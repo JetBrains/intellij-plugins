@@ -193,6 +193,9 @@ User Guide (API Version 2010-05-15)
                 + AWS::EMR::Cluster
                 + AWS::EMR::InstanceGroupConfig
                 + AWS::EMR::Step
+                + AWS::GameLift::Alias
+                + AWS::GameLift::Build
+                + AWS::GameLift::Fleet
                 + AWS::IAM::AccessKey
                 + AWS::IAM::Group
                 + AWS::IAM::InstanceProfile
@@ -390,6 +393,9 @@ User Guide (API Version 2010-05-15)
                   InstanceGroupConfig
                 + Amazon EMR Step HadoopJarStepConfig
                 + Amazon EMR Step HadoopJarStepConfig KeyValue
+                + GameLift Alias RoutingStrategy
+                + GameLift Build StorageLocation
+                + GameLift Fleet EC2InboundPermission
                 + IAM Policies
                 + IAM User LoginProfile
                 + AWS Lambda Function Code
@@ -540,6 +546,15 @@ The following table describes the important changes to the documentation
 since the last release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New resources
+
+March 15, 2016
+
+Use the AWS::GameLift::Alias, AWS::GameLift::Build, and 
+AWS::GameLift::Fleet resources to deploy multiplayer game servers in AWS.
+
+2010-05-15
 
 New resources
 
@@ -2171,6 +2186,7 @@ This is the initial public release of AWS CloudFormation.
 
 Document Conventions
 « Previous Next »
+© 2016, Amazon Web Services, Inc. or its affiliates. All rights reserved.
 PDF | Kindle <http://www.amazon.com/dp/B007S28IUW>
 Terms of Use <http://aws.amazon.com/terms> | © 2016, Amazon Web Services, 
 Inc. or its affiliates. All rights reserved.

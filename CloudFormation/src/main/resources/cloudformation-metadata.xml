@@ -1389,7 +1389,7 @@
       &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-as-policy.html#cfn-as-scalingpolicy-metricaggregationtype&quot;&gt;&lt;code class=&quot;code&quot;&gt;MetricAggregationType&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
       &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-as-policy.html#cfn-as-scalingpolicy-minadjustmentmagnitude&quot;&gt;&lt;code class=&quot;code&quot;&gt;MinAdjustmentMagnitude&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/em&gt;,
       &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-as-policy.html#cfn-as-scalingpolicy-policytype&quot;&gt;&lt;code class=&quot;code&quot;&gt;PolicyType&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-properties-as-policy.html#cfn-as-scalingpolicy-scalingadjustment&quot;&gt;ScalingAdjustment&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-properties-as-policy.html#cfn-as-scalingpolicy-scalingadjustment&quot;&gt;ScalingAdjustment&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/em&gt;,
       &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-as-policy.html#cfn-as-scalingpolicy-stepadjustments&quot;&gt;&lt;code class=&quot;code&quot;&gt;StepAdjustments&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;StepAdjustments, ...&lt;/code&gt;&lt;/em&gt; ]
    }
 }      &lt;/code&gt;&lt;/pre&gt;
@@ -2624,17 +2624,16 @@
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
-  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
-{
-   &quot;Type&quot; : &quot;AWS::CloudFormation::Stack&quot;,
-   &quot;Properties&quot; : {
-      &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#cfn-cloudformation-stack-notificationarns&quot;&gt;&lt;code class=&quot;literal&quot;&gt;NotificationARNs&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String, ...&lt;/code&gt;&lt;/em&gt; ],
-      &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#Parameters&quot;&gt;&lt;code class=&quot;literal&quot;&gt;Parameters&lt;/code&gt;&lt;/a&gt;&quot; : { &lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack-parameters.html&quot; title=&quot;CloudFormation Stack Parameters Property Type&quot;&gt;CloudFormation Stack Parameters Property Type&lt;/a&gt; },
-      &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#TemplateURL&quot;&gt;&lt;code class=&quot;literal&quot;&gt;TemplateURL&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#TimeoutInMinutes&quot;&gt;&lt;code class=&quot;literal&quot;&gt;TimeoutInMinutes&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
-   }
-}
-     &lt;/code&gt;&lt;/pre&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::CloudFormation::Stack&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#cfn-cloudformation-stack-notificationarns&quot;&gt;&lt;code class=&quot;code&quot;&gt;NotificationARNs&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#cfn-cloudformation-stack-parameters&quot;&gt;&lt;code class=&quot;code&quot;&gt;Parameters&lt;/code&gt;&lt;/a&gt;&quot; : { &lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack-parameters.html&quot; title=&quot;CloudFormation Stack Parameters Property Type&quot;&gt;CloudFormation Stack Parameters Property Type&lt;/a&gt; },
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#cfn-cloudformation-stack-tags&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Resource Tag, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#cfn-cloudformation-stack-templateurl&quot;&gt;&lt;code class=&quot;code&quot;&gt;TemplateURL&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack.html#cfn-cloudformation-stack-timeoutinminutes&quot;&gt;&lt;code class=&quot;code&quot;&gt;TimeoutInMinutes&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
  &lt;/div&gt;
  &lt;div class=&quot;section&quot;&gt;
   &lt;div class=&quot;titlepage&quot;&gt;
@@ -2648,7 +2647,7 @@
    &lt;dl&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-cloudformation-stack-notificationarns&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;NotificationARNs&lt;/code&gt;&lt;/span&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;NotificationARNs&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;A list of existing Amazon SNS topics where notifications about stack events are sent.&lt;/p&gt;
@@ -2657,8 +2656,8 @@
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
-     &lt;a name=&quot;Parameters&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;Parameters&lt;/code&gt;&lt;/span&gt;
+     &lt;a name=&quot;cfn-cloudformation-stack-parameters&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Parameters&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The set of parameters passed to AWS CloudFormation when this nested stack is created.&lt;/p&gt;
@@ -2671,8 +2670,18 @@
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Whether an update causes interruptions depends on the resources that are being update. An update never causes a nested stack to be replaced.&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
-     &lt;a name=&quot;TemplateURL&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;TemplateURL&lt;/code&gt;&lt;/span&gt;
+     &lt;a name=&quot;cfn-cloudformation-stack-tags&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) to describe this stack.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-cloudformation-stack-templateurl&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;TemplateURL&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The URL of a template that specifies the stack that you want to create as a resource. The template must be stored on an Amazon S3 bucket, so the URL must have the form: &lt;code class=&quot;code&quot;&gt;https://s3.amazonaws.com/.../&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;TemplateName&lt;/code&gt;&lt;/em&gt;.template&lt;/code&gt;&lt;/p&gt;
@@ -2681,8 +2690,8 @@
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Whether an update causes interruptions depends on the resources that are being update. An update never causes a nested stack to be replaced.&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
-     &lt;a name=&quot;TimeoutInMinutes&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;TimeoutInMinutes&lt;/code&gt;&lt;/span&gt;
+     &lt;a name=&quot;cfn-cloudformation-stack-timeoutinminutes&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;TimeoutInMinutes&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The length of time, in minutes, that AWS CloudFormation waits for the nested stack to reach the CREATE_COMPLETE state. The default is no timeout. When AWS CloudFormation detects that the nested stack has reached the CREATE_COMPLETE state, it marks the nested stack resource as CREATE_COMPLETE in the parent stack and resumes creating the parent stack. If the timeout period expires before the nested stack reaches CREATE_COMPLETE, AWS CloudFormation marks the nested stack as failed and rolls back both the nested stack and parent stack.&lt;/p&gt;
@@ -2769,6 +2778,16 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-stack-parameters.html&quot; title=&quot;CloudFormation Stack Parameters Property Type&quot;&gt;CloudFormation Stack Parameters Property Type&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Whether an update causes interruptions depends on the resources that are being update. An update never causes a nested stack to be replaced.&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Tags</string>
+            <ResourceProperty>
+              <name>Tags</name>
+              <description>&lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) to describe this stack.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -4056,7 +4075,7 @@
      &lt;p&gt;A name for the application. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the application name. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;
     &lt;/dd&gt;
    &lt;/dl&gt;
   &lt;/div&gt;
@@ -4113,7 +4132,7 @@
               <description>&lt;p&gt;A name for the application. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the application name. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -6836,7 +6855,7 @@
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-dynamodb-table.html#cfn-dynamodb-table-keyschema&quot;&gt;&lt;code class=&quot;literal&quot;&gt;KeySchema&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;KeySchema, ...&lt;/code&gt;&lt;/em&gt; ],
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-dynamodb-table.html#cfn-dynamodb-table-lsi&quot;&gt;&lt;code class=&quot;literal&quot;&gt;LocalSecondaryIndexes&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;LocalSecondaryIndexes, ...&lt;/code&gt;&lt;/em&gt; ],
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-dynamodb-table.html#cfn-dynamodb-table-provisionedthroughput&quot;&gt;&lt;code class=&quot;literal&quot;&gt;ProvisionedThroughput&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;ProvisionedThroughput&lt;/code&gt;&lt;/em&gt;,
-    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-dynamodb-table.html#cfn-dynamodb-table-streamspecification&quot;&gt;&lt;code class=&quot;code&quot;&gt;StreamSpecification&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;ProvisionedThroughput&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-dynamodb-table.html#cfn-dynamodb-table-streamspecification&quot;&gt;&lt;code class=&quot;code&quot;&gt;StreamSpecification&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;StreamSpecification&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-dynamodb-table.html#cfn-dynamodb-table-tablename&quot;&gt;&lt;code class=&quot;literal&quot;&gt;TableName&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
   }
 }&lt;/code&gt;&lt;/pre&gt;
@@ -6858,7 +6877,7 @@
     &lt;dd&gt;
      &lt;p&gt;A list of &lt;code class=&quot;code&quot;&gt;AttributeName&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;AttributeType&lt;/code&gt; objects that describe the key schema for the table and indexes.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-dynamodb-attributedef.html&quot; title=&quot;DynamoDB Attribute Definitions&quot;&gt;DynamoDB Attribute Definitions&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-dynamodb-attributedef.html&quot; title=&quot;DynamoDB Attribute Definitions&quot;&gt;DynamoDB Attribute Definitions&lt;/a&gt;&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
@@ -6875,7 +6894,7 @@
      &lt;/div&gt;
      &lt;p&gt; &lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-gsi.html&quot; title=&quot;DynamoDB Global Secondary Indexes&quot;&gt;DynamoDB Global Secondary Indexes&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-gsi.html&quot; title=&quot;DynamoDB Global Secondary Indexes&quot;&gt;DynamoDB Global Secondary Indexes&lt;/a&gt;&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; with the following exceptions:&lt;/p&gt;
      &lt;div class=&quot;itemizedlist&quot;&gt;
       &lt;ul class=&quot;itemizedlist&quot; type=&quot;disc&quot;&gt;
@@ -6891,7 +6910,7 @@
     &lt;dd&gt;
      &lt;p&gt;Specifies the attributes that make up the primary key for the table. The attributes in the &lt;code class=&quot;code&quot;&gt;KeySchema&lt;/code&gt; property must also be defined in the &lt;code class=&quot;code&quot;&gt;AttributeDefinitions&lt;/code&gt; property.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-keyschema.html&quot; title=&quot;DynamoDB Key Schema&quot;&gt;DynamoDB Key Schema&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-keyschema.html&quot; title=&quot;DynamoDB Key Schema&quot;&gt;DynamoDB Key Schema&lt;/a&gt;&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
@@ -6901,7 +6920,7 @@
     &lt;dd&gt;
      &lt;p&gt;Local secondary indexes to be created on the table. You can create up to 5 local secondary indexes. Each index is scoped to a given hash key value. The size of each hash key can be up to 10 gigabytes.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-lsi.html&quot; title=&quot;DynamoDB Local Secondary Indexes&quot;&gt;DynamoDB Local Secondary Indexes&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-lsi.html&quot; title=&quot;DynamoDB Local Secondary Indexes&quot;&gt;DynamoDB Local Secondary Indexes&lt;/a&gt;&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
@@ -7170,7 +7189,7 @@
             <ResourceProperty>
               <name>AttributeDefinitions</name>
               <description>&lt;p&gt;A list of &lt;code class=&quot;code&quot;&gt;AttributeName&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;AttributeType&lt;/code&gt; objects that describe the key schema for the table and indexes.&lt;/p&gt;</description>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-dynamodb-attributedef.html&quot; title=&quot;DynamoDB Attribute Definitions&quot;&gt;DynamoDB Attribute Definitions&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-dynamodb-attributedef.html&quot; title=&quot;DynamoDB Attribute Definitions&quot;&gt;DynamoDB Attribute Definitions&lt;/a&gt;&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -7180,7 +7199,7 @@
             <ResourceProperty>
               <name>GlobalSecondaryIndexes</name>
               <description>&lt;p&gt; &lt;/p&gt;</description>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-gsi.html&quot; title=&quot;DynamoDB Global Secondary Indexes&quot;&gt;DynamoDB Global Secondary Indexes&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-gsi.html&quot; title=&quot;DynamoDB Global Secondary Indexes&quot;&gt;DynamoDB Global Secondary Indexes&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; with the following exceptions:&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -7190,7 +7209,7 @@
             <ResourceProperty>
               <name>KeySchema</name>
               <description>&lt;p&gt;Specifies the attributes that make up the primary key for the table. The attributes in the &lt;code class=&quot;code&quot;&gt;KeySchema&lt;/code&gt; property must also be defined in the &lt;code class=&quot;code&quot;&gt;AttributeDefinitions&lt;/code&gt; property.&lt;/p&gt;</description>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-keyschema.html&quot; title=&quot;DynamoDB Key Schema&quot;&gt;DynamoDB Key Schema&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-keyschema.html&quot; title=&quot;DynamoDB Key Schema&quot;&gt;DynamoDB Key Schema&lt;/a&gt;&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -7200,7 +7219,7 @@
             <ResourceProperty>
               <name>LocalSecondaryIndexes</name>
               <description>&lt;p&gt;Local secondary indexes to be created on the table. You can create up to 5 local secondary indexes. Each index is scoped to a given hash key value. The size of each hash key can be up to 10 gigabytes.&lt;/p&gt;</description>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-lsi.html&quot; title=&quot;DynamoDB Local Secondary Indexes&quot;&gt;DynamoDB Local Secondary Indexes&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-dynamodb-lsi.html&quot; title=&quot;DynamoDB Local Secondary Indexes&quot;&gt;DynamoDB Local Secondary Indexes&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -8156,7 +8175,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;IamInstanceProfile&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The physical ID of an instance profile or a reference to an &lt;a class=&quot;link&quot; href=&quot;aws-resource-iam-instanceprofile.html&quot; title=&quot;AWS::IAM::InstanceProfile&quot;&gt;AWS::IAM::InstanceProfile&lt;/a&gt; resource.&lt;/p&gt;
+     &lt;p&gt;The physical ID (resource name) of an instance profile or a reference to an &lt;a class=&quot;link&quot; href=&quot;aws-resource-iam-instanceprofile.html&quot; title=&quot;AWS::IAM::InstanceProfile&quot;&gt;AWS::IAM::InstanceProfile&lt;/a&gt; resource.&lt;/p&gt;
      &lt;p&gt;For more information about IAM roles, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/IAM/latest/UserGuide/WorkingWithRoles.html&quot; target=&quot;_blank&quot;&gt;Working with Roles&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS Identity and Access Management User Guide&lt;/em&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
@@ -9021,7 +9040,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
  &lt;/div&gt;
- &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::EC2::NatGateway&lt;/code&gt; resource creates a network address translation (NAT) gateway in the specified private subnet. Use a NAT gateway to allow instances in a private subnet to connect to the Internet or to other AWS services, but prevent the Internet from initiating a connection with those instances. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-nat-gateway.html&quot; target=&quot;_blank&quot;&gt;NAT Gateways&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon VPC User Guide&lt;/em&gt;.&lt;/p&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::EC2::NatGateway&lt;/code&gt; resource creates a network address translation (NAT) gateway in the specified public subnet. Use a NAT gateway to allow instances in a private subnet to connect to the Internet or to other AWS services, but prevent the Internet from initiating a connection with those instances. For more information and a sample architectural diagram, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-nat-gateway.html&quot; target=&quot;_blank&quot;&gt;NAT Gateways&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon VPC User Guide&lt;/em&gt;.&lt;/p&gt;
  &lt;div class=&quot;section&quot;&gt;
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
@@ -9063,7 +9082,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;SubnetId&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The subnet in which to create the NAT gateway.&lt;/p&gt;
+     &lt;p&gt;The public subnet in which to create the NAT gateway.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
@@ -9139,7 +9158,7 @@
             <string>SubnetId</string>
             <ResourceProperty>
               <name>SubnetId</name>
-              <description>&lt;p&gt;The subnet in which to create the NAT gateway.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The public subnet in which to create the NAT gateway.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -14252,7 +14271,7 @@
      &lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) for this volume.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-ec2-ebs-volume-volumetype&quot;&gt;&lt;/a&gt;
@@ -14429,7 +14448,7 @@
               <description>&lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) for this volume.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -19851,7 +19870,7 @@
       &lt;p class=&quot;aws-note&quot;&gt;Important&lt;/p&gt;
       &lt;p&gt;If you specify a name, you cannot do updates that require this resource to be replaced. You can still do updates that require no or some interruption. If you must replace the resource, specify a new name.&lt;/p&gt;
      &lt;/div&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -19914,9 +19933,36 @@
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
-   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the resource name, such as &lt;code class=&quot;code&quot;&gt;1234a1a-a1b1-12a1-abcd-a123b123456&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the resource name, such as &lt;code class=&quot;code&quot;&gt;mystack-elasticsea-abc1d2efg3h4&lt;/code&gt;.&lt;/p&gt;
    &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
   &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Fn::GetAtt&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;&lt;code class=&quot;function&quot;&gt;Fn::GetAtt&lt;/code&gt; returns a value for a specified attribute of this type. This section lists the available attributes and sample return values.&lt;/p&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;DomainArn&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The Amazon Resource Name (ARN) of the domain, such as &lt;code class=&quot;code&quot;&gt;arn:aws:es:us-west-2:123456789012:domain/mystack-elasti-1ab2cdefghij&lt;/code&gt;.&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;DomainEndpoint&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The domain-specific endpoint that is used to submit index, search, and data upload requests to an Amazon ES domain, such as &lt;code class=&quot;code&quot;&gt;search-mystack-elasti-1ab2cdefghij-ab1c2deckoyb3hofw7wpqa3cm.us-west-2.es.amazonaws.com&lt;/code&gt;.&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+  &lt;p&gt;For more information about using &lt;code class=&quot;function&quot;&gt;Fn:GetAtt&lt;/code&gt;, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-getatt.html&quot; title=&quot;Fn::GetAtt&quot;&gt;Fn::GetAtt&lt;/a&gt;.&lt;/p&gt;
  &lt;/div&gt;
  &lt;div class=&quot;section&quot;&gt;
   &lt;div class=&quot;titlepage&quot;&gt;
@@ -19926,6 +19972,7 @@
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
+  &lt;p&gt;The following example creates an Amazon ES domain that contains two data nodes and three master nodes. Automated snapshots of the indices are taken daily between midnight and 1:00 AM (UTC). The access policy permits all users in the account to take all Amazon ES actions on the domain, such as &lt;code class=&quot;code&quot;&gt;es:UpdateElasticsearchDomainConfig&lt;/code&gt;.&lt;/p&gt;
   &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;ElasticsearchDomain&quot;: {
   &quot;Type&quot;: &quot;AWS::Elasticsearch::Domain&quot;,
   &quot;Properties&quot;: {
@@ -19959,11 +20006,7 @@
     },
     &quot;AdvancedOptions&quot;: {
       &quot;rest.action.multi.allow_explicit_index&quot;: &quot;true&quot;
-    },
-    &quot;Tags&quot;: [{
-      &quot;Key&quot;: &quot;type&quot;,
-      &quot;Value&quot;: &quot;test&quot;
-    }]
+    }
   }
 }&lt;/code&gt;&lt;/pre&gt;
  &lt;/div&gt;
@@ -19995,7 +20038,7 @@
               <name>DomainName</name>
               <description>&lt;p&gt;A name for the Amazon ES domain. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the domain name. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>true</required>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -20037,6 +20080,651 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>DomainArn</string>
+            <ResourceAttribute>
+              <name>DomainArn</name>
+              <description>The Amazon Resource Name (ARN) of the domain Example: arn:aws:es:us-west-2:123456789012:domain/mystack-elasti-1ab2cdefghij</description>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>DomainEndpoint</string>
+            <ResourceAttribute>
+              <name>DomainEndpoint</name>
+              <description>The domain-specific endpoint that is used to submit index, search, and data upload requests to an Amazon ES domain. Example: search-mystack-elasti-1ab2cdefghij-ab1c2deckoyb3hofw7wpqa3cm.us-west-2.es.amazonaws.com</description>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::GameLift::Alias</string>
+      <ResourceType>
+        <name>AWS::GameLift::Alias</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::GameLift::Alias&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::GameLift::Alias&lt;/code&gt; resource creates an alias for an Amazon GameLift (GameLift) fleet, which you can use to anonymize your fleet. You can reference the alias instead of a specific fleet when you create game sessions. For more information, see the &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/gamelift/latest/apireference/API_CreateAlias.html&quot; target=&quot;_blank&quot;&gt;CreateAlias&lt;/a&gt; action in the &lt;em class=&quot;citetitle&quot;&gt;Amazon GameLift API Reference&lt;/em&gt;.&lt;/p&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::GameLift::Alias&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-alias.html#cfn-gamelift-alias-name&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-alias.html#cfn-gamelift-alias-description&quot;&gt;&lt;code class=&quot;code&quot;&gt;Description&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-alias.html#cfn-gamelift-alias-routingstrategy&quot;&gt;&lt;code class=&quot;code&quot;&gt;RoutingStrategy&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;&lt;a class=&quot;link&quot; href=&quot;aws-properties-gamelift-alias-routingstrategy.html&quot; title=&quot;Amazon GameLift Alias RoutingStrategy&quot;&gt;RoutingStrategy&lt;/a&gt;&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-alias-description&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Description&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Information that helps you identify the purpose of this alias.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-alias-name&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An identifier to associate with this alias. Alias names don&apos;t need to be unique.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-alias-routingstrategy&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;RoutingStrategy&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A routing configuration that specifies where traffic is directed for this alias, such as to a fleet or to a message.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-gamelift-alias-routingstrategy.html&quot; title=&quot;Amazon GameLift Alias RoutingStrategy&quot;&gt;Amazon GameLift Alias RoutingStrategy&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Value&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the alias ID, such as &lt;code class=&quot;code&quot;&gt;myalias-a01234b56-7890-1de2-f345-g67h8i901j2k&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;The following example creates a terminal alias named &lt;code class=&quot;code&quot;&gt;TerminalAlias&lt;/code&gt; with a generic terminal message.&lt;/p&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;AliasResource&quot;: {
+  &quot;Type&quot;: &quot;AWS::GameLift::Alias&quot;,
+  &quot;Properties&quot;: {
+    &quot;Name&quot;: &quot;TerminalAlias&quot;,
+    &quot;Description&quot;: &quot;A terminal alias&quot;,
+    &quot;RoutingStrategy&quot;: {
+      &quot;Type&quot;: &quot;TERMINAL&quot;,
+      &quot;Message&quot;: &quot;Terminal routing strategy message&quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>Description</string>
+            <ResourceProperty>
+              <name>Description</name>
+              <description>&lt;p&gt;Information that helps you identify the purpose of this alias.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceProperty>
+              <name>Name</name>
+              <description>&lt;p&gt;An identifier to associate with this alias. Alias names don&apos;t need to be unique.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>RoutingStrategy</string>
+            <ResourceProperty>
+              <name>RoutingStrategy</name>
+              <description>&lt;p&gt;A routing configuration that specifies where traffic is directed for this alias, such as to a fleet or to a message.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-gamelift-alias-routingstrategy.html&quot; title=&quot;Amazon GameLift Alias RoutingStrategy&quot;&gt;Amazon GameLift Alias RoutingStrategy&lt;/a&gt;&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry/ResourceType/attributes"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::GameLift::Build</string>
+      <ResourceType>
+        <name>AWS::GameLift::Build</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::GameLift::Build&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::GameLift::Build&lt;/code&gt; resource creates a build that includes all of the components to run your game server in an Amazon GameLift (GameLift) fleet.&lt;/p&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::GameLift::Build&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-build.html#cfn-gamelift-build-name&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-build.html#cfn-gamelift-build-storagelocation&quot;&gt;&lt;code class=&quot;code&quot;&gt;StorageLocation&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;&lt;a class=&quot;link&quot; href=&quot;aws-properties-gamelift-build-storagelocation.html&quot; title=&quot;Amazon GameLift Build StorageLocation&quot;&gt;StorageLocation&lt;/a&gt;&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-build.html#cfn-gamelift-build-version&quot;&gt;&lt;code class=&quot;code&quot;&gt;Version&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-build-name&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An identifier to associate with this build. Build names don&apos;t need to be unique.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-build-storagelocation&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;StorageLocation&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The Amazon Simple Storage Service (Amazon S3) location where your build package files are located.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No, but we recommend that you specify a location. If you don&apos;t specify this property, you must manually upload your build package files to GameLift.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-gamelift-build-storagelocation.html&quot; title=&quot;Amazon GameLift Build StorageLocation&quot;&gt;Amazon GameLift Build StorageLocation&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-build-version&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Version&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A version to associate with this build. Version is useful if you want to track updates to your build package files. Versions don&apos;t need to be unique.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Value&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the build ID, such as &lt;code class=&quot;code&quot;&gt;mybuild-a01234b56-7890-1de2-f345-g67h8i901j2k&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;The following example creates a GameLift build named &lt;code class=&quot;code&quot;&gt;MyGameServerBuild&lt;/code&gt;. The build package is located in an S3 bucket, specified by the &lt;code class=&quot;code&quot;&gt;S3Bucket&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;S3Key&lt;/code&gt; input parameters. The example also creates the AWS Identity and Access Management (IAM) role that GameLift assumes so that it has permissions to download the build package files.&lt;/p&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;BuildResource&quot;: {
+  &quot;Type&quot;: &quot;AWS::GameLift::Build&quot;,
+  &quot;Properties&quot;: {
+    &quot;Name&quot;: &quot;MyGameServerBuild&quot;,
+    &quot;Version&quot;: &quot;v15&quot;,
+    &quot;StorageLocation&quot;: {
+      &quot;Bucket&quot;: &quot;mybucket,
+      &quot;Key&quot;: &quot;buildpackagefiles/&quot;,
+      &quot;RoleArn&quot;: { &quot;Fn::GetAtt&quot;: [ &quot;IAMRole&quot;, &quot;Arn&quot; ] }
+    }
+  }
+},
+&quot;IAMRole&quot;: {
+  &quot;Type&quot;: &quot;AWS::IAM::Role&quot;,
+  &quot;Properties&quot;: {
+    &quot;AssumeRolePolicyDocument&quot;: {
+      &quot;Version&quot;: &quot;2012-10-17&quot;,
+      &quot;Statement&quot;: [
+        {
+          &quot;Effect&quot;: &quot;Allow&quot;,
+          &quot;Principal&quot;: { &quot;Service&quot;: [ &quot;gamelift.amazonaws.com&quot; ] },
+          &quot;Action&quot;: [ &quot;sts:AssumeRole&quot; ]
+        }
+      ]
+    },
+    &quot;Path&quot;: &quot;/&quot;,
+    &quot;Policies&quot;: [
+      {
+        &quot;PolicyName&quot;: &quot;gamelift-s3-access-policy&quot;,
+        &quot;PolicyDocument&quot;: {
+          &quot;Version&quot;: &quot;2012-10-17&quot;,
+          &quot;Statement&quot;: [
+            {
+              &quot;Effect&quot;: &quot;Allow&quot;,
+              &quot;Action&quot;: [ &quot;s3:GetObject&quot; ],
+              &quot;Resource&quot;: [ &quot;arn:aws:s3:::mybucket/*&quot; ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>Name</string>
+            <ResourceProperty>
+              <name>Name</name>
+              <description>&lt;p&gt;An identifier to associate with this build. Build names don&apos;t need to be unique.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>StorageLocation</string>
+            <ResourceProperty>
+              <name>StorageLocation</name>
+              <description>&lt;p&gt;The Amazon Simple Storage Service (Amazon S3) location where your build package files are located.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-gamelift-build-storagelocation.html&quot; title=&quot;Amazon GameLift Build StorageLocation&quot;&gt;Amazon GameLift Build StorageLocation&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Version</string>
+            <ResourceProperty>
+              <name>Version</name>
+              <description>&lt;p&gt;A version to associate with this build. Version is useful if you want to track updates to your build package files. Versions don&apos;t need to be unique.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry/ResourceType/attributes"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::GameLift::Fleet</string>
+      <ResourceType>
+        <name>AWS::GameLift::Fleet</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::GameLift::Fleet&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::GameLift::Fleet&lt;/code&gt; resource creates an Amazon GameLift (GameLift) fleet to host game servers. A fleet is a set of EC2 instances, each of which is a host in the fleet. For more information, see the &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/gamelift/latest/apireference/API_CreateFleet.html&quot; target=&quot;_blank&quot;&gt;CreateFleet&lt;/a&gt; action in the &lt;em class=&quot;citetitle&quot;&gt;Amazon GameLift API Reference&lt;/em&gt;.&lt;/p&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::GameLift::Fleet&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-buildid&quot;&gt;&lt;code class=&quot;code&quot;&gt;BuildId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-description&quot;&gt;&lt;code class=&quot;code&quot;&gt;Description&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-desiredec2instances&quot;&gt;&lt;code class=&quot;code&quot;&gt;DesiredEC2Instances&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-ec2inboundpermissions&quot;&gt;&lt;code class=&quot;code&quot;&gt;EC2InboundPermissions&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;&lt;a class=&quot;link&quot; href=&quot;aws-properties-gamelift-fleet-ec2inboundpermission.html&quot; title=&quot;Amazon GameLift Fleet EC2InboundPermission&quot;&gt;EC2InboundPermission&lt;/a&gt;, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-ec2instancetype&quot;&gt;&lt;code class=&quot;code&quot;&gt;EC2InstanceType&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-logpaths&quot;&gt;&lt;code class=&quot;code&quot;&gt;LogPaths&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-name&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-serverlaunchparameters&quot;&gt;&lt;code class=&quot;code&quot;&gt;ServerLaunchParameters&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-gamelift-fleet.html#cfn-gamelift-fleet-serverlaunchpath&quot;&gt;&lt;code class=&quot;code&quot;&gt;ServerLaunchPath&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-buildid&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;BuildId&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The unique identifier for the build that you want to use with this fleet.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-description&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Description&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Information that helps you identify the purpose of this fleet.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-desiredec2instances&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;DesiredEC2Instances&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The number of EC2 instances that you want in this fleet.&lt;/p&gt;
+     &lt;div class=&quot;aws-note&quot;&gt;
+      &lt;p class=&quot;aws-note&quot;&gt;Important&lt;/p&gt;
+      &lt;p&gt;Currently, the number of EC2 instances that AWS CloudFormation supports is &lt;code class=&quot;code&quot;&gt;0&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;1&lt;/code&gt;.&lt;/p&gt;
+     &lt;/div&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-ec2inboundpermissions&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;EC2InboundPermissions&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The incoming traffic, expressed as IP ranges and port numbers, that is permitted to access the game server. If you don&apos;t specify values, no traffic is permitted to your game servers.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-gamelift-fleet-ec2inboundpermission.html&quot; title=&quot;Amazon GameLift Fleet EC2InboundPermission&quot;&gt;Amazon GameLift Fleet EC2InboundPermission&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-ec2instancetype&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;EC2InstanceType&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The type of EC2 instances that the fleet uses. EC2 instance types define the CPU, memory, storage, and networking capacity of the fleet&apos;s hosts. For more information about the instance types that are supported by GameLift, see the &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/gamelift/latest/apireference/API_CreateFleet.html#gamelift-CreateFleet-request-EC2InstanceType&quot; target=&quot;_blank&quot;&gt;EC2InstanceType&lt;/a&gt; parameter in the &lt;em class=&quot;citetitle&quot;&gt;Amazon GameLift API Reference&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-logpaths&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;LogPaths&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The path to game-session log files that are generated by your game server, with the slashes (&lt;code class=&quot;code&quot;&gt;\&lt;/code&gt;) escaped. After a game session has been terminated, GameLift captures and stores the logs in an S3 bucket.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-name&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An identifier to associate with this fleet. Fleet names don&apos;t need to be unique.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-serverlaunchparameters&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ServerLaunchParameters&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The parameters that are required to launch your game server. Specify these parameters as a string of command-line parameters, such as &lt;code class=&quot;code&quot;&gt;+sv_port 33435 +start_lobby&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-gamelift-fleet-serverlaunchpath&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ServerLaunchPath&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The location of your game server that GameLift launches. You must escape the slashes (&lt;code class=&quot;code&quot;&gt;\&lt;/code&gt;) and use the following pattern: &lt;code class=&quot;filename&quot;&gt;C:\\game\\&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;launchpath&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;. For example, if your game server files are in the &lt;code class=&quot;code&quot;&gt;MyGame&lt;/code&gt; folder, the path should be &lt;code class=&quot;filename&quot;&gt;C:\\game\\MyGame\\server.exe&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Value&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the fleet ID, such as &lt;code class=&quot;code&quot;&gt;myfleet-a01234b56-7890-1de2-f345-g67h8i901j2k&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;The following example creates a GameLift fleet named &lt;code class=&quot;code&quot;&gt;MyGameFleet&lt;/code&gt; with two inbound permissions. The fleet uses a &lt;code class=&quot;code&quot;&gt;Ref&lt;/code&gt; intrinsic function to specify a build, which can be declared elsewhere in the same template. For the log path and server launch path, the example uses the escape character (&lt;code class=&quot;code&quot;&gt;\&lt;/code&gt;) to escape the slashes (&lt;code class=&quot;code&quot;&gt;\&lt;/code&gt;).&lt;/p&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;FleetResource&quot;: {
+  &quot;Type&quot;: &quot;AWS::GameLift::Fleet&quot;,
+  &quot;Properties&quot;: {
+    &quot;Name&quot;: &quot;MyGameFleet&quot;,
+    &quot;Description&quot;: &quot;A fleet for my game&quot;,
+    &quot;BuildId&quot;: { &quot;Ref&quot;: &quot;BuildResource&quot; },
+    &quot;ServerLaunchPath&quot;: &quot;c:\\game\\TestApplicationServer.exe&quot;,
+    &quot;LogPaths&quot;: [
+      &quot;c:\\game\\testlog.log&quot;,
+      &quot;c:\\game\\testlog2.log&quot;
+    ],
+    &quot;EC2InstanceType&quot;: &quot;t2.small&quot;,
+    &quot;DesiredEC2Instances&quot;: &quot;2&quot;,
+    &quot;EC2InboundPermissions&quot;: [
+      {
+        &quot;FromPort&quot;: &quot;1234&quot;,
+        &quot;ToPort&quot;: &quot;1324&quot;,
+        &quot;IpRange&quot;: &quot;0.0.0.0/24&quot;,
+        &quot;Protocol&quot;: &quot;TCP&quot;
+      },
+      {
+        &quot;FromPort&quot;: &quot;1356&quot;,
+        &quot;ToPort&quot;: &quot;1578&quot;,
+        &quot;IpRange&quot;: &quot;192.168.0.0/24&quot;,
+        &quot;Protocol&quot;: &quot;UDP&quot;
+      }
+    ]
+  } 
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>BuildId</string>
+            <ResourceProperty>
+              <name>BuildId</name>
+              <description>&lt;p&gt;The unique identifier for the build that you want to use with this fleet.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Description</string>
+            <ResourceProperty>
+              <name>Description</name>
+              <description>&lt;p&gt;Information that helps you identify the purpose of this fleet.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>DesiredEC2Instances</string>
+            <ResourceProperty>
+              <name>DesiredEC2Instances</name>
+              <description>&lt;p&gt;The number of EC2 instances that you want in this fleet.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>EC2InboundPermissions</string>
+            <ResourceProperty>
+              <name>EC2InboundPermissions</name>
+              <description>&lt;p&gt;The incoming traffic, expressed as IP ranges and port numbers, that is permitted to access the game server. If you don&apos;t specify values, no traffic is permitted to your game servers.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-gamelift-fleet-ec2inboundpermission.html&quot; title=&quot;Amazon GameLift Fleet EC2InboundPermission&quot;&gt;Amazon GameLift Fleet EC2InboundPermission&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>EC2InstanceType</string>
+            <ResourceProperty>
+              <name>EC2InstanceType</name>
+              <description>&lt;p&gt;The type of EC2 instances that the fleet uses. EC2 instance types define the CPU, memory, storage, and networking capacity of the fleet&apos;s hosts. For more information about the instance types that are supported by GameLift, see the &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/gamelift/latest/apireference/API_CreateFleet.html#gamelift-CreateFleet-request-EC2InstanceType&quot; target=&quot;_blank&quot;&gt;EC2InstanceType&lt;/a&gt; parameter in the &lt;em class=&quot;citetitle&quot;&gt;Amazon GameLift API Reference&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>LogPaths</string>
+            <ResourceProperty>
+              <name>LogPaths</name>
+              <description>&lt;p&gt;The path to game-session log files that are generated by your game server, with the slashes (&lt;code class=&quot;code&quot;&gt;\&lt;/code&gt;) escaped. After a game session has been terminated, GameLift captures and stores the logs in an S3 bucket.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceProperty>
+              <name>Name</name>
+              <description>&lt;p&gt;An identifier to associate with this fleet. Fleet names don&apos;t need to be unique.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ServerLaunchParameters</string>
+            <ResourceProperty>
+              <name>ServerLaunchParameters</name>
+              <description>&lt;p&gt;The parameters that are required to launch your game server. Specify these parameters as a string of command-line parameters, such as &lt;code class=&quot;code&quot;&gt;+sv_port 33435 +start_lobby&lt;/code&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ServerLaunchPath</string>
+            <ResourceProperty>
+              <name>ServerLaunchPath</name>
+              <description>&lt;p&gt;The location of your game server that GameLift launches. You must escape the slashes (&lt;code class=&quot;code&quot;&gt;\&lt;/code&gt;) and use the following pattern: &lt;code class=&quot;filename&quot;&gt;C:\\game\\&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;launchpath&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;. For example, if your game server files are in the &lt;code class=&quot;code&quot;&gt;MyGame&lt;/code&gt; folder, the path should be &lt;code class=&quot;filename&quot;&gt;C:\\game\\MyGame\\server.exe&lt;/code&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -20100,10 +20788,10 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;Status&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The status of the access key.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;The status of the access key. By default, AWS CloudFormation sets this property value to &lt;code class=&quot;code&quot;&gt;Active&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Valid values:&lt;/em&gt;&lt;/span&gt; &lt;code class=&quot;code&quot;&gt;&quot;Active&quot; or &quot;Inactive&quot;&lt;/code&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Valid values:&lt;/em&gt;&lt;/span&gt; &lt;code class=&quot;code&quot;&gt;Active&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;Inactive&lt;/code&gt;&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
@@ -20186,7 +20874,7 @@
             <string>Status</string>
             <ResourceProperty>
               <name>Status</name>
-              <description>&lt;p&gt;The status of the access key.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The status of the access key. By default, AWS CloudFormation sets this property value to &lt;code class=&quot;code&quot;&gt;Active&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -21950,7 +22638,8 @@
   &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
    &quot;Type&quot; : &quot;AWS::Kinesis::Stream&quot;,
    &quot;Properties&quot; : {
-      &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-kinesis-stream.html#cfn-kinesis-stream-shardcount&quot;&gt;&lt;code class=&quot;literal&quot;&gt;ShardCount&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/em&gt;
+      &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-kinesis-stream.html#cfn-kinesis-stream-shardcount&quot;&gt;&lt;code class=&quot;literal&quot;&gt;ShardCount&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/em&gt;,
+      &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-kinesis-stream.html#cfn-kinesis-stream-tags&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Resource Tag, ...&lt;/code&gt;&lt;/em&gt; ]
    }
 }&lt;/code&gt;&lt;/pre&gt;
  &lt;/div&gt;
@@ -21973,6 +22662,16 @@
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-kinesis-stream-tags&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) to associate with the Amazon Kinesis stream.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
    &lt;/dl&gt;
   &lt;/div&gt;
@@ -22028,6 +22727,16 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Tags</string>
+            <ResourceProperty>
+              <name>Tags</name>
+              <description>&lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) to associate with the Amazon Kinesis stream.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -23653,7 +24362,7 @@
   &quot;Properties&quot; : {
     &quot;StackId&quot; : {&quot;Ref&quot;:&quot;myStack&quot;},
     &quot;Type&quot; : &quot;php&quot;,
-    &quot;Name&quot; : {&quot;myPHPapp&quot;},
+    &quot;Name&quot; : &quot;myPHPapp&quot;,
     &quot;AppSource&quot; : {
       &quot;Type&quot; : &quot;git&quot;,
       &quot;Url&quot; : &quot;git://github.com/amazonwebservices/opsworks-demo-php-simple-app.git&quot;,
@@ -25641,7 +26350,6 @@
   &quot;Properties&quot; : {
     &quot;MasterUsername&quot; : { &quot;Ref&quot; : &quot;username&quot; },
     &quot;MasterUserPassword&quot; : { &quot;Ref&quot; : &quot;password&quot; },
-    &quot;DBSubnetGroupName&quot; : { &quot;Ref&quot; : &quot;DBSubnetGroup&quot; },
     &quot;Engine&quot; : &quot;aurora&quot;,
     &quot;DBSubnetGroupName&quot; : { &quot;Ref&quot; : &quot;DBSubnetGroup&quot; },
     &quot;DBClusterParameterGroupName&quot; : { &quot;Ref&quot; : &quot;RDSDBClusterParameterGroup&quot; }
@@ -27653,6 +28361,26 @@
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
    &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Value&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When you pass the logical ID of an &lt;code class=&quot;code&quot;&gt;AWS::RDS::DBSubnetGroup&lt;/code&gt; resource to the intrinsic &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, the function returns the name of the DB subnet group, such as &lt;code class=&quot;code&quot;&gt;mystack-mydbsubnetgroup-0a12bc456789de0fg&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
   &lt;/div&gt;
  &lt;/div&gt;
  &lt;div class=&quot;section&quot;&gt;
@@ -29686,6 +30414,7 @@
   &quot;Type&quot; : &quot;AWS::Route53::RecordSet&quot;,
   &quot;Properties&quot; : {
     &quot;&lt;a class=&quot;link&quot; href=&quot;aws-properties-route53-recordset.html#cfn-route53-recordset-aliastarget&quot;&gt;AliasTarget&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;&lt;a class=&quot;link&quot; href=&quot;aws-properties-route53-aliastarget.html&quot; title=&quot;Route 53 AliasTarget Property&quot;&gt;AliasTarget&lt;/a&gt;&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-route53-recordset.html#cfn-route53-recordset-comment&quot;&gt;&lt;code class=&quot;code&quot;&gt;Comment&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-route53-recordset.html#cfn-route53-recordset-failover&quot;&gt;&lt;code class=&quot;literal&quot;&gt;Failover&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-route53-recordset.html#cfn-route53-recordset-geolocation&quot;&gt;&lt;code class=&quot;literal&quot;&gt;GeoLocation&lt;/code&gt;&lt;/a&gt;&quot; : { &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;GeoLocation&lt;/code&gt;&lt;/em&gt; },
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-properties-route53-recordset.html#cfn-route53-recordset-healthcheckid&quot;&gt;&lt;code class=&quot;literal&quot;&gt;HealthCheckId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
@@ -29721,6 +30450,20 @@
      &lt;p&gt;For more information about alias resource record sets, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingAliasRRSets.html&quot; target=&quot;_blank&quot;&gt;Creating Alias Resource Record Sets&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Route&amp;nbsp;53 Developer Guide&lt;/em&gt; and &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html#API_ChangeResourceRecordSets_RequestAliasSyntax&quot; target=&quot;_blank&quot;&gt;POST ChangeResourceRecordSets&lt;/a&gt; in the Amazon Route&amp;nbsp;53 API reference.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. Required if you are creating an alias resource record set. &lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-route53-aliastarget.html&quot; title=&quot;Route 53 AliasTarget Property&quot;&gt;AliasTarget&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-route53-recordset-comment&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Comment&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Any comments that you want to include about the hosted zone.&lt;/p&gt;
+     &lt;div class=&quot;aws-note&quot;&gt;
+      &lt;p class=&quot;aws-note&quot;&gt;Important&lt;/p&gt;
+      &lt;p&gt;If the record set is part of a record set group, this property isn&apos;t valid. Don&apos;t specify this property.&lt;/p&gt;
+     &lt;/div&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
@@ -29902,6 +30645,7 @@
                { &quot;Ref&quot; : &quot;HostedZone&quot; }, &quot;.&quot;
             ] ]
          },
+         &quot;Comment&quot; : &quot;DNS name for my instance.&quot;,  
          &quot;Name&quot; : {
             &quot;Fn::Join&quot; : [ &quot;&quot;, [
                {&quot;Ref&quot; : &quot;Ec2Instance&quot;}, &quot;.&quot;,
@@ -29930,6 +30674,16 @@
               <name>AliasTarget</name>
               <description>&lt;p&gt;For more information about alias resource record sets, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingAliasRRSets.html&quot; target=&quot;_blank&quot;&gt;Creating Alias Resource Record Sets&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Route&amp;nbsp;53 Developer Guide&lt;/em&gt; and &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html#API_ChangeResourceRecordSets_RequestAliasSyntax&quot; target=&quot;_blank&quot;&gt;POST ChangeResourceRecordSets&lt;/a&gt; in the Amazon Route&amp;nbsp;53 API reference.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-route53-aliastarget.html&quot; title=&quot;Route 53 AliasTarget Property&quot;&gt;AliasTarget&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Comment</string>
+            <ResourceProperty>
+              <name>Comment</name>
+              <description>&lt;p&gt;Any comments that you want to include about the hosted zone.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
