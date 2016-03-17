@@ -15,10 +15,10 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
-import com.intellij.concurrency.JobScheduler;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.concurrency.EdtExecutorService;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
@@ -386,16 +386,11 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
         }
 
     private boolean problem(final String resourceCode) {
-      JobScheduler.getScheduler().schedule(new Runnable(){
+      EdtExecutorService.getScheduledExecutorInstance().schedule(new Runnable(){
         @Override
         public void run() {
-          UIUtil.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
-                  StringUtil.getMsg(resourceCode));
-            }
-          });
+          Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
+                           StringUtil.getMsg(resourceCode));
         }
       }, (long)100, TimeUnit.MILLISECONDS);
       return false;
