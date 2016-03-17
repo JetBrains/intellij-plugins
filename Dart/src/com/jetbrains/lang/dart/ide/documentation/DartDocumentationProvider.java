@@ -5,11 +5,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartId;
 import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
@@ -25,12 +27,25 @@ public class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "http://api.dartlang.org/docs/releases/latest/";
 
   @Override
-  public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-    final String serverDoc = generateDocServer(element);
+  public String generateDoc(@NotNull final PsiElement element, @Nullable final PsiElement originalElement) {
+    // in case of code completion 'element' comes from completion list and has nothing to do with 'originalElement',
+    // but for Quick Doc in editor we should prefer building docs for 'originalElement' because such doc has info about propagated type
+    final PsiElement elementForDocs = resolvesTo(originalElement, element) ? originalElement : element;
+    final String serverDoc = generateDocServer(elementForDocs);
     if (serverDoc != null) {
       return serverDoc;
     }
     return DartDocUtil.generateDoc(element);
+  }
+
+  private static boolean resolvesTo(@Nullable final PsiElement originalElement, @NotNull final PsiElement target) {
+    final PsiElement parent = originalElement == null ? null : originalElement.getParent();
+    final PsiElement parentParent = parent instanceof DartId ? parent.getParent() : null;
+    if (parentParent == null) return false;
+    if (parentParent == target) return true;
+    if (!parentParent.getText().equals(target.getText())) return false;
+    final PsiReference reference = parentParent.getReference();
+    return reference != null && reference.resolve() == target;
   }
 
   @Override
