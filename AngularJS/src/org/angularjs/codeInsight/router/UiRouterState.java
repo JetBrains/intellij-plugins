@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight.router;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +20,12 @@ public class UiRouterState {
   private List<UiView> myViews;
   @Nullable private SmartPsiElementPointer<PsiElement> myPointer;
   private boolean myIsAbstract;
+  @NotNull
+  private final VirtualFile myFile;
 
-  public UiRouterState(@NotNull String name) {
+  public UiRouterState(@NotNull String name, @NotNull VirtualFile file) {
     myName = name;
+    myFile = file;
   }
 
   @NotNull

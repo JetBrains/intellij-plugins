@@ -47,7 +47,7 @@ public class ShowUiRouterStatesDiagramAction extends AnAction {
     final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(project);
     builder.build();
     final AngularUiRouterGraphBuilder graphBuilder =
-      new AngularUiRouterGraphBuilder(project, builder.getStatesMap(), builder.getTemplatesMap());
+      new AngularUiRouterGraphBuilder(project, builder.getStatesMap(), builder.getTemplatesMap(), builder.getRootTemplates());
     final Disposable disposable = new Disposable() {
       @Override
       public void dispose() {

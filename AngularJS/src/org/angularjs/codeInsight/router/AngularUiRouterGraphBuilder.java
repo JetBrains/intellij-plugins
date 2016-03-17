@@ -58,14 +58,17 @@ public class AngularUiRouterGraphBuilder {
   @NotNull private final Project myProject;
   private final Map<String, UiRouterState> myStatesMap;
   private final Map<String, Template> myTemplatesMap;
+  @NotNull private final Map<VirtualFile, RootTemplate> myRootTemplates;
   private Graph2D myGraph;
 
   public AngularUiRouterGraphBuilder(@NotNull Project project,
                                      @NotNull Map<String, UiRouterState> statesMap,
-                                     @NotNull Map<String, Template> templatesMap) {
+                                     @NotNull Map<String, Template> templatesMap,
+                                     @NotNull Map<VirtualFile, RootTemplate> rootTemplates) {
     myProject = project;
     myStatesMap = statesMap;
     myTemplatesMap = templatesMap;
+    myRootTemplates = rootTemplates;
   }
 
   public JComponent build(@NotNull final Disposable disposable) {
