@@ -1,4 +1,5 @@
-AWS CloudFormation plugin for IntelliJ-based IDEs (IntelliJ IDEA, RubyMine, WebStorm, PhpStorm, PyCharm, AppCode, Android Studio, DataGrip, CLion)
+AWS CloudFormation plugin for IntelliJ-based IDEs 
+(IntelliJ IDEA, RubyMine, WebStorm, PhpStorm, PyCharm, AppCode, Android Studio, DataGrip, CLion)
 
 [![Travis Build Status](https://travis-ci.org/shalupov/idea-cloudformation.svg?branch=master)](https://travis-ci.org/shalupov/idea-cloudformation)
 
