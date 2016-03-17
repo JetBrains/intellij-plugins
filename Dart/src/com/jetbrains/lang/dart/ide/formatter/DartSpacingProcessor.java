@@ -303,7 +303,11 @@ public class DartSpacingProcessor {
       if (type1 == RPAREN && mySettings.BRACE_STYLE == CommonCodeStyleSettings.END_OF_LINE) {
         // Always have a single space following the closing paren of an if-condition.
         int nsp = mySettings.SPACE_BEFORE_IF_LBRACE ? 1 : 0;
-        return Spacing.createSpacing(nsp, nsp, 0, type2 == BLOCK ? false : mySettings.KEEP_LINE_BREAKS, 0);
+        int lf = 0;
+        if (type2 != BLOCK && mySettings.SPECIAL_ELSE_IF_TREATMENT) {
+          if (FormatterUtil.isFollowedBy(node2, ELSE, SEMICOLON)) lf = 1;
+        }
+        return Spacing.createSpacing(nsp, nsp, lf, type2 == BLOCK ? false : mySettings.KEEP_LINE_BREAKS, 0);
       }
       if (type1 == SEMICOLON && type2 == ELSE) {
         // If the then-part is on the line with the condition put the else-part on the next line.
@@ -555,8 +559,9 @@ public class DartSpacingProcessor {
         return Spacing.createSpacing(1, 1, mySettings.SPECIAL_ELSE_IF_TREATMENT ? 0 : 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
       }
       if (type2 != LBRACE) {
-        // Keep single-statement else-part on same line.
-        return Spacing.createSpacing(1, 1, 0, type2 == BLOCK ? false : mySettings.KEEP_LINE_BREAKS, 0);
+        // Keep single-statement else-part on same line?
+        int lf = mySettings.SPECIAL_ELSE_IF_TREATMENT ? 1 : 0;
+        return Spacing.createSpacing(1, 1, lf, type2 == BLOCK ? false : mySettings.KEEP_LINE_BREAKS, 0);
       }
     }
 

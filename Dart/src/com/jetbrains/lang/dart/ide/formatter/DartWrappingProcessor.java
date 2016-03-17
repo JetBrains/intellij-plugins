@@ -184,8 +184,12 @@ public class DartWrappingProcessor {
     //
     // If
     //
-    if (elementType == IF_STATEMENT && childType == ELSE) {
-      return createWrap(mySettings.ELSE_ON_NEW_LINE);
+    if (elementType == IF_STATEMENT) {
+      if (childType == ELSE) {
+        return createWrap(mySettings.ELSE_ON_NEW_LINE);
+      } else if (childType != BLOCK && child == child.getTreeParent().getLastChildNode()) {
+        return createWrap(true);
+      }
     }
 
     //

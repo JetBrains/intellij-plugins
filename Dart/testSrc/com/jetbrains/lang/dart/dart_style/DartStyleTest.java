@@ -98,7 +98,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0000/0042.unit:2");
     KNOWN_TO_FAIL.add("regression/0000/0044.stmt:10");
     KNOWN_TO_FAIL.add("regression/0000/0044.stmt:50");
-    KNOWN_TO_FAIL.add("regression/0000/0045.stmt:1  doesn't wrap after condition on single-line ifs"); // NEW 3/16
     KNOWN_TO_FAIL.add("regression/0000/0046.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0050.stmt:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0000/0055.unit:17  (indent 12)");
@@ -251,9 +250,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0400/0439.stmt:9  (indent 2)"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0441.unit:1"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0444.unit:1"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0400/0448.stmt:1  (indent 6)"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0400/0448.stmt:15  (indent 4)"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0400/0448.stmt:21  (indent 6)"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0454.unit:10"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0462.unit:1"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0462.unit:21"); // NEW 3/26
@@ -492,10 +488,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/directives.unit:53  configuration"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("whitespace/directives.unit:57  configuration"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
-    KNOWN_TO_FAIL.add("whitespace/if.stmt:44  single-expression else body"); // NEW 3/16
     KNOWN_TO_FAIL.add("whitespace/if.stmt:67  long if without curlies"); // NEW 3/16
-    KNOWN_TO_FAIL.add("whitespace/if.stmt:72  long if else without curlies"); // NEW 3/16
-    KNOWN_TO_FAIL.add("whitespace/if.stmt:82  long if long else without curlies"); // NEW 3/16
   }
 
   protected String getFileExtension() {
