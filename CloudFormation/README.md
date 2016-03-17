@@ -1,12 +1,22 @@
-AWS CloudFormation plugin for IntelliJ IDEA 16+
+AWS CloudFormation plugin for IntelliJ-based IDEs (IntelliJ IDEA, RubyMine, WebStorm, PhpStorm, PyCharm, AppCode, Android Studio, DataGrip, CLion)
 
 [![Travis Build Status](https://travis-ci.org/shalupov/idea-cloudformation.svg?branch=master)](https://travis-ci.org/shalupov/idea-cloudformation)
 
 Latest stable version
 ---------------------
 
+Install plugin from IDE: File -> Settings -> Plugins -> Browse Repositories -> search for CloudFormation
+
 See IntelliJ IDEA plugin repository:
-https://plugins.jetbrains.com/plugin/7371?pr=idea_ce
+https://plugins.jetbrains.com/plugin/7371
+
+Old Versions
+------------
+
+"master" branch is compatible with IntelliJ-based IDEs 2016.1+
+Plugin sources for older IDE versions are in other branches.
+
+See versions history at https://plugins.jetbrains.com/plugin/7371
 
 Quick Start
 -----------
