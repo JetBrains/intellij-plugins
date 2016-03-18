@@ -22,6 +22,14 @@ class CompletionTests : LightCodeInsightFixtureTestCase() {
     UsefulTestCase.assertDoesntContain(strings, "AWS::IAM::AccessKey")
   }
 
+  fun testCloudFormationInterfaceParameterGroups() {
+    checkBasicCompletion("CloudFormationInterfaceParameterGroups.template", "WebServerInstanceType1", "WebServerInstanceType2")
+  }
+
+  fun testCloudFormationInterfaceParameterLabels() {
+    checkBasicCompletion("CloudFormationInterfaceParameterLabels.template", "WebServer12InstanceType1", "WebServer12InstanceType2")
+  }
+
   fun testResourceProperty1() {
     checkBasicCompletion("ResourceProperty1.template", "ApplicationName", "ApplicationVersions")
   }

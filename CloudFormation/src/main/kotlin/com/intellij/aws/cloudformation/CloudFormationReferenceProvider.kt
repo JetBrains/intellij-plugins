@@ -244,7 +244,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
       if (!isAWSCloudFormationInterfaceProperty(parameterLabelsProperty, CloudFormationConstants.CloudFormationInterfaceParameterLabels)) return null
 
-      return CloudFormationEntityReference(element, CloudFormationSections.ParametersSingletonList, null)
+      return CloudFormationEntityReference(element, CloudFormationSections.ParametersSingletonList, CloudFormationMetadataProvider.METADATA.predefinedParameters)
     }
 
     private fun handleCloudFormationInterfaceParameterGroups(element: JsonStringLiteral): PsiReference? {
@@ -259,7 +259,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
       if (!isAWSCloudFormationInterfaceProperty(parameterGroupsElement, CloudFormationConstants.CloudFormationInterfaceParameterGroups)) return null
 
-      return CloudFormationEntityReference(element, CloudFormationSections.ParametersSingletonList, null)
+      return CloudFormationEntityReference(element, CloudFormationSections.ParametersSingletonList, CloudFormationMetadataProvider.METADATA.predefinedParameters)
     }
 
     private fun isAWSCloudFormationInterfaceProperty(element: JsonProperty?, name: String): Boolean {

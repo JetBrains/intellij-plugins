@@ -23,12 +23,12 @@ class CloudFormationEntityReference(element: JsonLiteral,
   override fun getCompletionVariants(): List<String> {
     val entities = CloudFormationResolve.getEntities(myElement.containingFile, myPossibleSections).toMutableSet()
 
-    if (myExcludeFromVariants != null) {
-      entities.removeAll(myExcludeFromVariants)
-    }
-
     if (myPossibleSections.contains(CloudFormationSections.Parameters)) {
       entities.addAll(CloudFormationMetadataProvider.METADATA.predefinedParameters)
+    }
+
+    if (myExcludeFromVariants != null) {
+      entities.removeAll(myExcludeFromVariants)
     }
 
     return entities.toList()
