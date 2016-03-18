@@ -78,10 +78,8 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
     if (dartTestLib == null) return false;
 
     final VirtualFile pubspec = urlResolver.getPubspecYamlFile();
-    if (pubspec == null) return false;
-
-    final VirtualFile rootDir = pubspec.getParent();
-    final VirtualFile testDir = rootDir.findChild("test");
+    final VirtualFile rootDir = pubspec == null ? null : pubspec.getParent();
+    final VirtualFile testDir = rootDir == null ? null : rootDir.findChild("test");
     if (testDir == null || !testDir.isDirectory()) return false;
 
     if (!rootDir.equals(dir) && !VfsUtilCore.isAncestor(testDir, dir, false)) return false;
@@ -121,16 +119,10 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
     final VirtualFile dartTestLib = urlResolver.findFileByDartUrl("package:test/test.dart");
     if (dartTestLib == null) return false;
 
-    final VirtualFile yamlFile = urlResolver.getPubspecYamlFile();
-    if (yamlFile != null) {
-      final VirtualFile parent = yamlFile.getParent();
-      final VirtualFile testFolder = parent == null ? null : parent.findChild("test");
-      if (testFolder == null || !testFolder.isDirectory() || !VfsUtilCore.isAncestor(testFolder, file, true)) {
-        return false;
-      }
-    }
-
-    return true;
+    final VirtualFile pubspec = urlResolver.getPubspecYamlFile();
+    final VirtualFile rootDir = pubspec == null ? null : pubspec.getParent();
+    final VirtualFile testDir = rootDir == null ? null : rootDir.findChild("test");
+    return testDir != null && testDir.isDirectory() && VfsUtilCore.isAncestor(testDir, file, true);
   }
 
   private static boolean setupRunnerParametersForFile(@NotNull final DartTestRunnerParameters runnerParams,
