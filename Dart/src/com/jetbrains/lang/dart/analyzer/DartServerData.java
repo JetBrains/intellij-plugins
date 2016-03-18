@@ -384,10 +384,10 @@ public class DartServerData {
 
     private DartError(@NotNull final AnalysisError error) {
       super(error.getLocation().getOffset(), error.getLocation().getLength());
-      myAnalysisErrorFileSD = error.getLocation().getFile();
-      myType = error.getType();
+      myAnalysisErrorFileSD = error.getLocation().getFile().intern();
+      myType = error.getType().intern();
       myMessage = error.getMessage();
-      mySeverity = error.getSeverity();
+      mySeverity = error.getSeverity().intern();
     }
 
     public String getAnalysisErrorFileSD() {
