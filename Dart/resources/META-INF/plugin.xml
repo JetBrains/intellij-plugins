@@ -269,7 +269,8 @@
             description="Run 'pub cache repair'"/>
 
     <action id="DartTypeHierarchy.BaseOnThisType" text="Base on This Type"
-            class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"/>
+            class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"
+            use-shortcut-of="TypeHierarchy"/>
     <group id="DartClassHierarchyPopupMenu">
       <reference ref="DartTypeHierarchy.BaseOnThisType"/>
       <reference ref="TypeHierarchy.Class"/>
