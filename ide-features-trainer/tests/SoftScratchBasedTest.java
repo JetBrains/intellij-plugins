@@ -26,8 +26,8 @@ import org.junit.runners.Parameterized;
 import training.commands.*;
 import training.editor.EduEditor;
 import training.editor.EduEditorManager;
-import training.lesson.*;
-import training.lesson.exceptons.*;
+import training.learn.*;
+import training.learn.exceptons.*;
 
 import java.awt.*;
 import java.io.IOException;

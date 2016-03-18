@@ -1,10 +1,8 @@
 package training.solutions.EditorBasics;
 
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jdom.Element;
 import training.commands.*;
-import training.lesson.LessonProcessor;
+import training.learn.LessonProcessor;
 import training.testFramework.LessonSolution;
 import training.util.PerformActionUtil;
 

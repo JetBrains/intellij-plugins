@@ -2,12 +2,12 @@ package training.commands;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
-import training.lesson.ActionsRecorder;
+import training.learn.ActionsRecorder;
 import training.check.Check;
-import training.lesson.log.LessonLog;
+import training.learn.log.LessonLog;
 import training.keymap.KeymapUtil;
 import training.keymap.SubKeymapUtil;
-import training.lesson.Lesson;
+import training.learn.Lesson;
 import training.util.MyClassLoader;
 
 import javax.swing.*;

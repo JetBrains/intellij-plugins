@@ -17,9 +17,9 @@ import org.jetbrains.annotations.Nullable;
 import training.commands.BadCommandException;
 import training.editor.EduEditor;
 import training.editor.EduEditorManager;
-import training.lesson.Course;
-import training.lesson.CourseManager;
-import training.lesson.Lesson;
+import training.learn.Course;
+import training.learn.CourseManager;
+import training.learn.Lesson;
 
 import java.util.concurrent.ExecutionException;
 

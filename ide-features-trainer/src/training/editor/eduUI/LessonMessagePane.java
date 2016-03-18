@@ -1,8 +1,8 @@
 package training.editor.eduUI;
 
 import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.ui.UIUtil;
+import icons.LearnIcons;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -36,8 +36,6 @@ public class LessonMessagePane extends JTextPane {
         //TODO: Don't forget to change it back
         setEditable(false);
         this.setParagraphAttributes(PARAGRAPH_STYLE, true);
-        passedIcon = IconLoader.findIcon(EduIcons.CHECKMARK_GRAY_12);
-
     }
 
     private static void initStyleConstants() {
@@ -146,7 +144,7 @@ public class LessonMessagePane extends JTextPane {
             StyleContext context = new StyleContext();
             StyledDocument document = getStyledDocument();
             Style labelStyle = context.getStyle(StyleContext.DEFAULT_STYLE);
-            JLabel jlabel = new JLabel(passedIcon);
+            JLabel jlabel = new JLabel(LearnIcons.CheckmarkGray12);
             jlabel.setAlignmentY(0.9f);
             StyleConstants.setComponent(labelStyle, jlabel);
             try {
