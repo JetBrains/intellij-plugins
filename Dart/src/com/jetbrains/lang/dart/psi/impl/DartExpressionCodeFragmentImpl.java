@@ -66,11 +66,11 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
 
   protected DartExpressionCodeFragmentImpl clone() {
     final DartExpressionCodeFragmentImpl clone = (DartExpressionCodeFragmentImpl)cloneImpl((FileElement)calcTreeElement().clone());
-    clone.myPhysical = myPhysical;
+    clone.myPhysical = false;
     clone.myOriginalFile = this;
     final FileManager fileManager = ((PsiManagerEx)getManager()).getFileManager();
     final SingleRootFileViewProvider cloneViewProvider =
-      (SingleRootFileViewProvider)fileManager.createFileViewProvider(new LightVirtualFile(getName(), getLanguage(), getText()), myPhysical);
+      (SingleRootFileViewProvider)fileManager.createFileViewProvider(new LightVirtualFile(getName(), getLanguage(), getText()), false);
     clone.myViewProvider = cloneViewProvider;
     cloneViewProvider.forceCachedPsi(clone);
     clone.init(getContentElementType(), getContentElementType());
