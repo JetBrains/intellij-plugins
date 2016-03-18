@@ -3,6 +3,30 @@
   "Description": "desc",
 
   "Resources": {
+    "MySecurityGroup": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "RouteTableIds": ["XXX"],
+        "ServiceName" : { "Fn::Join": ["", ["com.amazonaws.", { "Ref": "AWS::Region" }, ".s3"]] },
+        "VpcId": "XXX"
+      }
+    },
+    "SomeSubnetA": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "RouteTableIds": ["XXX"],
+        "ServiceName" : { "Fn::Join": ["", ["com.amazonaws.", { "Ref": "AWS::Region" }, ".s3"]] },
+        "VpcId": "XXX"
+      }
+    },
+    "SomeSubnetB": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "RouteTableIds": ["XXX"],
+        "ServiceName" : { "Fn::Join": ["", ["com.amazonaws.", { "Ref": "AWS::Region" }, ".s3"]] },
+        "VpcId": "XXX"
+      }
+    },
     "MyLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties": {
@@ -27,7 +51,7 @@
             "Protocol": "HTTPS",
             "SSLCertificateId": {
               "Fn::Join": ["", ["arn:aws:iam::", {
-                "Ref": "AWS::AccountIds"
+                "Ref": "AWS::AccountId"
               }, ":server-certificate/", "MyLoadBalancerCertificate" ] ]
             }
           },

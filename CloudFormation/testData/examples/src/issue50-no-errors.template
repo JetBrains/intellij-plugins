@@ -1,0 +1,218 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "AWS Memcached or Redis Cluster for ElastiCache",
+  "Metadata": {
+    "Version": "v0.1.0",
+    "AWS::CloudFormation::Interface": {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "VPC Configuration" },
+          "Parameters" : ["Environment", "VPCId", "ElastiCacheSubnets","ASGSecurityGroup" ]
+        },
+        {
+          "Label" : { "default" : "ElastiCache Basic Configuration" },
+          "Parameters" : ["ElastiCacheEngineType", "InstanceClass", "NumberOfNodes", "CacheClusterPort"]
+        },
+        {
+          "Label" : { "default" : "ElastiCache Advanced Configuration" },
+          "Parameters" : ["FailoverEnabled", "InstanceClass", "NumberOfNodes", "CacheClusterPort", "EnableNotifications", "MinorVersionUpgrade"]
+        },
+        {
+          "Label" : { "default" : "Redis Specific" },
+          "Parameters" : ["ReplicationGroupDescription"]
+        },
+        {
+          "Label" : { "default" : "Memcached Specific" },
+          "Parameters" : ["ClusterName"]
+        },
+        {
+          "Label" : { "default" : "Backup / Maintenance" },
+          "Parameters" : ["SnapshotRetentionLimit", "PreferredSnapshotWindow", "PreferredMaintenanceWindow"]
+        }
+      ]
+    }
+  },
+
+  "Parameters": {
+    "VPCId": {
+      "Description": "Existing Virtual Private Cloud to use with the elasticache cluster",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "InstanceClass": {
+      "Description": "The compute and memory capacity of the nodes within the ElastiCache cluster",
+      "Default": "cache.m3.medium",
+      "Type": "String",
+      "AllowedValues": [
+        "cache.t2.micro", "cache.t2.small", "cache.t2.medium",
+        "cache.m3.medium", "cache.m3.large", "cache.m3.xlarge", "cache.m3.xlarge", "cache.m3.2xlarge",
+        "cache.r3.large", "cache.r3.xlarge", "cache.r3.2xlarge", "cache.r3.4xlarge", "cache.r3.8xlarge"
+      ]
+    },
+    "NumberOfNodes": {
+      "Description": "The number of cache nodes within the ElastiCache cluster",
+      "Default": "1",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "100"
+    },
+    "CacheClusterPort": {
+      "Description": "The number of cache nodes within the ElastiCache cluster",
+      "Default": "6379",
+      "Type": "Number",
+      "MinValue": "1024",
+      "MaxValue": "65535"
+    },
+    "ElastiCacheEngineType": {
+      "Description": "The name of the cache engine to be used for this cache cluster",
+      "Default": "redis28",
+      "Type": "String",
+      "AllowedValues": [ "memcached14", "redis28" ]
+    },
+    "ElastiCacheSubnets": {
+      "Description": "Subnets for use with this cache cluster",
+      "Type": "List<AWS::EC2::Subnet::Id>"
+    },
+    "ASGSecurityGroup": {
+      "Description": "Existing security group being used by ec2 instances within the application autoscale group",
+      "Type": "CommaDelimitedList",
+      "Default": ""
+    },
+    "FailoverEnabled": {
+      "Description": "Specifies if enable failover",
+      "Type": "String",
+      "Default": "true",
+      "AllowedValues": [ "true", "false" ]
+    },
+    "MinorVersionUpgrade": {
+      "Description": "Specifies version upgrade is enabled",
+      "Type": "String",
+      "Default": "true",
+      "AllowedValues": [ "true", "false" ]
+    },
+    "Environment": {
+      "Description": "Application environment for which this Cache Cluster is being created. e.g. Development/Production",
+      "Type": "String",
+      "Default": "Development",
+      "AllowedValues": ["Development", "Integration", "PreProduction", "Production", "Staging", "Test"]
+    },
+    "ReplicationGroupDescription": {
+      "Description": "Description of Replication Group (redis only)",
+      "Type": "String",
+      "Default": "Elasticache"
+    },
+    "ClusterName": {
+      "Description": "Name of Cluster",
+      "Type": "String",
+      "Default": "MyCluster"
+    },
+    "SnapshotRetentionLimit": {
+      "Default": "7",
+      "Description" : "The number of days for which automated backups are retained. Setting this parameter to a positive number enables backups. Setting this parameter to 0 disables automated backups.",
+      "Type": "Number",
+      "MinValue": "0",
+      "MaxValue": "35",
+      "ConstraintDescription" : "must be between 0 and 35"
+    },
+    "PreferredSnapshotWindow": {
+      "Default": "Sun:03:00-Sun:04:00",
+      "Description" : "The daily time range during which automated backups are created if automated backups are enabled",
+      "Type": "String"
+    },
+    "PreferredMaintenanceWindow": {
+      "Default": "Sun:05:00-Sun:07:00",
+      "Description" : "The daily time range during which automated backups are created if automated backups are enabled",
+      "Type": "String"
+    },
+    "EnableNotifications" : {
+      "Type" : "String",
+      "Default" : "False",
+      "AllowedValues" : ["False", "True"],
+      "Description" : "Specifies whether to notify if an autoscaling event ocurrs or not."
+    }
+  },
+  "Conditions" : {
+    "NotificationsEnabled" : {"Fn::Equals" : [{"Ref" : "EnableNotifications"}, "True"]},
+    "Memcached" : {"Fn::Equals" : [{"Ref" : "ElastiCacheEngineType"}, "memcached14"]},
+    "Redis" : {"Fn::Equals" : [{"Ref" : "ElastiCacheEngineType"}, "redis28"]}
+  },
+  "Mappings": {
+    "ElastiCacheEngine" : {
+      "memcached14" : {
+        "ParameterGroupName": "default.memcached1.4",
+        "Version": "1.4.24",
+        "Name": "memcached"
+      },
+      "redis28" : {
+        "ParameterGroupName": "default.redis2.8",
+        "Version": "2.8.24",
+        "Name": "redis"
+      }
+    }
+  },
+  "Resources": {
+    "ElastiCacheRepGroup": {
+      "Type": "AWS::ElastiCache::ReplicationGroup",
+      "Condition": "Redis",
+      "Properties": {
+        "NotificationTopicArn" : {
+          "Fn::If" :
+          [
+            "NotificationsEnabled",
+            {
+              "Fn::Join" : [":",["arn","aws","sns",{ "Ref" : "AWS::Region" },{ "Ref": "AWS::AccountId" },"rackspace-support"]]
+            }
+          ,
+            { "Ref" : "AWS::NoValue" }
+          ]
+        },
+        "AutomaticFailoverEnabled": { "Ref": "FailoverEnabled" },
+        "AutoMinorVersionUpgrade": { "Ref": "MinorVersionUpgrade" },
+        "CacheNodeType": { "Ref": "InstanceClass" },
+        "CacheParameterGroupName": {"Fn::FindInMap": [ "ElastiCacheEngine", { "Ref": "ElastiCacheEngineType" }, "ParameterGroupName" ]},
+        "CacheSubnetGroupName": {
+          "Ref": "ElastiCacheSubnetGroup"
+        },
+        "Engine": {"Fn::FindInMap": [ "ElastiCacheEngine", { "Ref": "ElastiCacheEngineType" }, "Name" ]},
+        "EngineVersion": {"Fn::FindInMap": [ "ElastiCacheEngine", { "Ref": "ElastiCacheEngineType" }, "Version" ]},
+        "NumCacheClusters": { "Ref": "NumberOfNodes" },
+        "Port": { "Ref": "CacheClusterPort" },
+        "PreferredMaintenanceWindow": {"Ref": "PreferredMaintenanceWindow"},
+        "ReplicationGroupDescription": {"Ref": "ReplicationGroupDescription"},
+        "SecurityGroupIds": { "Ref": "ASGSecurityGroup" },
+        "SnapshotRetentionLimit": {"Ref": "SnapshotRetentionLimit"},
+        "SnapshotWindow": {"Ref": "PreferredSnapshotWindow"}
+      }
+    },
+    "CacheCluster": {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Condition": "Memcached",
+      "Properties": {
+        "CacheNodeType": { "Ref": "InstanceClass" },
+        "Engine": {"Fn::FindInMap": [ "ElastiCacheEngine", { "Ref": "ElastiCacheEngineType" }, "Name" ]},
+        "AZMode": "cross-az",
+        "Port": { "Ref": "CacheClusterPort" },
+        "EngineVersion": {"Fn::FindInMap": [ "ElastiCacheEngine", { "Ref": "ElastiCacheEngineType" }, "Version" ]},
+        "PreferredMaintenanceWindow": {"Ref": "PreferredMaintenanceWindow"},
+        "CacheSubnetGroupName": { "Ref": "ElastiCacheSubnetGroup" },
+        "VpcSecurityGroupIds": { "Ref": "ASGSecurityGroup"},
+        "NumCacheNodes": { "Ref": "NumberOfNodes" },
+        "Tags": [
+          { "Key": "ServiceProvider", "Value": "Rackspace" },
+          { "Key": "Name", "Value": { "Ref": "ClusterName" } },
+          { "Key": "Environment", "Value": { "Ref": "Environment" } }
+        ]
+      }
+    },
+    "ElastiCacheSubnetGroup": {
+      "Type": "AWS::ElastiCache::SubnetGroup",
+      "Properties": {
+        "Description": "Subnets available for use with the cache cluster",
+        "SubnetIds": { "Ref": "ElastiCacheSubnets"}
+      }
+    }
+  },
+  "Outputs": {
+    "MemcachedConnection" : { "Value" : { "Fn::Join": [ ":", [ { "Fn::GetAtt": [ "CacheCluster", "ConfigurationEndpoint.Address" ] }, { "Fn::GetAtt": [ "CacheCluster", "ConfigurationEndpoint.Port" ] } ] ] }, "Condition" : "Memcached" },
+    "RedisConnection" : { "Value" : { "Fn::Join": [ ":", [ { "Fn::GetAtt": [ "ElastiCacheRepGroup", "PrimaryEndPoint.Address" ] }, { "Fn::GetAtt": [ "ElastiCacheRepGroup", "PrimaryEndPoint.Port" ] } ] ] }, "Condition" : "Redis" }
+  }
+}
