@@ -6,7 +6,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import training.editor.MouseListenerHolder;
 import training.editor.EduEditor;
-import training.lesson.Lesson;
+import training.learn.Lesson;
 
 import java.util.Queue;
 

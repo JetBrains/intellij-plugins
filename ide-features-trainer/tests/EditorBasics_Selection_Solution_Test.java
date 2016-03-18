@@ -4,18 +4,14 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
-import training.commands.BadCommandException;
 import training.commands.Command;
 import training.commands.ExecutionList;
 import training.commands.TestCommand;
 import training.editor.EduEditor;
-import training.lesson.CourseManager;
-import training.lesson.LessonProcessor;
-import training.lesson.exceptons.NoSdkException;
+import training.learn.CourseManager;
+import training.learn.LessonProcessor;
+import training.learn.exceptons.NoSdkException;
 import training.testFramework.EduLessonTest;
-import training.testFramework.LessonSolution;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 29/10/15.

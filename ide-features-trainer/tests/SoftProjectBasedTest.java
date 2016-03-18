@@ -19,12 +19,11 @@ import org.junit.runners.Parameterized;
 import training.commands.*;
 import training.editor.EduEditor;
 import training.editor.EduEditorManager;
-import training.lesson.*;
+import training.learn.*;
 import training.testFramework.EduIdeaTestFixtureFactoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 28/10/15.

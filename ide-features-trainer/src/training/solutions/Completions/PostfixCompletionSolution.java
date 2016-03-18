@@ -2,7 +2,7 @@ package training.solutions.Completions;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import training.commands.ExecutionList;
-import training.lesson.LessonProcessor;
+import training.learn.LessonProcessor;
 import training.testFramework.LessonSolution;
 import training.util.PerformActionUtil;
 

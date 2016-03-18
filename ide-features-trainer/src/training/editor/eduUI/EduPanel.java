@@ -1,16 +1,16 @@
 package training.editor.eduUI;
 
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
-import training.lesson.exceptons.BadCourseException;
-import training.lesson.exceptons.BadLessonException;
-import training.lesson.exceptons.LessonIsOpenedException;
+import training.learn.exceptons.BadCourseException;
+import training.learn.exceptons.BadLessonException;
+import training.learn.exceptons.LessonIsOpenedException;
 import training.editor.EduEditor;
-import training.lesson.Course;
-import training.lesson.CourseManager;
-import training.lesson.Lesson;
+import training.learn.Course;
+import training.learn.CourseManager;
+import training.learn.Lesson;
+import icons.LearnIcons;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -35,7 +35,6 @@ public class EduPanel extends JPanel {
     private JLabel lessonNameLabel; //Name of the current lesson
     private LessonMessagePane lessonMessagePane;
     private JButton lessonNextButton;
-
     private JButton lessonNextTestButton;
 
 
@@ -73,6 +72,36 @@ public class EduPanel extends JPanel {
     private Font lessonsFont;
     private Font allLessonsFont;
 
+    public EduPanel(int width){
+        super();
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setFocusable(false);
+        this.width = width;
+
+        //Obligatory block
+        generalizeUI();
+        this.setBackground(background);
+        initLessonPanel();
+        initCoursePanel();
+
+        lessonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.add(lessonPanel);
+        final Box.Filler filler = new Box.Filler(
+                new Dimension(5, separatorGap),    //minimum size of filler
+                new Dimension(5, separatorGap),    //preferable size of filler
+                new Dimension(5, Short.MAX_VALUE)     //maximum size of filler
+        );
+        filler.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.add(filler);
+        coursePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.add(coursePanel);
+
+        //set EduPanel UI
+        this.setPreferredSize(new Dimension(width, 100));
+        this.setBorder(new EmptyBorder(insets, insets, insets, insets));
+
+    }
+
 
     public EduPanel(EduEditor eduEditor, int width){
         super();
@@ -103,22 +132,6 @@ public class EduPanel extends JPanel {
         //set EduPanel UI
         this.setPreferredSize(new Dimension(width, 100));
         this.setBorder(new EmptyBorder(insets, insets, insets, insets));
-
-
-        //message test
-//        addMessage("<html>Comment out any line 23u5 35" +
-//                "23 45" +
-//                "23 4" +
-//                " 234" +
-//                "2346 34 623462346236 346234 6 2346with <b>Ctrl + /</b> </html>");
-//        setPreviousMessagesPassed();
-//        addMessage("<html>Comment the line with</html>");
-//        setPreviousMessagesPassed();
-//        addMessage("<html>Comment the line with the same shortcut</html>");
-//        setPreviousMessagesPassed();
-//        addMessage("<html>Comment the line with the same shortcut</html>");
-//        addMessage("<html>Comment the line with the same shortcut</html>");
-
 
     }
 
@@ -356,9 +369,6 @@ public class EduPanel extends JPanel {
 
 
     public void setAllLessons(final Lesson lesson){
-        Icon checkmarkIcon = IconLoader.getIcon(EduIcons.CHECKMARK_BLUE);
-        Icon checkmarkIconSelected = IconLoader.getIcon(EduIcons.CHECKMARK_GRAY);
-
         if(lesson == null) return;
         if(lesson.getCourse() == null) return;
         Course course = lesson.getCourse();
@@ -392,7 +402,7 @@ public class EduPanel extends JPanel {
             if (lesson.equals(currentLesson)){
                 //selected lesson
                 final JLabel e = new JLabel(id);
-                if (currentLesson.getPassed()) e.setIcon(checkmarkIconSelected);
+                if (currentLesson.getPassed()) e.setIcon(LearnIcons.CheckmarkGray);
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setForeground(lessonActiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
@@ -402,7 +412,7 @@ public class EduPanel extends JPanel {
                 coursePanel.add(e);
             } else {
                 final JLabel e = new JLabel(id);
-                if (currentLesson.getPassed()) e.setIcon(checkmarkIcon);
+                if (currentLesson.getPassed()) e.setIcon(LearnIcons.CheckmarkBlue);
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 e.setForeground(lessonInactiveColor);

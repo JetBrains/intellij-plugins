@@ -2,10 +2,7 @@ package training.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.wm.ex.WindowManagerEx;
-import training.lesson.dialogs.LessonDialog;
-
-import java.awt.*;
+import training.learn.dialogs.LessonDialog;
 
 /**
  * Created by karashevich on 15/01/16.

@@ -333,7 +333,7 @@ public class LearnUiUtil {
 //        glassPane.add(labelComponent);
 //        glassPane.revalidate();
 //        glassPane.repaint();
-
+//
 //        Animator animator = new Animator("Animate arrow", pointPath.length - 3, 500, false) {
 //            int j = 3;
 //
@@ -376,10 +376,10 @@ public class LearnUiUtil {
 //                j = Math.min(j, pointPath.length - 1);
 //            }
 //        };
-
+//
 //       animator.reset();
 //       animator.resume();
-
+//
 //        glassPane.revalidate();
 //        glassPane.repaint();
 //    }

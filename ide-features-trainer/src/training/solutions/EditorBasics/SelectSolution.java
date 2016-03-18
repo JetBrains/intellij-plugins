@@ -1,14 +1,8 @@
 package training.solutions.EditorBasics;
 
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
-import com.intellij.openapi.editor.actionSystem.EditorActionManager;
-import com.intellij.openapi.wm.IdeFocusManager;
-import org.jdesktop.swingx.action.ActionManager;
 import training.commands.*;
-import training.lesson.LessonProcessor;
+import training.learn.LessonProcessor;
 import training.testFramework.LessonSolution;
 import training.util.PerformActionUtil;
 

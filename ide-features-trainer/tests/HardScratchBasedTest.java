@@ -30,11 +30,11 @@ import org.junit.runners.Parameterized;
 import training.editor.EduEditor;
 import training.editor.EduEditorFactory;
 import training.editor.EduEditorManager;
-import training.lesson.*;
-import training.lesson.exceptons.InvalidSdkException;
-import training.lesson.exceptons.NoJavaModuleException;
-import training.lesson.exceptons.NoSdkException;
-import training.lesson.exceptons.OldJdkException;
+import training.learn.*;
+import training.learn.exceptons.InvalidSdkException;
+import training.learn.exceptons.NoJavaModuleException;
+import training.learn.exceptons.NoSdkException;
+import training.learn.exceptons.OldJdkException;
 import training.testFramework.LessonSolution;
 
 import java.util.ArrayList;

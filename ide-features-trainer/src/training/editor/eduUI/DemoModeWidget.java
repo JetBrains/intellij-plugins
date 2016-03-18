@@ -1,7 +1,5 @@
 package training.editor.eduUI;
 
-import com.intellij.ide.IdeTooltipManager;
-import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.*;
@@ -15,14 +13,13 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget;
 import com.intellij.ui.GotItMessage;
-import com.intellij.ui.UIBundle;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.editor.EduEditor;
-import training.lesson.EducationBundle;
+import training.learn.EducationBundle;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

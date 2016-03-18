@@ -8,9 +8,9 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import training.lesson.*;
-import training.lesson.log.GlobalLessonLog;
-import training.lesson.log.LessonLog;
+import training.learn.*;
+import training.learn.log.GlobalLessonLog;
+import training.learn.log.LessonLog;
 
 import java.io.File;
 import java.io.FileNotFoundException;

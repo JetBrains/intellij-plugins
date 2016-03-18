@@ -28,7 +28,7 @@ import training.commands.TestCommand;
 import training.editor.EduEditor;
 import training.editor.EduEditorFactory;
 import training.editor.EduEditorManager;
-import training.lesson.*;
+import training.learn.*;
 import training.testFramework.EduIdeaTestFixtureFactoryImpl;
 import training.testFramework.LessonSolution;
 

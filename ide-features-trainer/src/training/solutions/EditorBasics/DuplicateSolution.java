@@ -3,7 +3,7 @@ package training.solutions.EditorBasics;
 import com.intellij.openapi.actionSystem.AnAction;
 import training.commands.BadCommandException;
 import training.commands.ExecutionList;
-import training.lesson.LessonProcessor;
+import training.learn.LessonProcessor;
 import training.solutions.BaseSolutionClass;
 import training.testFramework.LessonSolution;
 import training.util.PerformActionUtil;
