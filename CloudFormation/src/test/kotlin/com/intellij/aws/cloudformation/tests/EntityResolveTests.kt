@@ -35,6 +35,14 @@ class EntityResolveTests : ResolveTestsBase(CloudFormationEntityReference::class
     assertEntityResolve("refToParameter", "WebServerInstanceType")
   }
 
+  fun testRefToParameterInCloudFormationInterfaceParameterLabels() {
+    assertEntityResolve("refToParameterInCloudFormationInterfaceParameterLabels", "WebServer12InstanceType1", "WebServer12InstanceType2", NotResolved)
+  }
+
+  fun testRefToParameterInCloudFormationInterfaceParameterGroups() {
+    assertEntityResolve("refToParameterInCloudFormationInterfaceParameterGroups", NotResolved, "WebServerInstanceType1", "WebServerInstanceType2")
+  }
+
   fun testRefToMapping() {
     assertEntityResolve("refToMapping", NotResolved)
   }

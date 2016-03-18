@@ -1,0 +1,38 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+    "WebServerInstanceType1": {
+      "Description": "WebServer EC2 instance type",
+      "Type": "String",
+      "Default": "m1.small",
+      "ConstraintDescription": "must be a valid EC2 instance type."
+    },
+
+    "WebServerInstanceType2": {
+      "Description": "WebServer EC2 instance type",
+      "Type": "String",
+      "Default": "m1.small",
+      "ConstraintDescription": "must be a valid EC2 instance type."
+    }
+  },
+
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Network Configuration" },
+          "Parameters" : [ "VP<ref>CID" ]
+        },
+        {
+          "Label" : { "default":"Amazon EC2 Configuration" },
+          "Parameters" : [ "WebServe<ref>rInstanceType1", "WebServ<ref>erInstanceType2" ]
+        }
+      ],
+      "ParameterLabels" : { }
+    }
+  },
+
+  "Outputs": {
+  }
+}

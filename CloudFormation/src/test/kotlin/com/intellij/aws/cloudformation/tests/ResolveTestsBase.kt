@@ -1,5 +1,6 @@
 package com.intellij.aws.cloudformation.tests
 
+import com.intellij.json.psi.impl.JsonPropertyNameReference
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -7,13 +8,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.testFramework.ResolveTestCase
 import org.junit.Assert
 import java.io.File
 import java.util.ArrayList
 
 abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : ResolveTestCase() {
-  protected var NotResolved = Object()
+  protected val NotResolved = Object()
 
   protected fun assertEntityResolve(testName: String, vararg entityNames: Any) {
     val templateFileName = testName + ".template"
@@ -46,7 +48,14 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
         ErrorUtil.containsError(myFile))
 
     for (i in offsets.indices) {
-      val ref = myFile.findReferenceAt(offsets[i]) ?: throw AssertionError("Reference not found at marker #${i + 1}")
+      val rawRef = myFile.findReferenceAt(offsets[i]) ?: throw AssertionError("Reference not found at marker #${i + 1}")
+
+      val ref: PsiReference
+      if (rawRef is PsiMultiReference) {
+        ref = rawRef.references.filter { it !is JsonPropertyNameReference }.single()
+      } else {
+        ref = rawRef
+      }
 
       Assert.assertTrue("Ref should be " + myReferenceClass.name +
           ", but got " + ref.javaClass.name,

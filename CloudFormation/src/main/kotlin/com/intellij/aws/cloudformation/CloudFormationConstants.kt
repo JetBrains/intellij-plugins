@@ -6,6 +6,11 @@ import java.util.Arrays
 object CloudFormationConstants {
   val SupportedTemplateFormatVersions: Set<String> = HashSet(Arrays.asList("2010-09-09"))
 
+  val CloudFormationInterfaceType = "AWS::CloudFormation::Interface"
+  val CloudFormationInterfaceParameterLabels = "ParameterLabels"
+  val CloudFormationInterfaceParameterGroups = "ParameterGroups"
+  val CloudFormationInterfaceParameters = "Parameters"
+
   val CustomResourceType = "AWS::CloudFormation::CustomResource"
   val CustomResourceTypePrefix = "Custom::"
 

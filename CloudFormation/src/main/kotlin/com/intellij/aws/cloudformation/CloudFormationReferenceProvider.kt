@@ -38,6 +38,16 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
         return handleRef
       }
 
+      val handleCloudFormationInterfaceParameterLabels = handleCloudFormationInterfaceParameterLabels(stringLiteral)
+      if (handleCloudFormationInterfaceParameterLabels != null) {
+        return handleCloudFormationInterfaceParameterLabels
+      }
+
+      val handleCloudFormationInterfaceParameterGroups = handleCloudFormationInterfaceParameterGroups(stringLiteral)
+      if (handleCloudFormationInterfaceParameterGroups != null) {
+        return handleCloudFormationInterfaceParameterGroups
+      }
+
       if (isInCondition(stringLiteral)) {
         return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null)
       }
@@ -223,6 +233,52 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       }
 
       return CloudFormationPsiUtils.getRootExpression(resourcesProperty.containingFile) === resourcesProperty.parent
+    }
+
+    private fun handleCloudFormationInterfaceParameterLabels(element: JsonStringLiteral): PsiReference? {
+      val labelProperty = element.parent as? JsonProperty
+      if (labelProperty?.nameElement != element) return null
+
+      val labelsObject = labelProperty?.parent as? JsonObject
+      val parameterLabelsProperty = labelsObject?.parent as? JsonProperty
+
+      if (!isAWSCloudFormationInterfaceProperty(parameterLabelsProperty, CloudFormationConstants.CloudFormationInterfaceParameterLabels)) return null
+
+      return CloudFormationEntityReference(element, CloudFormationSections.ParametersSingletonList, null)
+    }
+
+    private fun handleCloudFormationInterfaceParameterGroups(element: JsonStringLiteral): PsiReference? {
+      val parametersArray = element.parent as? JsonArray
+
+      val parametersProperty = parametersArray?.parent as? JsonProperty
+      if (parametersProperty?.name != CloudFormationConstants.CloudFormationInterfaceParameters) return null
+
+      val parameterGroup = parametersProperty?.parent as? JsonObject
+      val parameterGroups = parameterGroup?.parent as? JsonArray
+      val parameterGroupsElement = parameterGroups?.parent as? JsonProperty
+
+      if (!isAWSCloudFormationInterfaceProperty(parameterGroupsElement, CloudFormationConstants.CloudFormationInterfaceParameterGroups)) return null
+
+      return CloudFormationEntityReference(element, CloudFormationSections.ParametersSingletonList, null)
+    }
+
+    private fun isAWSCloudFormationInterfaceProperty(element: JsonProperty?, name: String): Boolean {
+      if (element?.name != name) return false
+
+      val interfaceObject = element?.parent as? JsonObject
+      val interfaceElement = interfaceObject?.parent as? JsonProperty
+
+      return isAWSCloudFormationInterfaceElement(interfaceElement)
+    }
+
+    private fun isAWSCloudFormationInterfaceElement(element: JsonProperty?): Boolean {
+      if (element == null || element.name != CloudFormationConstants.CloudFormationInterfaceType) return false
+
+      val metadataSectionObject = element.parent as? JsonObject
+      val metadataSectionElement = metadataSectionObject?.parent as? JsonProperty
+      if (metadataSectionElement == null || metadataSectionElement.name != CloudFormationSections.Metadata) return false
+
+      return CloudFormationPsiUtils.getRootExpression(element.containingFile) === metadataSectionElement.parent
     }
   }
 }

@@ -1,0 +1,42 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+    "WebServer12InstanceType1": {
+      "Description": "WebServer EC2 instance type",
+      "Type": "String",
+      "Default": "m1.small",
+      "ConstraintDescription": "must be a valid EC2 instance type."
+    },
+
+    "WebServer12InstanceType2": {
+      "Description": "WebServer EC2 instance type",
+      "Type": "String",
+      "Default": "m1.small",
+      "ConstraintDescription": "must be a valid EC2 instance type."
+    }
+  },
+
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Network Configuration" },
+          "Parameters" : [  ]
+        },
+        {
+          "Label" : { "default":"Amazon EC2 Configuration" },
+          "Parameters" : [  ]
+        }
+      ],
+      "ParameterLabels" : {
+        "WebServer12Insta<ref>nceType1" : { "default" : "Which VPC should this be deployed to?" },
+        "Web<ref>Server12InstanceType2" : { "default" : "Which VPC should this be deployed to?" },
+        "Web<ref>Server12InstanceType3" : { "default" : "Which VPC should this be deployed to?" }
+      }
+    }
+  },
+
+  "Outputs": {
+  }
+}
