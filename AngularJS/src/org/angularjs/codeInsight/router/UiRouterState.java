@@ -85,4 +85,9 @@ public class UiRouterState {
   public void setAbstract(boolean anAbstract) {
     myIsAbstract = anAbstract;
   }
+
+  @NotNull
+  public VirtualFile getFile() {
+    return myFile;
+  }
 }

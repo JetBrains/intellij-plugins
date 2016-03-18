@@ -1,6 +1,7 @@
 package org.angularjs.codeInsight.router;
 
 import com.intellij.lang.javascript.JavascriptLanguage;
+import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -15,9 +16,11 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.include.FileIncludeManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.angularjs.index.*;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +37,9 @@ public class AngularUiRouterDiagramBuilder {
   private final Map<VirtualFile, RootTemplate> myRootTemplates;
   @NotNull private final Project myProject;
   private SmartPointerManager mySmartPointerManager;
+  private final Map<PsiFile, Set<VirtualFile>> myModuleRecursiveDependencies;
+  private MultiMap<VirtualFile, String> myRootTemplates2States;
+  private MultiMap<VirtualFile, String> myDefiningFiles2States;
 
   // todo different scope
   public AngularUiRouterDiagramBuilder(@NotNull final Project project) {
@@ -42,6 +48,7 @@ public class AngularUiRouterDiagramBuilder {
     myTemplatesMap = new HashMap<>();
     myRootTemplates = new HashMap<>();
     mySmartPointerManager = SmartPointerManager.getInstance(myProject);
+    myModuleRecursiveDependencies = new HashMap<>();
   }
 
   public void build() {
@@ -81,6 +88,42 @@ public class AngularUiRouterDiagramBuilder {
       });
     }
     getRootPages();
+    groupStates();
+  }
+
+  private void groupStates() {
+    // root template file vs. state
+    // but the same state can be used for several root templates
+    myRootTemplates2States = new MultiMap<VirtualFile, String>() {
+      @NotNull
+      @Override
+      protected Collection<String> createCollection() {
+        return new HashSet<>();
+      }
+    };
+    final Set<String> statesUsedInRoots = new HashSet<>();
+    for (Map.Entry<VirtualFile, RootTemplate> entry : myRootTemplates.entrySet()) {
+      final Set<VirtualFile> modulesFiles = entry.getValue().getModulesFiles();
+      for (Map.Entry<String, UiRouterState> stateEntry : myStatesMap.entrySet()) {
+        if (modulesFiles.contains(stateEntry.getValue().getFile())) {
+          myRootTemplates2States.putValue(entry.getKey(), stateEntry.getKey());
+          statesUsedInRoots.add(stateEntry.getKey());
+        }
+      }
+    }
+
+    myDefiningFiles2States = new MultiMap<VirtualFile, String>() {
+      @NotNull
+      @Override
+      protected Collection<String> createCollection() {
+        return new HashSet<>();
+      }
+    };
+    for (Map.Entry<String, UiRouterState> stateEntry : myStatesMap.entrySet()) {
+      if (!statesUsedInRoots.contains(stateEntry.getKey())) {
+        myDefiningFiles2States.putValue(stateEntry.getValue().getFile(), stateEntry.getKey());
+      }
+    }
   }
 
   private void getRootPages() {
@@ -118,34 +161,124 @@ public class AngularUiRouterDiagramBuilder {
       if (relativeUrl == null) continue;
       final Template template = readTemplateFromFile(myProject, relativeUrl, file);
       //todo determine all files states from where relates to this template
-      final Set<VirtualFile> moduleFiles = new HashSet<>();
       final String mainModule = entry.getValue().getName();
-      if (!StringUtil.isEmptyOrSpaces(mainModule)) {
-        final List<List<String>> values = instance
-          .getValues(AngularModuleDependencyIndex.ANGULAR_MODULE_DEPENDENCY_INDEX, mainModule, GlobalSearchScope.projectScope(myProject));
-        for (List<String> value : values) {
-          for (String module : value) {
-            final JSImplicitElement element = AngularIndexUtil.resolve(myProject, AngularModuleIndex.KEY, module);
-            if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
-              moduleFiles.add(element.getNavigationElement().getContainingFile().getVirtualFile());
-            }
-          }
-        }
-      } else {
-        final VirtualFile[] includedFiles = FileIncludeManager.getManager(myProject).getIncludedFiles(file.getVirtualFile(), false, true);
-        moduleFiles.addAll(ContainerUtil.filter(includedFiles, new Condition<VirtualFile>() {
-          @Override
-          public boolean value(VirtualFile file) {
-            return file.getFileType() instanceof LanguageFileType && ((LanguageFileType)file.getFileType()).getLanguage().isKindOf(
-              JavascriptLanguage.INSTANCE);
-          }
-        }));
-      }
+      final Set<VirtualFile> moduleFiles = getModuleFiles(file, mainModule);
       // todo additionally pointer could point to ui-view place in file
       final RootTemplate rootTemplate = new RootTemplate(mySmartPointerManager.createSmartPsiElementPointer(file),
                                                          relativeUrl, template, moduleFiles);
       myRootTemplates.put(file.getVirtualFile(), rootTemplate);
     }
+  }
+
+  private static class NonCyclicQueue<T> {
+    private final Set<T> processed = new HashSet<>();
+    private final ArrayDeque<T> toProcess = new ArrayDeque<>();
+
+    public void add(@NotNull T t) {
+      if (processed.contains(t) || !check(t)) return;
+      processed.add(t);
+      toProcess.add(t);
+    }
+
+    protected boolean check(T t) {
+      return true;
+    }
+
+    public void addAll(final Collection<T> collection) {
+      for (T t : collection) {
+        add(t);
+      }
+    }
+
+    public boolean isEmpty() {
+      return toProcess.isEmpty();
+    }
+
+    @Nullable
+    public T removeNext() {
+      return toProcess.isEmpty() ? null : toProcess.remove();
+    }
+
+    public Set<T> getProcessed() {
+      return processed;
+    }
+  }
+
+  @NotNull
+  private Set<VirtualFile> getModuleFiles(PsiFile file, String mainModule) {
+    Set<VirtualFile> moduleFiles = myModuleRecursiveDependencies.get(file);
+    if (moduleFiles != null) return moduleFiles;
+
+    final NonCyclicQueue<String> modulesQueue = new NonCyclicQueue<>();
+    final NonCyclicQueue<VirtualFile> filesQueue = new NonCyclicQueue<VirtualFile>() {
+      @Override
+      protected boolean check(VirtualFile file) {
+        // do not add lib (especially angular) files
+        return !NodeModuleUtil.isFromNodeModules(myProject, file);
+      }
+    };
+
+    if (!StringUtil.isEmptyOrSpaces(mainModule)) {
+      modulesQueue.add(mainModule);
+    }
+    filesQueue.add(file.getVirtualFile());
+
+    // todo would be nice to use intermediate results, but the objects do not coincide totally
+    while (!modulesQueue.isEmpty()) {
+      final String moduleName = modulesQueue.removeNext();
+      moduleDependenciesStep(moduleName, filesQueue, modulesQueue);
+    }
+    while (!filesQueue.isEmpty()) {
+      final VirtualFile moduleFile = filesQueue.removeNext();
+      filesDependenciesStep(moduleFile, filesQueue);
+    }
+    Set<VirtualFile> processed = filesQueue.getProcessed();
+    // todo more effective filtering for being in the project, not libs. but?
+    final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(myProject);
+    processed = new HashSet<>(ContainerUtil.filter(processed, new Condition<VirtualFile>() {
+      @Override
+      public boolean value(VirtualFile file) {
+        return file.getFileType() instanceof LanguageFileType && ((LanguageFileType)file.getFileType()).getLanguage().isKindOf(
+          JavascriptLanguage.INSTANCE) && projectScope.contains(file);
+      }
+    }));
+    myModuleRecursiveDependencies.put(file, processed);
+    return processed;
+  }
+
+  private void moduleDependenciesStep(String mainModule, NonCyclicQueue<VirtualFile> filesQueue, NonCyclicQueue<String> modulesQueue) {
+    final FileBasedIndex instance = FileBasedIndex.getInstance();
+    if (!StringUtil.isEmptyOrSpaces(mainModule)) {
+      final List<List<String>> values = instance
+        .getValues(AngularModuleDependencyIndex.ANGULAR_MODULE_DEPENDENCY_INDEX, mainModule, GlobalSearchScope.projectScope(myProject));
+      for (List<String> value : values) {
+        for (String module : value) {
+          modulesQueue.add(module);
+          final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();
+          // todo this was used to fix angular example app, may be inappropriate for other apps, decision should be revised
+          AngularIndexUtil.multiResolve(myProject, AngularModuleIndex.KEY, module, collectProcessor);
+          if (collectProcessor.getResults().isEmpty()) return;
+          for (JSImplicitElement element : collectProcessor.getResults()) {
+            if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
+              final VirtualFile file = element.getNavigationElement().getContainingFile().getVirtualFile();
+              // prefer library resolves
+              if (NodeModuleUtil.isFromNodeModules(myProject, file)) return;
+            }
+          }
+          //final JSImplicitElement element = AngularIndexUtil.resolve(myProject, AngularModuleIndex.KEY, module);
+          final JSImplicitElement element = collectProcessor.getResults().iterator().next();
+          if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
+            filesQueue.add(element.getNavigationElement().getContainingFile().getVirtualFile());
+          }
+        }
+      }
+    }
+  }
+
+  private void filesDependenciesStep(VirtualFile file, NonCyclicQueue<VirtualFile> filesQueue) {
+    final VirtualFile[] includedFiles = FileIncludeManager.getManager(myProject).getIncludedFiles(file, false, true);
+    //take all included, since there can be also html includes (??? exclude css & like)
+    filesQueue.addAll(Arrays.asList(includedFiles));
   }
 
   private String findPossibleRelativeUrl(@NotNull final List<VirtualFile> roots, @NotNull final VirtualFile file) {
@@ -218,7 +351,6 @@ public class AngularUiRouterDiagramBuilder {
         }
       }
     }
-    // todo do state links later
     myTemplatesMap.put(normalizedUrl, template == null ? new Template(normalizedUrl, null) : template);
   }
 
@@ -291,5 +423,13 @@ public class AngularUiRouterDiagramBuilder {
 
   public Map<VirtualFile, RootTemplate> getRootTemplates() {
     return myRootTemplates;
+  }
+
+  public MultiMap<VirtualFile, String> getRootTemplates2States() {
+    return myRootTemplates2States;
+  }
+
+  public MultiMap<VirtualFile, String> getDefiningFiles2States() {
+    return myDefiningFiles2States;
   }
 }

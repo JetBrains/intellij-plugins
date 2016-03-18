@@ -58,19 +58,21 @@ public class AngularUiRouterGraphBuilder {
   @NotNull private final Project myProject;
   private final Map<String, UiRouterState> myStatesMap;
   private final Map<String, Template> myTemplatesMap;
-  @NotNull private final Map<VirtualFile, RootTemplate> myRootTemplates;
+  @Nullable private final RootTemplate myRootTemplate;
   private Graph2D myGraph;
 
   public AngularUiRouterGraphBuilder(@NotNull Project project,
                                      @NotNull Map<String, UiRouterState> statesMap,
                                      @NotNull Map<String, Template> templatesMap,
-                                     @NotNull Map<VirtualFile, RootTemplate> rootTemplates) {
+                                     @Nullable RootTemplate rootTemplate) {
     myProject = project;
     myStatesMap = statesMap;
     myTemplatesMap = templatesMap;
-    myRootTemplates = rootTemplates;
+    myRootTemplate = rootTemplate;
   }
 
+  // todo put root template into the picture
+  // todo initial state???
   public JComponent build(@NotNull final Disposable disposable) {
     final MyDiagramProvider provider = new MyDiagramProvider();
 
