@@ -31,20 +31,28 @@ public class DartDocumentationProvider implements DocumentationProvider {
     // in case of code completion 'element' comes from completion list and has nothing to do with 'originalElement',
     // but for Quick Doc in editor we should prefer building docs for 'originalElement' because such doc has info about propagated type
     final PsiElement elementForDocs = resolvesTo(originalElement, element) ? originalElement : element;
-    final String serverDoc = generateDocServer(elementForDocs);
-    if (serverDoc != null) {
-      return serverDoc;
+    final HoverInformation hover = getSingleHover(elementForDocs);
+    if (hover != null) {
+      return generateDocServer(hover);
     }
     return DartDocUtil.generateDoc(element);
   }
 
   private static boolean resolvesTo(@Nullable final PsiElement originalElement, @NotNull final PsiElement target) {
-    final PsiElement parent = originalElement == null ? null : originalElement.getParent();
-    final PsiElement parentParent = parent instanceof DartId ? parent.getParent() : null;
-    if (parentParent == null) return false;
-    if (parentParent == target) return true;
-    if (!parentParent.getText().equals(target.getText())) return false;
-    final PsiReference reference = parentParent.getReference();
+    final PsiReference reference;
+
+    if (originalElement instanceof PsiReference) {
+      reference = (PsiReference)originalElement;
+    }
+    else {
+      final PsiElement parent = originalElement == null ? null : originalElement.getParent();
+      final PsiElement parentParent = parent instanceof DartId ? parent.getParent() : null;
+      if (parentParent == null) return false;
+      if (parentParent == target) return true;
+      if (!parentParent.getText().equals(target.getText())) return false;
+      reference = parentParent.getReference();
+    }
+
     return reference != null && reference.resolve() == target;
   }
 
@@ -59,7 +67,12 @@ public class DartDocumentationProvider implements DocumentationProvider {
   }
 
   @Override
-  public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
+  public String getQuickNavigateInfo(final PsiElement element, final PsiElement originalElement) {
+    final PsiElement elementForInfo = resolvesTo(originalElement, element) ? originalElement : element;
+    final HoverInformation hover = getSingleHover(elementForInfo);
+    if (hover != null) {
+      return buildHoverTextServer(hover);
+    }
     return DartDocUtil.getSignature(element);
   }
 
@@ -80,20 +93,24 @@ public class DartDocumentationProvider implements DocumentationProvider {
     return docUrl == null ? null : Collections.singletonList(docUrl);
   }
 
-  @Nullable
-  public static String generateDocServer(HoverInformation hover) {
-    if (hover == null) {
-      return null;
-    }
-    // prepare data
+  @NotNull
+  public static String buildHoverTextServer(@NotNull final HoverInformation hover) {
+    final String elementDescription = hover.getElementDescription();
+    final String staticType = elementDescription.equals(hover.getStaticType()) ? null : hover.getStaticType();
+    final String propagatedType = elementDescription.equals(hover.getPropagatedType()) ? null : hover.getPropagatedType();
+    return DartDocUtil.generateDoc(elementDescription, false, null, null, null, staticType, propagatedType, true);
+  }
+
+  @NotNull
+  public static String generateDocServer(@NotNull final HoverInformation hover) {
     final String elementDescription = hover.getElementDescription();
     final String containingLibraryName = hover.getContainingLibraryName();
     final String containingClassDescription = hover.getContainingClassDescription();
     final String staticType = hover.getStaticType();
     final String propagatedType = hover.getPropagatedType();
     final String docText = hover.getDartdoc();
-    return DartDocUtil
-      .generateDoc(elementDescription, false, docText, containingLibraryName, containingClassDescription, staticType, propagatedType);
+    return DartDocUtil.generateDoc(elementDescription, false, docText, containingLibraryName, containingClassDescription,
+                                   staticType, propagatedType, false);
   }
 
   @Nullable
@@ -136,12 +153,6 @@ public class DartDocumentationProvider implements DocumentationProvider {
     }
 
     return resultUrl.toString();
-  }
-
-  @Nullable
-  private static String generateDocServer(PsiElement element) {
-    final HoverInformation hover = getSingleHover(element);
-    return generateDocServer(hover);
   }
 
   @Nullable
