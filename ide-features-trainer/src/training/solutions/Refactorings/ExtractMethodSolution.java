@@ -5,9 +5,8 @@ import training.commands.Command;
 import training.commands.CommandFactory;
 import training.commands.ExecutionList;
 import training.commands.TestCommand;
-import training.lesson.LessonProcessor;
+import training.learn.LessonProcessor;
 import training.testFramework.LessonSolution;
-import training.util.PerformActionUtil;
 
 /**
  * Created by karashevich on 23/12/15.

@@ -3,7 +3,7 @@ package training.util;
 import org.jdom.*;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import training.lesson.Course;
+import training.learn.Course;
 
 import java.io.File;
 import java.io.FileWriter;

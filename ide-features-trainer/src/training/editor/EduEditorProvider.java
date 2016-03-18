@@ -1,6 +1,5 @@
 package training.editor;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.DumbAware;
@@ -8,11 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
-import training.lesson.CourseManager;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import training.learn.CourseManager;
 
 /**
  * Created by karashevich on 23/06/15.

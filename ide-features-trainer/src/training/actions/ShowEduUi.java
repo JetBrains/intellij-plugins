@@ -2,10 +2,10 @@ package training.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import training.lesson.*;
-import training.lesson.exceptons.BadCourseException;
-import training.lesson.exceptons.BadLessonException;
-import training.lesson.exceptons.LessonIsOpenedException;
+import training.learn.*;
+import training.learn.exceptons.BadCourseException;
+import training.learn.exceptons.BadLessonException;
+import training.learn.exceptons.LessonIsOpenedException;
 
 import java.awt.*;
 import java.io.IOException;

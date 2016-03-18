@@ -2,7 +2,7 @@ package training.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import training.lesson.EducationBundle;
+import training.learn.EducationBundle;
 
 /**
  * Created by karashevich on 11/01/16.
