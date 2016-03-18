@@ -1,6 +1,7 @@
 package com.intellij.aws.cloudformation.metadata
 
 import com.thoughtworks.xstream.XStream
+import com.thoughtworks.xstream.core.ClassLoaderReference
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter
 import com.thoughtworks.xstream.io.xml.StaxDriver
 
@@ -18,7 +19,7 @@ object MetadataSerializer {
   }
 
   private fun createXStream(): XStream {
-    val xstream = XStream(null, StaxDriver(), javaClass.classLoader)
+    val xstream = XStream(null, StaxDriver(), ClassLoaderReference(javaClass.classLoader))
 
     xstream.alias("Metadata", CloudFormationMetadata::class.java)
     xstream.alias("ResourceType", CloudFormationResourceType::class.java)
