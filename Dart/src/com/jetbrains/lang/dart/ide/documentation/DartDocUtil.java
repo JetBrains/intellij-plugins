@@ -61,7 +61,7 @@ public class DartDocUtil {
     }
 
     final String docText = getDocumentationText(namedComponent);
-    return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, null);
+    return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, null, false);
   }
 
   public static String generateDoc(@Nullable final String signature,
@@ -70,7 +70,8 @@ public class DartDocUtil {
                                    @Nullable final String containingLibraryName,
                                    @Nullable final String containingClassDescription,
                                    @Nullable final String staticType,
-                                   @Nullable final String propagatedType) {
+                                   @Nullable final String propagatedType,
+                                   final boolean compactPresentation) {
     final boolean hasContainingLibraryName = !StringUtil.isEmpty(containingLibraryName);
     final boolean hasContainingClassDescription = !StringUtil.isEmpty(containingClassDescription);
     final boolean hasStaticType = !StringUtil.isEmpty(staticType);
@@ -102,7 +103,10 @@ public class DartDocUtil {
       }
     }
     if (hasStaticType || hasPropagatedType) {
-      builder.append("<br>");
+      if (!compactPresentation) {
+        builder.append("<br>");
+      }
+
       if (hasStaticType) {
         builder.append("<b>Static type:</b> ");
         builder.append(StringUtil.escapeXml(staticType));
