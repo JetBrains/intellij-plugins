@@ -43,6 +43,5 @@
     </orderEntry>
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="KotlinJavaRuntime" level="project" />
-    <orderEntry type="library" name="KotlinTest" level="project" />
   </component>
 </module>
