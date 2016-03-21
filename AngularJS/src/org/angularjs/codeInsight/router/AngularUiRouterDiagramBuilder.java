@@ -283,7 +283,7 @@ public class AngularUiRouterDiagramBuilder {
   }
 
   private void filesDependenciesStep(VirtualFile file, NonCyclicQueue<VirtualFile> filesQueue) {
-    final VirtualFile[] includedFiles = FileIncludeManager.getManager(myProject).getIncludedFiles(file, false, true);
+    final VirtualFile[] includedFiles = FileIncludeManager.getManager(myProject).getIncludedFiles(file, true, true);
     //take all included, since there can be also html includes (??? exclude css & like)
     filesQueue.addAll(Arrays.asList(includedFiles));
   }
