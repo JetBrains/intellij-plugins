@@ -250,6 +250,11 @@ public class DartSpacingProcessor {
         keepBreaks = false;
         blanks = 0;
       }
+      else if (type1 == MULTI_LINE_COMMENT && type2 == STATEMENTS) {
+        spaces = 1;
+        lineFeeds = 0;
+        keepBreaks = true;
+      }
       return Spacing.createSpacing(spaces, spaces, lineFeeds, keepBreaks, blanks);
     }
     if (elementType == STATEMENTS && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
@@ -578,13 +583,18 @@ public class DartSpacingProcessor {
       return addLineBreak();
     }
     if (COMMENTS.contains(type1)) {
-      if (isBraces || parentType == DART_FILE || type2 == SEMICOLON) {
+      if (isBraces || type2 == SEMICOLON) {
+        return addLineBreak();
+      }
+      if (parentType == DART_FILE &&
+          FUNCTION_DEFINITION.contains(elementType) &&
+          !(type1 == MULTI_LINE_COMMENT && type2 == COMPONENT_NAME)) {
         return addLineBreak();
       }
       if (type2 == RBRACKET && elementType != NAMED_FORMAL_PARAMETERS) {
         return addLineBreak();
       }
-      if (type2 == ARGUMENT_LIST) {
+      if (type2 == ARGUMENT_LIST || type2 == COMPONENT_NAME) {
         if (type1 == MULTI_LINE_COMMENT && isEmbeddedComment(type1, child1)) {
           if (!hasNewlineInText(node1)) {
             return addSingleSpaceIf(true);
@@ -595,10 +605,12 @@ public class DartSpacingProcessor {
     }
 
     if ((elementType == INTERFACES || elementType == MIXINS) && type2 == TYPE_LIST) {
-      return Spacing.createDependentLFSpacing(1, 1, myNode.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      return Spacing
+        .createDependentLFSpacing(1, 1, myNode.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (elementType == TYPE_LIST && type2 == TYPE) {
-      return Spacing.createDependentLFSpacing(1, 1, myNode.getTreeParent().getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      return Spacing.createDependentLFSpacing(1, 1, myNode.getTreeParent().getTextRange(), mySettings.KEEP_LINE_BREAKS,
+                                              mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
     if (type1 == LBRACKET && type2 == RBRACKET) {
@@ -642,7 +654,11 @@ public class DartSpacingProcessor {
     }
 
     if (COMMENTS.contains(type2)) {
-      return Spacing.createSpacing(1, 1, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      int forceSpace = 1;
+      if (type2 == MULTI_LINE_COMMENT && (type1 == COMPONENT_NAME || type1 == TYPE || type1 == VAR || type1 == RETURN_TYPE)) {
+        forceSpace = 0;
+      }
+      return Spacing.createSpacing(forceSpace, 1, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
     if (TOKENS_WITH_SPACE_AFTER.contains(type1) || KEYWORDS_WITH_SPACE_BEFORE.contains(type2)) {
@@ -837,13 +853,15 @@ public class DartSpacingProcessor {
       if (type == REFERENCE_EXPRESSION) {
         collectDotIfMessageSend(calls, node);
         node = node.getTreeParent();
-      } else if (type == CALL_EXPRESSION) {
+      }
+      else if (type == CALL_EXPRESSION) {
         if (hasMultilineFunctionArgument(node)) {
           calls.isFollowedByHardNewline = true;
           break;
         }
         node = node.getTreeParent();
-      } else {
+      }
+      else {
         break;
       }
     }
@@ -859,10 +877,12 @@ public class DartSpacingProcessor {
           break;
         }
         node = node.getFirstChildNode();
-      } else if (type == REFERENCE_EXPRESSION) {
+      }
+      else if (type == REFERENCE_EXPRESSION) {
         collectDotIfMessageSend(calls, node);
         node = node.getFirstChildNode();
-      } else {
+      }
+      else {
         break;
       }
     }
@@ -938,7 +958,8 @@ public class DartSpacingProcessor {
     }
     if (mustSplit) {
       return Spacing.createSpacing(0, 0, 1, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-    } else {
+    }
+    else {
       return Spacing.createDependentLFSpacing(0, 0, ranges, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
   }
