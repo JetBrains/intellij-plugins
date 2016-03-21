@@ -6,6 +6,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ public class UiRouterState {
   private boolean myIsAbstract;
   @NotNull
   private final VirtualFile myFile;
+  @Nullable private List<SmartPsiElementPointer<PsiElement>> myDuplicateDefinitions;
 
   public UiRouterState(@NotNull String name, @NotNull VirtualFile file) {
     myName = name;
@@ -89,5 +91,30 @@ public class UiRouterState {
   @NotNull
   public VirtualFile getFile() {
     return myFile;
+  }
+
+  public void addDuplicateDefinition(@NotNull final UiRouterState state) {
+    if (myDuplicateDefinitions == null) myDuplicateDefinitions = new ArrayList<>();
+    myDuplicateDefinitions.add(state.getPointer());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    UiRouterState state = (UiRouterState)o;
+
+    if (!myName.equals(state.myName)) return false;
+    if (!myFile.equals(state.myFile)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myName.hashCode();
+    result = 31 * result + myFile.hashCode();
+    return result;
   }
 }

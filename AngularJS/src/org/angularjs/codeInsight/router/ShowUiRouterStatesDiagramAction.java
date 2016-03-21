@@ -3,7 +3,6 @@ package org.angularjs.codeInsight.router;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -12,7 +11,6 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
-import com.intellij.util.containers.ContainerUtil;
 import icons.AngularJSIcons;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -55,36 +52,18 @@ public class ShowUiRouterStatesDiagramAction extends AnAction {
     final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(project);
     builder.build();
     final List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
-    final Map<String, UiRouterState> statesMap = builder.getStatesMap();
     final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();
 
-    for (Map.Entry<VirtualFile, Collection<String>> entry : builder.getRootTemplates2States().entrySet()) {
-      final Map<String, UiRouterState> localStatesMap = ContainerUtil.filter(statesMap, new Condition<String>() {
-        @Override
-        public boolean value(String key) {
-          return entry.getValue().contains(key);
-        }
-      });
-
+    for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getRootTemplates2States().entrySet()) {
       final AngularUiRouterGraphBuilder graphBuilder =
-        new AngularUiRouterGraphBuilder(project, localStatesMap, builder.getTemplatesMap(), rootTemplates.get(entry.getKey()));
+        new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), rootTemplates.get(entry.getKey()));
       graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
     }
-    // todo refactor for clarity
-    for (Map.Entry<VirtualFile, Collection<String>> entry : builder.getDefiningFiles2States().entrySet()) {
-      final Map<String, UiRouterState> localStatesMap = ContainerUtil.filter(statesMap, new Condition<String>() {
-        @Override
-        public boolean value(String key) {
-          return entry.getValue().contains(key);
-        }
-      });
-
+    for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getDefiningFiles2States().entrySet()) {
       final AngularUiRouterGraphBuilder graphBuilder =
-        new AngularUiRouterGraphBuilder(project, localStatesMap, builder.getTemplatesMap(), null);
+        new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), null);
       graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
     }
-    //final AngularUiRouterGraphBuilder graphBuilder =
-    //  new AngularUiRouterGraphBuilder(project, builder.getStatesMap(), builder.getTemplatesMap(), builder.getRootTemplates());
     final Disposable disposable = new Disposable() {
       @Override
       public void dispose() {

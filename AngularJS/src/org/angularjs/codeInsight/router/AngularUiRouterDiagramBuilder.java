@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -20,7 +21,6 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.angularjs.index.*;
 import org.jetbrains.annotations.NotNull;
@@ -32,19 +32,19 @@ import java.util.*;
  * @author Irina.Chernushina on 3/8/2016.
  */
 public class AngularUiRouterDiagramBuilder {
-  private final Map<String, UiRouterState> myStatesMap;
+  private final List<UiRouterState> myStates;
   private final Map<String, Template> myTemplatesMap;
   private final Map<VirtualFile, RootTemplate> myRootTemplates;
   @NotNull private final Project myProject;
   private SmartPointerManager mySmartPointerManager;
   private final Map<PsiFile, Set<VirtualFile>> myModuleRecursiveDependencies;
-  private MultiMap<VirtualFile, String> myRootTemplates2States;
-  private MultiMap<VirtualFile, String> myDefiningFiles2States;
+  private Map<VirtualFile, Map<String, UiRouterState>> myRootTemplates2States;
+  private Map<VirtualFile, Map<String, UiRouterState>> myDefiningFiles2States;
 
   // todo different scope
   public AngularUiRouterDiagramBuilder(@NotNull final Project project) {
     myProject = project;
-    myStatesMap = new HashMap<>();
+    myStates = new ArrayList<>();
     myTemplatesMap = new HashMap<>();
     myRootTemplates = new HashMap<>();
     mySmartPointerManager = SmartPointerManager.getInstance(myProject);
@@ -82,7 +82,7 @@ public class AngularUiRouterDiagramBuilder {
               }
             }
           }
-          myStatesMap.put(id, state);
+          myStates.add(state);
           return true;
         }
       });
@@ -94,35 +94,37 @@ public class AngularUiRouterDiagramBuilder {
   private void groupStates() {
     // root template file vs. state
     // but the same state can be used for several root templates
-    myRootTemplates2States = new MultiMap<VirtualFile, String>() {
-      @NotNull
-      @Override
-      protected Collection<String> createCollection() {
-        return new HashSet<>();
-      }
-    };
-    final Set<String> statesUsedInRoots = new HashSet<>();
+    myRootTemplates2States = new HashMap<VirtualFile, Map<String, UiRouterState>>();
+    final Set<UiRouterState> statesUsedInRoots = new HashSet<>();
     for (Map.Entry<VirtualFile, RootTemplate> entry : myRootTemplates.entrySet()) {
       final Set<VirtualFile> modulesFiles = entry.getValue().getModulesFiles();
-      for (Map.Entry<String, UiRouterState> stateEntry : myStatesMap.entrySet()) {
-        if (modulesFiles.contains(stateEntry.getValue().getFile())) {
-          myRootTemplates2States.putValue(entry.getKey(), stateEntry.getKey());
-          statesUsedInRoots.add(stateEntry.getKey());
+      for (UiRouterState state : myStates) {
+        if (modulesFiles.contains(state.getFile())) {
+          putState2map(entry.getKey(), state, myRootTemplates2States);
+          statesUsedInRoots.add(state);
         }
       }
     }
 
-    myDefiningFiles2States = new MultiMap<VirtualFile, String>() {
-      @NotNull
-      @Override
-      protected Collection<String> createCollection() {
-        return new HashSet<>();
+    myDefiningFiles2States = new HashMap<VirtualFile, Map<String, UiRouterState>>();
+    for (UiRouterState state : myStates) {
+      if (!statesUsedInRoots.contains(state)) {
+        putState2map(state.getFile(), state, myDefiningFiles2States);
       }
-    };
-    for (Map.Entry<String, UiRouterState> stateEntry : myStatesMap.entrySet()) {
-      if (!statesUsedInRoots.contains(stateEntry.getKey())) {
-        myDefiningFiles2States.putValue(stateEntry.getValue().getFile(), stateEntry.getKey());
+    }
+  }
+
+  private static void putState2map(@NotNull final VirtualFile rootFile, @NotNull final UiRouterState state,
+                                   @NotNull final Map<VirtualFile, Map<String, UiRouterState>> rootMap) {
+    Map<String, UiRouterState> map = rootMap.get(rootFile);
+    if (map == null) rootMap.put(rootFile, (map = new HashMap<>()));
+    if (map.containsKey(state.getName())) {
+      final UiRouterState existing = map.get(state.getName());
+      if (!Comparing.equal(existing.getPointer(), state.getPointer()) && state.getPointer() != null) {
+        existing.addDuplicateDefinition(state);
       }
+    } else {
+      map.put(state.getName(), state);
     }
   }
 
@@ -247,6 +249,7 @@ public class AngularUiRouterDiagramBuilder {
   }
 
   private void moduleDependenciesStep(String mainModule, NonCyclicQueue<VirtualFile> filesQueue, NonCyclicQueue<String> modulesQueue) {
+    addContainingFile(filesQueue, mainModule);
     final FileBasedIndex instance = FileBasedIndex.getInstance();
     if (!StringUtil.isEmptyOrSpaces(mainModule)) {
       final List<List<String>> values = instance
@@ -254,24 +257,28 @@ public class AngularUiRouterDiagramBuilder {
       for (List<String> value : values) {
         for (String module : value) {
           modulesQueue.add(module);
-          final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();
-          // todo this was used to fix angular example app, may be inappropriate for other apps, decision should be revised
-          AngularIndexUtil.multiResolve(myProject, AngularModuleIndex.KEY, module, collectProcessor);
-          if (collectProcessor.getResults().isEmpty()) return;
-          for (JSImplicitElement element : collectProcessor.getResults()) {
-            if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
-              final VirtualFile file = element.getNavigationElement().getContainingFile().getVirtualFile();
-              // prefer library resolves
-              if (NodeModuleUtil.isFromNodeModules(myProject, file)) return;
-            }
-          }
-          //final JSImplicitElement element = AngularIndexUtil.resolve(myProject, AngularModuleIndex.KEY, module);
-          final JSImplicitElement element = collectProcessor.getResults().iterator().next();
-          if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
-            filesQueue.add(element.getNavigationElement().getContainingFile().getVirtualFile());
-          }
+          addContainingFile(filesQueue, module);
         }
       }
+    }
+  }
+
+  private void addContainingFile(@NotNull final NonCyclicQueue<VirtualFile> filesQueue, @NotNull final String module) {
+    final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();
+    // todo this was used to fix angular example app, may be inappropriate for other apps, decision should be revised
+    AngularIndexUtil.multiResolve(myProject, AngularModuleIndex.KEY, module, collectProcessor);
+    if (collectProcessor.getResults().isEmpty()) return;
+    for (JSImplicitElement element : collectProcessor.getResults()) {
+      if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
+        final VirtualFile file = element.getNavigationElement().getContainingFile().getVirtualFile();
+        // prefer library resolves
+        if (NodeModuleUtil.isFromNodeModules(myProject, file)) return;
+      }
+    }
+    //final JSImplicitElement element = AngularIndexUtil.resolve(myProject, AngularModuleIndex.KEY, module);
+    final JSImplicitElement element = collectProcessor.getResults().iterator().next();
+    if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
+      filesQueue.add(element.getNavigationElement().getContainingFile().getVirtualFile());
     }
   }
 
@@ -413,10 +420,6 @@ public class AngularUiRouterDiagramBuilder {
     return null;
   }
 
-  public Map<String, UiRouterState> getStatesMap() {
-    return myStatesMap;
-  }
-
   public Map<String, Template> getTemplatesMap() {
     return myTemplatesMap;
   }
@@ -425,11 +428,11 @@ public class AngularUiRouterDiagramBuilder {
     return myRootTemplates;
   }
 
-  public MultiMap<VirtualFile, String> getRootTemplates2States() {
+  public Map<VirtualFile, Map<String, UiRouterState>> getRootTemplates2States() {
     return myRootTemplates2States;
   }
 
-  public MultiMap<VirtualFile, String> getDefiningFiles2States() {
+  public Map<VirtualFile, Map<String, UiRouterState>> getDefiningFiles2States() {
     return myDefiningFiles2States;
   }
 }

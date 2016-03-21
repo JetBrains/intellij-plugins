@@ -76,7 +76,7 @@ public class AngularUiRouterGraphBuilder {
   public JComponent build(@NotNull final Disposable disposable) {
     final MyDiagramProvider provider = new MyDiagramProvider();
 
-    final GraphNodesBuilder nodesBuilder = new GraphNodesBuilder(myStatesMap, myTemplatesMap);
+    final GraphNodesBuilder nodesBuilder = new GraphNodesBuilder(myStatesMap, myTemplatesMap, myRootTemplate);
     nodesBuilder.build(provider);
     // todo create links between parent-child states by name parts AND parent attribute as separate stage
     // todo fill possible views as separate stage
@@ -196,7 +196,9 @@ public class AngularUiRouterGraphBuilder {
     public static final String DEFAULT = "<default>";
     @NotNull private final Map<String, UiRouterState> myStatesMap;
     @NotNull private final Map<String, Template> myTemplatesMap;
+    @Nullable private final RootTemplate myRootTemplate;
 
+    private MyNode myRootNode;
     private final Map<String, MyNode> stateNodes = new HashMap<>();
     private final Map<String, MyNode> templateNodes = new HashMap<>();
     private final Map<Pair<String, String>, MyNode> templatePlaceHoldersNodes = new HashMap<>();
@@ -206,12 +208,25 @@ public class AngularUiRouterGraphBuilder {
     private final List<MyNode> allNodes = new ArrayList<>();
 
     public GraphNodesBuilder(@NotNull Map<String, UiRouterState> statesMap,
-                             @NotNull Map<String, Template> templatesMap) {
+                             @NotNull Map<String, Template> templatesMap, @Nullable RootTemplate rootTemplate) {
       myStatesMap = statesMap;
       myTemplatesMap = templatesMap;
+      myRootTemplate = rootTemplate;
     }
 
     public void build(@NotNull final MyDiagramProvider provider) {
+      final DiagramObject rootDiagramObject;
+      if (myRootTemplate != null) {
+        //rootDiagramObject = new DiagramObject(Type.topLevelTemplate, myRootTemplate.getRelativeUrl(), myRootTemplate.getPointer());
+        //myRootNode = new MyNode(rootDiagramObject, provider);
+        myRootNode = getOrCreateTemplateNode(provider, normalizeTemplateUrl(myRootTemplate.getRelativeUrl()), myRootTemplate.getTemplate());
+      } else {
+        // todo remove from diagram if not used
+        rootDiagramObject = new DiagramObject(Type.topLevelTemplate, "<unknown root template>", null);
+        myRootNode = new MyNode(rootDiagramObject, provider);
+      }
+
+      setParentStates();
       for (Map.Entry<String, UiRouterState> entry : myStatesMap.entrySet()) {
         final UiRouterState state = entry.getValue();
         final DiagramObject stateObject = new DiagramObject(Type.state, state.getName(), state.getPointer());
@@ -223,7 +238,7 @@ public class AngularUiRouterGraphBuilder {
         final String templateUrl = normalizeTemplateUrl(state.getTemplateUrl());
 
         if (templateUrl != null) {
-          final MyNode templateNode = getOrCreateTemplateNode(provider, templateUrl);
+          final MyNode templateNode = getOrCreateTemplateNode(provider, templateUrl, null);
           edges.add(new MyEdge(node, templateNode));
 
           if (state.hasViews()) {
@@ -235,9 +250,15 @@ public class AngularUiRouterGraphBuilder {
             }
           }
         }
+      }
+
+      for (Map.Entry<String, UiRouterState> entry : myStatesMap.entrySet()) {
+        final UiRouterState state = entry.getValue();
+        final MyNode node = stateNodes.get(state.getName());
+        assert node != null;
 
         final List<UiView> views = state.getViews();
-        if (views != null) {
+        if (views != null && !views.isEmpty()) {
           for (UiView view : views) {
             final String name = StringUtil.isEmptyOrSpaces(view.getName()) ? DEFAULT : view.getName();
             final DiagramObject viewObject = new DiagramObject(Type.view, name, view.getPointer());
@@ -246,7 +267,7 @@ public class AngularUiRouterGraphBuilder {
 
             final String template = view.getTemplate();
             if (!StringUtil.isEmptyOrSpaces(template)) {
-              final MyNode templateNode = getOrCreateTemplateNode(provider, template);
+              final MyNode templateNode = getOrCreateTemplateNode(provider, template, null);
               edges.add(new MyEdge(viewNode, templateNode, "provides"));
             }
             edges.add(new MyEdge(node, viewNode));
@@ -254,28 +275,97 @@ public class AngularUiRouterGraphBuilder {
         }
       }
 
-      for (Map.Entry<String, MyNode> entry : stateNodes.entrySet()) {
-        final String key = entry.getKey();
-        final int dotIdx = key.lastIndexOf('.');
-        if (dotIdx > 0) {
-          final String parentKey = key.substring(0, dotIdx);
-          MyNode parentState = stateNodes.get(parentKey);
-          if (parentState != null) {
-            edges.add(new MyEdge(entry.getValue(), parentState, "parent"));
-          } else {
-            final UiRouterState state = myStatesMap.get(key);
-            if (state != null && state.getParentName() != null) {
-              parentState = stateNodes.get(state.getParentName());
-              edges.add(new MyEdge(entry.getValue(), parentState, "parent"));
+      // views can also refer to different states, so first all state nodes must be created
+      for (Map.Entry<String, UiRouterState> entry : myStatesMap.entrySet()) {
+        final UiRouterState state = entry.getValue();
+        final MyNode node = stateNodes.get(state.getName());
+        assert node != null;
+
+        final List<UiView> views = state.getViews();
+        if (views != null && !views.isEmpty()) {
+          for (UiView view : views) {
+            final String name = StringUtil.isEmptyOrSpaces(view.getName()) ? DEFAULT : view.getName();
+            final MyNode viewNode = viewNodes.get(Pair.create(state.getName(), name));
+            assert viewNode != null;
+
+            final Pair<MyNode, String> pair = getParentTemplateNode(state.getName(), view.getName());
+            if (pair != null && pair.getFirst() != null) {
+              connectViewOrStateWithPlaceholder(viewNode, pair);
             }
+          }
+        } else {
+          //find unnamed parent template for view
+          final Pair<MyNode, String> pair = getParentTemplateNode(state.getName(), "");
+          if (pair != null && pair.getFirst() != null) {
+            connectViewOrStateWithPlaceholder(node, pair);
           }
         }
       }
+      createStateParentEdges();
 
+      allNodes.add(myRootNode);
       allNodes.addAll(stateNodes.values());
       allNodes.addAll(templateNodes.values());
       allNodes.addAll(templatePlaceHoldersNodes.values());
       allNodes.addAll(viewNodes.values());
+    }
+
+    private void connectViewOrStateWithPlaceholder(MyNode viewNode, Pair<MyNode, String> pair) {
+      final String placeholderName = pair.getSecond();
+      //final String placeholderName = StringUtil.isEmptyOrSpaces(pair.getSecond()) ? DEFAULT : pair.getSecond();
+      String usedTemplateUrl = null;
+
+      final Type nodeType = pair.getFirst().getIdentifyingElement().getType();
+      if (Type.template.equals(nodeType) || Type.topLevelTemplate.equals(nodeType)) {
+        usedTemplateUrl = pair.getFirst().getIdentifyingElement().getName();
+      } else if (Type.state.equals(nodeType)) {
+        final String parentState = pair.getFirst().getIdentifyingElement().getName();
+        final UiRouterState parentStateObject = myStatesMap.get(parentState);
+        if (parentStateObject != null) {
+          if (parentStateObject.hasViews()) {
+            final List<UiView> parentViews = parentStateObject.getViews();
+            for (UiView parentView : parentViews) {
+              if (placeholderName.equals(parentView.getName())) {
+                usedTemplateUrl = parentView.getTemplate();
+                break;
+              }
+            }
+          } else if (!StringUtil.isEmptyOrSpaces(parentStateObject.getTemplateUrl())) {
+            usedTemplateUrl = parentStateObject.getTemplateUrl();
+          }
+        }
+      }
+
+      usedTemplateUrl = normalizeTemplateUrl(usedTemplateUrl);
+      final MyNode placeholder = templatePlaceHoldersNodes.get(Pair.create(usedTemplateUrl, placeholderName));
+      if (placeholder != null) {
+        edges.add(new MyEdge(viewNode, placeholder, "fills"));
+      }
+    }
+
+    private void createStateParentEdges() {
+      for (Map.Entry<String, MyNode> entry : stateNodes.entrySet()) {
+        final String key = entry.getKey();
+        final UiRouterState state = myStatesMap.get(key);
+        if (state != null && state.getParentName() != null) {
+          final MyNode parentState = stateNodes.get(state.getParentName());
+          if (parentState != null) {
+            edges.add(new MyEdge(entry.getValue(), parentState, "parent"));
+          }
+        }
+      }
+    }
+
+    private void setParentStates() {
+      for (Map.Entry<String, UiRouterState> entry : myStatesMap.entrySet()) {
+        if (!StringUtil.isEmptyOrSpaces(entry.getValue().getParentName())) continue;
+        final String key = entry.getKey();
+        final int dotIdx = key.lastIndexOf('.');
+        if (dotIdx > 0) {
+          final String parentKey = key.substring(0, dotIdx);
+          entry.getValue().setParentName(parentKey);
+        }
+      }
     }
 
     public List<MyEdge> getEdges() {
@@ -286,17 +376,35 @@ public class AngularUiRouterGraphBuilder {
       return allNodes;
     }
 
-    // todo use a separate step to calculate placeholders where the views are built in
-    /*private String getParentTemplate(@NotNull final String view) {
+    @Nullable
+    private Pair<MyNode, String> getParentTemplateNode(@NotNull final String state, @NotNull final String view) {
       final int idx = view.indexOf("@");
       if (idx < 0) {
-        // top level template
+        // parent or top level template
+        if (state.contains(".")) {
+          final UiRouterState routerState = myStatesMap.get(state);
+          if (routerState == null) {
+            return null;
+          }
+          return Pair.create(stateNodes.get(routerState.getParentName()), view);
+        } else {
+          return Pair.create(myRootNode, view);
+        }
+      } else {
+        //absolute path
+        //if (idx == 0) return Pair.create(myRootNode, view.substring(1));
+        final String placeholderName = view.substring(0, idx);
+        final String stateName = view.substring(idx + 1);
+        if (StringUtil.isEmptyOrSpaces(stateName)) {
+          return Pair.create(myRootNode, placeholderName);
+        }
+        return Pair.create(stateNodes.get(stateName), placeholderName);
       }
-    }*/
+    }
 
     @NotNull
-    private MyNode getOrCreateTemplateNode(MyDiagramProvider provider, @NotNull String templateUrl) {
-      final Template template = myTemplatesMap.get(templateUrl);
+    private MyNode getOrCreateTemplateNode(MyDiagramProvider provider, @NotNull String templateUrl, @Nullable Template template) {
+      template = template == null ? myTemplatesMap.get(templateUrl) : template;
       if (template == null) {
         // file not found
         final DiagramObject templateObject = new DiagramObject(Type.template, templateUrl, null);
@@ -308,25 +416,30 @@ public class AngularUiRouterGraphBuilder {
         final MyNode templateNode = new MyNode(templateObject, provider);
         templateNodes.put(templateUrl, templateNode);
 
-        final Map<String, SmartPsiElementPointer<PsiElement>> placeholders = template.getViewPlaceholders();
-        if (placeholders != null) {
-          for (Map.Entry<String, SmartPsiElementPointer<PsiElement>> pointerEntry : placeholders.entrySet()) {
-            final String placeholder = pointerEntry.getKey();
-            final DiagramObject placeholderObject = new DiagramObject(Type.templatePlaceholder,
-                                                                      StringUtil.isEmptyOrSpaces(placeholder) ? DEFAULT : placeholder,
-                                                                      pointerEntry.getValue());
-            final MyNode placeholderNode = new MyNode(placeholderObject, provider);
-            templatePlaceHoldersNodes.put(Pair.create(templateUrl, placeholder), placeholderNode);
-            edges.add(new MyEdge(templateNode, placeholderNode));
-          }
-        }
+        putPlaceholderNodes(provider, templateUrl, template, templateNode);
       }
       final MyNode templateNode = templateNodes.get(templateUrl);
       assert templateNode != null;
       return templateNode;
     }
 
-
+    private void putPlaceholderNodes(MyDiagramProvider provider,
+                                     @NotNull String templateUrl,
+                                     Template template,
+                                     MyNode templateNode) {
+      final Map<String, SmartPsiElementPointer<PsiElement>> placeholders = template.getViewPlaceholders();
+      if (placeholders != null) {
+        for (Map.Entry<String, SmartPsiElementPointer<PsiElement>> pointerEntry : placeholders.entrySet()) {
+          final String placeholder = pointerEntry.getKey();
+          final DiagramObject placeholderObject = new DiagramObject(Type.templatePlaceholder,
+                                                                    StringUtil.isEmptyOrSpaces(placeholder) ? DEFAULT : placeholder,
+                                                                    pointerEntry.getValue());
+          final MyNode placeholderNode = new MyNode(placeholderObject, provider);
+          templatePlaceHoldersNodes.put(Pair.create(templateUrl, placeholder), placeholderNode);
+          edges.add(new MyEdge(templateNode, placeholderNode));
+        }
+      }
+    }
   }
 
   public static String normalizeTemplateUrl(@Nullable String url) {
@@ -437,12 +550,14 @@ public class AngularUiRouterGraphBuilder {
   private final static DiagramCategory VIEW = new DiagramCategory("Views", AllIcons.Hierarchy.Base, true);
   private final static DiagramCategory TEMPLATE = new DiagramCategory("Templates", AllIcons.Actions.EditSource, true);
   private final static DiagramCategory TEMPLATE_PLACEHOLDER = new DiagramCategory("TemplatePlaceholders", AllIcons.Actions.Unselectall, true);
+  private final static DiagramCategory TOP_LEVEL_TEMPLATE = new DiagramCategory("TopLevelTemplate", AllIcons.Actions.EditSource, true);
 
   private enum Type {
     state(STATE),
     view(VIEW),
     template(TEMPLATE),
-    templatePlaceholder(TEMPLATE_PLACEHOLDER);
+    templatePlaceholder(TEMPLATE_PLACEHOLDER),
+    topLevelTemplate(TOP_LEVEL_TEMPLATE);
 
     private final DiagramCategory myCategory;
 
