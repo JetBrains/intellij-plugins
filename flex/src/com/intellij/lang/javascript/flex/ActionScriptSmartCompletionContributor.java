@@ -98,12 +98,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         else {
           LookupElement lookupItem = JSLookupUtilImpl
             .createPrioritizedLookupItem(clazz, clazz.getName(), JSLookupPriority.SMART_PRIORITY + 1, false, true);
-          CompletionResultSet completionResultSet = JSCompletionContributor.getInstance().getCompletionResultSet();
 
-          if (completionResultSet != null && !ApplicationManager.getApplication().isHeadlessEnvironment()) {
-            ((LookupItem)lookupItem).setInsertHandler(new JSInsertHandler<LookupElement>());
-            completionResultSet.addElement(lookupItem);
-          }
           variants.add(lookupItem);
           processedCandidateNames.add(clazz.getQualifiedName());
           query = JSClassSearch.searchClassInheritors(clazz, true, location.getResolveScope());
