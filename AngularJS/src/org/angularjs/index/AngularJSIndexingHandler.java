@@ -52,6 +52,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
   private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<String, PairProcessor<JSProperty, JSElementIndexingData>>();
   private final static Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<String, Function<String, List<String>>>();
+  private final static Map<String, Processor<JSArgumentList>> ARGUMENT_LIST_CHECKERS = new HashMap<>();
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
@@ -153,6 +154,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         return Collections.singletonList(s);
       }
     });
+    ARGUMENT_LIST_CHECKERS.put(MODULE, new Processor<JSArgumentList>() {
+      @Override
+      public boolean process(JSArgumentList list) {
+        return list.getArguments().length > 1;
+      }
+    });
   }
 
   static final String RESTRICT = "@restrict";
@@ -194,6 +201,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         final StubIndexKey<String, JSImplicitElementProvider> index = INDEXERS.get(command);
         if (index != null) {
           if (argument.isQuotedLiteral()) {
+            final Processor<JSArgumentList> argumentListProcessor = ARGUMENT_LIST_CHECKERS.get(command);
+            if (argumentListProcessor != null && !argumentListProcessor.process(callExpression.getArgumentList())) return;
             final Function<PsiElement, String> calculator = DATA_CALCULATORS.get(command);
             final String data = calculator != null ? calculator.fun(argument) : null;
             final String argumentText = StringUtil.unquoteString(argument.getText());

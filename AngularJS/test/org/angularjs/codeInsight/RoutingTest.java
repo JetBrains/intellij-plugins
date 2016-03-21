@@ -1,8 +1,8 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.openapi.extensions.Extensions;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.include.FileIncludeProvider;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
@@ -112,5 +112,20 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("'localCtl2'", resolve.getParent().getText());
+  }
+
+  public void testNgAppResolve() {
+    Extensions.getExtensions(FileIncludeProvider.EP_NAME);
+    myFixture.configureByFiles("ngAppRouting.html", "myAppDefinition.js", "myAppUsage.js", "otherMyAppDefinition.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-app=\"my<caret>App\"", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("'myApp'", resolve.getNavigationElement().getText());
+    assertEquals("myAppDefinition.js", resolve.getContainingFile().getName());
+
+    final ResolveResult[] results = ((PsiPolyVariantReference)ref).multiResolve(false);
+    assertEquals(1, results.length);
   }
 }

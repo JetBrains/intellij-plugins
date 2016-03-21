@@ -26,7 +26,8 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<JSLiteralExpression> TEMPLATE_PATTERN = literalInProperty("templateUrl");
   private static final PsiElementPattern.Capture<JSLiteralExpression> CONTROLLER_PATTERN = literalInProperty("controller");
   public static final PsiElementPattern.Capture<PsiElement> UI_VIEW_PATTERN = uiViewPattern();
-  private static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = uiViewRefPattern();
+  private static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = xmlAttributePattern("ui-sref");
+  private static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ng-app");
 
   private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN =
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
@@ -102,6 +103,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(DI_PATTERN, new AngularJSDIReferencesProvider());
     registrar.registerReferenceProvider(UI_VIEW_PATTERN, new AngularJSUiRouterViewReferencesProvider());
     registrar.registerReferenceProvider(UI_VIEW_REF, new AngularJSUiRouterStatesReferencesProvider());
+    registrar.registerReferenceProvider(NG_APP_REF, new AngularJSNgAppReferencesProvider());
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> literalInProperty(final String propertyName) {
@@ -173,13 +175,13 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     }));
   }
 
-  private static PsiElementPattern.Capture<XmlAttributeValue> uiViewRefPattern() {
+  private static PsiElementPattern.Capture<XmlAttributeValue> xmlAttributePattern(@NotNull final String attributeName) {
     return PlatformPatterns.psiElement(XmlAttributeValue.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
         final XmlAttributeValue attributeValue = (XmlAttributeValue)element;
         final PsiElement parent = attributeValue.getParent();
-        if (parent instanceof XmlAttribute && "ui-sref".equals(((XmlAttribute)parent).getName())) {
+        if (parent instanceof XmlAttribute && attributeName.equals(((XmlAttribute)parent).getName())) {
           return AngularIndexUtil.hasAngularJS(attributeValue.getProject());
         }
         return false;
