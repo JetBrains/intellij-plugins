@@ -635,6 +635,10 @@ public class DartAnalysisServerService {
   public boolean updateRoots(@NotNull final List<String> includedRoots,
                              @NotNull final List<String> excludedRoots,
                              @Nullable final Map<String, String> packageRoots) {
+    if (includedRoots.isEmpty()) {
+      stopShowingServerProgress();
+    }
+
     AnalysisServer server = myServer;
     if (server == null) {
       return false;
