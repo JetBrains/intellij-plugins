@@ -3,8 +3,12 @@ package org.angularjs.index;
 import com.intellij.ProjectTopics;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
+import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -16,7 +20,9 @@ import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
@@ -25,6 +31,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -32,7 +39,9 @@ import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -87,6 +96,42 @@ public class AngularIndexUtil {
         }
       }
     );
+  }
+
+  public static ResolveResult[] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
+                                                                        @NotNull final ID<String, AngularNamedItemDefinition> INDEX,
+                                                                        @NotNull final String id,
+                                                                        @NotNull final Condition<VirtualFile> filter,
+                                                                        boolean dirtyResolve) {
+    final FileBasedIndex instance = FileBasedIndex.getInstance();
+    Collection<VirtualFile> files = instance.getContainingFiles(INDEX, id, GlobalSearchScope.allScope(project));
+    if (files.isEmpty()) return ResolveResult.EMPTY_ARRAY;
+    final List<VirtualFile> filtered = ContainerUtil.filter(files, filter);
+    if (filtered.isEmpty()) {
+      if (!dirtyResolve) return ResolveResult.EMPTY_ARRAY;
+    } else {
+      files = filtered;
+    }
+
+    final List<JSImplicitElement> elements = new ArrayList<JSImplicitElement>();
+    for (VirtualFile file : files) {
+      final List<AngularNamedItemDefinition> values = instance.getValues(INDEX, id, GlobalSearchScope.fileScope(project, file));
+      for (AngularNamedItemDefinition value : values) {
+        JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(id);
+        JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(qName, null);
+        final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+        if (psiFile != null) {
+          elements.add(new JSOffsetBasedImplicitElement(elementBuilder, (int)value.getStartOffset(), psiFile));
+        }
+      }
+    }
+    final List<ResolveResult> list = ContainerUtil.map(elements, new Function<JSImplicitElement, ResolveResult>() {
+      @Override
+      public ResolveResult fun(JSImplicitElement element) {
+        return new JSResolveResult(element);
+      }
+    });
+    return list.toArray(new ResolveResult[list.size()]);
   }
 
   public static Collection<String> getAllKeys(final ID<String, ?> index, final Project project) {
