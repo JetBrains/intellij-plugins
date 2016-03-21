@@ -15,7 +15,7 @@ public class DartStyleStrictTest extends DartStyleTest {
   static {
     KNOWN_TO_FAIL_STRICT.add("comments/classes.unit:110  remove blank line before beginning of body");
     KNOWN_TO_FAIL_STRICT.add("comments/expressions.stmt:36  space between block comment and other tokens");
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:46  var"); // Skip because of forced removal of space
+    KNOWN_TO_FAIL_STRICT.add("comments/generic_methods.unit:46  var"); // Skip because of forced removal of space
     KNOWN_TO_FAIL_STRICT.add("comments/lists.stmt:10  line comment on opening line");
     KNOWN_TO_FAIL_STRICT.add("comments/lists.stmt:25  block comment with trailing newline");
     KNOWN_TO_FAIL_STRICT.add("comments/lists.stmt:43  multiple comments on opening line");
