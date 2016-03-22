@@ -22,6 +22,6 @@ public class WinCommand extends Command {
         Project project = executionList.getProject();
         Lesson lesson = executionList.getLesson();
         lesson.pass();
-        LessonManager.getInstance(lesson).passLesson(project);
+        LessonManager.getInstance(lesson).passLesson(project, executionList.getEditor());
     }
 }

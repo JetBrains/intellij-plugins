@@ -573,5 +573,24 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     }
 
+    /**
+     *
+     * @param currentLesson
+     * @return null if lesson has no module or it is only one lesson in module
+     */
+    public @Nullable Lesson giveNextLesson(Lesson currentLesson){
+        Course module = currentLesson.getCourse();
+        ArrayList<Lesson> lessons = module.getLessons();
+        int size = lessons.size();
+        if (module == null || size == 1) return  null;
+
+        for (int i = 0; i < size; i++) {
+            if (lessons.get(i).equals(currentLesson)) {
+                if (i + 1 < size) return lessons.get(i + 1);
+                else break;
+            }
+        }
+        return null;
+    }
 
 }

@@ -25,14 +25,16 @@ import java.util.HashSet;
 public class LessonManager {
 
     Lesson myCurrentLesson;
-    private static HashSet<ActionsRecorder> actionsRecorders = new HashSet<ActionsRecorder>();
-    private boolean mouseBlocked;
-    private MouseListener[] myMouseListeners;
-    private MouseMotionListener[] myMouseMotionListeners;
-    private MouseListener myMouseDummyListener;
-    ArrayList<EduActions> myEduActions;
+
+    static ArrayList<EduActions> myEduActions;
+    private static MouseListener myMouseDummyListener;
     private final EduBalloonBuilder eduBalloonBuilder;
+    private static boolean mouseBlocked = false;
+    private static MouseListener[] myMouseListeners;
+    private static MouseMotionListener[] myMouseMotionListeners;
+    private static HashSet<ActionsRecorder> actionsRecorders = new HashSet<ActionsRecorder>();
     private static HashMap<Lesson, LessonManager> lessonManagers = new HashMap<Lesson, LessonManager>();
+    private static Editor lastEditor;
 
     public final int balloonDelay = 3000;
 
@@ -44,6 +46,7 @@ public class LessonManager {
         }
         eduBalloonBuilder = new EduBalloonBuilder(editor, balloonDelay, "Caret is blocked in this lesson");
         lessonManagers.put(lesson, this);
+        lastEditor = editor;
     }
 
     private static LessonManager getInstance() {
@@ -56,12 +59,12 @@ public class LessonManager {
     }
 
     public void initLesson(Editor editor) {
+        cleanEditor(); //remove mouse blocks and action recorders from last editor
         EduPanel eduPanel = CourseManager.getInstance().getEduPanel();
         eduPanel.setLessonName(myCurrentLesson.getName());
         String moduleName = myCurrentLesson.getCourse().getName();
         if (moduleName != null)
             eduPanel.setModuleName(moduleName);
-        hideButtons();
         eduPanel.getModulePanel().init(myCurrentLesson);
         clearEditor(editor);
         clearLessonPanel();
@@ -73,6 +76,19 @@ public class LessonManager {
             }
             myEduActions.clear();
         }
+        CourseManager.getInstance().getEduPanel().setButtonSkipAction(new Runnable() {
+            @Override
+            public void run() {
+                Lesson lesson = CourseManager.getInstance().giveNextLesson(myCurrentLesson);
+                if (lesson != null) {
+                    try {
+                        CourseManager.getInstance().openLesson(editor.getProject(), lesson);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     public void addMessage(String message){
@@ -87,12 +103,12 @@ public class LessonManager {
         CourseManager.getInstance().getEduPanel().setPreviousMessagesPassed();
     }
 
-    public void passLesson(Project project) {
+    public void passLesson(Project project, Editor editor) {
         EduPanel eduPanel = CourseManager.getInstance().getEduPanel();
         eduPanel.setLessonPassed();
         if(myCurrentLesson.getCourse()!=null && myCurrentLesson.getCourse().hasNotPassedLesson()){
             final Lesson notPassedLesson = myCurrentLesson.getCourse().giveNotPassedLesson();
-            eduPanel.setNextButtonAction(new Runnable() {
+            eduPanel.setButtonNextAction(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -101,7 +117,7 @@ public class LessonManager {
                         e.printStackTrace();
                     }
                 }
-            });
+            }, notPassedLesson);
         } else {
             eduPanel.hideNextButton();
         }
@@ -284,6 +300,12 @@ public class LessonManager {
 
     private void showCaretBlockedBalloon() throws InterruptedException {
         eduBalloonBuilder.showBalloon();
+    }
+
+    private void cleanEditor(){
+        restoreMouseActions(lastEditor);
+        removeActionsRecorders();
+        unblockCaret();
     }
 
 }

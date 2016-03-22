@@ -4,6 +4,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.ui.components.labels.LinkListener;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -19,8 +21,6 @@ import javax.swing.border.MatteBorder;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
@@ -36,11 +36,11 @@ public class EduPanel extends JPanel {
 
     private JPanel moduleNamePanel; //contains moduleNameLabel and allTopicsLabel
     private JLabel moduleNameLabel;
-    private JLabel allTopicsLabel;
+    private LinkLabel allTopicsLabel;
 
     private JLabel lessonNameLabel; //Name of the current lesson
     private LessonMessagePane lessonMessagePane;
-    private JButton lessonNextButton;
+    private JButton button;
     private JButton lessonNextTestButton;
 
 
@@ -52,7 +52,8 @@ public class EduPanel extends JPanel {
     //lessonPanel UI
     private int fontSize;
     private int lessonNameGap;
-    private int lessonNextButtonGap;
+    private int beforeButtonGap;
+    private int afterButtonGap;
     private int messageGap;
     private Font messageFont;
     private Font moduleNameFont;
@@ -94,13 +95,13 @@ public class EduPanel extends JPanel {
 
         lessonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         this.add(lessonPanel);
-        final Box.Filler filler = new Box.Filler(
-                new Dimension(5, separatorGap),    //minimum size of filler
-                new Dimension(5, separatorGap),    //preferable size of filler
-                new Dimension(5, Short.MAX_VALUE)     //maximum size of filler
-        );
-        filler.setAlignmentX(Component.LEFT_ALIGNMENT);
-        this.add(filler);
+//        final Box.Filler filler = new Box.Filler(
+//                new Dimension(5, separatorGap),    //minimum size of filler
+//                new Dimension(5, separatorGap),    //preferable size of filler
+//                new Dimension(5, Short.MAX_VALUE)     //maximum size of filler
+//        );
+//        filler.setAlignmentX(Component.LEFT_ALIGNMENT);
+//        this.add(filler);
         modulePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         this.add(modulePanel);
 
@@ -117,7 +118,8 @@ public class EduPanel extends JPanel {
         fontSize = 12;
         insets = 16;
         lessonNameGap = 4;
-        lessonNextButtonGap = 10;
+        beforeButtonGap = 20;
+        afterButtonGap = 44;
         messageGap = 10;
 
         //separator UI
@@ -145,7 +147,7 @@ public class EduPanel extends JPanel {
         separatorColor = new JBColor(Gray._222, Gray._149);
 
         //course UI
-        lessonActiveColor = new JBColor(Gray._167, Gray._202);
+        lessonActiveColor = new JBColor(new Color(128, 128, 128), Gray._202);
         lessonInactiveColor = lessonLinkColor;
 //        lessonsFont = new Font(UIUtil.getFont(fontSize, ), 0, fontSize);
         lessonsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);;
@@ -171,7 +173,7 @@ public class EduPanel extends JPanel {
         moduleNameLabel.setFont(moduleNameFont);
         moduleNameLabel.setFocusable(false);;
 
-        allTopicsLabel = new JLabel();
+        allTopicsLabel = new LinkLabel();
         allTopicsLabel.setFont(allTopicsFont);
         allTopicsLabel.setForeground(UIUtil.getActiveTextColor());
         allTopicsLabel.setFocusable(false);;
@@ -201,12 +203,13 @@ public class EduPanel extends JPanel {
         lessonMessagePane.setMaximumSize(new Dimension(width, 10000));
 
         //Set Next Button UI
-        lessonNextButton = new JButton("Next");
-//        lessonNextButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        lessonNextButton.setVisible(false);
-        lessonNextButton.setBackground(background);
-        lessonNextButton.setMargin(new Insets(0, 0, 0, 0));
-        lessonNextButton.setFocusable(false);;
+        button = new JButton("Skip");
+//        button.setAlignmentX(Component.LEFT_ALIGNMENT);
+        button.setBackground(background);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setFocusable(false);
+        button.setVisible(true);
+        button.setEnabled(true);
 
 
         //Add new NextButton TEST
@@ -220,9 +223,10 @@ public class EduPanel extends JPanel {
         lessonPanel.add(lessonNameLabel);
 //        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNameGap)));
         lessonPanel.add(lessonMessagePane);
-        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNextButtonGap)));
-        lessonPanel.add(lessonNextButton);
-        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNextButtonGap)));
+        lessonPanel.add(Box.createRigidArea(new Dimension(0, beforeButtonGap)));
+        lessonPanel.add(Box.createVerticalGlue());
+        lessonPanel.add(button);
+        lessonPanel.add(Box.createRigidArea(new Dimension(0, afterButtonGap)));
     }
 
 
@@ -239,26 +243,11 @@ public class EduPanel extends JPanel {
         moduleNameLabel.setForeground(defaultTextColor);
         moduleNameLabel.setFocusable(false);
         allTopicsLabel.setText(EducationBundle.message("learn.ui.alltopics"));
+        allTopicsLabel.setIcon(null);
         this.revalidate();
         this.repaint();
     }
 
-//    public void addMessage(String text){
-//        JLabel newLabel = new JLabel(XmlUtil.addHtmlTags(text));
-//        newLabel.setFont(messageFont);
-//        final LessonMessage lessonMessage = new LessonMessage(newLabel, null);
-//        messages.add(lessonMessage);
-//        final JPanel lessonMessagePanel = lessonMessage.getPanel();
-//        lessonMessagePanel.setBackground(background);
-//        lessonMessagePanel.setBorder(new EmptyBorder(0, 0, messageGap, 0));
-//
-//        lessonMessageContainer.add(lessonMessagePanel);
-//
-//        //Pack lesson panel
-//        lessonPanel.revalidate();
-//        this.revalidate();
-//        this.repaint();
-//    }
 
     public void addMessage(String text){
         lessonMessagePane.addMessage(text);
@@ -300,21 +289,6 @@ public class EduPanel extends JPanel {
 
     }
 
-
-//    public void addMessage(String text, String shortcut){
-//        JLabel newLabel = new JLabel(XmlUtil.addHtmlTags(text));
-//        newLabel.setFont(messageFont);
-//        final LessonMessage lessonMessage = new LessonMessage(newLabel, new ShortcutLabel(shortcut,shortcutFont, shortcutTextColor, shortcutBckColor, shortcutBorderColor));
-//        messages.add(lessonMessage);
-//        final JPanel lessonMessagePanel = lessonMessage.getPanel();
-//        lessonMessagePanel.setBackground(background);
-//        lessonMessagePanel.setBorder(new EmptyBorder(0, 0, messageGap, 0));
-//
-//        lessonMessageContainer.add(lessonMessagePanel);
-//        this.revalidate();
-//        this.repaint();
-//    }
-
     public void setPreviousMessagesPassed(){
         try {
             lessonMessagePane.passPreviousMessages();
@@ -326,22 +300,22 @@ public class EduPanel extends JPanel {
     public void setLessonPassed(){
 
 //        lessonNameLabel.setForeground(lessonPassedColor);
-        showNextButton();
+        setButtonToNext();
         this.repaint();
     }
 
-    private void showNextButton() {
-        lessonNextButton.setVisible(true);
+    private void setButtonToNext() {
+        button.setVisible(true);
         lessonPanel.revalidate();
         lessonPanel.repaint();
-//        lessonNextButton.requestFocus(true); focus requesting is danger here, may interfere with windows like File Structure
+//        button.requestFocus(true); focus requesting is danger here, may interfere with windows like File Structure
     }
 
 
 
 
     public void hideButtons(){
-        if (lessonNextButton.isVisible()) lessonNextButton.setVisible(false);
+        if (button.isVisible()) button.setVisible(false);
         this.repaint();
     }
 
@@ -363,7 +337,7 @@ public class EduPanel extends JPanel {
         this.repaint();
     }
 
-    public void setNextButtonAction(final Runnable runnable) {
+    public void setButtonNextAction(final Runnable runnable, Lesson notPassedLesson) {
 
         Action buttonAction = new AbstractAction() {
             @Override
@@ -376,11 +350,34 @@ public class EduPanel extends JPanel {
         buttonAction.putValue(Action.MNEMONIC_KEY, mnemonic_int);
         buttonAction.putValue(Action.NAME, "Next");
         buttonAction.setEnabled(true);
-        lessonNextButton.setAction(buttonAction);
+        button.setAction(buttonAction);
+        if (notPassedLesson != null) {
+            button.setText("Next Lesson: " + notPassedLesson.getName());
+        } else {
+            button.setText("Next Lesson");
+        }
+        button.setSelected(true);
+        getRootPane().setDefaultButton(button);
     }
 
+    public void setButtonSkipAction(final Runnable runnable) {
+
+        Action buttonAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                runnable.run();
+            }
+        };
+
+        buttonAction.setEnabled(true);
+        button.setAction(buttonAction);
+        button.setText("Skip");
+        button.setSelected(true);
+    }
+
+
     public void hideNextButton() {
-        lessonNextButton.setVisible(false);
+        button.setVisible(false);
     }
 
     private void initModulePanel(){
@@ -403,14 +400,14 @@ public class EduPanel extends JPanel {
     public class ModulePanel extends JPanel{
         private Course myModule;
         private Lesson myLesson;
-        private BidirectionalMap<Lesson, JLabel> lessonLabelMap;
+        private BidirectionalMap<Lesson, MyLinkLabel> lessonLabelMap;
         private int leftInset = 10;
 
         public void init(Lesson lesson){
 
             myLesson = lesson;
             myModule = lesson.getCourse();
-            lessonLabelMap = new BidirectionalMap<Lesson, JLabel>();
+            lessonLabelMap = new BidirectionalMap<Lesson, MyLinkLabel>();
             initModuleLessons(lesson);
         }
 
@@ -445,35 +442,33 @@ public class EduPanel extends JPanel {
 
         private void buildLessonLabels(Lesson lesson, final ArrayList<Lesson> myLessons) {
             for (int i = 0; i < myLessons.size(); i++) {
-                Lesson currentLesson = myLessons.get(i);
-                String id = currentLesson.getName();
+                final Lesson currentLesson = myLessons.get(i);
+                String lessonName = currentLesson.getName();
 
-                final JLabel e = new JLabel(id);
+                final MyLinkLabel e = new MyLinkLabel(lessonName);
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setBorder(new EmptyBorder(0, leftInset, lessonGap, 0));
-                e.setFont(lessonsFont);
                 e.setFocusable(false);
-
-                if (lesson.equals(currentLesson)){
-                    //selected lesson
-                    e.setForeground(lessonActiveColor);
-                } else {
-                    e.setForeground(lessonInactiveColor);
-                }
-                final int index = i;
-                e.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                e.addMouseListener(new MouseAdapter() {
+                e.setPaintUnderline(false);
+                e.setListener(new LinkListener() {
                     @Override
-                    public void mouseClicked(MouseEvent mouseEvent) {
+                    public void linkSelected(LinkLabel aSource, Object aLinkData) {
                         try {
-                            Lesson lessonToOpen = myLessons.get(index);
                             Project project = ProjectUtil.guessCurrentProject(EduPanel.this);
-                            CourseManager.getInstance().openLesson(project, lessonToOpen);
+                            CourseManager.getInstance().openLesson(project, currentLesson);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                });
+                }, null);
+
+                if (lesson.equals(currentLesson)){
+                    //selected lesson
+                    e.setTextColor(lessonActiveColor);
+                } else {
+                    e.resetTextColor();
+                }
+                e.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 lessonLabelMap.put(currentLesson, e);
                 add(e);
             }
@@ -481,11 +476,11 @@ public class EduPanel extends JPanel {
 
         public void updateLessons(Lesson lesson){
             for (Lesson curLesson : lessonLabelMap.keySet()) {
-                JLabel jLabel = lessonLabelMap.get(curLesson);
+                MyLinkLabel lessonLabel = lessonLabelMap.get(curLesson);
                 if (lesson.equals(curLesson)){
-                    jLabel.setForeground(lessonActiveColor);
+                    lessonLabel.setTextColor(lessonActiveColor);
                 } else {
-                    jLabel.setForeground(lessonInactiveColor);
+                    lessonLabel.resetTextColor();
                 }
             }
         }
@@ -503,6 +498,28 @@ public class EduPanel extends JPanel {
                     Point point = jLabel.getLocation();
                     LearnIcons.CheckmarkGray12.paintIcon(this, g, point.x, point.y + 2);
                 }
+            }
+        }
+
+        class MyLinkLabel extends LinkLabel{
+
+            Color userTextColor;
+
+            public MyLinkLabel(String text) {
+                super(text, null);
+            }
+
+            @Override
+            protected Color getTextColor() {
+                return (userTextColor != null ? userTextColor : super.getTextColor());
+            }
+
+            public void setTextColor(Color color){
+                userTextColor = color;
+            }
+
+            public void resetTextColor(){
+                userTextColor = null;
             }
         }
     }
