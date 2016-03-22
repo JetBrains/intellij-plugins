@@ -10,6 +10,7 @@ import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ObjectUtils;
@@ -28,6 +29,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   public static final PsiElementPattern.Capture<PsiElement> UI_VIEW_PATTERN = uiViewPattern();
   private static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = xmlAttributePattern("ui-sref");
   private static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ng-app");
+  public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_PATTERN = modulePattern();
 
   private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN =
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
@@ -104,6 +106,34 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(UI_VIEW_PATTERN, new AngularJSUiRouterViewReferencesProvider());
     registrar.registerReferenceProvider(UI_VIEW_REF, new AngularJSUiRouterStatesReferencesProvider());
     registrar.registerReferenceProvider(NG_APP_REF, new AngularJSNgAppReferencesProvider());
+    registrar.registerReferenceProvider(MODULE_PATTERN, new AngularJSModuleReferencesProvider());
+  }
+
+  private static PsiElementPattern.Capture<JSLiteralExpression> modulePattern() {
+    return PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+        if (element instanceof JSLiteralExpression) {
+          final PsiElement parent = ((PsiElement)element).getParent();
+          if (parent instanceof JSArgumentList && parent.getParent() instanceof JSCallExpression
+            && ((JSArgumentList)parent).getArguments().length == 1) {
+            if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[0], (PsiElement)element, false)) {
+              final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
+              if (methodExpression instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpression).getQualifier() != null &&
+                  AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
+                return true;
+              }
+            }
+          }
+        }
+        return false;
+      }
+
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    }));
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> literalInProperty(final String propertyName) {

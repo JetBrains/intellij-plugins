@@ -128,4 +128,28 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     final ResolveResult[] results = ((PsiPolyVariantReference)ref).multiResolve(false);
     assertEquals(1, results.length);
   }
+
+  public void testModuleCompletion() throws Exception {
+    myFixture.configureByFiles("moduleCompletion.js", "dependencyModuleDefinition.js", "myAppDefinition.js", "myAppUsage.js",
+                               "otherMyAppDefinition.js", "angular.js");
+    myFixture.completeBasic();
+    final List<String> strings = myFixture.getLookupElementStrings();
+    assertNotNull(strings);
+    assertTrue(strings.contains("myApp"));
+    assertTrue(strings.contains("dependency"));
+  }
+
+  public void testModuleNavigation() throws Exception {
+    myFixture.configureByFiles("moduleNavigation.js", "dependencyModuleDefinition.js", "myAppDefinition.js", "myAppUsage.js", "angular.js");
+    final PsiReference reference = myFixture.getReferenceAtCaretPosition("moduleNavigation.js");
+    assertNotNull(reference);
+
+    PsiElement resolve = reference.resolve();
+    assertNotNull(resolve);
+    assertEquals("'myApp'", resolve.getNavigationElement().getText());
+    assertEquals("myAppDefinition.js", resolve.getContainingFile().getName());
+
+    final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
+    assertEquals(1, results.length);
+  }
 }

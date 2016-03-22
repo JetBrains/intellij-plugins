@@ -1,6 +1,5 @@
 package org.angularjs.codeInsight.refs;
 
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
@@ -10,7 +9,6 @@ import com.intellij.psi.impl.include.FileIncludeManager;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularIndexUtil;
@@ -63,12 +61,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
         };
         results = ContainerUtil.filter(results, filter);
       }
-      final List<ResolveResult> resolveResults = ContainerUtil.map(results, new Function<JSImplicitElement, ResolveResult>() {
-        @Override
-        public ResolveResult fun(JSImplicitElement element) {
-          return new JSResolveResult(element);
-        }
-      });
+      final List<ResolveResult> resolveResults = ContainerUtil.map(results, AngularIndexUtil.JS_IMPLICIT_TO_RESOLVE_RESULT);
       return resolveResults.toArray(new ResolveResult[0]);
     }
 

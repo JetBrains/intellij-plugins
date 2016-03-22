@@ -53,6 +53,12 @@ public class AngularIndexUtil {
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
+  public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = new Function<JSImplicitElement, ResolveResult>() {
+    @Override
+    public ResolveResult fun(JSImplicitElement element) {
+      return new JSResolveResult(element);
+    }
+  };
 
   public static JSImplicitElement resolve(final Project project, final StubIndexKey<String, JSImplicitElementProvider> index, final String lookupKey) {
     final Ref<JSImplicitElement> result = new Ref<JSImplicitElement>(null);
