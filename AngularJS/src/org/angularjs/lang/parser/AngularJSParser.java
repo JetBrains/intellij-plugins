@@ -31,7 +31,7 @@ public class AngularJSParser
             return;
           }
         }
-        if (firstToken == AngularJSTokenTypes.HASH) {
+        if (firstToken == AngularJSTokenTypes.HASH && builder.lookAhead(2) != JSTokenTypes.EQ) {
           parseNgForStatement();
           return;
         }
@@ -108,6 +108,10 @@ public class AngularJSParser
       final IElementType firstToken = builder.getTokenType();
       if (firstToken == JSTokenTypes.STRING_LITERAL) {
         return parseStringLiteral(firstToken);
+      }
+      if (firstToken == AngularJSTokenTypes.HASH) {
+        parseHashDefinition();
+        return true;
       }
       if (isIdentifierToken(firstToken) && myAngularJSMessageFormatParser.parseMessage()) {
         return true;
@@ -192,14 +196,7 @@ public class AngularJSParser
 
     public boolean parseForExpression() {
       final PsiBuilder.Marker expr = builder.mark();
-      final PsiBuilder.Marker def = builder.mark();
-      builder.advanceLexer();
-      if (builder.getTokenType() != JSTokenTypes.IDENTIFIER) {
-        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
-      } else {
-        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
-      }
-      def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
+      parseHashDefinition();
 
       if (builder.getTokenType() != JSTokenTypes.OF_KEYWORD) {
         builder.error("'of' expected");
@@ -209,6 +206,17 @@ public class AngularJSParser
       parseExpression();
       expr.done(AngularJSElementTypes.FOR_EXPRESSION);
       return true;
+    }
+
+    protected void parseHashDefinition() {
+      final PsiBuilder.Marker def = builder.mark();
+      builder.advanceLexer();
+      if (builder.getTokenType() != JSTokenTypes.IDENTIFIER) {
+        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+      } else {
+        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      }
+      def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
     }
 
     public boolean parseInExpression() {
