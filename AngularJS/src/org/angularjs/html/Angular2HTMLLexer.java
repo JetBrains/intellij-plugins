@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class Angular2HTMLLexer extends HtmlLexer {
   private static final int SEEN_ANGULAR_SCRIPT = 0x1000;
   private Lexer myInterpolationLexer;
+  private int interpolationStart = -1;
   private boolean seenAngularScript;
 
   public Angular2HTMLLexer() {
@@ -59,12 +60,25 @@ public class Angular2HTMLLexer extends HtmlLexer {
         Logger.getInstance(Angular2HTMLLexer.class).error(myInterpolationLexer.getBufferSequence());
       }
       myInterpolationLexer = null;
+      interpolationStart = -1;
+      return;
     }
     super.advance();
-    final IElementType type = super.getTokenType();
-    if (type == XmlTokenType.XML_DATA_CHARACTERS || type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
-      final Lexer lexer = createLexer(type);
-      lexer.start(super.getTokenText());
+    final IElementType originalType = super.getTokenType();
+    if (originalType == XmlTokenType.XML_DATA_CHARACTERS || originalType == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
+      IElementType type = originalType;
+      interpolationStart = super.getTokenStart();
+      final StringBuilder text = new StringBuilder();
+      while (type == XmlTokenType.XML_DATA_CHARACTERS ||
+             type == XmlTokenType.XML_REAL_WHITE_SPACE ||
+             type == XmlTokenType.XML_WHITE_SPACE ||
+             type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
+        text.append(super.getTokenText());
+        super.advance();
+        type = getTokenType();
+      }
+      final Lexer lexer = createLexer(originalType);
+      lexer.start(text);
       myInterpolationLexer = lexer;
     }
   }
@@ -84,7 +98,7 @@ public class Angular2HTMLLexer extends HtmlLexer {
   @Override
   public int getTokenStart() {
     if (myInterpolationLexer != null) {
-      return super.getTokenStart() + myInterpolationLexer.getTokenStart();
+      return interpolationStart + myInterpolationLexer.getTokenStart();
     }
     return super.getTokenStart();
   }
@@ -92,7 +106,7 @@ public class Angular2HTMLLexer extends HtmlLexer {
   @Override
   public int getTokenEnd() {
     if (myInterpolationLexer != null) {
-      return super.getTokenStart() + myInterpolationLexer.getTokenEnd();
+      return interpolationStart + myInterpolationLexer.getTokenEnd();
     }
     return super.getTokenEnd();
   }
@@ -100,6 +114,7 @@ public class Angular2HTMLLexer extends HtmlLexer {
   @Override
   public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
     myInterpolationLexer = null;
+    interpolationStart = -1;
     seenAngularScript = (initialState & SEEN_ANGULAR_SCRIPT) != 0;
     super.start(buffer, startOffset, endOffset, initialState);
   }

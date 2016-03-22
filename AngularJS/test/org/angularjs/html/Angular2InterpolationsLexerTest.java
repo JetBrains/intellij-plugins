@@ -39,10 +39,12 @@ public class Angular2InterpolationsLexerTest extends LexerTestCase {
   }
 
   public void testWithLineBreaks() {
-    doTest("#todo of todoService.todos\n" +
+    doTest("{{#todo of todoService.todos\n" +
            "            | started : status\n" +
            "            | search : term\n" +
-           "            ", "XML_DATA_CHARACTERS ('#todo of todoService.todos\\n            | started : status\\n            | search : term\\n            ')");
+           "            }}", "XML_DATA_CHARACTERS ('{{')\n" +
+                             "EMBEDDED_CONTENT ('#todo of todoService.todos\\n            | started : status\\n            | search : term\\n            ')\n" +
+                             "XML_DATA_CHARACTERS ('}}')");
   }
 
   @Override
