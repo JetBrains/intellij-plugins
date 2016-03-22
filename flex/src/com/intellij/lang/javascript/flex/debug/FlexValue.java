@@ -567,8 +567,7 @@ class FlexValue extends XValue {
       final PsiElement contextElement =
         XDebuggerUtil.getInstance().findContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project, true);
       final JSFunction jsFunction = PsiTreeUtil.getParentOfType(contextElement, JSFunction.class);
-      final JSParameterList parameterList = jsFunction == null ? null : jsFunction.getParameterList();
-      final JSParameter[] parameters = parameterList == null ? JSParameter.EMPTY_ARRAY : parameterList.getParameters();
+      final JSParameter[] parameters = jsFunction == null ? JSParameter.EMPTY_ARRAY : jsFunction.getParameterVariables();
       for (final JSParameter parameter : parameters) {
         if (myName.equals(parameter.getName())) {
           result = DebuggerSupportUtils.calcSourcePosition(parameter);

@@ -90,9 +90,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   protected static SignatureMatchResult checkCompatibleSignature(final JSFunction fun, final JSFunction override) {
     JSParameterList nodeParameterList = fun.getParameterList();
     JSParameterList overrideParameterList = override.getParameterList();
-    final JSParameter[] parameters = nodeParameterList != null ? nodeParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
+    final JSParameter[] parameters = nodeParameterList != null ? nodeParameterList.getParameterVariables() : JSParameter.EMPTY_ARRAY;
     final JSParameter[] overrideParameters =
-      overrideParameterList != null ? overrideParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
+      overrideParameterList != null ? overrideParameterList.getParameterVariables() : JSParameter.EMPTY_ARRAY;
 
     SignatureMatchResult result = parameters.length != overrideParameters.length ?
                                   SignatureMatchResult.PARAMETERS_DIFFERS : SignatureMatchResult.COMPATIBLE_SIGNATURE;
@@ -761,7 +761,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
       JSParameterList parameterList = fun.getParameterList();
       if (parameterList != null) {
-        for (JSParameter p : parameterList.getParameters()) {
+        for (JSParameter p : parameterList.getParameterVariables()) {
           if (p.isRest()) {
             myHolder.createErrorAnnotation(node, JSBundle.message("javascript.validation.message.arguments.with.rest.parameter"));
           }
@@ -1239,7 +1239,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (setter != null) {
           JSParameterList setterParameterList = setter.getParameterList();
           JSParameter[] setterParameters = setterParameterList != null ?
-                                           setterParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
+                                           setterParameterList.getParameterVariables() : JSParameter.EMPTY_ARRAY;
 
           JSType setterType;
           if (setterParameters.length == 1 &&

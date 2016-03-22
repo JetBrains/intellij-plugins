@@ -88,7 +88,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
       JSParameterList parameterList = fun.getParameterList();
 
       if (parameterList != null) {
-        JSParameter[] parameters = parameterList.getParameters();
+        JSParameter[] parameters = parameterList.getParameterVariables();
         boolean invalidArgs = parameters.length == 0;
 
         if (!invalidArgs && parameters.length > 1) {

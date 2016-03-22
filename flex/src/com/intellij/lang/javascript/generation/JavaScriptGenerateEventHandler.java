@@ -323,7 +323,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
         .replaceElement(addedElement.findNameIdentifier().getPsi(), "handlerName", new MyExpression(eventHandlerName, eventHandlerName2),
                         true);
       templateBuilder
-        .replaceElement(addedElement.getParameterList().getParameters()[0].findNameIdentifier().getPsi(), new MyExpression("event", "e"));
+        .replaceElement(addedElement.getParameterVariables()[0].findNameIdentifier().getPsi(), new MyExpression("event", "e"));
 
       if (referenceElement != null && referenceElement.isValid()) {
         templateBuilder.replaceElement(referenceElement, "handlerReference", "handlerName", false);
