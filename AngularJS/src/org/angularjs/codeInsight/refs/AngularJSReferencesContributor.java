@@ -30,6 +30,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = xmlAttributePattern("ui-sref");
   private static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ng-app");
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_PATTERN = modulePattern();
+  public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_DEPENDENCY_PATTERN = moduleDependencyPattern();
 
   private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN =
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
@@ -118,6 +119,36 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
           if (parent instanceof JSArgumentList && parent.getParent() instanceof JSCallExpression
             && ((JSArgumentList)parent).getArguments().length == 1) {
             if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[0], (PsiElement)element, false)) {
+              final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
+              if (methodExpression instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpression).getQualifier() != null &&
+                  AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
+                return true;
+              }
+            }
+          }
+        }
+        return false;
+      }
+
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    }));
+  }
+
+  private static PsiElementPattern.Capture<JSLiteralExpression> moduleDependencyPattern() {
+    return PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+        if (element instanceof JSLiteralExpression) {
+          PsiElement parent = ((PsiElement)element).getParent();
+          if (!(parent instanceof JSArrayLiteralExpression)) return false;
+          parent = parent.getParent();
+          if (parent instanceof JSArgumentList && parent.getParent() instanceof JSCallExpression
+            && ((JSArgumentList)parent).getArguments().length > 1) {
+            if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[1], (PsiElement)element, false) &&
+                ((JSArgumentList)parent).getArguments()[1] instanceof JSArrayLiteralExpression) {
               final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
               if (methodExpression instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpression).getQualifier() != null &&
                   AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {

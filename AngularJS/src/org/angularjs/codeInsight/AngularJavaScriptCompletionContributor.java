@@ -45,7 +45,8 @@ public class AngularJavaScriptCompletionContributor extends CompletionContributo
         originalPosition = originalPosition instanceof LeafPsiElement &&
                            ((LeafPsiElement)originalPosition).getElementType() == JSTokenTypes.STRING_LITERAL ?
                            originalPosition.getParent() : originalPosition;
-        if (AngularJSReferencesContributor.MODULE_PATTERN.accepts(originalPosition)) {
+        if (AngularJSReferencesContributor.MODULE_PATTERN.accepts(originalPosition) ||
+            AngularJSReferencesContributor.MODULE_DEPENDENCY_PATTERN.accepts(originalPosition)) {
           final Collection<String> keys = AngularIndexUtil.getAllKeys(AngularModuleIndex.KEY, project);
           addCompletionVariants(result, keys, " (AngularJS module)");
         }
