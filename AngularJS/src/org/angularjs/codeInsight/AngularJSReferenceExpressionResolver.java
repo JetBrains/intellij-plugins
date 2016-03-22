@@ -1,7 +1,7 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
-import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
@@ -30,11 +30,11 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     super(expression, file);
   }
 
-  public static Collection<JSNamedElement> getItemsByName(final String name, PsiElement element) {
-    final Collection<JSNamedElement> result = new ArrayList<JSNamedElement>();
-    AngularJSProcessor.process(element, new Consumer<JSNamedElement>() {
+  public static Collection<JSPsiElementBase> getItemsByName(final String name, PsiElement element) {
+    final Collection<JSPsiElementBase> result = new ArrayList<JSPsiElementBase>();
+    AngularJSProcessor.process(element, new Consumer<JSPsiElementBase>() {
       @Override
-      public void consume(JSNamedElement element) {
+      public void consume(JSPsiElementBase element) {
         if (name.equals(element.getName())) {
           result.add(element);
         }
@@ -71,11 +71,11 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
         return new JSResolveResult[] {new JSResolveResult(resolve)};
       }
     } else if (myQualifier == null) {
-      final Collection<JSNamedElement> localVariables = getItemsByName(myReferencedName, myRef);
+      final Collection<JSPsiElementBase> localVariables = getItemsByName(myReferencedName, myRef);
       if (!localVariables.isEmpty()) {
-        return ContainerUtil.map2Array(localVariables, JSResolveResult.class, new Function<JSNamedElement, JSResolveResult>() {
+        return ContainerUtil.map2Array(localVariables, JSResolveResult.class, new Function<JSPsiElementBase, JSResolveResult>() {
           @Override
-          public JSResolveResult fun(JSNamedElement item) {
+          public JSResolveResult fun(JSPsiElementBase item) {
             return new JSResolveResult(item);
           }
         });

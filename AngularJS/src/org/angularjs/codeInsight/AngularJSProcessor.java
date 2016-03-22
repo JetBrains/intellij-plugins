@@ -5,13 +5,16 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.util.CachedValueProvider;
@@ -20,13 +23,18 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
 import com.intellij.util.Consumer;
+import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
+import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
 import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Dennis.Ushakov
@@ -42,7 +50,7 @@ public class AngularJSProcessor {
     NG_REPEAT_IMPLICITS.put("$odd", "Boolean");
   }
 
-  public static void process(final PsiElement element, final Consumer<JSNamedElement> consumer) {
+  public static void process(final PsiElement element, final Consumer<JSPsiElementBase> consumer) {
     final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     PsiFile hostFile = FileContextUtil.getContextFile(original != element ? original : element.getContainingFile().getOriginalFile());
     if (!(hostFile instanceof XmlFile)) {
@@ -52,24 +60,24 @@ public class AngularJSProcessor {
 
     final XmlFile file = (XmlFile)hostFile;
 
-    final Collection<JSNamedElement> cache = CachedValuesManager.getCachedValue(file, new CachedValueProvider<Collection<JSNamedElement>>() {
+    final Collection<JSPsiElementBase> cache = CachedValuesManager.getCachedValue(file, new CachedValueProvider<Collection<JSPsiElementBase>>() {
       @Nullable
       @Override
-      public Result<Collection<JSNamedElement>> compute() {
-        final Collection<JSNamedElement> result = new ArrayList<JSNamedElement>();
+      public Result<Collection<JSPsiElementBase>> compute() {
+        final Collection<JSPsiElementBase> result = new ArrayList<JSPsiElementBase>();
         processDocument(file.getDocument(), result);
 
         return Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
       }
     });
-    for (JSNamedElement namedElement : cache) {
+    for (JSPsiElementBase namedElement : cache) {
       if (scopeMatches(original, namedElement)){
         consumer.consume(namedElement);
       }
     }
   }
 
-  private static void processDocument(XmlDocument document, final Collection<JSNamedElement> result) {
+  private static void processDocument(XmlDocument document, final Collection<JSPsiElementBase> result) {
     if (document == null) return;
     final AngularInjectedFilesVisitor visitor = new AngularInjectedFilesVisitor(result);
 
@@ -107,10 +115,21 @@ public class AngularJSProcessor {
     return true;
   }
 
-  private static class AngularInjectedFilesVisitor extends JSResolveUtil.JSInjectedFilesVisitor {
-    private final Collection<JSNamedElement> myResult;
+  public static JSImplicitElementImpl.Builder createVariable(HtmlTag tag, XmlAttribute attribute, String name) {
+    final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name.substring(1), attribute)
+      .setType(JSImplicitElement.Type.Variable);
 
-    public AngularInjectedFilesVisitor(Collection<JSNamedElement> result) {
+    final String tagName = tag.getName();
+    if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
+      elementBuilder.setTypeString("HTML" + StringUtil.capitalize(tagName) + "Element");
+    }
+    return elementBuilder;
+  }
+
+  private static class AngularInjectedFilesVisitor extends JSResolveUtil.JSInjectedFilesVisitor {
+    private final Collection<JSPsiElementBase> myResult;
+
+    public AngularInjectedFilesVisitor(Collection<JSPsiElementBase> result) {
       myResult = result;
     }
 
@@ -119,8 +138,8 @@ public class AngularJSProcessor {
       accept(file);
     }
 
-    protected void accept(PsiElement file) {
-      file.accept(new AngularJSRecursiveVisitor() {
+    protected void accept(PsiElement element) {
+      element.accept(new AngularJSRecursiveVisitor() {
         @Override
         public void visitJSDefinitionExpression(JSDefinitionExpression node) {
           myResult.add(node);
@@ -137,6 +156,14 @@ public class AngularJSProcessor {
           super.visitAngularJSRepeatExpression(repeatExpression);
         }
       });
+      if (element instanceof XmlAttribute) {
+        final String name = ((XmlAttribute)element).getName();
+        if (AngularAttributesRegistry.isVariableAttribute(name, element.getProject())) {
+          final JSImplicitElementImpl.Builder builder = createVariable((HtmlTag)element.getParent(),
+                                                                                                 (XmlAttribute)element, name);
+          myResult.add(builder.toImplicitElement());
+        }
+      }
     }
   }
 }

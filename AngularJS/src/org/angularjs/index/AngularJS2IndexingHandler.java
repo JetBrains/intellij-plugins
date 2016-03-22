@@ -5,9 +5,6 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
-import com.intellij.lang.javascript.index.JSCustomIndexer;
-import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
-import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES7Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -24,9 +21,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
-import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
 import org.angularjs.html.Angular2HTMLLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -171,27 +166,6 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   private static boolean isPipe(String name) {
     return "Pipe".equals(name);
-  }
-
-  @Override
-  public boolean processCustomElement(@NotNull PsiElement customElement, @NotNull JSIndexContentBuilder builder) {
-    final HtmlTag tag = (HtmlTag)customElement;
-    for (XmlAttribute attribute : tag.getAttributes()) {
-      final String name = attribute.getName();
-      if (name.startsWith("#")) {
-        final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name.substring(1), attribute)
-          .setType(JSImplicitElement.Type.Variable);
-
-        final String tagName = tag.getName();
-        if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
-          elementBuilder.setTypeString("HTML" + StringUtil.capitalize(tagName) + "Element");
-        }
-
-        builder.addImplicitElement(name.substring(1), new JSImplicitElementsIndex.JSElementProxy(elementBuilder, attribute.getTextOffset() + 1));
-        JSCustomIndexer.addImplicitElement(attribute, elementBuilder, builder);
-      }
-    }
-    return true;
   }
 
   @Override
