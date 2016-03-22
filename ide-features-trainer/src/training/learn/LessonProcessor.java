@@ -2,6 +2,7 @@ package training.learn;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.TestOnly;
 import training.commands.Command;
 import training.commands.CommandFactory;
 import training.commands.ExecutionList;
+import training.editor.eduUI.EduPanel;
 import training.util.PerformActionUtil;
 import training.editor.MouseListenerHolder;
 import training.editor.EduEditor;
@@ -34,7 +36,7 @@ public class LessonProcessor {
 
     private static ExecutionList currentExecutionList;
 
-    public static void process(final Lesson lesson, final EduEditor eduEditor, final Project project, Document document, @Nullable String target) throws Exception {
+    public static void process(final Project project, final Lesson lesson, final Editor editor, @Nullable String target) throws Exception {
 
         HashMap<String, String> editorParameters = new HashMap<String, String>();
 
@@ -91,14 +93,14 @@ public class LessonProcessor {
         MouseListenerHolder mouseListenerHolder = new MouseListenerHolder();
 
         //Initialize lesson in the EduEditor
-        eduEditor.initLesson(lesson);
+        LessonManager.getInstance(lesson).initLesson(editor);
 
         //Prepare environment before execution
-        prepareEnvironment(eduEditor, project, editorParameters);
+        prepareEnvironment(editor, project, editorParameters);
 
         //Perform first action, all next perform like a chain reaction
         Command cmd = CommandFactory.buildCommand(elements.peek());
-        ExecutionList executionList = new ExecutionList(elements, lesson, project, eduEditor, mouseListenerHolder, target);
+        ExecutionList executionList = new ExecutionList(elements, lesson, project, editor, mouseListenerHolder, target);
         currentExecutionList = executionList;
 
         cmd.execute(executionList);
@@ -112,13 +114,13 @@ public class LessonProcessor {
         }
     }
 
-    private static void prepareEnvironment(EduEditor eduEditor, Project project, HashMap<String, String> editorParameters) throws ExecutionException, InterruptedException {
+    private static void prepareEnvironment(Editor editor, Project project, HashMap<String, String> editorParameters) throws ExecutionException, InterruptedException {
         if(editorParameters.containsKey(Lesson.EditorParameters.PROJECT_TREE)) {
             if (ActionManager.getInstance().getAction(HideProjectTreeAction.actionId) == null) {
                 HideProjectTreeAction hideAction = new HideProjectTreeAction();
                 ActionManager.getInstance().registerAction(hideAction.getActionId(), hideAction);
             }
-            PerformActionUtil.performAction(HideProjectTreeAction.actionId, eduEditor.getEditor(), project);
+            PerformActionUtil.performAction(HideProjectTreeAction.actionId, editor, project);
         }
     }
 

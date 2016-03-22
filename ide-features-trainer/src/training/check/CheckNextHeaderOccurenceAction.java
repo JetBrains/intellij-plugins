@@ -1,5 +1,6 @@
 package training.check;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import training.editor.EduEditor;
 
@@ -10,7 +11,7 @@ public class CheckNextHeaderOccurenceAction implements Check{
 
 
     @Override
-    public void set(Project project, EduEditor eduEditor) {
+    public void set(Project project, Editor editor) {
 
     }
 

@@ -71,36 +71,8 @@ public class EduEditor implements TextEditor {
 
     private boolean blockCaretBalloonIsShown = false;
 
-    private MouseListener[] myMouseListeners;
-    private MouseMotionListener[] myMouseMotionListeners;
-    private MouseListener myMouseDummyListener;
     private boolean mouseBlocked;
 
-    public void setMyMouseListeners(MouseListener[] myMouseListeners) {
-        this.myMouseListeners = myMouseListeners;
-    }
-
-    public void setMyMouseMotionListeners(MouseMotionListener[] myMouseMotionListeners) {
-        this.myMouseMotionListeners = myMouseMotionListeners;
-    }
-
-    public MouseListener[] getMyMouseListeners() {
-        return myMouseListeners;
-    }
-
-    public MouseMotionListener[] getMyMouseMotionListeners() {
-        return myMouseMotionListeners;
-    }
-
-    public boolean isMouseBlocked() {
-        return mouseBlocked;
-    }
-
-    public void setMouseBlocked(boolean mouseBlocked) {
-        this.mouseBlocked = mouseBlocked;
-    }
-
-    ArrayList<EduActions> myEduActions;
 
     public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
 
@@ -109,16 +81,14 @@ public class EduEditor implements TextEditor {
         myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, file);
         Disposer.register(myDefaultEditor, this); //dispose EduEditor when default has been already disposed
         myComponent = myDefaultEditor.getComponent();
-        eduPanel = new EduPanel(this, 275);
+        eduPanel = new EduPanel(275);
         myComponent.add(eduPanel, BorderLayout.WEST);
         actionsRecorders = new HashSet<ActionsRecorder>();
 
-        if (myEduActions == null) {
-            myEduActions = new ArrayList<EduActions>();
-        }
+
 
         mouseBlocked = false;
-        eduBalloonBuilder = new EduBalloonBuilder(this, balloonDelay, "Caret is blocked in this lesson");
+        eduBalloonBuilder = new EduBalloonBuilder(null, balloonDelay, "Caret is blocked in this lesson");
     }
 
     private FileEditor getDefaultEditor() {
@@ -289,253 +259,8 @@ public class EduEditor implements TextEditor {
         return isDisposed;
     }
 
-    public static void deleteGuardedBlocks(@NotNull final Document document) {
-        if (document instanceof DocumentImpl) {
-            final DocumentImpl documentImpl = (DocumentImpl)document;
-            List<RangeMarker> blocks = documentImpl.getGuardedBlocks();
-            for (final RangeMarker block : blocks) {
-                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                document.removeGuardedBlock(block);
-                            }
-                        });
-                    }
-                });
-            }
-        }
-    }
 
 
-    public void addMessage(String message){
-        eduPanel.addMessage(message);
-    }
-
-    public void addMessage(Message[] messages) {
-        eduPanel.addMessage(messages);
-    }
-
-    public void passExercise() {
-        eduPanel.setPreviousMessagesPassed();
-    }
-
-    public void passLesson(Lesson lesson) {
-        eduPanel.setLessonPassed();
-        if(lesson.getCourse()!=null && lesson.getCourse().hasNotPassedLesson()){
-            final Lesson notPassedLesson = lesson.getCourse().giveNotPassedLesson();
-            eduPanel.setNextButtonAction(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        CourseManager.getInstance().openLesson(myProject, notPassedLesson);
-                    } catch (BadCourseException e) {
-                        e.printStackTrace();
-                    } catch (BadLessonException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (FontFormatException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (LessonIsOpenedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        } else {
-            eduPanel.hideNextButton();
-        }
-        eduPanel.updateLessonPanel(lesson);
-    }
-
-    public void initAllLessons(Lesson lesson) {
-        eduPanel.setAllLessons(lesson);
-    }
-
-    public void clearEditor() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                final Editor editor = getEditor();
-                if (editor != null) {
-                    final Document document = getEditor().getDocument();
-                    if (document != null) {
-                        try {
-                            document.setText("");
-                        } catch (Exception e) {
-                            System.err.println("Unable to update text in EduEdutor!");
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    public void clearLessonPanel() {
-        eduPanel.clearLessonPanel();
-    }
-
-    public void registerActionsRecorder(ActionsRecorder recorder){
-        actionsRecorders.add(recorder);
-    }
-
-    public void removeActionsRecorders(){
-        for (ActionsRecorder actionsRecorder : actionsRecorders) {
-            actionsRecorder.dispose();
-        }
-        actionsRecorders.clear();
-    }
-
-    public void initLesson(Lesson lesson) {
-        myCourse = lesson.getCourse();
-        eduPanel.setLessonName(lesson.getName());
-        hideButtons();
-        initAllLessons(lesson);
-        clearEditor();
-        clearLessonPanel();
-        removeActionsRecorders();
-        if (isMouseBlocked()) restoreMouseActions();
-        if (myEduActions != null) {
-            for (EduActions myLearnAction : myEduActions) {
-                myLearnAction.unregisterAction();
-            }
-            myEduActions.clear();
-        }
-    }
-
-    private void hideButtons() {
-        eduPanel.hideButtons();
-    }
-
-
-    public void updateMyDefaultEditor() {
-        myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, vf);
-        myDefaultEditor.getComponent().setVisible(true);
-        myComponent = myDefaultEditor.getComponent();
-        myComponent.add(eduPanel, BorderLayout.WEST);
-    }
-
-    public void blockCaret() {
-
-//        try {
-//            LearnUiUtil.getInstance().drawIcon(myProject, getEditor());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-        for (EduActions myLearnAction : myEduActions) {
-            if(myLearnAction instanceof BlockCaretAction) return;
-        }
-
-        BlockCaretAction blockCaretAction = new BlockCaretAction(getEditor());
-        blockCaretAction.addActionHandler(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    showCaretBlockedBalloon();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        myEduActions.add(blockCaretAction);
-    }
-
-    public void unblockCaret() {
-        ArrayList<BlockCaretAction> myBlockActions = new ArrayList<BlockCaretAction>();
-
-        for (EduActions myLearnAction : myEduActions) {
-            if(myLearnAction instanceof BlockCaretAction) {
-                myBlockActions.add((BlockCaretAction) myLearnAction);
-                ((BlockCaretAction) myLearnAction).unregisterAction();
-            }
-        }
-
-        myEduActions.removeAll(myBlockActions);
-    }
-
-    public void grabMouseActions(){
-        MouseListener[] mouseListeners = getEditor().getContentComponent().getMouseListeners();
-        setMyMouseListeners(getEditor().getContentComponent().getMouseListeners());
-
-
-        for (MouseListener mouseListener : mouseListeners) {
-            getEditor().getContentComponent().removeMouseListener(mouseListener);
-        }
-
-        //kill all mouse (motion) listeners
-        MouseMotionListener[] mouseMotionListeners = getEditor().getContentComponent().getMouseMotionListeners();
-        setMyMouseMotionListeners(getEditor().getContentComponent().getMouseMotionListeners());
-
-        for (MouseMotionListener mouseMotionListener : mouseMotionListeners) {
-            getEditor().getContentComponent().removeMouseMotionListener(mouseMotionListener);
-        }
-
-        myMouseDummyListener  = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent mouseEvent) {
-                try {
-                    showCaretBlockedBalloon();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent mouseEvent) {
-                try {
-                    showCaretBlockedBalloon();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent mouseEvent) {
-                try {
-                    showCaretBlockedBalloon();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        };
-        getEditor().getContentComponent().addMouseListener(myMouseDummyListener);
-
-        setMouseBlocked(true);
-    }
-
-    public void restoreMouseActions(){
-        if (getMyMouseListeners() != null) {
-            for (MouseListener myMouseListener : getMyMouseListeners()) {
-                getEditor().getContentComponent().addMouseListener(myMouseListener);
-            }
-        }
-
-        if (getMyMouseMotionListeners() != null) {
-            for (MouseMotionListener myMouseMotionListener : getMyMouseMotionListeners()) {
-                getEditor().getContentComponent().addMouseMotionListener(myMouseMotionListener);
-            }
-        }
-
-        if(myMouseDummyListener != null) getEditor().getContentComponent().removeMouseListener(myMouseDummyListener);
-
-        setMyMouseListeners(null);
-        setMyMouseMotionListeners(null);
-        setMouseBlocked(false);
-    }
-
-
-    private void showCaretBlockedBalloon() throws InterruptedException {
-        eduBalloonBuilder.showBalloon();
-    }
 
     public void selectIt() {
         HashSet<FileEditor> selectedEditors = new HashSet<FileEditor>(Arrays.asList(FileEditorManager.getInstance(myProject).getSelectedEditors()));

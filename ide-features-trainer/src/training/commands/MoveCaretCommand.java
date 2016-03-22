@@ -24,7 +24,7 @@ public class MoveCaretCommand extends Command {
             final String offsetString = (element.getAttribute(MOVECARET_OFFSET).getValue());
             final int offset = Integer.parseInt(offsetString);
 
-            executionList.getEduEditor().getEditor().getCaretModel().moveToOffset(offset);
+            executionList.getEditor().getCaretModel().moveToOffset(offset);
         } else if (element.getAttribute(MOVECARET_POSITION) != null){
             final String positionString = (element.getAttribute(MOVECARET_POSITION).getValue());
             String[] splitStrings = positionString.split(":");
@@ -33,7 +33,7 @@ public class MoveCaretCommand extends Command {
             final int line = Integer.parseInt(splitStrings[0]);
             final int column = Integer.parseInt(splitStrings[1]);
 
-            executionList.getEduEditor().getEditor().getCaretModel().moveToLogicalPosition(new LogicalPosition(line - 1, column - 1));
+            executionList.getEditor().getCaretModel().moveToLogicalPosition(new LogicalPosition(line - 1, column - 1));
         }
 
         startNextCommand(executionList);

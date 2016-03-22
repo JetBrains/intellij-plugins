@@ -1,5 +1,6 @@
 package training.check;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import training.editor.EduEditor;
 
@@ -10,12 +11,12 @@ public class CheckFindBar implements Check{
 
 
     Project project;
-    EduEditor eduEditor;
+    Editor editor;
 
     @Override
-    public void set(Project project, EduEditor eduEditor) {
+    public void set(Project project, Editor editor) {
         this.project = project;
-        this.eduEditor = eduEditor;
+        this.editor = editor;
     }
 
     @Override
@@ -25,6 +26,6 @@ public class CheckFindBar implements Check{
 
     @Override
     public boolean check() {
-        return (eduEditor.getEditor().getHeaderComponent() == null);
+        return (editor.getHeaderComponent() == null);
     }
 }

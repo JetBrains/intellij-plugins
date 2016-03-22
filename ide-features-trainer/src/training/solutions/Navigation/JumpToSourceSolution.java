@@ -1,5 +1,6 @@
 package training.solutions.Navigation;
 
+import com.intellij.openapi.editor.Editor;
 import training.commands.ExecutionList;
 import training.learn.LessonProcessor;
 import training.solutions.BaseSolutionClass;
@@ -13,19 +14,18 @@ public class JumpToSourceSolution implements LessonSolution {
     @Override
     public void solveStep() throws Exception {
         final ExecutionList currentExecutionList = LessonProcessor.getCurrentExecutionList();
-        if (currentExecutionList == null) return;
+        Editor editor = currentExecutionList.getEditor();
 
         int stepNumber = currentExecutionList.getElements().size() - 1;
 
-
         if (stepNumber == 3){
             final String actionName = "EditSource";
-            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
+            PerformActionUtil.performActionDisabledPresentation(actionName, editor);
         }
         if (stepNumber == 0){
             final String actionName = "EditSource";
-            BaseSolutionClass.gotoOffset(currentExecutionList.getEduEditor(), 263);
-            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
+            BaseSolutionClass.gotoOffset(editor, 263);
+            PerformActionUtil.performActionDisabledPresentation(actionName, editor);
         }
     }
 }

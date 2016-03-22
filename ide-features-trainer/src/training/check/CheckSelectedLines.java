@@ -10,13 +10,12 @@ import training.editor.EduEditor;
 public class CheckSelectedLines implements Check{
 
     Project project;
-    EduEditor eduEditor;
-    int countComments;
+    Editor editor;
 
     @Override
-    public void set(Project project, EduEditor eduEditor) {
+    public void set(Project project, Editor editor) {
         this.project = project;
-        this.eduEditor = eduEditor;
+        this.editor = editor;
     }
 
     @Override
@@ -31,7 +30,6 @@ public class CheckSelectedLines implements Check{
 
     private int calc(){
 
-        final Editor editor = eduEditor.getEditor();
         final int lineStart = editor.getSelectionModel().getSelectionStartPosition().getLine();
         final int lineEnd = editor.getSelectionModel().getSelectionEndPosition().getLine();
 

@@ -1,9 +1,11 @@
 package training.commands;
 
+import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import training.learn.ActionsRecorder;
 import training.check.Check;
+import training.learn.LessonManager;
 import training.learn.log.LessonLog;
 import training.keymap.KeymapUtil;
 import training.keymap.SubKeymapUtil;
@@ -32,10 +34,13 @@ public class TryCommand extends Command {
         Check check = null;
 //        updateDescription(element, infoPanel, editor);
 
-        String myTarget = executionList.getTarget();
+        String target = executionList.getTarget();
+        Lesson lesson = executionList.getLesson();
+        Editor editor = executionList.getEditor();
+
         if (element.getAttribute("target") != null)
             try {
-                myTarget = getFromTarget(executionList.getLesson(), element.getAttribute("target").getValue());
+                target = getFromTarget(lesson, element.getAttribute("target").getValue());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -44,25 +49,25 @@ public class TryCommand extends Command {
         if (htmlText.isEmpty()) htmlText = element.getAttribute("description").getValue();
 
         if (htmlText.equals("")) {
-            updateDescription(htmlText, executionList.getEduEditor());
+            updateDescription(htmlText, lesson);
         } else {
-            updateHTMLDescription(htmlText, executionList.getEduEditor());
+            updateHTMLDescription(htmlText, lesson);
         }
 
         //Show button "again"
 //        updateButton(element, elements, lesson, editor, e, document, myTarget, infoPanel, mouseListenerHolder);
 
-        final ActionsRecorder recorder = new ActionsRecorder(executionList.getEditor().getProject(), executionList.getEditor().getDocument(), executionList.getTarget(), executionList.getEduEditor());
-        executionList.getEduEditor().registerActionsRecorder(recorder);
+        final ActionsRecorder recorder = new ActionsRecorder(editor.getProject(), editor.getDocument(), target, editor);
+        LessonManager.getInstance(lesson).registerActionsRecorder(recorder);
 
         if (element.getAttribute("check") != null) {
             String checkClassString = element.getAttribute("check").getValue();
             try {
                 Class myCheck = Class.forName(checkClassString);
                 check = (Check) myCheck.newInstance();
-                check.set(executionList.getProject(), executionList.getEduEditor());
+                check.set(executionList.getProject(), editor);
                 check.before();
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -108,10 +113,11 @@ public class TryCommand extends Command {
     }
 
     private void pass(ExecutionList executionList) {
-        executionList.getEduEditor().passExercise();
-        final LessonLog lessonLog = executionList.getLesson().getLessonLog();
+        Lesson lesson = executionList.getLesson();
+        LessonManager.getInstance(lesson).passExercise();
+        final LessonLog lessonLog = lesson.getLessonLog();
         lessonLog.log("Passed exercise. Exercise #" + lessonLog.getMyLesson().getExerciseCount());
-        executionList.getLesson().passItem();
+        lesson.passItem();
         startNextCommand(executionList);
     }
 

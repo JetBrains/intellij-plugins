@@ -1,6 +1,7 @@
 package training.check;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaTokenType;
 import com.intellij.psi.PsiDocumentManager;
@@ -13,13 +14,13 @@ import training.editor.EduEditor;
 public class CheckCountCommentedLines implements Check{
 
     Project project;
-    EduEditor eduEditor;
+    Editor editor;
     int countComments;
 
     @Override
-    public void set(Project project, EduEditor eduEditor) {
+    public void set(Project project, Editor editor) {
         this.project = project;
-        this.eduEditor = eduEditor;
+        this.editor = editor;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class CheckCountCommentedLines implements Check{
 
     public int countCommentedLines(){
 
-        final PsiElement psiElement = PsiDocumentManager.getInstance(project).getPsiFile(eduEditor.getEditor().getDocument());
+        final PsiElement psiElement = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
         ASTNode astNode = psiElement.getNode();
         while (astNode.getTreeParent() != null) {
             astNode = astNode.getTreeParent();
