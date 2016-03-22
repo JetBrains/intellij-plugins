@@ -307,3 +307,44 @@ ASTWrapperPsiElement(FILE)
             PsiWhiteSpace(' ')
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('term')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    AngularJSRepeatExpression
+      JSDefinitionExpression
+        PsiElement(HASH)('#')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('todo')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('todoService')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('todos')
+  JSEmptyStatement
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace(' ')
+  JSExpressionStatement
+    JSCommaExpression
+      JSAssignmentExpression
+        JSDefinitionExpression
+          JSDefinitionExpression
+            PsiElement(HASH)('#')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('index')
+        PsiElement(JS:EQ)('=')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('index')
+      PsiElement(JS:COMMA)(',')
+      PsiWhiteSpace(' ')
+      JSAssignmentExpression
+        JSDefinitionExpression
+          JSDefinitionExpression
+            PsiElement(HASH)('#')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('last')
+        PsiElement(JS:EQ)('=')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('last')

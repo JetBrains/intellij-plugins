@@ -14,3 +14,4 @@ aaa?.foo
 #todo of todoService.todos | started : status | search : term
 # of todoService.todos | started : status | search : term
 #todo todoService.todos | started : status | search : term
+#todo of todoService.todos; #index=index, #last=last
