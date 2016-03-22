@@ -295,6 +295,17 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testVariableCompletion2Inline() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("binding.ts", "angular2.js");
+        myFixture.completeBasic();
+        myFixture.checkResultByFile("binding.after.ts");
+      }
+    });
+  }
+
   public void testVariableSmart2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
       @Override
@@ -323,7 +334,23 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         PsiElement resolve = ref.resolve();
         assertNotNull(resolve);
         assertEquals("binding.after.html", resolve.getContainingFile().getName());
-        assertEquals("#username", resolve.getContainingFile().findElementAt(resolve.getTextOffset()).getText());
+        assertEquals("#username", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
+      }
+    });
+  }
+
+  public void testVariableResolve2Inline() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("binding.after.ts", "angular2.js");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("in<caret>put_el.", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("binding.after.ts", resolve.getContainingFile().getName());
+        assertEquals("#input_el", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
       }
     });
   }
