@@ -190,31 +190,30 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0200/0257.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0258.unit:1");
 
+    KNOWN_TO_FAIL.add("regression/0300/0357.stmt:1  (indent 2)"); // Bad bug -- original is better
     KNOWN_TO_FAIL.add("regression/0300/0360.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0360.stmt:1");
     KNOWN_TO_FAIL.add("regression/0300/0364.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0367.stmt:1  (indent 6)"); // NEW 3/26 Continuation indent is too deep
     KNOWN_TO_FAIL.add("regression/0300/0368.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0369.stmt:1");
     KNOWN_TO_FAIL.add("regression/0300/0370.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0300/0373.unit:1  (indent 4)"); // Bad bug -- original is better
     KNOWN_TO_FAIL.add("regression/0300/0375.stmt:1  (indent 4)");
     KNOWN_TO_FAIL.add("regression/0300/0377.stmt:1  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0300/0378.stmt:1  (indent 4)"); // NEW 3/26 Final chain should be on new lines
     KNOWN_TO_FAIL.add("regression/0300/0380.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0381.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0383.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0384.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0300/0387.unit:1"); // NEW 3/26 Parameter metadata
     KNOWN_TO_FAIL.add("regression/0300/0388.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0389.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0391.stmt:1");
-    KNOWN_TO_FAIL.add("regression/0300/0357.stmt:1  (indent 2)"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0300/0367.stmt:1  (indent 6)"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0300/0373.unit:1  (indent 4)"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0300/0378.stmt:1  (indent 4)"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0300/0387.unit:1"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0300/0394.stmt:1"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0300/0398.stmt:1  (indent 4)"); // NEW 3/26
-    KNOWN_TO_FAIL.add("regression/0300/0399.unit:1  (indent 2)"); // NEW 3/26
+    KNOWN_TO_FAIL.add("regression/0300/0394.stmt:1"); // NEW 3/26 List wrapping
+    KNOWN_TO_FAIL.add("regression/0300/0398.stmt:1  (indent 4)"); // NEW 3/26 Line splitting for all named params when one wraps
+    KNOWN_TO_FAIL.add("regression/0300/0399.unit:1  (indent 2)"); // NEW 3/26 Split line between property and method in chain
 
-    KNOWN_TO_FAIL.add("regression/0400/0407.unit:1"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0407.unit:15  (indent 4)"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0410.stmt:1"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0410.stmt:18  (indent 2)"); // NEW 3/26

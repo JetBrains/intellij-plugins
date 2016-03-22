@@ -634,7 +634,15 @@ public class DartSpacingProcessor {
 
     //todo: customize in settings
 
-    if (type1 == EXPRESSION_BODY_DEF || type2 == EXPRESSION_BODY_DEF) {
+    if (type1 == EXPRESSION_BODY_DEF) { // =>
+      if (type2 == STRING_LITERAL_EXPRESSION) {
+        // We might want to add a check that the string contains a newline as in regression/0000/0036.unit
+        return addSingleSpaceIf(true);
+      }
+      TextRange range = node2.getTextRange();
+      return Spacing.createDependentLFSpacing(1, 1, range, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+    if (type2 == EXPRESSION_BODY_DEF) {
       return addSingleSpaceIf(true);
     }
 
@@ -684,6 +692,9 @@ public class DartSpacingProcessor {
         if (allCascadesAreSameMethod(childs)) {
           return Spacing.createSpacing(0, 0, 0, false, 0);
         }
+      }
+      else if (type1 == NEW_EXPRESSION && parentType == ARGUMENT_LIST) {
+        return Spacing.createDependentLFSpacing(0, 0, myNode.getTextRange(), true, 0);
       }
       return addLineBreak();
     }
