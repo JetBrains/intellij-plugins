@@ -123,6 +123,8 @@ public class DartModuleBuilder extends ModuleBuilder {
                                          @NotNull final DartProjectWizardData wizardData) {
     // similar to DartConfigurable.apply()
     if (DartSdkUtil.isDartSdkHome(wizardData.dartSdkPath)) {
+      DartSdkUtil.updateKnownSdkPaths(modifiableRootModel.getProject(), wizardData.dartSdkPath);
+
       final LibraryTable.ModifiableModel libraryTableModifiableModel =
         ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel();
 

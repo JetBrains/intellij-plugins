@@ -10,6 +10,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,6 +80,8 @@ public class DartiumUtil {
     final String dartiumPathInitial = dartiumInitial == null ? null : dartiumInitial.getPath();
 
     if (!dartiumPathFromUI.isEmpty() && new File(dartiumPathFromUI).exists() && !dartiumPathFromUI.equals(dartiumPathInitial)) {
+      DartSdkUtil.updateKnownDartiumPaths(dartiumPathInitial, dartiumPathFromUI);
+
       final WebBrowser browser = ensureDartiumBrowserConfigured(dartiumPathFromUI);
       if (!dartiumSettingsFromUI.equals(browser.getSpecificSettings())) {
         WebBrowserManager.getInstance().setBrowserSpecificSettings(browser, dartiumSettingsFromUI);

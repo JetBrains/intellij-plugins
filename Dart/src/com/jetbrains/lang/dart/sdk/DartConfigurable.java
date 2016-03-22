@@ -57,6 +57,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
@@ -76,13 +77,13 @@ public class DartConfigurable implements SearchableConfigurable {
   private JBCheckBox myEnableDartSupportCheckBox;
 
   private JPanel mySettingsPanel;
-  private TextFieldWithBrowseButton mySdkPathTextWithBrowse;
+  private ComboboxWithBrowseButton mySdkPathComboWithBrowse;
   private JBLabel myVersionLabel;
   private JBCheckBox myCheckSdkUpdateCheckBox;
   private ComboBox mySdkUpdateChannelCombo;
   private JButton myCheckSdkUpdateButton;
 
-  private TextFieldWithBrowseButton myDartiumPathTextWithBrowse;
+  private ComboboxWithBrowseButton myDartiumPathComboWithBrowse;
   private JButton myDartiumSettingsButton;
   private JBCheckBox myCheckedModeCheckBox;
 
@@ -139,13 +140,14 @@ public class DartConfigurable implements SearchableConfigurable {
       }
     };
 
-    DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathTextWithBrowse, myVersionLabel, myDartiumPathTextWithBrowse,
+    DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
                                               currentDartiumSettingsRetriever, myDartiumSettingsButton, myCheckedModeCheckBox,
                                               isResettingControlsComputable);
 
-    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+    final JTextComponent sdkEditor = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
+    sdkEditor.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
-        final String sdkHomePath = mySdkPathTextWithBrowse.getText().trim();
+        final String sdkHomePath = mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim();
         if (!sdkHomePath.isEmpty()) {
           final String version = DartSdkUtil.getSdkVersion(sdkHomePath);
           if (version != null && (version.contains("-dev.") || version.contains("-edge."))) {
@@ -157,7 +159,8 @@ public class DartConfigurable implements SearchableConfigurable {
       }
     });
 
-    myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+    final JTextComponent dartiumEditor = (JTextComponent)myDartiumPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
+    dartiumEditor.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
         updateErrorLabel();
       }
@@ -327,7 +330,8 @@ public class DartConfigurable implements SearchableConfigurable {
 
   @Override
   public boolean isModified() {
-    final String sdkHomePath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
+    final String sdkHomePath =
+      FileUtilRt.toSystemIndependentName(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
     final boolean sdkSelected = DartSdkUtil.isDartSdkHome(sdkHomePath);
 
     // was disabled, now disabled (or no sdk selected) => not modified, do not care about other controls
@@ -344,7 +348,8 @@ public class DartConfigurable implements SearchableConfigurable {
                                                 : DartSdkUpdateOption.DoNotCheck;
     if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
 
-    final String dartiumPath = FileUtilRt.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
+    final String dartiumPath =
+      FileUtilRt.toSystemIndependentName(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
     final String dartiumPathInitial = myDartiumInitial == null ? null : myDartiumInitial.getPath();
     if (!dartiumPath.isEmpty() && new File(dartiumPath).exists() && !dartiumPath.equals(dartiumPathInitial)) return true;
 
@@ -402,14 +407,22 @@ public class DartConfigurable implements SearchableConfigurable {
 
     // reset UI
     myEnableDartSupportCheckBox.setSelected(myDartSupportEnabledInitial);
-    mySdkPathTextWithBrowse.setText(mySdkInitial == null ? "" : FileUtilRt.toSystemDependentName(mySdkInitial.getHomePath()));
+    final String sdkInitialPath = mySdkInitial == null ? "" : FileUtilRt.toSystemDependentName(mySdkInitial.getHomePath());
+    mySdkPathComboWithBrowse.getComboBox().getEditor().setItem(sdkInitialPath);
+    if (!sdkInitialPath.isEmpty()) {
+      ensureComboModelContainsCurrentItem(mySdkPathComboWithBrowse.getComboBox());
+    }
 
     final DartSdkUpdateOption sdkUpdateOption = DartSdkUpdateOption.getDartSdkUpdateOption();
     myCheckSdkUpdateCheckBox.setSelected(sdkUpdateOption != DartSdkUpdateOption.DoNotCheck);
     mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
 
-    myDartiumPathTextWithBrowse
-      .setText(myDartiumInitial == null ? "" : FileUtilRt.toSystemDependentName(StringUtil.notNullize(myDartiumInitial.getPath())));
+    final String dartiumInitialPath =
+      myDartiumInitial == null ? "" : FileUtilRt.toSystemDependentName(StringUtil.notNullize(myDartiumInitial.getPath()));
+    myDartiumPathComboWithBrowse.getComboBox().getEditor().setItem(dartiumInitialPath);
+    if (!dartiumInitialPath.isEmpty()) {
+      ensureComboModelContainsCurrentItem(myDartiumPathComboWithBrowse.getComboBox());
+    }
 
     final boolean checkedMode = myDartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
     myCheckedModeCheckBox.setSelected(checkedMode);
@@ -434,6 +447,24 @@ public class DartConfigurable implements SearchableConfigurable {
     myInReset = false;
   }
 
+  private static void ensureComboModelContainsCurrentItem(@NotNull final JComboBox comboBox) {
+    final Object currentItem = comboBox.getEditor().getItem();
+
+    boolean contains = false;
+    for (int i = 0; i < comboBox.getModel().getSize(); i++) {
+      if (currentItem.equals(comboBox.getModel().getElementAt(i))) {
+        contains = true;
+        break;
+      }
+    }
+
+    if (!contains) {
+      ((DefaultComboBoxModel)comboBox.getModel()).insertElementAt(currentItem, 0);
+      comboBox.setSelectedItem(currentItem); // to set focus on current item in combo popup
+      comboBox.getEditor().setItem(currentItem); // to set current item in combo itself
+    }
+  }
+
   @Override
   public void apply() throws ConfigurationException {
     // similar to DartModuleBuilder.setupSdkAndDartium()
@@ -441,9 +472,12 @@ public class DartConfigurable implements SearchableConfigurable {
       @Override
       public void run() {
         if (myEnableDartSupportCheckBox.isSelected()) {
-          final String sdkHomePath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
+          final String sdkHomePath =
+            FileUtilRt.toSystemIndependentName(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
 
           if (DartSdkUtil.isDartSdkHome(sdkHomePath)) {
+            DartSdkUtil.updateKnownSdkPaths(myProject, sdkHomePath);
+
             DartSdkGlobalLibUtil.ensureDartSdkConfigured(sdkHomePath);
             DaemonCodeAnalyzer.getInstance(myProject).restart();
 
@@ -471,7 +505,8 @@ public class DartConfigurable implements SearchableConfigurable {
                                                       : DartSdkUpdateOption.DoNotCheck;
           DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
 
-          final String dartiumPath = FileUtilRt.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
+          final String dartiumPath =
+            FileUtilRt.toSystemIndependentName(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
           DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
         }
         else {
@@ -525,10 +560,12 @@ public class DartConfigurable implements SearchableConfigurable {
       return null;
     }
 
-    String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathTextWithBrowse.getText().trim());
+    String message =
+      DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
     if (message != null) return message;
 
-    message = DartiumUtil.getErrorMessageIfWrongDartiumPath(myDartiumPathTextWithBrowse.getText().trim());
+    message =
+      DartiumUtil.getErrorMessageIfWrongDartiumPath(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
     if (message != null) return message;
 
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
@@ -573,6 +610,9 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   private void createUIComponents() {
+    mySdkPathComboWithBrowse = new ComboboxWithBrowseButton(new ComboBox<>());
+    myDartiumPathComboWithBrowse = new ComboboxWithBrowseButton(new ComboBox<>());
+
     final CheckboxTree.CheckboxTreeCellRenderer checkboxTreeCellRenderer = new CheckboxTree.CheckboxTreeCellRenderer() {
       @Override
       public void customizeRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {

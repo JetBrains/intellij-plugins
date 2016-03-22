@@ -25,9 +25,9 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="366bd" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="mySdkPathTextWithBrowse">
+          <component id="80a7b" class="com.intellij.ui.ComboboxWithBrowseButton" binding="mySdkPathComboWithBrowse" custom-create="true">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
@@ -137,7 +137,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <labelFor value="366bd"/>
+                  <labelFor value="80a7b"/>
                   <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="dart.sdk.path.label"/>
                 </properties>
               </component>
@@ -174,7 +174,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <labelFor value="356ae"/>
+                  <labelFor value="ff2ce"/>
                   <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="dartium.path.label"/>
                 </properties>
               </component>
@@ -182,7 +182,7 @@
           </grid>
           <component id="93cdd" class="com.intellij.openapi.ui.ComboBox" binding="mySdkUpdateChannelCombo">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <model>
@@ -191,9 +191,9 @@
               </model>
             </properties>
           </component>
-          <component id="356ae" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myDartiumPathTextWithBrowse">
+          <component id="ff2ce" class="com.intellij.ui.ComboboxWithBrowseButton" binding="myDartiumPathComboWithBrowse" custom-create="true">
             <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
