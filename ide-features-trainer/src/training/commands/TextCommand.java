@@ -1,6 +1,7 @@
 package training.commands;
 
 import org.jdom.Element;
+import training.learn.Lesson;
 
 /**
  * Created by karashevich on 30/01/15.
@@ -16,15 +17,15 @@ public class TextCommand extends Command {
 
 
         Element element = executionList.getElements().poll();
-//        updateDescription(element, infoPanel, editor);
+        Lesson lesson = executionList.getLesson();
 
         String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
         if (htmlText.isEmpty()) htmlText = element.getAttribute("description").getValue();
 
         if (htmlText.equals("")) {
-            updateDescription(htmlText, executionList.getEduEditor());
+            updateDescription(htmlText, lesson);
         } else {
-            updateHTMLDescription(htmlText, executionList.getEduEditor());
+            updateHTMLDescription(htmlText, lesson);
         }
 
         startNextCommand(executionList);

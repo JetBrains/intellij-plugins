@@ -32,10 +32,6 @@ public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvid
         super(vertical, borderless);
     }
 
-    public JComponent createLearnPanel(String taskText) {
-        return new JPanel();
-    }
-
     public void init(Project project) {
         int preferableWidth = 350;
         myEduPanel = new EduPanel(preferableWidth);

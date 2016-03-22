@@ -1,5 +1,8 @@
 package training.commands;
 
+import training.learn.Lesson;
+import training.learn.LessonManager;
+
 /**
  * Created by karashevich on 30/01/15.
  */
@@ -11,9 +14,12 @@ public class CaretUnblockCommand extends Command {
 
     @Override
     public void execute(ExecutionList executionList) {
-        //Unblock caret and perform next command
-        executionList.getEduEditor().unblockCaret();
         executionList.getElements().poll();
+
+        Lesson lesson = executionList.getLesson();
+
+        //Unblock caret and perform next command
+        LessonManager.getInstance(lesson).unblockCaret();
         startNextCommand(executionList);
 
     }

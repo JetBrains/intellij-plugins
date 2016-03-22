@@ -1,5 +1,6 @@
 package training.solutions;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import training.editor.EduEditor;
 
@@ -8,11 +9,11 @@ import training.editor.EduEditor;
  */
 public class BaseSolutionClass {
 
-    public static void gotoOffset(EduEditor eduEditor, int offset){
-        eduEditor.getEditor().getCaretModel().moveToOffset(offset);
+    public static void gotoOffset(Editor editor, int offset){
+        editor.getCaretModel().moveToOffset(offset);
     }
 
-    public static void gotoLogicalPosition(EduEditor eduEditor, int line, int column) {
-        eduEditor.getEditor().getCaretModel().moveToLogicalPosition(new LogicalPosition(line - 1, column - 1));
+    public static void gotoLogicalPosition(Editor editor, int line, int column) {
+        editor.getCaretModel().moveToLogicalPosition(new LogicalPosition(line - 1, column - 1));
     }
 }

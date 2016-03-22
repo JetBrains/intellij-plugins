@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -26,7 +27,7 @@ public class ActionsRecorder implements Disposable {
 
     private Project project;
     private Document document;
-    private EduEditor eduEditor;
+    private Editor editor;
     private String target;
     private boolean triggerActivated;
     Queue<String> triggerQueue;
@@ -39,15 +40,16 @@ public class ActionsRecorder implements Disposable {
     @Nullable
     Check check = null;
 
-    public ActionsRecorder(Project project, Document document, String target, EduEditor eduEditor) {
+    public ActionsRecorder(Project project, Document document, String target, Editor editor) {
         this.project = project;
         this.document = document;
         this.target = target;
         this.triggerActivated = false;
         this.doWhenDone = null;
-        this.eduEditor = eduEditor;
+        this.editor = editor;
 
-        Disposer.register(eduEditor, this);
+        //TODO: add disposer to ActionRecorder
+//        Disposer.register(editor, this);
     }
 
     @Override
@@ -154,7 +156,7 @@ public class ActionsRecorder implements Disposable {
 
             @Override
             public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-                if (event.getProject() == null || FileEditorManager.getInstance(event.getProject()).getSelectedTextEditor() != eduEditor.getEditor() )
+                if (event.getProject() == null || FileEditorManager.getInstance(event.getProject()).getSelectedTextEditor() != editor )
                     editorFlag = false;
                 else
                     editorFlag = true;
