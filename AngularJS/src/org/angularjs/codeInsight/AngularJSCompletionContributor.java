@@ -7,7 +7,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
-import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
@@ -41,9 +41,9 @@ public class AngularJSCompletionContributor extends CompletionContributor {
       final PsiElement parent = ((JSReferenceExpressionImpl)ref).getParent();
       if (addFilterVariants(result, parameters, ref, parent)) return;
       if (addControllerVariants(result, parameters, ref, parent)) return;
-      AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSNamedElement>() {
+      AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSPsiElementBase>() {
         @Override
-        public void consume(JSNamedElement element) {
+        public void consume(JSPsiElementBase element) {
           result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, element.getName(), NG_VARIABLE_PRIORITY, false, false));
         }
       });
