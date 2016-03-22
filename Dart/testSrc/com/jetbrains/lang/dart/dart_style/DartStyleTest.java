@@ -42,22 +42,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/functions.unit:82  before '[' in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:86  after '[' in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:98  before '{' in param list");
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:2  function declaration"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:6  type bounds"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:10  method"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:20  function type parameter"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:28  parameter type"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:32  return type"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:36  without dynamic"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/generic_methods.unit:46  var"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/comments/generic_methods.unit:2  function declaration"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/comments/generic_methods.unit:6  type bounds"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/comments/generic_methods.unit:10  method"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/comments/generic_methods.unit:20  function type parameter"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/comments/generic_methods.unit:28  parameter type"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/comments/generic_methods.unit:32  return type"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/comments/generic_methods.unit:36  without dynamic"); // NEW 3/16
-    KNOWN_TO_FAIL.add("comments/comments/generic_methods.unit:46  var"); // NEW 3/16
     KNOWN_TO_FAIL.add("comments/lists.stmt:39  inline block comment");
     KNOWN_TO_FAIL.add("comments/lists.stmt:50  multiple inline block comments");
     KNOWN_TO_FAIL.add("comments/lists.stmt:62  line comment between items");
