@@ -33,7 +33,6 @@ public class LessonMessagePane extends JTextPane {
     LessonMessagePane(){
         super();
         initStyleConstants();
-        //TODO: Don't forget to change it back
         setEditable(false);
         this.setParagraphAttributes(PARAGRAPH_STYLE, true);
     }
@@ -57,7 +56,7 @@ public class LessonMessagePane extends JTextPane {
         StyleConstants.setUnderline(LINK, true);
         StyleConstants.setFontSize(LINK, 12);
 
-        StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0);
+        StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 20);
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
         StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 10.5f);
         StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f);
@@ -74,7 +73,6 @@ public class LessonMessagePane extends JTextPane {
         StyleConstants.setForeground(LINK, linkFontColor);
         StyleConstants.setForeground(CODE, codeFontColor);
         this.passedColor = passedColor;
-
     }
 
     public void addMessage(String text) {
@@ -139,20 +137,7 @@ public class LessonMessagePane extends JTextPane {
     public void passPreviousMessages() throws BadLocationException {
         if (lessonMessages.size() > 0) {
             final LessonMessage lessonMessage = lessonMessages.get(lessonMessages.size() - 1);
-            getDocument().insertString(getDocument().getLength(), " ", REGULAR);
-
-            StyleContext context = new StyleContext();
-            StyledDocument document = getStyledDocument();
-            Style labelStyle = context.getStyle(StyleContext.DEFAULT_STYLE);
-            JLabel jlabel = new JLabel(LearnIcons.CheckmarkGray12);
-            jlabel.setAlignmentY(0.9f);
-            StyleConstants.setComponent(labelStyle, jlabel);
-            try {
-                document.insertString(document.getLength(), " passed", labelStyle); //this text is not shown but appends a jlabel containing checkmark icon.
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
-
+            lessonMessage.setPassed(true);
 
             //Repaint text with passed style
             Style passedStyle = this.addStyle("PassedStyle", null);
@@ -160,8 +145,7 @@ public class LessonMessagePane extends JTextPane {
             final StyledDocument doc = getStyledDocument();
 
             doc.setCharacterAttributes(0, lessonMessage.getEnd(), passedStyle, false);
-
-        } else return;
+        }
     }
 
     public void clear() {
@@ -193,6 +177,28 @@ public class LessonMessagePane extends JTextPane {
 
             }
         });
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        paintLessonCheckmarks(g);
+    }
+
+    private void paintLessonCheckmarks(Graphics g) {
+        for (LessonMessage lessonMessage : lessonMessages) {
+            if (lessonMessage.isPassed()){
+                int startOffset = lessonMessage.getStart();
+                if (startOffset != 0) startOffset++;
+                try {
+                    Rectangle rectangle = modelToView(startOffset);
+                    LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 20, rectangle.y + 2);
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
     }
 
     public AttributeSet getDefaultAttributeSet() {

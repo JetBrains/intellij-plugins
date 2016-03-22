@@ -30,11 +30,11 @@ public class EduBalloonBuilder {
     private boolean reuseLastBalloon = false;
     private Balloon lastBalloon = null;
 
-    public EduBalloonBuilder(EduEditor eduEditor, int delay, String text) {
+    public EduBalloonBuilder(Editor editor, int delay, String text) {
         myDelay = delay;
         myText = text;
 
-        myEditor = eduEditor.getEditor();
+        myEditor = editor;
         myProject = myEditor.getProject();
     }
 

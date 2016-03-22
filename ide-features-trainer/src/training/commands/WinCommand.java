@@ -1,6 +1,9 @@
 package training.commands;
 
+import com.intellij.openapi.project.Project;
 import org.jdom.Element;
+import training.learn.Lesson;
+import training.learn.LessonManager;
 
 /**
  * Created by karashevich on 30/01/15.
@@ -14,9 +17,11 @@ public class WinCommand extends Command {
     @Override
     public void execute(ExecutionList executionList) throws InterruptedException {
 
-        Element element = executionList.getElements().poll();
-        executionList.getLesson().pass();
-        executionList.getEduEditor().passLesson(executionList.getLesson());
+        executionList.getElements().poll();
 
+        Project project = executionList.getProject();
+        Lesson lesson = executionList.getLesson();
+        lesson.pass();
+        LessonManager.getInstance(lesson).passLesson(project);
     }
 }

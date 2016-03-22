@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * Created by jetbrains on 17/03/16.
  */
 public class LearnToolWindowFactory implements ToolWindowFactory, DumbAware {
-    public static final String LEARN_TOOL_WINDOW = "Learn";
+    public static final String LEARN_TOOL_WINDOW = "Learn IntelliJ IDEA";
 
 
     @Override

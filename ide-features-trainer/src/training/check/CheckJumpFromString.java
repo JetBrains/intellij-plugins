@@ -2,6 +2,7 @@ package training.check;
 
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaTokenType;
 import com.intellij.psi.PsiDocumentManager;
@@ -17,12 +18,12 @@ import training.editor.EduEditor;
 public class CheckJumpFromString implements Check {
 
     Project project;
-    EduEditor eduEditor;
+    Editor editor;
 
     @Override
-    public void set(Project project, EduEditor eduEditor) {
+    public void set(Project project, Editor editor) {
         this.project = project;
-        this.eduEditor = eduEditor;
+        this.editor = editor;
     }
 
     @Override
@@ -32,8 +33,8 @@ public class CheckJumpFromString implements Check {
 
     @Override
     public boolean check() {
-        final CaretModel caretModel = eduEditor.getEditor().getCaretModel();
-        final Document document = eduEditor.getEditor().getDocument();
+        final CaretModel caretModel = editor.getCaretModel();
+        final Document document = editor.getDocument();
         final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
         assert psiFile != null;
         final PsiElement elementAt = psiFile.findElementAt(caretModel.getOffset());

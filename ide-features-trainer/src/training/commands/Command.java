@@ -5,6 +5,8 @@ import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import training.editor.EduEditor;
 import training.editor.eduUI.Message;
+import training.learn.Lesson;
+import training.learn.LessonManager;
 import training.util.XmlUtil;
 
 import java.util.concurrent.ExecutionException;
@@ -27,11 +29,11 @@ public abstract class Command {
         return commandType;
     }
 
-    protected void updateDescription(String s, EduEditor eduEditor){
-        eduEditor.addMessage(s);
+    protected void updateDescription(String s, Lesson lesson){
+        LessonManager.getInstance(lesson).addMessage(s);
     }
 
-    protected void updateHTMLDescription(String htmlText, EduEditor eduEditor){
+    protected void updateHTMLDescription(String htmlText, Lesson lesson){
 //        if (element.getAttribute("description") != null) {
 //            String description =(element.getAttribute("description").getValue());
 //            description = XmlUtil.extractActions(description);
@@ -39,7 +41,7 @@ public abstract class Command {
 //            updateHTMLDescription(element, infoPanel, editor, description);
 //        }
         final Message[] messages = XmlUtil.extractAll(new Message[]{new Message(htmlText, Message.MessageType.TEXT_REGULAR)});
-        eduEditor.addMessage(messages);
+        LessonManager.getInstance(lesson).addMessage(messages);
     }
 
     /**
@@ -62,12 +64,6 @@ public abstract class Command {
             public void run() {
                 try {
                     CommandFactory.buildCommand(executionList.getElements().peek()).execute(executionList);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                } catch (ExecutionException e1) {
-                    e1.printStackTrace();
-                } catch (BadCommandException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

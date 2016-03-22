@@ -19,17 +19,17 @@ public class CommentSolution implements LessonSolution{
         int stepNumber = currentExecutionList.getElements().size() - 1;
         if (stepNumber == 3){
             final String actionName = "CommentByLineComment";
-            BaseSolutionClass.gotoOffset(currentExecutionList.getEduEditor(), 0);
+            BaseSolutionClass.gotoOffset(currentExecutionList.getEditor(), 0);
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
         }
         if (stepNumber == 1){
             final String actionName = "CommentByLineComment";
-            BaseSolutionClass.gotoOffset(currentExecutionList.getEduEditor(), 0);
+            BaseSolutionClass.gotoOffset(currentExecutionList.getEditor(), 0);
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
 
         }
         if (stepNumber == 0){
-            BaseSolutionClass.gotoOffset(currentExecutionList.getEduEditor(), 0);
+            BaseSolutionClass.gotoOffset(currentExecutionList.getEditor(), 0);
             final String actionName = "EditorDownWithSelection";
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
