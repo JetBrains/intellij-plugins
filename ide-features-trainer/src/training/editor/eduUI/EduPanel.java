@@ -10,7 +10,8 @@ import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import icons.LearnIcons;
-import training.learn.Course;
+import org.jetbrains.annotations.Nullable;
+import training.learn.Module;
 import training.learn.CourseManager;
 import training.learn.EducationBundle;
 import training.learn.Lesson;
@@ -70,7 +71,7 @@ public class EduPanel extends JPanel {
     private Color separatorColor;
     private int separatorGap;
 
-    //Course panel stuff
+    //Module panel stuff
     private ModulePanel modulePanel;
 
 
@@ -177,6 +178,13 @@ public class EduPanel extends JPanel {
         allTopicsLabel.setFont(allTopicsFont);
         allTopicsLabel.setForeground(UIUtil.getActiveTextColor());
         allTopicsLabel.setFocusable(false);;
+        allTopicsLabel.setListener(new LinkListener() {
+            @Override
+            public void linkSelected(LinkLabel aSource, Object aLinkData) {
+                Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
+                CourseManager.getInstance().setModulesView(guessCurrentProject);
+            }
+        }, null);
 
         moduleNamePanel.add(moduleNameLabel);
         moduleNamePanel.add(Box.createHorizontalGlue());
@@ -203,7 +211,7 @@ public class EduPanel extends JPanel {
         lessonMessagePane.setMaximumSize(new Dimension(width, 10000));
 
         //Set Next Button UI
-        button = new JButton("Skip");
+        button = new JButton(EducationBundle.message("learn.ui.button.skip"));
 //        button.setAlignmentX(Component.LEFT_ALIGNMENT);
         button.setBackground(background);
         button.setMargin(new Insets(0, 0, 0, 0));
@@ -352,15 +360,15 @@ public class EduPanel extends JPanel {
         buttonAction.setEnabled(true);
         button.setAction(buttonAction);
         if (notPassedLesson != null) {
-            button.setText("Next Lesson: " + notPassedLesson.getName());
+            button.setText(EducationBundle.message("learn.ui.button.next.lesson") + ": " + notPassedLesson.getName());
         } else {
-            button.setText("Next Lesson");
+            button.setText(EducationBundle.message("learn.ui.button.next.lesson"));
         }
         button.setSelected(true);
         getRootPane().setDefaultButton(button);
     }
 
-    public void setButtonSkipAction(final Runnable runnable) {
+    public void setButtonSkipAction(final Runnable runnable, @Nullable String text, boolean visible) {
 
         Action buttonAction = new AbstractAction() {
             @Override
@@ -371,8 +379,10 @@ public class EduPanel extends JPanel {
 
         buttonAction.setEnabled(true);
         button.setAction(buttonAction);
-        button.setText("Skip");
+        if (text == null || text.isEmpty()) button.setText("Skip");
+        else button.setText("Skip to module: " + text);
         button.setSelected(true);
+        button.setVisible(visible);
     }
 
 
@@ -397,8 +407,14 @@ public class EduPanel extends JPanel {
         return modulePanel;
     }
 
+    public void clear() {
+        clearLessonPanel();
+        //clearModulePanel
+        modulePanel.removeAll();
+    }
+
     public class ModulePanel extends JPanel{
-        private Course myModule;
+        private Module myModule;
         private Lesson myLesson;
         private BidirectionalMap<Lesson, MyLinkLabel> lessonLabelMap;
         private int leftInset = 10;
@@ -406,7 +422,7 @@ public class EduPanel extends JPanel {
         public void init(Lesson lesson){
 
             myLesson = lesson;
-            myModule = lesson.getCourse();
+            myModule = lesson.getModule();
             lessonLabelMap = new BidirectionalMap<Lesson, MyLinkLabel>();
             initModuleLessons(lesson);
         }
@@ -417,16 +433,16 @@ public class EduPanel extends JPanel {
 
         private void initModuleLessons(final Lesson lesson){
             if(lesson == null) return;
-            if(lesson.getCourse() == null) return;
-            Course course = lesson.getCourse();
-            final ArrayList<Lesson> myLessons = course.getLessons();
+            if(lesson.getModule() == null) return;
+            Module module = lesson.getModule();
+            final ArrayList<Lesson> myLessons = module.getLessons();
 
-            //if course contains one lesson only
+            //if module contains one lesson only
             if (myLessons.size() == 1) return;
 
             //create ModuleLessons region
             JLabel moduleLessons = new JLabel();
-            String courseName = lesson.getCourse().getName();
+            String courseName = lesson.getModule().getName();
             String courseNameLessons = courseName + " Lessons";
             moduleLessons.setText(courseNameLessons);
             moduleLessons.setFont(allLessonsFont);

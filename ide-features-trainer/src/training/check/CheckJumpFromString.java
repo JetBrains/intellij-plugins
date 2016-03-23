@@ -8,9 +8,6 @@ import com.intellij.psi.JavaTokenType;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.PsiJavaCodeReferenceElementImpl;
-import com.intellij.psi.util.PsiUtil;
-import training.editor.EduEditor;
 
 /**
  * Created by karashevich on 22/09/15.

@@ -18,7 +18,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.editor.EduEditor;
 import training.learn.EducationBundle;
 
 import java.awt.*;
@@ -41,7 +40,7 @@ public class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget
         final FileEditor[] selectedEditors = FileEditorManager.getInstance(project).getSelectedEditors();
 
         for (FileEditor selectedEditor : selectedEditors) {
-            if (selectedEditor instanceof EduEditor) currentEditor = selectedEditor;
+//            if () currentEditor = selectedEditor;
         }
 
         if (currentEditor == null) currentEditor = selectedEditors[0];
@@ -112,14 +111,14 @@ public class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget
     @Override
     public String getText() {
 
-        if((currentEditor != null) && (currentEditor instanceof EduEditor)) {
-            if(((EduEditor) currentEditor).isDemoModeOn()) {
+//        if((currentEditor != null) && (currentEditor instanceof EduEditor)) {
+//            if(((EduEditor) currentEditor).isDemoModeOn()) {
                 return "DEMO MODE ON";
-            } else {
-                return "";
-            }
-        }
-        return "";
+//            } else {
+//                return "";
+//            }
+//        }
+//        return "";
     }
 
     @NotNull

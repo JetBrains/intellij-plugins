@@ -17,8 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import training.commands.*;
-import training.editor.EduEditor;
-import training.editor.EduEditorManager;
 import training.learn.*;
 import training.testFramework.EduIdeaTestFixtureFactoryImpl;
 
@@ -68,11 +66,11 @@ public class SoftProjectBasedTest extends UsefulTestCase {
 
     public static List<Object> dataA() {
         List<Object> lessonsIds = new ArrayList<Object>();
-        final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
-        for (Course course : courses) {
-            final ArrayList<Lesson> lessons = course.getLessons();
+        final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        for (Module module : modules) {
+            final ArrayList<Lesson> lessons = module.getLessons();
             for (Lesson lesson : lessons) {
-                if (lesson.getCourse().courseType == Course.CourseType.PROJECT) {
+                if (lesson.getModule().moduleType == Module.ModuleType.PROJECT) {
                     lessonsIds.add(lesson.getName());
                 }
             }
@@ -101,7 +99,6 @@ public class SoftProjectBasedTest extends UsefulTestCase {
             @Override
             public void run() {
                 try {
-                    disposeAllEduEditors();
                     try {
                         myProjectFixture.tearDown();
                         myProjectFixture = null;
@@ -135,7 +132,7 @@ public class SoftProjectBasedTest extends UsefulTestCase {
                 ((VirtualFilePointerManagerImpl) VirtualFilePointerManager.getInstance()).storePointers();
 
                 try {
-                    CourseManager.getInstance().checkEnvironment(myProject, myLesson.getCourse());
+                    CourseManager.getInstance().checkEnvironment(myProject, myLesson.getModule());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -175,12 +172,6 @@ public class SoftProjectBasedTest extends UsefulTestCase {
     }
 
 
-    private static void disposeAllEduEditors() throws Exception {
-        final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
-        for (EduEditor eduEditor : allNotDisposedEduEditors) {
-            Disposer.dispose(eduEditor);
-        }
-    }
 
 
     protected void prepareLesson() {

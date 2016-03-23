@@ -123,7 +123,7 @@ public class TryCommand extends Command {
 
 
     private String getFromTarget(Lesson lesson, String targetPath) throws IOException {
-        InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getCourse().getAnswersPath() + targetPath);
+        InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getModule().getAnswersPath() + targetPath);
         if(is == null) throw new IOException("Unable to get checkfile for \"" + lesson.getName() + "\" lesson");
         return new Scanner(is).useDelimiter("\\Z").next();
     }

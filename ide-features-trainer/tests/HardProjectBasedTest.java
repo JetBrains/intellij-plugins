@@ -25,9 +25,6 @@ import training.commands.Command;
 import training.commands.CommandFactory;
 import training.commands.ExecutionList;
 import training.commands.TestCommand;
-import training.editor.EduEditor;
-import training.editor.EduEditorFactory;
-import training.editor.EduEditorManager;
 import training.learn.*;
 import training.testFramework.EduIdeaTestFixtureFactoryImpl;
 import training.testFramework.LessonSolution;
@@ -53,11 +50,11 @@ public class HardProjectBasedTest extends UsefulTestCase {
     @Parameterized.Parameters(name = "{0}")
     public static List<Object> data() {
         List<Object> lessonsIds = new ArrayList<Object>();
-        final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
-        for (Course course : courses) {
-            final ArrayList<Lesson> lessons = course.getLessons();
+        final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        for (Module module : modules) {
+            final ArrayList<Lesson> lessons = module.getLessons();
             for (Lesson lesson : lessons) {
-                if (lesson.getCourse().courseType == Course.CourseType.PROJECT) {
+                if (lesson.getModule().moduleType == Module.ModuleType.PROJECT) {
                     lessonsIds.add(lesson.getName());
                 }
             }
@@ -80,20 +77,11 @@ public class HardProjectBasedTest extends UsefulTestCase {
                     myProject = myProjectFixture.getProject();
 
                     //Swap EditorFactoryClasses with EduEditorFactory
-                    if (!(EditorFactory.getInstance() instanceof EduEditorFactory))
-                        swapEditorFactory();
                 } catch (Exception e) {
                     ex.set(e);
                 }
             }
 
-            private void swapEditorFactory() throws Exception {
-                final EduEditorFactory eduEditorFactory = new EduEditorFactory();
-                eduEditorFactory.cloneEventMulticaster(myProject);
-                final Class<EditorFactory> editorFactoryClass = EditorFactory.class;
-                final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
-                componentManager.registerComponentInstance(editorFactoryClass, eduEditorFactory);
-            }
         };
         invokeTestRunnable(runnable);
         final Exception exception = ex.get();
@@ -110,7 +98,6 @@ public class HardProjectBasedTest extends UsefulTestCase {
             @Override
             public void run() {
                 try {
-                    disposeAllEduEditors();
                     try {
                         if(myProjectFixture != null) {
                             myProjectFixture.tearDown();
@@ -139,14 +126,6 @@ public class HardProjectBasedTest extends UsefulTestCase {
         }
     }
 
-    private static void disposeAllEduEditors() throws Exception {
-        final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
-        for (EduEditor eduEditor : allNotDisposedEduEditors) {
-            if (!eduEditor.isDisposed())
-                Disposer.dispose(eduEditor);
-        }
-        EduEditorManager.getInstance().clearMap();
-    }
 
     protected Sdk getProjectJDK() {
         JavaSdk javaSdk = JavaSdk.getInstance();
@@ -180,7 +159,7 @@ public class HardProjectBasedTest extends UsefulTestCase {
                 ((VirtualFilePointerManagerImpl) VirtualFilePointerManager.getInstance()).storePointers();
 
                 try {
-                    CourseManager.getInstance().checkEnvironment(myProject, myLesson.getCourse());
+                    CourseManager.getInstance().checkEnvironment(myProject, myLesson.getModule());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

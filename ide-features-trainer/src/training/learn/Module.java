@@ -12,9 +12,9 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.learn.exceptons.BadCourseException;
+import training.learn.exceptons.BadModuleException;
 import training.learn.exceptons.BadLessonException;
-import training.util.GenerateCourseXml;
+import training.util.generateModuleXml;
 import training.util.MyClassLoader;
 
 import java.io.IOException;
@@ -26,15 +26,15 @@ import java.util.ArrayList;
  * Created by karashevich on 29/01/15.
  */
 @Tag("course")
-public class Course extends ActionGroup{
+public class Module extends ActionGroup{
 
-    private String coursePath;
+    private String modulePath;
 
-    public String getCoursePath() {
-        return (coursePath != null ? coursePath + "/" : "");
+    public String getModulePath() {
+        return (modulePath != null ? modulePath + "/" : "");
     }
 
-    public enum CourseType {SCRATCH, PROJECT};
+    public enum ModuleType {SCRATCH, PROJECT};
 
     private ArrayList<Lesson> lessons;
     @Nullable
@@ -44,11 +44,11 @@ public class Course extends ActionGroup{
     private String id;
     @NotNull
     public String name;
-    public CourseType courseType;
+    public ModuleType moduleType;
     @Nullable
-    private CourseSdkType mySdkType = null;
+    private ModuleSdkType mySdkType = null;
 
-    public enum CourseSdkType {JAVA}
+    public enum ModuleSdkType {JAVA}
 
     public void setAnswersPath(@Nullable String answersPath) {
         this.answersPath = answersPath;
@@ -63,11 +63,11 @@ public class Course extends ActionGroup{
     }
 
     @Nullable
-    public CourseSdkType getMySdkType() {
+    public ModuleSdkType getMySdkType() {
         return mySdkType;
     }
 
-    public void setMySdkType(@Nullable CourseSdkType mySdkType) {
+    public void setMySdkType(@Nullable ModuleSdkType mySdkType) {
         this.mySdkType = mySdkType;
     }
 
@@ -77,37 +77,37 @@ public class Course extends ActionGroup{
     }
 
 
-    public void setCoursePath(String coursePath) {
-        this.coursePath = coursePath;
+    public void setModulePath(String modulePath) {
+        this.modulePath = modulePath;
     }
 
-    public Course(){
+    public Module(){
         name = "Test";
         lessons = new ArrayList<Lesson>();
     }
 
 
-    public Course(String name, Element root) throws JDOMException, BadLessonException, BadCourseException, IOException, URISyntaxException {
+    public Module(String name, Element root) throws JDOMException, BadLessonException, BadModuleException, IOException, URISyntaxException {
         super(name, true);
         lessons = new ArrayList<Lesson>();
         this.name = name;
         this.root = root;
-        coursePath = GenerateCourseXml.COURSE_COURSES_PATH;
+        modulePath = generateModuleXml.MODULE_MODULES_PATH;
         initLessons();
-        if (root.getAttribute(GenerateCourseXml.COURSE_ANSWER_PATH_ATTR) != null) {
-            answersPath = root.getAttribute(GenerateCourseXml.COURSE_ANSWER_PATH_ATTR).getValue();
+        if (root.getAttribute(generateModuleXml.MODULE_ANSWER_PATH_ATTR) != null) {
+            answersPath = root.getAttribute(generateModuleXml.MODULE_ANSWER_PATH_ATTR).getValue();
         } else {
             answersPath = null;
         }
-        id = root.getAttribute(GenerateCourseXml.COURSE_ID_ATTR).getValue();
-        if (root.getAttribute(GenerateCourseXml.COURSE_SDK_TYPE) != null){
-            mySdkType = GenerateCourseXml.getSdkTypeFromString(root.getAttribute(GenerateCourseXml.COURSE_SDK_TYPE).getValue());
+        id = root.getAttribute(generateModuleXml.MODULE_ID_ATTR).getValue();
+        if (root.getAttribute(generateModuleXml.MODULE_SDK_TYPE) != null){
+            mySdkType = generateModuleXml.getSdkTypeFromString(root.getAttribute(generateModuleXml.MODULE_SDK_TYPE).getValue());
         }
-        final Attribute attributeFileType = root.getAttribute(GenerateCourseXml.COURSE_FILE_TYPE);
+        final Attribute attributeFileType = root.getAttribute(generateModuleXml.MODULE_FILE_TYPE);
         if (attributeFileType != null) {
-            if(attributeFileType.getValue().toUpperCase().equals(CourseType.SCRATCH.toString().toUpperCase())) courseType = CourseType.SCRATCH;
-            else if(attributeFileType.getValue().toUpperCase().equals(CourseType.PROJECT.toString().toUpperCase())) courseType = CourseType.PROJECT;
-            else throw new BadCourseException("Unable to recognise CourseType (should be SCRATCH or PROJECT)");
+            if(attributeFileType.getValue().toUpperCase().equals(ModuleType.SCRATCH.toString().toUpperCase())) moduleType = ModuleType.SCRATCH;
+            else if(attributeFileType.getValue().toUpperCase().equals(ModuleType.PROJECT.toString().toUpperCase())) moduleType = ModuleType.PROJECT;
+            else throw new BadModuleException("Unable to recognise ModuleType (should be SCRATCH or PROJECT)");
         }
 
 
@@ -122,15 +122,15 @@ public class Course extends ActionGroup{
     }
 
     @Nullable
-    public static Course initCourse(String coursePath) throws BadCourseException, BadLessonException, JDOMException, IOException, URISyntaxException {
+    public static Module initModule(String modulePath) throws BadModuleException, BadLessonException, JDOMException, IOException, URISyntaxException {
         //load xml with lessons
 
-        //Check DOM with Course
-        Element init_root = getRootFromPath(coursePath);
-        if(init_root.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR) == null) return null;
-        String init_name = init_root.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
+        //Check DOM with Module
+        Element init_root = getRootFromPath(modulePath);
+        if(init_root.getAttribute(generateModuleXml.MODULE_NAME_ATTR) == null) return null;
+        String init_name = init_root.getAttribute(generateModuleXml.MODULE_NAME_ATTR).getValue();
 
-        return new Course(init_name, init_root);
+        return new Module(init_name, init_root);
 
     }
 
@@ -152,23 +152,23 @@ public class Course extends ActionGroup{
         return lessons;
     }
 
-    private void initLessons() throws BadCourseException, BadLessonException, JDOMException, IOException, URISyntaxException {
+    private void initLessons() throws BadModuleException, BadLessonException, JDOMException, IOException, URISyntaxException {
 
-        name = root.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
+        name = root.getAttribute(generateModuleXml.MODULE_NAME_ATTR).getValue();
 
-        if (root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR) != null) {
+        if (root.getAttribute(generateModuleXml.MODULE_LESSONS_PATH_ATTR) != null) {
 
             //retrieve list of xml files inside lessonspath directory
-            String lessonsPath = getCoursePath() + root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR).getValue();
+            String lessonsPath = getModulePath() + root.getAttribute(generateModuleXml.MODULE_LESSONS_PATH_ATTR).getValue();
 //            String lessonsFullpath = MyClassLoader.getInstance().getDataPath() + lessonsPath;
-//            URL url = Course.class.getResource(lessonsFullpath);
-//            File dir = new File(Course.class.getResource("/data/" + lessonsPath).toURI());
+//            URL url = Module.class.getResource(lessonsFullpath);
+//            File dir = new File(Module.class.getResource("/data/" + lessonsPath).toURI());
 
             for (Element lessonElement : root.getChildren()) {
-                if (!lessonElement.getName().equals(GenerateCourseXml.COURSE_LESSON_ELEMENT))
-                    throw new BadCourseException("Course file is corrupted or cannot be read properly");
+                if (!lessonElement.getName().equals(generateModuleXml.MODULE_LESSON_ELEMENT))
+                    throw new BadModuleException("Module file is corrupted or cannot be read properly");
 
-                String lessonFilename = lessonElement.getAttributeValue(GenerateCourseXml.COURSE_LESSON_FILENAME_ATTR);
+                String lessonFilename = lessonElement.getAttributeValue(generateModuleXml.MODULE_LESSON_FILENAME_ATTR);
                 String lessonPath = lessonsPath + lessonFilename;
                 try {
                     Scenario scn = new Scenario(lessonPath);
@@ -220,20 +220,20 @@ public class Course extends ActionGroup{
         return name;
     }
 
-    public CourseSdkType getSdkType() {
+    public ModuleSdkType getSdkType() {
          return mySdkType;
     }
 
     public boolean equals(Object o) {
         if(o == null) return false;
-        if(!(o instanceof Course)) return false;
-        if(((Course) o).getName().equals(this.getName())) return true;
+        if(!(o instanceof Module)) return false;
+        if(((Module) o).getName().equals(this.getName())) return true;
         return false;
 
     }
 
     @Nullable
-    Element getCourseRoot(){
+    Element getModuleRoot(){
         return root;
     }
 }

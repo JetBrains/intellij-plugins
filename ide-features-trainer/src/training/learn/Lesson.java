@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.Nullable;
 import icons.LearnIcons;
-import training.learn.exceptons.BadCourseException;
+import training.learn.exceptons.BadModuleException;
 import training.learn.exceptons.BadLessonException;
 import training.learn.exceptons.LessonIsOpenedException;
 import training.learn.exceptons.NoProjectException;
@@ -26,7 +26,7 @@ public class Lesson extends AnAction {
     private String name;
     private String targetPath;
     private ArrayList<LessonListener> lessonListeners;
-    private Course parentCourse;
+    private Module parentModule;
     private ArrayList<MyPair> statistic = new ArrayList<MyPair>();
     private short exerciseCount;
 
@@ -81,7 +81,7 @@ public class Lesson extends AnAction {
         exerciseCount = 0;
     }
 
-    public Lesson(Scenario scenario, boolean passed, @Nullable Course course) throws BadLessonException {
+    public Lesson(Scenario scenario, boolean passed, @Nullable Module module) throws BadLessonException {
 
         super(scenario.getName());
         scn = scenario;
@@ -94,7 +94,7 @@ public class Lesson extends AnAction {
             targetPath = null;
         }
         lessonListeners = new ArrayList<LessonListener>();
-        parentCourse = course;
+        parentModule = module;
 
         isOpen = false;
 
@@ -110,7 +110,7 @@ public class Lesson extends AnAction {
     }
 
 
-    public void open() throws NoProjectException, BadLessonException, ExecutionException, LessonIsOpenedException, IOException, FontFormatException, InterruptedException, BadCourseException {
+    public void open() throws NoProjectException, BadLessonException, ExecutionException, LessonIsOpenedException, IOException, FontFormatException, InterruptedException, BadModuleException {
         Project currentProject = CourseManager.getInstance().getCurrentProject();
         if (currentProject == null) {
             currentProject = CourseManager.getInstance().getEduProject();
@@ -119,7 +119,7 @@ public class Lesson extends AnAction {
         CourseManager.getInstance().openLesson(currentProject, this);
     }
 
-    public void open(Project projectWhereToOpenLesson) throws NoProjectException, BadLessonException, ExecutionException, LessonIsOpenedException, IOException, FontFormatException, InterruptedException, BadCourseException {
+    public void open(Project projectWhereToOpenLesson) throws NoProjectException, BadLessonException, ExecutionException, LessonIsOpenedException, IOException, FontFormatException, InterruptedException, BadModuleException {
         CourseManager.getInstance().openLesson(projectWhereToOpenLesson, this);
     }
 
@@ -146,7 +146,7 @@ public class Lesson extends AnAction {
     }
 
     @Nullable
-    public Course getCourse() {return parentCourse;}
+    public Module getModule() {return parentModule;}
 
     public short getExerciseCount() {
         return exerciseCount;
@@ -206,7 +206,7 @@ public class Lesson extends AnAction {
 
     }
 
-    public void onNextLesson() throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
+    public void onNextLesson() throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadModuleException, LessonIsOpenedException {
         for (LessonListener lessonListener : lessonListeners) {
             lessonListener.lessonNext(this);
         }
@@ -225,7 +225,7 @@ public class Lesson extends AnAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         try {
             CourseManager.getInstance().openLesson(anActionEvent.getProject(), this);
-        } catch (BadCourseException | BadLessonException | FontFormatException | IOException | LessonIsOpenedException | InterruptedException | ExecutionException e) {
+        } catch (BadModuleException | BadLessonException | FontFormatException | IOException | LessonIsOpenedException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }

@@ -15,29 +15,26 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.commands.BadCommandException;
-import training.editor.EduEditor;
-import training.editor.EduEditorProvider;
 import training.editor.eduUI.EduPanel;
+import training.editor.eduUI.MainEduPanel;
 import training.learn.dialogs.SdkModuleProblemDialog;
 import training.learn.dialogs.SdkProjectProblemDialog;
 import training.learn.exceptons.*;
 import training.learn.log.GlobalLessonLog;
 import training.ui.LearnToolWindowFactory;
-import training.util.GenerateCourseXml;
+import training.util.generateModuleXml;
 import training.util.MyClassLoader;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +48,7 @@ import java.util.concurrent.ExecutionException;
  * Created by karashevich on 11/03/15.
  */
 @State(
-        name = "TrainingPluginCourses",
+        name = "TrainingPluginModules",
         storages = {
                 @Storage(
                         file = StoragePathMacros.APP_CONFIG + "/trainingPlugin.xml"
@@ -63,95 +60,88 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private Project eduProject;
     private EduPanel myEduPanel;
     final public static String EDU_PROJECT_NAME = "EduProject";
+    private MainEduPanel mainEduPanel;
 
     CourseManager() {
-        if (myState.courses == null || myState.courses.size() == 0) try {
-            initCourses();
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (BadCourseException e) {
-            e.printStackTrace();
-        } catch (BadLessonException e) {
+        if (myState.modules == null || myState.modules.size() == 0) try {
+            initModules();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private HashMap<Course, VirtualFile> mapCourseVirtualFile = new HashMap<Course, VirtualFile>();
+    private HashMap<Module, VirtualFile> mapModuleVirtualFile = new HashMap<Module, VirtualFile>();
     private State myState = new State();
 
     public static CourseManager getInstance() {
         return ServiceManager.getService(CourseManager.class);
     }
 
-    public void initCourses() throws JDOMException, IOException, URISyntaxException, BadCourseException, BadLessonException {
-        Element coursesRoot = Course.getRootFromPath(GenerateCourseXml.COURSE_ALLCOURSE_FILENAME);
-        for (Element element : coursesRoot.getChildren()) {
-            if (element.getName().equals(GenerateCourseXml.COURSE_TYPE_ATTR)) {
-                String courseFilename = element.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
-                final Course course = Course.initCourse(courseFilename);
-                addCourse(course);
+    public void initModules() throws JDOMException, IOException, URISyntaxException, BadModuleException, BadLessonException {
+        Element modulesRoot = Module.getRootFromPath(generateModuleXml.MODULE_ALLMODULE_FILENAME);
+        for (Element element : modulesRoot.getChildren()) {
+            if (element.getName().equals(generateModuleXml.MODULE_TYPE_ATTR)) {
+                String moduleFilename = element.getAttribute(generateModuleXml.MODULE_NAME_ATTR).getValue();
+                final Module module = Module.initModule(moduleFilename);
+                addModule(module);
             }
         }
     }
 
 
     @Nullable
-    public Course getCourseById(String id) {
-        final Course[] courses = getCourses();
-        if (courses == null || courses.length == 0) return null;
+    public Module getModuleById(String id) {
+        final Module[] modules = getModules();
+        if (modules == null || modules.length == 0) return null;
 
-        for (Course course : courses) {
-            if (course.getId().toUpperCase().equals(id.toUpperCase())) return course;
+        for (Module module : modules) {
+            if (module.getId().toUpperCase().equals(id.toUpperCase())) return module;
         }
         return null;
     }
 
-    public void registerVirtualFile(Course course, VirtualFile virtualFile) {
-        mapCourseVirtualFile.put(course, virtualFile);
+    public void registerVirtualFile(Module module, VirtualFile virtualFile) {
+        mapModuleVirtualFile.put(module, virtualFile);
     }
 
     public boolean isVirtualFileRegistered(VirtualFile virtualFile) {
-        return mapCourseVirtualFile.containsValue(virtualFile);
+        return mapModuleVirtualFile.containsValue(virtualFile);
     }
 
     public void unregisterVirtaulFile(VirtualFile virtualFile) {
-        if (!mapCourseVirtualFile.containsValue(virtualFile)) return;
-        for (Course course : mapCourseVirtualFile.keySet()) {
-            if (mapCourseVirtualFile.get(course).equals(virtualFile)) {
-                mapCourseVirtualFile.remove(course);
+        if (!mapModuleVirtualFile.containsValue(virtualFile)) return;
+        for (Module module : mapModuleVirtualFile.keySet()) {
+            if (mapModuleVirtualFile.get(module).equals(virtualFile)) {
+                mapModuleVirtualFile.remove(module);
                 return;
             }
         }
     }
 
-    public void unregisterCourse(Course course) {
-        mapCourseVirtualFile.remove(course);
+    public void unregisterModule(Module module) {
+        mapModuleVirtualFile.remove(module);
     }
 
 
-    public synchronized void openLesson(Project project, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
+    public synchronized void openLesson(Project project, final @Nullable Lesson lesson) throws BadModuleException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
         try {
 
             assert lesson != null;
-            checkEnvironment(project, lesson.getCourse());
+            checkEnvironment(project, lesson.getModule());
 
             if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getName() + " is opened");
 
-            //If lesson doesn't have parent course
-            if (lesson.getCourse() == null)
-                throw new BadLessonException("Unable to open lesson without specified course");
+            //If lesson doesn't have parent module
+            if (lesson.getModule() == null)
+                throw new BadLessonException("Unable to open lesson without specified module");
             final Project myProject = project;
             final String scratchFileName = "Learning...";
             final VirtualFile vf = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
                 @Override
                 public VirtualFile compute() {
                     try {
-                        if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
+                        if (lesson.getModule().moduleType == Module.ModuleType.SCRATCH) {
                             return getScratchFile(myProject, lesson, scratchFileName);
                         } else {
                             if (!initEduProject(myProject)) return null;
@@ -164,7 +154,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 }
             });
             if (vf == null) return; //if user aborts opening lesson in EduProject or Virtual File couldn't be computed
-            if (lesson.getCourse().courseType != Course.CourseType.SCRATCH) project = eduProject;
+            if (lesson.getModule().moduleType != Module.ModuleType.SCRATCH) project = eduProject;
 
             //open next lesson if current is passed
             final Project currentProject = project;
@@ -173,11 +163,11 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
             lesson.addLessonListener(new LessonListenerAdapter() {
                 @Override
-                public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
-                    if (lesson.getCourse() == null) return;
+                public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadModuleException, LessonIsOpenedException {
+                    if (lesson.getModule() == null) return;
 
-                    if (lesson.getCourse().hasNotPassedLesson()) {
-                        Lesson nextLesson = lesson.getCourse().giveNotPassedAndNotOpenedLesson();
+                    if (lesson.getModule().hasNotPassedLesson()) {
+                        Lesson nextLesson = lesson.getModule().giveNotPassedAndNotOpenedLesson();
                         if (nextLesson == null)
                             throw new BadLessonException("Unable to obtain not passed and not opened lessons");
                         openLesson(currentProject, nextLesson);
@@ -187,7 +177,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
             final String target;
             if (lesson.getTargetPath() != null) {
-                InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getCourse().getAnswersPath() + lesson.getTargetPath());
+                InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getModule().getAnswersPath() + lesson.getTargetPath());
                 if (is == null) throw new IOException("Unable to get answer for \"" + lesson.getName() + "\" lesson");
                 target = new Scanner(is).useDelimiter("\\Z").next();
             } else {
@@ -220,7 +210,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             LessonManager lessonManager = new LessonManager(lesson, editor);
 
             //3. update tool window
-            updateToolWindow(project);
+//            updateToolWindow(project);
+            CourseManager.getInstance().getEduPanel().clear();
+
 
             //4. Process lesson
             LessonProcessor.process(project, lesson, editor, target);
@@ -237,17 +229,17 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private VirtualFile getFileInEduProject(Lesson lesson) throws IOException {
 
         final VirtualFile sourceRootFile = ProjectRootManager.getInstance(eduProject).getContentSourceRoots()[0];
-        String courseFileName = "Test.java";
-        if (lesson.getCourse() != null) courseFileName = lesson.getCourse().getName() + ".java";
+        String moduleFileName = "Test.java";
+        if (lesson.getModule() != null) moduleFileName = lesson.getModule().getName() + ".java";
 
 
-        VirtualFile courseVirtualFile = sourceRootFile.findChild(courseFileName);
-        if (courseVirtualFile == null) {
-            courseVirtualFile = sourceRootFile.createChildData(this, courseFileName);
+        VirtualFile moduleVirtualFile = sourceRootFile.findChild(moduleFileName);
+        if (moduleVirtualFile == null) {
+            moduleVirtualFile = sourceRootFile.createChildData(this, moduleFileName);
         }
 
-        registerVirtualFile(lesson.getCourse(), courseVirtualFile);
-        return courseVirtualFile;
+        registerVirtualFile(lesson.getModule(), moduleVirtualFile);
+        return moduleVirtualFile;
     }
 
     private boolean initEduProject(Project projectToClose) {
@@ -350,11 +342,11 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private VirtualFile getScratchFile(@NotNull final Project project, @Nullable Lesson lesson, @NotNull final String filename) throws IOException {
         VirtualFile vf = null;
         assert lesson != null;
-        assert lesson.getCourse() != null;
-        if (mapCourseVirtualFile.containsKey(lesson.getCourse()))
-            vf = mapCourseVirtualFile.get(lesson.getCourse());
+        assert lesson.getModule() != null;
+        if (mapModuleVirtualFile.containsKey(lesson.getModule()))
+            vf = mapModuleVirtualFile.get(lesson.getModule());
         if (vf == null || !vf.isValid()) {
-            //while course info is not stored
+            //while module info is not stored
 
             //find file if it is existed
             vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), filename, ScratchFileService.Option.existing_only);
@@ -379,67 +371,28 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                     });
                 }
             }
-            registerVirtualFile(lesson.getCourse(), vf);
+            registerVirtualFile(lesson.getModule(), vf);
         }
         return vf;
-    }
-
-    @Nullable
-    public EduEditor getEduEditor(Project project, VirtualFile vf) {
-        OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vf);
-        final FileEditor[] allEditors = FileEditorManager.getInstance(project).getAllEditors(vf);
-        if (allEditors.length == 0) {
-            if (!ApplicationManager.getApplication().isUnitTestMode())
-                FileEditorManager.getInstance(project).openEditor(descriptor, true);
-            else
-//                FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
-                FileEditorManagerEx.getInstanceEx(project).openFile(vf, true);
-                System.out.print("");
-
-        } else {
-            boolean editorIsFind = false;
-            for (FileEditor curEditor : allEditors) {
-                if (curEditor instanceof EduEditor) editorIsFind = true;
-            }
-            if (!editorIsFind) {
-//              close other editors with this file
-                FileEditorManager.getInstance(project).closeFile(vf);
-                ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID("JAVA"));
-                if (!ApplicationManager.getApplication().isUnitTestMode())
-                    FileEditorManager.getInstance(project).openEditor(descriptor, true);
-                else
-                    FileEditorManagerEx.getInstanceEx(project).openFileWithProviders(vf, true, false);
-            }
-        }
-        final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(vf);
-
-        EduEditor eduEditor = null;
-        final EduEditorProvider eduEditorProvider = new EduEditorProvider();
-        if (selectedEditor instanceof EduEditor)
-            eduEditor = (EduEditor) selectedEditor;
-        else
-            eduEditor = (EduEditor) eduEditorProvider.createEditor(project, vf);
-//        FileEditorManagerEx.getInstance().setSelectedEditor(vf, eduEditorProvider.getEditorTypeId());
-        return eduEditor;
     }
 
     /**
      * checking environment to start education plugin. Checking SDK.
      *
      * @param project where lesson should be started
-     * @param course  education course
-     * @throws OldJdkException     - if project JDK version is not enough for this course
-     * @throws InvalidSdkException - if project SDK is not suitable for course
+     * @param module  education module
+     * @throws OldJdkException     - if project JDK version is not enough for this module
+     * @throws InvalidSdkException - if project SDK is not suitable for module
      */
-    public void checkEnvironment(Project project, @Nullable Course course) throws OldJdkException, InvalidSdkException, NoSdkException, NoJavaModuleException {
+    public void checkEnvironment(Project project, @Nullable Module module) throws OldJdkException, InvalidSdkException, NoSdkException, NoJavaModuleException {
 
-        if (course == null) return;
+        if (module == null) return;
 
         final Sdk projectJdk = ProjectRootManager.getInstance(project).getProjectSdk();
         if (projectJdk == null) throw new NoSdkException();
 
         final SdkTypeId sdkType = projectJdk.getSdkType();
-        if (course.getSdkType() == Course.CourseSdkType.JAVA) {
+        if (module.getSdkType() == Module.ModuleSdkType.JAVA) {
             if (sdkType instanceof JavaSdk) {
                 final JavaSdkVersion version = ((JavaSdk) sdkType).getVersion(projectJdk);
                 if (version != null) {
@@ -483,9 +436,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     @Nullable
     public Lesson findLesson(String lessonName) {
-        if (getCourses() == null) return null;
-        for (Course course : getCourses()) {
-            for (Lesson lesson : course.getLessons()) {
+        if (getModules() == null) return null;
+        for (Module module : getModules()) {
+            for (Lesson lesson : module.getLessons()) {
                 if (lesson.getName() != null)
                     if (lesson.getName().toUpperCase().equals(lessonName.toUpperCase()))
                         return lesson;
@@ -502,9 +455,18 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return myEduPanel;
     }
 
+    public void setMainEduPanel(MainEduPanel mainEduPanel) {
+        this.mainEduPanel = mainEduPanel;
+    }
+
+    public MainEduPanel getMainEduPanel() {
+        return mainEduPanel;
+    }
+
+
 
     static class State {
-        public final ArrayList<Course> courses = new ArrayList<Course>();
+        public final ArrayList<Module> modules = new ArrayList<Module>();
         public String eduProjectPath;
         public GlobalLessonLog globalLessonLog = new GlobalLessonLog();
 
@@ -515,16 +477,16 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
 
-    public void addCourse(Course course) {
-        myState.courses.add(course);
+    public void addModule(Module module) {
+        myState.modules.add(module);
     }
 
     @Nullable
-    public Course[] getCourses() {
+    public Module[] getModules() {
         if (myState == null) return null;
-        if (myState.courses == null) return null;
+        if (myState.modules == null) return null;
 
-        return myState.courses.toArray(new Course[myState.courses.size()]);
+        return myState.modules.toArray(new Module[myState.modules.size()]);
     }
 
     public GlobalLessonLog getGlobalLessonLog(){
@@ -541,20 +503,20 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         myState.eduProjectPath = null;
         myState.globalLessonLog = state.globalLessonLog;
 
-        if (state.courses == null || state.courses.size() == 0) {
+        if (state.modules == null || state.modules.size() == 0) {
             try {
-                initCourses();
+                initModules();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
 
-            for (Course course : myState.courses) {
-                if (state.courses.contains(course)) {
-                    final Course courseFromPersistentState = state.courses.get(state.courses.indexOf(course));
-                    for (Lesson lesson : course.getLessons()) {
-                        if (courseFromPersistentState.getLessons().contains(lesson)) {
-                            final Lesson lessonFromPersistentState = courseFromPersistentState.getLessons().get(courseFromPersistentState.getLessons().indexOf(lesson));
+            for (Module module : myState.modules) {
+                if (state.modules.contains(module)) {
+                    final Module moduleFromPersistentState = state.modules.get(state.modules.indexOf(module));
+                    for (Lesson lesson : module.getLessons()) {
+                        if (moduleFromPersistentState.getLessons().contains(lesson)) {
+                            final Lesson lessonFromPersistentState = moduleFromPersistentState.getLessons().get(moduleFromPersistentState.getLessons().indexOf(lesson));
                             lesson.setPassed(lessonFromPersistentState.getPassed());
                         }
                     }
@@ -570,7 +532,28 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
         LearnToolWindowFactory factory = new LearnToolWindowFactory();
         factory.createToolWindowContent(project, windowManager.getToolWindow(learnToolWindow));
+    }
 
+    public void setLessonView(Project project){
+        final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
+        String learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW;
+        ToolWindow toolWindow = windowManager.getToolWindow(learnToolWindow);
+        JComponent toolWindowComponent = toolWindow.getComponent();
+        toolWindowComponent.removeAll();
+        toolWindowComponent.add(getEduPanel());
+        toolWindowComponent.revalidate();
+        toolWindowComponent.repaint();
+    }
+
+    public void setModulesView(Project project){
+        final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
+        String learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW;
+        ToolWindow toolWindow = windowManager.getToolWindow(learnToolWindow);
+        JComponent toolWindowComponent = toolWindow.getComponent();
+        toolWindowComponent.removeAll();
+        toolWindowComponent.add(getMainEduPanel());
+        toolWindowComponent.revalidate();
+        toolWindowComponent.repaint();
     }
 
     /**
@@ -579,7 +562,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
      * @return null if lesson has no module or it is only one lesson in module
      */
     public @Nullable Lesson giveNextLesson(Lesson currentLesson){
-        Course module = currentLesson.getCourse();
+        Module module = currentLesson.getModule();
         ArrayList<Lesson> lessons = module.getLessons();
         int size = lessons.size();
         if (module == null || size == 1) return  null;
@@ -592,5 +575,23 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
         return null;
     }
+
+    @Nullable
+    public Module giveNextModule(Lesson currentLesson) {
+        Module module = currentLesson.getModule();
+        Module[] modules = CourseManager.getInstance().getModules();
+        if (modules == null) return null;
+        int size = modules.length;
+        if (size == 1) return null;
+
+        for (int i = 0; i < size; i++) {
+            if (modules[i].equals(module)) {
+                if (i + 1 < size) return modules[i + 1];
+                else break;
+            }
+        }
+        return null;
+    }
+
 
 }

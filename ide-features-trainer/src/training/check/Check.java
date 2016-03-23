@@ -2,7 +2,6 @@ package training.check;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import training.editor.EduEditor;
 
 /**
  * Created by karashevich on 21/08/15.
