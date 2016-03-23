@@ -23,8 +23,6 @@
 
   ]]></description>
 
-  <version>999.999</version>
-  <idea-version since-build="142.1" until-build="145.0"/>
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.platform</depends>
 
