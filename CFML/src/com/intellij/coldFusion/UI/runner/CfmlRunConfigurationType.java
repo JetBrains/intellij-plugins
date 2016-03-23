@@ -44,8 +44,7 @@ public class CfmlRunConfigurationType implements ConfigurationType {
 
       @NotNull
       public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-        CfmlRunConfiguration cfmlRunConfiguration = new CfmlRunConfiguration(project, this, "ColdFusion");
-        return cfmlRunConfiguration;
+        return new CfmlRunConfiguration(project, this, "Cold Fusion");
       }
     };
   }

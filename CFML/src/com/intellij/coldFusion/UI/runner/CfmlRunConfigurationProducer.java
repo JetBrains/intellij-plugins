@@ -35,7 +35,8 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
   public final static String DEFAULT_HOST = "http://localhost:8500";
 
   public CfmlRunConfigurationProducer() {
-    super(CfmlRunConfigurationType.getInstance());
+    super(CfmlRunConfigurationType.
+      getInstance());
   }
 
   @Override
