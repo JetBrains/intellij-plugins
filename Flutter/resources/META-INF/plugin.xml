@@ -1,7 +1,6 @@
 <idea-plugin version="2">
   <id>org.jetbrains.plugin.flutter</id>
   <name>Flutter</name>
-  <version>999.999</version>
   <vendor>JetBrains</vendor>
 
   <depends>Dart</depends>

@@ -8,7 +8,6 @@
       - Run, debug, test, package and deploy your applications.
     ]]></description>
   <id>com.intellij.flex</id>
-  <version>1.0</version>
   <category>HTML/JavaScript Development</category>
   <vendor>JetBrains</vendor>
   <depends optional="false">JavaScript</depends>

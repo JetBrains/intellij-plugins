@@ -1,9 +1,7 @@
 <idea-plugin version="2">
   <name>Dart</name>
   <description>Support for Dart programming language</description>
-  <version>999.999</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="146.1" until-build="146.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
