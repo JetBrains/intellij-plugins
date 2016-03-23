@@ -4,6 +4,10 @@ import com.intellij.diagram.*;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.graph.layout.Layouter;
+import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
+import com.intellij.openapi.graph.settings.GraphSettingsProvider;
+import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -90,7 +94,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
       @Override
       public String getNodeTooltip(DiagramObject element) {
-        return element.getName();
+        return element.getTooltip();
       }
     };
     myColorManager = new DiagramColorManagerBase() {
@@ -211,6 +215,15 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           return target == null ? null : target.getElement();
         }
         return null;
+      }
+
+      @Nullable
+      @Override
+      public Layouter getCustomLayouter(Graph2D graph, Project project) {
+        final SmartOrganicLayouter layouter = GraphSettingsProvider.getInstance(project).getSettings(graph).getOrganicLayouter();
+        layouter.setNodeEdgeOverlapAvoided(true);
+        layouter.setParallelEdgeLayouterEnabled(false);
+        return layouter;
       }
     };
   }

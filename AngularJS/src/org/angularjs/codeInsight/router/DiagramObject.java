@@ -15,6 +15,7 @@ import java.util.Map;
 public class DiagramObject {
   @NotNull private final Type myType;
   @NotNull private final String myName;
+  @Nullable private String myTooltip;
   @Nullable private final SmartPsiElementPointer myNavigationTarget;
   private boolean myIsValid = true;  //invalid = created by reference from other place, but not defined
   @NotNull private final List<String> myWarnings;
@@ -81,5 +82,14 @@ public class DiagramObject {
   @NotNull
   public List<String> getWarnings() {
     return myWarnings;
+  }
+
+  @Nullable
+  public String getTooltip() {
+    return myTooltip == null ? myName : myTooltip;
+  }
+
+  public void setTooltip(@Nullable String tooltip) {
+    myTooltip = tooltip;
   }
 }

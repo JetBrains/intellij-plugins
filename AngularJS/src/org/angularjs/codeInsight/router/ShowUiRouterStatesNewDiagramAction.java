@@ -30,15 +30,15 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     final List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
     final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();
 
+    for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getDefiningFiles2States().entrySet()) {
+      final AngularUiRouterGraphBuilder graphBuilder =
+        new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), null, entry.getKey());
+      graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
+    }
     for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getRootTemplates2States().entrySet()) {
       final AngularUiRouterGraphBuilder graphBuilder =
         new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), rootTemplates.get(entry.getKey()),
                                         entry.getKey());
-      graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
-    }
-    for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getDefiningFiles2States().entrySet()) {
-      final AngularUiRouterGraphBuilder graphBuilder =
-        new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), null, entry.getKey());
       graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
     }
     // todo look on mac

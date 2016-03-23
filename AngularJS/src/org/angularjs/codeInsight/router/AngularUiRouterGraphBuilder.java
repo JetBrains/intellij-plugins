@@ -56,7 +56,7 @@ public class AngularUiRouterGraphBuilder {
     private final Map<String, AngularUiRouterNode> stateNodes = new HashMap<>();
     private final Map<String, AngularUiRouterNode> templateNodes = new HashMap<>();
     private final Map<Pair<String, String>, DiagramObject> templatePlaceHoldersNodes = new HashMap<>();
-    private final Map<Pair<String, String>, AngularUiRouterNode> viewNodes = new HashMap<>();
+    private final Map<Pair<String, String>, DiagramObject> viewNodes = new HashMap<>();
     private final List<AngularUiRouterEdge> edges = new ArrayList<>();
 
     private final List<AngularUiRouterNode> allNodes = new ArrayList<>();
@@ -84,7 +84,7 @@ public class AngularUiRouterGraphBuilder {
       } else {
         // todo remove from diagram if not used
         final PsiFile psiFile = PsiManager.getInstance(project).findFile(myKey);
-        rootDiagramObject = new DiagramObject(Type.topLevelTemplate, "<unknown root template>", psiFile == null ? null :
+        rootDiagramObject = new DiagramObject(Type.topLevelTemplate, myKey.getName(), psiFile == null ? null :
                                               SmartPointerManager.getInstance(project).createSmartPsiElementPointer(psiFile));
         myRootNode = new AngularUiRouterNode(rootDiagramObject, provider);
       }
@@ -125,15 +125,14 @@ public class AngularUiRouterGraphBuilder {
           for (UiView view : views) {
             final String name = StringUtil.isEmptyOrSpaces(view.getName()) ? DEFAULT : view.getName();
             final DiagramObject viewObject = new DiagramObject(Type.view, name, view.getPointer());
-            final AngularUiRouterNode viewNode = new AngularUiRouterNode(viewObject, provider);
-            viewNodes.put(Pair.create(state.getName(), name), viewNode);
+            viewNodes.put(Pair.create(state.getName(), name), viewObject);
 
             final String template = view.getTemplate();
             if (!StringUtil.isEmptyOrSpaces(template)) {
               final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, template, null);
-              edges.add(new AngularUiRouterEdge(viewNode, templateNode, "provides"));
+              edges.add(new AngularUiRouterEdge(templateNode, node, name + " provides "));
             }
-            edges.add(new AngularUiRouterEdge(node, viewNode));
+            node.getIdentifyingElement().addChild(viewObject, node);
           }
         }
       }
@@ -148,19 +147,19 @@ public class AngularUiRouterGraphBuilder {
         if (views != null && !views.isEmpty()) {
           for (UiView view : views) {
             final String name = StringUtil.isEmptyOrSpaces(view.getName()) ? DEFAULT : view.getName();
-            final AngularUiRouterNode viewNode = viewNodes.get(Pair.create(state.getName(), name));
+            final DiagramObject viewNode = viewNodes.get(Pair.create(state.getName(), name));
             assert viewNode != null;
 
             final Pair<AngularUiRouterNode, String> pair = getParentTemplateNode(state.getName(), view.getName());
             if (pair != null && pair.getFirst() != null) {
-              connectViewOrStateWithPlaceholder(viewNode, pair);
+              connectViewOrStateWithPlaceholder(node, name, pair);
             }
           }
         } else {
           //find unnamed parent template for view
           final Pair<AngularUiRouterNode, String> pair = getParentTemplateNode(state.getName(), "");
           if (pair != null && pair.getFirst() != null) {
-            connectViewOrStateWithPlaceholder(node, pair);
+            connectViewOrStateWithPlaceholder(node, DEFAULT, pair);
           }
         }
       }
@@ -170,17 +169,17 @@ public class AngularUiRouterGraphBuilder {
       allNodes.addAll(stateNodes.values());
       allNodes.addAll(templateNodes.values());
       //allNodes.addAll(templatePlaceHoldersNodes.values());
-      allNodes.addAll(viewNodes.values());
+      //allNodes.addAll(viewNodes.values());
     }
 
-    private void connectViewOrStateWithPlaceholder(AngularUiRouterNode viewNode, Pair<AngularUiRouterNode, String> pair) {
+    private void connectViewOrStateWithPlaceholder(AngularUiRouterNode stateNode, String viewName, Pair<AngularUiRouterNode, String> pair) {
       final String placeholderName = pair.getSecond();
       //final String placeholderName = StringUtil.isEmptyOrSpaces(pair.getSecond()) ? DEFAULT : pair.getSecond();
       String usedTemplateUrl = null;
 
       final Type nodeType = pair.getFirst().getIdentifyingElement().getType();
       if (Type.template.equals(nodeType) || Type.topLevelTemplate.equals(nodeType)) {
-        usedTemplateUrl = pair.getFirst().getIdentifyingElement().getName();
+        usedTemplateUrl = pair.getFirst().getIdentifyingElement().getTooltip();
       } else if (Type.state.equals(nodeType)) {
         final String parentState = pair.getFirst().getIdentifyingElement().getName();
         final UiRouterState parentStateObject = myStatesMap.get(parentState);
@@ -202,7 +201,7 @@ public class AngularUiRouterGraphBuilder {
       usedTemplateUrl = normalizeTemplateUrl(usedTemplateUrl);
       final DiagramObject placeholder = templatePlaceHoldersNodes.get(Pair.create(usedTemplateUrl, placeholderName));
       if (placeholder != null && placeholder.getParent() != null) {
-        final AngularUiRouterEdge edge = new AngularUiRouterEdge(viewNode, placeholder.getParent(), "fills");
+        final AngularUiRouterEdge edge = new AngularUiRouterEdge(placeholder.getParent(), stateNode, viewName + " fills " + placeholderName);
         edge.setTargetAnchor(placeholder);
         edges.add(edge);
       }
@@ -215,7 +214,7 @@ public class AngularUiRouterGraphBuilder {
         if (state != null && state.getParentName() != null) {
           final AngularUiRouterNode parentState = stateNodes.get(state.getParentName());
           if (parentState != null) {
-            edges.add(new AngularUiRouterEdge(entry.getValue(), parentState, "parent"));
+            edges.add(new AngularUiRouterEdge(parentState, entry.getValue(), "parent"));
           }
         }
       }
@@ -269,6 +268,9 @@ public class AngularUiRouterGraphBuilder {
 
     @NotNull
     private AngularUiRouterNode getOrCreateTemplateNode(AngularUiRouterDiagramProvider provider, @NotNull String templateUrl, @Nullable Template template) {
+      final String fullUrl = templateUrl;
+      final int idx = fullUrl.lastIndexOf('/');
+      templateUrl = idx >= 0 ? templateUrl.substring(idx + 1) : templateUrl;
       template = template == null ? myTemplatesMap.get(templateUrl) : template;
       if (template == null) {
         // file not found
@@ -281,15 +283,15 @@ public class AngularUiRouterGraphBuilder {
         final AngularUiRouterNode templateNode = new AngularUiRouterNode(templateObject, provider);
         templateNodes.put(templateUrl, templateNode);
 
-        putPlaceholderNodes(provider, templateUrl, template, templateNode);
+        putPlaceholderNodes(fullUrl, template, templateNode);
       }
       final AngularUiRouterNode templateNode = templateNodes.get(templateUrl);
       assert templateNode != null;
+      templateNode.getIdentifyingElement().setTooltip(fullUrl);
       return templateNode;
     }
 
-    private void putPlaceholderNodes(AngularUiRouterDiagramProvider provider,
-                                     @NotNull String templateUrl,
+    private void putPlaceholderNodes(@NotNull String templateUrl,
                                      Template template,
                                      AngularUiRouterNode templateNode) {
       final Map<String, SmartPsiElementPointer<PsiElement>> placeholders = template.getViewPlaceholders();
