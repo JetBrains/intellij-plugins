@@ -76,6 +76,7 @@
 
     <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
                      groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
+    <diagram.Provider implementation="org.angularjs.codeInsight.router.AngularUiRouterDiagramProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -86,7 +87,8 @@
     <inheritedLanguagesConfigurableProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
   </extensions>
 
-  <!--<actions>
-    <action class="org.angularjs.codeInsight.router.ShowUiRouterStatesDiagramAction" id="AngularJS.Show.Ui.Router.States.Diuagram.Action"/>
-  </actions>-->
+  <actions>
+  <!--  <action class="org.angularjs.codeInsight.router.ShowUiRouterStatesNewDiagramAction" id="AngularJS.Show.Ui.Router.States.Diagram.Action"
+      text="Show ui-router State Diagram"/>-->
+  </actions>
 </idea-plugin>
