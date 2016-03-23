@@ -27,6 +27,8 @@ RAKE_EXT_LOG.log_msg("rake_ext.rb loaded.")
 # For RAKEVERSION =  0.7.3 - 0.8.3
 require 'rake'
 
+RAKEVERSION = 11 unless defined? RAKEVERSION
+
 require 'teamcity/utils/service_message_factory'
 require 'teamcity/utils/std_capture_helper'
 ######################################################################
