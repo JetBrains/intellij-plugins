@@ -24,6 +24,7 @@ import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XStackFrame;
+import com.intellij.xdebugger.frame.XSuspendContext;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -283,21 +284,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void startStepOver() {
+  public void startStepOver(@Nullable XSuspendContext context) {
     if (myLatestCurrentIsolateId != null && mySuspendedIsolateIds.contains(myLatestCurrentIsolateId)) {
       myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId, StepOption.Over);
     }
   }
 
   @Override
-  public void startStepInto() {
+  public void startStepInto(@Nullable XSuspendContext context) {
     if (myLatestCurrentIsolateId != null && mySuspendedIsolateIds.contains(myLatestCurrentIsolateId)) {
       myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId, StepOption.Into);
     }
   }
 
   @Override
-  public void startStepOut() {
+  public void startStepOut(@Nullable XSuspendContext context) {
     if (myLatestCurrentIsolateId != null && mySuspendedIsolateIds.contains(myLatestCurrentIsolateId)) {
       myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId, StepOption.Out);
     }
@@ -317,7 +318,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void resume() {
+  public void resume(@Nullable XSuspendContext context) {
     for (String isolateId : new ArrayList<String>(mySuspendedIsolateIds)) {
       myVmServiceWrapper.resumeIsolate(isolateId, null);
     }
@@ -328,7 +329,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void runToPosition(@NotNull XSourcePosition position) {
+  public void runToPosition(@NotNull XSourcePosition position, @Nullable XSuspendContext context) {
     // todo implement
     resume();
   }

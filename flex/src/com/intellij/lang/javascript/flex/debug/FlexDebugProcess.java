@@ -68,6 +68,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.frame.XValueMarkerProvider;
 import com.intellij.xdebugger.stepping.XSmartStepIntoHandler;
 import gnu.trove.THashSet;
@@ -1035,12 +1036,12 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void startStepOver() {
+  public void startStepOver(@Nullable XSuspendContext context) {
     sendCommand(new DebuggerCommand("next"));
   }
 
   @Override
-  public void startStepInto() {
+  public void startStepInto(@Nullable XSuspendContext context) {
     sendCommand(new DebuggerCommand("step"));
   }
 
@@ -1143,7 +1144,7 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void startStepOut() {
+  public void startStepOut(@Nullable XSuspendContext context) {
     sendCommand(new DebuggerCommand("finish"));
   }
 
@@ -1188,12 +1189,12 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void resume() {
+  public void resume(@Nullable XSuspendContext context) {
     sendCommand(new ContinueCommand());
   }
 
   @Override
-  public void runToPosition(@NotNull final XSourcePosition position) {
+  public void runToPosition(@NotNull final XSourcePosition position, @Nullable XSuspendContext context) {
     myBreakpointsHandler.handleRunToPosition(position, this);
   }
 

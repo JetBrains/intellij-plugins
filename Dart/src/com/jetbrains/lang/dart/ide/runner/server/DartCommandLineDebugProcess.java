@@ -18,6 +18,7 @@ import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XStackFrame;
+import com.intellij.xdebugger.frame.XSuspendContext;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.frame.DartStackFrame;
@@ -149,7 +150,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void startStepOver() {
+  public void startStepOver(@Nullable XSuspendContext context) {
     if (myLatestCurrentIsolate != null && mySuspendedIsolates.contains(myLatestCurrentIsolate)) {
       try {
         myVmConnection.stepOver(myLatestCurrentIsolate);
@@ -161,7 +162,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void startStepInto() {
+  public void startStepInto(@Nullable XSuspendContext context) {
     if (myLatestCurrentIsolate != null && mySuspendedIsolates.contains(myLatestCurrentIsolate)) {
       try {
         myVmConnection.stepInto(myLatestCurrentIsolate);
@@ -173,7 +174,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void startStepOut() {
+  public void startStepOut(@Nullable XSuspendContext context) {
     if (myLatestCurrentIsolate != null && mySuspendedIsolates.contains(myLatestCurrentIsolate)) {
       try {
         myVmConnection.stepOut(myLatestCurrentIsolate);
@@ -196,7 +197,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void resume() {
+  public void resume(@Nullable XSuspendContext context) {
     try {
       for (VmIsolate isolate : new THashSet<VmIsolate>(mySuspendedIsolates)) {
         myVmConnection.resume(isolate);
@@ -222,7 +223,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void runToPosition(@NotNull XSourcePosition position) {
+  public void runToPosition(@NotNull XSourcePosition position, @Nullable XSuspendContext context) {
     // todo implement
     resume();
   }
