@@ -1,7 +1,6 @@
 package training.learn;
 
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
@@ -10,10 +9,8 @@ import org.jetbrains.annotations.TestOnly;
 import training.commands.Command;
 import training.commands.CommandFactory;
 import training.commands.ExecutionList;
-import training.editor.eduUI.EduPanel;
 import training.util.PerformActionUtil;
 import training.editor.MouseListenerHolder;
-import training.editor.EduEditor;
 import training.editor.actions.HideProjectTreeAction;
 import training.editor.eduUI.Message;
 import training.util.XmlUtil;

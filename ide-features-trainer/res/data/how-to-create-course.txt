@@ -1,8 +1,8 @@
 
 
 GENERATE COURSES
-To generate specific course you have to:
- # create a directory with a Course name (or it maybe shortname of course)
+To generate specific module you have to:
+ # create a directory with a Course name (or it maybe shortname of module)
  # run util.GenerateCourseXml.gen(String courseName, String id, String path)
  # copy result to res/data/
 
@@ -11,7 +11,7 @@ Example Completions:
     id: "completions"
     path: "Completions/"
 
-To generate all courses:
+To generate all modules:
  # run util.GenerateCourseXml.main()
- # exclude redundant files from courses.xml list
+ # exclude redundant files from modules.xml list
 
