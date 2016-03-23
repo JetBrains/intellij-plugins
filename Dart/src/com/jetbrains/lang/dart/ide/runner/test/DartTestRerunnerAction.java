@@ -4,7 +4,6 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.actions.AbstractRerunFailedTestsAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.ComponentContainer;
