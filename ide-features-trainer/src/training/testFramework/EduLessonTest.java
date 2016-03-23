@@ -15,9 +15,7 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.commands.BadCommandException;
-import training.editor.EduEditor;
-import training.editor.EduEditorManager;
-import training.learn.Course;
+import training.learn.Module;
 import training.learn.CourseManager;
 import training.learn.Lesson;
 
@@ -85,7 +83,6 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
     @Override
     public void tearDown ()throws Exception {
         try {
-            disposeAllEduEditors();
             if(myProjectFixture != null) {
                 myProjectFixture.tearDown();
             }
@@ -110,12 +107,6 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
                     public void run() {
                         try {
                             solveStep();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (BadCommandException e) {
-                            e.printStackTrace();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -135,13 +126,6 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
         if (exception != null) throw exception;
     }
 
-    private void disposeAllEduEditors() {
-        final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
-        for (EduEditor eduEditor : allNotDisposedEduEditors) {
-            Disposer.dispose(eduEditor);
-        }
-    }
-
     private String getTestName() {
         return getTestName(true);
     }
@@ -149,12 +133,12 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
 
     @Nullable
     private Lesson getAnyLesson() {
-        final Course[] courses = CourseManager.getInstance().getCourses();
-        assertTrue(courses != null && courses.length > 0);
+        final Module[] modules = CourseManager.getInstance().getModules();
+        assertTrue(modules != null && modules.length > 0);
         Lesson lesson = null;
-        for (Course course : courses) {
-            if (!course.getLessons().isEmpty()) {
-                lesson = course.getLessons().get(0);
+        for (Module module : modules) {
+            if (!module.getLessons().isEmpty()) {
+                lesson = module.getLessons().get(0);
                 break;
             }
         }

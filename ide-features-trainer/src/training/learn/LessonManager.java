@@ -10,14 +10,20 @@ import training.editor.actions.EduActions;
 import training.editor.eduUI.EduBalloonBuilder;
 import training.editor.eduUI.EduPanel;
 import training.editor.eduUI.Message;
+import training.learn.exceptons.BadLessonException;
+import training.learn.exceptons.BadModuleException;
+import training.learn.exceptons.LessonIsOpenedException;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by jetbrains on 18/03/16.
@@ -62,7 +68,7 @@ public class LessonManager {
         cleanEditor(); //remove mouse blocks and action recorders from last editor
         EduPanel eduPanel = CourseManager.getInstance().getEduPanel();
         eduPanel.setLessonName(myCurrentLesson.getName());
-        String moduleName = myCurrentLesson.getCourse().getName();
+        String moduleName = myCurrentLesson.getModule().getName();
         if (moduleName != null)
             eduPanel.setModuleName(moduleName);
         eduPanel.getModulePanel().init(myCurrentLesson);
@@ -76,19 +82,53 @@ public class LessonManager {
             }
             myEduActions.clear();
         }
-        CourseManager.getInstance().getEduPanel().setButtonSkipAction(new Runnable() {
-            @Override
-            public void run() {
-                Lesson lesson = CourseManager.getInstance().giveNextLesson(myCurrentLesson);
-                if (lesson != null) {
+
+        Runnable runnable = null;
+        String buttonText = null;
+        Lesson lesson = CourseManager.getInstance().giveNextLesson(myCurrentLesson);
+        if (lesson != null) {
+//            buttonText = lesson.getName();
+            runnable = new Runnable() {
+                @Override
+                public void run() {
                     try {
                         CourseManager.getInstance().openLesson(editor.getProject(), lesson);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+            };
+        } else {
+            Module nextModule = CourseManager.getInstance().giveNextModule(myCurrentLesson);
+            if (nextModule != null) {
+                buttonText = nextModule.getName();
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        Lesson notPassedLesson = nextModule.giveNotPassedLesson();
+                        if (notPassedLesson == null) {
+                            try {
+                                CourseManager.getInstance().openLesson(editor.getProject(), nextModule.getLessons().get(0));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                CourseManager.getInstance().openLesson(editor.getProject(), notPassedLesson);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                };
             }
-        });
+        }
+
+        if (runnable != null) {
+            CourseManager.getInstance().getEduPanel().setButtonSkipAction(runnable, buttonText, true);
+        } else {
+            CourseManager.getInstance().getEduPanel().setButtonSkipAction(runnable, buttonText, false);
+        }
     }
 
     public void addMessage(String message){
@@ -106,8 +146,8 @@ public class LessonManager {
     public void passLesson(Project project, Editor editor) {
         EduPanel eduPanel = CourseManager.getInstance().getEduPanel();
         eduPanel.setLessonPassed();
-        if(myCurrentLesson.getCourse()!=null && myCurrentLesson.getCourse().hasNotPassedLesson()){
-            final Lesson notPassedLesson = myCurrentLesson.getCourse().giveNotPassedLesson();
+        if(myCurrentLesson.getModule()!=null && myCurrentLesson.getModule().hasNotPassedLesson()){
+            final Lesson notPassedLesson = myCurrentLesson.getModule().giveNotPassedLesson();
             eduPanel.setButtonNextAction(new Runnable() {
                 @Override
                 public void run() {

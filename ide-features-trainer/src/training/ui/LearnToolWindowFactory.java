@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import org.jetbrains.annotations.NotNull;
+import training.learn.CourseManager;
 
 /**
  * Created by jetbrains on 17/03/16.
@@ -21,8 +22,10 @@ public class LearnToolWindowFactory implements ToolWindowFactory, DumbAware {
         LearnToolWindow learnToolWindow = new LearnToolWindow();
         learnToolWindow.init(project);
         final ContentManager contentManager = toolWindow.getContentManager();
-        final Content content = contentManager.getFactory().createContent(learnToolWindow, null, false);
+
+        Content content = contentManager.getFactory().createContent(learnToolWindow, null, false);
         contentManager.addContent(content);
+
         Disposer.register(project, learnToolWindow);
     }
 }

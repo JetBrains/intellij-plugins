@@ -1,7 +1,4 @@
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.impl.ComponentManagerImpl;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
@@ -9,7 +6,6 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
@@ -27,10 +23,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import training.editor.EduEditor;
-import training.editor.EduEditorFactory;
-import training.editor.EduEditorManager;
-import training.learn.*;
+import training.learn.CourseManager;
+import training.learn.CourseManagerWithoutIDEA;
+import training.learn.Lesson;
+import training.learn.Module;
 import training.learn.exceptons.InvalidSdkException;
 import training.learn.exceptons.NoJavaModuleException;
 import training.learn.exceptons.NoSdkException;
@@ -72,7 +68,7 @@ public class HardScratchBasedTest extends UsefulTestCase{
     }
 
     @NotNull
-    protected ModuleType getModuleType() {
+    protected com.intellij.openapi.module.ModuleType getModuleType() {
         return StdModuleTypes.JAVA;
     }
 
@@ -88,11 +84,11 @@ public class HardScratchBasedTest extends UsefulTestCase{
     @Parameterized.Parameters(name = "{0}")
     public static List<Object> data(){
         List<Object> lessonsIds = new ArrayList<Object>();
-        final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
-        for (Course course : courses) {
-            final ArrayList<Lesson> lessons = course.getLessons();
+        final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        for (Module module : modules) {
+            final ArrayList<Lesson> lessons = module.getLessons();
             for (Lesson lesson : lessons) {
-                if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
+                if (lesson.getModule().moduleType == Module.ModuleType.SCRATCH) {
                     lessonsIds.add(lesson.getName());
                 }
             }
@@ -122,23 +118,12 @@ public class HardScratchBasedTest extends UsefulTestCase{
                     myProjectRoot = myProject.getBaseDir();
                     myProjectPath = myProjectRoot.getPath();
 
-                    //Swap EditorFactoryClasses with EduEditorFactory
-                    if (!(EditorFactory.getInstance() instanceof EduEditorFactory))
-                        swapEditorFactory();
 
                 } catch (Exception e) {
                     ex.set(e);
                 }
             }
 
-            private void swapEditorFactory() throws Exception {
-                final EduEditorFactory eduEditorFactory = new EduEditorFactory();
-                eduEditorFactory.cloneEventMulticaster(myProject);
-                final Class<EditorFactory> editorFactoryClass = EditorFactory.class;
-                final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
-//                    eduEditorFactory[0].cloneEventMulticaster(myProject);
-                componentManager.registerComponentInstance(editorFactoryClass, eduEditorFactory);
-            }
         };
         invokeTestRunnable(runnable);
         final Exception exception = ex.get();
@@ -161,7 +146,6 @@ public class HardScratchBasedTest extends UsefulTestCase{
 //                    final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
 //                    componentManager.registerComponentInstance(editorFactoryClass, editorFactory);
 
-                    disposeAllEduEditors();
                     if(myProjectFixture != null) {
                         myProjectFixture.tearDown();
                     }
@@ -196,7 +180,7 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
                 boolean noSdkDetected = false;
                 try {
-                    CourseManager.getInstance().checkEnvironment(myProject, myLesson.getCourse());
+                    CourseManager.getInstance().checkEnvironment(myProject, myLesson.getModule());
                 } catch (NoSdkException e) {
                     noSdkDetected = true;
                 } catch (OldJdkException e) {
@@ -251,17 +235,6 @@ public class HardScratchBasedTest extends UsefulTestCase{
     }
 
 
-    private void disposeAllEduEditors() {
-        final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
-//        for (int i = 0; i < allNotDisposedEduEditors.length; i++) {
-//            EduEditorManager.getInstance().clearMap();
-//        }
-        for (EduEditor eduEditor : allNotDisposedEduEditors) {
-            if (!eduEditor.isDisposed())
-                Disposer.dispose(eduEditor);
-        }
-        EduEditorManager.getInstance().clearMap();
-    }
 
 
     protected void prepareLesson(){

@@ -5,7 +5,6 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.ui.JBColor;
-import training.editor.EduEditor;
 
 import java.awt.*;
 
@@ -22,7 +21,7 @@ public class DemoModeUI {
         return demoCurtainColor;
     }
 
-    public void addDemoModeWidget(Project project, EduEditor eduEditor) {
+    public void addDemoModeWidget(Project project) {
 
         myProject = project;
 
@@ -35,9 +34,9 @@ public class DemoModeUI {
             } else {
                 if (demoModeWidget == null) {
                     demoModeWidget = new DemoModeWidget(project);
-                    statusBar.addWidget(demoModeWidget, "before Position", eduEditor);
+                    statusBar.addWidget(demoModeWidget, "before Position");
                 } else {
-                    statusBar.addWidget(demoModeWidget, "before Position", eduEditor);
+                    statusBar.addWidget(demoModeWidget, "before Position");
                 }
             }
             statusBar.updateWidget(demoModeWidget.ID());

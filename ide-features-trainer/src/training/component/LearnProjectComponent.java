@@ -5,10 +5,12 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import org.jetbrains.annotations.NotNull;
+import training.learn.CourseManager;
 import training.ui.LearnToolWindowFactory;
 
 /**
@@ -27,6 +29,7 @@ public class LearnProjectComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         registerLearnToolWindow(myProject);
+        CourseManager.getInstance().updateToolWindow(myProject);
     }
 
     @Override

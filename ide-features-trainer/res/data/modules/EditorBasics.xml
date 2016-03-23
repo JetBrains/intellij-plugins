@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<course name="Editor Basics" lessonsPath="EditorBasics/" version="0.3" id="basics" fileType="SCRATCH" sdkType="JAVA">
+<module name="Editor Basics" lessonsPath="EditorBasics/" version="0.3" id="basics" fileType="SCRATCH" sdkType="JAVA">
   <lesson filename="01.Select.xml" solution="training.solutions.EditorBasics.SelectSolution" />
   <lesson filename="02.Comment.xml" solution="training.solutions.EditorBasics.CommentSolution" />
   <lesson filename="03.Delete.xml" solution="training.solutions.EditorBasics.DeleteSolution"/>
   <lesson filename="04.Duplicate.xml" solution="training.solutions.EditorBasics.DuplicateSolution"/>
   <lesson filename="05.Move.xml" solution="training.solutions.EditorBasics.MoveSolution"/>
   <lesson filename="06.Collapse.xml" solution="training.solutions.EditorBasics.CollapseSolution"/>
-</course>
+</module>
 

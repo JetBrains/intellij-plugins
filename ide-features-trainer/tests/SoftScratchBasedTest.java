@@ -1,5 +1,4 @@
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
@@ -7,7 +6,6 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
@@ -24,8 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import training.commands.*;
-import training.editor.EduEditor;
-import training.editor.EduEditorManager;
 import training.learn.*;
 import training.learn.exceptons.*;
 
@@ -65,7 +61,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
     }
 
     @NotNull
-    protected ModuleType getModuleType() {
+    protected com.intellij.openapi.module.ModuleType getModuleType() {
         return StdModuleTypes.JAVA;
     }
 
@@ -76,11 +72,11 @@ public class SoftScratchBasedTest extends UsefulTestCase{
     @Parameterized.Parameters(name = "{0}")
     public static List<Object> data(){
         List<Object> lessonsIds = new ArrayList<Object>();
-        final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
-        for (Course course : courses) {
-            final ArrayList<Lesson> lessons = course.getLessons();
+        final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        for (Module module : modules) {
+            final ArrayList<Lesson> lessons = module.getLessons();
             for (Lesson lesson : lessons) {
-                if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
+                if (lesson.getModule().moduleType == Module.ModuleType.SCRATCH) {
                     lessonsIds.add(lesson.getName());
                 }
             }
@@ -119,7 +115,6 @@ public class SoftScratchBasedTest extends UsefulTestCase{
         Runnable runnable = new Runnable() {
             public void run() {
                 try {
-                    disposeAllEduEditors();
                     if(myProjectFixture != null) {
                         myProjectFixture.tearDown();
                     }
@@ -151,7 +146,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
 
                 boolean noSdkDetected = false;
                 try {
-                    CourseManager.getInstance().checkEnvironment(myProject, myLesson.getCourse());
+                    CourseManager.getInstance().checkEnvironment(myProject, myLesson.getModule());
                 } catch (NoSdkException e) {
                     noSdkDetected = true;
                 } catch (OldJdkException e) {
@@ -173,7 +168,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
                     assertNotNull(ProjectJdkTable.getInstance().findJdk(getProjectJDK().getName(), getProjectJDK().getSdkType().getName()));
                     try {
                         CourseManager.getInstance().openLesson(myProject, myLesson);
-                    } catch (BadCourseException e) {
+                    } catch (BadModuleException e) {
                         e.printStackTrace();
                     } catch (BadLessonException e) {
                         e.printStackTrace();
@@ -226,12 +221,6 @@ public class SoftScratchBasedTest extends UsefulTestCase{
 
 
 
-    private void disposeAllEduEditors() {
-        final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
-        for (EduEditor eduEditor : allNotDisposedEduEditors) {
-            Disposer.dispose(eduEditor);
-        }
-    }
 
 
     protected void prepareLesson(){

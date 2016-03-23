@@ -2,7 +2,6 @@ package training.solutions;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
-import training.editor.EduEditor;
 
 /**
  * Created by karashevich on 10/11/15.

@@ -2,7 +2,6 @@ package training.editor.eduUI;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -10,13 +9,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
-import training.editor.EduEditor;
 
 import java.awt.*;
-import java.util.HashMap;
 
 public class EduBalloonBuilder {
 

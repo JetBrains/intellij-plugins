@@ -1,15 +1,10 @@
 package training.commands;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import org.jdom.Element;
-import training.editor.EduEditor;
 import training.editor.eduUI.Message;
 import training.learn.Lesson;
 import training.learn.LessonManager;
 import training.util.XmlUtil;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 30/01/15.

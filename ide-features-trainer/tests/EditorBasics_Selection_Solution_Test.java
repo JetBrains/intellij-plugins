@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import training.commands.Command;
 import training.commands.ExecutionList;
 import training.commands.TestCommand;
-import training.editor.EduEditor;
 import training.learn.CourseManager;
 import training.learn.LessonProcessor;
 import training.learn.exceptons.NoSdkException;
@@ -63,10 +62,9 @@ public class EditorBasics_Selection_Solution_Test extends EduLessonTest {
     public void testLesson() throws Exception{
         ((VirtualFilePointerManagerImpl) VirtualFilePointerManager.getInstance()).storePointers();
 
-        EduEditor eduEditor = null;
         boolean noSdkDetected = false;
         try {
-            CourseManager.getInstance().checkEnvironment(myProject, myLesson.getCourse());
+            CourseManager.getInstance().checkEnvironment(myProject, myLesson.getModule());
         } catch (NoSdkException e) {
             noSdkDetected = true;
         }

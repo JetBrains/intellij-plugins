@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import training.editor.eduUI.EduPanel;
+import training.editor.eduUI.MainEduPanel;
 import training.learn.CourseManager;
 
 import javax.swing.*;
@@ -17,6 +18,7 @@ public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvid
 
     JPanel myContentPanel;
     EduPanel myEduPanel;
+    MainEduPanel mainEduPanel;
 
     public LearnToolWindow() {
         super(true, true);
@@ -34,9 +36,12 @@ public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvid
 
     public void init(Project project) {
         int preferableWidth = 350;
+
         myEduPanel = new EduPanel(preferableWidth);
+        mainEduPanel = new MainEduPanel(preferableWidth);
+        CourseManager.getInstance().setMainEduPanel(mainEduPanel);
         CourseManager.getInstance().setEduPanel(myEduPanel);
-        setContent(myEduPanel);
+        setContent(mainEduPanel);
     }
 
     @Override

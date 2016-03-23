@@ -1,6 +1,6 @@
 package training.learn;
 
-import training.learn.exceptons.BadCourseException;
+import training.learn.exceptons.BadModuleException;
 import training.learn.exceptons.BadLessonException;
 import training.learn.exceptons.LessonIsOpenedException;
 
@@ -27,7 +27,7 @@ public class LessonListenerAdapter implements LessonListener {
     }
 
     @Override
-    public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
+    public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadModuleException, LessonIsOpenedException {
     }
 
 }

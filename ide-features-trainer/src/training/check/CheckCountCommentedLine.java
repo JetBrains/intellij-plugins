@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaTokenType;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import training.editor.EduEditor;
 
 /**
  * Created by karashevich on 21/08/15.
