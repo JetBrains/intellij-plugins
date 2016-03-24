@@ -7,7 +7,6 @@ import com.intellij.ide.ui.UISettingsListener;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
-import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,13 +51,6 @@ public abstract class ProfileView extends UserDataHolderBase implements FileEdit
   @NotNull
   public String getName() {
     return myFile.getNameWithoutExtension();
-  }
-
-  @Override
-  @NotNull
-  public FileEditorState getState(@NotNull FileEditorStateLevel fileEditorStateLevel) {
-    // TODO:
-    return FileEditorState.INSTANCE;
   }
 
   @Override

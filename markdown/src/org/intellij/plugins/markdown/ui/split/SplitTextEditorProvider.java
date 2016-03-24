@@ -3,7 +3,6 @@ package org.intellij.plugins.markdown.ui.split;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -39,11 +38,6 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
   @Override
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
     return createEditorAsync(project, file).build();
-  }
-
-  @Override
-  public void disposeEditor(@NotNull FileEditor editor) {
-    Disposer.dispose(editor);
   }
 
   @NotNull

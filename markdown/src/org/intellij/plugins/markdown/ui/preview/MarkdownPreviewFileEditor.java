@@ -8,7 +8,10 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorLocation;
+import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -139,12 +142,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Override
   public String getName() {
     return "Markdown HTML Preview";
-  }
-
-  @NotNull
-  @Override
-  public FileEditorState getState(@NotNull FileEditorStateLevel level) {
-    return FileEditorState.INSTANCE;
   }
 
   @Override
@@ -283,7 +280,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   public void dispose() {
     Disposer.dispose(myPanel);
   }
-  
+
   @Contract("_, null, null -> fail")
   @NotNull
   private static MarkdownHtmlPanel detachOldPanelAndCreateAndAttachNewOne(@NotNull JPanel panelWrapper,
@@ -304,7 +301,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     final MarkdownHtmlPanel newPanel = newPanelProvider.createHtmlPanel();
     panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER);
     panelWrapper.repaint();
-    
+
     return newPanel;
   }
 
@@ -332,7 +329,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
         public void run() {
           myPanel = detachOldPanelAndCreateAndAttachNewOne(myHtmlPanelWrapper, myPanel, newPanelProvider);
           myPanel.setHtml(myLastRenderedHtml);
-          updatePanelCssSettings(myPanel, settings.getMarkdownCssSettings());              
+          updatePanelCssSettings(myPanel, settings.getMarkdownCssSettings());
         }
       }, 0, ModalityState.stateForComponent(getComponent()));
     }
