@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.uml.core.actions.ShowDiagram;
 import icons.AngularJSIcons;
@@ -61,7 +63,8 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   @Override
   public void update(AnActionEvent e) {
     final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
-    e.getPresentation().setEnabled(project != null && AngularIndexUtil.hasAngularJS(project));
+    final RegistryValue value = Registry.get("angular.js.ui.router.diagram");
+    e.getPresentation().setEnabled(value.isBoolean() && value.asBoolean() && project != null && AngularIndexUtil.hasAngularJS(project));
 
     e.getPresentation().setText("Show ui-router State Diagram");
     e.getPresentation().setDescription("Show ui-router State Diagram");
