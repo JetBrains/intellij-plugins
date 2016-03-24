@@ -27,8 +27,6 @@ RAKE_EXT_LOG.log_msg("rake_ext.rb loaded.")
 # For RAKEVERSION =  0.7.3 - 0.8.3
 require 'rake'
 
-RAKEVERSION = 11 unless defined? RAKEVERSION
-
 require 'teamcity/utils/service_message_factory'
 require 'teamcity/utils/std_capture_helper'
 ######################################################################
@@ -137,7 +135,7 @@ module Rake
         when SystemExit
           # Exit silently with current status
           exit_code = exc.status
-        when RAKEVERSION >= '0.8.3' ? OptionParser::InvalidOption : GetoptLong::InvalidOption
+        when (not defined? GetoptLong) ? OptionParser::InvalidOption : GetoptLong::InvalidOption
           # Exit Silently
         else
           # Sends exception to buildserver, if exception hasn't been sent early(inside some markup block)
