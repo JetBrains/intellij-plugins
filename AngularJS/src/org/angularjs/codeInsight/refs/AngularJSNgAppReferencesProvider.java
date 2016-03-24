@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight.refs;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,7 +53,9 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
           @Override
           public boolean value(JSImplicitElement element) {
             if (includedFiles == null) {
-              final VirtualFile appDefinitionFile = getElement().getContainingFile().getVirtualFile();
+              final PsiFile topLevelFile =
+                InjectedLanguageManager.getInstance(getElement().getProject()).getTopLevelFile(getElement().getContainingFile());
+              final VirtualFile appDefinitionFile = topLevelFile.getVirtualFile();
               final VirtualFile[] includedFilesArr = FileIncludeManager.getManager(getElement().getProject()).getIncludedFiles(appDefinitionFile, true, true);
               includedFiles = new HashSet<>(Arrays.asList(includedFilesArr));
             }
