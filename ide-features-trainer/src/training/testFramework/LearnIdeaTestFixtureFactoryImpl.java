@@ -9,12 +9,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by karashevich on 03/11/15.
  */
-public class EduIdeaTestFixtureFactoryImpl extends IdeaTestFixtureFactoryImpl{
+public class LearnIdeaTestFixtureFactoryImpl extends IdeaTestFixtureFactoryImpl{
 
-    private static final EduIdeaTestFixtureFactoryImpl ourInstance = new EduIdeaTestFixtureFactoryImpl();
+    private static final LearnIdeaTestFixtureFactoryImpl ourInstance = new LearnIdeaTestFixtureFactoryImpl();
 
     @NotNull
-    public static EduIdeaTestFixtureFactoryImpl getFixtureFactory() {
+    public static LearnIdeaTestFixtureFactoryImpl getFixtureFactory() {
         IdeaTestFixtureFactory.getFixtureFactory();
         return ourInstance;
     }
@@ -22,6 +22,6 @@ public class EduIdeaTestFixtureFactoryImpl extends IdeaTestFixtureFactoryImpl{
 
     @NotNull
     public TestFixtureBuilder<IdeaProjectTestFixture> createFixtureBuilder(@NotNull String name){
-        return new EduIdeaTestFixtureBuilderImpl(new EduIdeaTestFixtureImpl(name), myFixtureBuilderProviders);
+        return new LearnIdeaTestFixtureBuilderImpl(new LearnIdeaTestFixtureImpl(name), myFixtureBuilderProviders);
     }
 }

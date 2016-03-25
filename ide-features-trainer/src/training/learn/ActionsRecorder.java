@@ -28,15 +28,15 @@ public class ActionsRecorder implements Disposable {
     private Editor editor;
     private String target;
     private boolean triggerActivated;
-    Queue<String> triggerQueue;
+    private Queue<String> triggerQueue;
 
-    DocumentListener myDocumentListener;
-    AnActionListener myAnActionListener;
+    private DocumentListener myDocumentListener;
+    private AnActionListener myAnActionListener;
 
     private boolean disposed = false;
     private Runnable doWhenDone;
     @Nullable
-    Check check = null;
+    private Check check = null;
 
     public ActionsRecorder(Project project, Document document, String target, Editor editor) {
         this.project = project;
@@ -95,7 +95,7 @@ public class ActionsRecorder implements Disposable {
         this.doWhenDone = doWhenDone;
 
 //        triggerMap = new HashMap<String, Boolean>(actionIdArray.length);
-        triggerQueue = new LinkedList<String>();
+        triggerQueue = new LinkedList<>();
         //set triggerMap
         if (actionIdArray != null) {
             Collections.addAll(triggerQueue, actionIdArray);
@@ -105,35 +105,33 @@ public class ActionsRecorder implements Disposable {
 
 
 
-    public boolean isTaskSolved(Document current, String target){
+    private boolean isTaskSolved(Document current, String target){
         if (disposed) return false;
 
         if (target == null){
             if (triggerQueue !=null) {
-                return ((triggerQueue.size() == 1 || triggerQueue.size() == 0 ) && (check == null ? true : check.check()));
-            } else return (triggerActivated && (check == null ? true : check.check()));
+                return ((triggerQueue.size() == 1 || triggerQueue.size() == 0 ) && (check == null || check.check()));
+            } else return (triggerActivated && (check == null || check.check()));
         } else {
 
             List<String> expected = computeTrimmedLines(target);
             List<String> actual = computeTrimmedLines(current.getText());
 
             if (triggerQueue !=null) {
-                return ((expected.equals(actual) && (triggerQueue.size() == 0)) && (check == null ? true : check.check()));
-            } else return ((expected.equals(actual) && triggerActivated ) && (check == null ? true : check.check()));
+                return ((expected.equals(actual) && (triggerQueue.size() == 0)) && (check == null || check.check()));
+            } else return ((expected.equals(actual) && triggerActivated ) && (check == null || check.check()));
         }
 
     }
 
     private List<String> computeTrimmedLines(String s) {
-        ArrayList<String> ls = new ArrayList<String>();
+        ArrayList<String> ls = new ArrayList<>();
 
         for (String it :StringUtil.splitByLines(s) ) {
             String[] splitted = it.split("[ ]+");
-            if (splitted != null) {
-                for(String element: splitted)
-                if (!element.equals("")) {
-                    ls.add(element);
-                }
+            for(String element: splitted)
+            if (!element.equals("")) {
+                ls.add(element);
             }
         }
         return ls;
@@ -142,7 +140,6 @@ public class ActionsRecorder implements Disposable {
 
     /**
      * method adds action and document listeners to monitor user activity and check task
-     * @throws Exception
      */
     private void addActionAndDocumentListeners() throws Exception {
         final ActionManager actionManager = ActionManager.getInstance();
@@ -163,7 +160,7 @@ public class ActionsRecorder implements Disposable {
             @Override
             public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
 
-                //if action called not from project or current editor is different from EduEditor
+                //if action called not from project or current editor is different from editor
                  if (!editorFlag) return;
 
                 if(triggerQueue.size() == 0) {
@@ -209,25 +206,23 @@ public class ActionsRecorder implements Disposable {
             @Override
             public void documentChanged(final DocumentEvent event) {
                 if (PsiDocumentManager.getInstance(project).isUncommited(document)) {
-                    ApplicationManager.getApplication().invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
+                    ApplicationManager.getApplication().invokeLater(() -> {
 
-                            if(!disposed && !project.isDisposed()) {
-                                PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (triggerQueue.size() == 0) {
-                                            if (isTaskSolved(document, target)) {
-                                                removeListeners(document, actionManager);
-                                                if (doWhenDone != null)
-                                                    dispose();
-                                                doWhenDone.run();
-                                            }
+                        if(!disposed && !project.isDisposed()) {
+                            PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (triggerQueue.size() == 0) {
+                                        if (isTaskSolved(document, target)) {
+                                            removeListeners(document, actionManager);
+                                            if (doWhenDone != null)
+                                                dispose();
+                                            assert doWhenDone != null;
+                                            doWhenDone.run();
                                         }
                                     }
-                                });
-                            }
+                                }
+                            });
                         }
                     });
                 }
@@ -258,9 +253,8 @@ public class ActionsRecorder implements Disposable {
         myDocumentListener = null;
     }
 
-    private boolean equalStr(@Nullable String str1, @Nullable String str2){
-        if ((str1 == null) || (str2 == null)) return false;
-        return (str1.toUpperCase().equals(str2.toUpperCase()));
+    private boolean equalStr(@Nullable String str1, @Nullable String str2) {
+        return !((str1 == null) || (str2 == null)) && (str1.toUpperCase().equals(str2.toUpperCase()));
     }
 }
 

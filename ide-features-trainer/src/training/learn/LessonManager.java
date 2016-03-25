@@ -5,52 +5,47 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import training.editor.actions.BlockCaretAction;
-import training.editor.actions.EduActions;
-import training.editor.eduUI.EduBalloonBuilder;
-import training.editor.eduUI.EduPanel;
-import training.editor.eduUI.Message;
-import training.learn.exceptons.BadLessonException;
-import training.learn.exceptons.BadModuleException;
-import training.learn.exceptons.LessonIsOpenedException;
+import training.editor.actions.LearnActions;
+import training.ui.LearnBalloonBuilder;
+import training.ui.LearnPanel;
+import training.ui.Message;
 
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.concurrent.ExecutionException;
 
 /**
- * Created by jetbrains on 18/03/16.
+ * Created by karashevich on 18/03/16.
  */
 public class LessonManager {
 
-    Lesson myCurrentLesson;
+    private Lesson myCurrentLesson;
 
-    static ArrayList<EduActions> myEduActions;
+    private static ArrayList<LearnActions> myLearnActions;
     private static MouseListener myMouseDummyListener;
-    private final EduBalloonBuilder eduBalloonBuilder;
+    private final LearnBalloonBuilder learnBalloonBuilder;
     private static boolean mouseBlocked = false;
     private static MouseListener[] myMouseListeners;
     private static MouseMotionListener[] myMouseMotionListeners;
-    private static HashSet<ActionsRecorder> actionsRecorders = new HashSet<ActionsRecorder>();
-    private static HashMap<Lesson, LessonManager> lessonManagers = new HashMap<Lesson, LessonManager>();
+    private static HashSet<ActionsRecorder> actionsRecorders = new HashSet<>();
+    private static HashMap<Lesson, LessonManager> lessonManagers = new HashMap<>();
     private static Editor lastEditor;
 
-    public final int balloonDelay = 3000;
+    private final int balloonDelay = 3000;
 
     public LessonManager(Lesson lesson, Editor editor) {
         myCurrentLesson = lesson;
         mouseBlocked = false;
-        if (myEduActions == null) {
-            myEduActions = new ArrayList<EduActions>();
+        if (myLearnActions == null) {
+            myLearnActions = new ArrayList<>();
         }
-        eduBalloonBuilder = new EduBalloonBuilder(editor, balloonDelay, "Caret is blocked in this lesson");
+        learnBalloonBuilder = new LearnBalloonBuilder(editor, balloonDelay, "Caret is blocked in this lesson");
         lessonManagers.put(lesson, this);
         lastEditor = editor;
     }
@@ -64,23 +59,24 @@ public class LessonManager {
         return lessonManagers.get(lesson);
     }
 
-    public void initLesson(Editor editor) {
+    void initLesson(Editor editor) throws Exception {
         cleanEditor(); //remove mouse blocks and action recorders from last editor
-        EduPanel eduPanel = CourseManager.getInstance().getEduPanel();
-        eduPanel.setLessonName(myCurrentLesson.getName());
-        String moduleName = myCurrentLesson.getModule().getName();
-        if (moduleName != null)
-            eduPanel.setModuleName(moduleName);
-        eduPanel.getModulePanel().init(myCurrentLesson);
+        LearnPanel learnPanel = CourseManager.getInstance().getLearnPanel();
+        learnPanel.setLessonName(myCurrentLesson.getName());
+        Module module = myCurrentLesson.getModule();
+        if (module == null) throw new Exception("Unable to find module for lesson: " + myCurrentLesson);
+        String moduleName = module.getName();
+        learnPanel.setModuleName(moduleName);
+        learnPanel.getModulePanel().init(myCurrentLesson);
         clearEditor(editor);
         clearLessonPanel();
         removeActionsRecorders();
         if (isMouseBlocked()) restoreMouseActions(editor);
-        if (myEduActions != null) {
-            for (EduActions myLearnAction : myEduActions) {
+        if (myLearnActions != null) {
+            for (LearnActions myLearnAction : myLearnActions) {
                 myLearnAction.unregisterAction();
             }
-            myEduActions.clear();
+            myLearnActions.clear();
         }
 
         Runnable runnable = null;
@@ -88,36 +84,30 @@ public class LessonManager {
         Lesson lesson = CourseManager.getInstance().giveNextLesson(myCurrentLesson);
         if (lesson != null) {
 //            buttonText = lesson.getName();
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        CourseManager.getInstance().openLesson(editor.getProject(), lesson);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            runnable = () -> {
+                try {
+                    CourseManager.getInstance().openLesson(editor.getProject(), lesson);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             };
         } else {
             Module nextModule = CourseManager.getInstance().giveNextModule(myCurrentLesson);
             if (nextModule != null) {
                 buttonText = nextModule.getName();
-                runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        Lesson notPassedLesson = nextModule.giveNotPassedLesson();
-                        if (notPassedLesson == null) {
-                            try {
-                                CourseManager.getInstance().openLesson(editor.getProject(), nextModule.getLessons().get(0));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            try {
-                                CourseManager.getInstance().openLesson(editor.getProject(), notPassedLesson);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                runnable = () -> {
+                    Lesson notPassedLesson = nextModule.giveNotPassedLesson();
+                    if (notPassedLesson == null) {
+                        try {
+                            CourseManager.getInstance().openLesson(editor.getProject(), nextModule.getLessons().get(0));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            CourseManager.getInstance().openLesson(editor.getProject(), notPassedLesson);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 };
@@ -125,44 +115,57 @@ public class LessonManager {
         }
 
         if (runnable != null) {
-            CourseManager.getInstance().getEduPanel().setButtonSkipAction(runnable, buttonText, true);
+            CourseManager.getInstance().getLearnPanel().setButtonSkipAction(runnable, buttonText, true);
         } else {
-            CourseManager.getInstance().getEduPanel().setButtonSkipAction(runnable, buttonText, false);
+            CourseManager.getInstance().getLearnPanel().setButtonSkipAction(null, null, false);
         }
     }
 
     public void addMessage(String message){
-        CourseManager.getInstance().getEduPanel().addMessage(message);
+        CourseManager.getInstance().getLearnPanel().addMessage(message);
     }
 
     public void addMessage(Message[] messages) {
-        CourseManager.getInstance().getEduPanel().addMessage(messages);
+        CourseManager.getInstance().getLearnPanel().addMessage(messages);
     }
 
     public void passExercise() {
-        CourseManager.getInstance().getEduPanel().setPreviousMessagesPassed();
+        CourseManager.getInstance().getLearnPanel().setPreviousMessagesPassed();
     }
 
     public void passLesson(Project project, Editor editor) {
-        EduPanel eduPanel = CourseManager.getInstance().getEduPanel();
-        eduPanel.setLessonPassed();
-        if(myCurrentLesson.getModule()!=null && myCurrentLesson.getModule().hasNotPassedLesson()){
+        LearnPanel learnPanel = CourseManager.getInstance().getLearnPanel();
+        learnPanel.setLessonPassed();
+        if(myCurrentLesson.getModule() !=null && myCurrentLesson.getModule().hasNotPassedLesson()){
             final Lesson notPassedLesson = myCurrentLesson.getModule().giveNotPassedLesson();
-            eduPanel.setButtonNextAction(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        CourseManager.getInstance().openLesson(project, notPassedLesson);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            learnPanel.setButtonNextAction(() -> {
+                try {
+                    CourseManager.getInstance().openLesson(project, notPassedLesson);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }, notPassedLesson);
         } else {
-            eduPanel.hideNextButton();
+            Module module = CourseManager.getInstance().giveNextModule(myCurrentLesson);
+            if (module == null) hideButtons();
+            else {
+                Lesson lesson = module.giveNotPassedLesson();
+                if (lesson == null) lesson = module.getLessons().get(0);
+
+                Lesson lessonFromNextModule = lesson;
+                Module nextModule = lessonFromNextModule.getModule();
+                if (nextModule == null) return;
+                learnPanel.setButtonNextAction(() -> {
+                    try {
+                        CourseManager.getInstance().openLesson(project, lessonFromNextModule);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, lesson, LearnBundle.message("learn.ui.button.next.module") + ": " + nextModule.getName());
+            }
         }
-//        eduPanel.updateLessonPanel(myCurrentLesson);
-        eduPanel.getModulePanel().updateLessons(myCurrentLesson);
+//        learnPanel.updateLessonPanel(myCurrentLesson);
+        learnPanel.getModulePanel().updateLessons(myCurrentLesson);
     }
 
 
@@ -172,34 +175,32 @@ public class LessonManager {
             public void run() {
                 if (editor != null) {
                     final Document document = editor.getDocument();
-                    if (document != null) {
-                        try {
-                            document.setText("");
-                        } catch (Exception e) {
-                            System.err.println("Unable to update text in EduEdutor!");
-                        }
+                    try {
+                        document.setText("");
+                    } catch (Exception e) {
+                        System.err.println("Unable to update text in editor!");
                     }
                 }
             }
         });
     }
 
-    public void clearLessonPanel() {
-        CourseManager.getInstance().getEduPanel().clearLessonPanel();
+    private void clearLessonPanel() {
+        CourseManager.getInstance().getLearnPanel().clearLessonPanel();
     }
 
     private void hideButtons() {
-        CourseManager.getInstance().getEduPanel().hideButtons();
+        CourseManager.getInstance().getLearnPanel().hideButtons();
     }
 
-    public void removeActionsRecorders(){
+    private void removeActionsRecorders(){
         for (ActionsRecorder actionsRecorder : actionsRecorders) {
             actionsRecorder.dispose();
         }
         actionsRecorders.clear();
     }
 
-    public boolean isMouseBlocked() {
+    private boolean isMouseBlocked() {
         return mouseBlocked;
     }
 
@@ -223,37 +224,37 @@ public class LessonManager {
         setMouseBlocked(false);
     }
 
-    public MouseListener[] getMyMouseListeners() {
+    private MouseListener[] getMyMouseListeners() {
         return myMouseListeners;
     }
 
-    public MouseMotionListener[] getMyMouseMotionListeners() {
+    private MouseMotionListener[] getMyMouseMotionListeners() {
         return myMouseMotionListeners;
     }
 
-    public void setMyMouseListeners(MouseListener[] myMouseListeners) {
-        this.myMouseListeners = myMouseListeners;
+    private void setMyMouseListeners(MouseListener[] myMouseListeners) {
+        LessonManager.myMouseListeners = myMouseListeners;
     }
 
-    public void setMyMouseMotionListeners(MouseMotionListener[] myMouseMotionListeners) {
-        this.myMouseMotionListeners = myMouseMotionListeners;
+    private void setMyMouseMotionListeners(MouseMotionListener[] myMouseMotionListeners) {
+        LessonManager.myMouseMotionListeners = myMouseMotionListeners;
     }
 
-    public void setMouseBlocked(boolean mouseBlocked) {
-        this.mouseBlocked = mouseBlocked;
+    private void setMouseBlocked(boolean mouseBlocked) {
+        LessonManager.mouseBlocked = mouseBlocked;
     }
 
     public void unblockCaret() {
         ArrayList<BlockCaretAction> myBlockActions = new ArrayList<BlockCaretAction>();
 
-        for (EduActions myLearnAction : myEduActions) {
+        for (LearnActions myLearnAction : myLearnActions) {
             if(myLearnAction instanceof BlockCaretAction) {
                 myBlockActions.add((BlockCaretAction) myLearnAction);
-                ((BlockCaretAction) myLearnAction).unregisterAction();
+                myLearnAction.unregisterAction();
             }
         }
 
-        myEduActions.removeAll(myBlockActions);
+        myLearnActions.removeAll(myBlockActions);
     }
 
     public void grabMouseActions(Editor editor){
@@ -316,22 +317,19 @@ public class LessonManager {
 //            e.printStackTrace();
 //        }
 
-        for (EduActions myLearnAction : myEduActions) {
+        for (LearnActions myLearnAction : myLearnActions) {
             if(myLearnAction instanceof BlockCaretAction) return;
         }
 
         BlockCaretAction blockCaretAction = new BlockCaretAction(editor);
-        blockCaretAction.addActionHandler(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    showCaretBlockedBalloon();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        blockCaretAction.addActionHandler(() -> {
+            try {
+                showCaretBlockedBalloon();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
-        myEduActions.add(blockCaretAction);
+        myLearnActions.add(blockCaretAction);
     }
 
     public void registerActionsRecorder(ActionsRecorder recorder){
@@ -339,7 +337,7 @@ public class LessonManager {
     }
 
     private void showCaretBlockedBalloon() throws InterruptedException {
-        eduBalloonBuilder.showBalloon();
+        learnBalloonBuilder.showBalloon();
     }
 
     private void cleanEditor(){

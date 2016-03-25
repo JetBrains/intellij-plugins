@@ -51,21 +51,21 @@ import java.util.Set;
 /**
  * Created by karashevich on 03/11/15.
  */
-class EduIdeaTestFixtureImpl extends BaseFixture implements IdeaProjectTestFixture, HeavyIdeaTestFixture {
+class LearnIdeaTestFixtureImpl extends BaseFixture implements IdeaProjectTestFixture, HeavyIdeaTestFixture {
 
     private Project myProject;
-    private final Set<File> myFilesToDelete = new HashSet<File>();
+    private final Set<File> myFilesToDelete = new HashSet<>();
     private IdeaTestApplication myApplication;
-    private final Set<ModuleFixtureBuilder> myModuleFixtureBuilders = new LinkedHashSet<ModuleFixtureBuilder>();
+    private final Set<ModuleFixtureBuilder> myModuleFixtureBuilders = new LinkedHashSet<>();
     private EditorListenerTracker myEditorListenerTracker;
     private ThreadTracker myThreadTracker;
     private final String myName;
 
-    public EduIdeaTestFixtureImpl(@NotNull String name) {
+    LearnIdeaTestFixtureImpl(@NotNull String name) {
         myName = name;
     }
 
-    protected void addModuleFixtureBuilder(ModuleFixtureBuilder builder) {
+    void addModuleFixtureBuilder(ModuleFixtureBuilder builder) {
         myModuleFixtureBuilders.add(builder);
     }
 
@@ -85,7 +85,7 @@ class EduIdeaTestFixtureImpl extends BaseFixture implements IdeaProjectTestFixtu
     @Override
     public void tearDown() throws Exception {
         final Project project = getProject();
-        final List<Throwable> exceptions = new SmartList<Throwable>();
+        final List<Throwable> exceptions = new SmartList<>();
         try {
             LightPlatformTestCase.doTearDown(project, myApplication, false, exceptions);
 
@@ -93,11 +93,8 @@ class EduIdeaTestFixtureImpl extends BaseFixture implements IdeaProjectTestFixtu
                 moduleFixtureBuilder.getFixture().tearDown();
             }
 
-            EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
-                @Override
-                public void run() throws Throwable {
-                    PlatformTestCase.closeAndDisposeProjectAndCheckThatNoOpenProjects(project, exceptions);
-                }
+            EdtTestUtil.runInEdtAndWait((ThrowableRunnable<Throwable>) () -> {
+                PlatformTestCase.closeAndDisposeProjectAndCheckThatNoOpenProjects(project, exceptions);
             });
             myProject = null;
 
@@ -130,21 +127,17 @@ class EduIdeaTestFixtureImpl extends BaseFixture implements IdeaProjectTestFixtu
     }
 
     private void setUpProject() throws IOException {
-        EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
-            @SuppressWarnings("TestOnlyProblems")
-            @Override
-            public void run() throws Throwable {
+        EdtTestUtil.runInEdtAndWait((ThrowableRunnable<Throwable>) () -> {
 
-                myProject = CourseManager.getInstance().getEduProject();
-                ProjectManagerEx.getInstanceEx().openTestProject(myProject);
+            myProject = CourseManager.getInstance().getLearnProject();
+            ProjectManagerEx.getInstanceEx().openTestProject(myProject);
 
-                for (ModuleFixtureBuilder moduleFixtureBuilder : myModuleFixtureBuilders) {
-                    moduleFixtureBuilder.getFixture().setUp();
-                }
-
-                LightPlatformTestCase.clearUncommittedDocuments(myProject);
-                ((FileTypeManagerImpl) FileTypeManager.getInstance()).drainReDetectQueue();
+            for (ModuleFixtureBuilder moduleFixtureBuilder : myModuleFixtureBuilders) {
+                moduleFixtureBuilder.getFixture().setUp();
             }
+
+            LightPlatformTestCase.clearUncommittedDocuments(myProject);
+            ((FileTypeManagerImpl) FileTypeManager.getInstance()).drainReDetectQueue();
         });
     }
 
@@ -223,11 +216,8 @@ class EduIdeaTestFixtureImpl extends BaseFixture implements IdeaProjectTestFixtu
                 PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
             }
         }.execute();
-        return ApplicationManager.getApplication().runReadAction(new Computable<PsiFile>() {
-            @Override
-            public PsiFile compute() {
-                return PsiManager.getInstance(getProject()).findFile(virtualFile[0]);
-            }
+        return ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {
+            return PsiManager.getInstance(getProject()).findFile(virtualFile[0]);
         });
     }
 }

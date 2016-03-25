@@ -24,11 +24,11 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 28/10/15.
  */
-public abstract class EduLessonTest extends UsefulTestCase implements LessonSolution{
+public abstract class LearnLessonTest extends UsefulTestCase implements LessonSolution{
 
     protected Project myProject;
-    protected VirtualFile myProjectRoot;
-    protected String myProjectPath;
+    private VirtualFile myProjectRoot;
+    private String myProjectPath;
 
     protected Lesson myLesson;
 
@@ -39,6 +39,8 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
         JavaSdk javaSdk = JavaSdk.getInstance();
         final String suggestedHomePath = javaSdk.suggestHomePath();
         final String versionString = javaSdk.getVersionString(suggestedHomePath);
+        assert versionString != null;
+        assert suggestedHomePath != null;
         final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath);
 
         final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
@@ -102,14 +104,11 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
             while(!myLesson.getPassed()){
                 //pumpEvents
                 com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
-                EdtTestUtil.runInEdtAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            solveStep();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                EdtTestUtil.runInEdtAndWait((Runnable) () -> {
+                    try {
+                        solveStep();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
             }
@@ -145,7 +144,7 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
         return lesson;
     }
 
-    protected void prepareLesson(){
+    private void prepareLesson(){
         assertNotNull(myLesson);
         myLesson.setPassed(false);
         assertTrue(!myLesson.getPassed());

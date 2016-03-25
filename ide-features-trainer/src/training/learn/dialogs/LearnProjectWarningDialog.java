@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
-import training.learn.EducationBundle;
+import training.learn.LearnBundle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,16 +12,16 @@ import java.awt.*;
 /**
  * Created by karashevich on 09/09/15.
  */
-public class EduProjectWarningDialog extends DialogWrapper {
+public class LearnProjectWarningDialog extends DialogWrapper {
     private final Project myProject;
 
     private StateRestoringCheckBox myCbDoNotAskAgain;
 
 
-    public EduProjectWarningDialog(Project project) {
+    public LearnProjectWarningDialog(Project project) {
         super(project, true);
         myProject = project;
-        setTitle(EducationBundle.message("dialog.eduProjectWarning.title"));
+        setTitle(LearnBundle.message("dialog.learnProjectWarning.title"));
         init();
     }
 
@@ -37,7 +37,7 @@ public class EduProjectWarningDialog extends DialogWrapper {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        final String warningMessage = EducationBundle.message("dialog.eduProjectWarning.message");
+        final String warningMessage = LearnBundle.message("dialog.learnProjectWarning.message");
 
         gbc.insets = new Insets(4, 8, 4, 8);
         gbc.weighty = 1;
@@ -54,7 +54,7 @@ public class EduProjectWarningDialog extends DialogWrapper {
 //        gbc.weightx = 0.0;
 //        gbc.gridwidth = 1;
 //        myCbDoNotAskAgain = new StateRestoringCheckBox();
-//        myCbDoNotAskAgain.setText(EducationBundle.message("dialog.invalidSdk.checkbox"));
+//        myCbDoNotAskAgain.setText(LearnBundle.message("dialog.invalidSdk.checkbox"));
 //        panel.add(myCbDoNotAskAgain, gbc);
 
 //        myCbDoNotAskAgain.setSelected(true);

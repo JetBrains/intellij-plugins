@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module name="Navigation" lessonsPath="Navigation/" version="0.3" id="navigation" fileType="PROJECT">
+<module name="Navigation" lessonsPath="Navigation/" version="0.3" id="navigation" fileType="PROJECT" description="Jump to source, declaration/implementation, file structure and next/prev occurrences navigation">
   <lesson filename="01.JumpToSource.xml" solution="training.solutions.Navigation.JumpToSourceSolution" />
   <lesson filename="02.Declaration.xml" solution="training.solutions.Navigation.DeclarationSolution"/>
   <lesson filename="03.FileStructure.xml" solution="training.solutions.Navigation.FileStructureSolution" />
