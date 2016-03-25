@@ -58,6 +58,8 @@ public class HardScratchBasedTest extends UsefulTestCase{
         JavaSdk javaSdk = JavaSdk.getInstance();
         final String suggestedHomePath = javaSdk.suggestHomePath();
         final String versionString = javaSdk.getVersionString(suggestedHomePath);
+        assert suggestedHomePath != null;
+        assert versionString != null;
         final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath);
 
         final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
@@ -72,7 +74,7 @@ public class HardScratchBasedTest extends UsefulTestCase{
         return StdModuleTypes.JAVA;
     }
 
-    protected void setUpLesson(){
+    private void setUpLesson(){
         myLesson = CourseManagerWithoutIDEA.getInstance().findLesson(lessonId);
     }
 
@@ -85,6 +87,7 @@ public class HardScratchBasedTest extends UsefulTestCase{
     public static List<Object> data(){
         List<Object> lessonsIds = new ArrayList<Object>();
         final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        assert modules != null;
         for (Module module : modules) {
             final ArrayList<Lesson> lessons = module.getLessons();
             for (Lesson lesson : lessons) {

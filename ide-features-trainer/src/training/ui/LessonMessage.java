@@ -1,13 +1,12 @@
-package training.editor.eduUI;
+package training.ui;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Created by karashevich on 30/06/15.
  */
-public class LessonMessage {
+class LessonMessage {
 
     private ArrayList<Message> myMessages;
     private int start;
@@ -15,7 +14,7 @@ public class LessonMessage {
     private boolean passed;
 
     LessonMessage(String text, int start, int end){
-        if (myMessages == null) myMessages = new ArrayList<Message>();
+        if (myMessages == null) myMessages = new ArrayList<>();
         myMessages.add(new Message(text, Message.MessageType.TEXT_REGULAR));
         this.start = start;
         this.end = end;
@@ -23,7 +22,7 @@ public class LessonMessage {
     }
 
     LessonMessage(Message[] messages, int start, int end){
-        if (myMessages == null) myMessages = new ArrayList<Message>();
+        if (myMessages == null) myMessages = new ArrayList<>();
         myMessages.addAll(Arrays.asList(messages));
         this.start = start;
         this.end = end;

@@ -1,4 +1,4 @@
-package training.editor.eduUI;
+package training.ui;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public class ShortcutLabel extends JLabel {
         this.setText(text);
     }
 
-    class FilledBorderWithText extends AbstractBorder {
+    private class FilledBorderWithText extends AbstractBorder {
 
         private final Color color;
         private final Color colorBck;
@@ -32,7 +32,7 @@ public class ShortcutLabel extends JLabel {
         private Color fontColor;
         private String text;
 
-        public FilledBorderWithText(Color c, int g, @Nullable Color colorBck, Font f, Color fontColor, String s) {
+        FilledBorderWithText(Color c, int g, @Nullable Color colorBck, Font f, Color fontColor, String s) {
             color = c;
             gap = g;
             this.colorBck = colorBck;

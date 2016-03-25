@@ -149,11 +149,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
                     CourseManager.getInstance().checkEnvironment(myProject, myLesson.getModule());
                 } catch (NoSdkException e) {
                     noSdkDetected = true;
-                } catch (OldJdkException e) {
-                    e.printStackTrace();
-                } catch (InvalidSdkException e) {
-                    e.printStackTrace();
-                } catch (NoJavaModuleException e) {
+                } catch (OldJdkException | InvalidSdkException | NoJavaModuleException e) {
                     e.printStackTrace();
                 }
                 assertTrue(noSdkDetected);
@@ -168,19 +164,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
                     assertNotNull(ProjectJdkTable.getInstance().findJdk(getProjectJDK().getName(), getProjectJDK().getSdkType().getName()));
                     try {
                         CourseManager.getInstance().openLesson(myProject, myLesson);
-                    } catch (BadModuleException e) {
-                        e.printStackTrace();
-                    } catch (BadLessonException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (FontFormatException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (LessonIsOpenedException e) {
+                    } catch (BadModuleException | BadLessonException | FontFormatException | InterruptedException | ExecutionException | LessonIsOpenedException | IOException e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -200,11 +184,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
             });
             try {
                 solveStep();
-            } catch (BadCommandException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+            } catch (BadCommandException | ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -223,7 +203,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
 
 
 
-    protected void prepareLesson(){
+    private void prepareLesson(){
         assertNotNull(myLesson);
         myLesson.setPassed(false);
         assertTrue(!myLesson.getPassed());

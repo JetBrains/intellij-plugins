@@ -9,10 +9,10 @@ import com.intellij.openapi.wm.ToolWindowManager;
 /**
  * Created by karashevich on 16/09/15.
  */
-public class HideProjectTreeAction extends DumbAwareAction implements EduActions {
+public class HideProjectTreeAction extends DumbAwareAction implements LearnActions {
 
-    final static public String PROJECT_ID = "Project";
-    final static public String actionId = "EduHideProjectTreeAction";
+    private final static String PROJECT_ID = "Project";
+    final static public String actionId = "LearnHideProjectTreeAction";
 
     @Override
     public void actionPerformed(AnActionEvent e) {

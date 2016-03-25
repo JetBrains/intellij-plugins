@@ -1,6 +1,7 @@
-package training.editor.eduUI;
+package training.ui;
 
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import icons.LearnIcons;
 
@@ -15,19 +16,19 @@ import java.util.ArrayList;
  * Created by karashevich on 01/09/15.
  */
 
-public class LessonMessagePane extends JTextPane {
+class LessonMessagePane extends JTextPane {
 
     //Style Attributes for LessonMessagePane(JTextPane)
-    static SimpleAttributeSet REGULAR = new SimpleAttributeSet();
-    static SimpleAttributeSet BOLD = new SimpleAttributeSet();
-    static SimpleAttributeSet ROBOTO = new SimpleAttributeSet();
-    static SimpleAttributeSet CODE = new SimpleAttributeSet();
-    static SimpleAttributeSet LINK = new SimpleAttributeSet();
+    private static SimpleAttributeSet REGULAR = new SimpleAttributeSet();
+    private static SimpleAttributeSet BOLD = new SimpleAttributeSet();
+    private static SimpleAttributeSet ROBOTO = new SimpleAttributeSet();
+    private static SimpleAttributeSet CODE = new SimpleAttributeSet();
+    private static SimpleAttributeSet LINK = new SimpleAttributeSet();
 
-    static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
+    private static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
 
-    private ArrayList<LessonMessage> lessonMessages = new ArrayList<LessonMessage>();
-    private Color passedColor = Color.GRAY;
+    private ArrayList<LessonMessage> lessonMessages = new ArrayList<>();
+    private Color passedColor = JBColor.GRAY;
     private Icon passedIcon;
 
     LessonMessagePane(){
@@ -40,18 +41,18 @@ public class LessonMessagePane extends JTextPane {
     private static void initStyleConstants() {
         StyleConstants.setFontFamily(REGULAR, UIUtil.getLabelFont().getFamily());
         StyleConstants.setFontSize(REGULAR, 12);
-        StyleConstants.setForeground(REGULAR, Color.BLACK);
+        StyleConstants.setForeground(REGULAR, JBColor.BLACK);
 
         StyleConstants.setFontFamily(BOLD, UIUtil.getLabelFont().getFamily());
         StyleConstants.setFontSize(BOLD, 12);
         StyleConstants.setBold(BOLD, true);
-        StyleConstants.setForeground(BOLD, Color.BLACK);
+        StyleConstants.setForeground(BOLD, JBColor.BLACK);
 
-        StyleConstants.setForeground(CODE, Color.BLUE);
+        StyleConstants.setForeground(CODE, JBColor.BLUE);
         StyleConstants.setFontFamily(CODE, EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
         StyleConstants.setFontSize(CODE, 12);
 
-        StyleConstants.setForeground(LINK, Color.BLUE);
+        StyleConstants.setForeground(LINK, JBColor.BLUE);
         StyleConstants.setFontFamily(LINK, UIUtil.getLabelFont().getFamily());
         StyleConstants.setUnderline(LINK, true);
         StyleConstants.setFontSize(LINK, 12);
@@ -63,11 +64,11 @@ public class LessonMessagePane extends JTextPane {
         StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f);
     }
 
-    public void setUI(Color regularFontColor,
-                      Color shortcutColor,
-                      Color codeFontColor,
-                      Color linkFontColor,
-                      Color passedColor){
+    void setUI(Color regularFontColor,
+               Color shortcutColor,
+               Color codeFontColor,
+               Color linkFontColor,
+               Color passedColor){
         StyleConstants.setForeground(REGULAR, regularFontColor);
         StyleConstants.setForeground(BOLD, shortcutColor);
         StyleConstants.setForeground(LINK, linkFontColor);
@@ -75,7 +76,7 @@ public class LessonMessagePane extends JTextPane {
         this.passedColor = passedColor;
     }
 
-    public void addMessage(String text) {
+    void addMessage(String text) {
         try {
             int start = getDocument().getLength();
             getDocument().insertString(getDocument().getLength(), text, REGULAR);
@@ -87,7 +88,7 @@ public class LessonMessagePane extends JTextPane {
         }
     }
 
-    public void addMessage(Message[] messages) {
+    void addMessage(Message[] messages) {
 
         int start = getDocument().getLength();
         if (lessonMessages.size() > 0) {
@@ -131,10 +132,8 @@ public class LessonMessagePane extends JTextPane {
 
     /**
      * inserts a checkmark icon to the end of the LessonMessagePane document as a styled label.
-     *
-     * @throws BadLocationException
      */
-    public void passPreviousMessages() throws BadLocationException {
+    void passPreviousMessages() throws BadLocationException {
         if (lessonMessages.size() > 0) {
             final LessonMessage lessonMessage = lessonMessages.get(lessonMessages.size() - 1);
             lessonMessage.setPassed(true);
@@ -157,7 +156,6 @@ public class LessonMessagePane extends JTextPane {
      * Appends link inside JTextPane to Run another lesson
      *
      * @param message - should have LINK type. message.runnable starts when the message has been clicked.
-     * @throws BadLocationException
      */
     private void appendLink(final Message message) throws BadLocationException {
         final int startLink = getDocument().getEndPosition().getOffset();

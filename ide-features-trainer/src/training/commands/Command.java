@@ -1,7 +1,7 @@
 package training.commands;
 
 import com.intellij.openapi.application.ApplicationManager;
-import training.editor.eduUI.Message;
+import training.ui.Message;
 import training.learn.Lesson;
 import training.learn.LessonManager;
 import training.util.XmlUtil;
@@ -24,11 +24,12 @@ public abstract class Command {
         return commandType;
     }
 
-    protected void updateDescription(String s, Lesson lesson){
-        LessonManager.getInstance(lesson).addMessage(s);
+    void updateDescription(String s, Lesson lesson){
+        LessonManager lessonManager = LessonManager.getInstance(lesson);
+        if (lessonManager != null) lessonManager.addMessage(s);
     }
 
-    protected void updateHTMLDescription(String htmlText, Lesson lesson){
+    void updateHTMLDescription(String htmlText, Lesson lesson){
 //        if (element.getAttribute("description") != null) {
 //            String description =(element.getAttribute("description").getValue());
 //            description = XmlUtil.extractActions(description);
@@ -36,7 +37,8 @@ public abstract class Command {
 //            updateHTMLDescription(element, infoPanel, editor, description);
 //        }
         final Message[] messages = XmlUtil.extractAll(new Message[]{new Message(htmlText, Message.MessageType.TEXT_REGULAR)});
-        LessonManager.getInstance(lesson).addMessage(messages);
+        LessonManager lessonManager = LessonManager.getInstance(lesson);
+        if (lessonManager != null) lessonManager.addMessage(messages);
     }
 
     /**
@@ -54,14 +56,11 @@ public abstract class Command {
     public abstract void execute(ExecutionList executionList) throws Exception;
 
     protected void startNextCommand(final ExecutionList executionList){
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    CommandFactory.buildCommand(executionList.getElements().peek()).execute(executionList);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        ApplicationManager.getApplication().invokeLater(() -> {
+            try {
+                CommandFactory.buildCommand(executionList.getElements().peek()).execute(executionList);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

@@ -10,12 +10,12 @@ import training.commands.TestCommand;
 import training.learn.CourseManager;
 import training.learn.LessonProcessor;
 import training.learn.exceptons.NoSdkException;
-import training.testFramework.EduLessonTest;
+import training.testFramework.LearnLessonTest;
 
 /**
  * Created by karashevich on 29/10/15.
  */
-public class EditorBasics_Selection_Solution_Test extends EduLessonTest {
+public class EditorBasics_Selection_Solution_Test extends LearnLessonTest {
 
 
     /**
@@ -69,13 +69,9 @@ public class EditorBasics_Selection_Solution_Test extends EduLessonTest {
             noSdkDetected = true;
         }
         assertTrue(noSdkDetected);
-        noSdkDetected = false;
-        final Boolean result = ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
-            @Override
-            public Boolean compute() {
-                ProjectRootManager.getInstance(myProject).setProjectSdk(getProjectJDK());
-                return true;
-            }
+        final Boolean result = ApplicationManager.getApplication().runWriteAction((Computable<Boolean>) () -> {
+            ProjectRootManager.getInstance(myProject).setProjectSdk(getProjectJDK());
+            return true;
         });
         if (result) {
             assertNotNull(ProjectJdkTable.getInstance().findJdk(getProjectJDK().getName(), getProjectJDK().getSdkType().getName()));

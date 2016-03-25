@@ -12,7 +12,7 @@ import training.commands.ExecutionList;
 import training.util.PerformActionUtil;
 import training.editor.MouseListenerHolder;
 import training.editor.actions.HideProjectTreeAction;
-import training.editor.eduUI.Message;
+import training.ui.Message;
 import training.util.XmlUtil;
 
 import java.util.HashMap;
@@ -35,17 +35,17 @@ public class LessonProcessor {
 
     public static void process(final Project project, final Lesson lesson, final Editor editor, @Nullable String target) throws Exception {
 
-        HashMap<String, String> editorParameters = new HashMap<String, String>();
+        HashMap<String, String> editorParameters = new HashMap<>();
 
-        Queue<Element> elements = new LinkedBlockingQueue<Element>();
-        if (lesson.getScn().equals(null)) {
+        Queue<Element> elements = new LinkedBlockingQueue<>();
+        if (lesson.getScn() == null) {
             System.err.println("Scenario is empty or cannot be read!");
             return;
         }
 
         final Element root = lesson.getScn().getRoot();
 
-        if (root.equals(null)) {
+        if (root == null) {
             System.err.println("Scenario is empty or cannot be read!");
             return;
         }
@@ -56,10 +56,10 @@ public class LessonProcessor {
         //Create queue of Actions
         for (final Element el : root.getChildren()) {
             //if element is MouseBlocked (blocks all mouse events) than add all children inside it.
-            if(isMouseBlock(el)) {
+            if (isMouseBlock(el)) {
                 if (el.getChildren() != null) {
                     elements.add(el); //add block element
-                    for(Element el1 : el.getChildren()){
+                    for (Element el1 : el.getChildren()) {
                         if (isCaretBlock(el1)) {
                             if (el1.getChildren() != null) {
                                 elements.add(el1); //add block element
@@ -77,7 +77,7 @@ public class LessonProcessor {
             } else if (isCaretBlock(el)) {
                 if (el.getChildren() != null) {
                     elements.add(el); //add block element
-                    for(Element el1 : el.getChildren()){
+                    for (Element el1 : el.getChildren()) {
                         elements.add(el1); //add inner elements
                     }
                     elements.add(new Element(Command.CommandType.CARETUNBLOCK.toString())); //add unblock element
@@ -89,8 +89,14 @@ public class LessonProcessor {
 
         MouseListenerHolder mouseListenerHolder = new MouseListenerHolder();
 
-        //Initialize lesson in the EduEditor
-        LessonManager.getInstance(lesson).initLesson(editor);
+        //Initialize lesson in the editor
+
+        LessonManager lessonManager = LessonManager.getInstance(lesson);
+        if (lessonManager != null) {
+            lessonManager.initLesson(editor);
+        } else {
+            throw new Exception("Unable to get LessonManager");
+        }
 
         //Prepare environment before execution
         prepareEnvironment(editor, project, editorParameters);
@@ -106,13 +112,13 @@ public class LessonProcessor {
 
 
     private static void getEditorParameters(Element root, HashMap<String, String> editorParameters) {
-        if(root.getAttribute(Lesson.EditorParameters.PROJECT_TREE) != null) {
+        if (root.getAttribute(Lesson.EditorParameters.PROJECT_TREE) != null) {
             editorParameters.put(Lesson.EditorParameters.PROJECT_TREE, root.getAttributeValue(Lesson.EditorParameters.PROJECT_TREE));
         }
     }
 
     private static void prepareEnvironment(Editor editor, Project project, HashMap<String, String> editorParameters) throws ExecutionException, InterruptedException {
-        if(editorParameters.containsKey(Lesson.EditorParameters.PROJECT_TREE)) {
+        if (editorParameters.containsKey(Lesson.EditorParameters.PROJECT_TREE)) {
             if (ActionManager.getInstance().getAction(HideProjectTreeAction.actionId) == null) {
                 HideProjectTreeAction hideAction = new HideProjectTreeAction();
                 ActionManager.getInstance().registerAction(hideAction.getActionId(), hideAction);
@@ -121,25 +127,25 @@ public class LessonProcessor {
         }
     }
 
-    private static boolean isMouseBlock(Element el){
+    private static boolean isMouseBlock(Element el) {
         return el.getName().toUpperCase().equals(Command.CommandType.MOUSEBLOCK.toString());
     }
 
-    private static boolean isCaretBlock(Element el){
+    private static boolean isCaretBlock(Element el) {
         return el.getName().toUpperCase().equals(Command.CommandType.CARETBLOCK.toString());
     }
 
     public static String takeDescriptionsOnly(Lesson lesson) {
         StringBuilder sb = new StringBuilder();
-        Queue<Element> elements = new LinkedBlockingQueue<Element>();
-        if (lesson.getScn().equals(null)) {
+        Queue<Element> elements = new LinkedBlockingQueue<>();
+        if (lesson.getScn() == null) {
             System.err.println("Scenario is empty or cannot be read!");
             return null;
         }
 
         final Element root = lesson.getScn().getRoot();
 
-        if (root.equals(null)) {
+        if (root == null) {
             System.err.println("Scenario is empty or cannot be read!");
             return null;
         }
@@ -148,10 +154,10 @@ public class LessonProcessor {
         //Create queue of Actions
         for (final Element el : root.getChildren()) {
             //if element is MouseBlocked (blocks all mouse events) than add all children inside it.
-            if(isMouseBlock(el)) {
+            if (isMouseBlock(el)) {
                 if (el.getChildren() != null) {
                     elements.add(el); //add block element
-                    for(Element el1 : el.getChildren()){
+                    for (Element el1 : el.getChildren()) {
                         if (isCaretBlock(el1)) {
                             if (el1.getChildren() != null) {
                                 elements.add(el1); //add block element
@@ -169,7 +175,7 @@ public class LessonProcessor {
             } else if (isCaretBlock(el)) {
                 if (el.getChildren() != null) {
                     elements.add(el); //add block element
-                    for(Element el1 : el.getChildren()){
+                    for (Element el1 : el.getChildren()) {
                         elements.add(el1); //add inner elements
                     }
                     elements.add(new Element(Command.CommandType.CARETUNBLOCK.toString())); //add unblock element
@@ -179,7 +185,7 @@ public class LessonProcessor {
             }
         }
 
-        while(elements.size() > 0) {
+        while (elements.size() > 0) {
             final Element polledElement = elements.poll();
             if (polledElement.getAttribute("description") != null) {
                 String htmlText = polledElement.getAttribute("description").getValue();
@@ -188,7 +194,7 @@ public class LessonProcessor {
                 for (Message message : messages) {
                     messageString.append(message.getText());
                 }
-                sb.append(messageString.toString() + "\n");
+                sb.append(messageString.toString()).append("\n");
 
             }
         }

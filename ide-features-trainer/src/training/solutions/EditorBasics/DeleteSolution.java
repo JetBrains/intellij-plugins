@@ -22,8 +22,6 @@ public class DeleteSolution implements LessonSolution{
         }
         if (stepNumber == 0){
             final String actionName = "$Undo";
-//            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor(), currentExecutionList.getEduEditor());
-//            LightPlatformCodeInsightTestCase.executeAction(actionName, currentExecutionList.getEditor(), currentExecutionList.getProject());
             final Element peekedCommandElement = currentExecutionList.getElements().peek();
             final Command.CommandType peekedCommandType = CommandFactory.buildCommand(peekedCommandElement).getCommandType();
             Command testCommand = new TestCommand();

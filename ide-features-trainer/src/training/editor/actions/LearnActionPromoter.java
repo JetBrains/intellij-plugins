@@ -10,16 +10,16 @@ import java.util.List;
 /**
  * Created by karashevich on 17/08/15.
  */
-public class EduActionPromoter implements ActionPromoter {
+public class LearnActionPromoter implements ActionPromoter {
 
     @Override
     public List<AnAction> promote(List<AnAction> actions, DataContext context) {
         for (AnAction action : actions) {
-            if (action instanceof EduActions) {
-                return  (new ArrayList<AnAction>(actions));
+            if (action instanceof LearnActions) {
+                return  (new ArrayList<>(actions));
             }
         }
 
-        return (new ArrayList<AnAction>(actions));
+        return (new ArrayList<>(actions));
     }
 }

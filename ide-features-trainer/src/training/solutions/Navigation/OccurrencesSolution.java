@@ -62,7 +62,6 @@ public class OccurrencesSolution implements LessonSolution {
         }
         if (stepNumber == 0){
             final String actionName = "FindPrevious";
-//            BaseSolutionClass.gotoOffset(currentExecutionList.getEduEditor(), 263);
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
         }
     }
