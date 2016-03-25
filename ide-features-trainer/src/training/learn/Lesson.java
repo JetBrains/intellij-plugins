@@ -20,14 +20,14 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 29/01/15.
  */
-public class Lesson extends AnAction {
+public class Lesson {
 
     private Scenario scn;
     private String name;
     private String targetPath;
     private ArrayList<LessonListener> lessonListeners;
     private Module parentModule;
-    private ArrayList<MyPair> statistic = new ArrayList<MyPair>();
+    private ArrayList<MyPair> statistic = new ArrayList<>();
     private short exerciseCount;
 
     private boolean passed;
@@ -78,12 +78,12 @@ public class Lesson extends AnAction {
     public Lesson(){
         passed = false;
         lessonLog = new LessonLog(this);
+        lessonListeners = new ArrayList<>();
         exerciseCount = 0;
     }
 
     public Lesson(Scenario scenario, boolean passed, @Nullable Module module) throws BadLessonException {
 
-        super(scenario.getName());
         scn = scenario;
         name = scn.getName();
 
@@ -93,7 +93,7 @@ public class Lesson extends AnAction {
         } else {
             targetPath = null;
         }
-        lessonListeners = new ArrayList<LessonListener>();
+        lessonListeners = new ArrayList<>();
         parentModule = module;
 
         isOpen = false;
@@ -113,7 +113,7 @@ public class Lesson extends AnAction {
     public void open() throws NoProjectException, BadLessonException, ExecutionException, LessonIsOpenedException, IOException, FontFormatException, InterruptedException, BadModuleException {
         Project currentProject = CourseManager.getInstance().getCurrentProject();
         if (currentProject == null) {
-            currentProject = CourseManager.getInstance().getEduProject();
+            currentProject = CourseManager.getInstance().getLearnProject();
         }
         if (currentProject == null) throw new NoProjectException();
         CourseManager.getInstance().openLesson(currentProject, this);
@@ -136,12 +136,12 @@ public class Lesson extends AnAction {
         return lessonLog;
     }
 
-    public Scenario getScn(){
+    Scenario getScn(){
         return scn;
     }
 
     @Nullable
-    public String getTargetPath() {
+    String getTargetPath() {
         return targetPath;
     }
 
@@ -153,8 +153,8 @@ public class Lesson extends AnAction {
     }
 
     //Listeners
-    public void addLessonListener(LessonListener lessonListener){
-        if (lessonListeners == null) lessonListeners = new ArrayList<LessonListener>();
+    void addLessonListener(LessonListener lessonListener){
+        if (lessonListeners == null) lessonListeners = new ArrayList<>();
 
         lessonListeners.add(lessonListener);
     }
@@ -165,37 +165,37 @@ public class Lesson extends AnAction {
         }
     }
 
-    public void onStart(){
+    void onStart(){
         lessonLog = new LessonLog(this);
         lessonLog.log("Lesson started");
         exerciseCount = 0;
         statistic.add(new MyPair("started", System.currentTimeMillis()));
 
         lessonLog.resetCounter();
-        if (lessonListeners == null) lessonListeners = new ArrayList<LessonListener>();
+        if (lessonListeners == null) lessonListeners = new ArrayList<>();
 
         for (LessonListener lessonListener : lessonListeners) {
             lessonListener.lessonStarted(this);
         }
     }
 
-    public void onItemPassed(){
+    private void onItemPassed(){
         statistic.add(new MyPair("passed item #" + exerciseCount, System.currentTimeMillis()));
         exerciseCount++;
     }
 
-    public void onClose(){
+    private void onClose(){
 //        for (LessonListener lessonListener : lessonListeners) {
 //            lessonListener.lessonClosed(this);
 //        }
 
-        lessonListeners = null;
+        lessonListeners.clear();
         statistic.add(new MyPair("closed", System.currentTimeMillis()));
 
     }
 
     //call onPass handlers in lessonListeners
-    public void onPass(){
+    private void onPass(){
         lessonLog.log("Lesson passed");
         statistic.add(new MyPair("finished", System.currentTimeMillis()));
         CourseManager.getInstance().getGlobalLessonLog().commitSession(this);
@@ -221,35 +221,13 @@ public class Lesson extends AnAction {
         onItemPassed();
     }
 
-    @Override
-    public void actionPerformed(AnActionEvent anActionEvent) {
-        try {
-            CourseManager.getInstance().openLesson(anActionEvent.getProject(), this);
-        } catch (BadModuleException | BadLessonException | FontFormatException | IOException | LessonIsOpenedException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void update(AnActionEvent e) {
-        if(getPassed())
-            e.getPresentation().setIcon(LearnIcons.CheckmarkDarkgray);
-
-    }
-
     class EditorParameters{
-        final public static String PROJECT_TREE = "projectTree";
+        final static String PROJECT_TREE = "projectTree";
     }
 
     @Override
     public boolean equals(Object o) {
-        if(o == null) return false;
-        if(!(o instanceof Lesson)) return false;
-        if(this.getName() == null) return false;
-        if (((Lesson) o).getName() == null) return false;
-        if(((Lesson) o).getName().equals(this.getName())) return true;
-        return false;
-
+        return o != null && o instanceof Lesson && this.getName() != null && ((Lesson) o).getName() != null && ((Lesson) o).getName().equals(this.getName());
     }
 
 }

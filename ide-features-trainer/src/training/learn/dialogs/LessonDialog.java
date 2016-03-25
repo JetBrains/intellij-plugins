@@ -5,7 +5,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.learn.EducationBundle;
+import training.learn.LearnBundle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,19 +16,19 @@ import java.awt.*;
 public class LessonDialog extends DialogWrapper {
     private LessonDialogPanel myLessonDialogPanel;
 
-    public LessonDialog(){
+    private LessonDialog(){
         super(WindowManagerEx.getInstanceEx().findVisibleFrame(), true);
         initialize();
     }
 
-    public LessonDialog(@NotNull final Window parent) {
+    private LessonDialog(@NotNull final Window parent) {
         super(parent, true);
         initialize();
     }
 
     private void initialize() {
         setModal(false);
-        setTitle(EducationBundle.message("dialog.lessonDialog.title"));
+        setTitle(LearnBundle.message("dialog.lessonDialog.title"));
         setCancelButtonText("&Ok");
         myLessonDialogPanel = new LessonDialogPanel();
         setHorizontalStretch(1.33f);
@@ -51,6 +51,7 @@ public class LessonDialog extends DialogWrapper {
         return myLessonDialogPanel;
     }
 
+    @NotNull
     protected Action[] createActions(){
         return new Action[]{getCancelAction()};
     }

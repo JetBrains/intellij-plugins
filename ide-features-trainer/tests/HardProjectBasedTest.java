@@ -1,11 +1,7 @@
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.impl.ComponentManagerImpl;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
@@ -26,7 +22,7 @@ import training.commands.CommandFactory;
 import training.commands.ExecutionList;
 import training.commands.TestCommand;
 import training.learn.*;
-import training.testFramework.EduIdeaTestFixtureFactoryImpl;
+import training.testFramework.LearnIdeaTestFixtureFactoryImpl;
 import training.testFramework.LessonSolution;
 
 import java.util.ArrayList;
@@ -38,19 +34,20 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class HardProjectBasedTest extends UsefulTestCase {
 
-    protected Project myProject;
+    private Project myProject;
     private HardProjectBasedTest myCase;
     private IdeaProjectTestFixture myProjectFixture;
-    protected Lesson myLesson;
-    protected LessonSolution myLessonSolution;
+    private Lesson myLesson;
+    private LessonSolution myLessonSolution;
 
     @Parameterized.Parameter(0)
-    public String lessonId;
+    private String lessonId;
 
     @Parameterized.Parameters(name = "{0}")
     public static List<Object> data() {
         List<Object> lessonsIds = new ArrayList<Object>();
         final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        assert modules != null;
         for (Module module : modules) {
             final ArrayList<Lesson> lessons = module.getLessons();
             for (Lesson lesson : lessons) {
@@ -70,13 +67,12 @@ public class HardProjectBasedTest extends UsefulTestCase {
             public void run() {
                 try {
                     HardProjectBasedTest.super.setUp();
-                    EduIdeaTestFixtureFactoryImpl.getFixtureFactory();
+                    LearnIdeaTestFixtureFactoryImpl.getFixtureFactory();
 
-                    myProjectFixture = EduIdeaTestFixtureFactoryImpl.getFixtureFactory().createFixtureBuilder(getTestName(true)).getFixture();
+                    myProjectFixture = LearnIdeaTestFixtureFactoryImpl.getFixtureFactory().createFixtureBuilder(getTestName(true)).getFixture();
                     myProjectFixture.setUp();
                     myProject = myProjectFixture.getProject();
 
-                    //Swap EditorFactoryClasses with EduEditorFactory
                 } catch (Exception e) {
                     ex.set(e);
                 }
@@ -127,10 +123,12 @@ public class HardProjectBasedTest extends UsefulTestCase {
     }
 
 
-    protected Sdk getProjectJDK() {
+    private Sdk getProjectJDK() {
         JavaSdk javaSdk = JavaSdk.getInstance();
         final String suggestedHomePath = javaSdk.suggestHomePath();
         final String versionString = javaSdk.getVersionString(suggestedHomePath);
+        assert versionString != null;
+        assert suggestedHomePath != null;
         final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath);
 
         final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
@@ -140,7 +138,7 @@ public class HardProjectBasedTest extends UsefulTestCase {
         return newJdk;
     }
 
-    protected void setUpLesson() {
+    private void setUpLesson() {
         myLesson = CourseManagerWithoutIDEA.getInstance().findLesson(lessonId);
     }
 
@@ -204,7 +202,7 @@ public class HardProjectBasedTest extends UsefulTestCase {
         testCommand.execute(currentExecutionList);
     }
 
-    protected void prepareLesson() {
+    private void prepareLesson() {
         assertNotNull(myLesson);
         myLesson.setPassed(false);
         assertTrue(!myLesson.getPassed());

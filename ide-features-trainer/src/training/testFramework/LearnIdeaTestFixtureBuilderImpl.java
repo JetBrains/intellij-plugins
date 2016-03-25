@@ -12,12 +12,12 @@ import org.picocontainer.MutablePicoContainer;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-class EduIdeaTestFixtureBuilderImpl implements TestFixtureBuilder<IdeaProjectTestFixture> {
-    private final EduIdeaTestFixtureImpl myFixture;
+class LearnIdeaTestFixtureBuilderImpl implements TestFixtureBuilder<IdeaProjectTestFixture> {
+    private final LearnIdeaTestFixtureImpl myFixture;
     private final Map<Class<? extends ModuleFixtureBuilder>, Class<? extends ModuleFixtureBuilder>> myProviders;
     private final MutablePicoContainer myContainer;
 
-    public EduIdeaTestFixtureBuilderImpl(EduIdeaTestFixtureImpl fixture, final Map<Class<? extends ModuleFixtureBuilder>, Class<? extends ModuleFixtureBuilder>> providers) {
+    LearnIdeaTestFixtureBuilderImpl(LearnIdeaTestFixtureImpl fixture, final Map<Class<? extends ModuleFixtureBuilder>, Class<? extends ModuleFixtureBuilder>> providers) {
         myFixture = fixture;
         myProviders = providers;
 
@@ -34,7 +34,7 @@ class EduIdeaTestFixtureBuilderImpl implements TestFixtureBuilder<IdeaProjectTes
 
     @NotNull
     @Override
-    public EduIdeaTestFixtureImpl getFixture() {
+    public LearnIdeaTestFixtureImpl getFixture() {
         return myFixture;
     }
 

@@ -1,4 +1,4 @@
-package training.editor.eduUI;
+package training.ui;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
@@ -11,10 +11,11 @@ import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-public class EduBalloonBuilder {
+public class LearnBalloonBuilder {
 
     private final Editor myEditor;
     private final Project myProject;
@@ -26,7 +27,7 @@ public class EduBalloonBuilder {
     private boolean reuseLastBalloon = false;
     private Balloon lastBalloon = null;
 
-    public EduBalloonBuilder(Editor editor, int delay, String text) {
+    public LearnBalloonBuilder(Editor editor, int delay, String text) {
         myDelay = delay;
         myText = text;
 
@@ -56,30 +57,27 @@ public class EduBalloonBuilder {
             myBalloon.setAnimationEnabled(false);
             myProject.getMessageBus().connect(myProject).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerAdapter() {
                 @Override
-                public void selectionChanged(FileEditorManagerEvent event) {
+                public void selectionChanged(@NotNull FileEditorManagerEvent event) {
                     myBalloon.hide();
                     myBalloon.dispose();
                 }
             });
 
             myBalloon.show(new RelativePoint(myEditor.getContentComponent(), point), Balloon.Position.above);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        do {
-                            reuseLastBalloon = false;
-                            Thread.sleep(myDelay);
-                        } while (reuseLastBalloon);
-                        if (!myBalloon.isDisposed()) {
-                            myBalloon.hide();
-                            myBalloon.dispose();
-                        }
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
+            new Thread(() -> {
+                try {
+                    do {
+                        reuseLastBalloon = false;
+                        Thread.sleep(myDelay);
+                    } while (reuseLastBalloon);
+                    if (!myBalloon.isDisposed()) {
+                        myBalloon.hide();
+                        myBalloon.dispose();
                     }
-
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
                 }
+
             }).start();
         }
     }

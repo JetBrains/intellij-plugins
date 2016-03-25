@@ -16,7 +16,7 @@ import com.intellij.util.ResourceUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.learn.EducationBundle;
+import training.learn.LearnBundle;
 import training.util.MyClassLoader;
 
 import javax.imageio.ImageIO;
@@ -34,7 +34,7 @@ import java.net.URL;
 /**
  * Created by karashevich on 15/01/16.
  */
-public class LessonDialogPanel extends JPanel{
+class LessonDialogPanel extends JPanel{
     private static final int DEFAULT_WIDTH = 300;
     private static final int DEFAULT_HEIGHT = 150;
     private static final String SHORTCUT_ENTITY = "&shortcut:";
@@ -42,12 +42,12 @@ public class LessonDialogPanel extends JPanel{
     private final JEditorPane myBrowser;
 //    private final JLabel myPoweredByLabel;
 
-    public LessonDialogPanel() {
+    LessonDialogPanel() {
         setLayout(new BorderLayout());
 //        mute tip icon
 //        JLabel jlabel = new JLabel(AllIcons.General.Tip);
 //        jlabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        JLabel label1 = new JLabel(EducationBundle.message("dialog.lessonDialog.title"));
+        JLabel label1 = new JLabel(LearnBundle.message("dialog.lessonDialog.title"));
         Font font = label1.getFont();
         label1.setFont(font.deriveFont(Font.PLAIN, font.getSize() + 4));
         JPanel jpanel = new JPanel();
@@ -93,17 +93,15 @@ public class LessonDialogPanel extends JPanel{
     }
 
     @NotNull
-    public static JEditorPane createDialogBrowser() {
+    private static JEditorPane createDialogBrowser() {
         JEditorPane browser = new JEditorPane();
         browser.setEditable(false);
         browser.setBackground(UIUtil.getTextFieldBackground());
-        browser.addHyperlinkListener(new HyperlinkListener() {
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    BrowserUtil.browse(e.getURL());
-                }
-
+        browser.addHyperlinkListener(e -> {
+            if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                BrowserUtil.browse(e.getURL());
             }
+
         });
         URL resource = ResourceUtil.getResource(TipUIUtil.class, "/tips/css/", UIUtil.isUnderDarcula()?"tips_darcula.css":"tips.css");
         final StyleSheet styleSheet = UIUtil.loadStyleSheet(resource);
@@ -116,7 +114,7 @@ public class LessonDialogPanel extends JPanel{
         return browser;
     }
 
-    public static void openMessageInBrowser(@Nullable String messageFileName, JEditorPane browser) {
+    private static void openMessageInBrowser(@Nullable String messageFileName, JEditorPane browser) {
         if (messageFileName == null) return;
         try {
 

@@ -2,7 +2,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
@@ -18,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import training.commands.*;
 import training.learn.*;
-import training.testFramework.EduIdeaTestFixtureFactoryImpl;
+import training.testFramework.LearnIdeaTestFixtureFactoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,23 +28,24 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class SoftProjectBasedTest extends UsefulTestCase {
 
-    protected static Project myProject;
+    private static Project myProject;
     protected VirtualFile myProjectRoot;
     protected String myProjectPath;
 
     private static SoftProjectBasedTest myCase;
 
-    protected Lesson myLesson;
+    private Lesson myLesson;
 
     @Parameterized.Parameter(0)
-    public String lessonId;
+    private String lessonId;
 
     private static IdeaProjectTestFixture myProjectFixture;
 
-    protected Sdk getProjectJDK() {
+    private Sdk getProjectJDK() {
         JavaSdk javaSdk = JavaSdk.getInstance();
         final String suggestedHomePath = javaSdk.suggestHomePath();
         final String versionString = javaSdk.getVersionString(suggestedHomePath);
+        assert versionString != null;
         final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath);
 
         final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
@@ -86,8 +86,8 @@ public class SoftProjectBasedTest extends UsefulTestCase {
 
         myCase.setUp();
 
-        EduIdeaTestFixtureFactoryImpl.getFixtureFactory();
-        myProjectFixture = EduIdeaTestFixtureFactoryImpl.getFixtureFactory().createFixtureBuilder("ProjectLessonName").getFixture();
+        LearnIdeaTestFixtureFactoryImpl.getFixtureFactory();
+        myProjectFixture = LearnIdeaTestFixtureFactoryImpl.getFixtureFactory().createFixtureBuilder("ProjectLessonName").getFixture();
         myProjectFixture.setUp();
         myProject = myProjectFixture.getProject();
     }

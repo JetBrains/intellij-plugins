@@ -7,7 +7,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
-import training.learn.EducationBundle;
+import training.learn.LearnBundle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +26,7 @@ public class SdkModuleProblemDialog extends DialogWrapper {
         super(project, true);
         myProject = project;
         necessarySdkVersion = null;
-        setTitle(EducationBundle.message("dialog.emptyModule.title"));
+        setTitle(LearnBundle.message("dialog.emptyModule.title"));
         init();
     }
 
@@ -42,7 +42,7 @@ public class SdkModuleProblemDialog extends DialogWrapper {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        final String warningMessage = EducationBundle.message("dialog.emptyModule.message");
+        final String warningMessage = LearnBundle.message("dialog.emptyModule.message");
 
         gbc.insets = new Insets(4, 8, 4, 8);
         gbc.weighty = 1;
@@ -59,7 +59,7 @@ public class SdkModuleProblemDialog extends DialogWrapper {
         gbc.weightx = 0.0;
         gbc.gridwidth = 1;
         myCbOpenProjectSdkPreferences = new StateRestoringCheckBox();
-        myCbOpenProjectSdkPreferences.setText(EducationBundle.message("dialog.emptyModule.checkbox"));
+        myCbOpenProjectSdkPreferences.setText(LearnBundle.message("dialog.emptyModule.checkbox"));
         panel.add(myCbOpenProjectSdkPreferences, gbc);
 
 

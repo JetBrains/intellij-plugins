@@ -12,13 +12,13 @@ import java.util.ResourceBundle;
 /**
  * Created by karashevich on 09/09/15.
  */
-public class EducationBundle{
+public class LearnBundle {
 
     private static Reference<ResourceBundle> ourBundle;
 
     @NonNls
-    private static final String BUNDLE = "training.learn.EducationBundle";
-    private EducationBundle() {
+    private static final String BUNDLE = "training.learn.LearnBundle";
+    private LearnBundle() {
     }
 
     public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
@@ -30,7 +30,7 @@ public class EducationBundle{
         ResourceBundle bundle = SoftReference.dereference(ourBundle);
         if (bundle == null) {
             bundle = ResourceBundle.getBundle(BUNDLE);
-            ourBundle = new SoftReference<ResourceBundle>(bundle);
+            ourBundle = new SoftReference<>(bundle);
         }
         return bundle;
     }

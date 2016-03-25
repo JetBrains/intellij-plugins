@@ -15,17 +15,18 @@ import java.net.URISyntaxException;
  */
 public class generateModuleXml {
 
-    public final static String MODULE_ALLMODULE_ATTR = "modules";
+    private final static String MODULE_ALLMODULE_ATTR = "modules";
     public final static String MODULE_ALLMODULE_FILENAME = "modules.xml";
     public final static String MODULE_MODULES_PATH = "modules";
     public final static String MODULE_TYPE_ATTR = "module";
 
     public final static String MODULE_NAME_ATTR = "name";
-    public final static String MODULE_XML_VER_ATTR = "version";
+    private final static String MODULE_XML_VER_ATTR = "version";
     public final static String MODULE_ID_ATTR = "id";
-    public final static String MODULE_XML_VERSION = "0.3";
+    private final static String MODULE_XML_VERSION = "0.3";
     public final static String MODULE_LESSON_ELEMENT = "lesson";
     public final static String MODULE_ANSWER_PATH_ATTR = "answerPath";
+    public final static String MODULE_DESCRIPTION_ATTR = "description";
     public final static String MODULE_SDK_TYPE = "sdkType";
     public final static String MODULE_FILE_TYPE = "fileType";
 
@@ -46,6 +47,7 @@ public class generateModuleXml {
 
             File dir = new File(generateModuleXml.class.getResource("/data/" + path).toURI());
 
+            if (dir.listFiles() == null) return;
             for (File file : dir.listFiles()) {
                 if (file.isFile()) {
                     Element lesson = new Element(MODULE_LESSON_ELEMENT);
@@ -60,13 +62,12 @@ public class generateModuleXml {
             outputFile.createNewFile();
             xmlOutput.output(doc, new FileWriter(outputFile));
 
-
         } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
-    public static void genModules() throws URISyntaxException, IOException {
+    private static void genModules() throws URISyntaxException, IOException {
 
         Element modules = new Element(MODULE_ALLMODULE_ATTR);
         modules.setAttribute(MODULE_XML_VER_ATTR, MODULE_XML_VERSION);
@@ -76,6 +77,7 @@ public class generateModuleXml {
 
 
         File dir = new File(generateModuleXml.class.getResource("/data/").toURI());
+        if (dir.listFiles() == null) return;
 
         for (File file : dir.listFiles()) {
             if (file.isFile()) {

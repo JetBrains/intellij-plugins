@@ -26,15 +26,21 @@ import java.util.ArrayList;
  * Created by karashevich on 29/01/15.
  */
 @Tag("course")
-public class Module extends ActionGroup{
+public class Module{
 
     private String modulePath;
+    private String moduleDescription;
 
-    public String getModulePath() {
+    String getModulePath() {
         return (modulePath != null ? modulePath + "/" : "");
     }
 
-    public enum ModuleType {SCRATCH, PROJECT};
+    @Nullable
+    public String getDescription() {
+        return moduleDescription;
+    }
+
+    public enum ModuleType {SCRATCH, PROJECT}
 
     private ArrayList<Lesson> lessons;
     @Nullable
@@ -71,8 +77,7 @@ public class Module extends ActionGroup{
         this.mySdkType = mySdkType;
     }
 
-    public void setName(String name) {
-        if(name != null) getTemplatePresentation().setText(name);
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
@@ -83,16 +88,16 @@ public class Module extends ActionGroup{
 
     public Module(){
         name = "Test";
-        lessons = new ArrayList<Lesson>();
+        lessons = new ArrayList<>();
     }
 
 
-    public Module(String name, Element root) throws JDOMException, BadLessonException, BadModuleException, IOException, URISyntaxException {
-        super(name, true);
-        lessons = new ArrayList<Lesson>();
+    public Module(@NotNull String name, @Nullable Element root) throws JDOMException, BadLessonException, BadModuleException, IOException, URISyntaxException {
+        lessons = new ArrayList<>();
         this.name = name;
         this.root = root;
         modulePath = generateModuleXml.MODULE_MODULES_PATH;
+        moduleDescription = root.getAttribute(generateModuleXml.MODULE_DESCRIPTION_ATTR) != null ? root.getAttributeValue(generateModuleXml.MODULE_DESCRIPTION_ATTR) : null;
         initLessons();
         if (root.getAttribute(generateModuleXml.MODULE_ANSWER_PATH_ATTR) != null) {
             answersPath = root.getAttribute(generateModuleXml.MODULE_ANSWER_PATH_ATTR).getValue();
@@ -114,7 +119,6 @@ public class Module extends ActionGroup{
     }
 
     @NotNull
-    @Override
     public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
         AnAction[] actions = new AnAction[lessons.size()];
         actions = lessons.toArray(actions);
@@ -122,7 +126,7 @@ public class Module extends ActionGroup{
     }
 
     @Nullable
-    public static Module initModule(String modulePath) throws BadModuleException, BadLessonException, JDOMException, IOException, URISyntaxException {
+    static Module initModule(String modulePath) throws BadModuleException, BadLessonException, JDOMException, IOException, URISyntaxException {
         //load xml with lessons
 
         //Check DOM with Module
@@ -134,7 +138,7 @@ public class Module extends ActionGroup{
 
     }
 
-    public static Element getRootFromPath(String pathToFile) throws JDOMException, IOException {
+    static Element getRootFromPath(String pathToFile) throws JDOMException, IOException {
         InputStream is = MyClassLoader.getInstance().getResourceAsStream(pathToFile);
         SAXBuilder builder = new SAXBuilder();
         Document document = builder.build(is);
@@ -154,6 +158,7 @@ public class Module extends ActionGroup{
 
     private void initLessons() throws BadModuleException, BadLessonException, JDOMException, IOException, URISyntaxException {
 
+        assert root != null;
         name = root.getAttribute(generateModuleXml.MODULE_NAME_ATTR).getValue();
 
         if (root.getAttribute(generateModuleXml.MODULE_LESSONS_PATH_ATTR) != null) {
@@ -196,14 +201,14 @@ public class Module extends ActionGroup{
     }
 
     @Nullable
-    public Lesson giveNotPassedAndNotOpenedLesson() {
+    Lesson giveNotPassedAndNotOpenedLesson() {
         for (Lesson lesson : lessons) {
             if (!lesson.getPassed() && !lesson.isOpen()) return lesson;
         }
         return null;
     }
 
-    public boolean hasNotPassedLesson() {
+    boolean hasNotPassedLesson() {
         for (Lesson lesson : lessons) {
             if (!lesson.getPassed()) return true;
         }
@@ -220,15 +225,14 @@ public class Module extends ActionGroup{
         return name;
     }
 
-    public ModuleSdkType getSdkType() {
+    ModuleSdkType getSdkType() {
          return mySdkType;
     }
 
     public boolean equals(Object o) {
         if(o == null) return false;
         if(!(o instanceof Module)) return false;
-        if(((Module) o).getName().equals(this.getName())) return true;
-        return false;
+        return ((Module) o).getName().equals(this.getName());
 
     }
 

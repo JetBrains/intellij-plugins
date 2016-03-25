@@ -1,4 +1,4 @@
-package training.editor.eduUI;
+package training.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
@@ -11,9 +11,9 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import icons.LearnIcons;
 import org.jetbrains.annotations.Nullable;
+import training.learn.LearnBundle;
 import training.learn.Module;
 import training.learn.CourseManager;
-import training.learn.EducationBundle;
 import training.learn.Lesson;
 
 import javax.swing.*;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 /**
  * Created by karashevich on 26/06/15.
  */
-public class EduPanel extends JPanel {
+public class LearnPanel extends JPanel {
 
     private int width;
 
@@ -82,7 +82,7 @@ public class EduPanel extends JPanel {
     private Font lessonsFont;
     private Font allLessonsFont;
 
-    public EduPanel(int width){
+    LearnPanel(int width){
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setFocusable(false);
@@ -106,7 +106,7 @@ public class EduPanel extends JPanel {
         modulePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         this.add(modulePanel);
 
-        //set EduPanel UI
+        //set LearnPanel UI
         this.setPreferredSize(new Dimension(width, 100));
         this.setBorder(new EmptyBorder(insets, insets, insets, insets));
 
@@ -148,10 +148,10 @@ public class EduPanel extends JPanel {
         separatorColor = new JBColor(Gray._222, Gray._149);
 
         //course UI
-        lessonActiveColor = new JBColor(new Color(128, 128, 128), Gray._202);
+        lessonActiveColor = new JBColor(Gray._128, Gray._202);
         lessonInactiveColor = lessonLinkColor;
 //        lessonsFont = new Font(UIUtil.getFont(fontSize, ), 0, fontSize);
-        lessonsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);;
+        lessonsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
         allLessonsFont = new Font(JBUI.Fonts.label().getName(), Font.BOLD, fontSize + 1);
 
     }
@@ -172,18 +172,15 @@ public class EduPanel extends JPanel {
 
         moduleNameLabel = new JLabel();
         moduleNameLabel.setFont(moduleNameFont);
-        moduleNameLabel.setFocusable(false);;
+        moduleNameLabel.setFocusable(false);
 
         allTopicsLabel = new LinkLabel();
         allTopicsLabel.setFont(allTopicsFont);
         allTopicsLabel.setForeground(UIUtil.getActiveTextColor());
-        allTopicsLabel.setFocusable(false);;
-        allTopicsLabel.setListener(new LinkListener() {
-            @Override
-            public void linkSelected(LinkLabel aSource, Object aLinkData) {
-                Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
-                CourseManager.getInstance().setModulesView(guessCurrentProject);
-            }
+        allTopicsLabel.setFocusable(false);
+        allTopicsLabel.setListener((aSource, aLinkData) -> {
+            Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
+            CourseManager.getInstance().setModulesView(guessCurrentProject);
         }, null);
 
         moduleNamePanel.add(moduleNameLabel);
@@ -194,7 +191,7 @@ public class EduPanel extends JPanel {
         lessonNameLabel = new JLabel();
         lessonNameLabel.setFont(lessonNameFont);
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        lessonNameLabel.setFocusable(false);;
+        lessonNameLabel.setFocusable(false);
 
 //        lessonMessageContainer = new JPanel();
 //        messages = new ArrayList<LessonMessage>();
@@ -211,7 +208,7 @@ public class EduPanel extends JPanel {
         lessonMessagePane.setMaximumSize(new Dimension(width, 10000));
 
         //Set Next Button UI
-        button = new JButton(EducationBundle.message("learn.ui.button.skip"));
+        button = new JButton(LearnBundle.message("learn.ui.button.skip"));
 //        button.setAlignmentX(Component.LEFT_ALIGNMENT);
         button.setBackground(background);
         button.setMargin(new Insets(0, 0, 0, 0));
@@ -250,7 +247,7 @@ public class EduPanel extends JPanel {
         moduleNameLabel.setText(moduleName);
         moduleNameLabel.setForeground(defaultTextColor);
         moduleNameLabel.setFocusable(false);
-        allTopicsLabel.setText(EducationBundle.message("learn.ui.alltopics"));
+        allTopicsLabel.setText(LearnBundle.message("learn.ui.alltopics"));
         allTopicsLabel.setIcon(null);
         this.revalidate();
         this.repaint();
@@ -271,17 +268,14 @@ public class EduPanel extends JPanel {
         for (final Message message : messages) {
             if(message.getType() == Message.MessageType.LINK)  {
                 //add link handler
-                message.setRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        final Lesson lesson = CourseManager.getInstance().findLesson(message.getText());
-                        if (lesson != null) {
-                            try {
-                                Project project = ProjectUtil.guessCurrentProject(EduPanel.this);
-                                CourseManager.getInstance().openLesson(project, lesson);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                message.setRunnable(() -> {
+                    final Lesson lesson = CourseManager.getInstance().findLesson(message.getText());
+                    if (lesson != null) {
+                        try {
+                            Project project = ProjectUtil.guessCurrentProject(LearnPanel.this);
+                            CourseManager.getInstance().openLesson(project, lesson);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -337,15 +331,20 @@ public class EduPanel extends JPanel {
         lessonMessagePane.clear();
         //remove links from lessonMessagePane
         final MouseListener[] mouseListeners = lessonMessagePane.getMouseListeners();
-        for (int i = 0; i < mouseListeners.length; i++) {
-            lessonMessagePane.removeMouseListener(mouseListeners[i]);
+        for (MouseListener mouseListener : mouseListeners) {
+            lessonMessagePane.removeMouseListener(mouseListener);
         }
 //        messages.clear();
         this.revalidate();
         this.repaint();
     }
 
+
     public void setButtonNextAction(final Runnable runnable, Lesson notPassedLesson) {
+        setButtonNextAction(runnable, notPassedLesson, null);
+    }
+
+    public void setButtonNextAction(final Runnable runnable, Lesson notPassedLesson, @Nullable String text) {
 
         Action buttonAction = new AbstractAction() {
             @Override
@@ -360,9 +359,13 @@ public class EduPanel extends JPanel {
         buttonAction.setEnabled(true);
         button.setAction(buttonAction);
         if (notPassedLesson != null) {
-            button.setText(EducationBundle.message("learn.ui.button.next.lesson") + ": " + notPassedLesson.getName());
+            if (text != null){
+                button.setText(text);
+            } else {
+                button.setText(LearnBundle.message("learn.ui.button.next.lesson") + ": " + notPassedLesson.getName());
+            }
         } else {
-            button.setText(EducationBundle.message("learn.ui.button.next.lesson"));
+            button.setText(LearnBundle.message("learn.ui.button.next.lesson"));
         }
         button.setSelected(true);
         getRootPane().setDefaultButton(button);
@@ -370,6 +373,7 @@ public class EduPanel extends JPanel {
 
     public void setButtonSkipAction(final Runnable runnable, @Nullable String text, boolean visible) {
 
+        getRootPane().setDefaultButton(null);
         Action buttonAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -416,18 +420,17 @@ public class EduPanel extends JPanel {
     public class ModulePanel extends JPanel{
         private Module myModule;
         private Lesson myLesson;
-        private BidirectionalMap<Lesson, MyLinkLabel> lessonLabelMap;
+        private BidirectionalMap<Lesson, MyLinkLabel> lessonLabelMap = new BidirectionalMap<Lesson, MyLinkLabel>();
         private int leftInset = 10;
 
         public void init(Lesson lesson){
 
             myLesson = lesson;
             myModule = lesson.getModule();
-            lessonLabelMap = new BidirectionalMap<Lesson, MyLinkLabel>();
             initModuleLessons(lesson);
         }
 
-        public void setLeftInset(int inset){
+        void setLeftInset(int inset){
             leftInset = inset;
         }
 
@@ -457,8 +460,7 @@ public class EduPanel extends JPanel {
         }
 
         private void buildLessonLabels(Lesson lesson, final ArrayList<Lesson> myLessons) {
-            for (int i = 0; i < myLessons.size(); i++) {
-                final Lesson currentLesson = myLessons.get(i);
+            for (final Lesson currentLesson : myLessons) {
                 String lessonName = currentLesson.getName();
 
                 final MyLinkLabel e = new MyLinkLabel(lessonName);
@@ -466,19 +468,16 @@ public class EduPanel extends JPanel {
                 e.setBorder(new EmptyBorder(0, leftInset, lessonGap, 0));
                 e.setFocusable(false);
                 e.setPaintUnderline(false);
-                e.setListener(new LinkListener() {
-                    @Override
-                    public void linkSelected(LinkLabel aSource, Object aLinkData) {
-                        try {
-                            Project project = ProjectUtil.guessCurrentProject(EduPanel.this);
-                            CourseManager.getInstance().openLesson(project, currentLesson);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                e.setListener((aSource, aLinkData) -> {
+                    try {
+                        Project project = ProjectUtil.guessCurrentProject(LearnPanel.this);
+                        CourseManager.getInstance().openLesson(project, currentLesson);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
                     }
                 }, null);
 
-                if (lesson.equals(currentLesson)){
+                if (lesson.equals(currentLesson)) {
                     //selected lesson
                     e.setTextColor(lessonActiveColor);
                 } else {
@@ -521,7 +520,7 @@ public class EduPanel extends JPanel {
 
             Color userTextColor;
 
-            public MyLinkLabel(String text) {
+            MyLinkLabel(String text) {
                 super(text, null);
             }
 
@@ -530,11 +529,11 @@ public class EduPanel extends JPanel {
                 return (userTextColor != null ? userTextColor : super.getTextColor());
             }
 
-            public void setTextColor(Color color){
+            void setTextColor(Color color){
                 userTextColor = color;
             }
 
-            public void resetTextColor(){
+            void resetTextColor(){
                 userTextColor = null;
             }
         }

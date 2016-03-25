@@ -1,4 +1,4 @@
-package training.editor.eduUI;
+package training.ui;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

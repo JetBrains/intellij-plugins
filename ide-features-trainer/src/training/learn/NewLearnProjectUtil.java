@@ -16,7 +16,7 @@ import com.intellij.openapi.wm.ex.IdeFrameEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.learn.dialogs.EduProjectWarningDialog;
+import training.learn.dialogs.LearnProjectWarningDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,16 +24,16 @@ import java.io.IOException;
 /**
  * Created by karashevich on 24/09/15.
  */
-public class NewEduProjectUtil {
+class NewLearnProjectUtil {
 
-    public NewEduProjectUtil() {
+    public NewLearnProjectUtil() {
     }
 
-    public static Project createEduProject(@NotNull String projectName, @Nullable Project projectToClose, @Nullable final Sdk projectSdk) throws IOException {
+    static Project createLearnProject(@NotNull String projectName, @Nullable Project projectToClose, @Nullable final Sdk projectSdk) throws IOException {
         final ProjectManagerEx projectManager = ProjectManagerEx.getInstanceEx();
 
         String allProjectsDir = "/Users/jetbrains/IdeaProjects";
-        allProjectsDir = ProjectUtil.getBaseDir().toString();
+        allProjectsDir = ProjectUtil.getBaseDir();
         final ProjectBuilder projectBuilder = new JavaModuleBuilder();
 
         try {
@@ -56,15 +56,9 @@ public class NewEduProjectUtil {
 
 
             if (projectSdk != null) {
-                CommandProcessor.getInstance().executeCommand(newProject, new Runnable() {
-                    public void run() {
-                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                            public void run() {
-                                NewProjectUtil.applyJdkToProject(newProject, projectSdk);
-                            }
-                        });
-                    }
-                }, null, null);
+                CommandProcessor.getInstance().executeCommand(newProject, () -> ApplicationManager.getApplication().runWriteAction(() -> {
+                    NewProjectUtil.applyJdkToProject(newProject, projectSdk);
+                }), null, null);
             }
 
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
@@ -135,9 +129,9 @@ public class NewEduProjectUtil {
         }
     }
 
-    public static boolean showDialogOpenEduProject(Project project){
+    static boolean showDialogOpenLearnProject(Project project){
         //        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
-        final EduProjectWarningDialog dialog = new EduProjectWarningDialog(project);
+        final LearnProjectWarningDialog dialog = new LearnProjectWarningDialog(project);
         dialog.show();
         return dialog.isOK();
 

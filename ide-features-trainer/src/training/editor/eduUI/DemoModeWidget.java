@@ -18,7 +18,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.learn.EducationBundle;
+import training.learn.LearnBundle;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -26,23 +26,18 @@ import java.awt.event.MouseEvent;
 /**
  * Created by karashevich on 26/10/15.
  */
-public class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget.Multiframe, StatusBarWidget.TextPresentation, CaretListener, SelectionListener {
+class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget.Multiframe, StatusBarWidget.TextPresentation, CaretListener, SelectionListener {
 
-    StatusBar myStatusBar;
-    FileEditor currentEditor = null;
+    private StatusBar myStatusBar;
+    private FileEditor currentEditor = null;
 
-    final public static String DEMO_MODE_WIDGET_ID = "DemoMode";
+    final static String DEMO_MODE_WIDGET_ID = "DemoMode";
 
 
 
-    protected DemoModeWidget(@NotNull Project project) {
+    DemoModeWidget(@NotNull Project project) {
         super(project);
         final FileEditor[] selectedEditors = FileEditorManager.getInstance(project).getSelectedEditors();
-
-        for (FileEditor selectedEditor : selectedEditors) {
-//            if () currentEditor = selectedEditor;
-        }
-
         if (currentEditor == null) currentEditor = selectedEditors[0];
     }
 
@@ -60,15 +55,12 @@ public class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget
         if (!PropertiesComponent.getInstance().isTrueValue(key)) {
             PropertiesComponent.getInstance().setValue(key, String.valueOf(true));
             final Alarm alarm = new Alarm();
-            alarm.addRequest(new Runnable() {
-                @Override
-                public void run() {
-                    GotItMessage.createMessage(EducationBundle.message("demoWidget.info.title"), EducationBundle.message(
-                            "demoWidget.info.message"))
-                            .setDisposable(DemoModeWidget.this)
-                            .show(new RelativePoint(myStatusBar.getComponent(), new Point(10, 0)), Balloon.Position.above);
-                    Disposer.dispose(alarm);
-                }
+            alarm.addRequest(() -> {
+                GotItMessage.createMessage(LearnBundle.message("demoWidget.info.title"), LearnBundle.message(
+                        "demoWidget.info.message"))
+                        .setDisposable(DemoModeWidget.this)
+                        .show(new RelativePoint(myStatusBar.getComponent(), new Point(10, 0)), Balloon.Position.above);
+                Disposer.dispose(alarm);
             }, 20000);
         }
 
@@ -110,15 +102,7 @@ public class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget
     @NotNull
     @Override
     public String getText() {
-
-//        if((currentEditor != null) && (currentEditor instanceof EduEditor)) {
-//            if(((EduEditor) currentEditor).isDemoModeOn()) {
-                return "DEMO MODE ON";
-//            } else {
-//                return "";
-//            }
-//        }
-//        return "";
+        return "DEMO MODE ON";
     }
 
     @NotNull
@@ -135,7 +119,7 @@ public class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget
     @Nullable
     @Override
     public String getTooltipText() {
-        return EducationBundle.message("status.demoMode.tooltipText");
+        return LearnBundle.message("status.demoMode.tooltipText");
     }
 
     @Nullable

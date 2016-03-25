@@ -6,28 +6,29 @@ import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
  * Created by karashevich on 19/08/15.
  */
-public class BlockCaretAction extends DumbAwareAction implements EduActions {
+public class BlockCaretAction extends DumbAwareAction implements LearnActions {
 
-    ArrayList<Runnable> actionHandlers;
-    Editor editor;
+    private ArrayList<Runnable> actionHandlers;
+    private Editor editor;
 
-    final static public String actionId = "EduBlockCaretAction";
+    private final static String actionId = "LearnBlockCaretAction";
 
 
     public BlockCaretAction(@NotNull Editor editor){
-        super(EDU_BLOCK_EDITOR_CARET_ACTION);
-        actionHandlers = new ArrayList<Runnable>();
+        super(LEARN_BLOCK_EDITOR_CARET_ACTION);
+        actionHandlers = new ArrayList<>();
 
         this.editor = editor;
 
         //collect all shortcuts for caret actions
-        ArrayList<Shortcut> superShortcut = new ArrayList<Shortcut>();
-        HashSet<String> caretActionIds = new HashSet<String>();
+        ArrayList<Shortcut> superShortcut = new ArrayList<>();
+        HashSet<String> caretActionIds = new HashSet<>();
         caretActionIds.add(IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN);
         caretActionIds.add(IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN_WITH_SELECTION);
         caretActionIds.add(IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT);
@@ -47,9 +48,7 @@ public class BlockCaretAction extends DumbAwareAction implements EduActions {
 
         for (String caretActionId : caretActionIds) {
             Shortcut[] shortcuts = ActionManager.getInstance().getAction(caretActionId).getShortcutSet().getShortcuts();
-            for (Shortcut shortcut : shortcuts) {
-                superShortcut.add(shortcut);
-            }
+            Collections.addAll(superShortcut, shortcuts);
         }
 
         Shortcut[] shortcuts = new Shortcut[superShortcut.size()];
@@ -75,7 +74,7 @@ public class BlockCaretAction extends DumbAwareAction implements EduActions {
 
 
     public void addActionHandler(Runnable runnable) {
-        if (actionHandlers == null) actionHandlers = new ArrayList<Runnable>();
+        if (actionHandlers == null) actionHandlers = new ArrayList<>();
         actionHandlers.add(runnable);
     }
 

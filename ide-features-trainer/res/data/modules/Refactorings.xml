@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module name="Refactorings" lessonsPath="Refactorings/" version="0.3" id="refactorings" fileType="SCRATCH">
+<module name="Refactorings" lessonsPath="Refactorings/" version="0.3" id="refactorings" fileType="SCRATCH" description="Rename, extract variable and method">
   <lesson filename="01.Rename.xml" solution="training.solutions.Refactorings.RenameSolution"/>
   <lesson filename="02.Extract Variable.xml" solution="training.solutions.Refactorings.ExtractVariableSolution" />
   <lesson filename="03.Extract Method.xml" solution="training.solutions.Refactorings.ExtractMethodSolution"/>

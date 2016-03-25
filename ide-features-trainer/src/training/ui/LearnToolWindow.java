@@ -3,8 +3,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import training.editor.eduUI.EduPanel;
-import training.editor.eduUI.MainEduPanel;
 import training.learn.CourseManager;
 
 import javax.swing.*;
@@ -14,13 +12,13 @@ import javax.swing.*;
 /**
  * Created by karashevich on 17/03/16.
  */
-public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvider, Disposable {
+class LearnToolWindow extends SimpleToolWindowPanel implements DataProvider, Disposable {
 
-    JPanel myContentPanel;
-    EduPanel myEduPanel;
-    MainEduPanel mainEduPanel;
+    private JPanel myContentPanel;
+    private LearnPanel myLearnPanel;
+    private MainLearnPanel mainLearnPanel;
 
-    public LearnToolWindow() {
+    LearnToolWindow() {
         super(true, true);
         myContentPanel = new JPanel();
     }
@@ -37,17 +35,17 @@ public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvid
     public void init(Project project) {
         int preferableWidth = 350;
 
-        myEduPanel = new EduPanel(preferableWidth);
-        mainEduPanel = new MainEduPanel(preferableWidth);
-        CourseManager.getInstance().setMainEduPanel(mainEduPanel);
-        CourseManager.getInstance().setEduPanel(myEduPanel);
-        setContent(mainEduPanel);
+        myLearnPanel = new LearnPanel(preferableWidth);
+        mainLearnPanel = new MainLearnPanel(preferableWidth);
+        CourseManager.getInstance().setMainLearnPanel(mainLearnPanel);
+        CourseManager.getInstance().setLearnPanel(myLearnPanel);
+        setContent(mainLearnPanel);
     }
 
     @Override
     public void dispose() {
-        CourseManager.getInstance().setEduPanel(null);
-        myEduPanel = null;
+        CourseManager.getInstance().setLearnPanel(null);
+        myLearnPanel = null;
     }
 }
 

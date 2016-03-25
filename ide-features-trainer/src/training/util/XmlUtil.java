@@ -1,6 +1,6 @@
 package training.util;
 
-import training.editor.eduUI.Message;
+import training.ui.Message;
 import training.keymap.KeymapUtil;
 import training.keymap.SubKeymapUtil;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class XmlUtil {
 
-    public final static String SHORTCUT = "<shortcut>";
+    private final static String SHORTCUT = "<shortcut>";
 
     /**
      *
@@ -29,8 +29,6 @@ public class XmlUtil {
     /**
      *
      * replaces in text all <action="actionId"> with correspondent shortcut.
-     * @param text
-     * @return
      */
     public static String replacement(String text){
         String result = text;
@@ -71,10 +69,10 @@ public class XmlUtil {
         return result;
     }
 
-    public static Message[] extractActions(Message[] messages){
+    private static Message[] extractActions(Message[] messages){
         final String TAG = "action";
 
-        ArrayList<Message> result = new ArrayList<Message>();
+        ArrayList<Message> result = new ArrayList<>();
         for (Message message: messages) {
             if (message.isText()) {
                 String parsingString = message.getText();
@@ -108,10 +106,10 @@ public class XmlUtil {
         return result.toArray(new Message[result.size()]);
     }
 
-    public static Message[] extractCodeFragments(Message[] messages){
+    private static Message[] extractCodeFragments(Message[] messages){
         final String TAG = "code";
 
-        ArrayList<Message> result = new ArrayList<Message>();
+        ArrayList<Message> result = new ArrayList<>();
         for (Message message: messages) {
             if (message.isText()) {
                 String parsingString = message.getText();
@@ -140,10 +138,10 @@ public class XmlUtil {
         return result.toArray(new Message[result.size()]);
     }
 
-    public static Message[] extractLinkFragments(Message[] messages){
+    private static Message[] extractLinkFragments(Message[] messages){
         final String TAG = "link";
 
-        ArrayList<Message> result = new ArrayList<Message>();
+        ArrayList<Message> result = new ArrayList<>();
         for (Message message: messages) {
             if (message.isText()) {
                 String parsingString = message.getText();
@@ -193,7 +191,7 @@ public class XmlUtil {
             return text;
     }
 
-    public static String addHtmlTags(String text){
+    static String addHtmlTags(String text){
         final int n = text.length();
         if (n > 12 && text.substring(0, 6).equals("<html>") && (text.substring(n-7, n).equals("</html>")))
             return text;
