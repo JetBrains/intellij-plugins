@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.labels.LinkListener;
 import com.intellij.util.containers.BidirectionalMap;
@@ -34,7 +35,6 @@ public class LearnPanel extends JPanel {
 
     //Lesson panel items
     private JPanel lessonPanel;
-
     private JPanel moduleNamePanel; //contains moduleNameLabel and allTopicsLabel
     private JLabel moduleNameLabel;
     private LinkLabel allTopicsLabel;
@@ -82,7 +82,7 @@ public class LearnPanel extends JPanel {
     private Font lessonsFont;
     private Font allLessonsFont;
 
-    LearnPanel(int width){
+    LearnPanel(int width) {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setFocusable(false);
@@ -104,6 +104,7 @@ public class LearnPanel extends JPanel {
 //        filler.setAlignmentX(Component.LEFT_ALIGNMENT);
 //        this.add(filler);
         modulePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         this.add(modulePanel);
 
         //set LearnPanel UI
@@ -157,8 +158,7 @@ public class LearnPanel extends JPanel {
     }
 
 
-
-    private void initLessonPanel(){
+    private void initLessonPanel() {
         lessonPanel = new JPanel();
         lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.Y_AXIS));
         lessonPanel.setBackground(background);
@@ -235,7 +235,7 @@ public class LearnPanel extends JPanel {
     }
 
 
-    public void setLessonName(String lessonName){
+    public void setLessonName(String lessonName) {
         lessonNameLabel.setText(lessonName);
         lessonNameLabel.setForeground(defaultTextColor);
         lessonNameLabel.setFocusable(false);
@@ -243,7 +243,7 @@ public class LearnPanel extends JPanel {
         this.repaint();
     }
 
-    public void setModuleName(String moduleName){
+    public void setModuleName(String moduleName) {
         moduleNameLabel.setText(moduleName);
         moduleNameLabel.setForeground(defaultTextColor);
         moduleNameLabel.setFocusable(false);
@@ -254,7 +254,7 @@ public class LearnPanel extends JPanel {
     }
 
 
-    public void addMessage(String text){
+    public void addMessage(String text) {
         lessonMessagePane.addMessage(text);
 
         //Pack lesson panel
@@ -266,7 +266,7 @@ public class LearnPanel extends JPanel {
     public void addMessage(Message[] messages) {
 
         for (final Message message : messages) {
-            if(message.getType() == Message.MessageType.LINK)  {
+            if (message.getType() == Message.MessageType.LINK) {
                 //add link handler
                 message.setRunnable(() -> {
                     final Lesson lesson = CourseManager.getInstance().findLesson(message.getText());
@@ -291,7 +291,7 @@ public class LearnPanel extends JPanel {
 
     }
 
-    public void setPreviousMessagesPassed(){
+    public void setPreviousMessagesPassed() {
         try {
             lessonMessagePane.passPreviousMessages();
         } catch (BadLocationException e) {
@@ -299,7 +299,7 @@ public class LearnPanel extends JPanel {
         }
     }
 
-    public void setLessonPassed(){
+    public void setLessonPassed() {
 
 //        lessonNameLabel.setForeground(lessonPassedColor);
         setButtonToNext();
@@ -314,9 +314,7 @@ public class LearnPanel extends JPanel {
     }
 
 
-
-
-    public void hideButtons(){
+    public void hideButtons() {
         if (button.isVisible()) button.setVisible(false);
         this.repaint();
     }
@@ -359,7 +357,7 @@ public class LearnPanel extends JPanel {
         buttonAction.setEnabled(true);
         button.setAction(buttonAction);
         if (notPassedLesson != null) {
-            if (text != null){
+            if (text != null) {
                 button.setText(text);
             } else {
                 button.setText(LearnBundle.message("learn.ui.button.next.lesson") + ": " + notPassedLesson.getName());
@@ -394,7 +392,7 @@ public class LearnPanel extends JPanel {
         button.setVisible(false);
     }
 
-    private void initModulePanel(){
+    private void initModulePanel() {
         modulePanel = new ModulePanel();
         modulePanel.setLayout(new BoxLayout(modulePanel, BoxLayout.Y_AXIS));
         modulePanel.setBackground(background);
@@ -407,7 +405,7 @@ public class LearnPanel extends JPanel {
 
     }
 
-    public ModulePanel getModulePanel(){
+    public ModulePanel getModulePanel() {
         return modulePanel;
     }
 
@@ -417,26 +415,26 @@ public class LearnPanel extends JPanel {
         modulePanel.removeAll();
     }
 
-    public class ModulePanel extends JPanel{
+    public class ModulePanel extends JPanel {
         private Module myModule;
         private Lesson myLesson;
         private BidirectionalMap<Lesson, MyLinkLabel> lessonLabelMap = new BidirectionalMap<Lesson, MyLinkLabel>();
         private int leftInset = 10;
 
-        public void init(Lesson lesson){
+        public void init(Lesson lesson) {
 
             myLesson = lesson;
             myModule = lesson.getModule();
             initModuleLessons(lesson);
         }
 
-        void setLeftInset(int inset){
+        void setLeftInset(int inset) {
             leftInset = inset;
         }
 
-        private void initModuleLessons(final Lesson lesson){
-            if(lesson == null) return;
-            if(lesson.getModule() == null) return;
+        private void initModuleLessons(final Lesson lesson) {
+            if (lesson == null) return;
+            if (lesson.getModule() == null) return;
             Module module = lesson.getModule();
             final ArrayList<Lesson> myLessons = module.getLessons();
 
@@ -489,10 +487,10 @@ public class LearnPanel extends JPanel {
             }
         }
 
-        public void updateLessons(Lesson lesson){
+        public void updateLessons(Lesson lesson) {
             for (Lesson curLesson : lessonLabelMap.keySet()) {
                 MyLinkLabel lessonLabel = lessonLabelMap.get(curLesson);
-                if (lesson.equals(curLesson)){
+                if (lesson.equals(curLesson)) {
                     lessonLabel.setTextColor(lessonActiveColor);
                 } else {
                     lessonLabel.resetTextColor();
@@ -516,7 +514,7 @@ public class LearnPanel extends JPanel {
             }
         }
 
-        class MyLinkLabel extends LinkLabel{
+        class MyLinkLabel extends LinkLabel {
 
             Color userTextColor;
 
@@ -529,14 +527,18 @@ public class LearnPanel extends JPanel {
                 return (userTextColor != null ? userTextColor : super.getTextColor());
             }
 
-            void setTextColor(Color color){
+            void setTextColor(Color color) {
                 userTextColor = color;
             }
 
-            void resetTextColor(){
+            void resetTextColor() {
                 userTextColor = null;
             }
         }
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + 2 * insets, (int) lessonPanel.getMinimumSize().getHeight() + (int) modulePanel.getMinimumSize().getHeight() + 2 * insets);
+    }
 }
