@@ -222,7 +222,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       public Layouter getCustomLayouter(Graph2D graph, Project project) {
         final SmartOrganicLayouter layouter = GraphSettingsProvider.getInstance(project).getSettings(graph).getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
-        layouter.setParallelEdgeLayouterEnabled(false);
+        layouter.setParallelEdgeLayouterEnabled(true);
         return layouter;
       }
     };
