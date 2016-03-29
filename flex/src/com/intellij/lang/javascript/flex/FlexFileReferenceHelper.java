@@ -38,7 +38,7 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
   @NotNull
   public List<? extends LocalQuickFix> registerFixes(final FileReference reference) {
     final PsiElement element = reference.getElement();
-    if (!(reference instanceof JSFileReference) || !(element instanceof JSAttributeNameValuePair)) return Collections.emptyList();
+    if (!(reference instanceof JSFlexFileReference) || !(element instanceof JSAttributeNameValuePair)) return Collections.emptyList();
 
     final PsiElement parent = element.getParent();
     if (!(parent instanceof JSAttribute) || !FlexAnnotationNames.EMBED.equals(((JSAttribute)parent).getName())) {

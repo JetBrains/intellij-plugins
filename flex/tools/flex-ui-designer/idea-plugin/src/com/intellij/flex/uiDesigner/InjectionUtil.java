@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.flex.JSFileReference;
+import com.intellij.lang.javascript.flex.JSFlexFileReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.properties.ResourceBundleReference;
 import com.intellij.openapi.module.Module;
@@ -110,7 +110,7 @@ public final class InjectionUtil {
     // injection in mxml has JSAttributeNameValuePairImpl$NameReference as last reference
     while (true) {
       final PsiReference reference = i < 0 ? null : references[i];
-      if (reference instanceof JSFileReference || reference instanceof ResourceBundleReference) {
+      if (reference instanceof JSFlexFileReference || reference instanceof ResourceBundleReference) {
         fileReference = (PsiPolyVariantReference)reference;
         break;
       }

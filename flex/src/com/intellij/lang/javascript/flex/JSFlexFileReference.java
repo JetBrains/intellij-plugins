@@ -19,15 +19,15 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JSFileReference extends FileReference {
+public class JSFlexFileReference extends FileReference {
 
   private final ReferenceSupport.RelativeToWhat myRelativeToWhat;
 
-  public JSFileReference(@NotNull final FileReferenceSet fileReferenceSet,
-                         TextRange range,
-                         int index,
-                         String text,
-                         final ReferenceSupport.RelativeToWhat relativeToWhat) {
+  public JSFlexFileReference(@NotNull final FileReferenceSet fileReferenceSet,
+                             TextRange range,
+                             int index,
+                             String text,
+                             final ReferenceSupport.RelativeToWhat relativeToWhat) {
     super(fileReferenceSet, range, index, text);
     myRelativeToWhat = relativeToWhat;
   }

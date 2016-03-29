@@ -63,7 +63,7 @@ public class ReferenceSupport {
 
       @Override
       public FileReference createFileReference(final TextRange range, final int index, final String text) {
-        return new JSFileReference(this, range, index, text, relativeToWhat);
+        return new JSFlexFileReference(this, range, index, text, relativeToWhat);
       }
 
       @NotNull
