@@ -3,6 +3,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.ui.components.JBScrollPane;
 import training.learn.CourseManager;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ import javax.swing.*;
 class LearnToolWindow extends SimpleToolWindowPanel implements DataProvider, Disposable {
 
     private JPanel myContentPanel;
+    private JBScrollPane scrollPane;
     private LearnPanel myLearnPanel;
     private MainLearnPanel mainLearnPanel;
 
@@ -39,7 +41,8 @@ class LearnToolWindow extends SimpleToolWindowPanel implements DataProvider, Dis
         mainLearnPanel = new MainLearnPanel(preferableWidth);
         CourseManager.getInstance().setMainLearnPanel(mainLearnPanel);
         CourseManager.getInstance().setLearnPanel(myLearnPanel);
-        setContent(mainLearnPanel);
+        scrollPane = new JBScrollPane(mainLearnPanel);
+        setContent(scrollPane);
     }
 
     @Override

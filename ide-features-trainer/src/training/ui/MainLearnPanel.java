@@ -58,6 +58,7 @@ public class MainLearnPanel extends JPanel {
         //set LearnPanel UI
         this.setPreferredSize(new Dimension(width, 100));
         this.setBorder(new EmptyBorder(insets, insets, insets, insets));
+
         revalidate();
         repaint();
 
@@ -199,5 +200,8 @@ public class MainLearnPanel extends JPanel {
         }
     }
 
-
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + 2 * insets, (int) lessonPanel.getMinimumSize().getHeight() + 2 * insets);
+    }
 }

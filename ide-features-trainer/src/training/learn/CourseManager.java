@@ -19,6 +19,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.components.JBScrollPane;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -544,7 +545,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         ToolWindow toolWindow = windowManager.getToolWindow(learnToolWindow);
         JComponent toolWindowComponent = toolWindow.getComponent();
         toolWindowComponent.removeAll();
-        toolWindowComponent.add(getLearnPanel());
+        toolWindowComponent.add(new JBScrollPane(getLearnPanel()));
         toolWindowComponent.revalidate();
         toolWindowComponent.repaint();
     }
@@ -557,7 +558,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         toolWindowComponent.removeAll();
         MainLearnPanel mainLearnPanel = getMainLearnPanel();
         mainLearnPanel.updateMainPanel();
-        toolWindowComponent.add(mainLearnPanel);
+        toolWindowComponent.add(new JBScrollPane(getMainLearnPanel()));
         toolWindowComponent.revalidate();
         toolWindowComponent.repaint();
     }
