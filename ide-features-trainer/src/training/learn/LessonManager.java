@@ -161,7 +161,7 @@ public class LessonManager {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }, lesson, LearnBundle.message("learn.ui.button.next.module") + ": " + nextModule.getName());
+                }, lesson, LearnBundle.message("learn.ui.button.next.module"));
             }
         }
 //        learnPanel.updateLessonPanel(myCurrentLesson);
