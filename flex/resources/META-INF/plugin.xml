@@ -275,6 +275,7 @@
     <xmlBackedClassProvider implementation="com.intellij.javascript.flex.mxml.MxmlJSClassProvider"/>
     <smartCompletionContributor language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor"/>
     <dialectSpecificHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptSpecificHandlersFactory"/>
+    <handlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptHandlersFactory"/>
     <JSImplicitElementsIndexFileTypeProvider implementation="com.intellij.javascript.flex.MxmlJSImplicitElementsIndexFileTypeProvider"/>
     <analysisHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnalysisHandlersFactory"/>
   </extensions>

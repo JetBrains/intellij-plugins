@@ -32,12 +32,6 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
 
   @NotNull
   @Override
-  public JSCompletionKeywordsContributor newCompletionKeywordsContributor() {
-    return new ActionScriptCompletionKeywordsContributor();
-  }
-
-  @NotNull
-  @Override
   public JSResolveUtil.Resolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
                                                                                              PsiFile containingFile) {
     return new ActionScriptReferenceExpressionResolver(referenceExpression, containingFile);
