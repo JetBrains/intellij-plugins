@@ -54,7 +54,7 @@ public class AngularJavaScriptCompletionContributor extends CompletionContributo
     }
   }
 
-  private static void addCompletionVariants(@NotNull CompletionResultSet result, Collection<String> keys, @Nullable final String comment) {
+  static void addCompletionVariants(@NotNull CompletionResultSet result, Collection<String> keys, @Nullable final String comment) {
     for (String key : keys) {
       if (StringUtil.isEmptyOrSpaces(key)) {
         continue;

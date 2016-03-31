@@ -28,7 +28,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<JSLiteralExpression> CONTROLLER_PATTERN = literalInProperty("controller");
   public static final PsiElementPattern.Capture<PsiElement> UI_VIEW_PATTERN = uiViewPattern();
   private static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = xmlAttributePattern("ui-sref");
-  private static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ng-app");
+  public static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ng-app");
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_PATTERN = modulePattern();
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_DEPENDENCY_PATTERN = moduleDependencyPattern();
 

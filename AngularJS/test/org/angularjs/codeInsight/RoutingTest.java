@@ -129,6 +129,16 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals(1, results.length);
   }
 
+  public void testNgAppCompletion() throws Exception {
+    myFixture.configureByFiles("ngAppCompletion.html", "dependencyModuleDefinition.js", "myAppDefinition.js", "myAppUsage.js",
+                               "otherMyAppDefinition.js", "angular.js");
+    myFixture.completeBasic();
+    final List<String> strings = myFixture.getLookupElementStrings();
+    assertNotNull(strings);
+    assertTrue(strings.contains("myApp"));
+    assertTrue(strings.contains("dependency"));
+  }
+
   public void testModuleCompletion() throws Exception {
     myFixture.configureByFiles("moduleCompletion.js", "dependencyModuleDefinition.js", "myAppDefinition.js", "myAppUsage.js",
                                "otherMyAppDefinition.js", "angular.js");
