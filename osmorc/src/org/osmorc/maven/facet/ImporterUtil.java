@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,18 +170,19 @@ public class ImporterUtil {
   static void postProcessAdditionalProperties(@NotNull Map<String, String> props,
                                               @NotNull MavenProject mavenProject,
                                               @NotNull Project project) {
-    Analyzer myFakeAnalyzer = new FakeAnalyzer(props);
-    Collection<MavenArtifact> dependencies = collectDependencies(props, mavenProject);
+    Analyzer analyzer = new FakeAnalyzer(props);
 
+    Collection<MavenArtifact> dependencies = collectDependencies(props, mavenProject);
     DependencyEmbedder embedder = new DependencyEmbedder(dependencies);
     try {
-      embedder.processHeaders(myFakeAnalyzer);
+      embedder.processHeaders(analyzer);
     }
     catch (DependencyEmbedderException e) {
       String message = OsmorcBundle.message("maven.import.embed.error", mavenProject.getPath(), e.getMessage());
       OsmorcProjectComponent.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.ERROR).notify(project);
     }
-    ResourceCollector.includeMavenResources(mavenProject, myFakeAnalyzer);
+
+    ResourceCollector.includeMavenResources(mavenProject, analyzer);
 
     // finally post-process the Include-Resources header to account for backslashes and relative paths
     sanitizeIncludedResources(props, mavenProject);
