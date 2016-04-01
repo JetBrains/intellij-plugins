@@ -6,6 +6,7 @@
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
+  <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <codeInsight.template.postfixTemplateProvider language="AngularJS"
@@ -88,9 +89,4 @@
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
   </extensions>
-
-  <actions>
-    <action class="org.angularjs.codeInsight.router.ShowUiRouterStatesNewDiagramAction" id="AngularJS.Show.Ui.Router.States.Diagram.Action"
-      text="Show ui-router State Diagram"/>
-  </actions>
 </idea-plugin>

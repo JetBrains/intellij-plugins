@@ -1,0 +1,6 @@
+<idea-plugin version="2">
+  <actions>
+    <action class="org.angularjs.codeInsight.router.ShowUiRouterStatesNewDiagramAction" id="AngularJS.Show.Ui.Router.States.Diagram.Action"
+            text="Show ui-router State Diagram"/>
+  </actions>
+</idea-plugin>
