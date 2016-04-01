@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -12,7 +11,7 @@ import com.intellij.util.NotNullProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class AddAdapterSupportIntentionAction implements IntentionAction {
@@ -48,23 +47,18 @@ public class AddAdapterSupportIntentionAction implements IntentionAction {
 
   @Override
   public void invoke(@NotNull final Project project, Editor editor, final PsiFile file) throws IncorrectOperationException {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        AddAdapterSupportDialog dialog = new AddAdapterSupportDialog(
-          project,
-          file,
-          myAssertionFrameworkName,
-          myAdapterSourceFilesProvider.produce(),
-          myAdapterHomePageUrl
-        );
-        final boolean result = dialog.showAndGet();
-        final VirtualFile virtualFile = file.getVirtualFile();
-        if (virtualFile != null && result) {
-          FileContentUtil.reparseFiles(project, Arrays.<VirtualFile>asList(virtualFile), true);
-        }
-      }
-    });
+    AddAdapterSupportDialog dialog = new AddAdapterSupportDialog(
+      project,
+      file,
+      myAssertionFrameworkName,
+      myAdapterSourceFilesProvider.produce(),
+      myAdapterHomePageUrl
+    );
+    final boolean result = dialog.showAndGet();
+    final VirtualFile virtualFile = file.getVirtualFile();
+    if (virtualFile != null && result) {
+      FileContentUtil.reparseFiles(project, Collections.singletonList(virtualFile), true);
+    }
   }
 
   @Override
