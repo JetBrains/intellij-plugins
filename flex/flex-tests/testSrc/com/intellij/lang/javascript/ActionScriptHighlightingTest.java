@@ -2524,4 +2524,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testProtectedMembersWithImplicitInheritance() throws Exception {
     defaultTest(); // IDEA-146722
   }
+
+  public void testArgumentsInParenthesis() throws Exception {
+    defaultTest(); // IDEA-153275
+  }
 }

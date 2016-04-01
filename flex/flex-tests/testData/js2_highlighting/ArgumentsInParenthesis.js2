@@ -1,0 +1,13 @@
+package {
+public class ArgumentsInParenthesis {
+
+    private function foo():void {
+        bar(true ? 1 : 2);
+        bar((true ? 1 : 2));
+        bar((true ? <error descr="Expression type String is implicitly coerced to unrelated type int">""</error> : <error descr="Expression type String is implicitly coerced to unrelated type int">""</error>));
+        bar(true ? <error descr="Expression type String is implicitly coerced to unrelated type int">""</error> : <error descr="Expression type String is implicitly coerced to unrelated type int">""</error>);
+    }
+    
+    private function bar(a:int, b:String = ""){}
+}
+}
