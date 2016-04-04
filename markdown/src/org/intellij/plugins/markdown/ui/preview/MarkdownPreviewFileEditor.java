@@ -34,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
@@ -207,11 +209,18 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
     String text = myDocument.getText();
     final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
+    URI baseURI = null;
+    try {
+      baseURI = new URI(myFile.getParent().getPresentableUrl() + "/");
+    } catch (URISyntaxException e) {
+      baseURI = null;
+    }
     final String html = new HtmlGenerator(text,
                                           parsedTree,
                                           MarkdownParserManager.FLAVOUR,
                                           LinkMap.Builder.buildLinkMap(parsedTree, text),
-                                          true)
+                                          true,
+                                          baseURI)
       .generateHtml();
 
     // EA-75860: The lines to the top may be processed slowly; Since we're in pooled thread, we can be disposed already.
