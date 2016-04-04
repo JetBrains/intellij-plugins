@@ -18,14 +18,10 @@
     <orderEntry type="module" module-name="java-psi-api" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
-    <orderEntry type="module" module-name="execution-openapi" />
-    <orderEntry type="module" module-name="execution-impl" />
-    <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="library" name="cucumber-groovy" level="project" />
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="module" module-name="java-impl" />
     <orderEntry type="library" name="cucumber-core" level="project" />
     <orderEntry type="module" module-name="cucumber-java" />
-    <orderEntry type="module" module-name="java-indexing-api" />
   </component>
 </module>
