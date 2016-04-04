@@ -331,7 +331,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @Override
   public void runToPosition(@NotNull XSourcePosition position, @Nullable XSuspendContext context) {
     // todo implement
-    resume();
+    resume(context);
   }
 
   public void isolateSuspended(@NotNull final IsolateRef isolateRef) {
@@ -360,7 +360,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     mySuspendedIsolateIds.remove(isolateRef.getId());
 
     if (isolateRef.getId().equals(myLatestCurrentIsolateId)) {
-      resume(); // otherwise no way no resume them from UI
+      resume(getSession().getSuspendContext()); // otherwise no way no resume them from UI
     }
   }
 
