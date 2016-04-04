@@ -47,7 +47,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @NotNull
   private final JPanel myHtmlPanelWrapper;
   @NotNull
-  private MarkdownHtmlPanel myPanel;
+  private volatile MarkdownHtmlPanel myPanel;
   @Nullable
   private MarkdownHtmlPanelProvider.ProviderInfo myLastPanelProviderInfo = null;
   @NotNull
