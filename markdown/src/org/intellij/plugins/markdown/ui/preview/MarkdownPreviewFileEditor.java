@@ -19,7 +19,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
+import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
+import org.intellij.markdown.html.GeneratingProvider;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.parser.LinkMap;
 import org.intellij.markdown.parser.MarkdownParser;
@@ -34,6 +36,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.net.URI;
+import java.util.Map;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
@@ -205,14 +210,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       return;
     }
 
-    String text = myDocument.getText();
-    final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
-    final String html = new HtmlGenerator(text,
-                                          parsedTree,
-                                          MarkdownParserManager.FLAVOUR,
-                                          LinkMap.Builder.buildLinkMap(parsedTree, text),
-                                          true)
-      .generateHtml();
+    final String html = generateMarkdownHtml(myFile, myDocument.getText());
 
     // EA-75860: The lines to the top may be processed slowly; Since we're in pooled thread, we can be disposed already.
     if (!myFile.isValid() || Disposer.isDisposed(this)) {
@@ -279,6 +277,18 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Override
   public void dispose() {
     Disposer.dispose(myPanel);
+  }
+
+  @NotNull
+  private static String generateMarkdownHtml(@NotNull VirtualFile file, @NotNull String text) {
+    final VirtualFile parent = file.getParent();
+    final URI baseUri = parent != null ? new File(parent.getPath()).toURI() : null;
+
+    final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
+    final Map<IElementType, GeneratingProvider> htmlGeneratingProviders =
+      MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri);
+
+    return new HtmlGenerator(text, parsedTree, htmlGeneratingProviders, true).generateHtml();
   }
 
   @Contract("_, null, null -> fail")
