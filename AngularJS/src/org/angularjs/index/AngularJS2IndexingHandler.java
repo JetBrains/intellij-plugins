@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
@@ -183,6 +184,16 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       final JSQualifiedName directiveNamespace = findDirective(context);
       if (directiveNamespace != null) {
         info.addType(new JSNamespaceImpl(directiveNamespace, JSContext.INSTANCE, true), false);
+      }
+    }
+  }
+
+  @Override
+  public void addContextNames(PsiElement context, List<String> names) {
+    if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
+      final JSQualifiedName directiveNamespace = findDirective(context);
+      if (directiveNamespace != null) {
+        names.add(directiveNamespace.getQualifiedName());
       }
     }
   }
