@@ -1,11 +1,13 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.xml.SchemaPrefix;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.HtmlXmlExtension;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Dennis.Ushakov
@@ -30,8 +32,23 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
   @Override
   public SchemaPrefix getPrefixDeclaration(XmlTag context, String namespacePrefix) {
     if ("ng".equals(namespacePrefix)) {
-      return new SchemaPrefix(null, null, namespacePrefix);
+      SchemaPrefix attribute = findAttributeSchema(context, namespacePrefix, 0);
+      if (attribute != null) return attribute;
+    }
+    if (namespacePrefix != null && namespacePrefix.startsWith("(")) {
+      SchemaPrefix attribute = findAttributeSchema(context, namespacePrefix, 1);
+      if (attribute != null) return attribute;
     }
     return super.getPrefixDeclaration(context, namespacePrefix);
+  }
+
+  @Nullable
+  private static SchemaPrefix findAttributeSchema(XmlTag context, String namespacePrefix, int offset) {
+    for (XmlAttribute attribute : context.getAttributes()) {
+      if (attribute.getName().startsWith(namespacePrefix)) {
+        return new SchemaPrefix(attribute, TextRange.create(offset, namespacePrefix.length()), namespacePrefix.substring(offset));
+      }
+    }
+    return null;
   }
 }

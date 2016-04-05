@@ -707,4 +707,16 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNull(ref.resolve());
   }
 
+  public void testBindingNamespace() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("bindingNamespace.html", "angular2.js");
+        myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+        myFixture.enableInspections(XmlUnboundNsPrefixInspection.class);
+        myFixture.checkHighlighting();
+      }
+    });
+  }
+
 }
