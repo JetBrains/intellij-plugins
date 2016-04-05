@@ -250,6 +250,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
         findRelatedStepDefsRoots(module, featureFile, notLoadedStepDefinitionsRoots, dataObject.myProcessedStepDirectories);
       }
       loadStepDefinitionRootsFromLibraries(module, notLoadedStepDefinitionsRoots, dataObject.myProcessedStepDirectories);
+      loadStepDefinitionsFromDependentModules(featureFile, module);
     }
     catch (ProcessCanceledException e) {
       // just stop items gathering
@@ -287,6 +288,14 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
 
     synchronized (dataObject.myStepDefinitions) {
       return new ArrayList<AbstractStepDefinition>(dataObject.myStepDefinitions);
+    }
+  }
+
+  private void loadStepDefinitionsFromDependentModules(PsiFile featureFile, Module activeModule) {
+    Module[] dependencies = ModuleRootManager.getInstance(activeModule).getDependencies();
+    for (Module dependsOnModule : dependencies) {
+      if (dependsOnModule.equals(activeModule)) continue;
+      loadStepsFor(featureFile, dependsOnModule);
     }
   }
 

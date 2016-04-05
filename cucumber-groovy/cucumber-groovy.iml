@@ -27,5 +27,7 @@
     <orderEntry type="library" name="cucumber-core" level="project" />
     <orderEntry type="module" module-name="cucumber-java" />
     <orderEntry type="module" module-name="java-indexing-api" />
+    <orderEntry type="library" name="cucumber-groovy" level="project" />
+    <orderEntry type="module" module-name="community-main" />
   </component>
 </module>
