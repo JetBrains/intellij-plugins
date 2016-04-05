@@ -18,6 +18,7 @@ package com.intellij.coldFusion.UI.runner;
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.FileTypeIndex;
@@ -41,11 +42,13 @@ public class CfmlRunConfigurationType implements ConfigurationType {
         return FileTypeIndex.containsFileOfType(CfmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
       }
 
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      @NotNull
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new CfmlRunConfiguration(project, this, "Cold Fusion");
       }
     };
   }
+
 
   public String getDisplayName() {
     return "Cold Fusion";
@@ -59,6 +62,10 @@ public class CfmlRunConfigurationType implements ConfigurationType {
     return CFMLIcons.Cfml;
   }
 
+  public static CfmlRunConfigurationType getInstance() {
+    return ConfigurationTypeUtil.findConfigurationType(CfmlRunConfigurationType.class);
+  }
+
   @NotNull
   public String getId() {
     return getConfigurationTypeDescription();
@@ -67,4 +74,5 @@ public class CfmlRunConfigurationType implements ConfigurationType {
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{myConfigurationFactory};
   }
+
 }
