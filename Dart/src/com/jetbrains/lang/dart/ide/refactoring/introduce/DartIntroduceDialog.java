@@ -1,7 +1,5 @@
 package com.jetbrains.lang.dart.ide.refactoring.introduce;
 
-import com.intellij.openapi.application.AcceptNestedTransactions;
-import com.intellij.openapi.application.TransactionKind;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -22,7 +20,6 @@ import java.util.Collection;
 /**
  * User: Fedor.Korotkov
  */
-@AcceptNestedTransactions(TransactionKind.Common.TEXT_EDITING)
 public class DartIntroduceDialog extends DialogWrapper {
   private JPanel myContentPane;
   private JLabel myNameLabel;
