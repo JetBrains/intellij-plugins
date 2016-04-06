@@ -4,8 +4,8 @@ import com.intellij.ProjectTopics;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,8 @@ public class CodeContextHolder extends AbstractProjectComponent {
 
   public CodeContextHolder(Project project) {
     super(project);
-    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+      @Override
       public void rootsChanged(final ModuleRootEvent event) {
         synchronized (CodeContextHolder.this) {
           myNSToCodeContextMap.clear();
@@ -35,6 +36,7 @@ public class CodeContextHolder extends AbstractProjectComponent {
     });
   }
 
+  @Override
   @NonNls
   @NotNull
   public String getComponentName() {

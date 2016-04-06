@@ -30,8 +30,8 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -96,7 +96,8 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     MessageBusConnection connection = project.getMessageBus().connect(project);
 
-    connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+    connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+      @Override
       public void rootsChanged(ModuleRootEvent event) {
         quitCompilerShell();
       }
