@@ -251,6 +251,30 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     runTest(events, signals, new int[]{});
   }
 
+  public void testSetUpAllFailure() throws Exception {
+    String[] events = {
+      "{'count':1,'type':'allSuites','time':0}\n",
+      "{'suite':{'id':0,'platform':'vm','path':'test/next_test.dart'},'type':'suite','time':0}\n",
+      "{'test':{'id':1,'name':'loading test/next_test.dart','suiteID':0,'groupIDs':[],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':0}\n",
+      "{'testID':1,'result':'success','hidden':true,'type':'testDone','time':234}\n",
+      "{'group':{'id':2,'suiteID':0,'parentID':null,'name':null,'metadata':{'skip':false,'skipReason':null},'testCount':5},'type':'group','time':238}\n",
+      "{'test':{'id':3,'name':'(setUpAll)','suiteID':0,'groupIDs':[2],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':238}\n",
+      "{'testID':3,'message':'sa2','type':'print','time':258}\n",
+      "{'testID':3,'error':'fail','stackTrace':'test/next_test.dart 4:30  main.<fn>','isFailure':false,'type':'error','time':389}\n",
+      "{'testID':3,'result':'error','hidden':false,'type':'testDone','time':390}\n",
+      "{'success':false,'type':'done','time':392}\n",
+    };
+    String[] signals = {
+      "suite started next_test.dart",
+      "start (setUpAll)" ,
+      "fail (setUpAll) true" ,
+      "print (setUpAll) test/next_test.dart 4:30  main.<fn>\n",
+      "finish (setUpAll)" ,
+      "suite finished next_test.dart"
+    };
+    runTest(events, signals, new int[]{});
+  }
+
   public void testGroupsDone() throws Exception {
     String[] events = {
       "{'protocolVersion':'0.1.0','runnerVersion':'0.12.10','type':'start','time':0}\n",
@@ -261,6 +285,9 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       "{'group':{'id':2,'suiteID':0,'parentID':null,'name':null,'metadata':{'skip':false,'skipReason':null},'testCount':6},'type':'group','time':196}\n",
       "{'group':{'id':3,'suiteID':0,'parentID':2,'name':'some group','metadata':{'skip':false,'skipReason':null},'testCount':5},'type':'group','time':196}\n",
       "{'group':{'id':4,'suiteID':0,'parentID':3,'name':'some group sub group 1','metadata':{'skip':false,'skipReason':null},'testCount':1},'type':'group','time':196}\n",
+      "{'test':{'id':30,'name':'(setUpAll)','suiteID':0,'groupIDs':[2,3,4],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':196}\n",
+      "{'testID':30,'message':'foo','type':'print','time':258}\n",
+      "{'testID':30,'result':'success','hidden':true,'type':'testDone','time':261}\n",
       "{'test':{'id':5,'name':'some group sub group 1 passing test1','suiteID':0,'groupIDs':[2,3,4],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':196}\n",
       "{'testID':5,'result':'success','hidden':false,'type':'testDone','time':1224}\n",
       "{'group':{'id':6,'suiteID':0,'parentID':3,'name':'some group sub group 2','metadata':{'skip':false,'skipReason':null},'testCount':3},'type':'group','time':1224}\n",
@@ -279,6 +306,9 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       "{'test':{'id':11,'name':'passing test 3','suiteID':0,'groupIDs':[2],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':2402}\n",
       "{'testID':11,'message':'in passing test','type':'print','time':2403}\n",
       "{'testID':11,'result':'success','hidden':false,'type':'testDone','time':3404}\n",
+      "{'test':{'id':50,'name':'(tearDownAll)','suiteID':0,'groupIDs':[2],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':267}\n",
+      "{'testID':50,'message':'tda','type':'print','time':269}\n",
+      "{'testID':50,'result':'success','hidden':true,'type':'testDone','time':270}\n",
       "{'success':false,'type':'done','time':3406}\n",
     };
     String[] signals = {

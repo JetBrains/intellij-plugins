@@ -75,6 +75,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String FILE_URL_PREFIX = "dart_location://";
   private static final String LOADING_PREFIX = "loading ";
   private static final String COMPILING_PREFIX = "compiling ";
+  private static final String SET_UP_ALL_VIRTUAL_TEST_NAME = "(setUpAll)";
+  private static final String TEAR_DOWN_ALL_VIRTUAL_TEST_NAME = "(tearDownAll)";
 
   private static final Gson GSON = new Gson();
 
@@ -171,7 +173,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     final Test test = getTest(obj);
     myTestIdToTimestamp.put(test.getId(), getTimestamp(obj));
 
-    if (test.getParent() == null && (test.getName().startsWith(LOADING_PREFIX) || test.getName().startsWith(COMPILING_PREFIX))) {
+    if (shouldTestBeHiddenIfPassed(test)) {
       // Virtual test that represents loading or compiling a test suite. See lib/src/runner/loader.dart -> Loader.loadFile() in pkg/test source code
       // At this point we do not report anything to the framework, but if error occurs, we'll report it as a normal test
       String path = "";
@@ -203,6 +205,18 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     return result;
+  }
+
+  private static boolean shouldTestBeHiddenIfPassed(@NotNull final Test test) {
+    // There are so called 'virtual' tests that are created for loading test suites, setUpAll(), and tearDownAll().
+    // They shouldn't be visible when they do not cause problems. But if any error occurs, we'll report it later as a normal test.
+    // See lib/src/runner/loader.dart -> Loader.loadFile() and lib/src/backend/declarer.dart -> Declarer._setUpAll and Declarer._tearDownAll in pkg/test source code
+    final Group group = test.getParent();
+    return group == null && (test.getName().startsWith(LOADING_PREFIX) || test.getName().startsWith(COMPILING_PREFIX))
+           ||
+           group != null && group.getDoneTestsCount() == 0 && test.getName().equals(SET_UP_ALL_VIRTUAL_TEST_NAME)
+           ||
+           group != null && group.getDoneTestsCount() > 0 && test.getName().equals(TEAR_DOWN_ALL_VIRTUAL_TEST_NAME);
   }
 
   private boolean handleTestDone(JsonObject obj) throws ParseException {
@@ -331,6 +345,10 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     boolean result = true;
 
     if (!test.myTestStartReported) {
+      if (test.getName().equals(SET_UP_ALL_VIRTUAL_TEST_NAME) || test.getName().equals(TEAR_DOWN_ALL_VIRTUAL_TEST_NAME)) {
+        return true; // output in successfully passing setUpAll/tearDownAll is not important enough to make these nodes visible
+      }
+
       final ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(test.getBaseName());
       test.myTestStartReported = true;
       result = finishMessage(testStarted, test.getId(), test.getValidParentId());
