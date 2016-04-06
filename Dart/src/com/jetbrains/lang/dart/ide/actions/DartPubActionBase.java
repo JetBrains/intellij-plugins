@@ -42,7 +42,6 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.content.MessageView;
-import com.intellij.ui.content.tabs.PinToolwindowTabAction;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
@@ -286,14 +285,14 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     info.stopProcessAction = stopProcessAction;
     actionGroup.addAction(stopProcessAction);
 
-    actionGroup.add(PinToolwindowTabAction.getPinAction());
+    actionGroup.add(ActionManager.getInstance().getAction(IdeActions.ACTION_PIN_ACTIVE_TAB));
 
     final AnAction closeContentAction = new CloseActiveTabAction();
     closeContentAction.getTemplatePresentation().setIcon(AllIcons.Actions.Cancel);
     closeContentAction.getTemplatePresentation().setText(UIBundle.message("tabbed.pane.close.tab.action.name"));
     actionGroup.add(closeContentAction);
 
-    final ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actionGroup, false);
+    final ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, actionGroup, false);
     toolbar.setTargetComponent(info.console.getComponent());
     return toolbar;
   }
