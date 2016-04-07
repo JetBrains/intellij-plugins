@@ -189,7 +189,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           if (argument.isQuotedLiteral()) {
             final Function<PsiElement, String> calculator = DATA_CALCULATORS.get(command);
             final String data = calculator != null ? calculator.fun(argument) : null;
-            final String argumentText = StringUtil.unquoteString(argument.getText());
+            final String argumentText = unquote(argument);
             addImplicitElements(argument, command, index, argumentText, data, outIndexingData);
           }
         } else if (INJECTABLE_METHODS.contains(command)) { // INTERESTING_METHODS are contained in INJECTABLE_METHODS
@@ -203,7 +203,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
             if (qualifier instanceof JSReferenceExpression) {
               if ("$interpolateProvider".equals(((JSReferenceExpression)qualifier).getReferenceName())) {
                 if (argument.isQuotedLiteral()) {
-                  String interpolation = StringUtil.unquoteString(argument.getText());
+                  String interpolation = unquote(argument);
                   // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
                   if ("//".equals(interpolation)) return;
                   addImplicitElements(argument, null, AngularInjectionDelimiterIndex.KEY, command, interpolation, outIndexingData);
@@ -371,7 +371,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static void generateNamespace(@NotNull JSLiteralExpression argument,
                                         @NotNull String calledMethodName,
                                         @NotNull JSElementIndexingData outData) {
-    final String namespace = StringUtil.unquoteString(argument.getText());
+    final String namespace = unquote(argument);
     JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(namespace);
     JSImplicitElementImpl.Builder elementBuilder =
       new JSImplicitElementImpl.Builder(qName, argument)
@@ -442,7 +442,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           final JSExpression value = node.getValue();
           if ("restrict".equals(name)) {
             if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
-              restrict.set(StringUtil.unquoteString(value.getText()));
+              restrict.set(unquote(value));
             }
           } else if ("scope".equals(name)) {
             if (value instanceof JSObjectLiteralExpression) {
@@ -514,7 +514,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         if (arguments.length > 0) {
           JSExpression argument = arguments[0];
           if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-            return StringUtil.unquoteString(argument.getText());
+            return unquote(argument);
           }
         }
       }
@@ -594,12 +594,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         if (AngularJSRouterConstants.controllerAs.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
           final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
           if (!value.isQuotedLiteral()) return false;
-          final String unquotedValue = StringUtil.unquoteString(value.getText());
+          final String unquotedValue = unquote(value);
           return recordControllerAs(property, outData, value, unquotedValue);
         } else if (CONTROLLER.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
           final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
           if (!value.isQuotedLiteral()) return false;
-          final String unquotedValue = StringUtil.unquoteString(value.getText());
+          final String unquotedValue = unquote(value);
           final int idx = unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES);
           if (idx > 0 && (idx + AS_CONNECTOR_WITH_SPACES.length()) < (unquotedValue.length() - 1)) {
             return recordControllerAs(property, outData, value, unquotedValue.substring(idx + AS_CONNECTOR_WITH_SPACES.length(), unquotedValue.length()));
@@ -626,5 +626,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         return true;
       }
     };
+  }
+
+  static String unquote(PsiElement value) {
+    return (String)((JSLiteralExpression)value).getValue();
   }
 }
