@@ -68,8 +68,6 @@ public class HbConfig {
   }
 
   public static boolean setShouldOpenHtmlAsHandlebars(boolean value, Project project) {
-    if (shouldOpenHtmlAsHandlebars(project) == value) return false;
-
     setBooleanPropertyValue(SHOULD_OPEN_HTML, value, project);
     return true;
   }
