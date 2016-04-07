@@ -150,7 +150,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     final JSProperty selector = getProperty(decorator, name);
     final JSExpression value = selector != null ? selector.getValue() : null;
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
-      return StringUtil.unquoteString(value.getText());
+      return AngularJSIndexingHandler.unquote(value);
     }
     return null;
   }
