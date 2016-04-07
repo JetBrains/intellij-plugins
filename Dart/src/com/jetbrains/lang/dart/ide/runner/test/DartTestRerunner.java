@@ -1,12 +1,16 @@
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.AbstractTestProxy;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +34,11 @@ public class DartTestRerunner implements RunProfileState {
   @Nullable
   @Override
   public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+    RunContentManager contentManager = ExecutionManager.getInstance(environment.getProject()).getContentManager();
+    for (RunContentDescriptor descriptor : contentManager.getAllDescriptors()) {
+      ProcessHandler handler = descriptor.getProcessHandler();
+      if (handler != null) handler.destroyProcess();
+    }
     DartTestRunningState state = new DartTestRunningState(environment);
     DartTestRunnerParameters params = state.getParameters();
     params.setScope(DartTestRunnerParameters.Scope.MULTIPLE_NAMES);
