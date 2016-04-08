@@ -10,6 +10,7 @@ import com.jetbrains.cidr.execution.debugger.evaluation.CidrValue;
 import com.jetbrains.cidr.execution.debugger.evaluation.EvaluationContext;
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.motion.run.MotionMemberValue;
 import org.jetbrains.plugins.ruby.ruby.lang.TextUtil;
 
@@ -33,9 +34,14 @@ public class MotionObjectRenderer extends ValueRenderer {
   }
 
   @Override
-  protected int doComputeChildrenCount(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
-    final LLValue instanceVariablesNames = getInstanceVariablesNames(context);
-    return count(context, instanceVariablesNames);
+  protected boolean mayHaveChildrenViaChildrenCount() {
+    return true;
+  }
+
+  @Override
+  @Nullable
+  protected Integer doComputeChildrenCount(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
+    return count(context, getInstanceVariablesNames(context));
   }
 
   private static int count(EvaluationContext context, LLValue instanceVariablesNames) throws ExecutionException, DBUserException {
