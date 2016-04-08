@@ -11,6 +11,7 @@ import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.ui.LightColors;
 import com.intellij.ui.SimpleColoredText;
@@ -42,8 +43,14 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     myResolver = new DiagramVfsResolver<DiagramObject>() {
       @Override
       public String getQualifiedName(DiagramObject element) {
-        return (Type.template.equals(element.getType()) || Type.topLevelTemplate.equals(element.getType())) && element.getNavigationTarget() != null ?
-                                                             element.getNavigationTarget().getContainingFile().getVirtualFile().getPath() : "";
+        if ((Type.template.equals(element.getType()) || Type.topLevelTemplate.equals(element.getType())) &&
+            element.getNavigationTarget() != null) {
+          final PsiFile psiFile = element.getNavigationTarget().getContainingFile();
+          return psiFile == null ? "" : psiFile.getVirtualFile().getPath();
+        }
+        else {
+          return "";
+        }
       }
 
       @Nullable
