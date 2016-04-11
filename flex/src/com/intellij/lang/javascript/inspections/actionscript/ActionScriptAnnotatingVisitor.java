@@ -1561,4 +1561,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     super.visitJSForInStatement(node);
     ValidateTypesUtil.checkTypesInForIn(node, myProblemReporter);
   }
+
+  @Override
+  protected boolean isConstAssignable(@NotNull JSReferenceExpression lExpr, PsiElement resolved) {
+    return false;
+  }
+
+  @Override
+  protected boolean isConstNeedInitializer(JSVariable var) {
+    return true;
+  }
 }
