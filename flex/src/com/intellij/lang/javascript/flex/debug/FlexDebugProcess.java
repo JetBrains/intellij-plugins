@@ -1170,14 +1170,9 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private void reportProblem(final String s) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        Notifications.Bus
-          .notify(new Notification(DEBUGGER_GROUP_ID, FlexBundle.message("flex.debugger.startup.error"), s.replace("\n", "<br>"),
-                                   NotificationType.ERROR), getSession().getProject());
-      }
-    });
+    Notifications.Bus
+      .notify(new Notification(DEBUGGER_GROUP_ID, FlexBundle.message("flex.debugger.startup.error"), s.replace("\n", "<br>"),
+                               NotificationType.ERROR), getSession().getProject());
   }
 
   void insertCommand(DebuggerCommand command) {
