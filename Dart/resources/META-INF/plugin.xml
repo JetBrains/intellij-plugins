@@ -61,6 +61,7 @@
                               order="last"/>
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
+    <callHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyProvider"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartUriElement"
                              implementationClass="com.jetbrains.lang.dart.psi.impl.DartUriElementBase$DartUriElementManipulator"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartStringLiteralExpression"
@@ -277,6 +278,23 @@
       <reference ref="TypeHierarchy.Class"/>
       <reference ref="TypeHierarchy.Subtypes"/>
       <reference ref="TypeHierarchy.Supertypes"/>
+      <separator/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+    </group>
+
+    <action id="DartCallHierarchy.BaseOnThisFunction" text="Base on This Function"
+            class="com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyBrowser$BaseOnThisFunctionAction"
+            use-shortcut-of="MethodHierarchy"/>
+    <group id="DartCallHierarchyPopupMenu">
+      <reference ref="DartCallHierarchy.BaseOnThisFunction"/>
       <separator/>
       <reference ref="EditSource"/>
       <separator/>
