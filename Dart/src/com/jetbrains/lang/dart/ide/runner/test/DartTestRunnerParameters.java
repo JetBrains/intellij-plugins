@@ -1,5 +1,8 @@
 package com.jetbrains.lang.dart.ide.runner.test;
 
+import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +59,15 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
 
   public void setTestRunnerOptions(@Nullable String testRunnerOptions) {
     myTestRunnerOptions = testRunnerOptions;
+  }
+
+  @Override
+  public void check(@NotNull Project project) throws RuntimeConfigurationError {
+    super.check(project);
+
+    if (myScope == Scope.GROUP_OR_TEST_BY_NAME && StringUtil.isEmpty(myTestName)) {
+      throw new RuntimeConfigurationError("Group or test name is not specified");
+    }
   }
 
   @Override
