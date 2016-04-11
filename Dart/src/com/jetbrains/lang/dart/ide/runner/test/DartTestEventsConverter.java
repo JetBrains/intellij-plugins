@@ -214,9 +214,9 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     final Group group = test.getParent();
     return group == null && (test.getName().startsWith(LOADING_PREFIX) || test.getName().startsWith(COMPILING_PREFIX))
            ||
-           group != null && group.getDoneTestsCount() == 0 && test.getName().equals(SET_UP_ALL_VIRTUAL_TEST_NAME)
+           group != null && group.getDoneTestsCount() == 0 && test.getBaseName().equals(SET_UP_ALL_VIRTUAL_TEST_NAME)
            ||
-           group != null && group.getDoneTestsCount() > 0 && test.getName().equals(TEAR_DOWN_ALL_VIRTUAL_TEST_NAME);
+           group != null && group.getDoneTestsCount() > 0 && test.getBaseName().equals(TEAR_DOWN_ALL_VIRTUAL_TEST_NAME);
   }
 
   private boolean handleTestDone(JsonObject obj) throws ParseException {
@@ -345,7 +345,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     boolean result = true;
 
     if (!test.myTestStartReported) {
-      if (test.getName().equals(SET_UP_ALL_VIRTUAL_TEST_NAME) || test.getName().equals(TEAR_DOWN_ALL_VIRTUAL_TEST_NAME)) {
+      if (test.getBaseName().equals(SET_UP_ALL_VIRTUAL_TEST_NAME) || test.getBaseName().equals(TEAR_DOWN_ALL_VIRTUAL_TEST_NAME)) {
         return true; // output in successfully passing setUpAll/tearDownAll is not important enough to make these nodes visible
       }
 
