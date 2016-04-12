@@ -403,6 +403,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       if (parent instanceof JSClass &&
           name != null &&
           name.equals(((JSClass)parent).getName()) &&
+          !isNative(node) &&
           JavaScriptSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
         final Annotation annotation = myHolder.createErrorAnnotation(
           nameIdentifier,
@@ -563,6 +564,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
       }
     }
+  }
+
+  private static boolean isNative(final JSFunction function) {
+    final JSAttributeList attributeList = function.getAttributeList();
+    return attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.NATIVE);
   }
 
   private void reportStaticMethodProblem(JSAttributeList attributeList, String key) {
