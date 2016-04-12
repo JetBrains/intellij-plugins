@@ -18,15 +18,13 @@ public class ExecutionList {
     final private Lesson lesson;
     final private Project project;
     final private Editor editor;
-    final private MouseListenerHolder mouseListenerHolderl;
     @Nullable final private String target;
 
-    public ExecutionList(Queue<Element> elements, Lesson lesson, Project project, Editor editor, MouseListenerHolder mouseListenerHolder, String target) {
+    public ExecutionList(Queue<Element> elements, Lesson lesson, Project project, Editor editor, String target) {
         this.elements = elements;
         this.lesson = lesson;
         this.editor = editor;
         this.project = project;
-        this.mouseListenerHolderl = mouseListenerHolder;
         this.target = target;
     }
 
@@ -44,10 +42,6 @@ public class ExecutionList {
 
     public Lesson getLesson() {
         return lesson;
-    }
-
-    public MouseListenerHolder getMouseListenerHolderl() {
-        return mouseListenerHolderl;
     }
 
     @Nullable

@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import training.editor.MouseListenerHolder;
 import training.editor.actions.BlockCaretAction;
 import training.editor.actions.LearnActions;
 import training.ui.LearnBalloonBuilder;
@@ -28,14 +29,12 @@ public class LessonManager {
     private Lesson myCurrentLesson;
 
     private static ArrayList<LearnActions> myLearnActions;
-    private static MouseListener myMouseDummyListener;
     private final LearnBalloonBuilder learnBalloonBuilder;
     private static boolean mouseBlocked = false;
-    private static MouseListener[] myMouseListeners;
-    private static MouseMotionListener[] myMouseMotionListeners;
     private static HashSet<ActionsRecorder> actionsRecorders = new HashSet<>();
     private static HashMap<Lesson, LessonManager> lessonManagers = new HashMap<>();
     private static Editor lastEditor;
+    private static MouseListenerHolder mouseListenerHolder;
 
     private final int balloonDelay = 3000;
 
@@ -48,6 +47,8 @@ public class LessonManager {
         learnBalloonBuilder = new LearnBalloonBuilder(editor, balloonDelay, "Caret is blocked in this lesson");
         lessonManagers.put(lesson, this);
         lastEditor = editor;
+
+        mouseListenerHolder = null;
     }
 
     private static LessonManager getInstance() {
@@ -71,7 +72,9 @@ public class LessonManager {
         clearEditor(editor);
         clearLessonPanel();
         removeActionsRecorders();
-        if (isMouseBlocked()) restoreMouseActions(editor);
+
+        if (mouseListenerHolder != null) mouseListenerHolder.restoreMouseActions(editor);
+
         if (myLearnActions != null) {
             for (LearnActions myLearnAction : myLearnActions) {
                 myLearnAction.unregisterAction();
@@ -204,41 +207,7 @@ public class LessonManager {
         return mouseBlocked;
     }
 
-    public void restoreMouseActions(Editor editor){
-        if (getMyMouseListeners() != null) {
-            for (MouseListener myMouseListener : getMyMouseListeners()) {
-                editor.getContentComponent().addMouseListener(myMouseListener);
-            }
-        }
 
-        if (getMyMouseMotionListeners() != null) {
-            for (MouseMotionListener myMouseMotionListener : getMyMouseMotionListeners()) {
-                editor.getContentComponent().addMouseMotionListener(myMouseMotionListener);
-            }
-        }
-
-        if(myMouseDummyListener != null) editor.getContentComponent().removeMouseListener(myMouseDummyListener);
-
-        setMyMouseListeners(null);
-        setMyMouseMotionListeners(null);
-        setMouseBlocked(false);
-    }
-
-    private MouseListener[] getMyMouseListeners() {
-        return myMouseListeners;
-    }
-
-    private MouseMotionListener[] getMyMouseMotionListeners() {
-        return myMouseMotionListeners;
-    }
-
-    private void setMyMouseListeners(MouseListener[] myMouseListeners) {
-        LessonManager.myMouseListeners = myMouseListeners;
-    }
-
-    private void setMyMouseMotionListeners(MouseMotionListener[] myMouseMotionListeners) {
-        LessonManager.myMouseMotionListeners = myMouseMotionListeners;
-    }
 
     private void setMouseBlocked(boolean mouseBlocked) {
         LessonManager.mouseBlocked = mouseBlocked;
@@ -257,57 +226,6 @@ public class LessonManager {
         myLearnActions.removeAll(myBlockActions);
     }
 
-    public void grabMouseActions(Editor editor){
-        MouseListener[] mouseListeners = editor.getContentComponent().getMouseListeners();
-        setMyMouseListeners(editor.getContentComponent().getMouseListeners());
-
-
-        for (MouseListener mouseListener : mouseListeners) {
-            editor.getContentComponent().removeMouseListener(mouseListener);
-        }
-
-        //kill all mouse (motion) listeners
-        MouseMotionListener[] mouseMotionListeners = editor.getContentComponent().getMouseMotionListeners();
-        setMyMouseMotionListeners(editor.getContentComponent().getMouseMotionListeners());
-
-        for (MouseMotionListener mouseMotionListener : mouseMotionListeners) {
-            editor.getContentComponent().removeMouseMotionListener(mouseMotionListener);
-        }
-
-        myMouseDummyListener  = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent mouseEvent) {
-                try {
-                    showCaretBlockedBalloon();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent mouseEvent) {
-                try {
-                    showCaretBlockedBalloon();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent mouseEvent) {
-                try {
-                    showCaretBlockedBalloon();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        };
-        editor.getContentComponent().addMouseListener(myMouseDummyListener);
-
-        setMouseBlocked(true);
-    }
 
     public void blockCaret(Editor editor) {
 
@@ -341,9 +259,26 @@ public class LessonManager {
     }
 
     private void cleanEditor(){
-        restoreMouseActions(lastEditor);
+        if (mouseListenerHolder != null) mouseListenerHolder.restoreMouseActions(lastEditor);
         removeActionsRecorders();
         unblockCaret();
+    }
+
+    public void blockMouse(Editor editor){
+        mouseListenerHolder = new MouseListenerHolder(editor);
+        mouseListenerHolder.grabMouseActions(() -> {
+            try {
+                showCaretBlockedBalloon();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void unblockMouse(Editor editor){
+        if (mouseListenerHolder != null) {
+            mouseListenerHolder.restoreMouseActions(editor);
+        }
     }
 
 }

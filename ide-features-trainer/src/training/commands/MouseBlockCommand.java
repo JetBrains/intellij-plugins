@@ -18,7 +18,7 @@ public class MouseBlockCommand extends Command {
         //Block mouse and perform next
         Lesson lesson = executionList.getLesson();
         Editor editor = executionList.getEditor();
-        LessonManager.getInstance(lesson).grabMouseActions(editor);
+        LessonManager.getInstance(lesson).blockMouse(editor);
 
         executionList.getElements().poll();
         startNextCommand(executionList);
