@@ -5,6 +5,7 @@
     <module name="modules/Refactorings.xml"/>
     <module name="modules/Formatting.xml"/>
     <module name="modules/Navigation.xml"/>
+    <module name="modules/New.xml"/>
     <!--<module name="modules/Loops.xml"/>-->
 </modules>
 

@@ -1,0 +1,23 @@
+<xml type="Scenario" name="Statement completion" passed="false" version="0.1" subtype="aimless" projectTree="hide">
+    <MouseBlock><CopyText>package learn;
+public class PrimeNumbers {
+    public static void main(String[] args) {
+        System.out.println(&quot;Prime numbers between 1 and 100&quot;);
+
+        for (int i = 2; i &lt; 100; i++) {
+            boolean isPrime = true;
+
+            for (int j = 2; j &lt; i; j++)
+
+            if (isPrime) {
+                System.out.print(i + &quot; &quot;);
+            }
+        }
+    }
+}</CopyText>
+</MouseBlock>
+        <MoveCaret position="9:40" />
+        <Try description="Press &lt;action=&quot;EditorCompleteStatement&quot;&gt; to complete the &lt;code&gt;for&lt;/code&gt; statement and choose &lt;code&gt;if&lt;/code&gt;" trigger="EditorCompleteStatement"/>
+        <Try description="You may also Jump to Source from classes implemented in the libraries or even in JDK. Press &lt;action=&quot;EditSource&quot;&gt; when the caret is on &lt;code&gt;String&lt;/code&gt;" trigger="EditSource" check="training.check.CheckJumpFromString"/>
+    <Win/>
+</xml>
