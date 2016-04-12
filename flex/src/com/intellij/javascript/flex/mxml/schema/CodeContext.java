@@ -307,11 +307,13 @@ public class CodeContext {
 
   private static void handleFileDependency(Module module, Map<String, CodeContext> contextsOfModule, VirtualFile file) {
     if (file.getFileType() == FileTypes.ARCHIVE &&
-        ("swc".equalsIgnoreCase(file.getExtension()) || "ane".equalsIgnoreCase(file.getExtension()))) {
-      final VirtualFile local = file.getFileSystem() instanceof JarFileSystem
-                                ? file : JarFileSystem.getInstance().getJarRootForLocalFile(file);
-      if (local == null) return;
-      final VirtualFile catalog = local.findChild("catalog.xml");
+        ("swc".equalsIgnoreCase(file.getExtension()) ||
+         "ane".equalsIgnoreCase(file.getExtension()) ||
+         "jar".equalsIgnoreCase(file.getExtension()))) {
+      final VirtualFile jarRoot = file.getFileSystem() instanceof JarFileSystem
+                                  ? file : JarFileSystem.getInstance().getJarRootForLocalFile(file);
+      if (jarRoot == null) return;
+      final VirtualFile catalog = jarRoot.findChild("catalog.xml");
       if (catalog == null) return;
 
       processCatalogFile(module, contextsOfModule, catalog);
