@@ -22,7 +22,7 @@ public class MouseUnblockCommand extends Command {
         Lesson lesson = executionList.getLesson();
         Editor editor = executionList.getEditor();
 
-        LessonManager.getInstance(lesson).restoreMouseActions(editor);
+        LessonManager.getInstance(lesson).unblockMouse(editor);
         startNextCommand(executionList);
     }
 }

@@ -87,7 +87,6 @@ public class LessonProcessor {
             }
         }
 
-        MouseListenerHolder mouseListenerHolder = new MouseListenerHolder();
 
         //Initialize lesson in the editor
 
@@ -103,7 +102,7 @@ public class LessonProcessor {
 
         //Perform first action, all next perform like a chain reaction
         Command cmd = CommandFactory.buildCommand(elements.peek());
-        ExecutionList executionList = new ExecutionList(elements, lesson, project, editor, mouseListenerHolder, target);
+        ExecutionList executionList = new ExecutionList(elements, lesson, project, editor, target);
         currentExecutionList = executionList;
 
         cmd.execute(executionList);

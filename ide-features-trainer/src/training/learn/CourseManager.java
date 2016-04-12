@@ -39,9 +39,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -201,21 +199,31 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
             //to start any lesson we need to do 4 steps:
             //1. open editor or find editor
-            Editor editor = null;
+            TextEditor textEditor = null;
             if (FileEditorManager.getInstance(project).isFileOpen(vf)) {
                 FileEditor[] editors = FileEditorManager.getInstance(project).getEditors(vf);
                 for (FileEditor fileEditor : editors) {
-                    if (fileEditor instanceof Editor) {
-                        editor = (Editor) fileEditor;
+                    if (fileEditor instanceof TextEditor) {
+                        textEditor = (TextEditor) fileEditor;
                     }
                 }
             }
-            if (editor == null) {
-                editor = FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, vf), true);
+            if (textEditor != null) {
+            }
+            if (textEditor == null) {
+                final java.util.List<FileEditor> editors = FileEditorManager.getInstance(project).openEditor(new OpenFileDescriptor(project, vf), true);
+                for (FileEditor fileEditor : editors) {
+                    if (fileEditor instanceof TextEditor) {
+                        textEditor = (TextEditor) fileEditor;
+                    }
+                }
+            }
+            if (textEditor.getEditor().isDisposed()) {
+                throw new Exception("Editor is already disposed!!!");
             }
 
             //2. create LessonManager
-            LessonManager lessonManager = new LessonManager(lesson, editor);
+            new LessonManager(lesson, textEditor.getEditor());
 
             //3. update tool window
 //            updateToolWindow(project);
@@ -223,7 +231,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
 
             //4. Process lesson
-            LessonProcessor.process(project, lesson, editor, target);
+            LessonProcessor.process(project, lesson, textEditor.getEditor(), target);
 
         } catch (NoSdkException | InvalidSdkException noSdkException){
             showSdkProblemDialog(project, noSdkException.getMessage());
