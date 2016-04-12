@@ -105,6 +105,10 @@ class LessonMessagePane extends JTextPane {
                         getDocument().insertString(getDocument().getLength(), message.getText(), REGULAR);
                         break;
 
+                    case TEXT_BOLD:
+                        getDocument().insertString(getDocument().getLength(), message.getText(), BOLD);
+                        break;
+
                     case SHORTCUT:
                         getDocument().insertString(getDocument().getLength(), message.getText(), BOLD);
                         break;

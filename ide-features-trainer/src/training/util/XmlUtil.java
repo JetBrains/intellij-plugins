@@ -69,6 +69,7 @@ public class XmlUtil {
         return result;
     }
 
+
     private static Message[] extractActions(Message[] messages){
         final String TAG = "action";
 
@@ -138,6 +139,38 @@ public class XmlUtil {
         return result.toArray(new Message[result.size()]);
     }
 
+    private static Message[] extractBoldFragments(Message[] messages){
+        final String TAG = "bold";
+
+        ArrayList<Message> result = new ArrayList<>();
+        for (Message message: messages) {
+            if (message.isText()) {
+                String parsingString = message.getText();
+                while (parsingString.contains("<" + TAG + ">")) {
+                    int start = parsingString.indexOf("<" + TAG + ">");
+                    int end = parsingString.indexOf("</" + TAG + ">", start);
+
+                    String value = parsingString.substring((start + 2 + TAG.length()), end);
+
+
+                    Message msg_pre_text = new Message(parsingString.substring(0, start), Message.MessageType.TEXT_REGULAR);
+                    Message msg_code = new Message(value, Message.MessageType.TEXT_BOLD);
+                    result.add(msg_pre_text);
+                    result.add(msg_code);
+                    parsingString = parsingString.substring(end + 3 + TAG.length());
+                }
+                if (parsingString.length() > 0) {
+                    Message msg_after_text = new Message(parsingString, Message.MessageType.TEXT_REGULAR);
+                    result.add(msg_after_text);
+                }
+            } else {
+                result.add(message);
+            }
+        }
+
+        return result.toArray(new Message[result.size()]);
+    }
+
     private static Message[] extractLinkFragments(Message[] messages){
         final String TAG = "link";
 
@@ -159,7 +192,7 @@ public class XmlUtil {
                     parsingString = parsingString.substring(end + 3 + TAG.length());
                 }
                 if (parsingString.length() > 0) {
-                    Message msg_after_text = new Message(parsingString, Message.MessageType.TEXT_REGULAR);
+                    Message msg_after_text = new Message(parsingString, message.getType());
                     result.add(msg_after_text);
                 }
             } else {
@@ -171,13 +204,13 @@ public class XmlUtil {
     }
 
     public static Message[] extractAll(Message[] messages){
-        return extractLinkFragments(extractCodeFragments(extractActions(messages)));
+        return extractLinkFragments(extractBoldFragments(extractCodeFragments(extractActions(messages))));
     }
 
 
 
     public static void main(String[] args) {
-        final Message[] messages = extractAll(new Message[]{new Message("text is h<code>Some code is here</code>ere <action=\"EditorSelectWord\"> and <action=\"EditorSelectWord\"> here", Message.MessageType.TEXT_REGULAR)});
+        final Message[] messages = extractAll(new Message[]{new Message("text is h<code>Some code is here</code>ere and some <bold>bold code</bold> <action=\"EditorSelectWord\"> and <action=\"EditorSelectWord\"> here", Message.MessageType.TEXT_REGULAR)});
         for (Message message : messages) {
             System.out.println(message.toString());
         }

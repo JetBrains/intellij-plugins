@@ -181,7 +181,7 @@ public class Module{
                     lessons.add(lesson);
                 } catch (JDOMException e) {
                     //Lesson file is corrupted
-                    throw new BadLessonException("Probably lesson file is corrupted: " + lessonPath);
+                    throw new BadLessonException("Probably lesson file is corrupted: " + lessonPath + " JDOMExceprion:" + e);
                 } catch (IOException e) {
                     //Lesson file cannot be read
                     throw new BadLessonException("Probably lesson file cannot be read: " + lessonPath);
