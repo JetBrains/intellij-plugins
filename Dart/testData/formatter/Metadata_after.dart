@@ -23,3 +23,10 @@ class Baz {
 
   fun(@Foo13 param) {}
 }
+
+@annotation
+// comment
+var a;
+
+@annotation // comment
+var a;
