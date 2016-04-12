@@ -114,9 +114,12 @@ public class DartSpacingProcessor {
     if (AT == type1) return Spacing.createSpacing(0, 0, 0, false, 0);
 
     if (METADATA == type1) {
-      if (parentType == TYPE_PARAMETERS || COMMENTS.contains(type2)) {
+      if (parentType == TYPE_PARAMETERS) {
         // Metadata on type parameters must be inlined.
         return Spacing.createSpacing(1, 1, 0, false, 0);
+      }
+      if (COMMENTS.contains(type2)) {
+        return Spacing.createSpacing(1, 1, 0, true, 0);
       }
       if (parentType == DART_FILE) {
         // Metadata on top-level declarations must be on its own line.
