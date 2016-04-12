@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="New" lessonsPath="New/" version="0.3" id="new" fileType="SCRATCH" sdkType="JAVA" description="New lessons from Andrey Cheptsov">
+  <lesson filename="01.StatementCompletion.xml"/>
+  <lesson filename="02.ParameterInfo.xml"/>
+</module>
+
