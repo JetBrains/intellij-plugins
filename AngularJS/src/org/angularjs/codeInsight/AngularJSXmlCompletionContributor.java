@@ -8,6 +8,7 @@ import com.intellij.psi.xml.XmlToken;
 import org.angularjs.codeInsight.refs.AngularJSReferencesContributor;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularModuleIndex;
+import org.angularjs.index.AngularUiRouterStatesIndex;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -26,6 +27,10 @@ public class AngularJSXmlCompletionContributor extends CompletionContributor {
       if (AngularJSReferencesContributor.NG_APP_REF.accepts(position)) {
         final Collection<String> keys = AngularIndexUtil.getAllKeys(AngularModuleIndex.KEY, originalPosition.getProject());
         addCompletionVariants(result, keys, " (AngularJS module)");
+        result.stopHere();
+      } else if (AngularJSReferencesContributor.UI_VIEW_REF.accepts(position)) {
+        final Collection<String> keys = AngularIndexUtil.getAllKeys(AngularUiRouterStatesIndex.KEY, originalPosition.getProject());
+        addCompletionVariants(result, keys, " (angular-ui-router state)");
         result.stopHere();
       }
     }
