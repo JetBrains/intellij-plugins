@@ -17,7 +17,7 @@ public class PrimeNumbers {
 }</CopyText>
 </MouseBlock>
         <MoveCaret position="9:40" />
-        <Try description="Press &lt;action=&quot;EditorCompleteStatement&quot;&gt; to complete the &lt;code&gt;for&lt;/code&gt; statement and choose &lt;code&gt;if&lt;/code&gt;" trigger="EditorCompleteStatement"/>
-        <Try description="You may also Jump to Source from classes implemented in the libraries or even in JDK. Press &lt;action=&quot;EditSource&quot;&gt; when the caret is on &lt;code&gt;String&lt;/code&gt;" trigger="EditSource" check="training.check.CheckJumpFromString"/>
+        <Try description="Press &lt;action=&quot;EditorCompleteStatement&quot;&gt; to complete the &lt;code&gt;for&lt;/code&gt; statement" trigger="EditorCompleteStatement"/>
+        <Try description="Write &lt;code&gt;if&lt;/code&gt; statement and try to complete it with &lt;action=&quot;EditorCompleteStatement&quot;&gt;" trigger="EditorCompleteStatement"/>
     <Win/>
 </xml>

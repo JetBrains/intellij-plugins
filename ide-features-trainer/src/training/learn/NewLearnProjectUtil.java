@@ -134,7 +134,6 @@ class NewLearnProjectUtil {
         final LearnProjectWarningDialog dialog = new LearnProjectWarningDialog(project);
         dialog.show();
         return dialog.isOK();
-
     }
 
 }
