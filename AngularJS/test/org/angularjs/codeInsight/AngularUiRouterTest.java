@@ -144,14 +144,14 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
 
   // states
   public void testStatesCompletion() throws Exception {
-    final List<String> variants = myFixture.getCompletionVariants("stateReferences1.html", "appStates.js", "angular.js");
+    final List<String> variants = myFixture.getCompletionVariants("stateReferences.completion.html", "appStates.js", "angular.js");
     Assert.assertTrue(variants.contains("one"));
     Assert.assertTrue(variants.contains("two"));
     Assert.assertTrue(variants.contains("two.words"));
   }
 
   public void testStatesNavigation() throws Exception {
-    final PsiFile[] files = myFixture.configureByFiles("stateReferences.html", "appStates.js", "angular.js");
+    final PsiFile[] files = myFixture.configureByFiles("stateReferences.navigation.html", "appStates.js", "angular.js");
     myFixture.doHighlighting();
     checkNavigation(files[0], "one", null);
     checkNavigation(files[0], "two", null);
