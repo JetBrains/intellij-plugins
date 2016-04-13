@@ -120,7 +120,6 @@ public class MainLearnPanel extends JPanel {
                     Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
                     Lesson lesson = module.giveNotPassedLesson();
                     if (lesson == null) lesson = module.getLessons().get(0);
-                    CourseManager.getInstance().setLessonView(guessCurrentProject);
                     CourseManager.getInstance().openLesson(guessCurrentProject, lesson);
                 } catch (Exception e) {
                     e.printStackTrace();
