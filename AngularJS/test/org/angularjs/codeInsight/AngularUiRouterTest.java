@@ -88,8 +88,8 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     Assert.assertEquals("testMe", ((JSPsiNamedElementBase) resolve).getName());
   }
 
-  public void testNavigationToView1() throws Exception {
-    final PsiFile[] files = myFixture.configureByFiles("app.js", "one.html", "two.html", "angular.js");
+  public void testNavigationToNamedView() throws Exception {
+    final PsiFile[] files = myFixture.configureByFiles("appWithViews.navigation.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
     testNavigationToMenuTip(files[0]);
@@ -113,8 +113,8 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     return element;
   }
 
-  public void testNavigationToView2() throws Exception {
-    final PsiFile[] files = myFixture.configureByFiles("app.js", "one.html", "two.html", "angular.js");
+  public void testNavigationToDefaultView() throws Exception {
+    final PsiFile[] files = myFixture.configureByFiles("appWithViews.navigation.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
     emptyViewNavigatesToFilesDefaultView(files[0], "'one.html'");
@@ -144,14 +144,14 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
 
   // states
   public void testStatesCompletion() throws Exception {
-    final List<String> variants = myFixture.getCompletionVariants("stateReferences1.html", "appStates.js", "angular.js");
+    final List<String> variants = myFixture.getCompletionVariants("stateReferences.completion.html", "appStates.js", "angular.js");
     Assert.assertTrue(variants.contains("one"));
     Assert.assertTrue(variants.contains("two"));
     Assert.assertTrue(variants.contains("two.words"));
   }
 
   public void testStatesNavigation() throws Exception {
-    final PsiFile[] files = myFixture.configureByFiles("stateReferences.html", "appStates.js", "angular.js");
+    final PsiFile[] files = myFixture.configureByFiles("stateReferences.navigation.html", "appStates.js", "angular.js");
     myFixture.doHighlighting();
     checkNavigation(files[0], "one", null);
     checkNavigation(files[0], "two", null);

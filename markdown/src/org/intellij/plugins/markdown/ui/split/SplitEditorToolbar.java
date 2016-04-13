@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.util.ui.JBEmptyBorder;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +62,7 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
     add(mySpacingPanel);
     add(leftToolbar.getComponent());
     add(centerPanel,
-        new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, JBUI.emptyInsets(), 0, 0));
     add(myRightToolbar.getComponent());
 
     setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtil.CONTRAST_BORDER_COLOR));

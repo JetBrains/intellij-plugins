@@ -1,15 +1,11 @@
 package org.angularjs.codeInsight.refs;
 
-import com.intellij.codeInsight.completion.PrioritizedLookupElement;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.Processor;
 import org.angularjs.index.AngularIndexUtil;
@@ -17,7 +13,6 @@ import org.angularjs.index.AngularUiRouterStatesIndex;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -65,18 +60,7 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
     @NotNull
     @Override
     public Object[] getVariants() {
-      final Project project = getElement().getProject();
-
-      final Collection<String> keys = AngularIndexUtil.getAllKeys(AngularUiRouterStatesIndex.KEY, project);
-      final List<LookupElement> elements = new ArrayList<LookupElement>();
-      for (String key : keys) {
-        final LookupElementBuilder builder = LookupElementBuilder.create(key)
-          .withTailText(" (angular-ui-router state)", true);
-        final LookupElement item = PrioritizedLookupElement.withPriority(builder, JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY);
-        elements.add(item);
-      }
-
-      return elements.toArray(new LookupElement[elements.size()]);
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
   }
 }

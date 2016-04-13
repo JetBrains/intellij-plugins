@@ -15,6 +15,22 @@
  */
 package com.intellij.coldFusion;
 
+import com.intellij.coldFusion.model.files.CfmlFileType;
+import com.intellij.ide.highlighter.HighlighterFactory;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.highlighter.EditorHighlighter;
+import com.intellij.openapi.editor.impl.DocumentImpl;
+import junit.framework.TestCase;
+import org.jetbrains.annotations.NonNls;
+
+import java.util.List;
+
+import static com.intellij.testFramework.EditorTestUtil.getAllTokens;
+
 /**
  * Created by Lera Nikolaenko
  * Date: 12.01.2009
@@ -107,30 +123,78 @@ public class CfmlTypedHandlerTest extends CfmlCodeInsightFixtureTestCase {
       doTest('#');
   }
 
-    public void testRightBracketInQuotes() throws Throwable {
-        doTest(')');
-    }
+  public void testRightBracketInQuotes() throws Throwable {
+    doTest(')');
+  }
 
   public void testNoInsertionRCurlyBracketIfIncorrect() throws Throwable {
     doTest('\n');
   }
 
+  public void testEditing() throws Throwable {
+    @NonNls final String s1 = "<table bgcolor=\"#FFFFFF\"><cfoutput>\n" +
+                              "  <div id=\"#bColumn2";
+    String s2 = "\" />\n" +
+                "</cfoutput></table>";
+    String s = s1 + s2;
+
+    final Document doc = new DocumentImpl(s);
+    EditorEx editor = (EditorEx)EditorFactory.getInstance().createEditor(doc);
+    try {
+      EditorHighlighter highlighter = HighlighterFactory.createHighlighter(getProject(), CfmlFileType.INSTANCE);
+      editor.setHighlighter(highlighter);
+      CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
+        @Override
+        public void run() {
+          ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+              doc.insertString(s1.length(), "#");
+            }
+          });
+        }
+      }, "", null);
+      List tokensAfterUpdate = getAllTokens(highlighter);
+      highlighter = HighlighterFactory.createHighlighter(getProject(), CfmlFileType.INSTANCE);
+      editor.setHighlighter(highlighter);
+      List tokensWithoutUpdate = getAllTokens(highlighter);
+      TestCase.assertEquals(tokensWithoutUpdate, tokensAfterUpdate);
+    }
+    finally {
+      EditorFactory.getInstance().releaseEditor(editor);
+    }
+  }
+
   public void testRightBracketInsertion() throws Throwable { doTest('('); }
-    public void testRightSquareBracketInsertion() throws Throwable { doTest('['); }
-    public void testRightCurlyBracketInsertion() throws Throwable { doTest('{'); }
 
-    public void testLeftBracketDeletion() throws Throwable { doTest('\b'); }
-    public void testLeftSquareBracketDeletion() throws Throwable { doTest('\b'); }
-    public void testLeftCurlyBracketDeletion() throws Throwable { doTest('\b'); }
+  public void testRightSquareBracketInsertion() throws Throwable {
+    doTest('[');
+  }
 
-    private void doTest(final char typed) throws Throwable {
-        myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
-        myFixture.type(typed);
-        myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));
-    }
+  public void testRightCurlyBracketInsertion() throws Throwable {
+    doTest('{');
+  }
 
-    @Override
-    protected String getBasePath() {
-        return "/typedHandler";
-    }
+  public void testLeftBracketDeletion() throws Throwable {
+    doTest('\b');
+  }
+
+  public void testLeftSquareBracketDeletion() throws Throwable {
+    doTest('\b');
+  }
+
+  public void testLeftCurlyBracketDeletion() throws Throwable {
+    doTest('\b');
+  }
+
+  private void doTest(final char typed) throws Throwable {
+    myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
+    myFixture.type(typed);
+    myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));
+  }
+
+  @Override
+  protected String getBasePath() {
+      return "/typedHandler";
+  }
 }

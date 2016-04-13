@@ -21,7 +21,6 @@ import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.ide.highlighter.custom.CustomHighlighterColors;
-import com.intellij.lexer.LayeredLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
@@ -68,7 +67,7 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
 
     @NotNull
     public Lexer getHighlightingLexer() {
-      return new LayeredLexer(new CfmlLexer(true, myProject));
+      return new CfmlLexer(true, myProject);
     }
 
     static final TextAttributesKey CFML_ATTRIBUTE = TextAttributesKey.createTextAttributesKey(

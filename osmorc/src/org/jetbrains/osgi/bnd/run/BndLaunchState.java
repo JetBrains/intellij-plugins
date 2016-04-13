@@ -29,8 +29,6 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompilationStatusListener;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerTopics;
@@ -138,12 +136,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
     if (!aborted && errors == 0 && bundlesChanged()) {
       try {
         myLauncher.update();
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            myNotifications.createNotification(message("bnd.run.reloaded.text"), NotificationType.INFORMATION).notify(myProject);
-          }
-        }, ModalityState.NON_MODAL);
+        myNotifications.createNotification(message("bnd.run.reloaded.text"), NotificationType.INFORMATION).notify(myProject);
       }
       catch (Exception e) {
         LOG.error(e);

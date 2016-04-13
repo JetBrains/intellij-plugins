@@ -18,5 +18,7 @@ public interface FlexCommonTypeNames {
   String IVISUAL_ELEMENT = "mx.core.IVisualElement";
 
   String FLASH_EVENT_FQN = "flash.events.Event";
+  String FLASH_IEVENT_DISPATCHER_FQN = "flash.events.IEventDispatcher";
   String STARLING_EVENT_FQN = "starling.events.Event";
+  String STARLING_EVENT_DISPATCHER_FQN = "starling.events.EventDispatcher";
 }

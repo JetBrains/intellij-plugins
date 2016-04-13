@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.actionscript.psi.impl.ActionScriptGotoStatementImpl;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
@@ -403,6 +404,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       if (parent instanceof JSClass &&
           name != null &&
           name.equals(((JSClass)parent).getName()) &&
+          !isNative(node) &&
           JavaScriptSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
         final Annotation annotation = myHolder.createErrorAnnotation(
           nameIdentifier,
@@ -563,6 +565,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
       }
     }
+  }
+
+  private static boolean isNative(final JSFunction function) {
+    final JSAttributeList attributeList = function.getAttributeList();
+    return attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.NATIVE);
   }
 
   private void reportStaticMethodProblem(JSAttributeList attributeList, String key) {
@@ -1560,5 +1567,26 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   public void visitJSForInStatement(JSForInStatement node) {
     super.visitJSForInStatement(node);
     ValidateTypesUtil.checkTypesInForIn(node, myProblemReporter);
+  }
+
+  @Override
+  protected boolean isConstAssignable(@NotNull JSReferenceExpression lExpr, PsiElement resolved) {
+    return false;
+  }
+
+  @Override
+  protected boolean isConstNeedInitializer(JSVariable var) {
+    return true;
+  }
+
+  @Override
+  public void visitJSStatementWithLabelReference(JSStatementWithLabelReference statementWithLabelReference) {
+    if (statementWithLabelReference instanceof ActionScriptGotoStatementImpl) {
+      ASTNode keyword = statementWithLabelReference.getNode().findChildByType(JSTokenTypes.GOTO_KEYWORD);
+      if (keyword != null) {
+        JSSemanticHighlightingUtil.highlightKeyword(keyword, myHolder);
+      }
+    }
+    super.visitJSStatementWithLabelReference(statementWithLabelReference);
   }
 }

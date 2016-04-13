@@ -182,4 +182,8 @@ public class ActionScriptParsingTest extends ParsingTestCase {
   public void testLiteralWithExpressionProperties() throws Exception {
     doTest(true);
   }
+
+  public void testGoto() throws Exception {
+    doTest(true);
+  }
 }

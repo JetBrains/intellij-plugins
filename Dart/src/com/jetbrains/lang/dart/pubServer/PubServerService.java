@@ -199,7 +199,7 @@ final class PubServerService extends NetService {
 
   static void sendBadGateway(@NotNull final Channel channel) {
     if (channel.isActive()) {
-      Responses.sendStatus(HttpResponseStatus.BAD_GATEWAY, channel);
+      Responses.send(HttpResponseStatus.BAD_GATEWAY, channel);
     }
   }
 

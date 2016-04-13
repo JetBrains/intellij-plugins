@@ -1,0 +1,4 @@
+var goto;
+goto b;
+goto;
+goto = 1;

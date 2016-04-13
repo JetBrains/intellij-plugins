@@ -26,6 +26,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
@@ -132,14 +133,17 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       }
       builder.append(' ').append(params.getFilePath());
 
-      String groupOrTestName = params.getTestName();
-      if (groupOrTestName != null && !groupOrTestName.isEmpty()) {
-        if (params.getScope() == DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME) {
-          builder.append(" -N \"").append(groupOrTestName).append("\"");
+      if (params.getScope() == DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME) {
+        builder.append(" -N \"").append(StringUtil.notNullize(params.getTestName())).append("\"");
+      }
+
+      if (params.getScope() == DartTestRunnerParameters.Scope.MULTIPLE_NAMES) {
+        final String regex = StringUtil.notNullize(params.getTestName());
+        // may be empty only in case of Rerun Failed Tests when there are no failed ones yet
+        if (regex.isEmpty()) {
+          throw new ExecutionException("No tests to run");
         }
-        else if (params.getScope() == DartTestRunnerParameters.Scope.MULTIPLE_NAMES) {
-          builder.append(" -n \"").append(groupOrTestName).append("\"");
-        }
+        builder.append(" -n \"").append(regex).append("\"");
       }
     }
 
