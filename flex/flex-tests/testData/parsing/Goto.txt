@@ -1,0 +1,33 @@
+JSFile:Goto.js2
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:GOTO_KEYWORD)('goto')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  ActionScriptGotoStatement
+    PsiElement(JS:GOTO_KEYWORD)('goto')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:IDENTIFIER)('b')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSReferenceExpression
+      PsiElement(JS:GOTO_KEYWORD)('goto')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:GOTO_KEYWORD)('goto')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+    PsiElement(JS:SEMICOLON)(';')

@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.actionscript.psi.impl.ActionScriptGotoStatementImpl;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
@@ -1576,5 +1577,16 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   @Override
   protected boolean isConstNeedInitializer(JSVariable var) {
     return true;
+  }
+
+  @Override
+  public void visitJSStatementWithLabelReference(JSStatementWithLabelReference statementWithLabelReference) {
+    if (statementWithLabelReference instanceof ActionScriptGotoStatementImpl) {
+      ASTNode keyword = statementWithLabelReference.getNode().findChildByType(JSTokenTypes.GOTO_KEYWORD);
+      if (keyword != null) {
+        JSSemanticHighlightingUtil.highlightKeyword(keyword, myHolder);
+      }
+    }
+    super.visitJSStatementWithLabelReference(statementWithLabelReference);
   }
 }
