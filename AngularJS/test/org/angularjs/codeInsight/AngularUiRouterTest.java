@@ -88,8 +88,8 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     Assert.assertEquals("testMe", ((JSPsiNamedElementBase) resolve).getName());
   }
 
-  public void testNavigationToView1() throws Exception {
-    final PsiFile[] files = myFixture.configureByFiles("app.js", "one.html", "two.html", "angular.js");
+  public void testNavigationToNamedView() throws Exception {
+    final PsiFile[] files = myFixture.configureByFiles("appWithViews.navigation.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
     testNavigationToMenuTip(files[0]);
@@ -113,8 +113,8 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     return element;
   }
 
-  public void testNavigationToView2() throws Exception {
-    final PsiFile[] files = myFixture.configureByFiles("app.js", "one.html", "two.html", "angular.js");
+  public void testNavigationToDefaultView() throws Exception {
+    final PsiFile[] files = myFixture.configureByFiles("appWithViews.navigation.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
     emptyViewNavigatesToFilesDefaultView(files[0], "'one.html'");
