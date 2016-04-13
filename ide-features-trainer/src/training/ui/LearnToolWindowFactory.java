@@ -19,6 +19,7 @@ public class LearnToolWindowFactory implements ToolWindowFactory, DumbAware {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+
         LearnToolWindow learnToolWindow = new LearnToolWindow();
         learnToolWindow.init(project);
         final ContentManager contentManager = toolWindow.getContentManager();

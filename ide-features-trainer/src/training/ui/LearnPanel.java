@@ -371,7 +371,8 @@ public class LearnPanel extends JPanel {
 
     public void setButtonSkipAction(final Runnable runnable, @Nullable String text, boolean visible) {
 
-        getRootPane().setDefaultButton(null);
+        if (getRootPane() != null)
+            getRootPane().setDefaultButton(null);
         Action buttonAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

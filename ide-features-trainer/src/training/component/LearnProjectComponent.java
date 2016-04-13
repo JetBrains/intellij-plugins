@@ -63,10 +63,6 @@ public class LearnProjectComponent implements ProjectComponent {
             toolWindowManager.registerToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW, true, ToolWindowAnchor.LEFT, myProject, true);
         }
 
-        //(if commented) do not always show learn tool window after idea has started
-//        final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-//        if (learnToolWindow != null) {
-//            learnToolWindow.show(null);
-//        }
+
     }
 }

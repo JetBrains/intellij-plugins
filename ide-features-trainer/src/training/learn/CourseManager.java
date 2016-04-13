@@ -6,13 +6,14 @@ import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectManagerAdapter;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -140,8 +141,13 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                     if (lesson.getModule().moduleType == Module.ModuleType.SCRATCH) {
                         return getScratchFile(myProject, lesson, scratchFileName);
                     } else {
-                        if (!initLearnProject(myProject)) return null;
-                        return getFileInLearnProject(lesson);
+//                        if (!initLearnProjectAndOpenLesson(myProject)) return null;
+                        if (learnProject != null && getCurrentProject() != null && getCurrentProject().equals(learnProject)) {
+                            return getFileInLearnProject(lesson);
+                        } else {
+                            initLearnProjectAndOpenLesson(myProject, lesson);
+                            return null;
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -153,6 +159,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
             //open next lesson if current is passed
             final Project currentProject = project;
+            CourseManager.getInstance().setLessonView(currentProject);
 
             lesson.onStart();
 
@@ -233,9 +240,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             //4. Process lesson
             LessonProcessor.process(project, lesson, textEditor.getEditor(), target);
 
-        } catch (NoSdkException | InvalidSdkException noSdkException){
+        } catch (NoSdkException | InvalidSdkException noSdkException) {
             showSdkProblemDialog(project, noSdkException.getMessage());
-        } catch (NoJavaModuleException noJavaModuleException){
+        } catch (NoJavaModuleException noJavaModuleException) {
             showModuleProblemDialog(project);
         } catch (Exception e) {
             e.printStackTrace();
@@ -258,7 +265,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return moduleVirtualFile;
     }
 
-    private boolean initLearnProject(Project projectToClose) {
+    private Project initLearnProject(Project projectToClose) {
         Project myLearnProject = null;
 
         //if projectToClose is open
@@ -267,13 +274,15 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             final String name = openProject.getName();
             if (name.equals(LEARN_PROJECT_NAME)) {
                 myLearnProject = openProject;
-                if (ApplicationManager.getApplication().isUnitTestMode()) return true;
+                if (ApplicationManager.getApplication().isUnitTestMode()) return openProject;
             }
         }
-         if (myLearnProject == null || myLearnProject.getProjectFile() == null) {
+        if (myLearnProject == null || myLearnProject.getProjectFile() == null) {
 
-            if(!ApplicationManager.getApplication().isUnitTestMode()) if (!NewLearnProjectUtil.showDialogOpenLearnProject(projectToClose)) return false; //if user abort to open lesson in a new Project
-            if(myState.learnProjectPath != null) {
+            if (!ApplicationManager.getApplication().isUnitTestMode())
+                if (!NewLearnProjectUtil.showDialogOpenLearnProject(projectToClose))
+                    return null; //if user abort to open lesson in a new Project
+            if (myState.learnProjectPath != null) {
                 try {
                     myLearnProject = ProjectManager.getInstance().loadAndOpenProject(myState.learnProjectPath);
                 } catch (Exception e) {
@@ -283,7 +292,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
                 try {
                     final Sdk newJdk = getJavaSdkInWA();
-//                    final Sdk sdk = SdkConfigurationUtil.findOrCreateSdk(null, javaSdk);
                     myLearnProject = NewLearnProjectUtil.createLearnProject(LEARN_PROJECT_NAME, projectToClose, newJdk);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -291,18 +299,44 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             }
         }
 
-        learnProject = myLearnProject;
-        if (ApplicationManager.getApplication().isUnitTestMode()) return true;
+        if (myLearnProject != null) {
 
-        assert learnProject != null;
-        assert learnProject.getProjectFile() != null;
-        assert learnProject.getProjectFile().getParent() != null;
-        assert learnProject.getProjectFile().getParent().getParent() != null;
+            learnProject = myLearnProject;
 
-        myState.learnProjectPath = learnProject.getBasePath();
-        //Hide LearnProject from Recent projects
-        RecentProjectsManager.getInstance().removePath(learnProject.getPresentableUrl());
-        return true;
+            assert learnProject != null;
+            assert learnProject.getProjectFile() != null;
+            assert learnProject.getProjectFile().getParent() != null;
+            assert learnProject.getProjectFile().getParent().getParent() != null;
+
+            myState.learnProjectPath = learnProject.getBasePath();
+            //Hide LearnProject from Recent projects
+            RecentProjectsManager.getInstance().removePath(learnProject.getPresentableUrl());
+
+            return myLearnProject;
+        }
+
+        return null;
+
+    }
+
+    private void initLearnProjectAndOpenLesson(Project projectToClose, @Nullable Lesson lesson) {
+
+        Project myLearnProject = initLearnProject(projectToClose);
+        if (myLearnProject != null) {
+            StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
+                final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
+                final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
+                if (learnToolWindow != null) {
+                    learnToolWindow.show(null);
+                    try {
+                        CourseManager.getInstance().setLessonView(myLearnProject);
+                        openLesson(myLearnProject, lesson);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     @NotNull
@@ -335,19 +369,16 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     @Nullable
-    public Project getLearnProject(){
-        if (learnProject == null  || learnProject.isDisposed()) {
-            if (initLearnProject(getCurrentProject()))
-                return learnProject;
-            else
-                return null;
+    public Project getLearnProject() {
+        if (learnProject == null || learnProject.isDisposed()) {
+            return initLearnProject(getCurrentProject());
         } else {
             return learnProject;
         }
     }
 
     @Nullable
-    Project getCurrentProject(){
+    Project getCurrentProject() {
         final IdeFrame lastFocusedFrame = IdeFocusManager.getGlobalInstance().getLastFocusedFrame();
         if (lastFocusedFrame == null) return null;
         return lastFocusedFrame.getProject();
@@ -442,7 +473,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         dialog.show();
     }
 
-    private void showModuleProblemDialog(Project project){
+    private void showModuleProblemDialog(Project project) {
         final SdkModuleProblemDialog dialog = new SdkModuleProblemDialog(project);
         dialog.show();
     }
@@ -464,7 +495,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         myLearnPanel = learnPanel;
     }
 
-    LearnPanel getLearnPanel(){
+    LearnPanel getLearnPanel() {
         return myLearnPanel;
     }
 
@@ -475,7 +506,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private MainLearnPanel getMainLearnPanel() {
         return mainLearnPanel;
     }
-
 
 
     static class State {
@@ -502,7 +532,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return myState.modules.toArray(new Module[myState.modules.size()]);
     }
 
-    GlobalLessonLog getGlobalLessonLog(){
+    GlobalLessonLog getGlobalLessonLog() {
         return myState.globalLessonLog;
     }
 
@@ -538,7 +568,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
     }
 
-    public void updateToolWindow(@NotNull final Project project){
+    public void updateToolWindow(@NotNull final Project project) {
         final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
         String learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW;
         windowManager.getToolWindow(learnToolWindow).getContentManager().removeAllContents(false);
@@ -547,7 +577,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         factory.createToolWindowContent(project, windowManager.getToolWindow(learnToolWindow));
     }
 
-    public void setLessonView(Project project){
+    public void setLessonView(Project project) {
         final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
         String learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW;
         ToolWindow toolWindow = windowManager.getToolWindow(learnToolWindow);
@@ -558,7 +588,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         toolWindowComponent.repaint();
     }
 
-    public void setModulesView(Project project){
+    public void setModulesView(Project project) {
         final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
         String learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW;
         ToolWindow toolWindow = windowManager.getToolWindow(learnToolWindow);
@@ -572,16 +602,16 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     /**
-     *
      * @return null if lesson has no module or it is only one lesson in module
      */
-    @Nullable Lesson giveNextLesson(Lesson currentLesson){
+    @Nullable
+    Lesson giveNextLesson(Lesson currentLesson) {
         Module module = currentLesson.getModule();
         assert module != null;
         assert module.getLessons() != null;
         ArrayList<Lesson> lessons = module.getLessons();
         int size = lessons.size();
-        if (size == 1) return  null;
+        if (size == 1) return null;
 
         for (int i = 0; i < size; i++) {
             if (lessons.get(i).equals(currentLesson)) {
