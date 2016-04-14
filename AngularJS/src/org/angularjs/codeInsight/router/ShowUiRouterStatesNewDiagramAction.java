@@ -1,6 +1,7 @@
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.DiagramProvider;
+import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
@@ -21,8 +22,11 @@ import java.util.Map;
  * @author Irina.Chernushina on 3/23/2016.
  */
 public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
+  public static final String USAGE_KEY = "angular.js.ui.router.show.diagram";
+
   @Override
   public void actionPerformed(AnActionEvent e) {
+    UsageTrigger.trigger(USAGE_KEY);
     final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
     if (project == null) return;
 
