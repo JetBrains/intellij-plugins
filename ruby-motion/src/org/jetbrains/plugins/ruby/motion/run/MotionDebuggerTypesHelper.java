@@ -47,8 +47,8 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
     final PsiFile psiFile = PsiManager.getInstance(myProcess.getProject()).findFile(file);
     if (psiFile == null) return null;
 
-    final PsiElement element = RubyPsiUtil.getInstance().getSignificantLeafToTheRight(psiFile.findElementAt(offset));
-    final RContainer container = element != null ? RubyPsiUtil.getInstance().getParentContainerOrSelf(element) : null;
+    final PsiElement element = RubyPsiUtil.getSignificantLeafToTheRight(psiFile.findElementAt(offset));
+    final RContainer container = element != null ? RubyPsiUtil.getParentContainerOrSelf(element) : null;
     if (container == null) return null;
 
     ScopeVariable variable = null;
@@ -106,6 +106,6 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
 
     PsiFile psiFile = PsiManager.getInstance(myProcess.getProject()).findFile(pos.getFile());
     final PsiElement element = psiFile != null ? psiFile.findElementAt(pos.getOffset()) : null;
-    return element != null ? RubyPsiUtil.getInstance().getParentContainerOrSelf(element) : null;
+    return element != null ? RubyPsiUtil.getParentContainerOrSelf(element) : null;
   }
 }
