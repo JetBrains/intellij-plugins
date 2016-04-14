@@ -18,11 +18,12 @@ public class DartPubBuildAction extends DartPubActionBase {
   }
 
   @Nullable
-  protected String[] calculatePubParameters(final Project project) {
-    final DartPubBuildDialog dialog = new DartPubBuildDialog(project);
+  protected String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
+    final DartPubBuildDialog dialog = new DartPubBuildDialog(project, pubspecYamlFile.getParent());
     dialog.show();
-    return dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE
-           ? new String[]{"build", "--mode=" + dialog.getPubBuildMode()}
-           : null;
+    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+      return null;
+    }
+    return new String[]{"build", "--mode=" + dialog.getPubBuildMode(), "--output=" + dialog.getOutputFolder()};
   }
 }
