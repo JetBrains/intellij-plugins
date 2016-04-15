@@ -1,6 +1,5 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
