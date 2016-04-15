@@ -17,8 +17,12 @@ public class DartComponentNameImpl extends DartNamedElementImpl implements DartC
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitComponentName(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitComponentName(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

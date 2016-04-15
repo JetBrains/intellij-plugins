@@ -17,8 +17,12 @@ public class DartVarDeclarationListPartImpl extends AbstractDartComponentImpl im
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitVarDeclarationListPart(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitVarDeclarationListPart(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

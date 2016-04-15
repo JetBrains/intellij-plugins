@@ -17,8 +17,12 @@ public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitPartOfStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPartOfStatement(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

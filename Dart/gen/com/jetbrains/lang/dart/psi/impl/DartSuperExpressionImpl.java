@@ -17,8 +17,12 @@ public class DartSuperExpressionImpl extends DartReferenceImpl implements DartSu
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitSuperExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSuperExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

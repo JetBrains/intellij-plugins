@@ -17,8 +17,12 @@ public class DartIsExpressionImpl extends DartExpressionImpl implements DartIsEx
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitIsExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitIsExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

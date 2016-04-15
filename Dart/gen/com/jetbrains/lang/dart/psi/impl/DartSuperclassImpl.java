@@ -17,8 +17,12 @@ public class DartSuperclassImpl extends DartPsiCompositeElementImpl implements D
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitSuperclass(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSuperclass(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

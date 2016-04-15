@@ -17,8 +17,12 @@ public class DartLabelImpl extends AbstractDartComponentImpl implements DartLabe
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitLabel(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLabel(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

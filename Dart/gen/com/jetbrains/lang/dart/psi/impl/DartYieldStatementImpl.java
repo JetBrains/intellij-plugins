@@ -17,8 +17,12 @@ public class DartYieldStatementImpl extends DartPsiCompositeElementImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitYieldStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitYieldStatement(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

@@ -17,8 +17,12 @@ public class DartFormalParameterListImpl extends DartPsiCompositeElementImpl imp
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitFormalParameterList(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFormalParameterList(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

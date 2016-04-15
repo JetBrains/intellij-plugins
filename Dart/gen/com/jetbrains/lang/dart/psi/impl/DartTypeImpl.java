@@ -17,8 +17,12 @@ public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartTyp
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitType(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitType(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

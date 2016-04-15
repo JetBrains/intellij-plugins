@@ -17,8 +17,12 @@ public class DartStringLiteralExpressionImpl extends DartClassReferenceImpl impl
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitStringLiteralExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitStringLiteralExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

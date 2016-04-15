@@ -17,8 +17,12 @@ public class DartAssignmentOperatorImpl extends DartPsiCompositeElementImpl impl
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitAssignmentOperator(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitAssignmentOperator(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

@@ -17,8 +17,12 @@ public class DartSymbolLiteralExpressionImpl extends DartExpressionImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitSymbolLiteralExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSymbolLiteralExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

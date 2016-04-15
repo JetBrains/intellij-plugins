@@ -17,8 +17,12 @@ public class DartLongTemplateEntryImpl extends DartPsiCompositeElementImpl imple
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitLongTemplateEntry(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLongTemplateEntry(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

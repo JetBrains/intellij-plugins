@@ -17,8 +17,12 @@ public class DartInitializersImpl extends DartPsiCompositeElementImpl implements
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitInitializers(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitInitializers(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

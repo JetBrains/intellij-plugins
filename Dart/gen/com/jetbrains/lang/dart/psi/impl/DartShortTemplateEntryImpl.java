@@ -17,8 +17,12 @@ public class DartShortTemplateEntryImpl extends DartPsiCompositeElementImpl impl
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitShortTemplateEntry(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitShortTemplateEntry(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

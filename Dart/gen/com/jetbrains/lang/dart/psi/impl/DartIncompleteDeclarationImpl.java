@@ -17,8 +17,12 @@ public class DartIncompleteDeclarationImpl extends DartPsiCompositeElementImpl i
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitIncompleteDeclaration(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitIncompleteDeclaration(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

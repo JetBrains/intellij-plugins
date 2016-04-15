@@ -17,8 +17,12 @@ public class DartFunctionSignatureImpl extends AbstractDartComponentImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitFunctionSignature(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionSignature(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

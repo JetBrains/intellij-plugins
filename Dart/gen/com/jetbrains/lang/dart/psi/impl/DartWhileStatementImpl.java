@@ -17,8 +17,12 @@ public class DartWhileStatementImpl extends DartPsiCompositeElementImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitWhileStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitWhileStatement(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

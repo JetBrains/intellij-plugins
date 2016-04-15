@@ -17,8 +17,12 @@ public class DartSwitchCaseImpl extends DartPsiCompositeElementImpl implements D
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitSwitchCase(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSwitchCase(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

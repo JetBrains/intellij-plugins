@@ -17,8 +17,12 @@ public class DartEnumDefinitionImpl extends AbstractDartPsiClass implements Dart
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitEnumDefinition(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitEnumDefinition(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

@@ -17,8 +17,12 @@ public class DartFieldInitializerImpl extends DartPsiCompositeElementImpl implem
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitFieldInitializer(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFieldInitializer(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

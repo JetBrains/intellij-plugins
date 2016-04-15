@@ -17,8 +17,12 @@ public class DartOnPartImpl extends DartPsiCompositeElementImpl implements DartO
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitOnPart(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitOnPart(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

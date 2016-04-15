@@ -17,8 +17,12 @@ public class DartValueExpressionImpl extends DartExpressionImpl implements DartV
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitValueExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitValueExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

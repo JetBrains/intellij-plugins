@@ -17,8 +17,12 @@ public class DartArrayAccessExpressionImpl extends DartClassReferenceImpl implem
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitArrayAccessExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitArrayAccessExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

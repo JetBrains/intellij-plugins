@@ -17,8 +17,12 @@ public class DartEqualityOperatorImpl extends DartPsiCompositeElementImpl implem
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitEqualityOperator(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitEqualityOperator(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

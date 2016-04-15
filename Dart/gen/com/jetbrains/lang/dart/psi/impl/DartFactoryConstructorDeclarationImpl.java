@@ -17,8 +17,12 @@ public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponent
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitFactoryConstructorDeclaration(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFactoryConstructorDeclaration(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

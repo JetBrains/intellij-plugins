@@ -17,8 +17,12 @@ public class DartLibraryIdImpl extends DartLibraryIdBase implements DartLibraryI
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitLibraryId(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLibraryId(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

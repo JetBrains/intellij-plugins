@@ -17,8 +17,12 @@ public class DartUserDefinableOperatorImpl extends DartPsiCompositeElementImpl i
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitUserDefinableOperator(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitUserDefinableOperator(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

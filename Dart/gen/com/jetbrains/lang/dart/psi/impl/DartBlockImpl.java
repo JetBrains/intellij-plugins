@@ -17,8 +17,12 @@ public class DartBlockImpl extends DartPsiCompositeElementImpl implements DartBl
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitBlock(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitBlock(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 
