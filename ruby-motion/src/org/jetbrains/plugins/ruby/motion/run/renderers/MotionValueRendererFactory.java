@@ -1,14 +1,15 @@
 package org.jetbrains.plugins.ruby.motion.run.renderers;
 
 import com.intellij.execution.ExecutionException;
-import com.jetbrains.cidr.execution.debugger.CidrDebuggerSettings;
 import com.jetbrains.cidr.execution.debugger.backend.DBCannotEvaluateException;
-import com.jetbrains.cidr.execution.debugger.backend.LLValue;
-import com.jetbrains.cidr.execution.debugger.evaluation.CidrPhysicalValue;
+import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
+import com.jetbrains.cidr.execution.debugger.backend.LLValueData;
 import com.jetbrains.cidr.execution.debugger.evaluation.CustomValueRendererFactory;
 import com.jetbrains.cidr.execution.debugger.evaluation.EvaluationContext;
+import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory;
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.NSCollectionValueRenderer;
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -17,16 +18,15 @@ import org.jetbrains.annotations.Nullable;
 public class MotionValueRendererFactory implements CustomValueRendererFactory {
   @Nullable
   @Override
-  public ValueRenderer createRendererLeading(CidrDebuggerSettings settings, CidrPhysicalValue value,
-                                             LLValue var,
-                                             EvaluationContext context) throws ExecutionException {
+  public ValueRenderer createRendererLeading(@NotNull ValueRendererFactory.FactoryContext context) throws ExecutionException, DBUserException {
     try {
-      if (var.isValidPointer()) {
-        context.evaluate(EvaluationContext.cast("rb_inspect(" + EvaluationContext.cast(var.getPointer(), "id") + ")", "id"));
+      LLValueData data = context.getLLValueData();
+      if (data.isValidPointer()) {
+        context.getEvaluationContext().evaluate(EvaluationContext.cast("rb_inspect(" + EvaluationContext.cast(data.getPointer(), "id") + ")", "id"));
         // we want ObjC renderers for our collections
         // Ruby collections are inheriting from native ones and don't have any useful instance variables
-        final ValueRenderer collectionRenderer = NSCollectionValueRenderer.createIfNSCollection(context, value, var);
-        return collectionRenderer != null ? collectionRenderer : new MotionObjectRenderer(value);
+        final ValueRenderer collectionRenderer = NSCollectionValueRenderer.createIfNSCollection(context);
+        return collectionRenderer != null ? collectionRenderer : new MotionObjectRenderer(context.getPhysicalValue());
       }
     } catch (DBCannotEvaluateException ignored) {}
     return null;
@@ -34,10 +34,7 @@ public class MotionValueRendererFactory implements CustomValueRendererFactory {
 
   @Nullable
   @Override
-  public ValueRenderer createRendererTrailing(CidrDebuggerSettings settings,
-                                              CidrPhysicalValue value,
-                                              LLValue var,
-                                              EvaluationContext context) throws ExecutionException {
+  public ValueRenderer createRendererTrailing(@NotNull ValueRendererFactory.FactoryContext context) throws ExecutionException {
     return null;
   }
 }
