@@ -69,6 +69,6 @@ public class KarmaRunSettingsSerializationUtil {
                                                         settings.getKarmaPackageDirSystemIndependentPath());
     }
     JDOMExternalizerUtil.addElementWithValueAttribute(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
-    EnvironmentVariablesComponent.writeExternal(element, settings.getEnvData().getEnvs());
+    settings.getEnvData().writeExternal(element);
   }
 }
