@@ -1,10 +1,8 @@
 package org.angularjs.index;
 
-import com.intellij.lang.javascript.JavascriptLanguage;
+import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.indexing.*;
@@ -31,11 +29,7 @@ public class AngularModuleDependencyIndex extends FileBasedIndexExtension<String
     return new FileBasedIndex.InputFilter() {
       @Override
       public boolean acceptInput(@NotNull VirtualFile file) {
-        if (file.getFileType() instanceof LanguageFileType) {
-          return ((LanguageFileType)file.getFileType()).getLanguage().isKindOf(JavascriptLanguage.INSTANCE) &&
-                 !(file.getFileSystem() instanceof JarFileSystem);
-        }
-        return false;
+        return JavaScriptIndex.ourIndexedFilesFilter.acceptInput(file);
       }
     };
   }
