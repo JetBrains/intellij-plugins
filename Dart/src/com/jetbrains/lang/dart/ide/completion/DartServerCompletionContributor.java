@@ -8,6 +8,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -20,7 +22,6 @@ import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
-import com.jetbrains.lang.dart.psi.DartUriBasedDirective;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -79,9 +80,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
     final PsiElement psiElement = parameters.getOriginalPosition();
     final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
     final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
-    final PsiElement parentParentParent = parentParent instanceof DartUriElement ? parentParent.getParent() : null;
-    if (parentParentParent instanceof DartUriBasedDirective) {
-      final int uriStringOffset = ((DartUriBasedDirective)parentParentParent).getUriStringOffset();
+    if (parentParent instanceof DartUriElement) {
+      final int uriStringOffset = ((DartUriElement)parentParent).getUriStringAndItsRange().second.getEndOffset();
       if (parameters.getOffset() >= parentParent.getTextRange().getStartOffset() + uriStringOffset) {
         return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextRange().getStartOffset());
       }
@@ -94,11 +94,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     final PsiElement psiElement = context.getFile().findElementAt(context.getStartOffset());
     final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
     final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
-    final PsiElement parentParentParent = parentParent instanceof DartUriElement ? parentParent.getParent() : null;
-    if (parentParentParent instanceof DartUriBasedDirective) {
-      final String uri = ((DartUriBasedDirective)parentParentParent).getUriString();
-      final int uriOffset = ((DartUriBasedDirective)parentParentParent).getUriStringOffset();
-      context.setReplacementOffset(parentParent.getTextRange().getStartOffset() + uriOffset + uri.length());
+    if (parentParent instanceof DartUriElement) {
+      final Pair<String, TextRange> uriAndRange = ((DartUriElement)parentParent).getUriStringAndItsRange();
+      context.setReplacementOffset(parentParent.getTextRange().getStartOffset() + uriAndRange.second.getEndOffset());
     }
   }
 

@@ -185,7 +185,6 @@ importStatement ::= metadata* 'import' uriElement ('deferred'? 'as' componentNam
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
     getUriString
-    getUriStringOffset
     importPrefix = "componentName"
   ]
 }
@@ -193,10 +192,7 @@ importStatement ::= metadata* 'import' uriElement ('deferred'? 'as' componentNam
 exportStatement ::= metadata* 'export' uriElement combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
-  methods = [
-    getUriString
-    getUriStringOffset
-  ]
+  methods = [ getUriString ]
 }
 
 private combinator ::= showCombinator | hideCombinator
@@ -208,15 +204,12 @@ libraryReferenceList ::= libraryComponentReferenceExpression (',' libraryCompone
 partStatement ::= metadata* 'part' uriElement ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartUriBasedDirective"
-  methods = [
-    getUriString
-    getUriStringOffset
-  ]
+  methods = [ getUriString ]
 }
 
 metadata ::= '@' simpleQualifiedReferenceExpression <<argumentsWrapper>>?
 
-uriElement ::= stringLiteralExpression {mixin="com.jetbrains.lang.dart.psi.impl.DartUriElementBase"}
+uriElement ::= stringLiteralExpression {mixin="com.jetbrains.lang.dart.psi.impl.DartUriElementBase"   methods = [ getUriStringAndItsRange ]}
 
 varAccessDeclaration ::= metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName <<failIfItLooksLikeConstantObjectExpression>> | type !asExpression componentName | 'var' componentName)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}

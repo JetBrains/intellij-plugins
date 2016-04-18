@@ -1,7 +1,8 @@
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
@@ -33,58 +34,68 @@ public class DartPsiImplUtil {
 
   @NotNull
   public static String getUriString(@NotNull final DartUriBasedDirective uriBasedDirective) {
-    return unquoteDartString(uriBasedDirective.getUriElement().getText());
+    return getUnquotedDartStringAndItsRange(uriBasedDirective.getUriElement().getText()).first;
   }
 
-  public static String unquoteDartString(@NotNull final String quotedDartString) {
+  @NotNull
+  public static Pair<String, TextRange> getUriStringAndItsRange(@NotNull final DartUriElement uriElement) {
+    return getUnquotedDartStringAndItsRange(uriElement.getText());
+  }
+
+  @NotNull
+  public static Pair<String, TextRange> getUnquotedDartStringAndItsRange(@NotNull final String quotedDartString) {
     // r'''dart:core'''
     // """package:angular/angular.dart"""
     // "../foo/bar.dart"
     // also can be not closed string when completing for example import '<caret>
+    final int startOffset;
+    final int endOffset;
     if (quotedDartString.startsWith(TRIPLE_APOS)) {
-      return StringUtil.trimEnd(quotedDartString.substring(TRIPLE_APOS.length()), TRIPLE_APOS);
+      startOffset = TRIPLE_APOS.length();
+      endOffset = quotedDartString.endsWith(TRIPLE_APOS) && quotedDartString.length() >= TRIPLE_APOS.length() * 2
+                  ? quotedDartString.length() - TRIPLE_APOS.length() : quotedDartString.length();
     }
-    if (quotedDartString.startsWith(TRIPLE_QUOTE)) {
-      return StringUtil.trimEnd(quotedDartString.substring(TRIPLE_QUOTE.length()), TRIPLE_QUOTE);
+    else if (quotedDartString.startsWith(TRIPLE_QUOTE)) {
+      startOffset = TRIPLE_QUOTE.length();
+      endOffset = quotedDartString.endsWith(TRIPLE_QUOTE) && quotedDartString.length() >= TRIPLE_QUOTE.length() * 2
+                  ? quotedDartString.length() - TRIPLE_QUOTE.length() : quotedDartString.length();
     }
-    if (quotedDartString.startsWith(APOS)) {
-      return StringUtil.trimEnd(quotedDartString.substring(APOS.length()), APOS);
+    else if (quotedDartString.startsWith(APOS)) {
+      startOffset = APOS.length();
+      endOffset = quotedDartString.endsWith(APOS) && quotedDartString.length() >= APOS.length() * 2
+                  ? quotedDartString.length() - APOS.length() : quotedDartString.length();
     }
-    if (quotedDartString.startsWith(QUOTE)) {
-      return StringUtil.trimEnd(quotedDartString.substring(QUOTE.length()), QUOTE);
+    else if (quotedDartString.startsWith(QUOTE)) {
+      startOffset = QUOTE.length();
+      endOffset = quotedDartString.endsWith(QUOTE) && quotedDartString.length() >= QUOTE.length() * 2
+                  ? quotedDartString.length() - QUOTE.length() : quotedDartString.length();
     }
-    if (quotedDartString.startsWith(R_TRIPLE_APOS)) {
-      return StringUtil.trimEnd(quotedDartString.substring(R_TRIPLE_APOS.length()), TRIPLE_APOS);
+    else if (quotedDartString.startsWith(R_TRIPLE_APOS)) {
+      startOffset = R_TRIPLE_APOS.length();
+      endOffset = quotedDartString.endsWith(TRIPLE_APOS) && quotedDartString.length() >= R_TRIPLE_APOS.length() + TRIPLE_APOS.length()
+                  ? quotedDartString.length() - TRIPLE_APOS.length() : quotedDartString.length();
     }
-    if (quotedDartString.startsWith(R_TRIPLE_QUOTE)) {
-      return StringUtil.trimEnd(quotedDartString.substring(R_TRIPLE_QUOTE.length()), TRIPLE_QUOTE);
+    else if (quotedDartString.startsWith(R_TRIPLE_QUOTE)) {
+      startOffset = R_TRIPLE_QUOTE.length();
+      endOffset = quotedDartString.endsWith(TRIPLE_QUOTE) && quotedDartString.length() >= R_TRIPLE_QUOTE.length() + TRIPLE_QUOTE.length()
+                  ? quotedDartString.length() - TRIPLE_QUOTE.length() : quotedDartString.length();
     }
-    if (quotedDartString.startsWith(R_APOS)) {
-      return StringUtil.trimEnd(quotedDartString.substring(R_APOS.length()), APOS);
+    else if (quotedDartString.startsWith(R_APOS)) {
+      startOffset = R_APOS.length();
+      endOffset = quotedDartString.endsWith(APOS) && quotedDartString.length() >= R_APOS.length() + APOS.length()
+                  ? quotedDartString.length() - APOS.length() : quotedDartString.length();
     }
-    if (quotedDartString.startsWith(R_QUOTE)) {
-      return StringUtil.trimEnd(quotedDartString.substring(R_QUOTE.length()), QUOTE);
+    else if (quotedDartString.startsWith(R_QUOTE)) {
+      startOffset = R_QUOTE.length();
+      endOffset = quotedDartString.endsWith(QUOTE) && quotedDartString.length() >= R_QUOTE.length() + QUOTE.length()
+                  ? quotedDartString.length() - QUOTE.length() : quotedDartString.length();
+    }
+    else {
+      startOffset = 0;
+      endOffset = quotedDartString.length();
     }
 
-    return quotedDartString;
-  }
-
-  public static int getUriStringOffset(@NotNull final DartUriBasedDirective uriBasedDirective) {
-    // similar to #unquoteDartString()
-    final String quotedDartString = uriBasedDirective.getUriElement().getText();
-    if (quotedDartString.startsWith(TRIPLE_APOS) || quotedDartString.startsWith(TRIPLE_QUOTE)) {
-      return TRIPLE_QUOTE.length();
-    }
-    if (quotedDartString.startsWith(APOS) || quotedDartString.startsWith(QUOTE)) {
-      return QUOTE.length();
-    }
-    if (quotedDartString.startsWith(R_TRIPLE_APOS) || quotedDartString.startsWith(R_TRIPLE_QUOTE)) {
-      return R_TRIPLE_QUOTE.length();
-    }
-    if (quotedDartString.startsWith(R_APOS) || quotedDartString.startsWith(R_QUOTE)) {
-      return R_QUOTE.length();
-    }
-    return 0;
+    return Pair.create(quotedDartString.substring(startOffset, endOffset), TextRange.create(startOffset, endOffset));
   }
 
   @NotNull

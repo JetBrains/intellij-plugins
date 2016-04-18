@@ -22,6 +22,4 @@ public interface DartExportStatement extends DartImportOrExportStatement {
   @NotNull
   String getUriString();
 
-  int getUriStringOffset();
-
 }

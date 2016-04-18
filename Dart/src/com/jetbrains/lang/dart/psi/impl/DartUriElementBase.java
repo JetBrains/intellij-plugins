@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -51,8 +52,9 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
     final PsiElement parent = getParent();
     assert parent instanceof DartUriBasedDirective : parent;
 
-    final String uri = ((DartUriBasedDirective)parent).getUriString();
-    final int uriOffset = ((DartUriBasedDirective)parent).getUriStringOffset();
+    final Pair<String, TextRange> uriAndRange = getUriStringAndItsRange();
+    final String uri = uriAndRange.first;
+    final int uriOffset = uriAndRange.second.getStartOffset();
 
     if (DartResolver.isServerDrivenResolution()) {
       return new PsiReference[]{new DartFileReference(this, uri)};
@@ -207,12 +209,7 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull final DartUriElement element) {
-      final PsiElement parent = element.getParent();
-      assert parent instanceof DartUriBasedDirective : parent;
-
-      final String uri = ((DartUriBasedDirective)parent).getUriString();
-      final int uriOffset = element.getText().indexOf(uri);
-      return TextRange.create(uriOffset, uriOffset + uri.length());
+      return element.getUriStringAndItsRange().second;
     }
   }
 }

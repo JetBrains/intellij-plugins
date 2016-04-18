@@ -43,8 +43,4 @@ public class DartPartStatementImpl extends DartPsiCompositeElementImpl implement
     return DartPsiImplUtil.getUriString(this);
   }
 
-  public int getUriStringOffset() {
-    return DartPsiImplUtil.getUriStringOffset(this);
-  }
-
 }
