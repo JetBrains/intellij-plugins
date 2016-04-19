@@ -1,7 +1,7 @@
 <xml type="Scenario" name="Parameter info" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock><CopyText>import javax.swing.*;
 
-public class FrameDemo {
+class FrameDemo {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("FrameDemo");

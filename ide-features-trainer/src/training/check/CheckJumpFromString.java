@@ -40,6 +40,11 @@ public class CheckJumpFromString implements Check {
 
     }
 
+    @Override
+    public boolean listenAllKeys() {
+        return false;
+    }
+
     private int calc(PsiElement psiElement){
 
         if (psiElement.getNode().getElementType() == JavaTokenType.END_OF_LINE_COMMENT) return 1;

@@ -32,6 +32,11 @@ public class CheckCountCommentedLine implements Check{
         return ((countCommentedLines() == countComments - 1) || (countComments == 0));
     }
 
+    @Override
+    public boolean listenAllKeys() {
+        return false;
+    }
+
     public int countCommentedLines(){
 
         final PsiElement psiElement = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());

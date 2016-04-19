@@ -14,4 +14,6 @@ public interface Check {
 
     boolean check();
 
+    boolean listenAllKeys();
+
 }

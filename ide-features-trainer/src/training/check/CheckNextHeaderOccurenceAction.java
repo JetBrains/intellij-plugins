@@ -23,4 +23,9 @@ public class CheckNextHeaderOccurenceAction implements Check{
     public boolean check() {
         return false;
     }
+
+    @Override
+    public boolean listenAllKeys() {
+        return false;
+    }
 }

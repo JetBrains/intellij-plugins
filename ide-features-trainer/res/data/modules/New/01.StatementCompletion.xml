@@ -1,6 +1,5 @@
 <xml type="Scenario" name="Statement completion" passed="false" version="0.1" subtype="aimless" projectTree="hide">
-    <MouseBlock><CopyText>package learn;
-public class PrimeNumbers {
+    <MouseBlock><CopyText>class PrimeNumbers {
     public static void main(String[] args) {
         System.out.println(&quot;Prime numbers between 1 and 100&quot;);
 
@@ -16,8 +15,10 @@ public class PrimeNumbers {
     }
 }</CopyText>
 </MouseBlock>
-        <MoveCaret position="9:40" />
+        <MoveCaret position="8:40" />
         <Try description="Press &lt;action=&quot;EditorCompleteStatement&quot;&gt; to complete the &lt;code&gt;for&lt;/code&gt; statement" trigger="EditorCompleteStatement"/>
-        <Try description="Write &lt;code&gt;if&lt;/code&gt; statement and try to complete it with &lt;action=&quot;EditorCompleteStatement&quot;&gt;" trigger="EditorCompleteStatement"/>
+        <Try description="Write &lt;code&gt;if&lt;/code&gt; statement" check="training.check.CheckStatementCompletionIf"/>
+        <Try description="Add condition inside () &lt;code&gt;i % j == 0&lt;/code&gt; and press &lt;action=&quot;EditorCompleteStatement&quot;&gt; to jump inside &lt;code&gt;if&lt;/code&gt; statement" trigger="EditorCompleteStatement"/>
+        <Try description="Write in one line &lt;code&gt;isPrime = false; break&lt;/code&gt; and press &lt;action=&quot;EditorCompleteStatement&quot;&gt; to complete the entered statement and apply formatting" trigger="EditorCompleteStatement"/>
     <Win/>
 </xml>
