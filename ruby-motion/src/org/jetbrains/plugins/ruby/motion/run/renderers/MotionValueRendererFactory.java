@@ -1,7 +1,6 @@
 package org.jetbrains.plugins.ruby.motion.run.renderers;
 
 import com.intellij.execution.ExecutionException;
-import com.jetbrains.cidr.execution.debugger.backend.DBCannotEvaluateException;
 import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValueData;
 import com.jetbrains.cidr.execution.debugger.evaluation.CustomValueRendererFactory;
@@ -18,7 +17,8 @@ import org.jetbrains.annotations.Nullable;
 public class MotionValueRendererFactory implements CustomValueRendererFactory {
   @Nullable
   @Override
-  public ValueRenderer createRendererLeading(@NotNull ValueRendererFactory.FactoryContext context) throws ExecutionException, DBUserException {
+  public ValueRenderer createRendererLeading(@NotNull ValueRendererFactory.FactoryContext context) throws ExecutionException,
+                                                                                                          DBUserException {
     try {
       LLValueData data = context.getLLValueData();
       if (data.isValidPointer()) {
@@ -28,7 +28,7 @@ public class MotionValueRendererFactory implements CustomValueRendererFactory {
         final ValueRenderer collectionRenderer = NSCollectionValueRenderer.createIfNSCollection(context);
         return collectionRenderer != null ? collectionRenderer : new MotionObjectRenderer(context.getPhysicalValue());
       }
-    } catch (DBCannotEvaluateException ignored) {}
+    } catch (DBUserException ignored) {}
     return null;
   }
 

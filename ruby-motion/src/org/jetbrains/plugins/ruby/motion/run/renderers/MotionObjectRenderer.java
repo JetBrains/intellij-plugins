@@ -30,7 +30,8 @@ public class MotionObjectRenderer extends ValueRenderer {
 
   @NotNull
   @Override
-  protected Pair<String, XFullValueEvaluator> doComputeValueAndEvaluator(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
+  protected Pair<String, XFullValueEvaluator> doComputeValueAndEvaluator(@NotNull EvaluationContext context) throws ExecutionException,
+                                                                                                                    DBUserException {
     LLValue value =
       context.evaluate("(char *)[[(id)rb_inspect(" + myValue.getVarData(context).getPointer() + ") description] UTF8String]");
     LLValueData data = context.getData(value);
@@ -58,7 +59,7 @@ public class MotionObjectRenderer extends ValueRenderer {
 
   @Override
   protected void doComputeChildren(@NotNull EvaluationContext context,
-                                   @NotNull XCompositeNode container) throws ExecutionException, DBUserException{
+                                   @NotNull XCompositeNode container) throws ExecutionException, DBUserException {
 
     final Collection<CidrValue> children = new ArrayList<CidrValue>();
     final LLValue names = getInstanceVariablesNames(context);
