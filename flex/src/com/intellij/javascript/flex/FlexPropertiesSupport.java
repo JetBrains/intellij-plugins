@@ -2,12 +2,14 @@ package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.lang.javascript.psi.impl.JSPropertyReference;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.properties.BundleNameEvaluator;
 import com.intellij.lang.properties.PropertiesReferenceManager;
 import com.intellij.lang.properties.ResourceBundleReference;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.lang.properties.references.PropertyReference;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -25,7 +27,12 @@ public class FlexPropertiesSupport {
     public String evaluateBundleName(PsiFile psiFile) {
       final VirtualFile virtualFile = psiFile == null ? null : psiFile.getOriginalFile().getVirtualFile();
       if (virtualFile != null && psiFile instanceof PropertiesFile) {
-        return virtualFile.getNameWithoutExtension();
+        String className = virtualFile.getNameWithoutExtension();
+        String packageName = JSResolveUtil.getExpectedPackageNameFromFile(virtualFile, psiFile.getProject());
+        if (!StringUtil.isEmpty(packageName)) {
+          className = packageName + "." + className;
+        }
+        return className;
       }
       return null;
     }
