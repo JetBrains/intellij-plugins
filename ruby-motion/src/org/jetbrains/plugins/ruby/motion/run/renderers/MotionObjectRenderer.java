@@ -1,7 +1,9 @@
 package org.jetbrains.plugins.ruby.motion.run.renderers;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.openapi.util.Pair;
 import com.intellij.xdebugger.frame.XCompositeNode;
+import com.intellij.xdebugger.frame.XFullValueEvaluator;
 import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValue;
 import com.jetbrains.cidr.execution.debugger.backend.LLValueData;
@@ -28,9 +30,11 @@ public class MotionObjectRenderer extends ValueRenderer {
 
   @NotNull
   @Override
-  protected String doComputeValue(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
-    return TextUtil.removeQuoting(
-      context.evaluateData("(char *)[[(id)rb_inspect(" + myValue.getVarData(context).getPointer() + ") description] UTF8String]").getPresentableValue());
+  protected Pair<String, XFullValueEvaluator> doComputeValueAndEvaluator(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
+    LLValue value =
+      context.evaluate("(char *)[[(id)rb_inspect(" + myValue.getVarData(context).getPointer() + ") description] UTF8String]");
+    LLValueData data = context.getData(value);
+    return doComputeValueAndEvaluator(context, value, data);
   }
 
   @Override
