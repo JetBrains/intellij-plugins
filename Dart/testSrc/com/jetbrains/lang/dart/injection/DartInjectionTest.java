@@ -33,4 +33,8 @@ public class DartInjectionTest extends LightQuickFixTestCase {
   public void testRegExp() throws Exception {
     doTest();
   }
+
+  public void testJsonWithComment() throws Exception {
+    doTest();
+  }
 }
