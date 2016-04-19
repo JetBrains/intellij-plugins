@@ -20,4 +20,8 @@ public class DartInjectionTest extends InjectedLanguageTestCase {
   public void testHtmlInStrings() throws Exception {
     doTest();
   }
+
+  public void testRegExp() throws Exception {
+    doTest();
+  }
 }

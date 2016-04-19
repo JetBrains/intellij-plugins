@@ -9,8 +9,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartTokenTypes;
-import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
+import org.intellij.lang.regexp.RegExpLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +28,42 @@ public class DartMultiHostInjector implements MultiHostInjector {
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement element) {
     if (element instanceof DartStringLiteralExpression) {
-      injectHtmlIfNeeded(registrar, (DartStringLiteralExpression)element);
+      if (isRegExp((DartStringLiteralExpression)element)) {
+        injectRegExp(registrar, (DartStringLiteralExpression)element);
+      }
+      else {
+        injectHtmlIfNeeded(registrar, (DartStringLiteralExpression)element);
+      }
     }
+  }
+
+  private static boolean isRegExp(@NotNull final DartStringLiteralExpression element) {
+    // new RegExp(r'\d+')
+    final PsiElement parent1 = element.getParent();
+    final PsiElement parentParent2 = parent1 instanceof DartArgumentList && parent1.getFirstChild() == element ? parent1.getParent() : null;
+    final PsiElement parent3 = parentParent2 instanceof DartArguments ? parentParent2.getParent() : null;
+    if (parent3 instanceof DartNewExpression) {
+      final DartType type = ((DartNewExpression)parent3).getType();
+      return type != null && "RegExp".equals(type.getText());
+    }
+    return false;
+  }
+
+  private static void injectRegExp(@NotNull final MultiHostRegistrar registrar, @NotNull final DartStringLiteralExpression element) {
+    final PsiElement child = element.getFirstChild();
+    final IElementType elementType = child.getNode().getElementType();
+    if (elementType != DartTokenTypes.RAW_SINGLE_QUOTED_STRING || child.getNextSibling() != null) {
+      return; // inject in raw single line strings only
+    }
+
+    final Pair<String, TextRange> textAndRange = DartPsiImplUtil.getUnquotedDartStringAndItsRange(child.getText());
+    if (textAndRange.first.isEmpty()) {
+      return;
+    }
+
+    registrar.startInjecting(RegExpLanguage.INSTANCE);
+    registrar.addPlace(null, null, element, textAndRange.second);
+    registrar.doneInjecting();
   }
 
   private static void injectHtmlIfNeeded(@NotNull final MultiHostRegistrar registrar, @NotNull final DartStringLiteralExpression element) {
