@@ -11,7 +11,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartStringLiteralExpressionImpl extends DartClassReferenceImpl implements DartStringLiteralExpression {
+public class DartStringLiteralExpressionImpl extends DartStringLiteralExpressionBase implements DartStringLiteralExpression {
 
   public DartStringLiteralExpressionImpl(ASTNode node) {
     super(node);

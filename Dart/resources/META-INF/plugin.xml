@@ -42,6 +42,7 @@
     <lang.lineWrapStrategy language="Dart" implementationClass="com.jetbrains.lang.dart.ide.editor.DartLineWrapPositionStrategy"/>
 
     <languageInjector implementation="com.jetbrains.lang.dart.psi.DartLanguageInjector"/>
+    <multiHostInjector implementation="com.jetbrains.lang.dart.injection.DartMultiHostInjector"/>
 
     <colorSettingsPage implementation="com.jetbrains.lang.dart.highlight.DartColorsAndFontsPage"/>
     <lang.foldingBuilder language="Dart" implementationClass="com.jetbrains.lang.dart.folding.DartFoldingBuilder"/>

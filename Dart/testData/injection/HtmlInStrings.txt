@@ -1,0 +1,476 @@
+Dart File
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a1')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('< html>no injection </ html>')
+        PsiElement(CLOSING_QUOTE)(''')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a2')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('</html>')
+        PsiElement(CLOSING_QUOTE)(''')
+        HtmlFile:HtmlInStrings.dart
+          PsiElement(HTML_DOCUMENT)
+            PsiElement(XML_PROLOG)
+              <empty list>
+            PsiErrorElement:Closing tag matches nothing
+              XmlToken:XML_END_TAG_START('</')
+              XmlToken:XML_NAME('html')
+              XmlToken:XML_TAG_END('>')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a3')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('<!-- comment>')
+        PsiElement(CLOSING_QUOTE)(''')
+        HtmlFile:HtmlInStrings.dart
+          PsiElement(HTML_DOCUMENT)
+            PsiElement(XML_COMMENT)
+              XmlToken:XML_COMMENT_START('<!--')
+              XmlToken:XML_COMMENT_CHARACTERS(' comment>')
+            PsiElement(XML_PROLOG)
+              <empty list>
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a4')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('<h')
+        PsiElement(CLOSING_QUOTE)(''')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('t')
+        PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)(''''')
+        PsiElement(REGULAR_STRING_PART)('m')
+        PsiElement(CLOSING_QUOTE)(''''')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiElement(REGULAR_STRING_PART)('l')
+        PsiElement(CLOSING_QUOTE)('"""')
+        PsiWhiteSpace(' ')
+        PsiElement(RAW_SINGLE_QUOTED_STRING)('r'>'')
+        PsiWhiteSpace(' ')
+        PsiElement(RAW_SINGLE_QUOTED_STRING)('r"<"')
+        PsiWhiteSpace(' ')
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''/'''')
+        PsiWhiteSpace(' ')
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""html>"""')
+        HtmlFile:HtmlInStrings.dart
+          PsiElement(HTML_DOCUMENT)
+            PsiElement(XML_PROLOG)
+              <empty list>
+            HtmlTag:html
+              XmlToken:XML_START_TAG_START('<')
+              XmlToken:XML_NAME('html')
+              XmlToken:XML_TAG_END('>')
+              XmlToken:XML_END_TAG_START('</')
+              XmlToken:XML_NAME('html')
+              XmlToken:XML_TAG_END('>')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a5')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""\n<html>\n\n</html>\n        """')
+        HtmlFile:HtmlInStrings.dart
+          PsiElement(HTML_DOCUMENT)
+            PsiWhiteSpace('\n')
+            PsiElement(XML_PROLOG)
+              <empty list>
+            HtmlTag:html
+              XmlToken:XML_START_TAG_START('<')
+              XmlToken:XML_NAME('html')
+              XmlToken:XML_TAG_END('>')
+              XmlText
+                PsiWhiteSpace('\n\n')
+              XmlToken:XML_END_TAG_START('</')
+              XmlToken:XML_NAME('html')
+              XmlToken:XML_TAG_END('>')
+            PsiWhiteSpace('\n        ')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a6')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('<')
+        SHORT_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('foo')
+              HtmlFile:HtmlInStrings.dart
+                PsiElement(HTML_DOCUMENT)
+                  PsiElement(XML_PROLOG)
+                    <empty list>
+                  HtmlTag:placeholder
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+                    XmlText
+                      XmlToken:XML_DATA_CHARACTERS('placeholder')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+            HtmlFile:HtmlInStrings.dart
+              PsiElement(HTML_DOCUMENT)
+                PsiElement(XML_PROLOG)
+                  <empty list>
+                HtmlTag:placeholder
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+                  XmlText
+                    XmlToken:XML_DATA_CHARACTERS('placeholder')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+          HtmlFile:HtmlInStrings.dart
+            PsiElement(HTML_DOCUMENT)
+              PsiElement(XML_PROLOG)
+                <empty list>
+              HtmlTag:placeholder
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('placeholder')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+        PsiElement(REGULAR_STRING_PART)('>')
+        SHORT_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('foo')
+              HtmlFile:HtmlInStrings.dart
+                PsiElement(HTML_DOCUMENT)
+                  PsiElement(XML_PROLOG)
+                    <empty list>
+                  HtmlTag:placeholder
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+                    XmlText
+                      XmlToken:XML_DATA_CHARACTERS('placeholder')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+            HtmlFile:HtmlInStrings.dart
+              PsiElement(HTML_DOCUMENT)
+                PsiElement(XML_PROLOG)
+                  <empty list>
+                HtmlTag:placeholder
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+                  XmlText
+                    XmlToken:XML_DATA_CHARACTERS('placeholder')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+          HtmlFile:HtmlInStrings.dart
+            PsiElement(HTML_DOCUMENT)
+              PsiElement(XML_PROLOG)
+                <empty list>
+              HtmlTag:placeholder
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('placeholder')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+        PsiElement(REGULAR_STRING_PART)('</')
+        SHORT_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('foo')
+              HtmlFile:HtmlInStrings.dart
+                PsiElement(HTML_DOCUMENT)
+                  PsiElement(XML_PROLOG)
+                    <empty list>
+                  HtmlTag:placeholder
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+                    XmlText
+                      XmlToken:XML_DATA_CHARACTERS('placeholder')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+            HtmlFile:HtmlInStrings.dart
+              PsiElement(HTML_DOCUMENT)
+                PsiElement(XML_PROLOG)
+                  <empty list>
+                HtmlTag:placeholder
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+                  XmlText
+                    XmlToken:XML_DATA_CHARACTERS('placeholder')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+          HtmlFile:HtmlInStrings.dart
+            PsiElement(HTML_DOCUMENT)
+              PsiElement(XML_PROLOG)
+                <empty list>
+              HtmlTag:placeholder
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('placeholder')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+        PsiElement(REGULAR_STRING_PART)('>')
+        PsiElement(CLOSING_QUOTE)(''')
+        HtmlFile:HtmlInStrings.dart
+          PsiElement(HTML_DOCUMENT)
+            PsiElement(XML_PROLOG)
+              <empty list>
+            HtmlTag:placeholder
+              XmlToken:XML_START_TAG_START('<')
+              XmlToken:XML_NAME('placeholder')
+              XmlToken:XML_TAG_END('>')
+              XmlText
+                XmlToken:XML_DATA_CHARACTERS('placeholder')
+              XmlToken:XML_END_TAG_START('</')
+              XmlToken:XML_NAME('placeholder')
+              XmlToken:XML_TAG_END('>')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a7')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('<')
+        LONG_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('foo')
+              HtmlFile:HtmlInStrings.dart
+                PsiElement(HTML_DOCUMENT)
+                  PsiElement(XML_PROLOG)
+                    <empty list>
+                  HtmlTag:placeholder
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+                    XmlText
+                      XmlToken:XML_DATA_CHARACTERS('placeholder')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+            HtmlFile:HtmlInStrings.dart
+              PsiElement(HTML_DOCUMENT)
+                PsiElement(XML_PROLOG)
+                  <empty list>
+                HtmlTag:placeholder
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+                  XmlText
+                    XmlToken:XML_DATA_CHARACTERS('placeholder')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+          HtmlFile:HtmlInStrings.dart
+            PsiElement(HTML_DOCUMENT)
+              PsiElement(XML_PROLOG)
+                <empty list>
+              HtmlTag:placeholder
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('placeholder')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+        PsiElement(REGULAR_STRING_PART)('>')
+        LONG_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('foo')
+              HtmlFile:HtmlInStrings.dart
+                PsiElement(HTML_DOCUMENT)
+                  PsiElement(XML_PROLOG)
+                    <empty list>
+                  HtmlTag:placeholder
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+                    XmlText
+                      XmlToken:XML_DATA_CHARACTERS('placeholder')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+            HtmlFile:HtmlInStrings.dart
+              PsiElement(HTML_DOCUMENT)
+                PsiElement(XML_PROLOG)
+                  <empty list>
+                HtmlTag:placeholder
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+                  XmlText
+                    XmlToken:XML_DATA_CHARACTERS('placeholder')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+          HtmlFile:HtmlInStrings.dart
+            PsiElement(HTML_DOCUMENT)
+              PsiElement(XML_PROLOG)
+                <empty list>
+              HtmlTag:placeholder
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('placeholder')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+        PsiElement(REGULAR_STRING_PART)('</')
+        LONG_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('foo')
+              HtmlFile:HtmlInStrings.dart
+                PsiElement(HTML_DOCUMENT)
+                  PsiElement(XML_PROLOG)
+                    <empty list>
+                  HtmlTag:placeholder
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+                    XmlText
+                      XmlToken:XML_DATA_CHARACTERS('placeholder')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_NAME('placeholder')
+                    XmlToken:XML_TAG_END('>')
+            HtmlFile:HtmlInStrings.dart
+              PsiElement(HTML_DOCUMENT)
+                PsiElement(XML_PROLOG)
+                  <empty list>
+                HtmlTag:placeholder
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+                  XmlText
+                    XmlToken:XML_DATA_CHARACTERS('placeholder')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('placeholder')
+                  XmlToken:XML_TAG_END('>')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+          HtmlFile:HtmlInStrings.dart
+            PsiElement(HTML_DOCUMENT)
+              PsiElement(XML_PROLOG)
+                <empty list>
+              HtmlTag:placeholder
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('placeholder')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('placeholder')
+                XmlToken:XML_TAG_END('>')
+        PsiElement(REGULAR_STRING_PART)('>')
+        PsiElement(CLOSING_QUOTE)(''')
+        HtmlFile:HtmlInStrings.dart
+          PsiElement(HTML_DOCUMENT)
+            PsiElement(XML_PROLOG)
+              <empty list>
+            HtmlTag:placeholder
+              XmlToken:XML_START_TAG_START('<')
+              XmlToken:XML_NAME('placeholder')
+              XmlToken:XML_TAG_END('>')
+              XmlText
+                XmlToken:XML_DATA_CHARACTERS('placeholder')
+              XmlToken:XML_END_TAG_START('</')
+              XmlToken:XML_NAME('placeholder')
+              XmlToken:XML_TAG_END('>')
+  PsiElement(;)(';')

@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import  com.intellij.psi.PsiNameIdentifierOwner;
+import  com.intellij.psi.PsiLanguageInjectionHost;
 
 public class DartVisitor extends PsiElementVisitor {
 
