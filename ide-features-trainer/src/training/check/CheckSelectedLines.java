@@ -26,6 +26,11 @@ public class CheckSelectedLines implements Check{
         return calc() >= 2;
     }
 
+    @Override
+    public boolean listenAllKeys() {
+        return false;
+    }
+
 
     private int calc(){
 

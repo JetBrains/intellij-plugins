@@ -2,6 +2,7 @@ package training.commands;
 
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.ActionsRecorder;
 import training.check.Check;
@@ -28,7 +29,6 @@ public class TryCommand extends Command {
 
     @Override
     public void execute(ExecutionList executionList) throws Exception {
-
 
         Element element = executionList.getElements().poll();
         Check check = null;
@@ -71,7 +71,6 @@ public class TryCommand extends Command {
                 e.printStackTrace();
             }
         }
-
         if (element.getAttribute("trigger") != null) {
             String actionId = element.getAttribute("trigger").getValue();
             startRecord(executionList, recorder, actionId, check);
@@ -86,30 +85,21 @@ public class TryCommand extends Command {
     }
 
     private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, @Nullable Check check) throws Exception {
-        recorder.startRecording(new Runnable() {        //do when done
-            @Override
-            public void run() {
-                pass(executionList);
-            }
-        }, (String[]) null, check);
+        recorder.startRecording(getDoWhenDone(executionList), (String[]) null, check);
     }
 
     private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String actionId, @Nullable Check check) throws Exception {
-        recorder.startRecording(new Runnable() {        //do when done
-            @Override
-            public void run() {
-                pass(executionList);
-            }
-        }, actionId, check);
+        recorder.startRecording(getDoWhenDone(executionList), actionId, check);
     }
 
-    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String[] actionIdArray, @Nullable Check check ) throws Exception {
-        recorder.startRecording(new Runnable() {        //do when done
-            @Override
-            public void run() {
-                pass(executionList);
-            }
-        }, actionIdArray, check);
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String[] actionIdArray, @Nullable Check check) throws Exception {
+        recorder.startRecording(getDoWhenDone(executionList), actionIdArray, check);
+
+    }
+
+    @NotNull
+    private Runnable getDoWhenDone(final ExecutionList executionList) {
+        return () -> pass(executionList);
     }
 
     private void pass(ExecutionList executionList) {

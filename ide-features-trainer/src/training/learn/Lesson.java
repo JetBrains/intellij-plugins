@@ -74,6 +74,10 @@ public class Lesson {
         this.targetPath = targetPath;
     }
 
+    public String getLang(){
+        return getScn().getLang();
+    }
+
 
     public Lesson(){
         passed = false;

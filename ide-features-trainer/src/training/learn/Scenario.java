@@ -2,11 +2,13 @@ package training.learn;
 
 
 import com.intellij.util.xmlb.annotations.Transient;
+import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.jetbrains.annotations.Nullable;
 import training.util.MyClassLoader;
 
 import java.io.FileWriter;
@@ -81,6 +83,13 @@ public class Scenario {
         this.path = path;
     }
 
+
+    @Nullable
+    public String getLang(){
+        final Attribute lang = root.getAttribute("lang");
+        if (lang != null) return lang.getValue();
+        return null;
+    }
 
     public String getName(){
         return root.getAttribute("name").getValue();

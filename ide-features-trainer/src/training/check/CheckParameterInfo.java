@@ -56,4 +56,9 @@ public class CheckParameterInfo implements Check{
 
     }
 
+    @Override
+    public boolean listenAllKeys() {
+        return false;
+    }
+
 }

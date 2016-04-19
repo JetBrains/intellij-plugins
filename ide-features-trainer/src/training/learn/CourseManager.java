@@ -389,8 +389,12 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         VirtualFile vf = null;
         assert lesson != null;
         assert lesson.getModule() != null;
-        if (mapModuleVirtualFile.containsKey(lesson.getModule()))
+        String myLanguage = lesson.getLang() != null ? lesson.getLang() : "JAVA";
+
+        if (mapModuleVirtualFile.containsKey(lesson.getModule())) {
             vf = mapModuleVirtualFile.get(lesson.getModule());
+            ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID(myLanguage));
+        }
         if (vf == null || !vf.isValid()) {
             //while module info is not stored
 
@@ -398,11 +402,11 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), filename, ScratchFileService.Option.existing_only);
             if (vf != null) {
                 FileEditorManager.getInstance(project).closeFile(vf);
-                ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID("JAVA"));
+                ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID(myLanguage));
             }
 
             if (vf == null || !vf.isValid()) {
-                vf = ScratchRootType.getInstance().createScratchFile(project, filename, Language.findLanguageByID("JAVA"), "");
+                vf = ScratchRootType.getInstance().createScratchFile(project, filename, Language.findLanguageByID(myLanguage), "");
                 final VirtualFile finalVf = vf;
                 assert vf != null;
                 if (!vf.getName().equals(filename)) {
