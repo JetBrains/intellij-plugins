@@ -7,8 +7,6 @@ public interface DartUriBasedDirective extends DartPsiCompositeElement {
   @NotNull
   String getUriString();
 
-  int getUriStringOffset();
-
   @NotNull
   DartUriElement getUriElement();
 }

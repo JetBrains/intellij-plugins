@@ -17,8 +17,12 @@ public class DartReferenceExpressionImpl extends DartReferenceImpl implements Da
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitReferenceExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitReferenceExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

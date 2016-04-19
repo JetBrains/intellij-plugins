@@ -17,8 +17,12 @@ public class DartExportStatementImpl extends DartPsiCompositeElementImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitExportStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitExportStatement(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -49,10 +53,6 @@ public class DartExportStatementImpl extends DartPsiCompositeElementImpl impleme
   @NotNull
   public String getUriString() {
     return DartPsiImplUtil.getUriString(this);
-  }
-
-  public int getUriStringOffset() {
-    return DartPsiImplUtil.getUriStringOffset(this);
   }
 
 }

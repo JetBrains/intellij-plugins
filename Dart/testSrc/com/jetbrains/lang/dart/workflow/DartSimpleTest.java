@@ -1,13 +1,21 @@
 package com.jetbrains.lang.dart.workflow;
 
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 
 public class DartSimpleTest extends TestCase {
-  private static void doTestUnquoteDartString(@NotNull final String inputString, @NotNull final String expectedUnquoted) {
-    assertEquals(expectedUnquoted, DartPsiImplUtil.unquoteDartString(inputString));
+  private static void doTestUnquoteDartString(@NotNull final String inputString,
+                                              @NotNull final String expectedUnquoted,
+                                              final int expectedStartOffset,
+                                              final int expectedEndOffset) {
+    final Pair<String, TextRange> result = DartPsiImplUtil.getUnquotedDartStringAndItsRange(inputString);
+    assertEquals(expectedUnquoted, result.first);
+    assertEquals(expectedStartOffset, result.second.getStartOffset());
+    assertEquals(expectedEndOffset, result.second.getEndOffset());
   }
 
   private static void doTestDebuggerErrorText(@NotNull final String rawErrorText, @NotNull final String expected) {
@@ -15,49 +23,45 @@ public class DartSimpleTest extends TestCase {
   }
 
   public void testUnquoteDartString() throws Exception {
-    doTestUnquoteDartString("", ""); // not valid string
-    doTestUnquoteDartString("r", "r"); // not valid string
-    doTestUnquoteDartString("rr'", "rr'"); // not valid string
-    doTestUnquoteDartString("x'", "x'"); // not valid string
-    doTestUnquoteDartString("x\"", "x\""); // not valid string
-    doTestUnquoteDartString("r'", ""); // not closed string
-    doTestUnquoteDartString("r\"", ""); // not closed string
-    doTestUnquoteDartString("r'''", ""); // not closed string
-    doTestUnquoteDartString("r\"\"\"", ""); // not closed string
-    doTestUnquoteDartString("r'''''", "''"); // not closed string
-    doTestUnquoteDartString("r\"\"\"\"", "\""); // not closed string
-    doTestUnquoteDartString("'''", ""); // not closed string
-    doTestUnquoteDartString("\"\"\"", ""); // not closed string
-    doTestUnquoteDartString("'''''", "''"); // not closed string
-    doTestUnquoteDartString("\"\"\"\"", "\""); // not closed string
-    doTestUnquoteDartString("'", ""); // not closed string
-    doTestUnquoteDartString("\"", ""); // not closed string
-    doTestUnquoteDartString("'a", "a"); // not closed string
-    doTestUnquoteDartString("\"a", "a"); // not closed string
-    doTestUnquoteDartString("'a", "a"); // not closed string
-    doTestUnquoteDartString("\"a", "a"); // not closed string
-    doTestUnquoteDartString("r'", ""); // not closed string
-    doTestUnquoteDartString("r\"", ""); // not closed string
-    doTestUnquoteDartString("r'a", "a"); // not closed string
-    doTestUnquoteDartString("r\"a", "a"); // not closed string
-    doTestUnquoteDartString("r'a", "a"); // not closed string
-    doTestUnquoteDartString("r\"a", "a"); // not closed string
-    doTestUnquoteDartString("''", "");
-    doTestUnquoteDartString("\"\"", "");
-    doTestUnquoteDartString("''''''", "");
-    doTestUnquoteDartString("\"\"\"\"\"\"", "");
-    doTestUnquoteDartString("r''", "");
-    doTestUnquoteDartString("r\"\"", "");
-    doTestUnquoteDartString("r''''''", "");
-    doTestUnquoteDartString("r\"\"\"\"\"\"", "");
-    doTestUnquoteDartString("r'''a'''", "a");
-    doTestUnquoteDartString("r\"\"\"a\"\"\"", "a");
-    doTestUnquoteDartString("r'a'", "a");
-    doTestUnquoteDartString("r\"a\"", "a");
-    doTestUnquoteDartString("'''a'''", "a");
-    doTestUnquoteDartString("\"\"\"a\"\"\"", "a");
-    doTestUnquoteDartString("'abc'", "abc");
-    doTestUnquoteDartString("\"abc\"", "abc");
+    doTestUnquoteDartString("", "", 0, 0); // not valid string
+    doTestUnquoteDartString("r", "r", 0, 1); // not valid string
+    doTestUnquoteDartString("rr'", "rr'", 0, 3); // not valid string
+    doTestUnquoteDartString("x'", "x'", 0, 2); // not valid string
+    doTestUnquoteDartString("x\"", "x\"", 0, 2); // not valid string
+    doTestUnquoteDartString("r'", "", 2, 2); // not closed string
+    doTestUnquoteDartString("r\"", "", 2, 2); // not closed string
+    doTestUnquoteDartString("r'''", "", 4, 4); // not closed string
+    doTestUnquoteDartString("r\"\"\"", "", 4, 4); // not closed string
+    doTestUnquoteDartString("r'''''", "''", 4, 6); // not closed string
+    doTestUnquoteDartString("r\"\"\"\"", "\"", 4, 5); // not closed string
+    doTestUnquoteDartString("'''", "", 3, 3); // not closed string
+    doTestUnquoteDartString("\"\"\"", "", 3, 3); // not closed string
+    doTestUnquoteDartString("'''''", "''", 3, 5); // not closed string
+    doTestUnquoteDartString("\"\"\"\"", "\"", 3, 4); // not closed string
+    doTestUnquoteDartString("'", "", 1, 1); // not closed string
+    doTestUnquoteDartString("\"", "", 1, 1); // not closed string
+    doTestUnquoteDartString("'a", "a", 1, 2); // not closed string
+    doTestUnquoteDartString("\"a", "a", 1, 2); // not closed string
+    doTestUnquoteDartString("r'", "", 2, 2); // not closed string
+    doTestUnquoteDartString("r\"", "", 2, 2); // not closed string
+    doTestUnquoteDartString("r'a", "a", 2, 3); // not closed string
+    doTestUnquoteDartString("r\"a", "a", 2, 3); // not closed string
+    doTestUnquoteDartString("''", "", 1, 1);
+    doTestUnquoteDartString("\"\"", "", 1, 1);
+    doTestUnquoteDartString("''''''", "", 3, 3);
+    doTestUnquoteDartString("\"\"\"\"\"\"", "", 3, 3);
+    doTestUnquoteDartString("r''", "", 2, 2);
+    doTestUnquoteDartString("r\"\"", "", 2, 2);
+    doTestUnquoteDartString("r''''''", "", 4, 4);
+    doTestUnquoteDartString("r\"\"\"\"\"\"", "", 4, 4);
+    doTestUnquoteDartString("r'''a'''", "a", 4, 5);
+    doTestUnquoteDartString("r\"\"\"a\"\"\"", "a", 4, 5);
+    doTestUnquoteDartString("r'a'", "a", 2, 3);
+    doTestUnquoteDartString("r\"a\"", "a", 2, 3);
+    doTestUnquoteDartString("'''a'''", "a", 3, 4);
+    doTestUnquoteDartString("\"\"\"a\"\"\"", "a", 3, 4);
+    doTestUnquoteDartString("'abc'", "abc", 1, 4);
+    doTestUnquoteDartString("\"abc\"", "abc", 1, 4);
   }
 
   public void testDebuggerErrorText() throws Exception {

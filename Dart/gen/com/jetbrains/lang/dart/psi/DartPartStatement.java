@@ -16,6 +16,4 @@ public interface DartPartStatement extends DartUriBasedDirective {
   @NotNull
   String getUriString();
 
-  int getUriStringOffset();
-
 }

@@ -10,6 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 
 public class DartUriElementImpl extends DartUriElementBase implements DartUriElement {
 
@@ -17,8 +19,12 @@ public class DartUriElementImpl extends DartUriElementBase implements DartUriEle
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitUriElement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitUriElement(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -26,6 +32,11 @@ public class DartUriElementImpl extends DartUriElementBase implements DartUriEle
   @NotNull
   public DartStringLiteralExpression getStringLiteralExpression() {
     return findNotNullChildByClass(DartStringLiteralExpression.class);
+  }
+
+  @NotNull
+  public Pair<String, TextRange> getUriStringAndItsRange() {
+    return DartPsiImplUtil.getUriStringAndItsRange(this);
   }
 
 }

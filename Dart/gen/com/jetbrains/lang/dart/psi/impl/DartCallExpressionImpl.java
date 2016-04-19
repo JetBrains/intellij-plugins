@@ -17,8 +17,12 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitCallExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCallExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

@@ -17,8 +17,12 @@ public class DartVarInitImpl extends DartPsiCompositeElementImpl implements Dart
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitVarInit(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitVarInit(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

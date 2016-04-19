@@ -17,8 +17,12 @@ public class DartTypeListImpl extends DartPsiCompositeElementImpl implements Dar
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitTypeList(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTypeList(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

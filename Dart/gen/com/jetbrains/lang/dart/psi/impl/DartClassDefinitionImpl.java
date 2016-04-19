@@ -17,8 +17,12 @@ public class DartClassDefinitionImpl extends AbstractDartPsiClass implements Dar
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitClassDefinition(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitClassDefinition(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

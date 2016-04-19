@@ -17,7 +17,7 @@ public class DartPubUpgradeAction extends DartPubActionBase {
   }
 
   @Nullable
-  protected String[] calculatePubParameters(final Project project) {
+  protected String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
     return new String[]{"upgrade"};
   }
 }

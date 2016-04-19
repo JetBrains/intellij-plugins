@@ -15,7 +15,7 @@ public class DartPubCacheRepairAction extends DartPubActionBase {
   }
 
   @Nullable
-  protected String[] calculatePubParameters(final Project project) {
+  protected String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
     final int choice = Messages.showOkCancelDialog(project, DartBundle.message("dart.pub.cache.repair.message"),
                                                    DartBundle.message("dart.pub.cache.repair.title"), Messages.getWarningIcon());
     return choice == Messages.OK ? new String[]{"cache", "repair"} : null;

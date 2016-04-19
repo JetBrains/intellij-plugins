@@ -17,8 +17,12 @@ public class DartPartStatementImpl extends DartPsiCompositeElementImpl implement
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitPartStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPartStatement(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -37,10 +41,6 @@ public class DartPartStatementImpl extends DartPsiCompositeElementImpl implement
   @NotNull
   public String getUriString() {
     return DartPsiImplUtil.getUriString(this);
-  }
-
-  public int getUriStringOffset() {
-    return DartPsiImplUtil.getUriStringOffset(this);
   }
 
 }

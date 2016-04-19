@@ -53,8 +53,7 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
     if (isValid(containingFile)) {
       file = containingFile.getVirtualFile();
       sourceElement.set(containingFile);
-    }
-    else {
+    } else {
       return false;
     }
 
@@ -75,17 +74,33 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
       try {
         URL url = new URL(urlStr);
         serverUrl = url.getProtocol() + "://" + url.getAuthority();
-      } catch (MalformedURLException e) {
-        LOG.warn(CfmlBundle.message("cfml.producer.warn.url") );
+      }
+      catch (MalformedURLException e) {
+        LOG.error(CfmlBundle.message("cfml.producer.error.url", urlStr));
         return false;
       }
-    } else {    // if default configuration is not defined
+    }
+    else {    // if default configuration is not defined
       serverUrl = DEFAULT_HOST;
       configuration.setFromDefaultHost(true);
     }
 
     String path = buildPageUrl(context, file);
-    params.setUrl(serverUrl + path);
+
+    //check that serverUrl ends with '/' and fix it if neccessary
+    if (StringUtil.endsWith(serverUrl, "/") && !StringUtil.startsWith(path, "/")) {
+      params.setUrl(serverUrl + path);
+    }
+    else if (!StringUtil.endsWith(serverUrl, "/") && !StringUtil.startsWith(path, "/")) {
+      params.setUrl(serverUrl + "/" + path);
+    }
+    else if (!StringUtil.endsWith(serverUrl, "/") && StringUtil.startsWith(path, "/")) {
+      params.setUrl(serverUrl + path);
+    }
+    else if (StringUtil.endsWith(serverUrl, "/") && StringUtil.startsWith(path, "/")) {
+      params.setUrl(serverUrl + path.substring(1, path.length()));
+    }
+
     configuration.setName(generateName(containingFile));
     return true;
   }
@@ -120,16 +135,17 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
     final PsiElement anchor = location.getPsiElement();
     final PsiFile containingFile = anchor.getContainingFile();
     if (isValid(containingFile)) {
-
       final String path;
       path = buildPageUrl(context, containingFile.getVirtualFile());
       URL url;
+      final String urlFromRunnerParameters = configuration.getRunnerParameters().getUrl();
+      if (urlFromRunnerParameters.isEmpty()) return false;
       try {
-        url = new URL(configuration.getRunnerParameters().getUrl());
+        url = new URL(urlFromRunnerParameters);
         return StringUtil.equals(url.getPath(), path);
       }
       catch (MalformedURLException e) {
-        LOG.warn(CfmlBundle.message("cfml.producer.warn.url"));
+        LOG.error(CfmlBundle.message("cfml.producer.error.url", urlFromRunnerParameters));
       }
     }
     return false;

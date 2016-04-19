@@ -17,8 +17,12 @@ public class DartEnumConstantDeclarationImpl extends AbstractDartComponentImpl i
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitEnumConstantDeclaration(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitEnumConstantDeclaration(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

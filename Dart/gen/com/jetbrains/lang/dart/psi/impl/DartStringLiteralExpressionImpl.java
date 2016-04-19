@@ -11,14 +11,18 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartStringLiteralExpressionImpl extends DartClassReferenceImpl implements DartStringLiteralExpression {
+public class DartStringLiteralExpressionImpl extends DartStringLiteralExpressionBase implements DartStringLiteralExpression {
 
   public DartStringLiteralExpressionImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitStringLiteralExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitStringLiteralExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

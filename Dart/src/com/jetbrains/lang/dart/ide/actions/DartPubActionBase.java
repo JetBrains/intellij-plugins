@@ -96,7 +96,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   protected abstract String getTitle(@NotNull final VirtualFile pubspecYamlFile);
 
   @Nullable
-  protected abstract String[] calculatePubParameters(final Project project);
+  protected abstract String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
@@ -148,7 +148,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     if (!pubFile.isFile()) return;
 
-    final String[] pubParameters = calculatePubParameters(module.getProject());
+    final String[] pubParameters = calculatePubParameters(module.getProject(), pubspecYamlFile);
 
     if (pubParameters != null) {
       final GeneralCommandLine command = new GeneralCommandLine().withWorkDirectory(pubspecYamlFile.getParent().getPath());

@@ -17,8 +17,12 @@ public class DartDefaultCaseImpl extends DartPsiCompositeElementImpl implements 
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitDefaultCase(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitDefaultCase(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

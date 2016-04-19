@@ -17,8 +17,12 @@ public class DartSimpleFormalParameterImpl extends AbstractDartComponentImpl imp
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitSimpleFormalParameter(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSimpleFormalParameter(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

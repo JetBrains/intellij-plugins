@@ -17,8 +17,12 @@ public class DartMetadataImpl extends DartPsiCompositeElementImpl implements Dar
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitMetadata(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMetadata(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

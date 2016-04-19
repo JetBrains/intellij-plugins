@@ -17,8 +17,12 @@ public class DartMultiplicativeExpressionImpl extends DartOperatorExpressionImpl
     super(node);
   }
 
+  public void accept(@NotNull DartVisitor visitor) {
+    visitor.visitMultiplicativeExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMultiplicativeExpression(this);
+    if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 

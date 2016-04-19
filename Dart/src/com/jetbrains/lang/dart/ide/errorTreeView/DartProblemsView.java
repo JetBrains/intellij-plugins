@@ -16,6 +16,7 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -60,7 +61,10 @@ public class DartProblemsView {
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
     public void run() {
-      ProjectView.getInstance(myProject).refresh(); // refresh red waves managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
+      if (ProjectViewPane.ID.equals(ProjectView.getInstance(myProject).getCurrentViewId())) {
+        // refresh red squiggles managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
+        ProjectView.getInstance(myProject).refresh();
+      }
 
       final Map<String, List<AnalysisError>> filePathToErrors;
       synchronized (myLock) {

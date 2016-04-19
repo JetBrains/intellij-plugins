@@ -1,6 +1,5 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
@@ -69,6 +68,6 @@ public class KarmaRunSettingsSerializationUtil {
                                                         settings.getKarmaPackageDirSystemIndependentPath());
     }
     JDOMExternalizerUtil.addElementWithValueAttribute(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
-    EnvironmentVariablesComponent.writeExternal(element, settings.getEnvData().getEnvs());
+    settings.getEnvData().writeExternal(element);
   }
 }
