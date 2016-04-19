@@ -1,13 +1,16 @@
 package training.check;
 
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.refactoring.rename.inplace.InplaceRefactoring;
 
 /**
- * Created by karashevich on 24/11/15.
+ * Created by karashevich on 21/08/15.
  */
-public class CheckFindBar implements Check{
-
+public class CheckRefactoringBasics implements Check{
 
     Project project;
     Editor editor;
@@ -20,16 +23,16 @@ public class CheckFindBar implements Check{
 
     @Override
     public void before() {
-
     }
 
     @Override
     public boolean check() {
-        return (editor.getHeaderComponent() == null);
+        return InplaceRefactoring.getActiveInplaceRenamer(editor) == null;
     }
 
     @Override
     public boolean listenAllKeys() {
-        return false;
+        return true;
     }
+
 }

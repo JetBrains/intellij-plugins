@@ -1,5 +1,7 @@
 package training.learn;
 
+import com.intellij.ide.IdeEventQueue;
+import com.intellij.lang.documentation.DocumentationUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
@@ -9,13 +11,23 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher;
+import com.intellij.openapi.options.ex.GlassPanel;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.openapi.wm.IdeGlassPane;
+import com.intellij.openapi.wm.impl.IdeGlassPaneImpl;
 import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.annotations.Nullable;
 import training.check.Check;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by karashevich on 18/12/14.
@@ -32,6 +44,7 @@ public class ActionsRecorder implements Disposable {
 
     private DocumentListener myDocumentListener;
     private AnActionListener myAnActionListener;
+    private KeyListener myKeyListener;
 
     private boolean disposed = false;
     private Runnable doWhenDone;
@@ -46,14 +59,14 @@ public class ActionsRecorder implements Disposable {
         this.doWhenDone = null;
         this.editor = editor;
 
-        //TODO: add disposer to ActionRecorder
-//        Disposer.register(editor, this);
+        Disposer.register(project, this);
     }
 
     @Override
     public void dispose() {
         removeListeners(document, ActionManager.getInstance());
         disposed = true;
+        Disposer.dispose(this);
     }
 
     public void startRecording(final Runnable doWhenDone){
@@ -87,8 +100,10 @@ public class ActionsRecorder implements Disposable {
     public void startRecording(final Runnable doWhenDone, final @Nullable String actionId, @Nullable Check check) throws Exception {
         final String[] stringArray = {actionId};
         startRecording(doWhenDone, stringArray, check);
-
     }
+
+
+
     public void startRecording(final Runnable doWhenDone, final String[] actionIdArray, @Nullable Check check) throws Exception {
         if (check != null) this.check = check;
         if (disposed) return;
@@ -165,7 +180,8 @@ public class ActionsRecorder implements Disposable {
 
                 if(triggerQueue.size() == 0) {
                     if (isTaskSolved(document, target)) {
-                        actionManager.removeAnActionListener(this);
+//                        actionManager.removeAnActionListener(this);
+                        removeListeners(document, actionManager);
                         if (doWhenDone != null) {
                             dispose();
                             doWhenDone.run();
@@ -177,7 +193,8 @@ public class ActionsRecorder implements Disposable {
                         triggerQueue.poll();
                     } else if (triggerQueue.size() == 1) {
                         if (isTaskSolved(document, target)) {
-                            actionManager.removeAnActionListener(this);
+//                            actionManager.removeAnActionListener(this);
+                            removeListeners(document, actionManager);
                             if (doWhenDone != null) {
                                 dispose();
                                 doWhenDone.run();
@@ -191,6 +208,7 @@ public class ActionsRecorder implements Disposable {
 
             @Override
             public void beforeEditorTyping(char c, DataContext dataContext) {
+                System.out.println("test");
             }
         };
 
@@ -200,7 +218,6 @@ public class ActionsRecorder implements Disposable {
 
             @Override
             public void beforeDocumentChange(DocumentEvent event) {
-
             }
 
             @Override
@@ -212,15 +229,7 @@ public class ActionsRecorder implements Disposable {
                             PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (triggerQueue.size() == 0) {
-                                        if (isTaskSolved(document, target)) {
-                                            removeListeners(document, actionManager);
-                                            if (doWhenDone != null)
-                                                dispose();
-                                            assert doWhenDone != null;
-                                            doWhenDone.run();
-                                        }
-                                    }
+                                    doWhenTriggerIsEmptyAndTaskSolved(actionManager);
                                 }
                             });
                         }
@@ -229,8 +238,29 @@ public class ActionsRecorder implements Disposable {
             }
         };
 
+
+        IdeEventQueue.EventDispatcher myEventDispatcher = awtEvent -> {
+            if (awtEvent instanceof KeyEvent) {
+                doWhenTriggerIsEmptyAndTaskSolved(actionManager);
+            } return false;
+        };
+
+
+        if (check != null && check.listenAllKeys()) IdeEventQueue.getInstance().addDispatcher(myEventDispatcher, this);
         document.addDocumentListener(myDocumentListener);
         actionManager.addAnActionListener(myAnActionListener);
+    }
+
+    private void doWhenTriggerIsEmptyAndTaskSolved(ActionManager actionManager) {
+        if (triggerQueue.size() == 0) {
+            if (isTaskSolved(document, target)) {
+                removeListeners(document, actionManager);
+                if (doWhenDone != null)
+                    dispose();
+                assert doWhenDone != null;
+                doWhenDone.run();
+            }
+        }
     }
 
 
@@ -249,6 +279,8 @@ public class ActionsRecorder implements Disposable {
     private void removeListeners(Document document, ActionManager actionManager){
         if (myAnActionListener != null) actionManager.removeAnActionListener(myAnActionListener);
         if (myDocumentListener != null) document.removeDocumentListener(myDocumentListener);
+        if (myKeyListener != null) editor.getComponent().getRootPane().getGlassPane().removeKeyListener(myKeyListener);
+        myKeyListener = null;
         myAnActionListener = null;
         myDocumentListener = null;
     }
