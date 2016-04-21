@@ -470,29 +470,6 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "");
   }
 
-  public void testEnterBetweenEmptyStringQuotes() {
-    // Checks single quotes.
-    doTypingTest('\n',
-                 "var x = '<caret>'",
-                 "var x = ''\n" +
-                 "    '<caret>'");
-  }
-
-  public void testEnterBetweenStringQuotes() {
-    // Checks single quotes.
-    doTypingTest('\n',
-                 "var x = 'content<caret>'",
-                 "var x = 'content'\n" +
-                 "    '<caret>'");
-  }
-
-  public void testEnterMidString() {
-    doTypingTest('\n',
-                 "var x = 'content<caret>and stuff'",
-                 "var x = 'content'\n" +
-                 "    '<caret>and stuff'");
-  }
-
   public void testAutoWrapString() {
     CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
     settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
@@ -523,34 +500,6 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "    '\\t8901234567890123'");
   }
 
-  public void testAutoIndentMultilineString() {
-    doTypingTest('\n',
-                 "var q = '''<caret>",
-                 "var q = '''\n" +
-                 "<caret>");
-  }
-
-  public void testEnterMidRawString() {
-    doTypingTest('\n',
-                 "var x = r'content<caret>and stuff'",
-                 "var x = r'content'\n" +
-                 "    r'<caret>and stuff'");
-  }
-
-  public void testEnterMidInterpolatedString() {
-    doTypingTest('\n',
-                 "var x = 'content<caret>and $some stuff'",
-                 "var x = 'content'\n" +
-                 "    '<caret>and $some stuff'");
-  }
-
-  public void testEnterBetweenInterpolations() {
-    doTypingTest('\n',
-                 "var a = '$x and <caret> also $y';",
-                 "var a = '$x and '\n" +
-                 "    '<caret> also $y';");
-  }
-
   public void testEnterBetweenInterpolationsHtml() {
     doTypingTest(HtmlFileType.INSTANCE, '\n',
                  "<script type=\"application/dart\">\n" +
@@ -561,50 +510,6 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  // 8 spaces continuation indent is taken from HTML language instead of Dart's 4 spaces. Fix expected result when it is fixed in Platform
                  "        '<caret> also $y';\n" +
                  "</script>");
-  }
-
-  public void testEnterBeforeInterpolation() {
-    doTypingTest('\n',
-                 "var a = \"see <caret>$y\";",
-                 "var a = \"see \"\n" +
-                 "    \"<caret>$y\";");
-  }
-
-  public void testEnterBeforeInterpolationSequence() {
-    doTypingTest('\n',
-                 "var a = \"see <caret>$y${z}\";",
-                 "var a = \"see \"\n" +
-                 "    \"<caret>$y${z}\";");
-  }
-
-  public void testEnterBeforeInterpolatedExpr() {
-    doTypingTest('\n',
-                 "var a = 'see <caret> also ${y}';",
-                 "var a = 'see '\n" +
-                 "    '<caret> also ${y}';");
-  }
-
-  public void testEnterInMultilineString() {
-    doTypingTest('\n',
-                 "var a = '''some<caret>content''';",
-                 "var a = '''some\n" +
-                 "<caret>content''';");
-  }
-
-  public void testEnterInRawMultilineString() {
-    doTypingTest('\n',
-                 "var a = r'''some<caret>content''';",
-                 "var a = r'''some\n" +
-                 "<caret>content''';");
-  }
-
-  public void testEnterBeforeEmbeddedInterpolation() {
-    // We are not going to address the whole issue of
-    // "how do I format an entire functional program written in an interpolation expression"
-    doTypingTest('\n',
-                 "var b = \"see ${'${<caret>a}'} and more\";",
-                 "var b = \"see ${'${\n" +
-                 "    a}'} and more\";");
   }
 
   public void testEnterAfterEqualsVar() {
@@ -679,10 +584,41 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
-  public void testRawStringAfterR() {
-    doTypingTest('\n',
-                 "var a = r<caret>'a';",
-                 "var a = r\n" +
-                 "'a';");
+  public void testEnterInMultilineString() {
+    doTypingTest('\n', "var a = <caret>r''' ''';", "var a = \n<caret>r''' ''';"); // indent should be here, need to fix formatter
+    doTypingTest('\n', "var a = r<caret>''' ''';", "var a = r\n<caret>''' ''';"); // indent should be here, need to fix formatter
+    doTypingTest('\n', "var a = r'<caret>'' ''';", "var a = r'\n    <caret>'' ''';");
+    doTypingTest('\n', "var a = r''<caret>' ''';", "var a = r''\n    <caret>' ''';");
+    doTypingTest('\n', "var a = r'''<caret>''';", "var a = r'''\n<caret>''';");
+    doTypingTest('\n', "var a = '''<caret>''';", "var a = '''\n<caret>''';");
+    doTypingTest('\n', "var a = \"\" r\"\"\"x<caret>\"\"\";", "var a = \"\" r\"\"\"x\n<caret>\"\"\";");
+    doTypingTest('\n', "var a = '' \"\"\"<caret>y\"\"\";", "var a = '' \"\"\"\n<caret>y\"\"\";");
+  }
+
+  public void testEnterInRawString() {
+    doTypingTest('\n', "var a = '''x''' <caret>r'a';", "var a = '''x''' \n    r'a';");
+    doTypingTest('\n', "var a = \"\" r<caret>'a'\"\";", "var a = \"\" r\n<caret>'a'\"\";");
+    doTypingTest('\n', "var a = r\"<caret>\";", "var a = r\"\"\n    r\"<caret>\";");
+    doTypingTest('\n', "var a = r'<caret>$a", "var a = r''\n    r'<caret>$a");
+    doTypingTest('\n', "var a = r\"$<caret>a", "var a = r\"$\"\n    r\"<caret>a");
+    doTypingTest('\n', "var a = r''<caret>r'';", "var a = r''\n    <caret>r'';");
+  }
+
+  public void testEnterInString() {
+    doTypingTest('\n', "var a = ''<caret>\"\";", "var a = ''\n    <caret>\"\";");
+    doTypingTest('\n', "var a = \"\"'<caret>'\"\";", "var a = \"\"''\n    '<caret>'\"\";");
+    doTypingTest('\n', "var a = \"<caret>$a\"", "var a = \"\"\n    \"<caret>$a\"");
+    doTypingTest('\n', "var a = '$<caret>a", "var a = '$\n<caret>a");
+    doTypingTest('\n', "var a = '$a<caret>';", "var a = '$a'\n    '<caret>';");
+    doTypingTest('\n', "var a = '$x a<caret>b$x${y}';", "var a = '$x a'\n    '<caret>b$x${y}';");
+    doTypingTest('\n', "var a = \"<caret>${ab}\";", "var a = \"\"\n    \"<caret>${ab}\";");
+    doTypingTest('\n', "var a = '$<caret>{ab}';", "var a = '$\n<caret>{ab}';");
+    doTypingTest('\n', "var a = '${<caret>ab}';", "var a = '${\n    <caret>ab}';");
+    doTypingTest('\n', "var a = '${a<caret>b}';", "var a = '${a\n<caret>b}';");
+    doTypingTest('\n', "var a = '${ab<caret>}';", "var a = '${ab\n<caret>}';");
+    doTypingTest('\n', "var a = '${ab}<caret>';", "var a = '${ab}'\n    '<caret>';");
+    doTypingTest('\n', "var a = '$a<caret>$b';", "var a = '$a'\n    '<caret>$b';");
+    doTypingTest('\n', "var a = '$a i <caret> i $b';", "var a = '$a i '\n    '<caret> i $b';");
+    doTypingTest('\n', "var a = '${a}<caret>${b}';", "var a = '${a}'\n    '<caret>${b}';");
   }
 }

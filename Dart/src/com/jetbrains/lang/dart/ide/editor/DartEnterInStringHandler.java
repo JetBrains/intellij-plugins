@@ -12,8 +12,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartLanguage;
-import com.jetbrains.lang.dart.DartTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
 public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
 
@@ -32,42 +34,54 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
     if (psiAtOffset == null || (psiOffset = psiAtOffset.getTextRange().getStartOffset()) > caretOffset) {
       return Result.Continue;
     }
-    Document document = editor.getDocument();
-    ASTNode token = psiAtOffset.getNode();
-    IElementType type = token.getElementType();
-    if (type == DartTokenTypes.OPEN_QUOTE && psiOffset == caretOffset) {
-      return Result.Continue;
+
+    ASTNode node = psiAtOffset.getNode();
+    IElementType nodeType = node.getElementType();
+
+    if ((nodeType == SHORT_TEMPLATE_ENTRY_START || nodeType == LONG_TEMPLATE_ENTRY_START) && caretOffset == psiOffset) {
+      node = node.getTreeParent();
+      nodeType = node.getElementType();
     }
-    if (type == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
+
+    if (nodeType == RAW_TRIPLE_QUOTED_STRING && caretOffset >= psiOffset + "r'''".length()) {
       return Result.DefaultSkipIndent; // Multiline string gets no indent
     }
-    if (type == DartTokenTypes.RAW_SINGLE_QUOTED_STRING && caretOffset >= psiOffset + "r'".length()) {
-      char quote = token.getText().charAt(1);
-      breakString("r" + quote, String.valueOf(quote), caretOffsetRef, caretAdvanceRef, document);
+
+    if (nodeType == RAW_SINGLE_QUOTED_STRING && caretOffset >= psiOffset + "r'".length()) {
+      char quote = node.getText().charAt(1);
+      breakString("r" + quote, String.valueOf(quote), caretOffsetRef, caretAdvanceRef, editor.getDocument());
       return Result.Default;
     }
-    if ((token = token.getTreeParent()) != null) {
-      type = token.getElementType();
-      if (type == DartTokenTypes.SHORT_TEMPLATE_ENTRY || type == DartTokenTypes.LONG_TEMPLATE_ENTRY) {
-        token = token.getTreeParent();
-        if (token == null) return Result.Continue;
-        type = token.getElementType();
-      }
-      if (type == DartTokenTypes.STRING_LITERAL_EXPRESSION) {
-        token = token.getFirstChildNode();
-        if (token == null) return Result.Continue; // Can't happen with current grammar.
-        type = token.getElementType();
-        if (type == DartTokenTypes.OPEN_QUOTE) {
-          String quote = token.getText().trim();
-          if (quote.length() == 1) {
-            breakString(quote, quote, caretOffsetRef, caretAdvanceRef, document);
-            return Result.Default;
-          }
+
+    if (nodeType == REGULAR_STRING_PART ||
+        nodeType == CLOSING_QUOTE ||
+        nodeType == SHORT_TEMPLATE_ENTRY ||
+        nodeType == LONG_TEMPLATE_ENTRY) {
+      final String openingQuoteText = getOpeningQuoteText(node);
+      if (openingQuoteText != null) {
+        if (openingQuoteText.length() == 1) {
+          breakString(openingQuoteText, openingQuoteText, caretOffsetRef, caretAdvanceRef, editor.getDocument());
+          return Result.Default;
+        }
+        else {
           return Result.DefaultSkipIndent; // Multiline string gets no indent
         }
       }
     }
+
     return Result.Continue;
+  }
+
+  @Nullable
+  private static String getOpeningQuoteText(@NotNull final ASTNode node) {
+    ASTNode prev = node.getTreePrev();
+    while (prev != null) {
+      if (prev.getElementType() == OPEN_QUOTE) {
+        return prev.getText();
+      }
+      prev = prev.getTreePrev();
+    }
+    return null;
   }
 
   private static void breakString(@NotNull final String startQuote,
