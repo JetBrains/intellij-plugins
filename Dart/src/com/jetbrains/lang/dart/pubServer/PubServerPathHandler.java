@@ -33,7 +33,7 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     final Pair<VirtualFile, String> servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path);
     if (servedDirAndPathForPubServer == null) return false;
 
-    PubServerManager.getInstance(project).send(context, request, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
+    PubServerManager.getInstance(project).send(context.channel(), request, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
     return true;
   }
 
