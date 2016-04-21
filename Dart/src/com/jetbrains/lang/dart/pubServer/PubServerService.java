@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
 import com.intellij.util.net.NetKt;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
@@ -35,13 +34,16 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.*;
 import io.netty.util.ReferenceCounted;
+import io.netty.util.internal.PlatformDependent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 import org.jetbrains.builtInWebServer.NetService;
 import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.ide.PooledThreadExecutor;
 import org.jetbrains.io.*;
 
 import javax.swing.*;
@@ -49,11 +51,12 @@ import javax.swing.event.HyperlinkEvent;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Deque;
 import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.jetbrains.io.NettyUtil.nioClientBootstrap;
 
 final class PubServerService extends NetService {
   private static final Logger LOG = Logger.getInstance(PubServerService.class.getName());
@@ -63,26 +66,32 @@ final class PubServerService extends NetService {
 
   private volatile VirtualFile firstServedDir;
 
-  private final Bootstrap bootstrap = NettyUtil.nioClientBootstrap();
+  private final Bootstrap bootstrap = nioClientBootstrap(new NioEventLoopGroup(1, PooledThreadExecutor.INSTANCE));
 
-  private final ConcurrentMap<Channel, ChannelHandlerContext> serverToClientContext = ContainerUtil.newConcurrentMap();
-  // client context could point to several server channels (because client connected to IDEA server, not to proxied server)
-  private final MultiMap<ChannelHandlerContext, Channel> clientContextToServerChannels = MultiMap.createConcurrentSet();
-
-  private final Set<Channel> freeServerChannels = ContainerUtil.newConcurrentSet();
-  private final ChannelInboundHandlerAdapter clientChannelStateHandler = new ClientChannelStateHandler();
+  private final ConcurrentMap<Channel, Channel> serverToClientChannel = ContainerUtil.newConcurrentMap();
   private final ChannelRegistrar serverChannelRegistrar = new ChannelRegistrar();
 
-  private final ConcurrentMap<VirtualFile, InetSocketAddress> servedDirToSocketAddress = ContainerUtil.newConcurrentMap();
+  private final ConcurrentMap<VirtualFile, ServerInfo> servedDirToSocketAddress = ContainerUtil.newConcurrentMap();
+
+  private static class ServerInfo {
+    private final InetSocketAddress address;
+    private final Deque<Channel> freeServerChannels = PlatformDependent.newConcurrentDeque();
+
+    private ServerInfo(InetSocketAddress address) {
+      this.address = address;
+    }
+  }
 
   private final ChannelFutureListener serverChannelCloseListener = future -> {
     Channel channel = future.channel();
-    freeServerChannels.remove(channel);
+    ServerInfo serverInfo = getServerInfo(channel);
+    if (serverInfo != null) {
+      serverInfo.freeServerChannels.remove(channel);
+    }
 
-    ChannelHandlerContext clientContext = serverToClientContext.remove(channel);
-    if (clientContext != null) {
-      clientContextToServerChannels.remove(clientContext, channel);
-      sendBadGateway(clientContext.channel());
+    Channel clientChannel = serverToClientChannel.remove(channel);
+    if (clientChannel != null) {
+      sendBadGateway(clientChannel);
     }
   };
 
@@ -96,6 +105,16 @@ final class PubServerService extends NetService {
         channel.pipeline().addLast(new PubServeChannelHandler(), ChannelExceptionHandler.getInstance());
       }
     });
+  }
+
+  @Nullable
+  private ServerInfo getServerInfo(@NotNull Channel channel) {
+    for (ServerInfo serverInstanceInfo : servedDirToSocketAddress.values()) {
+      if (channel.remoteAddress().equals(serverInstanceInfo.address)) {
+        return serverInstanceInfo;
+      }
+    }
+    return null;
   }
 
   @Override
@@ -127,21 +146,21 @@ final class PubServerService extends NetService {
     return getProcessHandler().has() && !getProcessHandler().getResult().isProcessTerminated();
   }
 
-  public void sendToPubServer(@NotNull final ChannelHandlerContext clientContext,
+  public void sendToPubServer(@NotNull final Channel clientChannel,
                               @NotNull final FullHttpRequest clientRequest,
                               @NotNull final VirtualFile servedDir,
                               @NotNull final String pathForPubServer) {
     clientRequest.retain();
 
     if (getProcessHandler().has()) {
-      sendToServer(servedDir, clientContext, clientRequest, pathForPubServer);
+      sendToServer(servedDir, clientChannel, clientRequest, pathForPubServer);
     }
     else {
       firstServedDir = servedDir;
 
       getProcessHandler().get()
-        .done(osProcessHandler -> sendToServer(servedDir, clientContext, clientRequest, pathForPubServer))
-        .rejected(throwable -> sendBadGateway(clientContext.channel()));
+        .done(osProcessHandler -> sendToServer(servedDir, clientChannel, clientRequest, pathForPubServer))
+        .rejected(throwable -> sendBadGateway(clientChannel));
     }
   }
 
@@ -170,14 +189,14 @@ final class PubServerService extends NetService {
                                   @NotNull final OSProcessHandler processHandler,
                                   @NotNull final Consumer<String> errorOutputConsumer) {
     InetSocketAddress firstPubServerAddress = NetKt.loopbackSocketAddress(port);
-    InetSocketAddress old = servedDirToSocketAddress.put(firstServedDir, firstPubServerAddress);
+    ServerInfo old = servedDirToSocketAddress.put(firstServedDir, new ServerInfo(firstPubServerAddress));
     LOG.assertTrue(old == null);
 
     super.connectToProcess(promise, port, processHandler, errorOutputConsumer);
   }
 
   @SuppressWarnings({"MethodMayBeStatic", "UnusedParameters"})
-  private void serveDirAndSendRequest(@NotNull final ChannelHandlerContext clientContext,
+  private void serveDirAndSendRequest(@NotNull final Channel clientChannel,
                                       @NotNull final FullHttpRequest clientRequest,
                                       @NotNull final VirtualFile servedDir,
                                       @NotNull final String pathForPubServer) {
@@ -194,20 +213,22 @@ final class PubServerService extends NetService {
   protected void closeProcessConnections() {
     servedDirToSocketAddress.clear();
 
-    ChannelHandlerContext[] clientContexts;
+    Channel[] clientContexts;
     try {
-      Collection<ChannelHandlerContext> clients = serverToClientContext.values();
-      clientContexts = clients.toArray(new ChannelHandlerContext[clients.size()]);
-      freeServerChannels.clear();
-      serverToClientContext.clear();
+      Collection<Channel> clientChannels = serverToClientChannel.values();
+      clientContexts = clientChannels.toArray(new Channel[clientChannels.size()]);
+      for (ServerInfo serverInstanceInfo : servedDirToSocketAddress.values()) {
+        serverInstanceInfo.freeServerChannels.clear();
+      }
+      serverToClientChannel.clear();
     }
     finally {
       serverChannelRegistrar.close();
     }
 
-    for (ChannelHandlerContext context : clientContexts) {
+    for (Channel channel : clientContexts) {
       try {
-        sendBadGateway(context.channel());
+        sendBadGateway(channel);
       }
       catch (Exception e) {
         LOG.error(e);
@@ -239,77 +260,63 @@ final class PubServerService extends NetService {
     });
   }
 
+  @SuppressWarnings("UseOfSystemOutOrSystemErr")
   void sendToServer(@NotNull final VirtualFile servedDir,
-                    @NotNull final ChannelHandlerContext clientContext,
+                    @NotNull final Channel clientChannel,
                     @NotNull final FullHttpRequest clientRequest,
                     @NotNull final String pathToPubServe) {
-    InetSocketAddress serverAddress = servedDirToSocketAddress.get(servedDir);
-    if (serverAddress == null) {
-      serveDirAndSendRequest(clientContext, clientRequest, servedDir, pathToPubServe);
+    ServerInfo serverInstanceInfo = servedDirToSocketAddress.get(servedDir);
+    if (serverInstanceInfo == null) {
+      serveDirAndSendRequest(clientChannel, clientRequest, servedDir, pathToPubServe);
     }
 
-    Channel serverChannel = findActiveServerChannel(clientContext, serverAddress);
-    if (serverChannel == null) {
-      serverAddress = servedDirToSocketAddress.get(servedDir);
-      if (serverAddress == null) {
-        serveDirAndSendRequest(clientContext, clientRequest, servedDir, pathToPubServe);
-      }
+    System.out.println("Get " + clientRequest.uri());
 
-      serverChannel = findFreeServerChannel(serverAddress);
-      if (serverChannel != null) {
-        clientContextToServerChannels.putValue(clientContext, serverChannel);
-      }
-    }
-
+    Channel serverChannel = findFreeServerChannel(serverInstanceInfo.freeServerChannels);
     if (serverChannel == null) {
-      connect(bootstrap, serverAddress, serverChannel1 -> {
+      System.out.println("New server channel");
+      connect(bootstrap, serverInstanceInfo.address, serverChannel1 -> {
         if (serverChannel1 == null) {
-          sendBadGateway(clientContext.channel());
+          sendBadGateway(clientChannel);
         }
         else {
           serverChannel1.closeFuture().addListener(serverChannelCloseListener);
-          ChannelHandlerContext oldClientContext = serverToClientContext.put(serverChannel1, clientContext);
-          LOG.assertTrue(oldClientContext == null);
-          clientContextToServerChannels.putValue(clientContext, serverChannel1);
-
-          clientContext.channel().pipeline().addLast(clientChannelStateHandler);
-          sendToServer(clientRequest, pathToPubServe, serverChannel1);
+          sendToServer(clientChannel, clientRequest, pathToPubServe, serverChannel1);
         }
       });
     }
     else {
-      sendToServer(clientRequest, pathToPubServe, serverChannel);
+      System.out.println("Reuse server channel");
+      sendToServer(clientChannel, clientRequest, pathToPubServe, serverChannel);
     }
   }
 
   @Nullable
-  private Channel findActiveServerChannel(@NotNull ChannelHandlerContext clientContext, @NotNull InetSocketAddress serverAddress) {
-    for (Channel serverChannel : clientContextToServerChannels.get(clientContext)) {
-      if (serverChannel.remoteAddress().equals(serverAddress)) {
-        return serverChannel;
+  private static Channel findFreeServerChannel(@NotNull Deque<Channel> freeServerChannels) {
+    while (true) {
+      Channel channel = freeServerChannels.pollLast();
+      if (channel == null) {
+        break;
+      }
+
+      if (channel.isActive()) {
+        return channel;
       }
     }
     return null;
   }
 
-  @Nullable
-  private Channel findFreeServerChannel(@NotNull InetSocketAddress serverAddress) {
-    Iterator<Channel> iterator = freeServerChannels.iterator();
-    if (iterator.hasNext()) {
-      Channel serverChannel = iterator.next();
-      if (serverAddress.getPort() == ((InetSocketAddress)serverChannel.remoteAddress()).getPort()) {
-        iterator.remove();
-        return serverChannel;
-      }
-    }
-    return null;
-  }
+  private void sendToServer(@NotNull final Channel clientChannel, @NotNull FullHttpRequest clientRequest, @NotNull String pathToPubServe, @NotNull Channel serverChannel) {
+    Channel oldClientChannel = serverToClientChannel.put(serverChannel, clientChannel);
+    LOG.assertTrue(oldClientChannel == null);
 
-  private static void sendToServer(@NotNull FullHttpRequest clientRequest, @NotNull String pathToPubServe, @NotNull Channel serverChannel) {
     // duplicate - content will be shared (opposite to copy), so, we use duplicate. see ByteBuf javadoc.
     FullHttpRequest request = clientRequest.duplicate().setUri(pathToPubServe);
+
     // regardless of client, we always keep connection to server
+    request.setProtocolVersion(HttpVersion.HTTP_1_1);
     HttpUtil.setKeepAlive(request, true);
+
     InetSocketAddress serverAddress = (InetSocketAddress)serverChannel.remoteAddress();
     request.headers().set(HttpHeaderNames.HOST, serverAddress.getAddress().getHostAddress() + ':' + serverAddress.getPort());
     serverChannel.writeAndFlush(request);
@@ -323,30 +330,32 @@ final class PubServerService extends NetService {
 
     @Override
     protected void messageReceived(@NotNull ChannelHandlerContext context, @NotNull HttpObject message) throws Exception {
-      ChannelHandlerContext clientContext = serverToClientContext.get(context.channel());
-      if (clientContext != null && clientContext.channel().isActive()) {
-        clientContext.channel().writeAndFlush(message);
-      }
-      else if (message instanceof ReferenceCounted) {
-        ((ReferenceCounted)message).release();
-      }
-    }
-  }
+      Channel serverChannel = context.channel();
+      Channel clientChannel = serverToClientChannel.get(serverChannel);
+      if (clientChannel == null || !clientChannel.isActive()) {
+        // client abort request, so, just close server channel as well and don't try to reuse it
+        serverToClientChannel.remove(serverChannel);
+        serverChannel.close();
 
-  @ChannelHandler.Sharable
-  private class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
-    @Override
-    public void channelInactive(ChannelHandlerContext context) throws Exception {
-      super.channelInactive(context);
-
-      Collection<Channel> serverChannels = clientContextToServerChannels.remove(context);
-      if (!ContainerUtil.isEmpty(serverChannels)) {
-        for (Channel serverChannel : serverChannels) {
-          //noinspection Since15
-          if (serverToClientContext.remove(serverChannel, context)) {
-            freeServerChannels.add(serverChannel);
+        if (message instanceof ReferenceCounted) {
+          ((ReferenceCounted)message).release();
+        }
+      }
+      else {
+        if (message instanceof HttpMessage) {
+          HttpUtil.setKeepAlive(((HttpMessage)message), true);
+        }
+        if (message instanceof LastHttpContent) {
+          serverToClientChannel.remove(serverChannel);
+          ServerInfo serverInfo = getServerInfo(serverChannel);
+          if (serverInfo != null) {
+            // todo sometimes dart pub server stops to repond, so, we don't reuse it for now
+            //serverInfo.freeServerChannels.add(serverChannel);
+            serverChannel.close();
           }
         }
+
+        clientChannel.writeAndFlush(message);
       }
     }
   }
