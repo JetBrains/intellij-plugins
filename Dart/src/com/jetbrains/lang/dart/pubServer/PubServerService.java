@@ -75,17 +75,14 @@ final class PubServerService extends NetService {
 
   private final ConcurrentMap<VirtualFile, InetSocketAddress> servedDirToSocketAddress = ContainerUtil.newConcurrentMap();
 
-  private final ChannelFutureListener serverChannelCloseListener = new ChannelFutureListener() {
-    @Override
-    public void operationComplete(ChannelFuture future) throws Exception {
-      Channel channel = future.channel();
-      freeServerChannels.remove(channel);
+  private final ChannelFutureListener serverChannelCloseListener = future -> {
+    Channel channel = future.channel();
+    freeServerChannels.remove(channel);
 
-      ChannelHandlerContext clientContext = serverToClientContext.remove(channel);
-      if (clientContext != null) {
-        clientContextToServerChannels.remove(clientContext, channel);
-        sendBadGateway(clientContext.channel());
-      }
+    ChannelHandlerContext clientContext = serverToClientContext.remove(channel);
+    if (clientContext != null) {
+      clientContextToServerChannels.remove(clientContext, channel);
+      sendBadGateway(clientContext.channel());
     }
   };
 
@@ -143,18 +140,8 @@ final class PubServerService extends NetService {
       firstServedDir = servedDir;
 
       getProcessHandler().get()
-        .done(new Consumer<OSProcessHandler>() {
-          @Override
-          public void consume(OSProcessHandler osProcessHandler) {
-            sendToServer(servedDir, clientContext, clientRequest, pathForPubServer);
-          }
-        })
-        .rejected(new Consumer<Throwable>() {
-          @Override
-          public void consume(Throwable throwable) {
-            sendBadGateway(clientContext.channel());
-          }
-        });
+        .done(osProcessHandler -> sendToServer(servedDir, clientContext, clientRequest, pathForPubServer))
+        .rejected(throwable -> sendBadGateway(clientContext.channel()));
     }
   }
 
@@ -275,21 +262,18 @@ final class PubServerService extends NetService {
     }
 
     if (serverChannel == null) {
-      connect(bootstrap, serverAddress, new Consumer<Channel>() {
-        @Override
-        public void consume(final Channel serverChannel) {
-          if (serverChannel == null) {
-            sendBadGateway(clientContext.channel());
-          }
-          else {
-            serverChannel.closeFuture().addListener(serverChannelCloseListener);
-            ChannelHandlerContext oldClientContext = serverToClientContext.put(serverChannel, clientContext);
-            LOG.assertTrue(oldClientContext == null);
-            clientContextToServerChannels.putValue(clientContext, serverChannel);
+      connect(bootstrap, serverAddress, serverChannel1 -> {
+        if (serverChannel1 == null) {
+          sendBadGateway(clientContext.channel());
+        }
+        else {
+          serverChannel1.closeFuture().addListener(serverChannelCloseListener);
+          ChannelHandlerContext oldClientContext = serverToClientContext.put(serverChannel1, clientContext);
+          LOG.assertTrue(oldClientContext == null);
+          clientContextToServerChannels.putValue(clientContext, serverChannel1);
 
-            clientContext.channel().pipeline().addLast(clientChannelStateHandler);
-            sendToServer(clientRequest, pathToPubServe, serverChannel);
-          }
+          clientContext.channel().pipeline().addLast(clientChannelStateHandler);
+          sendToServer(clientRequest, pathToPubServe, serverChannel1);
         }
       });
     }
@@ -381,12 +365,7 @@ final class PubServerService extends NetService {
       if (outputType == ProcessOutputTypes.STDERR) {
         final boolean error = event.getText().toLowerCase(Locale.US).contains("error");
 
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            showNotificationIfNeeded(error);
-          }
-        });
+        ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(error));
       }
     }
 
@@ -406,8 +385,8 @@ final class PubServerService extends NetService {
 
       myNotificationAboutErrors = isError; // previous errors are already reported, so reset our flag
 
-      final String message = myNotificationAboutErrors ? DartBundle.message("pub.serve.output.contains.errors")
-                                                       : DartBundle.message("pub.serve.output.contains.warnings");
+      final String message =
+        DartBundle.message(myNotificationAboutErrors ? "pub.serve.output.contains.errors" : "pub.serve.output.contains.warnings");
 
       myNotification = NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener.Adapter() {
         @Override
