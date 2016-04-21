@@ -678,4 +678,11 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "  );\n" +
                  "}");
   }
+
+  public void testRawStringAfterR() {
+    doTypingTest('\n',
+                 "var a = r<caret>'a';",
+                 "var a = r\n" +
+                 "'a';");
+  }
 }

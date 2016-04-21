@@ -41,7 +41,7 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
     if (type == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
       return Result.DefaultSkipIndent; // Multiline string gets no indent
     }
-    if (type == DartTokenTypes.RAW_SINGLE_QUOTED_STRING) {
+    if (type == DartTokenTypes.RAW_SINGLE_QUOTED_STRING && caretOffset >= psiOffset + "r'".length()) {
       char quote = token.getText().charAt(1);
       breakString("r" + quote, String.valueOf(quote), caretOffsetRef, caretAdvanceRef, document);
       return Result.Default;
