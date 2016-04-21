@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -44,7 +45,8 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
       String name = fun.getName();
       JSType qualifiedExpressionType = null;
 
-      JSExpression methodExpression = ((JSCallExpression)JSTypeUtils.getScopeInOriginalTree(myGrandParent).getParent()).getMethodExpression();
+      JSExpression methodExpression =
+        ((JSCallExpression)JSTypeUtils.getScopeInOriginalTree(myGrandParent).getParent()).getMethodExpression();
       if (methodExpression instanceof JSReferenceExpression) {
         JSExpression qualifier = ((JSReferenceExpression)methodExpression).getQualifier();
         if (qualifier != null) {
@@ -62,7 +64,8 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
           myResult = qualifiedExpressionType;
         }
       }
-    } else {
+    }
+    else {
       myResult = createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myParent);
     }
   }
@@ -87,5 +90,29 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     final String type = resolve instanceof JSVariable ? ((JSVariable)resolve).getTypeString() : null;
 
     return type != null && JSResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, type, expression);
+  }
+
+  @Override
+  public void visitJSArgumentList(@NotNull JSArgumentList node) {
+    JSParameterItem param = JSResolveUtil.findParameterForUsedArgument(myParent, node);
+
+    if (param != null) {
+      if (param.isRest()) {
+        findRestParameterExpectedType(param);
+      }
+      else {
+        myResult = param.getType();
+      }
+    }
+  }
+
+  @Override
+  public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
+    if (myGrandParent.getParent() instanceof JSNewExpression) {
+      JSType type = JSResolveUtil.getQualifiedExpressionJSType((JSExpression)myGrandParent.getParent(), myGrandParent.getContainingFile());
+      if (type instanceof JSGenericTypeImpl) {
+        myResult = ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments());
+      }
+    }
   }
 }
