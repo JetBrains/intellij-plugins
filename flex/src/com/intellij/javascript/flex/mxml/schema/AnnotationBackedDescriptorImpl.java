@@ -208,6 +208,14 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       // mxml compiler doesn't inherit function annotations
       initRichTextContentAndCollapseWhiteSpace((JSFunction)originatingElement);
     }
+
+    if (originatingElement instanceof JSAttributeListOwner) {
+      final JSAttribute attribute = findAttr((JSAttributeListOwner)originatingElement, FlexAnnotationNames.PERCENT_PROXY);
+      if (attribute != null && percentProxy == null) {
+        final JSAttributeNameValuePair[] values = attribute.getValues();
+        percentProxy = values.length > 0 ? values[0].getSimpleValue() : "";
+      }
+    }
   }
 
   private void initRichTextContentAndCollapseWhiteSpace(JSAttributeListOwner attributeListOwner) {

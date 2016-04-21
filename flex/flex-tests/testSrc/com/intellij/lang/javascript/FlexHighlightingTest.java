@@ -2479,4 +2479,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_other.as");
   }
 
+  @JSTestOptions({JSTestOption.WithGumboSdk})
+  public void testPercentProxyInOverridden() throws Exception {
+    defaultTest();
+  }
 }
