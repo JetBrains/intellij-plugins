@@ -929,11 +929,16 @@ import flash.events.EventDispatcher;
 [Event(name="mouseDown",type="flash.events.MouseEvent")]
 [Event(name="mouseUp",type="flash.events.MouseEvent")]
 [Event(name="mouseMove",type="flash.events.MouseEvent")]
-public class Sprite extends EventDispatcher{
+public class Sprite extends DisplayObject{
     native public function Sprite():*;
     native public function set buttonMode(value:Boolean):void;
     native public function get name():String;
     native public function set name(value:String):void;
+}
+
+public class DisplayObject extends EventDispatcher{
+    native public function get height():Number;
+    native public function set height(value:Number):void;
 }
 }
 
@@ -1309,6 +1314,9 @@ public class SpriteVisualElement extends Sprite implements IVisualElement{
     public function get id():String{}
     public function set id(value:String):void{}
     public function set depth(value:Number):void{}
+    [PercentProxy("percentHeight")]
+    override public function get height():Number{}
+    override public function set height(value:Number):void{}
 }
 }
 

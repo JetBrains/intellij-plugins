@@ -25,4 +25,5 @@
     <component id="HGroup" class="spark.components.HGroup"/>
     <component id="ArrayCollection" class="mx.collections.ArrayCollection"/>
     <component id="SkinnableContainer" class="spark.components.SkinnableContainer"/>
+    <component id="SpriteVisualElement" class="spark.core.SpriteVisualElement"/>
 </componentPackage>

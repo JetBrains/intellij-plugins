@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -9,7 +8,10 @@ import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.completion.*;
+import com.intellij.lang.javascript.completion.JSCompletionContributor;
+import com.intellij.lang.javascript.completion.JSLookupPriority;
+import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
+import com.intellij.lang.javascript.completion.JSSmartCompletionContributor;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
@@ -19,6 +21,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
@@ -28,7 +31,6 @@ import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.lang.javascript.types.TypeFromUsageDetector;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
@@ -66,7 +68,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         ((JSArgumentList)parent).getArguments()[0] == location &&
         location.getQualifier() == null
       ) {
-      final JSExpression calledExpr = ((JSCallExpression) parent.getParent()).getMethodExpression();
+      final JSExpression calledExpr = ((JSCallExpression)parent.getParent()).getMethodExpression();
 
       if (calledExpr instanceof JSReferenceExpression) {
         final JSReferenceExpression expression = (JSReferenceExpression)calledExpr;
@@ -109,9 +111,9 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           IElementType opSign;
 
           if (parent instanceof JSBinaryExpression &&
-              ( (opSign = ((JSBinaryExpression)parent).getOperationSign()) == JSTokenTypes.AS_KEYWORD ||
-                opSign == JSTokenTypes.IS_KEYWORD
-              ) ) {
+              ((opSign = ((JSBinaryExpression)parent).getOperationSign()) == JSTokenTypes.AS_KEYWORD ||
+               opSign == JSTokenTypes.IS_KEYWORD
+              )) {
             addAllClassesFromQuery(variants, JSClassSearch.searchClassInheritors(clazz, true, location.getResolveScope()), parent,
                                    processedCandidateNames);
           }
@@ -138,7 +140,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         if (signature != null) {
           variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
             createType(JSCommonTypeNames.ARRAY_CLASS_NAME, JSTypeSourceFactory.createTypeSource(parent), JSContext.INSTANCE).resolveClass(),
-            "<"+ ImportUtils.importAndShortenReference(signature.genericType, parent, false, true).first+">" + "[]",
+            "<" + ImportUtils.importAndShortenReference(signature.genericType, parent, false, true).first + ">" + "[]",
             JSLookupPriority.SMART_PRIORITY,
             true,
             true
@@ -153,7 +155,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           JSType type = TypeFromUsageDetector.detectTypeFromUsage(parent, parent.getContainingFile());
           if (type == null && parent instanceof JSVariable) {
             PsiElement parent2 = parent.getParent();
-            PsiElement grandParent = parent2 instanceof JSVarStatement ? parent2.getParent():null;
+            PsiElement grandParent = parent2 instanceof JSVarStatement ? parent2.getParent() : null;
             if (grandParent instanceof JSForInStatement &&
                 ((JSForInStatement)grandParent).isForEach() &&
                 parent2 == ((JSForInStatement)grandParent).getDeclarationStatement()
@@ -206,7 +208,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         return true;
       }
     }, resolveScope, project);
-    for(String qualifiedName:qualifiedNames) {
+    for (String qualifiedName : qualifiedNames) {
       PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
         .findClassByQName(qualifiedName, resolveScope);
       if (element != null && !processor.execute(element, ResolveState.initial())) {
@@ -222,7 +224,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     Collection<JSClass> all = query.findAll();
     String packageName = place != null ? JSResolveUtil.getPackageNameFromPlace(place) : "";
 
-    for(JSClass result: all) {
+    for (JSClass result : all) {
       if (JSResolveUtil.hasExcludeClassMetadata(result)) continue;
       if (!JSResolveUtil.isAccessibleFromCurrentPackage(result, packageName, place)) continue;
       if (!processedCandidateNames.add(result.getQualifiedName())) continue;
@@ -238,7 +240,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
     if (qualifier != null) {
       qualifier = PsiUtilBase.getOriginalElement(qualifier, qualifier.getClass());
-      clazzToProcess = qualifier != null ? JSResolveUtil.findClassOfQualifier(qualifier, qualifier.getContainingFile()):null;
+      clazzToProcess = qualifier != null ? JSResolveUtil.findClassOfQualifier(qualifier, qualifier.getContainingFile()) : null;
     }
 
     if (clazzToProcess == null) {
@@ -303,14 +305,14 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor = new JSResolveUtil.JSInjectedFilesVisitor() {
           @Override
           protected void process(JSFile file) {
-            for(PsiElement element:file.getChildren()) {
+            for (PsiElement element : file.getChildren()) {
               if (element instanceof JSAttributeList) {
                 JSResolveUtil.processAttributeList(eventsDataCollector, null, (JSAttributeList)element, true, true);
               }
             }
           }
         };
-        for(XmlTag tag: tags) {
+        for (XmlTag tag : tags) {
           JSResolveUtil.processInjectedFileForTag(tag, injectedFilesVisitor);
         }
       }
@@ -318,6 +320,43 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
     clazzToProcess.processDeclarations(eventsDataCollector, ResolveState.initial(), clazzToProcess, clazzToProcess);
     return eventsMap;
+  }
+
+  @Override
+  protected int processContextClass(@NotNull JSReferenceExpression location,
+                                    JSType expectedType,
+                                    PsiElement parent,
+                                    List<Object> variants,
+                                    int qualifiedStaticVariantsStart,
+                                    SinkResolveProcessor<?> processor,
+                                    JSClass ourClass) {
+    JSClass clazz = expectedType.resolveClass();
+    if (clazz != null && !clazz.isEquivalentTo(ourClass)) {
+      qualifiedStaticVariantsStart = processor.getResultSink().getResultCount();
+      processStaticsOf(clazz, processor, ourClass);
+    }
+
+    if (ourClass != null &&
+        clazz != null &&
+        JSInheritanceUtil.isParentClass(ourClass, clazz, false) &&
+        !JSResolveUtil.calculateStaticFromContext(location) &&
+        JSCompletionContributor.getInstance().isDoingSmartCodeCompleteAction()
+      ) {
+      variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
+        null, "this", JSLookupPriority.SMART_PRIORITY, true, true
+      ));
+    }
+    if (parent instanceof JSArgumentList) {
+      JSParameterItem param = JSResolveUtil.findParameterForUsedArgument(location, (JSArgumentList)parent);
+      if (param instanceof JSParameter) {
+        PsiElement element = JSResolveUtil.findParent(((JSParameter)param).getParent().getParent());
+
+        if (element instanceof JSClass && !element.isEquivalentTo(ourClass) && !element.isEquivalentTo(clazz)) {
+          processStaticsOf((JSClass)element, processor, ourClass);
+        }
+      }
+    }
+    return qualifiedStaticVariantsStart;
   }
 
   private static class MyEventSubclassesProcessor extends ResolveProcessor {
@@ -354,7 +393,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
             "String".equals(variable.getTypeString())
           ) {
           final String s = variable.getLiteralOrReferenceInitializerText();
-          if (s != null && StringUtil.startsWith(s, "\"") && StringUtil.endsWith(s,"\"") ) {
+          if (s != null && StringUtil.startsWith(s, "\"") && StringUtil.endsWith(s, "\"")) {
             String key = StringUtil.stripQuotesAroundValue(s);
             String event = myEventsMap.get(key);
             if (event == null) return true;
@@ -411,5 +450,13 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         }
       }
     }
+  }
+
+  private static void processStaticsOf(JSClass parameterClass, ResolveProcessor processor, @Nullable JSClass contextClass) {
+    processor.configureClassScope(contextClass);
+
+    processor.setProcessStatics(true);
+    processor.setTypeName(parameterClass.getQualifiedName());
+    parameterClass.processDeclarations(processor, ResolveState.initial(), parameterClass, parameterClass);
   }
 }

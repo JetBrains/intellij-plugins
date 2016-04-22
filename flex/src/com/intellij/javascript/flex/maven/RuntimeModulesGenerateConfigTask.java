@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -109,9 +110,10 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
     final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (configFile != null) {
       try {
-        final Element rootElement = JDOMUtil.load(configFile.getInputStream());
-        if (rootElement.getName().equals(FLEX_CONFIG)) {
-          return rootElement.clone();
+        final Document document = JDOMUtil.loadDocument(configFile.getInputStream());
+        final Element clonedRootElement = document.clone().getRootElement();
+        if (clonedRootElement.getName().equals(FLEX_CONFIG)) {
+          return clonedRootElement;
         }
       }
       catch (JDOMException ignored) {/*ignore*/}
