@@ -86,11 +86,6 @@ public class MotionObjectRenderer extends ValueRenderer {
     return EvaluationContext.cast("rb_ivar_get(" + getSelf(context) + ", " + ivarNameExpr + ")", "id");
   }
 
-  @Override
-  protected boolean shouldPrintChildrenConsoleDescription() {
-    return true;
-  }
-
   private String getSelf(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
     return EvaluationContext.cast(myValue.getVarData(context).getPointer(), "id");
   }
