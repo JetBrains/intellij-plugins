@@ -126,7 +126,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0100/0122.unit:12");
     KNOWN_TO_FAIL.add("regression/0100/0130.unit:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0100/0137.stmt:1  (indent 2)");
-    KNOWN_TO_FAIL.add("regression/0100/0139.unit:1");
     KNOWN_TO_FAIL.add("regression/0100/0140.stmt:1  (indent 8)");
     KNOWN_TO_FAIL.add("regression/0100/0141.unit:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0100/0142.stmt:1  (indent 4)");
