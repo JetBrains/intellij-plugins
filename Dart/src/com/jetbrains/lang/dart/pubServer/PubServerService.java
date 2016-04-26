@@ -260,7 +260,6 @@ final class PubServerService extends NetService {
     });
   }
 
-  @SuppressWarnings("UseOfSystemOutOrSystemErr")
   void sendToServer(@NotNull final VirtualFile servedDir,
                     @NotNull final Channel clientChannel,
                     @NotNull final FullHttpRequest clientRequest,
@@ -270,11 +269,8 @@ final class PubServerService extends NetService {
       serveDirAndSendRequest(clientChannel, clientRequest, servedDir, pathToPubServe);
     }
 
-    System.out.println("Get " + clientRequest.uri());
-
     Channel serverChannel = findFreeServerChannel(serverInstanceInfo.freeServerChannels);
     if (serverChannel == null) {
-      System.out.println("New server channel");
       connect(bootstrap, serverInstanceInfo.address, serverChannel1 -> {
         if (serverChannel1 == null) {
           sendBadGateway(clientChannel);
@@ -286,7 +282,6 @@ final class PubServerService extends NetService {
       });
     }
     else {
-      System.out.println("Reuse server channel");
       sendToServer(clientChannel, clientRequest, pathToPubServe, serverChannel);
     }
   }
@@ -349,7 +344,7 @@ final class PubServerService extends NetService {
           serverToClientChannel.remove(serverChannel);
           ServerInfo serverInfo = getServerInfo(serverChannel);
           if (serverInfo != null) {
-            // todo sometimes dart pub server stops to repond, so, we don't reuse it for now
+            // todo sometimes dart pub server stops to respond, so, we don't reuse it for now
             //serverInfo.freeServerChannels.add(serverChannel);
             serverChannel.close();
           }

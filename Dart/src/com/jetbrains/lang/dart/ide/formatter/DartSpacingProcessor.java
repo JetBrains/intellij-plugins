@@ -55,6 +55,14 @@ public class DartSpacingProcessor {
     final ASTNode node2 = ((AbstractBlock)child2).getNode();
     final IElementType type2 = node2.getElementType();
 
+    if (type2 == SINGLE_LINE_COMMENT && !isDirectlyPrecededByNewline(node2)) {
+      // line comment after code on the same line: do not add line break here, it may be used to ignore warning
+      // but after '{' in class or function definition Dart Style inserts line break, so let's do the same
+      if (type1 != LBRACE || (elementType != CLASS_BODY && (elementType != BLOCK || parentType != FUNCTION_BODY))) {
+        return Spacing.createSpacing(1, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE, 0);
+      }
+    }
+
     if (type1 == SINGLE_LINE_COMMENT) {
       int spaces = 0;
       int lines = 1;
