@@ -14,6 +14,7 @@ import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.indexing.FileContent;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
 
@@ -25,7 +26,7 @@ import java.io.ByteArrayInputStream;
 public class SwfFileStubBuilder implements BinaryFileStubBuilder {
   private static final int VERSION = 2;
 
-  public boolean acceptsFile(final VirtualFile file) {
+  public boolean acceptsFile(@NotNull final VirtualFile file) {
     return file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE &&
            file.getPath().endsWith(JarFileSystem.JAR_SEPARATOR + file.getName());
   }
