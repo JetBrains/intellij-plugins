@@ -35,9 +35,9 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     final Pair<VirtualFile, String> servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path);
     if (servedDirAndPathForPubServer == null) return false;
 
-    HttpHeaders validateResult = BuiltInWebServerKt.validateToken(request, context.channel(), true);
-    if (validateResult != null && validateResult.isEmpty()) {
-      PubServerManager.getInstance(project).send(context.channel(), request, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
+    HttpHeaders validateResult = BuiltInWebServerKt.validateToken(request, context.channel());
+    if (validateResult != null) {
+      PubServerManager.getInstance(project).send(context.channel(), request, validateResult, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
     }
     return true;
   }
