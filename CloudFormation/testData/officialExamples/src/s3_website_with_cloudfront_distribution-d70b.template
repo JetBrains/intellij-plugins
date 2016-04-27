@@ -46,16 +46,25 @@
       "Properties" : {
          "DistributionConfig" : {
            "Comment" : "CDN for S3-backed website",
-           "CustomOrigin" : {
-             "DNSName": { "Fn::Join" : ["", [{"Ref" : "S3BucketForWebsiteContent"},
-                                           {"Fn::FindInMap" : [ "Region2S3WebsiteSuffix", {"Ref" : "AWS::Region"}, "Suffix" ]}]]},
-             "HTTPPort" : "80",
-             "HTTPSPort" : "443",
-             "OriginProtocolPolicy" : "http-only"
-           },
+           "Aliases" : [{ "Fn::Join" : [ "", [{"Ref" : "AWS::StackName"}, {"Ref" : "AWS::AccountId"}, ".", {"Ref" : "AWS::Region"}, ".", { "Ref" : "HostedZone" }]]}],
            "Enabled" : "true",
+	   "DefaultCacheBehavior" : {
+	     "ForwardedValues" : { "QueryString" : "true" },
+	     "TargetOriginId" : "only-origin",
+	     "ViewerProtocolPolicy" : "allow-all"
+	   },
            "DefaultRootObject" : "index.html",
-           "CNAMEs" : [{ "Fn::Join" : [ "", [{"Ref" : "AWS::StackName"}, {"Ref" : "AWS::AccountId"}, ".", {"Ref" : "AWS::Region"}, ".", { "Ref" : "HostedZone" }]]}]
+	   "Origins" : [
+	     { "CustomOriginConfig" : 
+                 {
+                   "HTTPPort" : "80",
+                   "HTTPSPort" : "443",
+                   "OriginProtocolPolicy" : "http-only"
+                 },
+               "DomainName" : { "Fn::Join" : ["", [{"Ref" : "S3BucketForWebsiteContent"},
+                                                   {"Fn::FindInMap" : [ "Region2S3WebsiteSuffix", {"Ref" : "AWS::Region"}, "Suffix" ]}]]},
+	       "Id" : "only-origin"
+             }]
          }
       }
     },

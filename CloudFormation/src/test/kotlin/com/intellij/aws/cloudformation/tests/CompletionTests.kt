@@ -47,7 +47,9 @@ class CompletionTests : LightCodeInsightFixtureTestCase() {
   }
 
   fun testGetAtt2() {
-    checkBasicCompletion("GetAtt2.template", "ConfigurationEndpoint.Address", "ConfigurationEndpoint.Port")
+    checkBasicCompletion("GetAtt2.template",
+        "ConfigurationEndpoint.Address", "ConfigurationEndpoint.Port",
+        "RedisEndpoint.Address", "RedisEndpoint.Port")
   }
 
   fun testResourceTopLevelProperty1() {

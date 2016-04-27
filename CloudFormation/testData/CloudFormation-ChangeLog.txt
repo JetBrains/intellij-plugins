@@ -42,8 +42,15 @@ User Guide (API Version 2010-05-15)
                 + Validating a Template
                 + Deleting a Stack
           o Stack Updates
+                + Update Behaviors of Stack Resources
                 + Modifying a Stack Template
-                + Updating a Stack
+                + Updating Stacks Using Change Sets
+                      # Creating a Change Set
+                      # Viewing a Change Set
+                      # Executing a Change Set
+                      # Deleting a Change Set
+                      # Example Change Sets
+                + Updating Stacks Directly
                 + Monitoring Progress
                 + Canceling a Stack Update
                 + Prevent Updates to Stack Resources
@@ -113,6 +120,17 @@ User Guide (API Version 2010-05-15)
           o Using Regular Expressions
     * Template Reference
           o AWS Resource Types
+                + AWS::ApiGateway::Account
+                + AWS::ApiGateway::ApiKey
+                + AWS::ApiGateway::Authorizer
+                + AWS::ApiGateway::BasePathMapping
+                + AWS::ApiGateway::ClientCertificate
+                + AWS::ApiGateway::Deployment
+                + AWS::ApiGateway::Method
+                + AWS::ApiGateway::Model
+                + AWS::ApiGateway::Resource
+                + AWS::ApiGateway::RestApi
+                + AWS::ApiGateway::Stage
                 + AWS::AutoScaling::AutoScalingGroup
                 + AWS::AutoScaling::LaunchConfiguration
                 + AWS::AutoScaling::LifecycleHook
@@ -144,6 +162,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::DHCPOptions
                 + AWS::EC2::EIP
                 + AWS::EC2::EIPAssociation
+                + AWS::EC2::Host
                 + AWS::EC2::Instance
                 + AWS::EC2::InternetGateway
                 + AWS::EC2::NatGateway
@@ -193,6 +212,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::EMR::Cluster
                 + AWS::EMR::InstanceGroupConfig
                 + AWS::EMR::Step
+                + AWS::Events::Rule
                 + AWS::GameLift::Alias
                 + AWS::GameLift::Build
                 + AWS::GameLift::Fleet
@@ -207,8 +227,10 @@ User Guide (API Version 2010-05-15)
                 + AWS::Kinesis::Stream
                 + AWS::KMS::Key
                 + AWS::Lambda::EventSourceMapping
+                + AWS::Lambda::Alias
                 + AWS::Lambda::Function
                 + AWS::Lambda::Permission
+                + AWS::Lambda::Version
                 + AWS::Logs::Destination
                 + AWS::Logs::LogGroup
                 + AWS::Logs::LogStream
@@ -248,10 +270,20 @@ User Guide (API Version 2010-05-15)
                 + AWS::WAF::ByteMatchSet
                 + AWS::WAF::IPSet
                 + AWS::WAF::Rule
+                + AWS::WAF::SizeConstraintSet
                 + AWS::WAF::SqlInjectionMatchSet
                 + AWS::WAF::WebACL
+                + AWS::WAF::XssMatchSet
                 + AWS::WorkSpaces::Workspace
           o Resource Property Types
+                + API Gateway ApiKey StageKey
+                + API Gateway Deployment StageDescription
+                + API Gateway Deployment StageDescription MethodSetting
+                + API Gateway Method Integration
+                + API Gateway Method Integration IntegrationResponse
+                + API Gateway Method MethodResponse
+                + API Gateway RestApi S3Location
+                + API Gateway Stage MethodSetting
                 + AutoScaling Block Device Mapping
                 + AutoScaling EBS Block Device
                 + Auto Scaling MetricsCollection
@@ -276,6 +308,7 @@ User Guide (API Version 2010-05-15)
                 + CloudFront ForwardedValues
                 + CloudFront ForwardedValues Cookies
                 + CloudWatch Metric Dimension
+                + CloudWatch Events Rule Target
                 + CloudWatch Logs MetricFilter MetricTransformation
                   Property
                 + AWS CodeDeploy DeploymentConfig MinimumHealthyHosts
@@ -353,14 +386,19 @@ User Guide (API Version 2010-05-15)
                   LaunchSpecifications Placement
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
                   LaunchSpecifications SecurityGroups
+                + Amazon ECS Service DeploymentConfiguration
                 + Amazon ECS Service LoadBalancers
                 + Amazon ECS TaskDefinition ContainerDefinitions
                 + Amazon ECS TaskDefinition ContainerDefinitions
                   Environment
+                + Amazon ECS TaskDefinition ContainerDefinitions HostEntry
+                + Amazon ECS TaskDefinition ContainerDefinitions
+                  LogConfiguration
                 + Amazon ECS TaskDefinition ContainerDefinitions
                   MountPoints
                 + Amazon ECS TaskDefinition ContainerDefinitions
                   PortMappings
+                + Amazon ECS TaskDefinition ContainerDefinitions Ulimit
                 + Amazon ECS TaskDefinition ContainerDefinitions
                   VolumesFrom
                 + Amazon ECS TaskDefinition Volumes
@@ -391,6 +429,10 @@ User Guide (API Version 2010-05-15)
                   InstanceGroupConfig
                 + Amazon EMR Cluster JobFlowInstancesConfig
                   InstanceGroupConfig
+                + Amazon EMR EbsConfiguration
+                + Amazon EMR EbsConfiguration EbsBlockDeviceConfig
+                + Amazon EMR EbsConfiguration EbsBlockDeviceConfig
+                  VolumeSpecification
                 + Amazon EMR Step HadoopJarStepConfig
                 + Amazon EMR Step HadoopJarStepConfig KeyValue
                 + GameLift Alias RoutingStrategy
@@ -399,6 +441,7 @@ User Guide (API Version 2010-05-15)
                 + IAM Policies
                 + IAM User LoginProfile
                 + AWS Lambda Function Code
+                + AWS Lambda Function VPCConfig
                 + Name Type
                 + AWS OpsWorks AutoScalingThresholds Type
                 + AWS OpsWorks ChefConfiguration Type
@@ -459,9 +502,13 @@ User Guide (API Version 2010-05-15)
                 + AWS WAF ByteMatchSet ByteMatchTuples FieldToMatch
                 + AWS WAF IPSet IPSetDescriptors
                 + AWS WAF Rule Predicates
+                + AWS WAF SizeConstraintSet SizeConstraint
+                + AWS WAF SizeConstraintSet SizeConstraint FieldToMatch
                 + AWS WAF SqlInjectionMatchSet SqlInjectionMatchTuples
                 + AWS WAF SqlInjectionMatchSet SqlInjectionMatchTuples
                   FieldToMatch
+                + AWS WAF XssMatchSet XssMatchTuple
+                + AWS WAF XssMatchSet XssMatchTuple FieldToMatch
                 + AWS WAF WebACL Action
                 + AWS WAF WebACL Rules
           o Resource Attributes
@@ -543,9 +590,142 @@ User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/>
 Release History
 
 The following table describes the important changes to the documentation 
-since the last release of AWS CloudFormation.
+since the preceeding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New resource
+
+April 25, 2016
+
+Use the AWS::EC2::Host resource to allocate a fully dedicated physical 
+server for launching EC2 instances.
+
+2010-05-15
+
+Updated resources 	
+
+April 25, 2016
+
+AWS::EC2::Instance
+
+    Use the Affinity and HostId properties to launch instances onto an
+    Amazon Elastic Compute Cloud dedicated host.
+
+AWS::ECS::Service
+
+    Use the DeploymentConfiguration property to configure how many tasks
+    can run during a deployment.
+
+AWS::ECS::TaskDefinition
+
+    AWS CloudFormation added support for additional Amazon EC2 Container
+    Service container definition properties.
+
+AWS::GameLift::Fleet
+
+    Use the MaxSize and MinSize properties to specify the maximum and
+    minimum number of EC2 instances allowed in your Amazon GameLift fleet.
+
+AWS::Lambda::Function
+
+    Use the FunctionName property to specify a name for your AWS Lambda
+    function. You can also use Python 2.7 to specify an inline function.
+
+2010-05-15
+
+New resources
+
+April 18, 2016
+
+Amazon API Gateway
+
+    Use the Amazon API Gateway resources to publish, maintain, and monitor
+    APIs at any scale. You can create APIs that clients can call to access
+    your back-end services, such as applications running EC2 instances or
+    code running on AWS Lambda.
+
+        * AWS::ApiGateway::Account
+
+        * AWS::ApiGateway::ApiKey
+
+        * AWS::ApiGateway::Authorizer
+
+        * AWS::ApiGateway::BasePathMapping
+
+        * AWS::ApiGateway::ClientCertificate
+
+        * AWS::ApiGateway::Deployment
+
+        * AWS::ApiGateway::Method
+
+        * AWS::ApiGateway::Model
+
+        * AWS::ApiGateway::Resource
+
+        * AWS::ApiGateway::RestApi
+
+        * AWS::ApiGateway::Stage
+
+AWS::Events::Rule
+
+    Create an Amazon CloudWatch Events rule that monitors changes to AWS
+    resources in your account (events). If an incoming event matches the
+    conditions that you described in the rule, Amazon CloudWatch Events
+    sends messages to and activates your specified targets, such as AWS
+    Lambda functions or Amazon Simple Notification Service topics.
+
+AWS::WAF::SizeConstraintSet and AWS::WAF::XssMatchSet
+
+    Use the two AWS WAF rules to check the size of a web request or to
+    prevent cross-site scripting attacks.
+
+2010-05-15
+
+New resources
+
+March 31, 2016
+
+Use the AWS::Lambda::Alias resource to create aliases for your AWS Lambda 
+functions and the AWS::Lambda::Version resource to create versions of your 
+functions.
+
+2010-05-15
+
+Updated resources
+
+March 31, 2016
+
+AWS CloudFormation updated the following resources:
+
+AWS::EMR::Cluster and AWS::EMR::InstanceGroupConfig
+
+    Use the EbsConfiguration property to configure Amazon Elastic Block
+    Store storage volumes for your Amazon Elastic MapReduce clusters or
+    instance groups.
+
+AWS::Lambda::Function
+
+    Use the VpcConfig property to enable AWS Lambda functions to access
+    resources in a VPC.
+
+AWS::S3::Bucket
+
+    For the Amazon Simple Storage Service life cycle rules, you can now
+    specify multiple transition rules that specify when objects transition
+    to a specified storage class.
+
+2010-05-15
+
+Change sets
+
+March 29, 2016
+
+Before updating stacks, use change sets to see how your changes might 
+affect your running resources. For more information, see Updating Stacks 
+Using Change Sets.
+
+2010-05-15
 
 New resources
 
@@ -624,7 +804,7 @@ Update stack tags
 February 26, 2016
 
 You can add, modify, or remove stack tags when you update a stack. For more 
-information, see Updating a Stack.
+information, see AWS CloudFormation Stacks Updates.
 
 2010-05-15
 

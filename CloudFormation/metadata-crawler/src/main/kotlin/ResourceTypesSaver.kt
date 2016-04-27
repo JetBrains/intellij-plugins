@@ -180,7 +180,7 @@ object ResourceTypesSaver {
             type = "String"
           } else {
             // TODO
-            if (resourceTypeName != "AWS::Route53::RecordSet") {
+            if (resourceTypeName != "AWS::Route53::RecordSet" && !(name == "ScheduleExpression" && resourceTypeName == "AWS::Events::Rule")) {
               throw RuntimeException("Type is not found in property $name in $docLocation")
             }
           }
@@ -206,7 +206,8 @@ object ResourceTypesSaver {
                 requiredValue == "Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups" ||
                 requiredValue == "Yes, for ICMP and any protocol that uses ports" ||
                 requiredValue == "If your cache cluster isn't in a VPC, you must specify this property" ||
-                requiredValue == "If your cache cluster is in a VPC, you must specify this property") {
+                requiredValue == "If your cache cluster is in a VPC, you must specify this property" ||
+                requiredValue == "Yes. If you specify the AuthorizerId property, specify CUSTOM for this property") {
               required = false
             } else {
               throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredValue")

@@ -56,9 +56,9 @@
           "Statement": [{
             "Effect"   : "Allow",
             "Action"   : [
-              "cloudforation:Describe*",
-              "cloudforation:List*",
-              "cloudforation:Get*"
+              "cloudformation:Describe*",
+              "cloudformation:List*",
+              "cloudformation:Get*"
               ],
             "Resource" : "*"
           }]
@@ -74,7 +74,7 @@
         "PolicyDocument" : {
           "Statement": [{
             "Effect"   : "Allow",
-            "Action"   : "cloudforation:*",
+            "Action"   : "cloudformation:*",
             "Resource" : "*"
           }]
         },
