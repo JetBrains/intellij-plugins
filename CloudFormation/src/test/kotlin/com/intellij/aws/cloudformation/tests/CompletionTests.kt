@@ -11,14 +11,14 @@ class CompletionTests : LightCodeInsightFixtureTestCase() {
   fun testResourceType1() {
     myFixture.configureByFiles("ResourceType1.template")
     myFixture.complete(CompletionType.BASIC, 1)
-    val strings = myFixture.lookupElementStrings
+    val strings = myFixture.lookupElementStrings!!
     UsefulTestCase.assertContainsElements(strings, "AWS::IAM::AccessKey")
   }
 
   fun testResourceType2() {
     myFixture.configureByFiles("ResourceType2.template")
     myFixture.complete(CompletionType.BASIC, 1)
-    val strings = myFixture.lookupElementStrings
+    val strings = myFixture.lookupElementStrings!!
     UsefulTestCase.assertDoesntContain(strings, "AWS::IAM::AccessKey")
   }
 
@@ -111,7 +111,7 @@ class CompletionTests : LightCodeInsightFixtureTestCase() {
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
     myFixture.configureByFiles(fileName)
     myFixture.complete(CompletionType.BASIC, 1)
-    val strings = myFixture.lookupElementStrings
+    val strings = myFixture.lookupElementStrings!!
     UsefulTestCase.assertSameElements(strings, Arrays.asList(*expectedElements))
   }
 
