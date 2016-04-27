@@ -77,7 +77,4 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
   protected Comparator<NodeDescriptor> getComparator() {
     return DartHierarchyUtil.getComparator(myProject);
   }
-
-  public static final class BaseOnThisFunctionAction extends CallHierarchyBrowserBase.BaseOnThisMethodAction {
-  }
 }
