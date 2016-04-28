@@ -27,11 +27,10 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.IdeaTestCase
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
+import org.junit.Assert
 import org.osmorc.facet.OsmorcFacet
 import java.io.File
 import kotlin.properties.Delegates
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class BndProjectImporterTest : IdeaTestCase() {
   var myWorkspace: Workspace by Delegates.notNull()
@@ -109,9 +108,9 @@ class BndProjectImporterTest : IdeaTestCase() {
 
     modules.forEach {
       val rootManager = ModuleRootManager.getInstance(it)
-      assertEquals(1, rootManager.getContentRootUrls().size, it.getName())
-      assertEquals(2, rootManager.getSourceRootUrls().size, it.getName())
-      assertEquals(3, rootManager.getExcludeRootUrls().size, it.getName())
+      Assert.assertEquals(it.getName(), 1, rootManager.getContentRootUrls().size)
+      Assert.assertEquals(it.getName(), 2, rootManager.getSourceRootUrls().size)
+      Assert.assertEquals(it.getName(), 3, rootManager.getExcludeRootUrls().size)
 
       val dependencies = getDependencies(it)
       when (it.getName()) {
@@ -130,7 +129,7 @@ class BndProjectImporterTest : IdeaTestCase() {
 
       val facet = OsmorcFacet.getInstance(it)
       if (it.getName() != "hello.tests") {
-        assertNotNull(facet, it.getName())
+        Assert.assertNotNull(it.getName(), facet)
 
         val config = facet?.getConfiguration()
         assertEquals(ManifestGenerationMode.Bnd, config?.getManifestGenerationMode())

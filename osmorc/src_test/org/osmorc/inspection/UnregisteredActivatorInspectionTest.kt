@@ -17,7 +17,6 @@ package org.osmorc.inspection
 
 import org.osmorc.LightOsgiFixtureTestCase
 import org.osmorc.i18n.OsmorcBundle
-import kotlin.test.assertEquals
 
 class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
   fun testPositive() {

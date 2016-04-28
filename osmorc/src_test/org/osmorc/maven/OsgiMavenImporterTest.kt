@@ -17,16 +17,10 @@ package org.osmorc.maven
 
 import com.intellij.facet.FacetTypeId
 import org.jetbrains.idea.maven.importing.FacetImporterTestCase
-import org.osmorc.facet.OsmorcFacet
-import org.osmorc.facet.OsmorcFacetType
-import org.osmorc.facet.OsmorcFacetConfiguration
 import org.osgi.framework.Constants
-
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import org.osmorc.facet.OsmorcFacet
+import org.osmorc.facet.OsmorcFacetConfiguration
+import org.osmorc.facet.OsmorcFacetType
 
 class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
   override fun getFacetTypeId(): FacetTypeId<OsmorcFacet> = OsmorcFacetType.ID

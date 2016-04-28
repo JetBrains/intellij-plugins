@@ -15,52 +15,49 @@
  */
 package org.jetbrains.osgi.project
 
+import org.junit.Assert
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class BundleManifestTest {
   @Test fun bundleSymbolicName() {
     val manifest = BundleManifest(mapOf("Bundle-SymbolicName" to "foo.bar"))
-    assertEquals("foo.bar", manifest.getBundleSymbolicName())
+    Assert.assertEquals("foo.bar", manifest.getBundleSymbolicName())
   }
 
   @Test fun bundleActivator() {
     val manifest = BundleManifest(mapOf("Bundle-Activator" to "foo.bar.WakeMeUp"))
-    assertEquals("foo.bar.WakeMeUp", manifest.getBundleActivator())
+    Assert.assertEquals("foo.bar.WakeMeUp", manifest.getBundleActivator())
   }
 
   @Test fun exportedPackage() {
     val manifest = BundleManifest(mapOf("Export-Package" to "foo.bar.baz;version= 1.0.0,foo.bar.bam;version= 1.0.0"))
-    assertEquals("foo.bar.baz", manifest.getExportedPackage("foo.bar.baz"))
-    assertEquals("foo.bar.baz", manifest.getExportedPackage("foo.bar.baz.impl"))
-    assertNull(manifest.getExportedPackage("foo.bar.no.way"))
+    Assert.assertEquals("foo.bar.baz", manifest.getExportedPackage("foo.bar.baz"))
+    Assert.assertEquals("foo.bar.baz", manifest.getExportedPackage("foo.bar.baz.impl"))
+    Assert.assertNull(manifest.getExportedPackage("foo.bar.no.way"))
   }
 
   @Test fun missingHeaderHandling() {
     val manifest = BundleManifest(mapOf())
-    assertNull(manifest.getExportedPackage("pkg"))
+    Assert.assertNull(manifest.getExportedPackage("pkg"))
   }
 
   @Test fun importedPackage() {
     val manifest = BundleManifest(mapOf("Import-Package" to "foo.bar.baz;version=\"[1, 2)\""))
-    assertTrue(manifest.isPackageImported("foo.bar.baz"))
-    assertFalse(manifest.isPackageImported("foo.bar.bam"))
-    assertFalse(manifest.isPackageImported("foo.bar"))
+    Assert.assertTrue(manifest.isPackageImported("foo.bar.baz"))
+    Assert.assertFalse(manifest.isPackageImported("foo.bar.bam"))
+    Assert.assertFalse(manifest.isPackageImported("foo.bar"))
   }
 
   @Test fun requiredBundle() {
     val manifest = BundleManifest(mapOf("Require-Bundle" to "org.apache.felix.framework;bundle-version=\"[0,3)\""))
-    assertTrue(manifest.isBundleRequired("org.apache.felix.framework"))
-    assertFalse(manifest.isBundleRequired("org.apache.felix"))
+    Assert.assertTrue(manifest.isBundleRequired("org.apache.felix.framework"))
+    Assert.assertFalse(manifest.isBundleRequired("org.apache.felix"))
   }
 
   @Test fun privatePackage() {
     val manifest = BundleManifest(mapOf("Private-Package" to "org.apache.felix.framework"))
-    assertTrue(manifest.isPrivatePackage("org.apache.felix.framework"))
-    assertTrue(manifest.isPrivatePackage("org.apache.felix.framework.impl"))
-    assertFalse(manifest.isPrivatePackage("org.apache.felix"))
+    Assert.assertTrue(manifest.isPrivatePackage("org.apache.felix.framework"))
+    Assert.assertTrue(manifest.isPrivatePackage("org.apache.felix.framework.impl"))
+    Assert.assertFalse(manifest.isPrivatePackage("org.apache.felix"))
   }
 }

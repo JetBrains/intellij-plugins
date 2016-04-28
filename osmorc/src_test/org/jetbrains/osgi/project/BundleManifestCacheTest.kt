@@ -22,7 +22,6 @@ import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.LightOsgiFixtureTestCase
 
 import kotlin.properties.Delegates
-import kotlin.test.*
 
 class BundleManifestCacheTest : LightOsgiFixtureTestCase() {
   var myCache: BundleManifestCache by Delegates.notNull()
