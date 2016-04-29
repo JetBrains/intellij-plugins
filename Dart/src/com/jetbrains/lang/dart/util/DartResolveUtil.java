@@ -1030,7 +1030,7 @@ public class DartResolveUtil {
 
   @Nullable
   public static DartComponent findReferenceAndComponentTarget(@Nullable PsiElement element) {
-    DartReference reference = PsiTreeUtil.getParentOfType(element, DartReference.class);
+    DartReference reference = PsiTreeUtil.getNonStrictParentOfType(element, DartReference.class);
     PsiElement target = reference == null ? null : reference.resolve();
     PsiElement targetParent = target != null ? target.getParent() : null;
     if (targetParent instanceof DartComponent) {

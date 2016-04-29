@@ -1,0 +1,20 @@
+<node text="C.c() C" base="true">
+  <node text="B.b() B">
+    <node text="B.B() B">
+      <node text="A.A() A"/>
+      <node text="A.a() A"/>
+    </node>
+    <node text="A.A() A"/>
+    <node text="A.a() A"/>
+  </node>
+  <node text="C.C() C">
+    <node text="B.b() B">
+      <node text="B.B() B">
+        <node text="A.A() A"/>
+        <node text="A.a() A"/>
+      </node>
+      <node text="A.A() A"/>
+      <node text="A.a() A"/>
+    </node>
+  </node>
+</node>

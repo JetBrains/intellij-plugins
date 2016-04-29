@@ -1,0 +1,65 @@
+<node text="C.c() C" base="true">
+  <node text="A.a() → B A">
+    <node text="A.a() → B A">
+      <node text="A.a() → B A">
+        <node text="A.a() → B A">
+          <node text="A.a() → B A">
+            <node text="A.a() → B A">
+              <node text="A.a() → B A">
+                <node text="A.a() → B A">
+                  <node text="A.a() → B A">
+                    <node text="A.a() → B A">
+                      <Probably infinite part skipped>
+                    </node>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <node text="B.b() → C B">
+    <node text="A.a() → B A">
+      <node text="A.a() → B A">
+        <node text="A.a() → B A">
+          <node text="A.a() → B A">
+            <node text="A.a() → B A">
+              <node text="A.a() → B A">
+                <node text="A.a() → B A">
+                  <node text="A.a() → B A">
+                    <node text="A.a() → B A">
+                      <Probably infinite part skipped>
+                    </node>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+  <node text="C.C() C">
+    <node text="B.b() → C B">
+      <node text="A.a() → B A">
+        <node text="A.a() → B A">
+          <node text="A.a() → B A">
+            <node text="A.a() → B A">
+              <node text="A.a() → B A">
+                <node text="A.a() → B A">
+                  <node text="A.a() → B A">
+                    <node text="A.a() → B A">
+                      <Probably infinite part skipped>
+                    </node>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+</node>

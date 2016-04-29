@@ -1,0 +1,93 @@
+<node text="A.a() → B A" base="true">
+  <node text="A.a() → B A">
+    <node text="A.a() → B A">
+      <node text="A.a() → B A">
+        <node text="A.a() → B A">
+          <node text="A.a() → B A">
+            <node text="A.a() → B A">
+              <node text="A.a() → B A">
+                <node text="A.a() → B A">
+                  <node text="A.a() → B A">
+                    <node text="A.a() → B A">
+                      <Probably infinite part skipped>
+                      <Probably infinite part skipped>
+                      <Probably infinite part skipped>
+                    </node>
+                    <node text="B.b() → C B">
+                      <Probably infinite part skipped>
+                      <Probably infinite part skipped>
+                    </node>
+                    <node text="C.c() C"/>
+                  </node>
+                  <node text="B.b() → C B">
+                    <node text="C.C() C">
+                      <Probably infinite part skipped>
+                    </node>
+                    <node text="C.c() C"/>
+                  </node>
+                  <node text="C.c() C"/>
+                </node>
+                <node text="B.b() → C B">
+                  <node text="C.C() C">
+                    <node text="C.c() C"/>
+                  </node>
+                  <node text="C.c() C"/>
+                </node>
+                <node text="C.c() C"/>
+              </node>
+              <node text="B.b() → C B">
+                <node text="C.C() C">
+                  <node text="C.c() C"/>
+                </node>
+                <node text="C.c() C"/>
+              </node>
+              <node text="C.c() C"/>
+            </node>
+            <node text="B.b() → C B">
+              <node text="C.C() C">
+                <node text="C.c() C"/>
+              </node>
+              <node text="C.c() C"/>
+            </node>
+            <node text="C.c() C"/>
+          </node>
+          <node text="B.b() → C B">
+            <node text="C.C() C">
+              <node text="C.c() C"/>
+            </node>
+            <node text="C.c() C"/>
+          </node>
+          <node text="C.c() C"/>
+        </node>
+        <node text="B.b() → C B">
+          <node text="C.C() C">
+            <node text="C.c() C"/>
+          </node>
+          <node text="C.c() C"/>
+        </node>
+        <node text="C.c() C"/>
+      </node>
+      <node text="B.b() → C B">
+        <node text="C.C() C">
+          <node text="C.c() C"/>
+        </node>
+        <node text="C.c() C"/>
+      </node>
+      <node text="C.c() C"/>
+    </node>
+    <node text="B.b() → C B">
+      <node text="C.C() C">
+        <node text="C.c() C"/>
+      </node>
+      <node text="C.c() C"/>
+    </node>
+    <node text="C.c() C"/>
+  </node>
+  <node text="B.b() → C B">
+    <node text="C.C() C">
+      <node text="C.c() C"/>
+    </node>
+    <node text="C.c() C"/>
+  </node>
+  <node text="C.c() C"/>
+</node>

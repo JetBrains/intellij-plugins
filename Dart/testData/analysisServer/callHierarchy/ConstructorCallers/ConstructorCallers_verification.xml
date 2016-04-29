@@ -1,0 +1,8 @@
+<node text="B.b() B" base="true">
+  <node text="A.A() A"/>
+  <node text="A.a() A"/>
+  <node text="B.B() B">
+    <node text="A.A() A"/>
+    <node text="A.a() A"/>
+  </node>
+</node>
