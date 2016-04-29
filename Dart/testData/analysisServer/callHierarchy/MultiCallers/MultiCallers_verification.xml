@@ -9,7 +9,7 @@
                 <node text="A.a() → B A">
                   <node text="A.a() → B A">
                     <node text="A.a() → B A">
-                      <Probably infinite part skipped>
+                      <any/>
                     </node>
                   </node>
                 </node>
@@ -30,7 +30,7 @@
                 <node text="A.a() → B A">
                   <node text="A.a() → B A">
                     <node text="A.a() → B A">
-                      <Probably infinite part skipped>
+                      <any/>
                     </node>
                   </node>
                 </node>
@@ -51,7 +51,7 @@
                 <node text="A.a() → B A">
                   <node text="A.a() → B A">
                     <node text="A.a() → B A">
-                      <Probably infinite part skipped>
+                      <any/>
                     </node>
                   </node>
                 </node>
