@@ -25,7 +25,7 @@ public class JstdLibraryUtil {
   public static final String LIBRARY_NAME = "JsTestDriver Assertion Framework";
 
   private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
-  private static volatile Boolean JSTD_LIBRARY_EXISTS = null;
+  private static volatile Boolean JSTD_LIBRARY_EXISTS;
 
   private static void init(@NotNull Project project) {
     if (INITIALIZED.compareAndSet(false, true)) {
