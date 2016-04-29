@@ -39,7 +39,6 @@
     <stubIndex implementation="org.angularjs.index.AngularInjectionDelimiterIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularUiRouterViewsIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularAppIndex"/>
-    <fileBasedIndex implementation="org.angularjs.index.AngularModuleDependencyIndex"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
     <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider" />
