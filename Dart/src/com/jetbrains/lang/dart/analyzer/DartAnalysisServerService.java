@@ -50,7 +50,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
-import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.HtmlUtil;
@@ -757,55 +756,47 @@ public class DartAnalysisServerService {
                                                                           final int offset,
                                                                           final int length) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-
     final Ref<List<DartServerData.DartNavigationRegion>> resultRef = Ref.create();
-    final Semaphore semaphore = new Semaphore();
 
-    synchronized (myLock) {
-      if (myServer == null) return null;
-
-      semaphore.down();
-
-      LOG.debug("analysis_getNavigation(" + filePath + ")");
-
-      final GetNavigationConsumer consumer = new GetNavigationConsumer() {
-        @Override
-        public void computedNavigation(final List<NavigationRegion> regions) {
-          final List<DartServerData.DartNavigationRegion> dartRegions = new ArrayList<DartServerData.DartNavigationRegion>(regions.size());
-          for (NavigationRegion region : regions) {
-            if (region.getLength() > 0) {
-              dartRegions.add(new DartServerData.DartNavigationRegion(region));
-            }
-          }
-
-          resultRef.set(dartRegions);
-
-          semaphore.up();
-        }
-
-        @Override
-        public void onError(final RequestError error) {
-          if (RequestErrorCode.GET_NAVIGATION_INVALID_FILE.equals(error.getCode())) {
-            LOG.info(getShortErrorMessage("analysis_getNavigation()", filePath, error));
-          }
-          else {
-            logError("analysis_getNavigation()", filePath, error);
-          }
-
-          semaphore.up();
-        }
-      };
-
-      myServer.analysis_getNavigation(filePath, offset, length, consumer);
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
     }
 
-    final long t0 = System.currentTimeMillis();
+    final CountDownLatch latch = new CountDownLatch(1);
+    LOG.debug("analysis_getNavigation(" + filePath + ")");
 
-    semaphore.waitFor(GET_NAVIGATION_TIMEOUT);
+    server.analysis_getNavigation(filePath, offset, length, new GetNavigationConsumer() {
+      @Override
+      public void computedNavigation(final List<NavigationRegion> regions) {
+        final List<DartServerData.DartNavigationRegion> dartRegions = new ArrayList<DartServerData.DartNavigationRegion>(regions.size());
+        for (NavigationRegion region : regions) {
+          if (region.getLength() > 0) {
+            dartRegions.add(new DartServerData.DartNavigationRegion(region));
+          }
+        }
 
-    if (semaphore.tryUp()) {
-      LOG.info("analysis_getNavigation() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
-      return null;
+        resultRef.set(dartRegions);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(final RequestError error) {
+        if (RequestErrorCode.GET_NAVIGATION_INVALID_FILE.equals(error.getCode())) {
+          LOG.info(getShortErrorMessage("analysis_getNavigation()", filePath, error));
+        }
+        else {
+          logError("analysis_getNavigation()", filePath, error);
+        }
+
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_NAVIGATION_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      LOG.info("analysis_getNavigation() took more than " + GET_NAVIGATION_TIMEOUT + "ms for file " + filePath);
     }
 
     return resultRef.get();
@@ -844,38 +835,26 @@ public class DartAnalysisServerService {
   public List<AnalysisErrorFixes> edit_getFixes(@NotNull final String _filePath, final int offset) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
     final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
-    final Semaphore semaphore = new Semaphore();
 
-    synchronized (myLock) {
-      if (myServer == null) return null;
+    final AnalysisServer server = myServer;
+    if (server == null) return null;
 
-      semaphore.down();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.edit_getFixes(filePath, offset, new GetFixesConsumer() {
+      @Override
+      public void computedFixes(final List<AnalysisErrorFixes> fixes) {
+        resultRef.set(fixes);
+        latch.countDown();
+      }
 
-      final GetFixesConsumer consumer = new GetFixesConsumer() {
-        @Override
-        public void computedFixes(final List<AnalysisErrorFixes> fixes) {
-          resultRef.set(fixes);
-          semaphore.up();
-        }
+      @Override
+      public void onError(final RequestError error) {
+        logError("edit_getFixes()", filePath, error);
+        latch.countDown();
+      }
+    });
 
-        @Override
-        public void onError(final RequestError error) {
-          logError("edit_getFixes()", filePath, error);
-          semaphore.up();
-        }
-      };
-
-      myServer.edit_getFixes(filePath, offset, consumer);
-    }
-
-    final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(GET_FIXES_TIMEOUT);
-
-    if (semaphore.tryUp()) {
-      LOG.info("edit_getFixes() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
-      return null;
-    }
-
+    awaitForLatchCheckingCanceled(server, latch, GET_FIXES_TIMEOUT);
     return resultRef.get();
   }
 
@@ -883,48 +862,36 @@ public class DartAnalysisServerService {
                                            final int offset,
                                            @NotNull final Consumer<SearchResult> consumer) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
+    final Ref<String> searchIdRef = new Ref<String>();
 
-    final String searchId;
-    synchronized (myLock) {
-      if (myServer == null) return;
-      final AnalysisServer server = myServer;
+    final AnalysisServer server = myServer;
+    if (server == null) return;
 
-      final Ref<String> searchIdRef = new Ref<String>();
-      final Semaphore semaphore = new Semaphore();
-
-      semaphore.down();
-
-      server.search_findElementReferences(filePath, offset, true, new FindElementReferencesConsumer() {
-        @Override
-        public void computedElementReferences(String searchId, Element element) {
-          searchIdRef.set(searchId);
-          semaphore.up();
-        }
-
-        @Override
-        public void onError(RequestError requestError) {
-          semaphore.up();
-        }
-      });
-
-      final long t0 = System.currentTimeMillis();
-      semaphore.waitFor(FIND_ELEMENT_REFERENCES_TIMEOUT);
-
-      if (semaphore.tryUp()) {
-        LOG.info("search_findElementReferences() took too long for file " +
-                 filePath +
-                 "@" +
-                 offset +
-                 ": " +
-                 (System.currentTimeMillis() - t0) +
-                 "ms");
-        return;
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.search_findElementReferences(filePath, offset, true, new FindElementReferencesConsumer() {
+      @Override
+      public void computedElementReferences(String searchId, Element element) {
+        searchIdRef.set(searchId);
+        latch.countDown();
       }
 
-      searchId = searchIdRef.get();
-      if (searchId == null) {
-        return;
+      @Override
+      public void onError(RequestError error) {
+        LOG.info(getShortErrorMessage("search_findElementReferences()", filePath, error));
+        latch.countDown();
       }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, FIND_ELEMENT_REFERENCES_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      LOG.info("search_findElementReferences() took too long for " + filePath + "@" + offset);
+      return;
+    }
+
+    final String searchId = searchIdRef.get();
+    if (searchId == null) {
+      return;
     }
 
     while (true) {
@@ -1014,44 +981,36 @@ public class DartAnalysisServerService {
                                   final int selectionLength,
                                   final int lineLength) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-
     final Ref<FormatResult> resultRef = new Ref<FormatResult>();
-    final Semaphore semaphore = new Semaphore();
 
-    synchronized (myLock) {
-      if (myServer == null) return null;
+    final AnalysisServer server = myServer;
+    if (server == null) return null;
 
-      semaphore.down();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.edit_format(filePath, selectionOffset, selectionLength, lineLength, new FormatConsumer() {
+      @Override
+      public void computedFormat(final List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
+        resultRef.set(new FormatResult(edits, selectionOffset, selectionLength));
+        latch.countDown();
+      }
 
-      final FormatConsumer consumer = new FormatConsumer() {
-        @Override
-        public void computedFormat(final List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
-          resultRef.set(new FormatResult(edits, selectionOffset, selectionLength));
-          semaphore.up();
+      @Override
+      public void onError(final RequestError error) {
+        if (RequestErrorCode.FORMAT_WITH_ERRORS.equals(error.getCode()) || RequestErrorCode.FORMAT_INVALID_FILE.equals(error.getCode())) {
+          LOG.info(getShortErrorMessage("edit_format()", filePath, error));
+        }
+        else {
+          logError("edit_format()", filePath, error);
         }
 
-        @Override
-        public void onError(final RequestError error) {
-          if (RequestErrorCode.FORMAT_WITH_ERRORS.equals(error.getCode()) || RequestErrorCode.FORMAT_INVALID_FILE.equals(error.getCode())) {
-            LOG.info(getShortErrorMessage("edit_format()", filePath, error));
-          }
-          else {
-            logError("edit_format()", filePath, error);
-          }
+        latch.countDown();
+      }
+    });
 
-          semaphore.up();
-        }
-      };
+    awaitForLatchCheckingCanceled(server, latch, EDIT_FORMAT_TIMEOUT);
 
-      myServer.edit_format(filePath, selectionOffset, selectionLength, lineLength, consumer);
-    }
-
-    final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EDIT_FORMAT_TIMEOUT);
-
-    if (semaphore.tryUp()) {
-      LOG.info("edit_format() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
-      return null;
+    if (latch.getCount() > 0) {
+      LOG.info("edit_format() took too long for file " + filePath);
     }
 
     return resultRef.get();
@@ -1066,55 +1025,48 @@ public class DartAnalysisServerService {
                                      GetRefactoringConsumer consumer) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
 
-    synchronized (myLock) {
-      if (myServer == null) return false;
-      myServer.edit_getRefactoring(kind, filePath, offset, length, validateOnly, options, consumer);
-      return true;
-    }
+    final AnalysisServer server = myServer;
+    if (server == null) return false;
+
+    server.edit_getRefactoring(kind, filePath, offset, length, validateOnly, options, consumer);
+    return true;
   }
 
   @Nullable
   public SourceFileEdit edit_organizeDirectives(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-
     final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
-    final Semaphore semaphore = new Semaphore();
 
-    synchronized (myLock) {
-      if (myServer == null) return null;
+    final AnalysisServer server = myServer;
+    if (server == null) return null;
 
-      semaphore.down();
+    final CountDownLatch latch = new CountDownLatch(1);
 
-      final OrganizeDirectivesConsumer consumer = new OrganizeDirectivesConsumer() {
-        @Override
-        public void computedEdit(final SourceFileEdit edit) {
-          resultRef.set(edit);
-          semaphore.up();
+    server.edit_organizeDirectives(filePath, new OrganizeDirectivesConsumer() {
+      @Override
+      public void computedEdit(final SourceFileEdit edit) {
+        resultRef.set(edit);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(final RequestError error) {
+        if (RequestErrorCode.FILE_NOT_ANALYZED.equals(error.getCode()) ||
+            RequestErrorCode.ORGANIZE_DIRECTIVES_ERROR.equals(error.getCode())) {
+          LOG.info(getShortErrorMessage("edit_organizeDirectives()", filePath, error));
+        }
+        else {
+          logError("edit_organizeDirectives()", filePath, error);
         }
 
-        @Override
-        public void onError(final RequestError error) {
-          if (RequestErrorCode.FILE_NOT_ANALYZED.equals(error.getCode()) ||
-              RequestErrorCode.ORGANIZE_DIRECTIVES_ERROR.equals(error.getCode())) {
-            LOG.info(getShortErrorMessage("edit_organizeDirectives()", filePath, error));
-          }
-          else {
-            logError("edit_organizeDirectives()", filePath, error);
-          }
+        latch.countDown();
+      }
+    });
 
-          semaphore.up();
-        }
-      };
+    awaitForLatchCheckingCanceled(server, latch, EDIT_ORGANIZE_DIRECTIVES_TIMEOUT);
 
-      myServer.edit_organizeDirectives(filePath, consumer);
-    }
-
-    final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EDIT_ORGANIZE_DIRECTIVES_TIMEOUT);
-
-    if (semaphore.tryUp()) {
-      LOG.info("edit_organizeDirectives() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
-      return null;
+    if (latch.getCount() > 0) {
+      LOG.info("edit_organizeDirectives() took too long for file " + filePath);
     }
 
     return resultRef.get();
@@ -1123,66 +1075,57 @@ public class DartAnalysisServerService {
   @Nullable
   public SourceFileEdit edit_sortMembers(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-
     final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
-    final Semaphore semaphore = new Semaphore();
 
-    synchronized (myLock) {
-      if (myServer == null) return null;
+    final AnalysisServer server = myServer;
+    if (server == null) return null;
 
-      semaphore.down();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.edit_sortMembers(filePath, new SortMembersConsumer() {
+      @Override
+      public void computedEdit(final SourceFileEdit edit) {
+        resultRef.set(edit);
+        latch.countDown();
+      }
 
-      final SortMembersConsumer consumer = new SortMembersConsumer() {
-        @Override
-        public void computedEdit(final SourceFileEdit edit) {
-          resultRef.set(edit);
-          semaphore.up();
+      @Override
+      public void onError(final RequestError error) {
+        if (RequestErrorCode.SORT_MEMBERS_PARSE_ERRORS.equals(error.getCode()) ||
+            RequestErrorCode.SORT_MEMBERS_INVALID_FILE.equals(error.getCode())) {
+          LOG.info(getShortErrorMessage("edit_sortMembers()", filePath, error));
+        }
+        else {
+          logError("edit_sortMembers()", filePath, error);
         }
 
-        @Override
-        public void onError(final RequestError error) {
-          if (RequestErrorCode.SORT_MEMBERS_PARSE_ERRORS.equals(error.getCode()) ||
-              RequestErrorCode.SORT_MEMBERS_INVALID_FILE.equals(error.getCode())) {
-            LOG.info(getShortErrorMessage("edit_sortMembers()", filePath, error));
-          }
-          else {
-            logError("edit_sortMembers()", filePath, error);
-          }
+        latch.countDown();
+      }
+    });
 
-          semaphore.up();
-        }
-      };
+    awaitForLatchCheckingCanceled(server, latch, EDIT_SORT_MEMBERS_TIMEOUT);
 
-      myServer.edit_sortMembers(filePath, consumer);
-    }
-
-    final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EDIT_SORT_MEMBERS_TIMEOUT);
-
-    if (semaphore.tryUp()) {
-      LOG.info("edit_sortMembers() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
-      return null;
+    if (latch.getCount() > 0) {
+      LOG.info("edit_sortMembers() took too long for file " + filePath);
     }
 
     return resultRef.get();
   }
 
   public void analysis_reanalyze(@Nullable final List<String> roots) {
-    synchronized (myLock) {
-      if (myServer == null) return;
+    final AnalysisServer server = myServer;
+    if (server == null) return;
 
-      String rootsStr = roots != null ? StringUtil.join(roots, ",\n") : "all roots";
-      LOG.debug("analysis_reanalyze, roots: " + rootsStr);
+    String rootsStr = roots != null ? StringUtil.join(roots, ",\n") : "all roots";
+    LOG.debug("analysis_reanalyze, roots: " + rootsStr);
 
-      myServer.analysis_reanalyze(roots);
+    server.analysis_reanalyze(roots);
 
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          clearAllErrors(myRootsHandler.getTrackedProjects());
-        }
-      }, ModalityState.NON_MODAL);
-    }
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        clearAllErrors(myRootsHandler.getTrackedProjects());
+      }
+    }, ModalityState.NON_MODAL);
   }
 
   private void analysis_setPriorityFiles() {
@@ -1220,48 +1163,39 @@ public class DartAnalysisServerService {
   @Nullable
   public String execution_createContext(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-
     final Ref<String> resultRef = new Ref<String>();
-    final Semaphore semaphore = new Semaphore();
 
-    synchronized (myLock) {
-      if (myServer == null) return null;
+    final AnalysisServer server = myServer;
+    if (server == null) return null;
 
-      semaphore.down();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.execution_createContext(filePath, new CreateContextConsumer() {
+      @Override
+      public void computedExecutionContext(final String contextId) {
+        resultRef.set(contextId);
+        latch.countDown();
+      }
 
-      final CreateContextConsumer consumer = new CreateContextConsumer() {
-        @Override
-        public void computedExecutionContext(final String contextId) {
-          resultRef.set(contextId);
-          semaphore.up();
-        }
+      @Override
+      public void onError(final RequestError error) {
+        logError("execution_createContext()", filePath, error);
+        latch.countDown();
+      }
+    });
 
-        @Override
-        public void onError(final RequestError error) {
-          logError("execution_createContext()", filePath, error);
-          semaphore.up();
-        }
-      };
+    awaitForLatchCheckingCanceled(server, latch, EXECUTION_CREATE_CONTEXT_TIMEOUT);
 
-      myServer.execution_createContext(filePath, consumer);
-    }
-
-    final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EXECUTION_CREATE_CONTEXT_TIMEOUT);
-
-    if (semaphore.tryUp()) {
-      LOG.info("execution_createContext() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
-      return null;
+    if (latch.getCount() > 0) {
+      LOG.info("execution_createContext() took too long for file " + filePath);
     }
 
     return resultRef.get();
   }
 
   public void execution_deleteContext(@NotNull final String contextId) {
-    synchronized (myLock) {
-      if (myServer == null) return;
-
-      myServer.execution_deleteContext(contextId);
+    final AnalysisServer server = myServer;
+    if (server != null) {
+      server.execution_deleteContext(contextId);
     }
   }
 
@@ -1276,49 +1210,36 @@ public class DartAnalysisServerService {
     }
 
     final String filePath = _filePath != null ? FileUtil.toSystemDependentName(_filePath) : null;
-
     final Ref<String> resultRef = new Ref<String>();
-    final Semaphore semaphore = new Semaphore();
 
-    synchronized (myLock) {
-      if (myServer == null) return null;
+    final AnalysisServer server = myServer;
+    if (server == null) return null;
 
-      semaphore.down();
-
-      final MapUriConsumer consumer = new MapUriConsumer() {
-        @Override
-        public void computedFileOrUri(final String file, final String uri) {
-          if (uri != null) {
-            resultRef.set(uri);
-          }
-          else {
-            resultRef.set(file);
-          }
-          semaphore.up();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.execution_mapUri(_id, filePath, _uri, new MapUriConsumer() {
+      @Override
+      public void computedFileOrUri(final String file, final String uri) {
+        if (uri != null) {
+          resultRef.set(uri);
         }
-
-        @Override
-        public void onError(final RequestError error) {
-          LOG.warn(
-            "execution_mapUri(" + _id + ", " + filePath + ", " + _uri + ") returned error " + error.getCode() + ": " + error.getMessage());
-          semaphore.up();
+        else {
+          resultRef.set(file);
         }
-      };
+        latch.countDown();
+      }
 
-      myServer.execution_mapUri(_id, filePath, _uri, consumer);
-    }
+      @Override
+      public void onError(final RequestError error) {
+        LOG.warn(
+          "execution_mapUri(" + _id + ", " + filePath + ", " + _uri + ") returned error " + error.getCode() + ": " + error.getMessage());
+        latch.countDown();
+      }
+    });
 
-    final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EXECUTION_MAP_URI_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, EXECUTION_MAP_URI_TIMEOUT);
 
-    if (semaphore.tryUp()) {
-      LOG.info("execution_mapUri() took too long for contextID " +
-               _id +
-               " and file or uri " +
-               (filePath != null ? filePath : _uri) +
-               ": " +
-               (System.currentTimeMillis() - t0) +
-               "ms");
+    if (latch.getCount() > 0) {
+      LOG.info("execution_mapUri() took too long for contextID " + _id + " and file or uri " + (filePath != null ? filePath : _uri));
       return null;
     }
 
@@ -1481,28 +1402,25 @@ public class DartAnalysisServerService {
   public void waitForAnalysisToComplete_TESTS_ONLY(@NotNull final VirtualFile file) {
     assert ApplicationManager.getApplication().isUnitTestMode();
 
-    synchronized (myLock) {
-      if (myServer == null) return;
+    final AnalysisServer server = myServer;
+    if (server == null) return;
 
-      final Semaphore semaphore = new Semaphore();
-      semaphore.down();
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.analysis_getErrors(FileUtil.toSystemDependentName(file.getPath()), new GetErrorsConsumer() {
+      @Override
+      public void computedErrors(AnalysisError[] errors) {
+        latch.countDown();
+      }
 
-      myServer.analysis_getErrors(FileUtil.toSystemDependentName(file.getPath()), new GetErrorsConsumer() {
-        @Override
-        public void computedErrors(AnalysisError[] errors) {
-          semaphore.up();
-        }
+      @Override
+      public void onError(RequestError requestError) {
+        latch.countDown();
+        LOG.error(requestError.getMessage());
+      }
+    });
 
-        @Override
-        public void onError(RequestError requestError) {
-          semaphore.up();
-          LOG.error(requestError.getMessage());
-        }
-      });
-
-      semaphore.waitFor(ANALYSIS_IN_TESTS_TIMEOUT);
-      assert !semaphore.tryUp() : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
-    }
+    awaitForLatchCheckingCanceled(server, latch, ANALYSIS_IN_TESTS_TIMEOUT);
+    assert latch.getCount() == 0 : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
   }
 
   private void waitWhileServerBusy() {

@@ -19,6 +19,7 @@
   </project-components>
 
   <extensionPoints>
+    <!--suppress ExtensionPointBeanClass -->
     <extensionPoint name="service" beanClass="com.intellij.openapi.components.ServiceDescriptor"/>
   </extensionPoints>
 

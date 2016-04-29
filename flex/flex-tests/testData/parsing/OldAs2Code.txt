@@ -29,3 +29,25 @@ JSFile:OldAs2Code.js2
     JSBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  ActionScriptFunction
+    JSAttributeList
+      PsiElement(JS:NATIVE_KEYWORD)('native')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:PUBLIC_KEYWORD)('public')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:FUNCTION_KEYWORD)('function')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('libwebp')
+      PsiElement(JS:DOT)('.')
+      PsiElement(JS:INTERNAL_KEYWORD)('internal')
+    PsiElement(JS:DOT)('.')
+    PsiElement(JS:IDENTIFIER)('ptr2funInit')
+    JSParameterList
+      PsiElement(JS:LPAR)('(')
+      PsiElement(JS:RPAR)(')')
+    PsiElement(JS:COLON)(':')
+    PsiElement(JS:ANY_IDENTIFIER)('*')
+    PsiElement(JS:SEMICOLON)(';')
