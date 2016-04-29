@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.text.CharArrayUtil;
@@ -35,6 +36,7 @@ public class CucumberEnterHandler extends EnterHandlerDelegateAdapter {
     }
     final Document document = editor.getDocument();
     final String docText = document.getText();
+    PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
     final PsiElement probableQuotes = file.findElementAt(caretOffsetValue - 1);
     if (probableQuotes != null && probableQuotes.getNode().getElementType() == GherkinTokenTypes.PYSTRING) {
       final PsiElement probablePyStringText =
