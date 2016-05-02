@@ -6,7 +6,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.PathUtilRt;
 import gnu.trove.THashMap;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
@@ -59,23 +58,18 @@ public class RslUtil {
 
       final Map<String, List<String>> swcPathToRslMap = new THashMap<String, List<String>>();
       try {
-        final Document document = JDOMUtil.loadDocument(configFile);
-        final Element rootElement = document.getRootElement();
-        if (rootElement != null) {
-          //noinspection unchecked
-          for (Element rslElement : ((Iterable<Element>)rootElement.getChildren("runtime-shared-library-path",
-                                                                                rootElement.getNamespace()))) {
-            final Element swcPathElement = rslElement.getChild("path-element", rslElement.getNamespace());
-            if (swcPathElement != null) {
-              final List<String> rslUrls = new ArrayList<String>(2);
-              //noinspection unchecked
-              for (Element rslUrlElement : ((Iterable<Element>)rslElement.getChildren("rsl-url", rootElement.getNamespace()))) {
-                final String rslUrl = rslUrlElement.getTextNormalize();
-                rslUrls.add(rslUrl);
-              }
-              final String swcPath = PathUtilRt.getParentPath(configFilePath) + "/" + swcPathElement.getTextNormalize();
-              swcPathToRslMap.put(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase(), rslUrls);
+        final Element rootElement = JDOMUtil.load(configFile);
+        for (Element rslElement : rootElement.getChildren("runtime-shared-library-path",
+                                                          rootElement.getNamespace())) {
+          final Element swcPathElement = rslElement.getChild("path-element", rslElement.getNamespace());
+          if (swcPathElement != null) {
+            final List<String> rslUrls = new ArrayList<String>(2);
+            for (Element rslUrlElement : rslElement.getChildren("rsl-url", rootElement.getNamespace())) {
+              final String rslUrl = rslUrlElement.getTextNormalize();
+              rslUrls.add(rslUrl);
             }
+            final String swcPath = PathUtilRt.getParentPath(configFilePath) + "/" + swcPathElement.getTextNormalize();
+            swcPathToRslMap.put(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase(), rslUrls);
           }
         }
       }

@@ -10,7 +10,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.PlatformTestUtil;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
@@ -47,18 +46,15 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
   @Override
   protected void tearDown() throws Exception {
     try {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          final Library[] libraries = ApplicationLibraryTable.getApplicationTable().getLibraries();
-          for (Library library : libraries) {
-            ApplicationLibraryTable.getApplicationTable().removeLibrary(library);
-          }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        final Library[] libraries = ApplicationLibraryTable.getApplicationTable().getLibraries();
+        for (Library library : libraries) {
+          ApplicationLibraryTable.getApplicationTable().removeLibrary(library);
+        }
 
-          ApplicationLibraryTable.getApplicationTable().loadState(myOriginalGlobalLibraries);
-          if (checkJdk()) {
-            ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).loadState(myOriginalSkds);
-          }
+        ApplicationLibraryTable.getApplicationTable().loadState(myOriginalGlobalLibraries);
+        if (checkJdk()) {
+          ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).loadState(myOriginalSkds);
         }
       });
 
@@ -80,25 +76,22 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
     String path = getHomePath() + getBasePath() + testName;
 
     final File globalBefore = new File(path, "global_before");
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          if (checkJdk()) {
-            Element d = JDOMUtil.load(new File(globalBefore, JDK_TABLE_XML));
-            ConversionHelper.expandPaths(d);
-            ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).loadState(d);
-          }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        if (checkJdk()) {
+          Element d = JDOMUtil.load(new File(globalBefore, JDK_TABLE_XML));
+          ConversionHelper.expandPaths(d);
+          ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).loadState(d);
+        }
 
-          {
-            Document d = JDOMUtil.loadDocument(new File(globalBefore, GLOBAL_LIBS_XML));
-            ConversionHelper.expandPaths(d.getRootElement());
-            ApplicationLibraryTable.getApplicationTable().loadState(d.getRootElement());
-          }
+        {
+          Element d = JDOMUtil.load(new File(globalBefore, GLOBAL_LIBS_XML));
+          ConversionHelper.expandPaths(d);
+          ApplicationLibraryTable.getApplicationTable().loadState(d);
         }
-        catch (Exception e) {
-          throw new RuntimeException(e);
-        }
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
       }
     });
 
@@ -108,17 +101,15 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
 
     File globalAfter = new File(path, "global_after");
     if (checkJdk()) {
-      Document d = JDOMUtil.loadDocument(new File(globalAfter, JDK_TABLE_XML));
       Element sdkState = ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).getState();
       ConversionHelper.collapsePaths(sdkState);
-      PlatformTestUtil.assertElementsEqual(d.getRootElement(), sdkState);
+      PlatformTestUtil.assertElementsEqual(JDOMUtil.load(new File(globalAfter, JDK_TABLE_XML)), sdkState);
     }
 
     {
-      Document d = JDOMUtil.loadDocument(new File(globalAfter, GLOBAL_LIBS_XML));
       Element globalLibState = ApplicationLibraryTable.getApplicationTable().getState();
       ConversionHelper.collapsePaths(globalLibState);
-      PlatformTestUtil.assertElementsEqual(d.getRootElement(), globalLibState);
+      PlatformTestUtil.assertElementsEqual(JDOMUtil.load(new File(globalAfter, GLOBAL_LIBS_XML)), globalLibState);
     }
     return true;
   }

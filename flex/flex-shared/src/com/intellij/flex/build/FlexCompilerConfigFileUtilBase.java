@@ -4,7 +4,10 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import gnu.trove.THashSet;
-import org.jdom.*;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,9 +55,9 @@ public class FlexCompilerConfigFileUtilBase {
       return generatedConfigText;
     }
 
-    final Document document;
+    final Element rootElement;
     try {
-      document = JDOMUtil.loadDocument(additionalConfigFile);
+      rootElement = JDOMUtil.load(additionalConfigFile);
     }
     catch (JDOMException e) {
       return generatedConfigText;
@@ -63,7 +66,6 @@ public class FlexCompilerConfigFileUtilBase {
       return generatedConfigText;
     }
 
-    final Element rootElement = document.getRootElement();
     if (!FLEX_CONFIG.equals(rootElement.getName())) {
       return generatedConfigText;
     }
@@ -73,7 +75,7 @@ public class FlexCompilerConfigFileUtilBase {
 
     try {
       final Element otherRootElement = JDOMUtil.loadDocument(generatedConfigText).getRootElement();
-      assert otherRootElement != null && FLEX_CONFIG.equals(rootElement.getName()) : JDOMUtil.writeDocument(document, "\n");
+      assert FLEX_CONFIG.equals(rootElement.getName()) : JDOMUtil.writeElement(rootElement, "\n");
 
       appendDocument(rootElement, otherRootElement);
     }
@@ -84,7 +86,7 @@ public class FlexCompilerConfigFileUtilBase {
       assert false : e.getMessage() + "\n" + generatedConfigText;
     }
 
-    return JDOMUtil.writeDocument(document, "\n");
+    return JDOMUtil.writeElement(rootElement, "\n");
   }
 
   private static void removeSwcSpecificElementsRecursively(final Element element) {
@@ -92,8 +94,7 @@ public class FlexCompilerConfigFileUtilBase {
       element.removeChildren(elementName, element.getNamespace());
     }
 
-    // noinspection unchecked
-    for (final Element child : (Iterable<Element>)element.getChildren()) {
+    for (final Element child : element.getChildren()) {
       removeSwcSpecificElementsRecursively(child);
     }
   }
@@ -127,13 +128,13 @@ public class FlexCompilerConfigFileUtilBase {
     final Collection<String> result = new ArrayList<String>();
 
     //noinspection unchecked
-    for (Element compilerElement : ((Iterable<Element>)rootElement.getChildren(COMPILER, namespace))) {
+    for (Element compilerElement : rootElement.getChildren(COMPILER, namespace)) {
       if (removeExternal) {
         //noinspection unchecked
-        for (Element externalLibraryPathElement : ((Iterable<Element>)compilerElement.getChildren(EXTERNAL_LIBRARY_PATH, namespace))) {
+        for (Element externalLibraryPathElement : compilerElement.getChildren(EXTERNAL_LIBRARY_PATH, namespace)) {
           final Collection<Element> pathElementsToRemove = new ArrayList<Element>();
           //noinspection unchecked
-          for (Element pathElement : ((Iterable<Element>)externalLibraryPathElement.getChildren(PATH_ELEMENT, namespace))) {
+          for (Element pathElement : externalLibraryPathElement.getChildren(PATH_ELEMENT, namespace)) {
             final String path = pathElement.getText();
             final String fileName = path.substring(FileUtil.toSystemIndependentName(path).lastIndexOf("/") + 1);
             if (fileName.startsWith("playerglobal") || fileName.startsWith("airglobal")) {
@@ -152,10 +153,10 @@ public class FlexCompilerConfigFileUtilBase {
 
       if (removeIncluded) {
         //noinspection unchecked
-        for (Element includeLibrariesElement : ((Iterable<Element>)compilerElement.getChildren(INCLUDE_LIBRARIES, namespace))) {
+        for (Element includeLibrariesElement : compilerElement.getChildren(INCLUDE_LIBRARIES, namespace)) {
           final Collection<Element> libraryElementsToRemove = new ArrayList<Element>();
           //noinspection unchecked
-          for (Element libraryElement : ((Iterable<Element>)includeLibrariesElement.getChildren(LIBRARY, namespace))) {
+          for (Element libraryElement : includeLibrariesElement.getChildren(LIBRARY, namespace)) {
             result.add(libraryElement.getText());
             libraryElementsToRemove.add(libraryElement);
           }
@@ -180,8 +181,8 @@ public class FlexCompilerConfigFileUtilBase {
     }
 
     //noinspection unchecked
-    for (final Element otherElement : ((Iterable<Element>)otherRootElement.getChildren())) {
-      rootElement.addContent((Element)otherElement.clone());
+    for (final Element otherElement : otherRootElement.getChildren()) {
+      rootElement.addContent(otherElement.clone());
     }
   }
 
@@ -190,7 +191,7 @@ public class FlexCompilerConfigFileUtilBase {
     final Collection<Element> result = new THashSet<Element>();
 
     //noinspection unchecked
-    for (Element potentialChild : (Iterable<Element>)otherElement.getChildren()) {
+    for (Element potentialChild : otherElement.getChildren()) {
       final List existingChildren = existingElement.getChildren(potentialChild.getName(), existingElement.getNamespace());
       //noinspection unchecked
       for (Element existingChild : (Iterable<Element>)existingChildren) {
