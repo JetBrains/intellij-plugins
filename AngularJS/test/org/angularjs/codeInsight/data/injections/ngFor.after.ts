@@ -10,7 +10,7 @@ import {SearchPipe} from "./search-pipe";
     directives: [TodoItemRenderer],
     template:`<div>
         <ul>
-            <li *ngFor="#myTodo of todoService.todos
+            <li *ngFor="let myTodo of todoService.todos
             | started : status
             | search : term
             ">
