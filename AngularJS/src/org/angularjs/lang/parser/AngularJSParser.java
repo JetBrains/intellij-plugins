@@ -31,8 +31,12 @@ public class AngularJSParser
             return;
           }
         }
-        if (firstToken == AngularJSTokenTypes.HASH && builder.lookAhead(2) != JSTokenTypes.EQ) {
-          parseNgForStatement();
+        if (firstToken == JSTokenTypes.LET_KEYWORD) {
+          if (builder.lookAhead(2) != JSTokenTypes.EQ) {
+            parseNgForStatement();
+            return;
+          }
+          parseExpressionStatement();
           return;
         }
         if (builder.getTokenType() == JSTokenTypes.LPAR) {
@@ -109,7 +113,7 @@ public class AngularJSParser
       if (firstToken == JSTokenTypes.STRING_LITERAL) {
         return parseStringLiteral(firstToken);
       }
-      if (firstToken == AngularJSTokenTypes.HASH) {
+      if (firstToken == AngularJSTokenTypes.LET_KEYWORD) {
         parseHashDefinition();
         return true;
       }

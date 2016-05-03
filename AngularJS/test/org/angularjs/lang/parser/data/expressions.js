@@ -11,7 +11,7 @@ x.y.z=123;
 a=123;b=234
 ::a
 aaa?.foo
-#todo of todoService.todos | started : status | search : term
-# of todoService.todos | started : status | search : term
-#todo todoService.todos | started : status | search : term
-#todo of todoService.todos; #index=index, #last=last
+let todo of todoService.todos | started : status | search : term
+let of todoService.todos | started : status | search : term
+let todo todoService.todos | started : status | search : term
+let todo of todoService.todos; let index=index, let last=last
