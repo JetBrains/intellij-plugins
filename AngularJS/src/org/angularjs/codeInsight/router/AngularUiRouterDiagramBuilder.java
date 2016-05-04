@@ -250,14 +250,17 @@ public class AngularUiRouterDiagramBuilder {
 
   private void moduleDependenciesStep(String mainModule, NonCyclicQueue<VirtualFile> filesQueue, NonCyclicQueue<String> modulesQueue) {
     addContainingFile(filesQueue, mainModule);
-    final FileBasedIndex instance = FileBasedIndex.getInstance();
     if (!StringUtil.isEmptyOrSpaces(mainModule)) {
-      final List<List<String>> values = instance
-        .getValues(AngularModuleDependencyIndex.ANGULAR_MODULE_DEPENDENCY_INDEX, mainModule, GlobalSearchScope.projectScope(myProject));
-      for (List<String> value : values) {
-        for (String module : value) {
-          modulesQueue.add(module);
-          addContainingFile(filesQueue, module);
+      final JSImplicitElement element = AngularIndexUtil.resolve(myProject, AngularModuleIndex.KEY, mainModule);
+      if (element != null) {
+        final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
+        if (callExpression == null) return;
+        final List<String> dependenciesInModuleDeclaration = AngularModuleIndex.findDependenciesInModuleDeclaration(callExpression);
+        if (dependenciesInModuleDeclaration != null) {
+          for (String module : dependenciesInModuleDeclaration) {
+            modulesQueue.add(module);
+            addContainingFile(filesQueue, module);
+          }
         }
       }
     }

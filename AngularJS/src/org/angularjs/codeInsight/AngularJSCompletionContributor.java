@@ -44,7 +44,10 @@ public class AngularJSCompletionContributor extends CompletionContributor {
       AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSPsiElementBase>() {
         @Override
         public void consume(JSPsiElementBase element) {
-          result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, element.getName(), NG_VARIABLE_PRIORITY, false, false));
+          final String name = element.getName();
+          if (name != null) {
+            result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, name, NG_VARIABLE_PRIORITY, false, false));
+          }
         }
       });
     }

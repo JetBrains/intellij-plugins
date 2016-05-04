@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
@@ -15,7 +16,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
-import org.angularjs.lang.lexer.AngularJSTokenTypes;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -48,8 +48,8 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
   public ResolveResult[] doResolve() {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
     if (myRef.getParent() instanceof JSDefinitionExpression) {
-      final PsiElement sibling = myRef.getPrevSibling();
-      if (sibling != null && sibling.getNode().getElementType() == AngularJSTokenTypes.HASH) {
+      final PsiElement sibling = PsiTreeUtil.prevVisibleLeaf(myRef);
+      if (sibling != null && sibling.getNode().getElementType() == JSTokenTypes.LET_KEYWORD) {
         return new JSResolveResult[]{new JSResolveResult(myRef)};
       }
       final AngularJSRepeatExpression repeat = PsiTreeUtil.getParentOfType(myRef, AngularJSRepeatExpression.class);

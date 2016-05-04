@@ -5,14 +5,13 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtilRt;
 import gnu.trove.THashMap;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.util.JpsPathUtil;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,26 +127,22 @@ public class InfoFromConfigFile {
       String targetPlayer = null;
 
       try {
-        final Document document = JDOMUtil.loadDocument(configFile);
-        final Element rootElement = document.getRootElement();
+        final Element rootElement = JDOMUtil.load(configFile);
+        final Element fileSpecsElement = rootElement.getChild("file-specs", rootElement.getNamespace());
+        mainClassPath = fileSpecsElement == null ? null
+                                                 : fileSpecsElement.getChildTextNormalize("path-element", rootElement.getNamespace());
+        outputPath = rootElement.getChildTextNormalize("output", rootElement.getNamespace());
 
-        if (rootElement != null) {
-          final Element fileSpecsElement = rootElement.getChild("file-specs", rootElement.getNamespace());
-          mainClassPath = fileSpecsElement == null ? null
-                                                   : fileSpecsElement.getChildTextNormalize("path-element", rootElement.getNamespace());
-          outputPath = rootElement.getChildTextNormalize("output", rootElement.getNamespace());
-
-          if (outputPath != null && !FileUtil.isAbsolute(outputPath)) {
-            try {
-              outputPath = FileUtil.toSystemIndependentName(new File(configFile.getParent(), outputPath).getCanonicalPath());
-            }
-            catch (IOException e) {
-              outputPath = FileUtil.toSystemIndependentName(new File(configFile.getParent(), outputPath).getAbsolutePath());
-            }
+        if (outputPath != null && !FileUtil.isAbsolute(outputPath)) {
+          try {
+            outputPath = FileUtil.toSystemIndependentName(new File(configFile.getParent(), outputPath).getCanonicalPath());
           }
-
-          targetPlayer = rootElement.getChildTextNormalize("target-player", rootElement.getNamespace());
+          catch (IOException e) {
+            outputPath = FileUtil.toSystemIndependentName(new File(configFile.getParent(), outputPath).getAbsolutePath());
+          }
         }
+
+        targetPlayer = rootElement.getChildTextNormalize("target-player", rootElement.getNamespace());
       }
       catch (IOException ignore) {/*ignore*/ }
       catch (JDOMException ignore) {/*ignore*/}

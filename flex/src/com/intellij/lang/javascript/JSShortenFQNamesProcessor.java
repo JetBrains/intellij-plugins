@@ -2,6 +2,7 @@ package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.impl.TemplateContext;
 import com.intellij.codeInsight.template.impl.TemplateOptionalProcessor;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.ImportUtils;
@@ -23,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
@@ -84,7 +86,7 @@ public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
   }
 
   @Override
-  public boolean isVisible(Template template) {
+  public boolean isVisible(@NotNull Template template, @NotNull TemplateContext context) {
     return false;
   }
 }

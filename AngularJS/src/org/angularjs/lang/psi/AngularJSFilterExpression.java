@@ -35,6 +35,11 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
     return node != null ? (JSExpression)node.getPsi() : null;
   }
 
+  @Override
+  public JSExpression getStubSafeMethodExpression() {
+    return null;
+  }
+
   @Nullable
   @Override
   public JSArgumentList getArgumentList() {
