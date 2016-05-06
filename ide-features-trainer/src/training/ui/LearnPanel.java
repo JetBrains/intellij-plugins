@@ -131,7 +131,8 @@ public class LearnPanel extends JPanel {
         lessonGap = 10;
 
         //UI colors and fonts
-        background = new JBColor(Gray._250, Gray._50);
+//        background = new JBColor(Gray._250, Gray._50);
+        background = UIUtil.getPanelBackground();
         moduleNameFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
         allTopicsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
         lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 2);
@@ -197,10 +198,11 @@ public class LearnPanel extends JPanel {
 //        messages = new ArrayList<LessonMessage>();
 //        lessonMessageContainer.setLayout(new BoxLayout(lessonMessageContainer, BoxLayout.Y_AXIS));
 //        lessonMessageContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
-        lessonMessagePane = new LessonMessagePane();
+        lessonMessagePane = new LessonMessagePane(fontSize);
         lessonMessagePane.setFocusable(false);
         //Set lessonMessagePane UI
-        lessonMessagePane.setBackground(background);
+//        lessonMessagePane.setBackground(background);
+        lessonMessagePane.setOpaque(false);
         lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, lessonLinkColor, passedColor);
         lessonMessagePane.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonMessagePane.setMargin(new Insets(0, 0, 0, 0));
@@ -514,6 +516,7 @@ public class LearnPanel extends JPanel {
                 }
             }
         }
+
 
         class MyLinkLabel extends LinkLabel {
 
