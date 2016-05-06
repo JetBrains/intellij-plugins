@@ -33,17 +33,20 @@ class LessonMessagePane extends JTextPane {
     private Color passedColor = JBColor.GRAY;
     private static int arc = 4;
     private static int indent = 2;
-    private JBColor bckshrtct = new JBColor(new Color(218, 226, 237), new Color(39, 43, 46));
+//    private JBColor bckshrtct = new JBColor(new Color(218, 226, 237), new Color(39, 43, 46));
+    private JBColor bckShortcutColor;
     private Icon passedIcon;
+    private int fontSize;
 
-    LessonMessagePane(int fontSize) {
+    LessonMessagePane(int fontSize, int leftIndent) {
         super();
-        initStyleConstants(fontSize);
+        this.fontSize = fontSize;
+        initStyleConstants(leftIndent);
         setEditable(false);
         this.setParagraphAttributes(PARAGRAPH_STYLE, true);
     }
 
-    private static void initStyleConstants(int fontSize) {
+    private void initStyleConstants(int leftIndent) {
         StyleConstants.setFontFamily(REGULAR, UIUtil.getLabelFont().getFamily());
         StyleConstants.setFontSize(REGULAR, fontSize);
         StyleConstants.setForeground(REGULAR, JBColor.BLACK);
@@ -67,25 +70,26 @@ class LessonMessagePane extends JTextPane {
         StyleConstants.setUnderline(LINK, true);
         StyleConstants.setFontSize(LINK, fontSize);
 
-        StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 20);
+        StyleConstants.setLeftIndent(PARAGRAPH_STYLE, leftIndent);
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
-        StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 10.5f);
+        StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 16.0f);
         StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f);
-        StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f);
+        StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.2f);
     }
 
     void setUI(Color regularFontColor,
                Color shortcutColor,
                Color codeFontColor,
                Color linkFontColor,
-               Color passedColor) {
+               Color passedColor,
+               JBColor shortcutBackgroundColor) {
         StyleConstants.setForeground(REGULAR, regularFontColor);
         StyleConstants.setForeground(BOLD, shortcutColor);
         StyleConstants.setForeground(SHORTCUT, shortcutColor);
         StyleConstants.setForeground(LINK, linkFontColor);
         StyleConstants.setForeground(CODE, codeFontColor);
         this.passedColor = passedColor;
-
+        this.bckShortcutColor = shortcutBackgroundColor;
     }
 
     void addMessage(String text) {
@@ -217,7 +221,7 @@ class LessonMessagePane extends JTextPane {
                 if (startOffset != 0) startOffset++;
                 try {
                     Rectangle rectangle = modelToView(startOffset);
-                    LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 20, rectangle.y + 2);
+                    LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 17, rectangle.y + 1);
                 } catch (BadLocationException e) {
                     e.printStackTrace();
                 }
@@ -237,9 +241,9 @@ class LessonMessagePane extends JTextPane {
                     final Rectangle rectangleStart = modelToView(startOffset);
                     final Rectangle rectangleEnd = modelToView(endOffset - 2);
                     final Color color = g2d.getColor();
-                    g2d.setColor(bckshrtct);
+                    g2d.setColor(bckShortcutColor);
                     RoundRectangle2D r2d = new RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent,
-                            (rectangleEnd.getX() - rectangleStart.getX()) + 4 * indent, rectangleStart.getHeight() + 2 * indent, arc, arc);
+                            (rectangleEnd.getX() - rectangleStart.getX()) + 4 * indent, fontSize + 3 * indent, arc, arc);
                     g2d.fill(r2d);
                     g2d.setColor(color);
                 }

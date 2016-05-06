@@ -35,12 +35,12 @@ public class LearnPanel extends JPanel {
 
     //Lesson panel items
     private JPanel lessonPanel;
-    private JPanel moduleNamePanel; //contains moduleNameLabel and allTopicsLabel
     private JLabel moduleNameLabel;
     private LinkLabel allTopicsLabel;
 
     private JLabel lessonNameLabel; //Name of the current lesson
     private LessonMessagePane lessonMessagePane;
+    private JPanel buttonPanel;
     private JButton button;
     private JButton lessonNextTestButton;
 
@@ -49,6 +49,14 @@ public class LearnPanel extends JPanel {
     private Color background;
     private Color defaultTextColor; //default text color
     private int insets;
+    private int north_inset;
+    private int west_inset;
+    private int south_inset;
+    private int east_inset;
+    private int check_width;
+    private int check_right_indent;
+    private EmptyBorder checkmarkShift;
+
 
     //lessonPanel UI
     private int fontSize;
@@ -60,7 +68,8 @@ public class LearnPanel extends JPanel {
     private Font moduleNameFont;
     private Font allTopicsFont;
     private Font lessonNameFont;
-    private Color shortcutTextColor;
+    private JBColor shortcutTextColor;
+    private JBColor shortcutBackgroundColor;
     private Color passedColor;
     private Color lessonPassedColor;
     private Color lessonCodeColor;
@@ -73,7 +82,7 @@ public class LearnPanel extends JPanel {
 
     //Module panel stuff
     private ModulePanel modulePanel;
-
+    private JPanel moduleNamePanel; //contains moduleNameLabel and allTopicsLabel
 
     //modulePanel UI
     private int lessonGap;
@@ -96,21 +105,13 @@ public class LearnPanel extends JPanel {
 
         lessonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         this.add(lessonPanel);
-//        final Box.Filler filler = new Box.Filler(
-//                new Dimension(5, separatorGap),    //minimum size of filler
-//                new Dimension(5, separatorGap),    //preferable size of filler
-//                new Dimension(5, Short.MAX_VALUE)     //maximum size of filler
-//        );
-//        filler.setAlignmentX(Component.LEFT_ALIGNMENT);
-//        this.add(filler);
         modulePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         this.add(modulePanel);
 
         //set LearnPanel UI
         this.setPreferredSize(new Dimension(width, 100));
-        this.setBorder(new EmptyBorder(insets, insets, insets, insets));
-
+        this.setBorder(new EmptyBorder(north_inset, west_inset, south_inset, east_inset));
     }
 
 
@@ -119,7 +120,16 @@ public class LearnPanel extends JPanel {
         //TODO: change size to UiUtil size
         fontSize = 12;
         insets = 16;
-        lessonNameGap = 4;
+
+        west_inset = 13;
+        north_inset = 16;
+        east_inset = 32;
+        south_inset = 32;
+        check_width = LearnIcons.CheckmarkGray12.getIconWidth();
+        check_right_indent = 5;
+        checkmarkShift = new EmptyBorder(0, check_width + check_right_indent, 0, 0);
+
+        lessonNameGap = 5;
         beforeButtonGap = 20;
         afterButtonGap = 44;
         messageGap = 10;
@@ -128,7 +138,7 @@ public class LearnPanel extends JPanel {
         separatorGap = 10;
 
         //§e UI
-        lessonGap = 10;
+        lessonGap = 12;
 
         //UI colors and fonts
 //        background = new JBColor(Gray._250, Gray._50);
@@ -145,6 +155,7 @@ public class LearnPanel extends JPanel {
 
         //shortcut UI
         shortcutTextColor = new JBColor(Gray._12, Gray._200);
+        shortcutBackgroundColor = new JBColor(new Color(218, 226, 237), new Color(39, 43, 46));
 
         //separator UI
         separatorColor = new JBColor(Gray._222, Gray._149);
@@ -165,15 +176,10 @@ public class LearnPanel extends JPanel {
         lessonPanel.setBackground(background);
         lessonPanel.setFocusable(false);
 
-        moduleNamePanel = new JPanel();
-        moduleNamePanel.setBackground(background);
-        moduleNamePanel.setFocusable(false);
-        moduleNamePanel.setLayout(new BoxLayout(moduleNamePanel, BoxLayout.X_AXIS));
-        moduleNamePanel.setAlignmentX(LEFT_ALIGNMENT);
-
         moduleNameLabel = new JLabel();
         moduleNameLabel.setFont(moduleNameFont);
         moduleNameLabel.setFocusable(false);
+        moduleNameLabel.setBorder(checkmarkShift);
 
         allTopicsLabel = new LinkLabel();
         allTopicsLabel.setFont(allTopicsFont);
@@ -184,26 +190,16 @@ public class LearnPanel extends JPanel {
             CourseManager.getInstance().setModulesView(guessCurrentProject);
         }, null);
 
-        moduleNamePanel.add(moduleNameLabel);
-        moduleNamePanel.add(Box.createHorizontalGlue());
-        moduleNamePanel.add(allTopicsLabel);
-        moduleNamePanel.setBorder(new EmptyBorder(0, 0, 0, 4));
-
         lessonNameLabel = new JLabel();
+        lessonNameLabel.setBorder(checkmarkShift);
         lessonNameLabel.setFont(lessonNameFont);
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNameLabel.setFocusable(false);
 
-//        lessonMessageContainer = new JPanel();
-//        messages = new ArrayList<LessonMessage>();
-//        lessonMessageContainer.setLayout(new BoxLayout(lessonMessageContainer, BoxLayout.Y_AXIS));
-//        lessonMessageContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
-        lessonMessagePane = new LessonMessagePane(fontSize);
+        lessonMessagePane = new LessonMessagePane(fontSize, check_width + check_right_indent);
         lessonMessagePane.setFocusable(false);
-        //Set lessonMessagePane UI
-//        lessonMessagePane.setBackground(background);
         lessonMessagePane.setOpaque(false);
-        lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, lessonLinkColor, passedColor);
+        lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, lessonLinkColor, passedColor, shortcutBackgroundColor);
         lessonMessagePane.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonMessagePane.setMargin(new Insets(0, 0, 0, 0));
         lessonMessagePane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -211,29 +207,31 @@ public class LearnPanel extends JPanel {
 
         //Set Next Button UI
         button = new JButton(LearnBundle.message("learn.ui.button.skip"));
-//        button.setAlignmentX(Component.LEFT_ALIGNMENT);
         button.setBackground(background);
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setFocusable(false);
         button.setVisible(true);
         button.setEnabled(true);
 
+        buttonPanel = new JPanel();
+        buttonPanel.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
+        buttonPanel.setOpaque(false);
+        buttonPanel.setFocusable(false);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.setAlignmentX(LEFT_ALIGNMENT);
+        buttonPanel.add(button);
 
-        //Add new NextButton TEST
-//        lessonNextTestButton = new JButton("Test Next");
-//        lessonNextTestButton.setVisible(true);
-//        lessonNextTestButton.setBackground(background);
-//        lessonNextTestButton.setMargin(new Insets(0, 0, 0, 0));
-
-        lessonPanel.add(moduleNamePanel);
-        lessonPanel.add(Box.createRigidArea(new Dimension(5, lessonNameGap)));
+        lessonPanel.setName("lessonPanel");
+        //shift right for checkmark
+        lessonPanel.add(moduleNameLabel);
+        lessonPanel.add(Box.createVerticalStrut(lessonNameGap));
         lessonPanel.add(lessonNameLabel);
 //        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNameGap)));
         lessonPanel.add(lessonMessagePane);
-        lessonPanel.add(Box.createRigidArea(new Dimension(0, beforeButtonGap)));
+        lessonPanel.add(Box.createVerticalStrut(beforeButtonGap));
         lessonPanel.add(Box.createVerticalGlue());
-        lessonPanel.add(button);
-        lessonPanel.add(Box.createRigidArea(new Dimension(0, afterButtonGap)));
+        lessonPanel.add(buttonPanel);
+        lessonPanel.add(Box.createVerticalStrut(afterButtonGap));
     }
 
 
@@ -403,9 +401,6 @@ public class LearnPanel extends JPanel {
 
         //define separator
         modulePanel.setBorder(new MatteBorder(1, 0, 0, 0, separatorColor));
-        modulePanel.setLeftInset(16);
-
-
     }
 
     public ModulePanel getModulePanel() {
@@ -422,17 +417,12 @@ public class LearnPanel extends JPanel {
         private Module myModule;
         private Lesson myLesson;
         private BidirectionalMap<Lesson, MyLinkLabel> lessonLabelMap = new BidirectionalMap<Lesson, MyLinkLabel>();
-        private int leftInset = 10;
 
         public void init(Lesson lesson) {
 
             myLesson = lesson;
             myModule = lesson.getModule();
             initModuleLessons(lesson);
-        }
-
-        void setLeftInset(int inset) {
-            leftInset = inset;
         }
 
         private void initModuleLessons(final Lesson lesson) {
@@ -446,14 +436,24 @@ public class LearnPanel extends JPanel {
 
             //create ModuleLessons region
             JLabel moduleLessons = new JLabel();
-            String courseName = lesson.getModule().getName();
-            String courseNameLessons = courseName + " Lessons";
-            moduleLessons.setText(courseNameLessons);
+
+            moduleNamePanel = new JPanel();
+            moduleNamePanel.setBorder(new EmptyBorder(lessonGap, check_width + check_right_indent, 0, 0));
+            moduleNamePanel.setOpaque(false);
+            moduleNamePanel.setFocusable(false);
+            moduleNamePanel.setLayout(new BoxLayout(moduleNamePanel, BoxLayout.X_AXIS));
+            moduleNamePanel.setAlignmentX(LEFT_ALIGNMENT);
+            moduleNamePanel.add(moduleLessons);
+            moduleNamePanel.add(Box.createHorizontalStrut(20));
+            moduleNamePanel.add(Box.createHorizontalGlue());
+            moduleNamePanel.add(allTopicsLabel);
+
+            moduleLessons.setText(lesson.getModule().getName());
             moduleLessons.setFont(allLessonsFont);
             moduleLessons.setFocusable(false);
 
             add(Box.createRigidArea(new Dimension(0, 5)));
-            add(moduleLessons);
+            add(moduleNamePanel);
             add(Box.createRigidArea(new Dimension(0, 10)));
 
             buildLessonLabels(lesson, myLessons);
@@ -466,7 +466,7 @@ public class LearnPanel extends JPanel {
 
                 final MyLinkLabel e = new MyLinkLabel(lessonName);
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
-                e.setBorder(new EmptyBorder(0, leftInset, lessonGap, 0));
+                e.setBorder(new EmptyBorder(0, check_width + check_right_indent, lessonGap, 0));
                 e.setFocusable(false);
                 e.setPaintUnderline(false);
                 e.setListener((aSource, aLinkData) -> {

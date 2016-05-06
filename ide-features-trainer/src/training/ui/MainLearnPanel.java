@@ -139,7 +139,7 @@ public class MainLearnPanel extends JPanel {
             } else {
                 progressLabel = new JBLabel();
             }
-            progressLabel.setFont(progressLabelFont);
+            progressLabel.setFont(progressLabelFont.deriveFont(Font.ITALIC));
             progressLabel.setForeground(JBColor.BLACK);
             moduleHeader.add(moduleName);
             moduleHeader.add(Box.createRigidArea(new Dimension(10, 10)));
