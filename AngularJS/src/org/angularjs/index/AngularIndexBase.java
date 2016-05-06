@@ -7,9 +7,9 @@ import com.intellij.psi.stubs.StringStubIndexExtension;
  * @author Dennis.Ushakov
  */
 public abstract class AngularIndexBase extends StringStubIndexExtension<JSImplicitElementProvider> {
-
+  private static final int VERSION = 1;
   @Override
   public int getVersion() {
-    return AngularIndexUtil.BASE_VERSION;
+    return VERSION;
   }
 }
