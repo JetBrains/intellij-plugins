@@ -467,7 +467,6 @@ public class LearnPanel extends JPanel {
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setBorder(new EmptyBorder(0, check_width + check_right_indent, lessonGap, 0));
                 e.setFocusable(false);
-                e.setPaintUnderline(false);
                 e.setListener((aSource, aLinkData) -> {
                     try {
                         Project project = ProjectUtil.guessCurrentProject(LearnPanel.this);
