@@ -53,6 +53,7 @@ public class AngularJSParser
           statement.drop();
           return false;
         }
+        checkForSemicolon();
         statement.done(JSElementTypes.EXPRESSION_STATEMENT);
         return true;
       }
