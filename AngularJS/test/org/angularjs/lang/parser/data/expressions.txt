@@ -326,7 +326,6 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:IDENTIFIER)('todoService')
         PsiElement(JS:DOT)('.')
         PsiElement(JS:IDENTIFIER)('todos')
-  JSEmptyStatement
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace(' ')
   JSExpressionStatement

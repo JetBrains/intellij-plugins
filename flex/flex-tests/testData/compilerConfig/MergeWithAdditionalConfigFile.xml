@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
   <compiler>
     <fonts>
@@ -153,4 +152,3 @@
   </runtime-shared-library-path>
   <output>$MODULE_DIR$/path/in/config/SetInBC.swf</output>
 </flex-config>
-
