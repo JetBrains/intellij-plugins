@@ -1,4 +1,4 @@
-package org.angularjs;
+package org.angularjs.cli;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
@@ -6,7 +6,10 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
-import com.intellij.execution.process.*;
+import com.intellij.execution.process.KillableColoredProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -23,9 +26,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.ProjectTemplate;
 import com.intellij.ui.content.Content;
@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -71,7 +70,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
     StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
         try {
-          generateApp(ng, baseDir, project, module);
+          generateApp(ng, baseDir, project);
           final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
           final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
           if (entry != null) {
@@ -96,38 +95,34 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
     });
   }
 
-  protected void generateApp(String ng, @NotNull final VirtualFile baseDir, @NotNull Project project, Module module)
+  protected void generateApp(String ng, @NotNull final VirtualFile baseDir, @NotNull Project project)
     throws IOException, ExecutionException {
-    final File temp = FileUtilRt.createTempDirectory("angularCli", null);
-    final GeneralCommandLine commandLine = new GeneralCommandLine(ng, "new", baseDir.getName());
-    commandLine.setWorkDirectory(temp);
+    final GeneralCommandLine commandLine = new GeneralCommandLine(ng, "init", "--name=" + baseDir.getName());
+    commandLine.setWorkDirectory(baseDir.getPath());
     final KillableColoredProcessHandler handler = new KillableColoredProcessHandler(commandLine);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project);
+    builder.setUsePredefinedMessageFilter(false);
+    builder.addFilter(new AngularCLIFilter(project, baseDir.getPath()));
+
     builder.setUsePredefinedMessageFilter(false);
     final ConsoleView console = builder.getConsole();
     console.attachToProcess(handler);
     handler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(ProcessEvent event) {
-        try {
-          handler.notifyTextAvailable("\nMoving items into place...", ProcessOutputTypes.SYSTEM);
-          FileUtil.copyDirContent(temp.listFiles()[0], VfsUtilCore.virtualToIoFile(baseDir));
-          baseDir.refresh(false, true);
-          baseDir.getChildren();
-          handler.notifyTextAvailable("Done\n", ProcessOutputTypes.SYSTEM);
-          final NpmScriptsService instance = NpmScriptsService.getInstance();
-          for (VirtualFile file : instance.detectAllBuildfiles(project)) {
-            instance.getFileManager(project).addBuildfile(file);
-          }
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              instance.getToolWindowManager(project).setAvailable();
-            }
-          });
-        } catch (IOException e) {
-          LOG.error(e);
+        baseDir.refresh(false, true);
+        baseDir.getChildren();
+        handler.notifyTextAvailable("Done\n", ProcessOutputTypes.SYSTEM);
+        final NpmScriptsService instance = NpmScriptsService.getInstance();
+        for (VirtualFile file : instance.detectAllBuildfiles(project)) {
+          instance.getFileManager(project).addBuildfile(file);
         }
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            instance.getToolWindowManager(project).setAvailable();
+          }
+        });
       }
     });
     final Executor defaultExecutor = DefaultRunExecutor.getRunExecutorInstance();
