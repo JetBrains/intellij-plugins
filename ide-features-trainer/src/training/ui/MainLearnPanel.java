@@ -8,6 +8,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.labels.LinkListener;
+import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.ui.MouseEventAdapter;
 import com.intellij.util.ui.UIUtil;
 import icons.LearnIcons;
@@ -54,9 +55,11 @@ public class MainLearnPanel extends JPanel {
     private JPanel lessonPanel;
     private int progressGap;
 
+    private BidirectionalMap<Module, LinkLabel> module2linklabel;
 
     MainLearnPanel(int width) {
         super();
+        module2linklabel = new BidirectionalMap<>();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setFocusable(false);
         this.width = width;
@@ -115,6 +118,7 @@ public class MainLearnPanel extends JPanel {
     private void initMainPanel() {
         lessonPanel = new JPanel();
         lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.PAGE_AXIS));
+        lessonPanel.setOpaque(false);
         lessonPanel.setFocusable(false);
         initLessonPanel();
     }
@@ -127,8 +131,10 @@ public class MainLearnPanel extends JPanel {
             moduleHeader.setFocusable(false);
             moduleHeader.setAlignmentX(LEFT_ALIGNMENT);
             moduleHeader.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
+            moduleHeader.setOpaque(false);
             moduleHeader.setLayout(new BoxLayout(moduleHeader, BoxLayout.X_AXIS));
             LinkLabel moduleName = new LinkLabel(module.getName(), null);
+            module2linklabel.put(module, moduleName);
             moduleName.setListener((aSource, aLinkData) -> {
                 try {
                     Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
@@ -211,7 +217,7 @@ public class MainLearnPanel extends JPanel {
         };
     }
 
-    public void updateMainPanel(){
+    public void updateMainPanel() {
         lessonPanel.removeAll();
         initLessonPanel();
     }
@@ -224,7 +230,7 @@ public class MainLearnPanel extends JPanel {
             if (lesson.getPassed()) done++;
         }
         if (done != 0) {
-            if (done == total) return "Done";
+            if (done == total) return "";
             else return done + " of " + total + " done";
         } else {
             return null;
@@ -253,4 +259,26 @@ public class MainLearnPanel extends JPanel {
         return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + (west_inset + east_inset),
                 (int) lessonPanel.getMinimumSize().getHeight() + (north_inset + south_inset));
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        paintModuleCheckmarks(g);
+    }
+
+    private void paintModuleCheckmarks(Graphics g) {
+        if (module2linklabel != null || module2linklabel.size() > 0) {
+            for (Module module : module2linklabel.keySet()) {
+                if (module.giveNotPassedLesson() == null) {
+                    final LinkLabel linkLabel = module2linklabel.get(module);
+                    Point point = linkLabel.getLocationOnScreen();
+                    final Point basePoint = this.getLocationOnScreen();
+                    int y = point.y + 1 - basePoint.y;
+                    LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 1);
+                }
+            }
+        }
+    }
+
 }
+
