@@ -1,6 +1,5 @@
 package org.angularjs.index;
 
-import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 
@@ -11,6 +10,6 @@ public abstract class AngularIndexBase extends StringStubIndexExtension<JSImplic
 
   @Override
   public int getVersion() {
-    return AngularIndexUtil.BASE_VERSION + JavaScriptIndex.getVersionStatic();
+    return AngularIndexUtil.BASE_VERSION;
   }
 }
