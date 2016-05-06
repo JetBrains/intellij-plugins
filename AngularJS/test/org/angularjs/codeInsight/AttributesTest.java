@@ -550,6 +550,17 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testForTemplateCompletion2Javascript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("for2Template.html", "angular2_compiled.js");
+        myFixture.completeBasic();
+        assertContainsElements(myFixture.getLookupElementStrings(), "*ngFor");
+      }
+    });
+  }
+
   public void testForOfResolve2Javascript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
       @Override
@@ -561,10 +572,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         PsiElement resolve = ref.resolve();
         assertNotNull(resolve);
         assertEquals("angular2_compiled.js", resolve.getContainingFile().getName());
-        assertEquals("core_1.Directive({\n" +
-                     "  selector: '[ngFor][ngForOf]',\n" +
-                     "  inputs: ['ngForOf', 'ngForTemplate']\n" +
-                     "})", getDirectiveDefinitionText(resolve));
+        assertEquals("args: [{ selector: '[ngFor][ngForOf]', inputs: ['ngForTrackBy', 'ngForOf', 'ngForTemplate'] },]",
+                     getDirectiveDefinitionText(resolve));
       }
     });
   }
