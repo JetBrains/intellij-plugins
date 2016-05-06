@@ -42,11 +42,9 @@ public class LearnPanel extends JPanel {
     private LessonMessagePane lessonMessagePane;
     private JPanel buttonPanel;
     private JButton button;
-    private JButton lessonNextTestButton;
 
 
     //UI Preferences
-    private Color background;
     private Color defaultTextColor; //default text color
     private int insets;
     private int north_inset;
@@ -95,11 +93,11 @@ public class LearnPanel extends JPanel {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setFocusable(false);
+        setOpaque(false);
         this.width = width;
 
         //Obligatory block
         generalizeUI();
-        this.setBackground(background);
         initLessonPanel();
         initModulePanel();
 
@@ -141,8 +139,6 @@ public class LearnPanel extends JPanel {
         lessonGap = 12;
 
         //UI colors and fonts
-//        background = new JBColor(Gray._250, Gray._50);
-        background = UIUtil.getPanelBackground();
         moduleNameFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
         allTopicsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
         lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 2);
@@ -173,8 +169,8 @@ public class LearnPanel extends JPanel {
     private void initLessonPanel() {
         lessonPanel = new JPanel();
         lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.Y_AXIS));
-        lessonPanel.setBackground(background);
         lessonPanel.setFocusable(false);
+        lessonPanel.setOpaque(false);
 
         moduleNameLabel = new JLabel();
         moduleNameLabel.setFont(moduleNameFont);
@@ -207,7 +203,6 @@ public class LearnPanel extends JPanel {
 
         //Set Next Button UI
         button = new JButton(LearnBundle.message("learn.ui.button.skip"));
-        button.setBackground(background);
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setFocusable(false);
         button.setVisible(true);
@@ -396,8 +391,8 @@ public class LearnPanel extends JPanel {
     private void initModulePanel() {
         modulePanel = new ModulePanel();
         modulePanel.setLayout(new BoxLayout(modulePanel, BoxLayout.Y_AXIS));
-        modulePanel.setBackground(background);
         modulePanel.setFocusable(false);
+        modulePanel.setOpaque(false);
 
         //define separator
         modulePanel.setBorder(new MatteBorder(1, 0, 0, 0, separatorColor));
@@ -411,6 +406,10 @@ public class LearnPanel extends JPanel {
         clearLessonPanel();
         //clearModulePanel
         modulePanel.removeAll();
+    }
+
+    public void updateButtonUi() {
+        button.updateUI();
     }
 
     public class ModulePanel extends JPanel {
