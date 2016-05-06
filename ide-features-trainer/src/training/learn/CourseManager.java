@@ -500,6 +500,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     LearnPanel getLearnPanel() {
+        myLearnPanel.updateButtonUi();
         return myLearnPanel;
     }
 

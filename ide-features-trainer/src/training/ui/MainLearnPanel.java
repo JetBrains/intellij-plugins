@@ -34,7 +34,6 @@ public class MainLearnPanel extends JPanel {
     private int width;
 
     //UI Preferences
-    private Color background;
     private int north_inset;
     private int west_inset;
     private int south_inset;
@@ -64,7 +63,7 @@ public class MainLearnPanel extends JPanel {
 
         //Obligatory block
         generalizeUI();
-        this.setBackground(background);
+        setOpaque(false);
         initMainPanel();
         add(lessonPanel);
         add(Box.createVerticalGlue());
@@ -91,7 +90,6 @@ public class MainLearnPanel extends JPanel {
 
         //UI colors and fonts
         fontSize = 12;
-        background = UIUtil.getPanelBackground();
         moduleNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 2);
         progressLabelFont = new Font(UIUtil.getLabelFont().getName(), Font.PLAIN, fontSize + 1);
         descriptionFont = new Font(UIUtil.getLabelFont().getName(), Font.PLAIN, fontSize + 1);
@@ -101,12 +99,10 @@ public class MainLearnPanel extends JPanel {
         moduleGap = 20;
         progressGap = 12;
 
-        setBackground(background);
 
         StyleConstants.setFontFamily(REGULAR, descriptionFont.getFamily());
         StyleConstants.setFontSize(REGULAR, descriptionFont.getSize());
         StyleConstants.setForeground(REGULAR, descriptionColor);
-        StyleConstants.setBackground(REGULAR, background);
 
         StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0.0f);
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
@@ -119,7 +115,6 @@ public class MainLearnPanel extends JPanel {
     private void initMainPanel() {
         lessonPanel = new JPanel();
         lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.PAGE_AXIS));
-        lessonPanel.setBackground(background);
         lessonPanel.setFocusable(false);
         initLessonPanel();
     }
@@ -129,7 +124,6 @@ public class MainLearnPanel extends JPanel {
         assert modules != null;
         for (Module module : modules) {
             JPanel moduleHeader = new JPanel();
-            moduleHeader.setBackground(background);
             moduleHeader.setFocusable(false);
             moduleHeader.setAlignmentX(LEFT_ALIGNMENT);
             moduleHeader.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
@@ -164,6 +158,7 @@ public class MainLearnPanel extends JPanel {
 
             MyJTextPane descriptionPane = new MyJTextPane(width);
             descriptionPane.setEditable(false);
+            descriptionPane.setOpaque(false);
             descriptionPane.setParagraphAttributes(PARAGRAPH_STYLE, true);
             try {
                 String descriptionStr = module.getDescription();
@@ -171,7 +166,6 @@ public class MainLearnPanel extends JPanel {
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
-            descriptionPane.setBackground(background);
             descriptionPane.setAlignmentX(Component.LEFT_ALIGNMENT);
             descriptionPane.setMargin(new Insets(0, 0, 0, 0));
             descriptionPane.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
