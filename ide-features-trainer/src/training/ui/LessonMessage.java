@@ -29,6 +29,10 @@ class LessonMessage {
         passed = false;
     }
 
+    public ArrayList<Message> getMyMessages() {
+        return myMessages;
+    }
+
     public int getStart() {
         return start;
     }
