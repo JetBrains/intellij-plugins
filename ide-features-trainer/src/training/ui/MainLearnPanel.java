@@ -1,5 +1,6 @@
 package training.ui;
 
+import com.intellij.designer.utils.Cursors;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.ui.Gray;
@@ -7,7 +8,9 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.labels.LinkListener;
+import com.intellij.util.ui.MouseEventAdapter;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.Module;
 import training.learn.CourseManager;
@@ -19,6 +22,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Created by karashevich on 26/06/15.
@@ -153,6 +158,7 @@ public class MainLearnPanel extends JPanel {
             descriptionPane.setAlignmentX(Component.LEFT_ALIGNMENT);
             descriptionPane.setMargin(new Insets(0, 0, 0, 0));
             descriptionPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+            descriptionPane.addMouseListener(delegateToLinkLabel(descriptionPane, moduleName));
 
             lessonPanel.add(moduleHeader);
             lessonPanel.add(Box.createRigidArea(new Dimension(0, headerGap)));
@@ -160,6 +166,38 @@ public class MainLearnPanel extends JPanel {
             lessonPanel.add(Box.createRigidArea(new Dimension(0, moduleGap)));
         }
         lessonPanel.add(Box.createVerticalGlue());
+    }
+
+    @NotNull
+    private MouseListener delegateToLinkLabel(MyJTextPane descriptionPane, final LinkLabel moduleName) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                moduleName.doClick();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                moduleName.doClick();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                moduleName.entered(e);
+                descriptionPane.setCursor(Cursor.getPredefinedCursor(12));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                moduleName.exited(e);
+                descriptionPane.setCursor(Cursor.getDefaultCursor());
+            }
+        };
     }
 
     public void updateMainPanel(){

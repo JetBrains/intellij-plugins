@@ -208,7 +208,6 @@ public class ActionsRecorder implements Disposable {
 
             @Override
             public void beforeEditorTyping(char c, DataContext dataContext) {
-                System.out.println("test");
             }
         };
 
