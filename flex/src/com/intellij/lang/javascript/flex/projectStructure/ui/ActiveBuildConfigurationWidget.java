@@ -29,6 +29,7 @@ import com.intellij.ui.ClickListener;
 import com.intellij.ui.HintHint;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,7 +137,7 @@ public class ActiveBuildConfigurationWidget {
       myPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       myPanel.setBorder(WidgetBorder.INSTANCE);
       GridBagConstraints c =
-        new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+        new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.emptyInsets(), 0, 0);
       myPanel.add(myEnabledLabel, c);
       c.gridx++;
       c.anchor = GridBagConstraints.CENTER;
