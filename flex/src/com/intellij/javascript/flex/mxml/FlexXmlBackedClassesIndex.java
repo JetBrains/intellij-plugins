@@ -26,7 +26,6 @@ import java.util.Map;
 
 public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<String> {
   private static final int INDEX_VERSION = 4;
-  private final EnumeratorStringDescriptor myKeyDescriptor = new EnumeratorStringDescriptor();
 
   @Override
   @NotNull
@@ -60,7 +59,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
   @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
-    return myKeyDescriptor;
+    return EnumeratorStringDescriptor.INSTANCE;
   }
 
   @NotNull

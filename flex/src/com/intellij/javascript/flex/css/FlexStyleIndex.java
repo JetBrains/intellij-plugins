@@ -44,8 +44,6 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   private static final int VERSION = 18;
 
-  private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
-
   private final DataExternalizer<Set<FlexStyleIndexInfo>> myDataExternalizer = new DataExternalizer<Set<FlexStyleIndexInfo>>() {
 
     @Override
@@ -220,7 +218,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
   @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
-    return myKeyDescriptor;
+    return EnumeratorStringDescriptor.INSTANCE;
   }
 
   @NotNull

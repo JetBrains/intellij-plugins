@@ -12,9 +12,9 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureItemPresentation;
 import com.intellij.lang.javascript.types.JSFileElementType;
-import com.intellij.navigation.PsiElementNavigationItem;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.navigation.PsiElementNavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -46,7 +46,6 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
   private static final int INDEX_VERSION = 1;
 
   public static final ID<String, Void> NAME = ID.create("FlexXmlBackedMembersIndex");
-  private final EnumeratorStringDescriptor myKeyDescriptor = new EnumeratorStringDescriptor();
 
   @Override
   @NotNull
@@ -126,7 +125,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
   @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
-    return myKeyDescriptor;
+    return EnumeratorStringDescriptor.INSTANCE;
   }
 
   @NotNull
