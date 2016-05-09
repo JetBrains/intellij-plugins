@@ -39,7 +39,7 @@ public class DartPartUriIndex extends FileBasedIndexExtension<String, List<Strin
   @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
-    return new EnumeratorStringDescriptor();
+    return EnumeratorStringDescriptor.INSTANCE;
   }
 
   @NotNull
