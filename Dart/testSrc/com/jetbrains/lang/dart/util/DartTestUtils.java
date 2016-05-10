@@ -13,11 +13,14 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.testFramework.PsiTestCase;
 import com.intellij.testFramework.ThreadTracker;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -26,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -202,5 +206,22 @@ public class DartTestUtils {
         }
       }
     });
+  }
+
+  public static VirtualFile configureNavigation(@NotNull PsiTestCase test,
+                                                @NotNull VirtualFile testRoot,
+                                                @NotNull final VirtualFile... vFiles)
+    throws IOException {
+    DartAnalysisServerService.getInstance().serverReadyForRequest(test.getProject());
+    // Trigger navigation requests for each file that needs to have navigation data during resolution.
+    for (VirtualFile vFile : vFiles) {
+      String name = vFile.getName();
+      VirtualFile testFile = testRoot.findChild(name);
+      if (testFile == null) TestCase.fail();
+      DartAnalysisServerService.getInstance().analysis_getNavigation(testFile, 0, (int)testFile.getLength());
+    }
+    // A little cargo-cult programming: some tests fail without the next line.
+    DartAnalysisServerService.getInstance().waitForAnalysisToComplete_TESTS_ONLY(test.getFile().getVirtualFile());
+    return testRoot;
   }
 }

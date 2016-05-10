@@ -38,7 +38,7 @@ public class DartImportAndExportIndex extends FileBasedIndexExtension<String, Li
   @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
-    return new EnumeratorStringDescriptor();
+    return EnumeratorStringDescriptor.INSTANCE;
   }
 
   @NotNull

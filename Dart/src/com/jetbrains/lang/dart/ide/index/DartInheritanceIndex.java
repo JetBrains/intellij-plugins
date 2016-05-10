@@ -48,7 +48,7 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
   @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
-    return new EnumeratorStringDescriptor();
+    return EnumeratorStringDescriptor.INSTANCE;
   }
 
   @NotNull

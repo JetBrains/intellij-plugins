@@ -5,6 +5,7 @@ import com.intellij.ide.util.treeView.AlphaComparator;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -19,6 +20,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static com.jetbrains.lang.dart.DartTokenTypes.FACTORY_CONSTRUCTOR_DECLARATION;
+import static com.jetbrains.lang.dart.DartTokenTypes.NAMED_CONSTRUCTOR_DECLARATION;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.FUNCTION_DEFINITION;
 
 public class DartHierarchyUtil {
   private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = new Comparator<NodeDescriptor>() {
@@ -54,5 +59,9 @@ public class DartHierarchyUtil {
     if (name == null) return Collections.emptyList();
 
     return DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), false);
+  }
+
+  public static boolean isTypeExecutable(IElementType type) {
+    return FUNCTION_DEFINITION.contains(type) || type == FACTORY_CONSTRUCTOR_DECLARATION || type == NAMED_CONSTRUCTOR_DECLARATION;
   }
 }

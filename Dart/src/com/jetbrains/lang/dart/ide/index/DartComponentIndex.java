@@ -35,7 +35,7 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
   @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
-    return new EnumeratorStringDescriptor();
+    return EnumeratorStringDescriptor.INSTANCE;
   }
 
   @NotNull

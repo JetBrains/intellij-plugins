@@ -34,6 +34,7 @@ import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.refactoring.ServerExtractLocalVariableRefactoring;
@@ -267,7 +268,7 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog {
     JPanel panel = new JPanel(new GridBagLayout());
     GridBagConstraints gbConstraints = new GridBagConstraints();
 
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.insets = JBUI.insetsBottom(4);
     gbConstraints.gridx = 0;
     gbConstraints.gridy = 0;
     gbConstraints.gridwidth = 1;
@@ -279,7 +280,7 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog {
     panel.add(nameLabel, gbConstraints);
     nameLabel.setText("Name:");
 
-    gbConstraints.insets = new Insets(0, 4, 4, 0);
+    gbConstraints.insets = JBUI.insets(0, 4, 4, 0);
     gbConstraints.gridx = 1;
     gbConstraints.gridy = 0;
     gbConstraints.gridwidth = GridBagConstraints.REMAINDER;

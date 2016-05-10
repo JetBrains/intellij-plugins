@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
@@ -32,6 +33,7 @@ public class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapte
 
     final int caretOffset = caretOffsetRef.get().intValue();
     final Document document = editor.getDocument();
+    PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
     final PsiElement psiAtOffset = file.findElementAt(caretOffset);
     final PsiElement probablyDocComment = psiAtOffset instanceof PsiWhiteSpace && psiAtOffset.getText().startsWith("\n")
                                           ? psiAtOffset.getPrevSibling()

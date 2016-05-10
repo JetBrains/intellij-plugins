@@ -31,8 +31,6 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
 
   private static final ID<String, Void> KEY = ID.create("jstd.jsFile.path");
 
-  private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
-
   @NotNull
   @Override
   public ID<String, Void> getName() {
@@ -74,7 +72,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
   @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
-    return myKeyDescriptor;
+    return EnumeratorStringDescriptor.INSTANCE;
   }
 
   @NotNull

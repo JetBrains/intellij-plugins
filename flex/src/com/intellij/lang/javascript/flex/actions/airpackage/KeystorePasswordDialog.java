@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,22 +47,22 @@ public class KeystorePasswordDialog extends DialogWrapper {
       if (row > 0) {
         panel.add(new JSeparator(SwingConstants.HORIZONTAL),
                   new GridBagConstraints(0, row, 2, 1, 0., 0., GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                                         new Insets(5, 0, 5, 0), 0, 0));
+                                         JBUI.insets(5, 0), 0, 0));
         row++;
       }
 
       panel.add(new JLabel("Keystore file:"), new GridBagConstraints(0, row, 1, 1, 0., 0., GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                     new Insets(2, 0, 2, 0), 0, 0));
+                                                                     JBUI.insets(2, 0), 0, 0));
       panel.add(new JLabel(FileUtil.toSystemDependentName(signingOptions.getKeystorePath())),
                 new GridBagConstraints(1, row, 1, 1, 0., 0., GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                       new Insets(2, 0, 2, 0), 0, 0));
+                                       JBUI.insets(2, 0), 0, 0));
       row++;
 
       panel.add(new JLabel("Keystore password:"), new GridBagConstraints(0, row, 1, 1, 0., 0., GridBagConstraints.WEST,
-                                                                         GridBagConstraints.NONE, new Insets(2, 0, 2, 0), 0, 0));
+                                                                         GridBagConstraints.NONE, JBUI.insets(2, 0), 0, 0));
       final JPasswordField keystorePasswordField = new JPasswordField();
       panel.add(keystorePasswordField, new GridBagConstraints(1, row, 1, 1, 0., 0., GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                                                              new Insets(2, 0, 2, 0), 0, 0));
+                                                              JBUI.insets(2, 0), 0, 0));
 
       if (row == 1) {
         myPreferredFocusedComponent = keystorePasswordField;
@@ -74,16 +75,16 @@ public class KeystorePasswordDialog extends DialogWrapper {
       }
       else {
         panel.add(new JLabel("Key alias:"), new GridBagConstraints(0, row, 1, 1, 0., 0., GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                   new Insets(2, 0, 2, 0), 0, 0));
+                                                                   JBUI.insets(2, 0), 0, 0));
         panel.add(new JLabel(signingOptions.getKeyAlias()), new GridBagConstraints(1, row, 1, 1, 0., 0., GridBagConstraints.WEST,
-                                                                                   GridBagConstraints.NONE, new Insets(2, 0, 2, 0), 0, 0));
+                                                                                   GridBagConstraints.NONE, JBUI.insets(2, 0), 0, 0));
         row++;
 
         panel.add(new JLabel("Key password:"), new GridBagConstraints(0, row, 1, 1, 0., 0., GridBagConstraints.WEST,
-                                                                      GridBagConstraints.NONE, new Insets(2, 0, 2, 0), 0, 0));
+                                                                      GridBagConstraints.NONE, JBUI.insets(2, 0), 0, 0));
         final JPasswordField keyPasswordField = new JPasswordField();
         panel.add(keyPasswordField, new GridBagConstraints(1, row, 1, 1, 0., 0., GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                                                           new Insets(2, 0, 2, 0), 0, 0));
+                                                           JBUI.insets(2, 0), 0, 0));
         row++;
 
         result.add(Trinity.create(signingOptions, keystorePasswordField, keyPasswordField));

@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 
 public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
-
   public static final String TEMPLATE_REF = "TemplateRef";
   public static final String SELECTOR = "selector";
   public static final String NAME = "name";
@@ -48,6 +47,22 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         addPipe(callExpression, (JSElementIndexingDataImpl)outData, getPropertyName(callExpression, NAME));
       }
      }
+  }
+
+  @Nullable
+  @Override
+  public JSElementIndexingData processAnyProperty(@NotNull JSProperty property, @Nullable JSElementIndexingData outData) {
+    if ("args".equals(property.getName())) {
+      final JSObjectLiteralExpression object = (JSObjectLiteralExpression)property.getParent();
+      final JSProperty type = object.findProperty("type");
+      if (type != null) {
+        final JSExpression value = type.getValue();
+        if (value instanceof JSReferenceExpression && isDirective(((JSReferenceExpression)value).getReferenceName())) {
+          return addImplicitElement(property, (JSElementIndexingDataImpl)outData, getPropertyName(property, SELECTOR));
+        }
+      }
+    }
+    return super.processAnyProperty(property, outData);
   }
 
   @Override
@@ -142,6 +157,21 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       final JSCallExpression metadata = PsiTreeUtil.getNextSiblingOfType(decorator, JSCallExpression.class);
       return metadata != null && metadata.getText().contains(TEMPLATE_REF);
     }
+    if (parent instanceof JSObjectLiteralExpression) {
+      final JSBlockStatement block = PsiTreeUtil.getParentOfType(parent, JSBlockStatement.class);
+      final JSStatement[] statements = block != null ? block.getStatements() : JSStatement.EMPTY;
+      for (JSStatement statement : statements) {
+        if (statement instanceof JSExpressionStatement) {
+          final JSExpression expression = ((JSExpressionStatement)statement).getExpression();
+          if (expression instanceof JSAssignmentExpression) {
+            final JSDefinitionExpression def = ((JSAssignmentExpression)expression).getDefinitionExpression();
+            if (def != null && "ctorParameters".equals(def.getName())) {
+              return expression.getText().contains(TEMPLATE_REF);
+            }
+          }
+        }
+      }
+    }
     return false;
   }
 
@@ -163,7 +193,11 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   @Nullable
   private static JSProperty getProperty(PsiElement decorator, String name) {
     final JSArgumentList argumentList = PsiTreeUtil.getChildOfType(decorator, JSArgumentList.class);
-    final JSExpression[] arguments = argumentList != null ? argumentList.getArguments() : null;
+    JSExpression[] arguments = argumentList != null ? argumentList.getArguments() : null;
+    if (arguments == null) {
+      final JSArrayLiteralExpression array = PsiTreeUtil.getChildOfType(decorator, JSArrayLiteralExpression.class);
+      arguments = array != null ? array.getExpressions() : null;
+    }
     final JSObjectLiteralExpression descriptor = ObjectUtils.tryCast(arguments != null && arguments.length > 0 ? arguments[0] : null,
                                                                      JSObjectLiteralExpression.class);
     return descriptor != null ? descriptor.findProperty(name) : null;

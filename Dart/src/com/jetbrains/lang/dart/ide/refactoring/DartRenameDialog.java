@@ -17,6 +17,7 @@ import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.*;
 import com.intellij.util.SmartList;
+import com.intellij.util.ui.JBUI;
 import com.intellij.xml.util.XmlStringUtil;
 import com.intellij.xml.util.XmlTagUtilBase;
 import com.jetbrains.lang.dart.DartBundle;
@@ -63,7 +64,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     JPanel panel = new JPanel(new GridBagLayout());
     GridBagConstraints gbConstraints = new GridBagConstraints();
 
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.insets = JBUI.insetsBottom(4);
     gbConstraints.weighty = 0;
     gbConstraints.weightx = 1;
     gbConstraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -72,7 +73,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     panel.add(nameLabel, gbConstraints);
     nameLabel.setText(XmlStringUtil.wrapInHtml(XmlTagUtilBase.escapeString(getLabelText(), false)));
 
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.insets = JBUI.insetsBottom(4);
     gbConstraints.gridwidth = 1;
     gbConstraints.fill = GridBagConstraints.NONE;
     gbConstraints.weightx = 0;
@@ -80,7 +81,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     gbConstraints.anchor = GridBagConstraints.WEST;
     panel.add(myNewNamePrefix, gbConstraints);
 
-    gbConstraints.insets = new Insets(0, 0, 8, 0);
+    gbConstraints.insets = JBUI.insetsBottom(8);
     gbConstraints.gridwidth = 2;
     gbConstraints.fill = GridBagConstraints.BOTH;
     gbConstraints.weightx = 1;

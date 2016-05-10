@@ -1,0 +1,3 @@
+<node text="b() null" base="true">
+  <node text="a() null"/>
+</node>
