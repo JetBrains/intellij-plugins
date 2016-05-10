@@ -8,6 +8,7 @@ import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -42,7 +43,10 @@ public class DartHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
         }
       }
       myHighlightedText.getEnding().addText(presentation.getPresentableText());
-      myHighlightedText.getEnding().addText(" " + presentation.getLocationString(), HierarchyNodeDescriptor.getPackageNameAttributes());
+      PsiFile file = element.getContainingFile();
+      if (file != null) {
+        myHighlightedText.getEnding().addText(" (" + file.getName() + ")", HierarchyNodeDescriptor.getPackageNameAttributes());
+      }
     }
     myName = myHighlightedText.getText();
     if (!Comparing.equal(myHighlightedText, oldText)) {

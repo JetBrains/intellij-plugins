@@ -51,8 +51,6 @@ public class DartCallHierarchyProvider implements HierarchyProvider {
       if (comp != null) {
         return comp;
       }
-      Collection<PsiElement> candidates = TargetElementUtil.getInstance().getTargetCandidates(dartReference);
-      if (!candidates.isEmpty()) return candidates.iterator().next();
       return dartReference.resolve();
     }
     else {

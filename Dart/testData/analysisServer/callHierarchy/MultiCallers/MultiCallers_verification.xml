@@ -1,14 +1,14 @@
-<node text="C.c() C" base="true">
-  <node text="A.a() → B A">
-    <node text="A.a() → B A">
-      <node text="A.a() → B A">
-        <node text="A.a() → B A">
-          <node text="A.a() → B A">
-            <node text="A.a() → B A">
-              <node text="A.a() → B A">
-                <node text="A.a() → B A">
-                  <node text="A.a() → B A">
-                    <node text="A.a() → B A">
+<node text="C.c() (C.dart)" base="true">
+  <node text="A.a() → B (A.dart)">
+    <node text="A.a() → B (A.dart)">
+      <node text="A.a() → B (A.dart)">
+        <node text="A.a() → B (A.dart)">
+          <node text="A.a() → B (A.dart)">
+            <node text="A.a() → B (A.dart)">
+              <node text="A.a() → B (A.dart)">
+                <node text="A.a() → B (A.dart)">
+                  <node text="A.a() → B (A.dart)">
+                    <node text="A.a() → B (A.dart)">
                       <any/>
                     </node>
                   </node>
@@ -20,16 +20,16 @@
       </node>
     </node>
   </node>
-  <node text="B.b() → C B">
-    <node text="A.a() → B A">
-      <node text="A.a() → B A">
-        <node text="A.a() → B A">
-          <node text="A.a() → B A">
-            <node text="A.a() → B A">
-              <node text="A.a() → B A">
-                <node text="A.a() → B A">
-                  <node text="A.a() → B A">
-                    <node text="A.a() → B A">
+  <node text="B.b() → C (B.dart)">
+    <node text="A.a() → B (A.dart)">
+      <node text="A.a() → B (A.dart)">
+        <node text="A.a() → B (A.dart)">
+          <node text="A.a() → B (A.dart)">
+            <node text="A.a() → B (A.dart)">
+              <node text="A.a() → B (A.dart)">
+                <node text="A.a() → B (A.dart)">
+                  <node text="A.a() → B (A.dart)">
+                    <node text="A.a() → B (A.dart)">
                       <any/>
                     </node>
                   </node>
@@ -41,16 +41,16 @@
       </node>
     </node>
   </node>
-  <node text="C.C() C">
-    <node text="B.b() → C B">
-      <node text="A.a() → B A">
-        <node text="A.a() → B A">
-          <node text="A.a() → B A">
-            <node text="A.a() → B A">
-              <node text="A.a() → B A">
-                <node text="A.a() → B A">
-                  <node text="A.a() → B A">
-                    <node text="A.a() → B A">
+  <node text="C.C() (C.dart)">
+    <node text="B.b() → C (B.dart)">
+      <node text="A.a() → B (A.dart)">
+        <node text="A.a() → B (A.dart)">
+          <node text="A.a() → B (A.dart)">
+            <node text="A.a() → B (A.dart)">
+              <node text="A.a() → B (A.dart)">
+                <node text="A.a() → B (A.dart)">
+                  <node text="A.a() → B (A.dart)">
+                    <node text="A.a() → B (A.dart)">
                       <any/>
                     </node>
                   </node>

@@ -1,5 +1,5 @@
-<node text="c() null" base="true">
-  <node text="b() null">
-    <node text="a() null"/>
+<node text="c() (C.dart)" base="true">
+  <node text="b() (B.dart)">
+    <node text="a() (A.dart)"/>
   </node>
 </node>
