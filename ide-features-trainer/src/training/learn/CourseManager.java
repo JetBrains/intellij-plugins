@@ -440,15 +440,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 vf = ScratchRootType.getInstance().createScratchFile(project, filename, Language.findLanguageByID(myLanguage), "");
                 final VirtualFile finalVf = vf;
                 assert vf != null;
-                if (!vf.getName().equals(filename)) {
-                    ApplicationManager.getApplication().runWriteAction(() -> {
-                        try {
-                            finalVf.rename(project, filename);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }
             }
             registerVirtualFile(lesson.getModule(), vf);
         }
