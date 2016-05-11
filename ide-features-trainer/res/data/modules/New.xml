@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module name="New" lessonsPath="New/" version="0.3" id="new" fileType="SCRATCH" sdkType="JAVA" description="New lessons from Andrey Cheptsov">
+<module name="New" lessonsPath="New/" version="0.3" id="new" fileType="PROJECT" sdkType="JAVA" description="New lessons from Andrey Cheptsov">
   <lesson filename="01.StatementCompletion.xml"/>
   <lesson filename="02.ParameterInfo.xml"/>
   <lesson filename="03.CompletionWithTab.xml"/>
   <lesson filename="04.MultipleSelections.xml"/>
   <lesson filename="05.QuickPopups.xml"/>
   <lesson filename="06.RefactoringBasics.xml"/>
+  <lesson filename="07.EditorCodingAssistance.xml"/>
 </module>
 

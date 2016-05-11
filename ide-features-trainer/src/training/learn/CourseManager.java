@@ -322,20 +322,34 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private void initLearnProjectAndOpenLesson(Project projectToClose, @Nullable Lesson lesson) {
 
         Project myLearnProject = initLearnProject(projectToClose);
-        if (myLearnProject != null) {
-            StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
-                final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
-                final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-                if (learnToolWindow != null) {
-                    learnToolWindow.show(null);
-                    try {
-                        CourseManager.getInstance().setLessonView(myLearnProject);
-                        openLesson(myLearnProject, lesson);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        if (myLearnProject == projectToClose) {
+            final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
+            final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
+            if (learnToolWindow != null) {
+                learnToolWindow.show(null);
+                try {
+                    CourseManager.getInstance().setLessonView(myLearnProject);
+                    openLesson(myLearnProject, lesson);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            });
+            }
+        } else {
+            if (myLearnProject != null) {
+                StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
+                    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
+                    final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
+                    if (learnToolWindow != null) {
+                        learnToolWindow.show(null);
+                        try {
+                            CourseManager.getInstance().setLessonView(myLearnProject);
+                            openLesson(myLearnProject, lesson);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
         }
     }
 
