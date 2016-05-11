@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
-import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
 import com.intellij.ide.hierarchy.HierarchyBrowser;
 import com.intellij.ide.hierarchy.HierarchyProvider;
@@ -18,8 +17,6 @@ import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
@@ -51,7 +48,6 @@ public class DartCallHierarchyProvider implements HierarchyProvider {
       if (comp != null) {
         return comp;
       }
-      return dartReference.resolve();
     }
     else {
       DartComponent comp = PsiTreeUtil.getParentOfType(psiElement, DartComponent.class);
