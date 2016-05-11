@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerAdapter;
 import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Computable;
@@ -383,12 +384,18 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         final String versionString = javaSdk.getVersionString(suggestedHomePath);
         assert versionString != null;
         assert suggestedHomePath != null;
-        final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath);
+        final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath, false);
 
         final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
         if (foundJdk == null) {
             ProjectJdkTable.getInstance().addJdk(newJdk);
         }
+        //fix: No IDEA annotations attached to the JDK
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            SdkModificator modificator = newJdk.getSdkModificator();
+            JavaSdkImpl.attachJdkAnnotations(modificator);
+            modificator.commitChanges();
+        });
         return newJdk;
     }
 
