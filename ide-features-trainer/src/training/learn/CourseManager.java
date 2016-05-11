@@ -7,6 +7,8 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.impl.SelectNextEditorTabAction;
+import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -21,6 +23,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.usageView.impl.SelectInEditorHandler;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +39,7 @@ import training.util.generateModuleXml;
 import training.util.MyClassLoader;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -204,7 +208,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 }
             });
 
-            //to start any lesson we need to do 4 steps:
+            //to start any lesson we need to do 5 steps:
             //1. open editor or find editor
             TextEditor textEditor = null;
             if (FileEditorManager.getInstance(project).isFileOpen(vf)) {
@@ -229,15 +233,18 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 throw new Exception("Editor is already disposed!!!");
             }
 
-            //2. create LessonManager
+            //2. set the focus on this editor
+            FileEditorManager.getInstance(project).setSelectedEditor(vf, TextEditorProvider.getInstance().getEditorTypeId());
+
+            //3. create LessonManager
             new LessonManager(lesson, textEditor.getEditor());
 
-            //3. update tool window
+            //4. update tool window
 //            updateToolWindow(project);
             CourseManager.getInstance().getLearnPanel().clear();
 
 
-            //4. Process lesson
+            //5. Process lesson
             LessonProcessor.process(project, lesson, textEditor.getEditor(), target);
 
         } catch (NoSdkException | InvalidSdkException noSdkException) {
@@ -252,17 +259,20 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private VirtualFile getFileInLearnProject(Lesson lesson) throws IOException {
 
         final VirtualFile sourceRootFile = ProjectRootManager.getInstance(learnProject).getContentSourceRoots()[0];
-        String moduleFileName = "Test.java";
-        if (lesson.getModule() != null) moduleFileName = lesson.getModule().getName() + ".java";
-
-
-        VirtualFile moduleVirtualFile = sourceRootFile.findChild(moduleFileName);
-        if (moduleVirtualFile == null) {
-            moduleVirtualFile = sourceRootFile.createChildData(this, moduleFileName);
+        String fileName = "Test.java";
+        if (lesson.getModule() != null) {
+            String extensionFile = ".java";
+            if (lesson.getLang() != null) extensionFile = "." + lesson.getLang().toLowerCase();
+            fileName = lesson.getModule().getName() + extensionFile;
         }
 
-        registerVirtualFile(lesson.getModule(), moduleVirtualFile);
-        return moduleVirtualFile;
+        VirtualFile lessonVirtualFile = sourceRootFile.findChild(fileName);
+        if (lessonVirtualFile == null) {
+            lessonVirtualFile = sourceRootFile.createChildData(this, fileName);
+        }
+
+        registerVirtualFile(lesson.getModule(), lessonVirtualFile);
+        return lessonVirtualFile;
     }
 
     private Project initLearnProject(Project projectToClose) {
@@ -602,7 +612,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         ToolWindow toolWindow = windowManager.getToolWindow(learnToolWindow);
         JComponent toolWindowComponent = toolWindow.getComponent();
         toolWindowComponent.removeAll();
-        toolWindowComponent.add(new JBScrollPane(getLearnPanel()));
+        final JBScrollPane scrollPane = new JBScrollPane(getLearnPanel());
+        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        toolWindowComponent.add(scrollPane);
         toolWindowComponent.revalidate();
         toolWindowComponent.repaint();
     }
@@ -615,7 +627,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         toolWindowComponent.removeAll();
         MainLearnPanel mainLearnPanel = getMainLearnPanel();
         mainLearnPanel.updateMainPanel();
-        toolWindowComponent.add(new JBScrollPane(getMainLearnPanel()));
+        final JBScrollPane scrollPane = new JBScrollPane(getMainLearnPanel());
+        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        toolWindowComponent.add(scrollPane);
         toolWindowComponent.revalidate();
         toolWindowComponent.repaint();
     }

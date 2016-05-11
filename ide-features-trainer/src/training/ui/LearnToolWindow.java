@@ -4,10 +4,11 @@ import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.UIUtil;
 import training.learn.CourseManager;
 
 import javax.swing.*;
-
+import java.awt.*;
 
 
 /**
@@ -44,6 +45,7 @@ class LearnToolWindow extends SimpleToolWindowPanel implements DataProvider, Dis
         scrollPane = new JBScrollPane(mainLearnPanel);
         setContent(scrollPane);
     }
+
 
     @Override
     public void dispose() {
