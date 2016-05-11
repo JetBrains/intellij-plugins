@@ -49,10 +49,16 @@ public class SubKeymapUtil{
                 for (String modifier : modifiers) {
                     result += modifier + " + ";
                 }
-                return result;
+                return replaceSpacesWithNonBreakSpace(result);
             } else {
-                return (modifiersString + " + ");
+                return replaceSpacesWithNonBreakSpace(modifiersString + " + ");
             }
         }
+    }
+
+    private static String replaceSpacesWithNonBreakSpace(String input){
+        int nbsp_int = 0160;
+        char nbsp = (char) nbsp_int;
+        return input.replace(' ', nbsp);
     }
 }
