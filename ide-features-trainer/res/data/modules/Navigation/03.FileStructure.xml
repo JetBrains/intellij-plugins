@@ -38,7 +38,6 @@
     }
 }</CopyText>
     </MouseBlock>
-    <Text description="Navigation through the large sources is complicated, and sometimes you need an overview of a file."/>
-    <Try description="Use &lt;action=&quot;FileStructurePopup&quot;&gt; to show the file structure" action="FileStructurePopup" trigger="FileStructurePopup"/>
+    <Try description="Navigation through the large sources is complicated, and sometimes you need an overview of a file. Use &lt;action=&quot;FileStructurePopup&quot;&gt; to show the file structure" action="FileStructurePopup" trigger="FileStructurePopup"/>
     <Win/>
 </xml>

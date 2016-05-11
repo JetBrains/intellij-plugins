@@ -19,7 +19,6 @@ class CommentDemo {
     </MouseBlock>
     <MoveCaret position="3:1"/>
     <Try description="Comment out any line with &lt;action=&quot;CommentByLineComment&quot;&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
-    <Text description="The comment action moves a caret to next line automatically. It makes easy to comment several lines successively" />
     <Try description="Uncomment all commented lines with the same shortcut &lt;action=&quot;CommentByLineComment&quot;&gt;. (Don't forget to put the caret at commented line before the action)" action="CommentByLineComment" trigger="CommentByLineComment" check="training.check.CheckCountCommentedLine"/>
     <Try description="Select several lines with &lt;action=&quot;EditorDownWithSelection&quot;&gt; and comment with &lt;action=&quot;CommentByLineComment&quot;&gt;" action="CommentByLineComment" triggers="EditorDownWithSelection;CommentByLineComment" check="training.check.CheckCountCommentedLines"/>
     <Win/>
