@@ -99,7 +99,7 @@ public class MainLearnPanel extends JPanel {
         descriptionFont = new Font(UIUtil.getLabelFont().getName(), Font.PLAIN, fontSize + 1);
         descriptionColor = Gray._128;
 
-        headerGap = 8;
+        headerGap = 2;
         moduleGap = 20;
         progressGap = 12;
 
@@ -275,7 +275,7 @@ public class MainLearnPanel extends JPanel {
                     Point point = linkLabel.getLocationOnScreen();
                     final Point basePoint = this.getLocationOnScreen();
                     int y = point.y + 1 - basePoint.y;
-                    LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 1);
+                    LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 2);
                 }
             }
         }
