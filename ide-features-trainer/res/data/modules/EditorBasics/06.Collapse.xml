@@ -48,8 +48,7 @@ class CollapseDemo{
 
 }</CopyText>
     <MoveCaret position="13:9"/>
-    <Text description="Sometimes you need to collapse some code to read it better"/>
-    <Try description="Try to collapse code, with &lt;action=&quot;CollapseRegion&quot;&gt;" trigger="CollapseRegion"/>
+    <Try description="Sometimes you need to collapse some code to read it better. Try to collapse code, with &lt;action=&quot;CollapseRegion&quot;&gt;" trigger="CollapseRegion"/>
     <Try description="To expand code region, try &lt;action=&quot;ExpandRegion&quot;&gt;" trigger="ExpandRegion"/>
     <Try description="If you want to collapse all regions in code, use &lt;action=&quot;CollapseAllRegions&quot;&gt;" trigger="CollapseAllRegions"/>
     <Try description="And &lt;action=&quot;ExpandAllRegions&quot;&gt; in reverse order" trigger="ExpandAllRegions"/>
