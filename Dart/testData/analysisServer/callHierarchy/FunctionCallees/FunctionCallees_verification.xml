@@ -1,7 +1,7 @@
-<node text="a() null" base="true">
-  <node text="b() null">
-    <node text="c() null">
-      <node text="x() null"/>
+<node text="a() (A.dart)" base="true">
+  <node text="b() (B.dart)">
+    <node text="c() (C.dart)">
+      <node text="x() (C.dart)"/>
     </node>
   </node>
 </node>

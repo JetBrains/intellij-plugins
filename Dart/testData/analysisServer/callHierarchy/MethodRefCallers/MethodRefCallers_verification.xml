@@ -1,20 +1,20 @@
-<node text="C.c() C" base="true">
-  <node text="B.b() B">
-    <node text="B.B() B">
-      <node text="A.A() A"/>
-      <node text="A.a() A"/>
+<node text="C.c() (C.dart)" base="true">
+  <node text="B.b() (B.dart)">
+    <node text="B.B() (B.dart)">
+      <node text="A.A() (A.dart)"/>
+      <node text="A.a() (A.dart)"/>
     </node>
-    <node text="A.A() A"/>
-    <node text="A.a() A"/>
+    <node text="A.A() (A.dart)"/>
+    <node text="A.a() (A.dart)"/>
   </node>
-  <node text="C.C() C">
-    <node text="B.b() B">
-      <node text="B.B() B">
-        <node text="A.A() A"/>
-        <node text="A.a() A"/>
+  <node text="C.C() (C.dart)">
+    <node text="B.b() (B.dart)">
+      <node text="B.B() (B.dart)">
+        <node text="A.A() (A.dart)"/>
+        <node text="A.a() (A.dart)"/>
       </node>
-      <node text="A.A() A"/>
-      <node text="A.a() A"/>
+      <node text="A.A() (A.dart)"/>
+      <node text="A.a() (A.dart)"/>
     </node>
   </node>
 </node>

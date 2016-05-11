@@ -26,7 +26,7 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
   private static void getCallees(@NotNull PsiElement element, @NotNull List<PsiElement> results) {
     DartComponentName name = (DartComponentName)element;
     DartComponent decl = (DartComponent)name.getParent();
-    PsiFile file = PsiTreeUtil.getParentOfType(decl, PsiFile.class);
+    PsiFile file = decl.getContainingFile();
     if (file == null) return;
     VirtualFile vFile = file.getVirtualFile();
     List<DartNavigationRegion> navRegions =
