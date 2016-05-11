@@ -66,7 +66,8 @@ public class MainLearnPanel extends JPanel {
 
         //Obligatory block
         generalizeUI();
-        setOpaque(false);
+        setOpaque(true);
+        setBackground(getBackground());
         initMainPanel();
         add(lessonPanel);
         add(Box.createVerticalGlue());
@@ -278,6 +279,12 @@ public class MainLearnPanel extends JPanel {
                 }
             }
         }
+    }
+
+    @Override
+    public Color getBackground(){
+        if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
+        else return this.getParent().getBackground();
     }
 
 }
