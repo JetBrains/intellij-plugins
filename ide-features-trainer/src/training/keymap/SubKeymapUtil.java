@@ -57,8 +57,7 @@ public class SubKeymapUtil{
     }
 
     private static String replaceSpacesWithNonBreakSpace(String input){
-        int nbsp_int = 0160;
-        char nbsp = (char) nbsp_int;
-        return input.replace(' ', nbsp);
+        String nbsp_str = "\u00A0";
+        return input.replace(" ", nbsp_str);
     }
 }
