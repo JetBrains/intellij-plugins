@@ -632,14 +632,8 @@ class _CfscriptLexer8 implements FlexLexer {
       the source of the yytext() string */
   private CharSequence zzBuffer = "";
 
-  /** this buffer may contains the current text array to be matched when it is cheap to acquire it */
-  private char[] zzBufferArray;
-
   /** the textposition at the last accepting state */
   private int zzMarkedPos;
-
-  /** the textposition at the last state to be included in yytext */
-  private int zzPushbackPos;
 
   /** the current text position in the buffer */
   private int zzCurrentPos;
@@ -728,22 +722,21 @@ class _CfscriptLexer8 implements FlexLexer {
     return map;
   }
 
-  public final int getTokenStart(){
+  public final int getTokenStart() {
     return zzStartRead;
   }
 
-  public final int getTokenEnd(){
+  public final int getTokenEnd() {
     return getTokenStart() + yylength();
   }
 
-  public void reset(CharSequence buffer, int start, int end,int initialState){
+  public void reset(CharSequence buffer, int start, int end, int initialState) {
     zzBuffer = buffer;
-    zzBufferArray = com.intellij.util.text.CharArrayUtil.fromSequenceWithoutCopying(buffer);
-    yychar = zzCurrentPos = zzMarkedPos = zzStartRead = start;
-    zzPushbackPos = 0;
+    zzCurrentPos = zzMarkedPos = zzStartRead = start;
     zzAtEOF  = false;
     zzAtBOL = true;
     zzEndRead = end;
+    yychar = start;
     myCurrentConfiguration.reset();
     yybegin(initialState);
   }
@@ -798,7 +791,7 @@ class _CfscriptLexer8 implements FlexLexer {
    * @return the character at position pos
    */
   public final char yycharat(int pos) {
-    return zzBufferArray != null ? zzBufferArray[zzStartRead+pos]:zzBuffer.charAt(zzStartRead+pos);
+    return zzBuffer.charAt(zzStartRead+pos);
   }
 
 
@@ -881,7 +874,6 @@ class _CfscriptLexer8 implements FlexLexer {
     int zzMarkedPosL;
     int zzEndReadL = zzEndRead;
     CharSequence zzBufferL = zzBuffer;
-    char[] zzBufferArrayL = zzBufferArray;
     char [] zzCMapL = ZZ_CMAP;
 
     int [] zzTransL = ZZ_TRANS;
@@ -951,12 +943,12 @@ class _CfscriptLexer8 implements FlexLexer {
       // store back cached position
       zzMarkedPos = zzMarkedPosL;
 
-          if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
-            zzAtEOF = true;
+      if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
+        zzAtEOF = true;
         zzDoEOF();
         return null;
-          }
-          else {
+      }
+      else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { return CfmlTokenTypes.COMMENT;

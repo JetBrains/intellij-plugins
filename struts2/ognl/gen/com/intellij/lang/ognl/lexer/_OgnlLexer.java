@@ -486,14 +486,8 @@ public class _OgnlLexer implements FlexLexer {
       the source of the yytext() string */
   private CharSequence zzBuffer = "";
 
-  /** this buffer may contains the current text array to be matched when it is cheap to acquire it */
-  private char[] zzBufferArray;
-
   /** the textposition at the last accepting state */
   private int zzMarkedPos;
-
-  /** the textposition at the last state to be included in yytext */
-  private int zzPushbackPos;
 
   /** the current text position in the buffer */
   private int zzCurrentPos;
@@ -552,19 +546,17 @@ public class _OgnlLexer implements FlexLexer {
     return map;
   }
 
-  public final int getTokenStart(){
+  public final int getTokenStart() {
     return zzStartRead;
   }
 
-  public final int getTokenEnd(){
+  public final int getTokenEnd() {
     return getTokenStart() + yylength();
   }
 
-  public void reset(CharSequence buffer, int start, int end,int initialState){
+  public void reset(CharSequence buffer, int start, int end, int initialState) {
     zzBuffer = buffer;
-    zzBufferArray = com.intellij.util.text.CharArrayUtil.fromSequenceWithoutCopying(buffer);
     zzCurrentPos = zzMarkedPos = zzStartRead = start;
-    zzPushbackPos = 0;
     zzAtEOF  = false;
     zzAtBOL = true;
     zzEndRead = end;
@@ -621,7 +613,7 @@ public class _OgnlLexer implements FlexLexer {
    * @return the character at position pos
    */
   public final char yycharat(int pos) {
-    return zzBufferArray != null ? zzBufferArray[zzStartRead+pos]:zzBuffer.charAt(zzStartRead+pos);
+    return zzBuffer.charAt(zzStartRead+pos);
   }
 
 
@@ -692,7 +684,6 @@ public class _OgnlLexer implements FlexLexer {
     int zzMarkedPosL;
     int zzEndReadL = zzEndRead;
     CharSequence zzBufferL = zzBuffer;
-    char[] zzBufferArrayL = zzBufferArray;
     char [] zzCMapL = ZZ_CMAP;
 
     int [] zzTransL = ZZ_TRANS;
