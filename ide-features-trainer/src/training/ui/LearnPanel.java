@@ -4,18 +4,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.labels.LinkLabel;
-import com.intellij.ui.components.labels.LinkListener;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import icons.LearnIcons;
 import org.jetbrains.annotations.Nullable;
-import training.learn.LearnBundle;
-import training.learn.Module;
 import training.learn.CourseManager;
+import training.learn.LearnBundle;
 import training.learn.Lesson;
+import training.learn.Module;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -54,7 +52,7 @@ public class LearnPanel extends JPanel {
     private int check_width;
     private int check_right_indent;
     private EmptyBorder checkmarkShift;
-
+    private JBColor background;
 
     //lessonPanel UI
     private int fontSize;
@@ -93,7 +91,6 @@ public class LearnPanel extends JPanel {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setFocusable(false);
-        setOpaque(false);
         this.width = width;
 
         //Obligatory block
@@ -101,15 +98,18 @@ public class LearnPanel extends JPanel {
         initLessonPanel();
         initModulePanel();
 
+        setOpaque(true);
+        setBackground(getBackground());
+
         lessonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        this.add(lessonPanel);
+        add(lessonPanel);
         modulePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        this.add(modulePanel);
+        add(modulePanel);
 
         //set LearnPanel UI
-        this.setPreferredSize(new Dimension(width, 100));
-        this.setBorder(new EmptyBorder(north_inset, west_inset, south_inset, east_inset));
+        setPreferredSize(new Dimension(width, 100));
+        setBorder(new EmptyBorder(north_inset, west_inset, south_inset, east_inset));
     }
 
 
@@ -141,8 +141,8 @@ public class LearnPanel extends JPanel {
         //UI colors and fonts
         moduleNameFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
         allTopicsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
-        lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 2);
-        messageFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
+        lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 3);
+        messageFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 2);
         defaultTextColor = new JBColor(Gray._30, Gray._208);
         passedColor = new JBColor(Gray._105, Gray._103);
         lessonPassedColor = new JBColor(new Color(49, 140, 64), new Color(7, 140, 45));
@@ -154,10 +154,10 @@ public class LearnPanel extends JPanel {
         shortcutBackgroundColor = new JBColor(new Color(218, 226, 237), new Color(39, 43, 46));
 
         //separator UI
-        separatorColor = new JBColor(Gray._222, Gray._149);
+        separatorColor = new JBColor(new Color(204, 204, 204), Gray._149);
 
         //course UI
-        lessonActiveColor = new JBColor(Gray._128, Gray._202);
+        lessonActiveColor = new JBColor(new Color(0, 0, 0), Gray._202);
         lessonInactiveColor = lessonLinkColor;
 //        lessonsFont = new Font(UIUtil.getFont(fontSize, ), 0, fontSize);
         lessonsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
@@ -192,7 +192,7 @@ public class LearnPanel extends JPanel {
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNameLabel.setFocusable(false);
 
-        lessonMessagePane = new LessonMessagePane(fontSize, check_width + check_right_indent);
+        lessonMessagePane = new LessonMessagePane(fontSize + 1, check_width + check_right_indent);
         lessonMessagePane.setFocusable(false);
         lessonMessagePane.setOpaque(false);
         lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, lessonLinkColor, passedColor, shortcutBackgroundColor);
@@ -207,6 +207,7 @@ public class LearnPanel extends JPanel {
         button.setFocusable(false);
         button.setVisible(true);
         button.setEnabled(true);
+        button.setOpaque(false);
 
         buttonPanel = new JPanel();
         buttonPanel.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
@@ -377,8 +378,8 @@ public class LearnPanel extends JPanel {
 
         buttonAction.setEnabled(true);
         button.setAction(buttonAction);
-        if (text == null || text.isEmpty()) button.setText("Skip");
-        else button.setText("Skip to module: " + text);
+        if (text == null || text.isEmpty()) button.setText(LearnBundle.message("learn.ui.button.skip"));
+        else button.setText(LearnBundle.message("learn.ui.button.skip.module") + " "+ text);
         button.setSelected(true);
         button.setVisible(visible);
     }
@@ -456,7 +457,7 @@ public class LearnPanel extends JPanel {
             add(Box.createRigidArea(new Dimension(0, 10)));
 
             buildLessonLabels(lesson, myLessons);
-            setMaximumSize(new Dimension(width - insets * 2, modulePanel.getPreferredSize().height));
+            setMaximumSize(new Dimension(width, modulePanel.getPreferredSize().height));
         }
 
         private void buildLessonLabels(Lesson lesson, final ArrayList<Lesson> myLessons) {
@@ -542,5 +543,11 @@ public class LearnPanel extends JPanel {
     @Override
     public Dimension getPreferredSize() {
         return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + 2 * insets, (int) lessonPanel.getMinimumSize().getHeight() + (int) modulePanel.getMinimumSize().getHeight() + 2 * insets);
+    }
+
+    @Override
+    public Color getBackground(){
+        if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
+        else return this.getParent().getBackground();
     }
 }

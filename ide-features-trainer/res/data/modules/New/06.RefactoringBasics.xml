@@ -31,7 +31,5 @@ class Sorter {
         <Try description="Press &lt;action=&quot;IntroduceParameter&quot;&gt; to extract the selected expression to a parameter" trigger="IntroduceParameter" check="training.check.CheckRefactoringBasics"/>
         <MoveCaret string="FileReader(&quot;input"/>
         <Try description="Press &lt;action=&quot;IntroduceVariable&quot;&gt; and select &lt;code&gt;new FileReader(...)&lt;/code&gt; from the suggested list to extract it to a variable" triggers="IntroduceVariable;NextTemplateVariable"/>
-
-        <Try description="Press &lt;action=&quot;IntroduceVariable&quot;&gt; and select &lt;code&gt;new FileReader(...)&lt;/code&gt; from the suggested list to extract it to a variable" triggers="IntroduceVariable;NextTemplateVariable"/>
     <Win/>
 </xml>
