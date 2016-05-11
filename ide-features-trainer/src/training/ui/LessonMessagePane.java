@@ -1,6 +1,7 @@
 package training.ui;
 
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import icons.LearnIcons;
@@ -242,7 +243,10 @@ class LessonMessagePane extends JTextPane {
                     final Rectangle rectangleEnd = modelToView(endOffset - 2);
                     final Color color = g2d.getColor();
                     g2d.setColor(bckShortcutColor);
-                    RoundRectangle2D r2d = new RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent,
+                    RoundRectangle2D r2d;
+                    if (SystemInfo.isWindows) r2d = new RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent + 1,
+                            (rectangleEnd.getX() - rectangleStart.getX()) + 4 * indent, fontSize + 3 * indent, arc, arc);
+                    else r2d = new RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent,
                             (rectangleEnd.getX() - rectangleStart.getX()) + 4 * indent, fontSize + 3 * indent, arc, arc);
                     g2d.fill(r2d);
                     g2d.setColor(color);
