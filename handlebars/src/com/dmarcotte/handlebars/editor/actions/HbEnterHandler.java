@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +57,7 @@ public class HbEnterHandler extends EnterHandlerDelegateAdapter {
     EditorHighlighter highlighter = ((EditorEx)editor).getHighlighter();
     HighlighterIterator iterator = highlighter.createIterator(offset - 1);
 
+    PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
     final PsiElement openerElement = file.findElementAt(iterator.getStart());
 
     PsiElement openTag = HbPsiUtil.findParentOpenTagElement(openerElement);

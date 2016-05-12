@@ -19,6 +19,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.JBUI;
 import jetbrains.communicator.util.icons.CompositeIcon;
 
 import javax.swing.*;
@@ -52,7 +53,7 @@ public class DropDownButton extends JButton {
     }
 
     setIcon(icon);
-    setMargin(new Insets(0, 0, 0, 0));
+    setMargin(JBUI.emptyInsets());
 
     setHorizontalAlignment(JButton.LEFT);
     setFocusable(false);

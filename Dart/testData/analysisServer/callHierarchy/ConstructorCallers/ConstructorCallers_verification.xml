@@ -1,0 +1,8 @@
+<node text="B.b() (B.dart)" base="true">
+  <node text="B.B() (B.dart)">
+    <node text="A.A() (A.dart)"/>
+    <node text="A.a() (A.dart)"/>
+  </node>
+  <node text="A.A() (A.dart)"/>
+  <node text="A.a() (A.dart)"/>
+</node>

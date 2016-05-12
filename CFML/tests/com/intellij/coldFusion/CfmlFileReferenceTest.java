@@ -62,12 +62,7 @@ public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
   private void doRenameFileTest(final String newName, String fileTextWithReference) throws Exception {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.addFileToProject("fileWithReference.test.cfml", fileTextWithReference);
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        myFixture.renameElement(myFixture.getFile(), newName);
-      }
-    });
+    myFixture.renameElement(myFixture.getFile(), newName);
     myFixture.checkResultByFile("fileWithReference.test.cfml", Util.getExpectedDataFileName(getTestName(true)), false);
   }
 

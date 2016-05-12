@@ -24,12 +24,12 @@ import org.angularjs.lang.parser.AngularJSElementTypes;
 %function advance
 %state INTERPOLATION
 
-WHITE_SPACE_CHARS=[ \n\r\t\f]+
+WS=[ \n\r\t\f]+
 
 %%
 
-<YYINITIAL> "{{"                { yybegin(INTERPOLATION); return myType; }
+<YYINITIAL>     "{{"            { yybegin(INTERPOLATION); return myType; }
 <INTERPOLATION> "}}"            { yybegin(YYINITIAL); return myType; }
-<INTERPOLATION> .|"\n"          { return AngularJSElementTypes.EMBEDDED_CONTENT; }
-<YYINITIAL> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_REAL_WHITE_SPACE;}
-<YYINITIAL> .|"\n"              { return myType; }
+<INTERPOLATION> [^]             { return AngularJSElementTypes.EMBEDDED_CONTENT; }
+<YYINITIAL>     {WS}            { return XmlTokenType.XML_REAL_WHITE_SPACE;}
+<YYINITIAL>     [^]             { return myType; }

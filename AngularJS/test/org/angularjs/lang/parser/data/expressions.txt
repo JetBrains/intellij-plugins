@@ -186,7 +186,8 @@ ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
       JSDefinitionExpression
-        PsiElement(HASH)('#')
+        PsiElement(JS:LET_KEYWORD)('let')
+        PsiWhiteSpace(' ')
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('todo')
       PsiWhiteSpace(' ')
@@ -228,7 +229,7 @@ ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
       JSDefinitionExpression
-        PsiElement(HASH)('#')
+        PsiElement(JS:LET_KEYWORD)('let')
         PsiErrorElement:identifier expected
           <empty list>
       PsiWhiteSpace(' ')
@@ -270,7 +271,8 @@ ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
       JSDefinitionExpression
-        PsiElement(HASH)('#')
+        PsiElement(JS:LET_KEYWORD)('let')
+        PsiWhiteSpace(' ')
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('todo')
       PsiErrorElement:'of' expected
@@ -312,7 +314,8 @@ ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
       JSDefinitionExpression
-        PsiElement(HASH)('#')
+        PsiElement(JS:LET_KEYWORD)('let')
+        PsiWhiteSpace(' ')
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('todo')
       PsiWhiteSpace(' ')
@@ -323,7 +326,6 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:IDENTIFIER)('todoService')
         PsiElement(JS:DOT)('.')
         PsiElement(JS:IDENTIFIER)('todos')
-  JSEmptyStatement
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace(' ')
   JSExpressionStatement
@@ -331,7 +333,8 @@ ASTWrapperPsiElement(FILE)
       JSAssignmentExpression
         JSDefinitionExpression
           JSDefinitionExpression
-            PsiElement(HASH)('#')
+            PsiElement(JS:LET_KEYWORD)('let')
+            PsiWhiteSpace(' ')
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('index')
         PsiElement(JS:EQ)('=')
@@ -342,7 +345,8 @@ ASTWrapperPsiElement(FILE)
       JSAssignmentExpression
         JSDefinitionExpression
           JSDefinitionExpression
-            PsiElement(HASH)('#')
+            PsiElement(JS:LET_KEYWORD)('let')
+            PsiWhiteSpace(' ')
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('last')
         PsiElement(JS:EQ)('=')

@@ -7,9 +7,11 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlComment;
@@ -64,6 +66,7 @@ public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
       return false;
     }
 
+    PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
     final PsiElement at = file.findElementAt(offset);
     String parentText;
     String marker = "<!---";

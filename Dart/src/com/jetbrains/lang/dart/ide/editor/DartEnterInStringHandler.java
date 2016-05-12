@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
@@ -29,6 +30,7 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
     if (file.getLanguage() != DartLanguage.INSTANCE && !HtmlUtil.isHtmlFile(file)) return Result.Continue;
 
     int caretOffset = caretOffsetRef.get().intValue();
+    PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
     PsiElement psiAtOffset = file.findElementAt(caretOffset);
     int psiOffset;
     if (psiAtOffset == null || (psiOffset = psiAtOffset.getTextRange().getStartOffset()) > caretOffset) {

@@ -22,7 +22,6 @@ import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.SystemProperties;
 import gnu.trove.THashMap;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
@@ -1036,14 +1035,11 @@ public class FlexCommonUtils {
     if (StringUtil.isEmpty(descriptorFilePath)) return null;
 
     try {
-      final Document document = JDOMUtil.loadDocument(new File(descriptorFilePath));
-      final Element rootElement = document.getRootElement();
-      if (rootElement != null) {
-        final String localName = rootElement.getName();
-        final Namespace namespace = rootElement.getNamespace();
-        if ("application".equals(localName) && namespace != null && namespace.getURI().startsWith(AIR_NAMESPACE_BASE)) {
-          return namespace.getURI().substring(AIR_NAMESPACE_BASE.length());
-        }
+      final Element rootElement = JDOMUtil.load(new File(descriptorFilePath));
+      final String localName = rootElement.getName();
+      final Namespace namespace = rootElement.getNamespace();
+      if ("application".equals(localName) && namespace != null && namespace.getURI().startsWith(AIR_NAMESPACE_BASE)) {
+        return namespace.getURI().substring(AIR_NAMESPACE_BASE.length());
       }
     }
     catch (JDOMException e) {/*unlucky*/}

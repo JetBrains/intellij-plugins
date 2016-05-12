@@ -26,6 +26,7 @@ import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.refactoring.ServerExtractMethodRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.ServerRefactoringDialog;
@@ -141,7 +142,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     JPanel panel = new JPanel(new GridBagLayout());
     GridBagConstraints gbConstraints = new GridBagConstraints();
 
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.insets = JBUI.insetsBottom(4);
     gbConstraints.gridx = 0;
     gbConstraints.gridy = 0;
     gbConstraints.gridwidth = 1;
@@ -153,7 +154,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     panel.add(nameLabel, gbConstraints);
     nameLabel.setText("Method name:");
 
-    gbConstraints.insets = new Insets(0, 4, 4, 0);
+    gbConstraints.insets = JBUI.insets(0, 4, 4, 0);
     gbConstraints.gridx = 1;
     gbConstraints.gridy = 0;
     gbConstraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -164,7 +165,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     panel.add(myMethodNameField, gbConstraints);
     myMethodNameField.setPreferredSize(new Dimension(200, myMethodNameField.getPreferredSize().height));
 
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.insets = JBUI.insetsBottom(4);
     gbConstraints.gridx = 0;
     gbConstraints.gridy = 1;
     gbConstraints.gridwidth = 2;
@@ -174,7 +175,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     gbConstraints.anchor = GridBagConstraints.WEST;
     panel.add(myGetterCheckBox, gbConstraints);
 
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.insets = JBUI.insetsBottom(4);
     gbConstraints.gridx = 0;
     gbConstraints.gridy = 2;
     gbConstraints.gridwidth = 2;
@@ -184,7 +185,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     gbConstraints.anchor = GridBagConstraints.WEST;
     panel.add(myAllCheckBox, gbConstraints);
 
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.insets = JBUI.insetsBottom(4);
     gbConstraints.gridx = 0;
     gbConstraints.gridy = 3;
     gbConstraints.gridwidth = 2;

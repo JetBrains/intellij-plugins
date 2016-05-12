@@ -1,7 +1,5 @@
 package org.osmorc.refactoring;
 
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -11,7 +9,6 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.refactoring.JavaRefactoringFactory;
 import com.intellij.refactoring.MoveDestination;
 import com.intellij.refactoring.RefactoringFactory;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.LightOsgiFixtureTestCase;
 
@@ -77,23 +74,13 @@ public class ActivatorRenameTest extends LightOsgiFixtureTestCase {
   }
 
   private void renameClass() {
-    new WriteCommandAction(getProject(), "test", "testId", myActivator.getContainingFile()) {
-      @Override
-      protected void run(@NotNull Result result) throws Throwable {
-        RefactoringFactory.getInstance(getProject()).createRename(myActivator, "RenamedActivator").run();
-      }
-    }.execute();
+    RefactoringFactory.getInstance(getProject()).createRename(myActivator, "RenamedActivator").run();
   }
 
   private void renamePackage() {
-    new WriteCommandAction(getProject(), "test", "testId", myActivator.getContainingFile()) {
-      @Override
-      protected void run(@NotNull Result result) throws Throwable {
-        VirtualFile sourceRoot = ModuleRootManager.getInstance(myModule).getSourceRoots()[0];
-        JavaRefactoringFactory factory = JavaRefactoringFactory.getInstance(getProject());
-        MoveDestination moveDestination = factory.createSourceRootMoveDestination("tx", sourceRoot);
-        factory.createMoveClassesOrPackages(new PsiElement[]{myActivator}, moveDestination).run();
-      }
-    }.execute();
+    VirtualFile sourceRoot = ModuleRootManager.getInstance(myModule).getSourceRoots()[0];
+    JavaRefactoringFactory factory = JavaRefactoringFactory.getInstance(getProject());
+    MoveDestination moveDestination = factory.createSourceRootMoveDestination("tx", sourceRoot);
+    factory.createMoveClassesOrPackages(new PsiElement[]{myActivator}, moveDestination).run();
   }
 }

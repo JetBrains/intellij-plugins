@@ -1,0 +1,7 @@
+<node text="a() (A.dart)" base="true">
+  <node text="b() (B.dart)">
+    <node text="c() (C.dart)">
+      <node text="x() (C.dart)"/>
+    </node>
+  </node>
+</node>
