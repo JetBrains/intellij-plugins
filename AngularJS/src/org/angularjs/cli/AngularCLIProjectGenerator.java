@@ -104,7 +104,6 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
     builder.setUsePredefinedMessageFilter(false);
     builder.addFilter(new AngularCLIFilter(project, baseDir.getPath()));
 
-    builder.setUsePredefinedMessageFilter(false);
     final ConsoleView console = builder.getConsole();
     console.attachToProcess(handler);
     handler.addProcessListener(new ProcessAdapter() {
