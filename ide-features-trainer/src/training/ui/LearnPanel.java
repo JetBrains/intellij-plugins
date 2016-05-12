@@ -252,11 +252,6 @@ public class LearnPanel extends JPanel {
 
     public void addMessage(String text) {
         lessonMessagePane.addMessage(text);
-
-        //Pack lesson panel
-        lessonPanel.revalidate();
-        this.revalidate();
-        this.repaint();
     }
 
     public void addMessage(Message[] messages) {
@@ -279,9 +274,12 @@ public class LearnPanel extends JPanel {
         }
 
         lessonMessagePane.addMessage(messages);
+        lessonMessagePane.revalidate();
+        lessonMessagePane.repaint();
 
         //Pack lesson panel
         lessonPanel.revalidate();
+        lessonPanel.repaint();
         this.revalidate();
         this.repaint();
 

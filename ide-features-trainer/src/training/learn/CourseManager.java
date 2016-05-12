@@ -210,7 +210,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 }
             });
 
-            //to start any lesson we need to do 5 steps:
+            //to start any lesson we need to do 4 steps:
             //1. open editor or find editor
             TextEditor textEditor = null;
             if (FileEditorManager.getInstance(project).isFileOpen(vf)) {
@@ -238,15 +238,11 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             //2. set the focus on this editor
             FileEditorManager.getInstance(project).setSelectedEditor(vf, TextEditorProvider.getInstance().getEditorTypeId());
 
-            //3. create LessonManager
-//            new LessonManager(lesson, textEditor.getEditor());
-
-            //4. update tool window
-//            updateToolWindow(project);
+            //3. update tool window
             CourseManager.getInstance().getLearnPanel().clear();
 
 
-            //5. Process lesson
+            //4. Process lesson
             LessonProcessor.process(project, lesson, textEditor.getEditor(), target);
 
         } catch (NoSdkException | InvalidSdkException noSdkException) {
@@ -539,6 +535,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
         if (myLearnToolWindow == null) return;
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
+        scrollPane.getViewport().revalidate();
+        scrollPane.getViewport().repaint();
         scrollPane.revalidate();
         scrollPane.repaint();
     }
