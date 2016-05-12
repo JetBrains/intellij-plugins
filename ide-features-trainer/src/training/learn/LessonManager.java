@@ -143,6 +143,7 @@ public class LessonManager {
 
     public void addMessage(Message[] messages) {
         CourseManager.getInstance().getLearnPanel().addMessage(messages);
+        CourseManager.getInstance().updateToolWindowScrollPane();
     }
 
     public void passExercise() {
