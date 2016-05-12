@@ -117,12 +117,17 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       PsiElement parent = tag;
       while (parent != null) {
         parent = parent.getParent();
-        if (parent instanceof XmlTag && "form".equalsIgnoreCase(((XmlTag)parent).getName())) {
+        if (parent instanceof XmlTag && isForm((XmlTag)parent)) {
           return true;
         }
       }
     }
     return false;
+  }
+
+  private static boolean isForm(XmlTag parent) {
+    final String name = parent.getName();
+    return "form".equalsIgnoreCase(name) || "ng-form".equalsIgnoreCase(name);
   }
 
   @Nullable
