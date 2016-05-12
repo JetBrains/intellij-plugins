@@ -138,4 +138,4 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 "&"  { return OgnlTypes.AND; }
 "~"  { return OgnlTypes.NOT; }
 
-.    {  yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
+[^]  {  yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
