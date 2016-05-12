@@ -12,12 +12,14 @@ class FoldingDemo {
         checkAndStart((register > 10), new Runnable() {
             public void run() {
                 counter[0]++;
+                System.out.print(counter[0] + " ");
             }
         });
     }
 
     public static void checkAndStart(boolean flag, Runnable runnable){
         if(flag) runnable.run();
+        else System.out.println("suspending");
     }
 
 }</CopyText>

@@ -1,5 +1,4 @@
 <xml type="Scenario" name="Rename" passed="false" version="0.1" subtype="aimless" projectTree="hide">
-        <ExpandAllBlocks/>
         <CopyText>import java.lang.String;
 
 class Rename{

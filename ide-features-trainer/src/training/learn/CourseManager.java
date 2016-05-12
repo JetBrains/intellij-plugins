@@ -30,6 +30,7 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.ui.LearnPanel;
+import training.ui.LearnToolWindow;
 import training.ui.MainLearnPanel;
 import training.learn.dialogs.SdkModuleProblemDialog;
 import training.learn.dialogs.SdkProjectProblemDialog;
@@ -238,7 +239,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             FileEditorManager.getInstance(project).setSelectedEditor(vf, TextEditorProvider.getInstance().getEditorTypeId());
 
             //3. create LessonManager
-            new LessonManager(lesson, textEditor.getEditor());
+//            new LessonManager(lesson, textEditor.getEditor());
 
             //4. update tool window
 //            updateToolWindow(project);
@@ -534,6 +535,14 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return mainLearnPanel;
     }
 
+    public void updateToolWindowScrollPane() {
+        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
+        if (myLearnToolWindow == null) return;
+        final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
+        scrollPane.revalidate();
+        scrollPane.repaint();
+    }
+
 
     static class State {
         public final ArrayList<Module> modules = new ArrayList<>();
@@ -605,31 +614,21 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     public void setLessonView(Project project) {
-        final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
-        String learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW;
-        ToolWindow toolWindow = windowManager.getToolWindow(learnToolWindow);
-        JComponent toolWindowComponent = toolWindow.getComponent();
-        toolWindowComponent.removeAll();
-        final JBScrollPane scrollPane = new JBScrollPane(getLearnPanel());
-        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        toolWindowComponent.add(scrollPane);
-        toolWindowComponent.revalidate();
-        toolWindowComponent.repaint();
+        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
+        final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
+        scrollPane.setViewportView(getLearnPanel());
+        scrollPane.revalidate();
+        scrollPane.repaint();
     }
 
     public void setModulesView(Project project) {
-        final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
-        String learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW;
-        ToolWindow toolWindow = windowManager.getToolWindow(learnToolWindow);
-        JComponent toolWindowComponent = toolWindow.getComponent();
-        toolWindowComponent.removeAll();
         MainLearnPanel mainLearnPanel = getMainLearnPanel();
         mainLearnPanel.updateMainPanel();
-        final JBScrollPane scrollPane = new JBScrollPane(getMainLearnPanel());
-        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        toolWindowComponent.add(scrollPane);
-        toolWindowComponent.revalidate();
-        toolWindowComponent.repaint();
+        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
+        final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
+        scrollPane.setViewportView(mainLearnPanel);
+        scrollPane.revalidate();
+        scrollPane.repaint();
     }
 
     /**
