@@ -233,7 +233,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             }
 
             //2. set the focus on this editor
-            FileEditorManager.getInstance(project).setSelectedEditor(vf, TextEditorProvider.getInstance().getEditorTypeId());
+            //FileEditorManager.getInstance(project).setSelectedEditor(vf, TextEditorProvider.getInstance().getEditorTypeId());
+            FileEditorManager.getInstance(project).openEditor(new OpenFileDescriptor(project, vf), true);
 
             //3. update tool window
             CourseManager.getInstance().getLearnPanel().clear();
