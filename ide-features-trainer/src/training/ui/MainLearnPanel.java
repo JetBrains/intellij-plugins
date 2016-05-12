@@ -284,7 +284,7 @@ public class MainLearnPanel extends JPanel {
     @Override
     public Color getBackground(){
         if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
-        else return this.getParent().getBackground();
+        else return super.getBackground();
     }
 
 }
