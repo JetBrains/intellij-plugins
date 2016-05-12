@@ -112,10 +112,10 @@ public class LearnProjectComponent implements ProjectComponent {
                         public void run() {
                             GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"), LearnBundle.message("learn.tool.window.quick.access.message"))
                                     .setDisposable(myProject)
-                                    .show(new RelativePoint(learnStripeButton, new Point(20, 30)), Balloon.Position.atRight);
+                                    .show(new RelativePoint(learnStripeButton, new Point(learnStripeButton.getBounds().width, learnStripeButton.getBounds().height/2)), Balloon.Position.atRight);
                             Disposer.dispose(alarm);
                         }
-                    }, 20000);
+                    }, 10000);
                 }
             }
         });
