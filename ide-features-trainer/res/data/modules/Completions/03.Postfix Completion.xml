@@ -4,13 +4,13 @@
 
     public void demonstrate(int show_times){
         (show_times == 10)
-
     }
 }</CopyText>
 <CaretBlock>
     <MoveCaret position="4:27" />
     <Try description="Postfix code completion helps reduce backward caret jumps as you write code. It lets you transform an already typed expression to another one based on the postfix you added, the type of expression and its context. Put the &lt;code&gt;.&lt;/code&gt; after parenthesis and you will see the list of postfix completions. Choose the first element by clicking &lt;action=&quot;EditorEnter&quot;&gt;" trigger="EditorChooseLookupItem"/>
-    <Try description="Postfix completions list appears as the part of the instant completion list. If you want to filter it just press &lt;action=&quot;InsertLiveTemplate&quot;&gt;" trigger="InsertLiveTemplate"/>
+    <Try description="Select &lt;code&gt;if&lt;/code&gt; from the list or type it in editor. And press &lt;action=&quot;EditorEnter&quot;&gt; to complete statement" trigger="EditorChooseLookupItem"/>
+    <!--<Try description="Postfix completions list appears as the part of the instant completion list. If you want to filter it just press &lt;action=&quot;InsertLiveTemplate&quot;&gt;" trigger="InsertLiveTemplate"/>-->
     <Win/>
 </CaretBlock>
 </MouseBlock>

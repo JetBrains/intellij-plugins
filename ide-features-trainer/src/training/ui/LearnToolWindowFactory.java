@@ -16,18 +16,23 @@ import training.learn.CourseManager;
 public class LearnToolWindowFactory implements ToolWindowFactory, DumbAware {
     public static final String LEARN_TOOL_WINDOW = "Learn IntelliJ IDEA";
 
+    private static LearnToolWindow myLearnToolWindow = null;
+
+    public static LearnToolWindow getMyLearnToolWindow(){
+        return myLearnToolWindow;
+    }
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
-        LearnToolWindow learnToolWindow = new LearnToolWindow();
-        learnToolWindow.init(project);
+        myLearnToolWindow = new LearnToolWindow();
+        myLearnToolWindow.init(project);
         final ContentManager contentManager = toolWindow.getContentManager();
 
-        Content content = contentManager.getFactory().createContent(learnToolWindow, null, false);
+        Content content = contentManager.getFactory().createContent(myLearnToolWindow, null, false);
         contentManager.addContent(content);
 
-        Disposer.register(project, learnToolWindow);
+        Disposer.register(project, myLearnToolWindow);
     }
 }
 

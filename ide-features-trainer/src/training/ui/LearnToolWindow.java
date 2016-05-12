@@ -14,7 +14,7 @@ import java.awt.*;
 /**
  * Created by karashevich on 17/03/16.
  */
-class LearnToolWindow extends SimpleToolWindowPanel implements DataProvider, Disposable {
+public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvider, Disposable {
 
     private JPanel myContentPanel;
     private JBScrollPane scrollPane;
@@ -46,6 +46,9 @@ class LearnToolWindow extends SimpleToolWindowPanel implements DataProvider, Dis
         setContent(scrollPane);
     }
 
+    public JBScrollPane getScrollPane() {
+        return scrollPane;
+    }
 
     @Override
     public void dispose() {
