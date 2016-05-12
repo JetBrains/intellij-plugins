@@ -3,6 +3,7 @@ package training.commands;
 /**
  * Created by karashevich on 30/01/15.
  */
+@Deprecated
 public class ExpandAllBlocksCommand extends Command {
 
     public ExpandAllBlocksCommand(){

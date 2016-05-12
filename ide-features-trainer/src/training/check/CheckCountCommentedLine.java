@@ -29,7 +29,7 @@ public class CheckCountCommentedLine implements Check{
 
     @Override
     public boolean check() {
-        return ((countCommentedLines() == countComments - 1) || (countComments == 0));
+        return (countCommentedLines() == 0);
     }
 
     @Override

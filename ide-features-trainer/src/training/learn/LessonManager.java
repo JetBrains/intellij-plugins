@@ -29,10 +29,9 @@ public class LessonManager {
     private Lesson myCurrentLesson;
 
     private static ArrayList<LearnActions> myLearnActions;
-    private final LearnBalloonBuilder learnBalloonBuilder;
+    private LearnBalloonBuilder learnBalloonBuilder;
     private static boolean mouseBlocked = false;
     private static HashSet<ActionsRecorder> actionsRecorders = new HashSet<>();
-    private static HashMap<Lesson, LessonManager> lessonManagers = new HashMap<>();
     private static Editor lastEditor;
     private static MouseListenerHolder mouseListenerHolder;
 
@@ -41,13 +40,17 @@ public class LessonManager {
     public LessonManager(Lesson lesson, Editor editor) {
         myCurrentLesson = lesson;
         mouseBlocked = false;
-        if (myLearnActions == null) {
-            myLearnActions = new ArrayList<>();
-        }
-        learnBalloonBuilder = new LearnBalloonBuilder(editor, balloonDelay, "Caret is blocked in this lesson");
-        lessonManagers.put(lesson, this);
+        if (myLearnActions == null) myLearnActions = new ArrayList<>();
+        learnBalloonBuilder = null;
         lastEditor = editor;
+        mouseListenerHolder = null;
+    }
 
+    public LessonManager(){
+        myCurrentLesson = null;
+        mouseBlocked = false;
+        if (myLearnActions == null) myLearnActions = new ArrayList<>();
+        lastEditor = null;
         mouseListenerHolder = null;
     }
 
@@ -56,12 +59,19 @@ public class LessonManager {
     }
 
     public static LessonManager getInstance(Lesson lesson){
-        if (lessonManagers == null) return null;
-        return lessonManagers.get(lesson);
+        final LessonManager lessonManager = getInstance();
+        lessonManager.setCurrentLesson(lesson);
+        return lessonManager;
+    }
+
+    private void setCurrentLesson(Lesson lesson) {
+        myCurrentLesson = lesson;
     }
 
     void initLesson(Editor editor) throws Exception {
         cleanEditor(); //remove mouse blocks and action recorders from last editor
+        lastEditor = editor; //rearrange last editor
+
         LearnPanel learnPanel = CourseManager.getInstance().getLearnPanel();
         learnPanel.setLessonName(myCurrentLesson.getName());
         Module module = myCurrentLesson.getModule();
@@ -72,6 +82,8 @@ public class LessonManager {
         clearEditor(editor);
         clearLessonPanel();
         removeActionsRecorders();
+
+        learnBalloonBuilder = new LearnBalloonBuilder(editor, balloonDelay, LearnBundle.message("learn.ui.balloon.blockCaret.message"));
 
         if (mouseListenerHolder != null) mouseListenerHolder.restoreMouseActions(editor);
 
@@ -126,6 +138,7 @@ public class LessonManager {
 
     public void addMessage(String message){
         CourseManager.getInstance().getLearnPanel().addMessage(message);
+        CourseManager.getInstance().updateToolWindowScrollPane();
     }
 
     public void addMessage(Message[] messages) {
@@ -259,6 +272,7 @@ public class LessonManager {
     }
 
     private void cleanEditor(){
+        if (lastEditor == null) return;
         if (mouseListenerHolder != null) mouseListenerHolder.restoreMouseActions(lastEditor);
         removeActionsRecorders();
         unblockCaret();
