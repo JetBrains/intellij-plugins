@@ -2,6 +2,7 @@ package training.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.labels.LinkLabel;
@@ -508,7 +509,11 @@ public class LearnPanel extends JPanel {
                 if (lesson.getPassed()) {
                     JLabel jLabel = lessonLabelMap.get(lesson);
                     Point point = jLabel.getLocation();
-                    LearnIcons.CheckmarkGray12.paintIcon(this, g, point.x, point.y + 2);
+                    if (SystemInfo.isWindows) {
+                        LearnIcons.CheckmarkGray12.paintIcon(this, g, point.x, point.y + 1);
+                    } else {
+                        LearnIcons.CheckmarkGray12.paintIcon(this, g, point.x, point.y + 2);
+                    }
                 }
             }
         }

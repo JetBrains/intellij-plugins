@@ -221,7 +221,11 @@ class LessonMessagePane extends JTextPane {
                 if (startOffset != 0) startOffset++;
                 try {
                     Rectangle rectangle = modelToView(startOffset);
-                    LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 17, rectangle.y + 1);
+                    if (SystemInfo.isWindows) {
+                        LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 17, rectangle.y + 3);
+                    } else {
+                        LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 17, rectangle.y + 1);
+                    }
                 } catch (BadLocationException e) {
                     e.printStackTrace();
                 }
