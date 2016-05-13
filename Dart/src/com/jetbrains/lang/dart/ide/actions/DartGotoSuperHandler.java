@@ -66,7 +66,7 @@ public class DartGotoSuperHandler implements LanguageCodeInsightActionHandler {
       PsiElementListNavigator.openTargets(
         editor,
         DartResolveUtil.getComponentNameArray(supers),
-        DaemonBundle.message("navigation.title.subclass", component.getName(), supers.size()),
+        DaemonBundle.message("navigation.title.subclass", component.getName(), supers.size(),""),
         "Subclasses of " + component.getName(),
         new DefaultPsiElementCellRenderer()
       );
