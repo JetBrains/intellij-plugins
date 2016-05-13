@@ -46,7 +46,7 @@ public class HardProjectBasedTest extends UsefulTestCase {
     @Parameterized.Parameters(name = "{0}")
     public static List<Object> data() {
         List<Object> lessonsIds = new ArrayList<Object>();
-        final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        final Module[] modules = CourseManagerTest.getInstance().getModules();
         assert modules != null;
         for (Module module : modules) {
             final ArrayList<Lesson> lessons = module.getLessons();
@@ -139,11 +139,11 @@ public class HardProjectBasedTest extends UsefulTestCase {
     }
 
     private void setUpLesson() {
-        myLesson = CourseManagerWithoutIDEA.getInstance().findLesson(lessonId);
+        myLesson = CourseManagerTest.getInstance().findLesson(lessonId);
     }
 
     private void setUpSolution() throws Exception {
-        myLessonSolution = CourseManagerWithoutIDEA.getInstance().findSolution(lessonId);
+        myLessonSolution = CourseManagerTest.getInstance().findSolution(lessonId);
         assertNotNull(myLessonSolution);
     }
 

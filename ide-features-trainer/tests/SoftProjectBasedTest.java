@@ -56,7 +56,7 @@ public class SoftProjectBasedTest extends UsefulTestCase {
     }
 
     protected void setUpLesson() {
-        myLesson = CourseManagerWithoutIDEA.getInstance().findLesson(lessonId);
+        myLesson = CourseManagerTest.getInstance().findLesson(lessonId);
     }
 
     @Parameterized.Parameters(name = "{0}")
@@ -66,7 +66,7 @@ public class SoftProjectBasedTest extends UsefulTestCase {
 
     public static List<Object> dataA() {
         List<Object> lessonsIds = new ArrayList<Object>();
-        final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        final Module[] modules = CourseManagerTest.getInstance().getModules();
         for (Module module : modules) {
             final ArrayList<Lesson> lessons = module.getLessons();
             for (Lesson lesson : lessons) {

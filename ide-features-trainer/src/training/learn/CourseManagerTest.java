@@ -3,6 +3,7 @@ package training.learn;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import training.learn.exceptons.*;
 import training.solutions.BaseSolutionClass;
 import training.testFramework.LessonSolution;
@@ -16,18 +17,21 @@ import java.util.ArrayList;
  * Created by karashevich on 11/03/15.
  */
 
-public class CourseManagerWithoutIDEA {
+@TestOnly
+public class CourseManagerTest {
 
     private static final String DOT = ".";
-    public static CourseManagerWithoutIDEA INSTANCE = new CourseManagerWithoutIDEA();
 
-    public static CourseManagerWithoutIDEA getInstance(){
+    public static CourseManagerTest INSTANCE = new CourseManagerTest();
+
+    @TestOnly
+    public static CourseManagerTest getInstance(){
         return INSTANCE;
     }
 
     private ArrayList<Module> modules;
 
-    public CourseManagerWithoutIDEA() {
+    public CourseManagerTest() {
         modules = new ArrayList<Module>();
         if (modules.size() == 0) try {
             initCourses();

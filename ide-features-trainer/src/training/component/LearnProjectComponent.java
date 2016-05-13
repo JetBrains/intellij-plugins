@@ -115,7 +115,7 @@ public class LearnProjectComponent implements ProjectComponent {
                                     .show(new RelativePoint(learnStripeButton, new Point(learnStripeButton.getBounds().width, learnStripeButton.getBounds().height/2)), Balloon.Position.atRight);
                             Disposer.dispose(alarm);
                         }
-                    }, 10000);
+                    }, 5000);
                 }
             }
         });
