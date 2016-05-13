@@ -26,13 +26,15 @@ public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
     return FileUtil.toSystemDependentName("/liveTemplates/");
   }
 
-  public static void expandTemplate(final Editor editor) {
+  public void expandTemplate(final Editor editor) {
     final Project project = editor.getProject();
     assertNotNull(project);
     new ListTemplatesAction().actionPerformedImpl(project, editor);
     final LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(editor);
     assertNotNull(lookup);
-    lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR);
+    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
+                                               lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR);
+                                             });
     TemplateState template = TemplateManagerImpl.getTemplateState(editor);
     if (template != null) {
       Disposer.dispose(template);
