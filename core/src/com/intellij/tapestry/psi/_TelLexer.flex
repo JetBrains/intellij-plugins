@@ -17,13 +17,11 @@ import static com.intellij.tapestry.psi.TelTokenTypes.*;
    }
 %}
 
-%unicode
+%unicode 2.0
 %class _TelLexer
 %implements FlexLexer
 %function advance
 %type IElementType
-%eof{  return;
-%eof}
 
 IDENT=[:jletter:]([:jletterdigit:]*|-[:jletterdigit:]+)*
 INTEGER={SIGN}[:digit:]+
