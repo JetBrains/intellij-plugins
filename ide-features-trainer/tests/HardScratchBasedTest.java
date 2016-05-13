@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import training.learn.CourseManager;
-import training.learn.CourseManagerWithoutIDEA;
+import training.learn.CourseManagerTest;
 import training.learn.Lesson;
 import training.learn.Module;
 import training.learn.exceptons.InvalidSdkException;
@@ -75,18 +75,18 @@ public class HardScratchBasedTest extends UsefulTestCase{
     }
 
     private void setUpLesson(){
-        myLesson = CourseManagerWithoutIDEA.getInstance().findLesson(lessonId);
+        myLesson = CourseManagerTest.getInstance().findLesson(lessonId);
     }
 
     private void setUpSolution() throws Exception {
-        myLessonSolution = CourseManagerWithoutIDEA.getInstance().findSolution(lessonId);
+        myLessonSolution = CourseManagerTest.getInstance().findSolution(lessonId);
         assertNotNull(myLessonSolution);
     }
 
     @Parameterized.Parameters(name = "{0}")
     public static List<Object> data(){
         List<Object> lessonsIds = new ArrayList<Object>();
-        final Module[] modules = CourseManagerWithoutIDEA.getInstance().getModules();
+        final Module[] modules = CourseManagerTest.getInstance().getModules();
         assert modules != null;
         for (Module module : modules) {
             final ArrayList<Lesson> lessons = module.getLessons();

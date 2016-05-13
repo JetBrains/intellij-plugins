@@ -4,7 +4,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
-import icons.LearnIcons;
 
 import javax.swing.*;
 import javax.swing.text.*;
