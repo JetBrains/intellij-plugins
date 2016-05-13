@@ -247,7 +247,7 @@ class LessonMessagePane extends JTextPane {
                     final Color color = g2d.getColor();
                     g2d.setColor(bckShortcutColor);
                     RoundRectangle2D r2d;
-                    if (SystemInfo.isWindows) r2d = new RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent + 1,
+                    if (!SystemInfo.isMac) r2d = new RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent + 1,
                             (rectangleEnd.getX() - rectangleStart.getX()) + 4 * indent, fontSize + 3 * indent, arc, arc);
                     else r2d = new RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent,
                             (rectangleEnd.getX() - rectangleStart.getX()) + 4 * indent, fontSize + 3 * indent, arc, arc);
