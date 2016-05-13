@@ -459,6 +459,7 @@ public class LearnPanel extends JPanel {
         }
 
         private void buildLessonLabels(Lesson lesson, final ArrayList<Lesson> myLessons) {
+            lessonLabelMap.clear();
             for (final Lesson currentLesson : myLessons) {
                 String lessonName = currentLesson.getName();
 
