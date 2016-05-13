@@ -594,6 +594,14 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), "ng-disabled");
   }
 
+  public void testInputWithNgForm() {
+    myFixture.configureByFiles("ng-disabled-ng-form.html", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("<button ng-<caret>", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "ng-disabled");
+  }
+
   public void testRepeatCompletion() {
     myFixture.configureByFiles("ng-repeat.html", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("<div ng-rep<caret>", myFixture.getFile());

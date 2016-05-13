@@ -202,11 +202,11 @@ public class DartSdkUtil {
     updateKnownPaths(DART_SDK_KNOWN_PATHS, oldSdk == null ? null : oldSdk.getHomePath(), newSdkPath);
   }
 
-  public static void updateKnownDartiumPaths(@NotNull final String oldPath, @NotNull final String newPath) {
+  public static void updateKnownDartiumPaths(@Nullable final String oldPath, @NotNull final String newPath) {
     updateKnownPaths(DARTIUM_KNOWN_PATHS, oldPath, newPath);
   }
 
-  public static void updateKnownPaths(@NotNull final String propertyKey, @Nullable final String oldPath, @NotNull final String newPath) {
+  private static void updateKnownPaths(@NotNull final String propertyKey, @Nullable final String oldPath, @NotNull final String newPath) {
     final THashSet<String> knownPaths = new THashSet<>();
 
     final String[] oldKnownPaths = PropertiesComponent.getInstance().getValues(propertyKey);
