@@ -41,7 +41,7 @@ class _AngularJSInterpolationsLexer implements FlexLexer {
    */
   private static final String ZZ_CMAP_PACKED = 
     "\11\0\2\1\1\0\2\1\22\0\1\1\132\0\1\2\1\0\1\3"+
-    "\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff92\0";
+    "\uff82\0";
 
   /** 
    * Translates characters to character classes
@@ -233,10 +233,10 @@ class _AngularJSInterpolationsLexer implements FlexLexer {
    * @return         the unpacked character translation table
    */
   private static char [] zzUnpackCMap(String packed) {
-    char [] map = new char[0x110000];
+    char [] map = new char[0x10000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 54) {
+    while (i < 22) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);

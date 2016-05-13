@@ -54,7 +54,7 @@ class _DartLexer implements FlexLexer {
     "\1\72\1\3\1\0\1\30\1\33\1\35\1\44\1\22\1\4\1\52"+
     "\1\36\1\42\1\3\1\34\1\37\1\45\1\41\1\40\1\50\1\3"+
     "\1\13\1\31\1\32\1\43\1\51\1\47\1\25\1\46\1\3\1\17"+
-    "\1\71\1\27\1\62\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff91\0";
+    "\1\71\1\27\1\62\uff81\0";
 
   /** 
    * Translates characters to character classes
@@ -697,10 +697,10 @@ class _DartLexer implements FlexLexer {
    * @return         the unpacked character translation table
    */
   private static char [] zzUnpackCMap(String packed) {
-    char [] map = new char[0x110000];
+    char [] map = new char[0x10000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 180) {
+    while (i < 148) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);

@@ -58,7 +58,7 @@ final class _HbLexer implements FlexLexer {
     "\1\22\1\5\12\41\1\0\2\42\1\21\1\12\1\0\1\30\32\0"+
     "\1\43\1\4\1\44\1\15\1\0\1\42\1\40\3\0\1\31\1\37"+
     "\5\0\1\32\5\0\1\35\1\33\1\34\1\36\5\0\1\3\1\23"+
-    "\1\10\1\11\6\0\1\26\u1fa2\0\1\26\1\26\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
+    "\1\10\1\11\6\0\1\26\u1fa2\0\1\26\1\26\udfd6\0";
 
   /** 
    * Translates characters to character classes
@@ -350,10 +350,10 @@ final class _HbLexer implements FlexLexer {
    * @return         the unpacked character translation table
    */
   private static char [] zzUnpackCMap(String packed) {
-    char [] map = new char[0x110000];
+    char [] map = new char[0x10000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 148) {
+    while (i < 116) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);
@@ -484,18 +484,6 @@ final class _HbLexer implements FlexLexer {
 
 
   /**
-   * Contains user EOF-code, which will be executed exactly once,
-   * when the end of file is reached
-   */
-  private void zzDoEOF() {
-    if (!zzEOFDone) {
-      zzEOFDone = true;
-    
-    }
-  }
-
-
-  /**
    * Resumes scanning until the next regular expression is matched,
    * the end of input is encountered or an I/O-Error occurs.
    *
@@ -582,7 +570,6 @@ final class _HbLexer implements FlexLexer {
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
-        zzDoEOF();
         return null;
       }
       else {

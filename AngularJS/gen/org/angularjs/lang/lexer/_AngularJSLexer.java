@@ -47,7 +47,7 @@ class _AngularJSLexer implements FlexLexer {
     "\1\0\4\62\1\6\1\62\24\10\1\53\1\2\1\54\1\40\1\10"+
     "\1\0\1\20\1\32\1\27\1\24\1\16\1\17\2\10\1\25\1\10"+
     "\1\30\1\21\1\10\1\23\1\26\2\10\1\14\1\22\1\13\1\15"+
-    "\3\10\1\33\1\10\1\51\1\46\1\52\42\0\1\1\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff6f\0";
+    "\3\10\1\33\1\10\1\51\1\46\1\52\42\0\1\1\uff5f\0";
 
   /** 
    * Translates characters to character classes
@@ -328,10 +328,10 @@ class _AngularJSLexer implements FlexLexer {
    * @return         the unpacked character translation table
    */
   private static char [] zzUnpackCMap(String packed) {
-    char [] map = new char[0x110000];
+    char [] map = new char[0x10000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 170) {
+    while (i < 138) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);

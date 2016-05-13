@@ -41,7 +41,7 @@ class _DartDocLexer implements FlexLexer {
    */
   private static final String ZZ_CMAP_PACKED = 
     "\11\0\1\1\1\4\1\5\1\6\1\5\22\0\1\1\11\0\1\3"+
-    "\4\0\1\2\125\0\1\5\u1fa2\0\1\5\1\5\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
+    "\4\0\1\2\125\0\1\5\u1fa2\0\1\5\1\5\udfd6\0";
 
   /** 
    * Translates characters to character classes
@@ -238,10 +238,10 @@ class _DartDocLexer implements FlexLexer {
    * @return         the unpacked character translation table
    */
   private static char [] zzUnpackCMap(String packed) {
-    char [] map = new char[0x110000];
+    char [] map = new char[0x10000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 68) {
+    while (i < 36) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);
@@ -372,19 +372,6 @@ class _DartDocLexer implements FlexLexer {
 
 
   /**
-   * Contains user EOF-code, which will be executed exactly once,
-   * when the end of file is reached
-   */
-  private void zzDoEOF() {
-    if (!zzEOFDone) {
-      zzEOFDone = true;
-    return;
-
-    }
-  }
-
-
-  /**
    * Resumes scanning until the next regular expression is matched,
    * the end of input is encountered or an I/O-Error occurs.
    *
@@ -471,7 +458,6 @@ class _DartDocLexer implements FlexLexer {
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
-        zzDoEOF();
         return null;
       }
       else {
