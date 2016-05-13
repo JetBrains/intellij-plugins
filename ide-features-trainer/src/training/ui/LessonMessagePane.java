@@ -221,7 +221,7 @@ class LessonMessagePane extends JTextPane {
                 if (startOffset != 0) startOffset++;
                 try {
                     Rectangle rectangle = modelToView(startOffset);
-                    if (SystemInfo.isWindows) {
+                    if (!SystemInfo.isMac) {
                         LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 17, rectangle.y + 3);
                     } else {
                         LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 17, rectangle.y + 1);
