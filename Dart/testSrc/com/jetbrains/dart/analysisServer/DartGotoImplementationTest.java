@@ -1,6 +1,5 @@
 package com.jetbrains.dart.analysisServer;
 
-import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -8,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -34,8 +34,7 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
   }
 
   protected void doTestInner(int expectedLength) {
-    final GotoTargetHandler.GotoData data =
-      new GotoImplementationHandler().getSourceAndTargetElements(myFixture.getEditor(), myFixture.getFile());
+    final GotoTargetHandler.GotoData data = CodeInsightTestUtil.gotoImplementation(myFixture.getEditor(), myFixture.getFile());
     assertNotNull(myFixture.getFile().toString(), data);
     assertEquals(expectedLength, data.targets.length);
   }
@@ -78,8 +77,7 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     final PsiElement nameIdentifier = iterableClass.getNameIdentifier();
     assertNotNull(nameIdentifier);
     getEditor().getCaretModel().moveToOffset(nameIdentifier.getTextRange().getStartOffset());
-    final GotoTargetHandler.GotoData data =
-      new GotoImplementationHandler().getSourceAndTargetElements(myFixture.getEditor(), myFixture.getFile());
+    final GotoTargetHandler.GotoData data = CodeInsightTestUtil.gotoImplementation(myFixture.getEditor(), myFixture.getFile());
     assertNotNull(data);
     assertTrue(String.valueOf(data.targets.length), data.targets.length > 50);
   }

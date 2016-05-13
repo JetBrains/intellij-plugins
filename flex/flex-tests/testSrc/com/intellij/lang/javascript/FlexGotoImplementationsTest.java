@@ -2,7 +2,6 @@ package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.hint.actions.ShowImplementationsAction;
-import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.DataManager;
@@ -29,6 +28,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -149,8 +149,7 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
   }
 
   private void invokeAndCheck(String expected) {
-    GotoImplementationHandler handler = new GotoImplementationHandler();
-    GotoTargetHandler.GotoData pair = handler.getSourceAndTargetElements(getEditor(), getFile());
+    GotoTargetHandler.GotoData pair = CodeInsightTestUtil.gotoImplementation(getEditor(), getFile());
     PsiElement base = pair.source;
     PsiElement[] implementations = pair.targets;
 

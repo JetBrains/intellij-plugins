@@ -107,7 +107,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
         final List<DartComponent> components =
           DartInheritorsSearcher.getSubClasses(name.getProject(), GlobalSearchScope.allScope(name.getProject()), items);
         PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
-                                            DaemonBundle.message("navigation.title.subclass", name.getName(), components.size()),
+                                            DaemonBundle.message("navigation.title.subclass", name.getName(), components.size(),""),
                                             "Subclasses of " + name.getName(), new DefaultPsiElementCellRenderer());
       }
     }, GutterIconRenderer.Alignment.RIGHT);
