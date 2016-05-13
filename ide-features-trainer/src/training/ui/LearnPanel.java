@@ -509,7 +509,7 @@ public class LearnPanel extends JPanel {
                 if (lesson.getPassed()) {
                     JLabel jLabel = lessonLabelMap.get(lesson);
                     Point point = jLabel.getLocation();
-                    if (SystemInfo.isWindows) {
+                    if (!SystemInfo.isMac) {
                         LearnIcons.CheckmarkGray12.paintIcon(this, g, point.x, point.y + 1);
                     } else {
                         LearnIcons.CheckmarkGray12.paintIcon(this, g, point.x, point.y + 2);

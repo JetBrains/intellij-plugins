@@ -285,7 +285,7 @@ public class MainLearnPanel extends JPanel {
                     Point point = linkLabel.getLocationOnScreen();
                     final Point basePoint = this.getLocationOnScreen();
                     int y = point.y + 1 - basePoint.y;
-                    if (SystemInfo.isWindows) {
+                    if (!SystemInfo.isMac) {
                         LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 4);
                     } else {
                         LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 2);
