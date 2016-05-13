@@ -13,7 +13,7 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
   private char quote;
 %}
 
-%unicode
+%unicode 2.0
 //%debug
 %class _AngularJSLexer
 %implements FlexLexer

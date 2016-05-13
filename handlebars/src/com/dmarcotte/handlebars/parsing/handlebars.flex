@@ -16,11 +16,9 @@ import com.intellij.util.containers.Stack;
 %class _HbLexer
 %implements FlexLexer
 %final
-%unicode
+%unicode 2.0
 %function advance
 %type IElementType
-%eof{ return;
-%eof}
 
 %{
     private Stack<Integer> stack = new Stack<Integer>();

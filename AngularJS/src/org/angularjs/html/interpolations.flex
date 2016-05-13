@@ -8,7 +8,7 @@ import org.angularjs.lang.parser.AngularJSElementTypes;
 
 %%
 
-%unicode
+%unicode 2.0
 //%debug
 %class _AngularJSInterpolationsLexer
 %implements FlexLexer

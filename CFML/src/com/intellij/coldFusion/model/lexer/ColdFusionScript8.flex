@@ -51,11 +51,9 @@ import com.intellij.util.ArrayUtil;
 
 %class _CfscriptLexer8
 %implements FlexLexer
-%unicode
+%unicode 2.0
 %function advance
 %type IElementType
-%eof{  return;
-%eof}
 %caseless
 %ignorecase
 

@@ -119,11 +119,9 @@ import com.intellij.util.containers.Stack;
 
 %class _CfmlLexer
 %implements FlexLexer
-%unicode
+%unicode 2.0
 %function advance
 %type IElementType
-%eof{  return;
-%eof}
 %caseless
 %ignorecase
 

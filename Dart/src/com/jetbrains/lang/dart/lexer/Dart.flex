@@ -46,7 +46,7 @@ import static com.jetbrains.lang.dart.lexer.DartLexer.*;
 
 %class _DartLexer
 %implements FlexLexer
-%unicode
+%unicode 2.0
 %function advance
 %type IElementType
 %eof{

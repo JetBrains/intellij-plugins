@@ -16,12 +16,9 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 %class _DartDocLexer
 %implements FlexLexer
-%unicode
+%unicode 2.0
 %function advance
 %type IElementType
-%eof{
-return;
-%eof}
 
 %xstate COMMENT_BODY
 %xstate AFTER_CRLF
