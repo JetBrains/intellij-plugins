@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +54,11 @@ public class DotPackagesFileUtil {
         final int colonIndex = line.indexOf(':');
         if (colonIndex > 0 && colonIndex < line.length() - 1) {
           final String packageName = line.substring(0, colonIndex).trim();
-          final String packageUri = getAbsolutePackageRootPath(dotPackagesFile.getParent(), line.substring(colonIndex + 1).trim());
+          final String encodedUri = line.substring(colonIndex + 1).trim();
+          // need to protect '+' chars because URLDecoder.decode replaces '+' with space
+          final String encodedUriWithoutPluses = StringUtil.replace(encodedUri, "+", "%2B");
+          final String uri = URLDecoder.decode(encodedUriWithoutPluses, "UTF-8");
+          final String packageUri = getAbsolutePackageRootPath(dotPackagesFile.getParent(), uri);
           if (!packageName.isEmpty() && packageUri != null) {
             result.put(packageName, packageUri);
           }
