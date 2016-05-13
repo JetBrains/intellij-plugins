@@ -8,7 +8,6 @@ import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import icons.LearnIcons;
 import org.jetbrains.annotations.Nullable;
 import training.learn.CourseManager;
 import training.learn.LearnBundle;
@@ -546,6 +545,6 @@ public class LearnPanel extends JPanel {
     @Override
     public Color getBackground(){
         if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
-        else return super.getBackground();
+        else return UIUtil.getPanelBackground();
     }
 }

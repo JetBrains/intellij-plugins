@@ -1,19 +1,17 @@
 package training.ui;
 
-import com.intellij.designer.utils.Cursors;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.LinkLabel;
-import com.intellij.ui.components.labels.LinkListener;
 import com.intellij.util.containers.BidirectionalMap;
-import com.intellij.util.ui.MouseEventAdapter;
 import com.intellij.util.ui.UIUtil;
-import icons.LearnIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import training.learn.LearnBundle;
 import training.learn.Module;
 import training.learn.CourseManager;
 import training.learn.Lesson;
@@ -53,6 +51,8 @@ public class MainLearnPanel extends JPanel {
     private int fontSize;
 
     private JPanel lessonPanel;
+    private JPanel submitFeedbackPanel;
+    private LinkLabel submitFeedback;
     private int progressGap;
 
     private BidirectionalMap<Module, LinkLabel> module2linklabel;
@@ -71,6 +71,7 @@ public class MainLearnPanel extends JPanel {
         initMainPanel();
         add(lessonPanel);
         add(Box.createVerticalGlue());
+        add(submitFeedbackPanel);
 
         //set LearnPanel UI
         this.setPreferredSize(new Dimension(width, 100));
@@ -122,6 +123,14 @@ public class MainLearnPanel extends JPanel {
         lessonPanel.setOpaque(false);
         lessonPanel.setFocusable(false);
         initLessonPanel();
+        submitFeedbackPanel = new JPanel();
+        submitFeedbackPanel.setLayout(new BoxLayout(submitFeedbackPanel, BoxLayout.LINE_AXIS));
+        submitFeedbackPanel.setOpaque(false);
+        submitFeedbackPanel.setAlignmentX(LEFT_ALIGNMENT);
+        submitFeedback = new LinkLabel(LearnBundle.message("learn.ui.mainpanel.submit.feedback"), null);
+        submitFeedback.setListener((linkLabel, o) -> BrowserUtil.browse(LearnBundle.message("learn.ui.mainpanel.submit.feedback.url")), null);
+        submitFeedbackPanel.add(Box.createHorizontalGlue());
+        submitFeedbackPanel.add(submitFeedback);
     }
 
     private void initLessonPanel() {
@@ -284,7 +293,7 @@ public class MainLearnPanel extends JPanel {
     @Override
     public Color getBackground(){
         if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
-        else return super.getBackground();
+        else return UIUtil.getPanelBackground();
     }
 
 }
