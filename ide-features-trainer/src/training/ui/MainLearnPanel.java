@@ -3,6 +3,7 @@ package training.ui;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
@@ -284,7 +285,11 @@ public class MainLearnPanel extends JPanel {
                     Point point = linkLabel.getLocationOnScreen();
                     final Point basePoint = this.getLocationOnScreen();
                     int y = point.y + 1 - basePoint.y;
-                    LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 2);
+                    if (SystemInfo.isWindows) {
+                        LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 4);
+                    } else {
+                        LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 2);
+                    }
                 }
             }
         }
