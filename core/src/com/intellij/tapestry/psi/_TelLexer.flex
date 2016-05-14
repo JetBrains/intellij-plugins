@@ -17,7 +17,7 @@ import static com.intellij.tapestry.psi.TelTokenTypes.*;
    }
 %}
 
-%unicode 2.0
+%unicode
 %class _TelLexer
 %implements FlexLexer
 %function advance
