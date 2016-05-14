@@ -119,7 +119,7 @@ import com.intellij.util.containers.Stack;
 
 %class _CfmlLexer
 %implements FlexLexer
-%unicode 2.0
+%unicode
 %function advance
 %type IElementType
 %caseless

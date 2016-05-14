@@ -51,7 +51,7 @@ import com.intellij.util.ArrayUtil;
 
 %class _CfscriptLexer
 %implements FlexLexer
-%unicode 2.0
+%unicode
 %function advance
 %type IElementType
 %caseless

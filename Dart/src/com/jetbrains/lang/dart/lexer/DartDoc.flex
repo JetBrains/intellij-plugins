@@ -16,7 +16,7 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 %class _DartDocLexer
 %implements FlexLexer
-%unicode 2.0
+%unicode
 %function advance
 %type IElementType
 

@@ -16,7 +16,7 @@ import com.intellij.util.containers.Stack;
 %class _HbLexer
 %implements FlexLexer
 %final
-%unicode 2.0
+%unicode
 %function advance
 %type IElementType
 

@@ -20,11 +20,11 @@ import com.intellij.lang.ognl.OgnlTypes;
   int braceCount;
 %}
 
-%unicode 2.0
+%unicode
 %class _OgnlLexer
 %public
 %implements FlexLexer
-%unicode 2.0
+%unicode
 %function advance
 %type IElementType
 
