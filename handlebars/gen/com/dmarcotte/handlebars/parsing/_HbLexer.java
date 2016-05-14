@@ -58,12 +58,17 @@ final class _HbLexer implements FlexLexer {
     "\1\22\1\5\12\41\1\0\2\42\1\21\1\12\1\0\1\30\32\0"+
     "\1\43\1\4\1\44\1\15\1\0\1\42\1\40\3\0\1\31\1\37"+
     "\5\0\1\32\5\0\1\35\1\33\1\34\1\36\5\0\1\3\1\23"+
-    "\1\10\1\11\6\0\1\26\u1fa2\0\1\26\1\26\udfd6\0";
+    "\1\10\1\11\6\0\1\26\u1fa2\0\1\26\1\26\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
 
   /** 
    * Translates characters to character classes
    */
-  private static final char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED);
+  private static final int ZZ_SX = 0x0700;
+  private static final int ZZ_MX = 0x10000;
+  private static final int ZZ_LX = 0x110000;
+  private static char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_SX);
+  private static class M { static final char [] MAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_MX); }
+  private static class L { static final char [] MAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_LX); }
 
   /** 
    * Translates DFA states to action switch labels.
@@ -349,14 +354,14 @@ final class _HbLexer implements FlexLexer {
    * @param packed   the packed character translation table
    * @return         the unpacked character translation table
    */
-  private static char [] zzUnpackCMap(String packed) {
-    char [] map = new char[0x10000];
+  private static char [] zzUnpackCMap(String packed, int limit) {
+    char [] map = new char[limit];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 116) {
+    while (i < 148 && j < limit) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
-      do map[j++] = value; while (--count > 0);
+      do map[j++] = value; while (--count > 0 && j < limit);
     }
     return map;
   }
@@ -551,6 +556,7 @@ final class _HbLexer implements FlexLexer {
               zzCurrentPosL += Character.charCount(zzInput);
             }
           }
+          if (zzInput >= zzCMapL.length) ZZ_CMAP = zzCMapL = zzInput >= ZZ_MX ? L.MAP : M.MAP;
           int zzNext = zzTransL[ zzRowMapL[zzState] + zzCMapL[zzInput] ];
           if (zzNext == -1) break zzForAction;
           zzState = zzNext;

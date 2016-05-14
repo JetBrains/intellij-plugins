@@ -177,12 +177,46 @@ class _CfmlLexer implements FlexLexer {
     "\5\11\1\0\207\11\2\0\1\12\4\0\1\11\13\0\12\12\7\0"+
     "\32\11\4\0\1\11\1\0\32\11\13\0\131\11\3\0\6\11\2\0"+
     "\6\11\2\0\6\11\2\0\3\11\3\0\2\11\3\0\2\11\22\0"+
-    "\3\12\4\0";
+    "\3\12\4\0\14\11\1\0\32\11\1\0\23\11\1\0\2\11\1\0"+
+    "\17\11\2\0\16\11\42\0\173\11\105\0\65\11\210\0\1\12\202\0"+
+    "\35\11\3\0\61\11\57\0\37\11\21\0\33\11\65\0\36\11\2\0"+
+    "\44\11\4\0\10\11\1\0\5\11\52\0\236\11\2\0\12\12\u0356\0"+
+    "\6\11\2\0\1\11\1\0\54\11\1\0\2\11\3\0\1\11\2\0"+
+    "\27\11\252\0\26\11\12\0\32\11\106\0\70\11\6\0\2\11\100\0"+
+    "\1\11\3\12\1\0\2\12\5\0\4\12\4\11\1\0\3\11\1\0"+
+    "\33\11\4\0\3\12\4\0\1\12\40\0\35\11\203\0\66\11\12\0"+
+    "\26\11\12\0\23\11\215\0\111\11\u03b7\0\3\12\65\11\17\12\37\0"+
+    "\12\12\20\0\3\12\55\11\13\12\2\0\1\12\22\0\31\11\7\0"+
+    "\12\12\6\0\3\12\44\11\16\12\1\0\12\12\100\0\3\12\60\11"+
+    "\16\12\4\11\13\0\12\12\u04a6\0\53\11\15\12\10\0\12\12\u0936\0"+
+    "\u036f\11\221\0\143\11\u0b9d\0\u042f\11\u33d1\0\u0239\11\u04c7\0\105\11\13\0"+
+    "\1\11\56\12\20\0\4\12\15\11\u4060\0\2\11\u2163\0\5\12\3\0"+
+    "\26\12\2\0\7\12\36\0\4\12\224\0\3\12\u01bb\0\125\11\1\0"+
+    "\107\11\1\0\2\11\2\0\1\11\2\0\2\11\2\0\4\11\1\0"+
+    "\14\11\1\0\1\11\1\0\7\11\1\0\101\11\1\0\4\11\2\0"+
+    "\10\11\1\0\7\11\1\0\34\11\1\0\4\11\1\0\5\11\1\0"+
+    "\1\11\3\0\7\11\1\0\u0154\11\2\0\31\11\1\0\31\11\1\0"+
+    "\37\11\1\0\31\11\1\0\37\11\1\0\31\11\1\0\37\11\1\0"+
+    "\31\11\1\0\37\11\1\0\31\11\1\0\10\11\2\0\62\12\u1600\0"+
+    "\4\11\1\0\33\11\1\0\2\11\1\0\1\11\2\0\1\11\1\0"+
+    "\12\11\1\0\4\11\1\0\1\11\1\0\1\11\6\0\1\11\4\0"+
+    "\1\11\1\0\1\11\1\0\1\11\1\0\3\11\1\0\2\11\1\0"+
+    "\1\11\2\0\1\11\1\0\1\11\1\0\1\11\1\0\1\11\1\0"+
+    "\1\11\1\0\2\11\1\0\1\11\2\0\4\11\1\0\7\11\1\0"+
+    "\4\11\1\0\4\11\1\0\1\11\1\0\12\11\1\0\21\11\5\0"+
+    "\3\11\1\0\5\11\1\0\21\11\u1144\0\ua6d7\11\51\0\u1035\11\13\0"+
+    "\336\11\u3fe2\0\u021e\11\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\u05ee\0"+
+    "\1\12\36\0\140\12\200\0\360\12\uffff\0\uffff\0\ufe12\0";
 
   /** 
    * Translates characters to character classes
    */
-  private static final char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED);
+  private static final int ZZ_SX = 0x0700;
+  private static final int ZZ_MX = 0x10000;
+  private static final int ZZ_LX = 0x110000;
+  private static char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_SX);
+  private static class M { static final char [] MAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_MX); }
+  private static class L { static final char [] MAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_LX); }
 
   /** 
    * Translates DFA states to action switch labels.
@@ -1313,14 +1347,14 @@ class _CfmlLexer implements FlexLexer {
    * @param packed   the packed character translation table
    * @return         the unpacked character translation table
    */
-  private static char [] zzUnpackCMap(String packed) {
-    char [] map = new char[0x10000];
+  private static char [] zzUnpackCMap(String packed, int limit) {
+    char [] map = new char[limit];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 2264) {
+    while (i < 2866 && j < limit) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
-      do map[j++] = value; while (--count > 0);
+      do map[j++] = value; while (--count > 0 && j < limit);
     }
     return map;
   }
@@ -1519,6 +1553,7 @@ class _CfmlLexer implements FlexLexer {
               zzCurrentPosL += Character.charCount(zzInput);
             }
           }
+          if (zzInput >= zzCMapL.length) ZZ_CMAP = zzCMapL = zzInput >= ZZ_MX ? L.MAP : M.MAP;
           int zzNext = zzTransL[ zzRowMapL[zzState] + zzCMapL[zzInput] ];
           if (zzNext == -1) break zzForAction;
           zzState = zzNext;

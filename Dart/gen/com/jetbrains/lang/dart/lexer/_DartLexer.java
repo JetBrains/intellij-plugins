@@ -54,12 +54,17 @@ class _DartLexer implements FlexLexer {
     "\1\72\1\3\1\0\1\30\1\33\1\35\1\44\1\22\1\4\1\52"+
     "\1\36\1\42\1\3\1\34\1\37\1\45\1\41\1\40\1\50\1\3"+
     "\1\13\1\31\1\32\1\43\1\51\1\47\1\25\1\46\1\3\1\17"+
-    "\1\71\1\27\1\62\uff81\0";
+    "\1\71\1\27\1\62\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff91\0";
 
   /** 
    * Translates characters to character classes
    */
-  private static final char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED);
+  private static final int ZZ_SX = 0x0700;
+  private static final int ZZ_MX = 0x10000;
+  private static final int ZZ_LX = 0x110000;
+  private static char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_SX);
+  private static class M { static final char [] MAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_MX); }
+  private static class L { static final char [] MAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_LX); }
 
   /** 
    * Translates DFA states to action switch labels.
@@ -696,14 +701,14 @@ class _DartLexer implements FlexLexer {
    * @param packed   the packed character translation table
    * @return         the unpacked character translation table
    */
-  private static char [] zzUnpackCMap(String packed) {
-    char [] map = new char[0x10000];
+  private static char [] zzUnpackCMap(String packed, int limit) {
+    char [] map = new char[limit];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 148) {
+    while (i < 180 && j < limit) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
-      do map[j++] = value; while (--count > 0);
+      do map[j++] = value; while (--count > 0 && j < limit);
     }
     return map;
   }
@@ -912,6 +917,7 @@ class _DartLexer implements FlexLexer {
               zzCurrentPosL += Character.charCount(zzInput);
             }
           }
+          if (zzInput >= zzCMapL.length) ZZ_CMAP = zzCMapL = zzInput >= ZZ_MX ? L.MAP : M.MAP;
           int zzNext = zzTransL[ zzRowMapL[zzState] + zzCMapL[zzInput] ];
           if (zzNext == -1) break zzForAction;
           zzState = zzNext;
