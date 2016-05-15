@@ -7,6 +7,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile
+import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.newvfs.FileSystemInterface
@@ -18,6 +19,8 @@ import java.util.Collections
 import javax.swing.Icon
 
 class CloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileTypeIdentifiableByVirtualFile {
+  private val fileTypeRecursionGuard = RecursionManager.createGuard(javaClass.simpleName)
+
   override fun getName(): String = "AWSCloudFormation"
   override fun getDescription(): String = "AWS CloudFormation templates"
   override fun getDefaultExtension(): String = ""
@@ -26,12 +29,15 @@ class CloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileType
   override fun isMyFileType(file: VirtualFile): Boolean {
     val extension = file.extension ?: return false
 
-    if (FileTypeManager.getInstance().getFileTypeByExtension(extension) === JsonFileType.INSTANCE ||
-        CloudFormationFileType.EXTENSION.equals(extension, ignoreCase = true)) {
-      return detectFromContent(file)
-    }
+    return fileTypeRecursionGuard.doPreventingRecursion(javaClass.simpleName, false, {
+      if (JsonFileType.DEFAULT_EXTENSION.equals(extension, ignoreCase = true) ||
+          CloudFormationFileType.EXTENSION.equals(extension, ignoreCase = true) ||
+          FileTypeManager.getInstance().getFileTypeByFile(file) === JsonFileType.INSTANCE) {
+        return@doPreventingRecursion detectFromContent(file)
+      }
 
-    return false
+      return@doPreventingRecursion false
+    }) ?: false
   }
 
   private fun findArray(array: ByteArray, subArray: ByteArray): Int {
