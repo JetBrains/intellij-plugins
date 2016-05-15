@@ -376,7 +376,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The source of the identity in an incoming request. If you specify &lt;code class=&quot;code&quot;&gt;TOKEN&lt;/code&gt; for the authorizer&apos;s &lt;code class=&quot;code&quot;&gt;Type&lt;/code&gt; property, specify a mapping expression. The custom header mapping expression has the form &lt;code class=&quot;code&quot;&gt;method.request.header.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;, where &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt; is the name of a custom authorization header that clients submit as part of their requests.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -395,8 +395,8 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;A name of the authorizer.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;The name of the authorizer.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -416,7 +416,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The type of the authorizer, such as &lt;code class=&quot;code&quot;&gt;TOKEN&lt;/code&gt;.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -510,7 +510,7 @@
               <name>IdentitySource</name>
               <description>&lt;p&gt;The source of the identity in an incoming request. If you specify &lt;code class=&quot;code&quot;&gt;TOKEN&lt;/code&gt; for the authorizer&apos;s &lt;code class=&quot;code&quot;&gt;Type&lt;/code&gt; property, specify a mapping expression. The custom header mapping expression has the form &lt;code class=&quot;code&quot;&gt;method.request.header.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;, where &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt; is the name of a custom authorization header that clients submit as part of their requests.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
+              <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -528,9 +528,9 @@
             <string>Name</string>
             <ResourceProperty>
               <name>Name</name>
-              <description>&lt;p&gt;A name of the authorizer.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The name of the authorizer.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
+              <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -550,7 +550,7 @@
               <name>Type</name>
               <description>&lt;p&gt;The type of the authorizer, such as &lt;code class=&quot;code&quot;&gt;TOKEN&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
+              <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -615,7 +615,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The name of a &lt;code class=&quot;code&quot;&gt;DomainName&lt;/code&gt; resource.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -625,7 +625,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The name of the API.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -660,7 +660,7 @@
               <name>DomainName</name>
               <description>&lt;p&gt;The name of a &lt;code class=&quot;code&quot;&gt;DomainName&lt;/code&gt; resource.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
+              <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -670,7 +670,7 @@
               <name>RestApiId</name>
               <description>&lt;p&gt;The name of the API.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
+              <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -868,7 +868,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;A name for the stage that API Gateway creates with this deployment.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -958,7 +958,7 @@
               <name>StageName</name>
               <description>&lt;p&gt;A name for the stage that API Gateway creates with this deployment.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
+              <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -1098,7 +1098,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ResourceId&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The ID of an API Gateway &lt;a class=&quot;link&quot; href=&quot;#&quot;&gt;resource&lt;/a&gt;.&lt;/p&gt;
+     &lt;p&gt;The ID of an API Gateway &lt;a class=&quot;link&quot; href=&quot;aws-resource-apigateway-resource.html&quot; title=&quot;AWS::ApiGateway::Resource&quot;&gt;resource&lt;/a&gt;. For root resource methods, specify the RestApi root resource ID, such as &lt;code class=&quot;code&quot;&gt;{ &quot;Fn::GetAtt&quot;: [&quot;MyRestApi&quot;, &quot;RootResourceId&quot;] }&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
@@ -1242,7 +1242,7 @@
             <string>ResourceId</string>
             <ResourceProperty>
               <name>ResourceId</name>
-              <description>&lt;p&gt;The ID of an API Gateway &lt;a class=&quot;link&quot; href=&quot;#&quot;&gt;resource&lt;/a&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The ID of an API Gateway &lt;a class=&quot;link&quot; href=&quot;aws-resource-apigateway-resource.html&quot; title=&quot;AWS::ApiGateway::Resource&quot;&gt;resource&lt;/a&gt;. For root resource methods, specify the RestApi root resource ID, such as &lt;code class=&quot;code&quot;&gt;{ &quot;Fn::GetAtt&quot;: [&quot;MyRestApi&quot;, &quot;RootResourceId&quot;] }&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -1518,7 +1518,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ParentId&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;If you want to create a child resource, the ID of the parent resource.&lt;/p&gt;
+     &lt;p&gt;If you want to create a child resource, the ID of the parent resource. For resources without a parent, specify the RestApi root resource ID, such as &lt;code class=&quot;code&quot;&gt;{ &quot;Fn::GetAtt&quot;: [&quot;MyRestApi&quot;, &quot;RootResourceId&quot;] }&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
@@ -1529,7 +1529,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;A path name for the resource.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -1590,7 +1590,7 @@
             <string>ParentId</string>
             <ResourceProperty>
               <name>ParentId</name>
-              <description>&lt;p&gt;If you want to create a child resource, the ID of the parent resource.&lt;/p&gt;</description>
+              <description>&lt;p&gt;If you want to create a child resource, the ID of the parent resource. For resources without a parent, specify the RestApi root resource ID, such as &lt;code class=&quot;code&quot;&gt;{ &quot;Fn::GetAtt&quot;: [&quot;MyRestApi&quot;, &quot;RootResourceId&quot;] }&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -1602,7 +1602,7 @@
               <name>PathPart</name>
               <description>&lt;p&gt;A path name for the resource.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
+              <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -1724,7 +1724,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;A name for the API Gateway &lt;code class=&quot;code&quot;&gt;RestApi&lt;/code&gt; resource.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -1857,7 +1857,7 @@
               <name>Name</name>
               <description>&lt;p&gt;A name for the API Gateway &lt;code class=&quot;code&quot;&gt;RestApi&lt;/code&gt; resource.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
+              <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -1937,6 +1937,7 @@
      &lt;p&gt;Indicates whether cache clustering is enabled for the stage.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-apigateway-stage-cacheclustersize&quot;&gt;&lt;/a&gt;
@@ -1946,6 +1947,7 @@
      &lt;p&gt;The stage&apos;s cache cluster size.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-apigateway-stage-clientcertificateid&quot;&gt;&lt;/a&gt;
@@ -1955,6 +1957,7 @@
      &lt;p&gt;The identifier of the client certificate that API Gateway uses to call your integration endpoints in the stage.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-apigateway-stage-deploymentid&quot;&gt;&lt;/a&gt;
@@ -1964,6 +1967,7 @@
      &lt;p&gt;The ID of the deployment that the stage points to.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-apigateway-stage-description&quot;&gt;&lt;/a&gt;
@@ -1973,6 +1977,7 @@
      &lt;p&gt;A description of the stage&apos;s purpose.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-apigateway-stage-methodsettings&quot;&gt;&lt;/a&gt;
@@ -1982,6 +1987,7 @@
      &lt;p&gt;Settings for all methods in the stage.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-apitgateway-stage-methodsetting.html&quot; title=&quot;Amazon API Gateway Stage MethodSetting&quot;&gt;Amazon API Gateway Stage MethodSetting&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-apigateway-stage-restapiid&quot;&gt;&lt;/a&gt;
@@ -1989,8 +1995,9 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The ID of the &lt;code class=&quot;code&quot;&gt;RestApi&lt;/code&gt; resource that you&apos;re deploying with this stage.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-apigateway-stage-stagename&quot;&gt;&lt;/a&gt;
@@ -1998,8 +2005,9 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-apigateway-stage-variables&quot;&gt;&lt;/a&gt;
@@ -2009,6 +2017,7 @@
      &lt;p&gt;A map (string to string map) that defines the stage variables, where the variable name is the key and the variable value is the value. Variable names are limited to alphanumeric characters. Values must match the following regular expression: &lt;code class=&quot;code&quot;&gt;[A-Za-z0-9-._~:/?#&amp;amp;amp;=,]+&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of key-value pairs&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
    &lt;/dl&gt;
   &lt;/div&gt;
@@ -2081,7 +2090,7 @@
               <description>&lt;p&gt;Indicates whether cache clustering is enabled for the stage.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires></updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -2091,7 +2100,7 @@
               <description>&lt;p&gt;The stage&apos;s cache cluster size.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires></updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -2101,7 +2110,7 @@
               <description>&lt;p&gt;The identifier of the client certificate that API Gateway uses to call your integration endpoints in the stage.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires></updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -2111,7 +2120,7 @@
               <description>&lt;p&gt;The ID of the deployment that the stage points to.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires></updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -2121,7 +2130,7 @@
               <description>&lt;p&gt;A description of the stage&apos;s purpose.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires></updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -2131,7 +2140,7 @@
               <description>&lt;p&gt;Settings for all methods in the stage.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-apitgateway-stage-methodsetting.html&quot; title=&quot;Amazon API Gateway Stage MethodSetting&quot;&gt;Amazon API Gateway Stage MethodSetting&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires></updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -2140,8 +2149,8 @@
               <name>RestApiId</name>
               <description>&lt;p&gt;The ID of the &lt;code class=&quot;code&quot;&gt;RestApi&lt;/code&gt; resource that you&apos;re deploying with this stage.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
-              <updateRequires></updateRequires>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -2150,8 +2159,8 @@
               <name>StageName</name>
               <description>&lt;p&gt;The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>false</required>
-              <updateRequires></updateRequires>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -2161,7 +2170,7 @@
               <description>&lt;p&gt;A map (string to string map) that defines the stage variables, where the variable name is the key and the variable value is the value. Variable names are limited to alphanumeric characters. Values must match the following regular expression: &lt;code class=&quot;code&quot;&gt;[A-Za-z0-9-._~:/?#&amp;amp;amp;=,]+&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of key-value pairs&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires></updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -2374,7 +2383,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The tags you want to attach to this resource.&lt;/p&gt;
-     &lt;p&gt;For more information about tags, go to &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/ASTagging.html&quot; target=&quot;_blank&quot;&gt; Tagging Auto Scaling Groups and Amazon EC2 Instances&lt;/a&gt; in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Auto Scaling Developer Guide&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;
+     &lt;p&gt;For more information about tags, go to &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/ASTagging.html&quot; target=&quot;_blank&quot;&gt; Tagging Auto Scaling Groups and Amazon EC2 Instances&lt;/a&gt; in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Auto Scaling User Guide&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-as-tags.html&quot; title=&quot;Auto Scaling Tags Property Type&quot;&gt;Auto Scaling Tags&lt;/a&gt;&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
@@ -2385,7 +2394,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;A policy or a list of policies that are used to select the instances to terminate. The policies are executed in the order that you list them.&lt;/p&gt;
-     &lt;p&gt; For more information on configuring a termination policy for your Auto Scaling group, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/us-termination-policy.html&quot; target=&quot;_blank&quot;&gt;Instance Termination Policy for Your Auto Scaling Group&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;. &lt;/p&gt;
+     &lt;p&gt; For more information on configuring a termination policy for your Auto Scaling group, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/autoscaling/latest/userguide/us-termination-policy.html&quot; target=&quot;_blank&quot;&gt;Instance Termination Policy for Your Auto Scaling Group&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling User Guide&lt;/em&gt;. &lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
@@ -2397,7 +2406,7 @@
     &lt;dd&gt;
      &lt;p&gt;A list of subnet identifiers of Amazon Virtual Private Cloud (Amazon VPCs).&lt;/p&gt;
      &lt;p&gt;If you specify the &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;AvailabilityZones&lt;/code&gt;&lt;/em&gt; property, the subnets that you specify for this property must reside in those Availability Zones.&lt;/p&gt;
-     &lt;p&gt;For more information, go to &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/autoscalingsubnets.html&quot; target=&quot;_blank&quot;&gt;Using EC2 Dedicated Instances Within Your VPC&lt;/a&gt; in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Auto Scaling Developer Guide&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;
+     &lt;p&gt;For more information, go to &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/autoscalingsubnets.html&quot; target=&quot;_blank&quot;&gt;Using EC2 Dedicated Instances Within Your VPC&lt;/a&gt; in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Auto Scaling User Guide&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. If you don&apos;t specify the &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;AvailabilityZones&lt;/code&gt;&lt;/em&gt; property, you must specify this property.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;Some interruptions&lt;/a&gt;&lt;/p&gt;
@@ -2676,7 +2685,7 @@
             <string>Tags</string>
             <ResourceProperty>
               <name>Tags</name>
-              <description>&lt;p&gt;For more information about tags, go to &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/ASTagging.html&quot; target=&quot;_blank&quot;&gt; Tagging Auto Scaling Groups and Amazon EC2 Instances&lt;/a&gt; in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Auto Scaling Developer Guide&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;For more information about tags, go to &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/ASTagging.html&quot; target=&quot;_blank&quot;&gt; Tagging Auto Scaling Groups and Amazon EC2 Instances&lt;/a&gt; in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Auto Scaling User Guide&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-as-tags.html&quot; title=&quot;Auto Scaling Tags Property Type&quot;&gt;Auto Scaling Tags&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -2686,7 +2695,7 @@
             <string>TerminationPolicies</string>
             <ResourceProperty>
               <name>TerminationPolicies</name>
-              <description>&lt;p&gt; For more information on configuring a termination policy for your Auto Scaling group, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/us-termination-policy.html&quot; target=&quot;_blank&quot;&gt;Instance Termination Policy for Your Auto Scaling Group&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;. &lt;/p&gt;</description>
+              <description>&lt;p&gt; For more information on configuring a termination policy for your Auto Scaling group, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/autoscaling/latest/userguide/us-termination-policy.html&quot; target=&quot;_blank&quot;&gt;Instance Termination Policy for Your Auto Scaling Group&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling User Guide&lt;/em&gt;. &lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -2696,7 +2705,7 @@
             <string>VPCZoneIdentifier</string>
             <ResourceProperty>
               <name>VPCZoneIdentifier</name>
-              <description>&lt;p&gt;For more information, go to &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/autoscalingsubnets.html&quot; target=&quot;_blank&quot;&gt;Using EC2 Dedicated Instances Within Your VPC&lt;/a&gt; in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Auto Scaling Developer Guide&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;For more information, go to &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/autoscalingsubnets.html&quot; target=&quot;_blank&quot;&gt;Using EC2 Dedicated Instances Within Your VPC&lt;/a&gt; in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Auto Scaling User Guide&lt;/em&gt;&lt;/span&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;Some interruptions&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -2858,7 +2867,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;Indicates whether detailed instance monitoring is enabled for the Auto Scaling group. By default, this property is set to &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt; (enabled).&lt;/p&gt;
-     &lt;p&gt;When detailed monitoring is enabled, Amazon CloudWatch (CloudWatch) generates metrics every minute and your account is charged a fee. When you disable detailed monitoring, CloudWatch generates metrics every 5 minutes. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-instance-monitoring.html&quot; target=&quot;_blank&quot;&gt;Monitor Your Auto Scaling Instances&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;When detailed monitoring is enabled, Amazon CloudWatch (CloudWatch) generates metrics every minute and your account is charged a fee. When you disable detailed monitoring, CloudWatch generates metrics every 5 minutes. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/autoscaling/latest/userguide/as-instance-monitoring.html&quot; target=&quot;_blank&quot;&gt;Monitor Your Auto Scaling Instances&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
@@ -3207,7 +3216,7 @@
             <string>InstanceMonitoring</string>
             <ResourceProperty>
               <name>InstanceMonitoring</name>
-              <description>&lt;p&gt;When detailed monitoring is enabled, Amazon CloudWatch (CloudWatch) generates metrics every minute and your account is charged a fee. When you disable detailed monitoring, CloudWatch generates metrics every 5 minutes. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-instance-monitoring.html&quot; target=&quot;_blank&quot;&gt;Monitor Your Auto Scaling Instances&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;When detailed monitoring is enabled, Amazon CloudWatch (CloudWatch) generates metrics every minute and your account is charged a fee. When you disable detailed monitoring, CloudWatch generates metrics every 5 minutes. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/autoscaling/latest/userguide/as-instance-monitoring.html&quot; target=&quot;_blank&quot;&gt;Monitor Your Auto Scaling Instances&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -3309,7 +3318,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
  &lt;/div&gt;
- &lt;p&gt;Use &lt;code class=&quot;code&quot;&gt;AWS::AutoScaling::LifecycleHook&lt;/code&gt; to control the state of an instance in an Auto Scaling group after it is launched or terminated. When you use a lifecycle hook, the Auto Scaling group either pauses the instance after it is launched (before it is put into service) or pauses the instance as it is terminated (before it is fully terminated). For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/lifecycle-hook-examples.html&quot; target=&quot;_blank&quot;&gt;Examples of How to Use Lifecycle Hooks&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;.&lt;/p&gt;
+ &lt;p&gt;Use &lt;code class=&quot;code&quot;&gt;AWS::AutoScaling::LifecycleHook&lt;/code&gt; to control the state of an instance in an Auto Scaling group after it is launched or terminated. When you use a lifecycle hook, the Auto Scaling group either pauses the instance after it is launched (before it is put into service) or pauses the instance as it is terminated (before it is fully terminated). For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/autoscaling/latest/userguide/lifecycle-hook-examples.html&quot; target=&quot;_blank&quot;&gt;Examples of How to Use Lifecycle Hooks&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling User Guide&lt;/em&gt;.&lt;/p&gt;
  &lt;div class=&quot;section&quot;&gt;
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
@@ -3640,7 +3649,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;PolicyType&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;An Auto Scaling policy type. You can specify &lt;code class=&quot;code&quot;&gt;SimpleScaling&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;StepScaling&lt;/code&gt;. By default, AWS CloudFormation specifies &lt;code class=&quot;code&quot;&gt;SimpleScaling&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-scale-based-on-demand.html#as-scaling-types&quot; target=&quot;_blank&quot;&gt;Scaling Policy Types&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;An Auto Scaling policy type. You can specify &lt;code class=&quot;code&quot;&gt;SimpleScaling&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;StepScaling&lt;/code&gt;. By default, AWS CloudFormation specifies &lt;code class=&quot;code&quot;&gt;SimpleScaling&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/autoscaling/latest/userguide/as-scale-based-on-demand.html#as-scaling-types&quot; target=&quot;_blank&quot;&gt;Scaling Policy Types&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling User Guide&lt;/em&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
@@ -3805,7 +3814,7 @@
             <string>PolicyType</string>
             <ResourceProperty>
               <name>PolicyType</name>
-              <description>&lt;p&gt;An Auto Scaling policy type. You can specify &lt;code class=&quot;code&quot;&gt;SimpleScaling&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;StepScaling&lt;/code&gt;. By default, AWS CloudFormation specifies &lt;code class=&quot;code&quot;&gt;SimpleScaling&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-scale-based-on-demand.html#as-scaling-types&quot; target=&quot;_blank&quot;&gt;Scaling Policy Types&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;An Auto Scaling policy type. You can specify &lt;code class=&quot;code&quot;&gt;SimpleScaling&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;StepScaling&lt;/code&gt;. By default, AWS CloudFormation specifies &lt;code class=&quot;code&quot;&gt;SimpleScaling&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/autoscaling/latest/userguide/as-scale-based-on-demand.html#as-scaling-types&quot; target=&quot;_blank&quot;&gt;Scaling Policy Types&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling User Guide&lt;/em&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -3853,7 +3862,7 @@
   &lt;p&gt;Note the following:&lt;/p&gt;
   &lt;div class=&quot;itemizedlist&quot;&gt;
    &lt;ul class=&quot;itemizedlist&quot; type=&quot;disc&quot;&gt;
-    &lt;li class=&quot;listitem&quot;&gt;&lt;p&gt;If you have rolling updates enabled, you must suspend scheduled actions before you can update the Auto Scaling group. You can suspend processes by using the AWS CLI or Auto Scaling API. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/US_SuspendResume.html&quot; target=&quot;_blank&quot;&gt;Suspend and Resume Auto Scaling Process&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling Developer Guide&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+    &lt;li class=&quot;listitem&quot;&gt;&lt;p&gt;If you have rolling updates enabled, you must suspend scheduled actions before you can update the Auto Scaling group. You can suspend processes by using the AWS CLI or Auto Scaling API. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/autoscaling/latest/userguide/US_SuspendResume.html&quot; target=&quot;_blank&quot;&gt;Suspend and Resume Auto Scaling Process&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Auto Scaling User Guide&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
     &lt;li class=&quot;listitem&quot;&gt;&lt;p&gt;When you update a stack with an Auto Scaling group and scheduled action, AWS CloudFormation always sets the min size, max size, and desired capacity properties of your Auto Scaling group to the values that are defined in the &lt;code class=&quot;code&quot;&gt;AWS::AutoScaling::AutoScalingGroup&lt;/code&gt; resource of your template, even if a scheduled action is in effect. However, you might not want AWS CloudFormation to change any of the group size property values, such as when you have a scheduled action in effect. You can use an &lt;a class=&quot;link&quot; href=&quot;aws-attribute-updatepolicy.html&quot; title=&quot;UpdatePolicy Attribute&quot;&gt;UpdatePolicy attribute&lt;/a&gt; to prevent AWS CloudFormation from changing the min size, max size, or desired capacity property values during a stack update unless you modified the individual values in your template.&lt;/p&gt;&lt;/li&gt;
    &lt;/ul&gt;
   &lt;/div&gt;
@@ -4187,8 +4196,8 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;Specifies whether the authentication scheme uses a user name and password (&quot;basic&quot;) or an access key ID and secret key (&quot;S3&quot;).&lt;/p&gt;
-     &lt;p&gt;If you specify &lt;code class=&quot;code&quot;&gt;&quot;basic&quot;&lt;/code&gt;, you must also specify the &lt;code class=&quot;code&quot;&gt;username&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;password&lt;/code&gt;, and &lt;code class=&quot;code&quot;&gt;uris&lt;/code&gt; properties.&lt;/p&gt;
-     &lt;p&gt;If you specify &lt;code class=&quot;code&quot;&gt;&quot;S3&quot;&lt;/code&gt;, you must also specify the &lt;code class=&quot;code&quot;&gt;accessKeyId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;secretKey&lt;/code&gt;, and &lt;code class=&quot;code&quot;&gt;buckets&lt;/code&gt; properties.&lt;/p&gt;
+     &lt;p&gt;If you specify &lt;code class=&quot;code&quot;&gt;&quot;basic&quot;&lt;/code&gt;, specify the &lt;code class=&quot;code&quot;&gt;username&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;password&lt;/code&gt;, and &lt;code class=&quot;code&quot;&gt;uris&lt;/code&gt; properties.&lt;/p&gt;
+     &lt;p&gt;If you specify &lt;code class=&quot;code&quot;&gt;&quot;S3&quot;&lt;/code&gt;, specify the &lt;code class=&quot;code&quot;&gt;accessKeyId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;secretKey&lt;/code&gt;, and &lt;code class=&quot;code&quot;&gt;buckets&lt;/code&gt; (optional) properties.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String Valid values are &quot;basic&quot; or &quot;S3&quot;&lt;/p&gt;
     &lt;/dd&gt;
@@ -4372,7 +4381,7 @@
             <string>type</string>
             <ResourceProperty>
               <name>type</name>
-              <description>&lt;p&gt;If you specify &lt;code class=&quot;code&quot;&gt;&quot;S3&quot;&lt;/code&gt;, you must also specify the &lt;code class=&quot;code&quot;&gt;accessKeyId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;secretKey&lt;/code&gt;, and &lt;code class=&quot;code&quot;&gt;buckets&lt;/code&gt; properties.&lt;/p&gt;</description>
+              <description>&lt;p&gt;If you specify &lt;code class=&quot;code&quot;&gt;&quot;S3&quot;&lt;/code&gt;, specify the &lt;code class=&quot;code&quot;&gt;accessKeyId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;secretKey&lt;/code&gt;, and &lt;code class=&quot;code&quot;&gt;buckets&lt;/code&gt; (optional) properties.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String Valid values are &quot;basic&quot; or &quot;S3&quot;&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires></updateRequires>
@@ -4424,7 +4433,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
  &lt;/div&gt;
- &lt;p&gt;In an AWS CloudFormation template, you use the &lt;a class=&quot;link&quot; href=&quot;aws-resource-cfn-customresource.html&quot; title=&quot;AWS::CloudFormation::CustomResource&quot;&gt;&lt;code class=&quot;code&quot;&gt;AWS::CloudFormation::CustomResource&lt;/code&gt;&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;aws-resource-cfn-customresource.html#aws-cfn-resource-type-name&quot; title=&quot;Custom::String&quot;&gt;&lt;code class=&quot;code&quot;&gt;Custom::&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;&lt;/a&gt; resource type to specify custom resources.&lt;/p&gt;
+ &lt;p&gt;In an AWS CloudFormation template, you use the &lt;code class=&quot;code&quot;&gt;AWS::CloudFormation::CustomResource&lt;/code&gt; or &lt;a class=&quot;link&quot; href=&quot;aws-resource-cfn-customresource.html#aws-cfn-resource-type-name&quot; title=&quot;Custom::String&quot;&gt;&lt;code class=&quot;code&quot;&gt;Custom::&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;&lt;/a&gt; resource type to specify custom resources.&lt;/p&gt;
  &lt;p&gt;Custom resources provide a way for you to write custom provisioning logic in AWS CloudFormation template and have AWS CloudFormation run it during a stack operation, such as when you create, update or delete a stack. For more information, see &lt;a class=&quot;xref&quot; href=&quot;template-custom-resources.html&quot; title=&quot;Custom Resources&quot;&gt;Custom Resources&lt;/a&gt;.&lt;/p&gt;
  &lt;div class=&quot;aws-note&quot;&gt;
   &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
@@ -4492,6 +4501,7 @@
      &lt;p&gt;The service token that was given to the template developer by the service provider to access the service, such as an Amazon SNS topic ARN or Lambda function ARN. The service token must be from the same region in which you are creating the stack.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;
     &lt;/dd&gt;
    &lt;/dl&gt;
   &lt;/div&gt;
@@ -4627,7 +4637,7 @@
               <description>&lt;p&gt;The service token that was given to the template developer by the service provider to access the service, such as an Amazon SNS topic ARN or Lambda function ARN. The service token must be from the same region in which you are creating the stack.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires></updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -14708,7 +14718,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
  &lt;/div&gt;
- &lt;p&gt;Creates a Virtual Private Cloud (VPC) with the CIDR block that you specify.&lt;/p&gt;
+ &lt;p&gt;Creates a Virtual Private Cloud (VPC) with the CIDR block that you specify. To name a VPC resource, use the &lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt; property and specify a value for the &lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt; key.&lt;/p&gt;
  &lt;div class=&quot;section&quot;&gt;
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
@@ -14741,7 +14751,7 @@
    &lt;dl&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-aws-ec2-vpc-cidrblock&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;CidrBlock&lt;/code&gt;&lt;/span&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;CidrBlock&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The CIDR block you want the VPC to cover. For example: &lt;code class=&quot;code&quot;&gt;&quot;10.0.0.0/16&quot;&lt;/code&gt;.&lt;/p&gt;
@@ -14751,7 +14761,7 @@
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-aws-ec2-vpc-EnableDnsSupport&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;EnableDnsSupport&lt;/code&gt;&lt;/span&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;EnableDnsSupport&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;Specifies whether DNS resolution is supported for the VPC. If this attribute is &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;, the Amazon DNS server resolves DNS hostnames for your instances to their corresponding IP addresses; otherwise, it does not. By default the value is set to &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;.&lt;/p&gt;
@@ -14761,7 +14771,7 @@
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-aws-ec2-vpc-EnableDnsHostnames&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;EnableDnsHostnames&lt;/code&gt;&lt;/span&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;EnableDnsHostnames&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;Specifies whether the instances launched in the VPC get DNS hostnames. If this attribute is &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;, instances in the VPC get DNS hostnames; otherwise, they do not. You can only set &lt;code class=&quot;code&quot;&gt;EnableDnsHostnames&lt;/code&gt; to &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt; if you also set the &lt;code class=&quot;code&quot;&gt;EnableDnsSupport&lt;/code&gt; attribute to &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;. By default, the value is set to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;
@@ -14771,14 +14781,14 @@
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-aws-ec2-vpc-instancetenancy&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;InstanceTenancy&lt;/code&gt;&lt;/span&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;InstanceTenancy&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The allowed tenancy of instances launched into the VPC. &lt;/p&gt;
      &lt;div class=&quot;itemizedlist&quot;&gt;
       &lt;ul class=&quot;itemizedlist&quot; type=&quot;disc&quot;&gt;
        &lt;li class=&quot;listitem&quot;&gt;&lt;p&gt;&lt;code class=&quot;code&quot;&gt;&quot;default&quot;&lt;/code&gt;: Instances can be launched with any tenancy.&lt;/p&gt;&lt;/li&gt;
-       &lt;li class=&quot;listitem&quot;&gt;&lt;p&gt;&lt;code class=&quot;code&quot;&gt;&quot;dedicated&quot;&lt;/code&gt;: Any instance launched into the VPC will automatically be dedicated, regardless of the tenancy option you specify when you launch the instance.&lt;/p&gt;&lt;/li&gt;
+       &lt;li class=&quot;listitem&quot;&gt;&lt;p&gt;&lt;code class=&quot;code&quot;&gt;&quot;dedicated&quot;&lt;/code&gt;: Any instance launched into the VPC automatically has dedicated tenancy, unless you launch it with the default tenancy.&lt;/p&gt;&lt;/li&gt;
       &lt;/ul&gt;
      &lt;/div&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
@@ -14788,10 +14798,10 @@
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-aws-ec2-vpc-tags&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;Tags&lt;/code&gt;&lt;/span&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) for this VPC.&lt;/p&gt;
+     &lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) for this VPC. To name a VPC resource, specify a value for the &lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt; key.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;
@@ -14938,7 +14948,7 @@
             <string>Tags</string>
             <ResourceProperty>
               <name>Tags</name>
-              <description>&lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) for this VPC.&lt;/p&gt;</description>
+              <description>&lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) for this VPC. To name a VPC resource, specify a value for the &lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt; key.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
@@ -19140,11 +19150,6 @@
     &lt;/div&gt;
    &lt;/div&gt;
    &lt;p&gt; &lt;code class=&quot;function&quot;&gt;Fn::GetAtt&lt;/code&gt; returns a value for a specified attribute of this type. This section lists the available attributes and sample return values. &lt;/p&gt;
-   &lt;div class=&quot;aws-note&quot;&gt;
-    &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
-    &lt;p&gt;Currently, you can use &lt;code class=&quot;function&quot;&gt;Fn::GetAtt&lt;/code&gt; only with Memcached cache clusters.&lt;/p&gt;
-   &lt;/div&gt;
-   &lt;p&gt; &lt;/p&gt;
    &lt;div class=&quot;variablelist&quot;&gt;
     &lt;dl&gt;
      &lt;dt&gt;
@@ -22756,14 +22761,14 @@
     &quot;FunctionName&quot;: { &quot;Ref&quot;: &quot;LambdaFunction&quot; },
     &quot;Action&quot;: &quot;lambda:InvokeFunction&quot;,
     &quot;Principal&quot;: &quot;events.amazonaws.com&quot;,
-    &quot;SourceArn&quot;: { &quot;Fn::GetAtt&quot;: [&quot;MyFirstEventsRule&quot;, &quot;Arn&quot;] }
+    &quot;SourceArn&quot;: { &quot;Fn::GetAtt&quot;: [&quot;ScheduledRule&quot;, &quot;Arn&quot;] }
   }
 }&lt;/code&gt;&lt;/pre&gt;
   &lt;p&gt;The following example creates a rule that invokes the specified Lambda function when any EC2 instance&apos;s state changes to &lt;code class=&quot;code&quot;&gt;stopping&lt;/code&gt;.&lt;/p&gt;
-  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;ScheduledRule&quot;: {
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;EventRule&quot;: {
   &quot;Type&quot;: &quot;AWS::Events::Rule&quot;,
   &quot;Properties&quot;: {
-    &quot;Description&quot;: &quot;ScheduledRule&quot;,
+    &quot;Description&quot;: &quot;EventRule&quot;,
     &quot;EventPattern&quot;: {
       &quot;source&quot;: [
         &quot;aws.ec2&quot;
@@ -22790,7 +22795,7 @@
     &quot;FunctionName&quot;: { &quot;Ref&quot;: &quot;LambdaFunction&quot; },
     &quot;Action&quot;: &quot;lambda:InvokeFunction&quot;,
     &quot;Principal&quot;: &quot;events.amazonaws.com&quot;,
-    &quot;SourceArn&quot;: { &quot;Fn::GetAtt&quot;: [&quot;MyFirstEventsRule&quot;, &quot;Arn&quot;] }
+    &quot;SourceArn&quot;: { &quot;Fn::GetAtt&quot;: [&quot;EventRule&quot;, &quot;Arn&quot;] }
   }
 }&lt;/code&gt;&lt;/pre&gt;
  &lt;/div&gt;
@@ -24642,8 +24647,11 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;Policies&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
+     &lt;div class=&quot;aws-note&quot;&gt;
+      &lt;p class=&quot;aws-note&quot;&gt;Important&lt;/p&gt;
+      &lt;p&gt;The name of each policy for a role, user, or group must be unique. Duplicate policy names can cause the updating of IAM roles to fail. &lt;/p&gt;
+     &lt;/div&gt;
      &lt;p&gt;The policies to associate with this role. Policies can also be specified externally. For sample templates that demonstrates both embedded and external policies, see &lt;a class=&quot;link&quot; href=&quot;aws-resource-iam-role.html#cfn-iam-role-templateexamples&quot; title=&quot;Template Examples&quot;&gt;Template Examples&lt;/a&gt;.&lt;/p&gt;
-     &lt;p&gt;If you specify multiple polices, specify unique values for the policy name. If you don&apos;t, updates to the IAM role will fail.&lt;/p&gt;
      &lt;div class=&quot;aws-note&quot;&gt;
       &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
       &lt;p&gt;If an external policy (such as &lt;code class=&quot;code&quot;&gt;AWS::IAM::Policy&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;AWS::IAM::ManagedPolicy&lt;/code&gt;) has a &lt;code class=&quot;code&quot;&gt;Ref&lt;/code&gt; to a role and if a resource (such as &lt;code class=&quot;code&quot;&gt;AWS::ECS::Service&lt;/code&gt;) also has a &lt;code class=&quot;code&quot;&gt;Ref&lt;/code&gt; to the same role, add a &lt;code class=&quot;code&quot;&gt;DependsOn&lt;/code&gt; attribute to the resource so that the resource depends on the external policy. This dependency ensures that the role&apos;s policy is available throughout the resource&apos;s lifecycle. For example, when you delete a stack with an &lt;code class=&quot;code&quot;&gt;AWS::ECS::Service&lt;/code&gt; resource, the &lt;code class=&quot;code&quot;&gt;DependsOn&lt;/code&gt; attribute ensures that the &lt;code class=&quot;code&quot;&gt;AWS::ECS::Service&lt;/code&gt; resource can complete its deletion before its role&apos;s policy is deleted.&lt;/p&gt;
@@ -24875,7 +24883,7 @@
             <string>Policies</string>
             <ResourceProperty>
               <name>Policies</name>
-              <description>&lt;p&gt;If you specify multiple polices, specify unique values for the policy name. If you don&apos;t, updates to the IAM role will fail.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The policies to associate with this role. Policies can also be specified externally. For sample templates that demonstrates both embedded and external policies, see &lt;a class=&quot;link&quot; href=&quot;aws-resource-iam-role.html#cfn-iam-role-templateexamples&quot; title=&quot;Template Examples&quot;&gt;Template Examples&lt;/a&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-iam-policy.html&quot; title=&quot;IAM Policies&quot;&gt;IAM Policies&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -27318,13 +27326,7 @@
     &quot;RoleArn&quot; : { &quot;Fn::GetAtt&quot; : [ &quot;CloudWatchIAMRole&quot;, &quot;Arn&quot; ] },
     &quot;LogGroupName&quot; : { &quot;Ref&quot; : &quot;LogGroup&quot; },
     &quot;FilterPattern&quot; : &quot;{$.userIdentity.type = Root}&quot;,
-    &quot;DestinationArn&quot; : {
-      &quot;Fn::Join&quot; : [ &quot;:&quot;, [ &quot;arn&quot;, &quot;aws&quot;, &quot;kinesis&quot;,
-        { &quot;Ref&quot; : &quot;AWS::Region&quot; },
-        { &quot;Ref&quot; : &quot;AWS::AccountId&quot; },
-        { &quot;Fn::Join&quot; : [ &quot;/&quot;, [ &quot;stream&quot;, { &quot;Ref&quot; : &quot;KinesisStream&quot; } ] ] } ]
-      ]
-    }
+    &quot;DestinationArn&quot; : { &quot;Fn::GetAtt&quot; : [ &quot;KinesisStream&quot;, &quot;Arn&quot; ] }
   }
 }&lt;/code&gt;&lt;/pre&gt;
  &lt;/div&gt;
@@ -28545,7 +28547,6 @@
   &quot;DependsOn&quot;: &quot;myApp&quot;,
   &quot;Properties&quot;: {
     &quot;StackId&quot;: {&quot;Ref&quot;: &quot;myStack&quot;},
-	&quot;Name&quot;: &quot;PHP App Server&quot;,
     &quot;Type&quot;: &quot;php-app&quot;,
     &quot;Shortname&quot; : &quot;php-app&quot;,
     &quot;EnableAutoHealing&quot; : &quot;true&quot;,
@@ -28569,7 +28570,6 @@
   &quot;DependsOn&quot;: &quot;myApp&quot;,
   &quot;Properties&quot;: {
     &quot;StackId&quot;: {&quot;Ref&quot;: &quot;myStack&quot;},
-	&quot;Name&quot;: &quot;PHP App Server&quot;,
     &quot;Type&quot;: &quot;php-app&quot;,
     &quot;Shortname&quot; : &quot;php-app&quot;,
     &quot;EnableAutoHealing&quot; : &quot;true&quot;,
