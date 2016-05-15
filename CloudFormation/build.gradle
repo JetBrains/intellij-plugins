@@ -54,6 +54,13 @@ project(':metadata-crawler') {
     }
 }
 
+task printIdeaVersionToTeamCity(type: JavaExec, dependsOn: testClasses) {
+    main = 'com.intellij.aws.cloudformation.tests.PrintIdeaVersionToTeamCity'
+    workingDir = rootDir
+    systemProperty "file.encoding", "UTF-8"
+    classpath sourceSets.test.runtimeClasspath
+}
+
 task printVersion {
     println 'version = ' + version
 }
