@@ -1,6 +1,6 @@
 package com.intellij.aws.cloudformation.tests
 
-import com.intellij.json.psi.impl.JsonPropertyNameReference
+import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -52,7 +52,7 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
 
       val ref: PsiReference
       if (rawRef is PsiMultiReference) {
-        ref = rawRef.references.filter { it !is JsonPropertyNameReference }.single()
+        ref = rawRef.references.filter { it is CloudFormationReferenceBase }.single()
       } else {
         ref = rawRef
       }
