@@ -8,11 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HbBlockMismatchFixTest extends LightPlatformCodeInsightFixtureTestCase {
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   public void testWrongCloseBlock1() {
     doTest("Change block end");
   }

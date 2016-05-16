@@ -27,11 +27,6 @@ public class CfmlAnnotationTest extends CfmlCodeInsightFixtureTestCase {
     return "/annotation";
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   private void doAnnotationTest(boolean infos, Class<? extends LocalInspectionTool>... inspectionClasses) throws Exception {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     myFixture.configureByFiles(inputDataFileName);

@@ -24,10 +24,6 @@ import org.jetbrains.annotations.NonNls;
  * Date: 1/26/12
  */
 public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
 
   public void testRename() throws Throwable {
     doRenameFileTest("newName.test.cfml", "<cfinclude template=\"rename.test.cfml\">");

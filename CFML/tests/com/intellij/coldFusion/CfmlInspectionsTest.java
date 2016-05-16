@@ -36,10 +36,6 @@ import java.util.Map;
  * @date 30.01.11
  */
 public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
 
   @Override
   protected String getBasePath() {

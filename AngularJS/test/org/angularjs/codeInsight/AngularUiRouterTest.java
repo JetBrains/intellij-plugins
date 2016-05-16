@@ -24,10 +24,6 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "uiRouter";
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
 
   public void testSimpleViewCompletion() throws Exception {
     final List<String> variants = myFixture.getCompletionVariants("simpleView.completion.js", "one.html", "two.html", "angular.js");

@@ -14,11 +14,6 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
   }
 
   @Override
-  protected void setUpModule() {
-    super.setUpModule();
-  }
-
-  @Override
   protected String getBasePath() {
     return "";
   }

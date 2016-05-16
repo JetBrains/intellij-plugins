@@ -25,10 +25,6 @@ import java.util.concurrent.Callable;
  * Date: 14.11.2008
  */
 public class CfmlParserTest extends CfmlCodeInsightFixtureTestCase {
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
-  }
 
   // public void testInit() throws Throwable {}
 

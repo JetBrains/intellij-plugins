@@ -36,10 +36,6 @@ import static com.intellij.testFramework.EditorTestUtil.getAllTokens;
  * Date: 12.01.2009
  */
 public class CfmlTypedHandlerTest extends CfmlCodeInsightFixtureTestCase {
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
-  }
 
   public void testSimpleTagGTCompletion() throws Throwable { doTest('>'); }
   public void testSimpleTagGTCompletion2() throws Throwable { doTest('>'); }

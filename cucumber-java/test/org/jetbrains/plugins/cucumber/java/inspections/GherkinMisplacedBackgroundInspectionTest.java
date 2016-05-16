@@ -32,10 +32,5 @@ public class GherkinMisplacedBackgroundInspectionTest extends CucumberJavaCodeIn
     super.setUp();
     myFixture.allowTreeAccessForAllFiles();
   }
-
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
 }
 

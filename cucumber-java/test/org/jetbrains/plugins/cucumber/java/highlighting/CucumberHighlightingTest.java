@@ -32,9 +32,4 @@ public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
     super.setUp();
     myFixture.allowTreeAccessForAllFiles();
   }
-
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
 }

@@ -18,11 +18,6 @@ import static com.jetbrains.dart.analysisServer.DartServerResolverTest.doTest;
 
 public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   public void testResolveAndUseScope() throws Exception {
     try {
       final VirtualFile inSdk1 = DartLibraryIndex.getSdkLibByUri(getProject(), "dart:collection");

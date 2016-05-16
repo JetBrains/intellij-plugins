@@ -60,11 +60,6 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
   }
 
   @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
-  @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();
   }

@@ -31,11 +31,6 @@ public class CfmlRenameTest extends CfmlCodeInsightFixtureTestCase {
                          Util.getExpectedDataFileName(getTestName(true)), newName);
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   public void testSimpleVariableRename() throws Throwable { doTest("newName"); }
   public void testComponentVariableRename() throws Throwable { doTest("newName"); }
   public void testScriptFunctionRename() throws Throwable { doTest("newName"); }

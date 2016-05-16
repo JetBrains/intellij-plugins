@@ -18,10 +18,6 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     return "/highlighting";
   }
 
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   private void excludeFolder(final String relPath) {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
