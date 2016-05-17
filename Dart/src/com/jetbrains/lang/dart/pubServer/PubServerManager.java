@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.net.NetUtils;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -25,6 +26,8 @@ public class PubServerManager implements Disposable {
 
   private final Project project;
   private final ConsoleManager consoleManager = new ConsoleManager();
+
+  private String myServedSdkVersion;
 
   private final LoadingCache<VirtualFile, PubServerService> dartProjectToPubService =
     CacheBuilder.newBuilder().build(new CacheLoader<VirtualFile, PubServerService>() {
@@ -93,6 +96,12 @@ public class PubServerManager implements Disposable {
                    @NotNull HttpHeaders extraHeaders,
                    @NotNull VirtualFile servedDir,
                    @NotNull String pathForPubServer) {
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk != null && !sdk.getVersion().equals(myServedSdkVersion)) {
+      stopAllPubServerProcesses();
+      myServedSdkVersion = sdk.getVersion();
+    }
+
     try {
       // servedDir - web or test, direct child of directory containing pubspec.yaml
       // "pub serve" process per dart project
