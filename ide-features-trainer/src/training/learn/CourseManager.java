@@ -145,14 +145,57 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                         return getScratchFile(myProject, lesson, scratchFileName);
                     } else {
 //                        if (!initLearnProjectAndOpenLesson(myProject)) return null;
-                        if (learnProject != null && getCurrentProject() != null && getCurrentProject().equals(learnProject)) {
+                        //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
+                        if (learnProject == null && getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
+                            learnProject = getCurrentProject();
+                            return getFileInLearnProject(lesson);
+                        //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
+                        } else if (learnProject == null && !getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
+                                Project myLearnProject = initLearnProject(myProject);
+                                assert myLearnProject != null;
+                                StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
+                                    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
+                                    final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
+                                    if (learnToolWindow != null) {
+                                        learnToolWindow.show(null);
+                                        try {
+                                            CourseManager.getInstance().setLessonView(myLearnProject);
+                                            CourseManager.getInstance().openLesson(myLearnProject, lesson);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            return null;
+                            //2. learnProject != null and learnProject is disposed then reinitProject and getFileInLearnProject
+                        } else if (learnProject.isDisposed()) {
+                            Project myLearnProject = initLearnProject(myProject);
+                            assert myLearnProject != null;
+                            StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
+                                final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
+                                final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
+                                if (learnToolWindow != null) {
+                                    learnToolWindow.show(null);
+                                    try {
+                                        CourseManager.getInstance().setLessonView(myLearnProject);
+                                        CourseManager.getInstance().openLesson(myLearnProject, lesson);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                            return null;
+                            //3. learnProject != null and learnProject is opened but not focused then focus Project and getFileInLearnProject
+                        } else if (learnProject.isOpen() && !getCurrentProject().equals(learnProject)) {
+                            return getFileInLearnProject(lesson);
+                        //4. learnProject != null and learnProject is opened and focused getFileInLearnProject
+                        } else if (learnProject.isOpen() && getCurrentProject().equals(learnProject)) {
                             return getFileInLearnProject(lesson);
                         } else {
-                            initLearnProjectAndOpenLesson(myProject, lesson);
-                            return null;
+                            throw new Exception("Unable to start Learn project");
                         }
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
@@ -325,6 +368,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     }
 
+    @Deprecated
     private void initLearnProjectAndOpenLesson(Project projectToClose, @Nullable Lesson lesson) {
 
         Project myLearnProject = initLearnProject(projectToClose);
