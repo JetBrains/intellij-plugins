@@ -2,6 +2,7 @@ package training.component;
 
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.notification.NotificationsManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.ProjectComponent;
@@ -89,6 +90,10 @@ public class LearnProjectComponent implements ProjectComponent {
         }
     }
 
+    public void startTrackActivity(){
+
+    }
+
     public void pluginFirstStart(){
         final String key = "learn.toolwindow.button.info.shown";
         //TODO: remove before release
@@ -111,7 +116,6 @@ public class LearnProjectComponent implements ProjectComponent {
                         @Override
                         public void run() {
                             GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"), LearnBundle.message("learn.tool.window.quick.access.message"))
-                                    .setDisposable(myProject)
                                     .show(new RelativePoint(learnStripeButton, new Point(learnStripeButton.getBounds().width, learnStripeButton.getBounds().height/2)), Balloon.Position.atRight);
                             Disposer.dispose(alarm);
                         }

@@ -545,6 +545,8 @@ public class LearnPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
+        if(lessonPanel.getMinimumSize() == null) return new Dimension(10, 10);
+        if(modulePanel.getMinimumSize() == null) return new Dimension(10, 10);
         return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + 2 * insets, (int) lessonPanel.getMinimumSize().getHeight() + (int) modulePanel.getMinimumSize().getHeight() + 2 * insets);
     }
 
