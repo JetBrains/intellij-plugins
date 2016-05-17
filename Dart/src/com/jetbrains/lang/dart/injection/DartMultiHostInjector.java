@@ -109,20 +109,31 @@ public class DartMultiHostInjector implements MultiHostInjector {
   }
 
   private static boolean looksLikeHtml(@NotNull final String text) {
-    // similar to com.intellij.lang.javascript.JSInjectionController.willInjectHtml()
+    // similar to com.intellij.lang.javascript.JSInjectionController.willInjectHtml(), but strings like 'List<int>', '<foo> and <bar>' are not treated as HTML
     final int tagStart = text.indexOf('<');
     final int length = text.length();
-    return tagStart >= 0
-           &&
-           (tagStart < length - 1 && (Character.isLetter(text.charAt(tagStart + 1))) // <tag>
-            ||
-            (tagStart < length - 2 && text.charAt(tagStart + 1) == '/' && Character.isLetter(text.charAt(tagStart + 2))) // </tag>
-            ||
-            (tagStart < length - 3 && text.charAt(tagStart + 1) == '!' &&
-             text.charAt(tagStart + 2) == '-') && text.charAt(tagStart + 3) == '-' // <!-- comment
-           )
-           &&
-           text.indexOf('>', tagStart) > 0;
+    final boolean hasTag = tagStart >= 0
+                           &&
+                           (tagStart < length - 1 && (Character.isLetter(text.charAt(tagStart + 1)))
+                            // <tag>
+                            ||
+                            (tagStart < length - 2 && text.charAt(tagStart + 1) == '/' && Character.isLetter(text.charAt(tagStart + 2)))
+                            // </tag>
+                            ||
+                            (tagStart < length - 3 && text.charAt(tagStart + 1) == '!' &&
+                             text.charAt(tagStart + 2) == '-') && text.charAt(tagStart + 3) == '-' // <!-- comment
+                           )
+                           &&
+                           text.indexOf('>', tagStart) > 0;
+
+    if (hasTag) {
+      // now filter out cases like '<foo> and <bar>' or 'Map<int, int>'
+      if (Character.isLetter(text.charAt(tagStart + 1)) && !text.contains("/>") && !text.contains("</")) {
+        return false;
+      }
+    }
+
+    return hasTag;
   }
 
   private static class HtmlPlaceInfo {

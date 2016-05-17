@@ -5,23 +5,6 @@ Dart File
       PsiWhiteSpace(' ')
       COMPONENT_NAME
         ID
-          PsiElement(IDENTIFIER)('a1')
-    PsiWhiteSpace(' ')
-    VAR_INIT
-      PsiElement(=)('=')
-      PsiWhiteSpace(' ')
-      STRING_LITERAL_EXPRESSION
-        PsiElement(OPEN_QUOTE)(''')
-        PsiElement(REGULAR_STRING_PART)('< html>no injection </ html>')
-        PsiElement(CLOSING_QUOTE)(''')
-  PsiElement(;)(';')
-  PsiWhiteSpace('\n')
-  VAR_DECLARATION_LIST
-    VAR_ACCESS_DECLARATION
-      PsiElement(var)('var')
-      PsiWhiteSpace(' ')
-      COMPONENT_NAME
-        ID
           PsiElement(IDENTIFIER)('a2')
     PsiWhiteSpace(' ')
     VAR_INIT
@@ -473,4 +456,142 @@ Dart File
               XmlToken:XML_END_TAG_START('</')
               XmlToken:XML_NAME('placeholder')
               XmlToken:XML_TAG_END('>')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a8')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('<foo><bar><baz/>')
+        PsiElement(CLOSING_QUOTE)(''')
+        HtmlFile:HtmlInStrings.dart
+          PsiElement(HTML_DOCUMENT)
+            PsiElement(XML_PROLOG)
+              <empty list>
+            HtmlTag:foo
+              XmlToken:XML_START_TAG_START('<')
+              XmlToken:XML_NAME('foo')
+              XmlToken:XML_TAG_END('>')
+              HtmlTag:bar
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('bar')
+                XmlToken:XML_TAG_END('>')
+                HtmlTag:baz
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('baz')
+                  XmlToken:XML_EMPTY_ELEMENT_END('/>')
+                PsiErrorElement:Element bar is not closed
+                  <empty list>
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a9')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('<foo><bar></baz>')
+        PsiElement(CLOSING_QUOTE)(''')
+        HtmlFile:HtmlInStrings.dart
+          PsiElement(HTML_DOCUMENT)
+            PsiElement(XML_PROLOG)
+              <empty list>
+            HtmlTag:foo
+              XmlToken:XML_START_TAG_START('<')
+              XmlToken:XML_NAME('foo')
+              XmlToken:XML_TAG_END('>')
+              HtmlTag:bar
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('bar')
+                XmlToken:XML_TAG_END('>')
+                PsiErrorElement:Closing tag matches nothing
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('baz')
+                  XmlToken:XML_TAG_END('>')
+                PsiErrorElement:Element bar is not closed
+                  <empty list>
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('b1')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('< html>no injection </ html>')
+        PsiElement(CLOSING_QUOTE)(''')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('b2')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('<foo>')
+        PsiElement(CLOSING_QUOTE)('"')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('b3')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('<foo><bar><baz>')
+        PsiElement(CLOSING_QUOTE)('"')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('b4')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('List<int>')
+        PsiElement(CLOSING_QUOTE)('"')
   PsiElement(;)(';')
