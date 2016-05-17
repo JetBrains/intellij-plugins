@@ -17,10 +17,6 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
     private static final int custom = 102;
   }
 
-  public Reader getReader() {
-    return reader;
-  }
-
   public void setExpectedErrorMessage(String message) {
     expectedError = message;
   }

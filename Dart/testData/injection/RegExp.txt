@@ -48,7 +48,7 @@ Dart File
           ARGUMENT_LIST
             STRING_LITERAL_EXPRESSION
               PsiElement(RAW_SINGLE_QUOTED_STRING)('r'.'')
-              REGEXP_FILE
+              JS_REGEXP_FILE
                 RegExpPatternImpl: <.>
                   RegExpBranchImpl: <.>
                     RegExpSimpleClassImpl: <.>
@@ -79,7 +79,7 @@ Dart File
           ARGUMENT_LIST
             STRING_LITERAL_EXPRESSION
               PsiElement(RAW_SINGLE_QUOTED_STRING)('r"."')
-              REGEXP_FILE
+              JS_REGEXP_FILE
                 RegExpPatternImpl: <.>
                   RegExpBranchImpl: <.>
                     RegExpSimpleClassImpl: <.>
@@ -320,4 +320,59 @@ Dart File
               PsiElement(RAW_SINGLE_QUOTED_STRING)('r"."')
           PsiElement())(')')
   PsiElement(;)(';')
-  PsiWhiteSpace('\n\n\n\n')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(final)('final')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('_specialChars')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      NEW_EXPRESSION
+        PsiElement(new)('new')
+        PsiWhiteSpace(' ')
+        TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('RegExp')
+        ARGUMENTS
+          PsiElement(()('(')
+          ARGUMENT_LIST
+            STRING_LITERAL_EXPRESSION
+              PsiElement(RAW_SINGLE_QUOTED_STRING)('r'[\\()$^.+[\]{}|]'')
+              JS_REGEXP_FILE
+                RegExpPatternImpl: <[\\()$^.+[\]{}|]>
+                  RegExpBranchImpl: <[\\()$^.+[\]{}|]>
+                    RegExpClassImpl: <[\\()$^.+[\]{}|]>
+                      PsiElement(CLASS_BEGIN)('[')
+                      RegExpCharImpl: <\\>
+                        PsiElement(ESC_CHARACTER)('\\')
+                      RegExpCharImpl: <(>
+                        PsiElement(CHARACTER)('(')
+                      RegExpCharImpl: <)>
+                        PsiElement(CHARACTER)(')')
+                      RegExpCharImpl: <$>
+                        PsiElement(CHARACTER)('$')
+                      RegExpCharImpl: <^>
+                        PsiElement(CARET)('^')
+                      RegExpCharImpl: <.>
+                        PsiElement(CHARACTER)('.')
+                      RegExpCharImpl: <+>
+                        PsiElement(CHARACTER)('+')
+                      RegExpCharImpl: <[>
+                        PsiElement(CHARACTER)('[')
+                      RegExpCharImpl: <\]>
+                        PsiElement(CHARACTER)('\]')
+                      RegExpCharImpl: <{>
+                        PsiElement(LBRACE)('{')
+                      RegExpCharImpl: <}>
+                        PsiElement(CHARACTER)('}')
+                      RegExpCharImpl: <|>
+                        PsiElement(CHARACTER)('|')
+                      PsiElement(CLASS_END)(']')
+          PsiElement())(')')
+  PsiElement(;)(';')

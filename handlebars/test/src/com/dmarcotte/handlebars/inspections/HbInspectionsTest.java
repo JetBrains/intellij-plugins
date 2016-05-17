@@ -8,11 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HbInspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   public void testEmptyBlock() {
     doTest();
   }

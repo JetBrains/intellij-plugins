@@ -17,21 +17,12 @@ package com.intellij.coldFusion;
 
 import com.intellij.codeInsight.editorActions.CodeBlockUtil;
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil;
-import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiDocumentManager;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Lera Nikolaenko
@@ -69,7 +60,9 @@ public class CfmlMatcherTest extends CfmlCodeInsightFixtureTestCase {
     }
 
     Document document = myFixture.getEditor().getDocument();
-    document.replaceString(pairOffset, pairOffset + pairMarker.length(), "");
+    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
+                                               document.replaceString(pairOffset, pairOffset + pairMarker.length(), "");
+                                             });
     PsiDocumentManager.getInstance(getProject()).commitDocument(document);
 
     return pairOffset;

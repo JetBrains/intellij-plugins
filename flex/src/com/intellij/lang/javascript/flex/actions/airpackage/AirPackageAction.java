@@ -219,13 +219,14 @@ public class AirPackageAction extends DumbAwareAction {
         NOTIFICATION_GROUP
           .createNotification("", FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason),
                               NotificationType.ERROR, new NotificationListener() {
-            public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
-              if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                notification.expire();
-                Messages.showMessageDialog(project, task.getCommandLine(), "ADT Command Line", null);
+              public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                  notification.expire();
+                  Messages.showIdeaMessageDialog(project, task.getCommandLine(), "ADT Command Line",
+                                                 new String[]{Messages.OK_BUTTON}, 0, null, null);
+                }
               }
-            }
-          })
+            })
           .notify(project);
       }
     };

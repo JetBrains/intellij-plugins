@@ -15,11 +15,6 @@ public class NgDocTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "ngDoc";
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   public void testModule15() {
     myFixture.configureByFiles(getTestName(false) + ".js");
     PsiReference ref = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());

@@ -19,9 +19,6 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 %unicode
 %function advance
 %type IElementType
-%eof{
-return;
-%eof}
 
 %xstate COMMENT_BODY
 %xstate AFTER_CRLF

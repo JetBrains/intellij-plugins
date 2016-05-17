@@ -32,9 +32,4 @@ public class GherkinBrokenTableInspectionTest extends CucumberJavaCodeInsightTes
     super.setUp();
     myFixture.allowTreeAccessForAllFiles();
   }
-
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
 }

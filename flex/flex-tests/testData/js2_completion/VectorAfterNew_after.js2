@@ -6,7 +6,7 @@ import foo.Bar;
 
 function noCompletion():void {
     var vb:Vector.<Bar>;
-    vb = new Vector.<Bar>()
+    vb = new Vector.<Bar>(<caret>)
 }
 
 package foo {

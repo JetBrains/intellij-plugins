@@ -68,7 +68,7 @@ final class PubServerService extends NetService {
 
   private final Bootstrap bootstrap = nioClientBootstrap(new NioEventLoopGroup(1, PooledThreadExecutor.INSTANCE));
 
-  private final ConcurrentMap<Channel, Channel> serverToClientChannel = ContainerUtil.newConcurrentMap();
+  private final ConcurrentMap<Channel, ClientInfo> serverToClientChannel = ContainerUtil.newConcurrentMap();
   private final ChannelRegistrar serverChannelRegistrar = new ChannelRegistrar();
 
   private final ConcurrentMap<VirtualFile, ServerInfo> servedDirToSocketAddress = ContainerUtil.newConcurrentMap();
@@ -82,6 +82,16 @@ final class PubServerService extends NetService {
     }
   }
 
+  private static class ClientInfo {
+    private final Channel channel;
+    private final HttpHeaders extraHeaders;
+
+    private ClientInfo(@NotNull  Channel channel, @NotNull HttpHeaders extraHeaders) {
+      this.channel = channel;
+      this.extraHeaders = extraHeaders;
+    }
+  }
+
   private final ChannelFutureListener serverChannelCloseListener = future -> {
     Channel channel = future.channel();
     ServerInfo serverInfo = getServerInfo(channel);
@@ -89,9 +99,9 @@ final class PubServerService extends NetService {
       serverInfo.freeServerChannels.remove(channel);
     }
 
-    Channel clientChannel = serverToClientChannel.remove(channel);
-    if (clientChannel != null) {
-      sendBadGateway(clientChannel);
+    ClientInfo clientInfo = serverToClientChannel.remove(channel);
+    if (clientInfo != null) {
+      sendBadGateway(clientInfo.channel, clientInfo.extraHeaders);
     }
   };
 
@@ -148,19 +158,20 @@ final class PubServerService extends NetService {
 
   public void sendToPubServer(@NotNull final Channel clientChannel,
                               @NotNull final FullHttpRequest clientRequest,
+                              @NotNull HttpHeaders extraHeaders,
                               @NotNull final VirtualFile servedDir,
                               @NotNull final String pathForPubServer) {
     clientRequest.retain();
 
     if (getProcessHandler().has()) {
-      sendToServer(servedDir, clientChannel, clientRequest, pathForPubServer);
+      sendToServer(servedDir, clientChannel, clientRequest, extraHeaders, pathForPubServer);
     }
     else {
       firstServedDir = servedDir;
 
       getProcessHandler().get()
-        .done(osProcessHandler -> sendToServer(servedDir, clientChannel, clientRequest, pathForPubServer))
-        .rejected(throwable -> sendBadGateway(clientChannel));
+        .done(osProcessHandler -> sendToServer(servedDir, clientChannel, clientRequest, extraHeaders, pathForPubServer))
+        .rejected(throwable -> sendBadGateway(clientChannel, extraHeaders));
     }
   }
 
@@ -203,9 +214,9 @@ final class PubServerService extends NetService {
     throw new UnsupportedOperationException(); // todo this code is not reachable because of commented out /*.getParent()*/ in PubServerManager.send()
   }
 
-  static void sendBadGateway(@NotNull final Channel channel) {
+  static void sendBadGateway(@NotNull final Channel channel, @NotNull HttpHeaders extraHeaders) {
     if (channel.isActive()) {
-      Responses.send(HttpResponseStatus.BAD_GATEWAY, channel);
+      Responses.send(HttpResponseStatus.BAD_GATEWAY, channel, null, null, extraHeaders);
     }
   }
 
@@ -213,10 +224,10 @@ final class PubServerService extends NetService {
   protected void closeProcessConnections() {
     servedDirToSocketAddress.clear();
 
-    Channel[] clientContexts;
+    ClientInfo[] list;
     try {
-      Collection<Channel> clientChannels = serverToClientChannel.values();
-      clientContexts = clientChannels.toArray(new Channel[clientChannels.size()]);
+      Collection<ClientInfo> clientInfos = serverToClientChannel.values();
+      list = clientInfos.toArray(new ClientInfo[clientInfos.size()]);
       for (ServerInfo serverInstanceInfo : servedDirToSocketAddress.values()) {
         serverInstanceInfo.freeServerChannels.clear();
       }
@@ -226,9 +237,9 @@ final class PubServerService extends NetService {
       serverChannelRegistrar.close();
     }
 
-    for (Channel channel : clientContexts) {
+    for (ClientInfo info : list) {
       try {
-        sendBadGateway(channel);
+        sendBadGateway(info.channel, info.extraHeaders);
       }
       catch (Exception e) {
         LOG.error(e);
@@ -263,6 +274,7 @@ final class PubServerService extends NetService {
   void sendToServer(@NotNull final VirtualFile servedDir,
                     @NotNull final Channel clientChannel,
                     @NotNull final FullHttpRequest clientRequest,
+                    @NotNull HttpHeaders extraHeaders,
                     @NotNull final String pathToPubServe) {
     ServerInfo serverInstanceInfo = servedDirToSocketAddress.get(servedDir);
     if (serverInstanceInfo == null) {
@@ -273,16 +285,18 @@ final class PubServerService extends NetService {
     if (serverChannel == null) {
       connect(bootstrap, serverInstanceInfo.address, serverChannel1 -> {
         if (serverChannel1 == null) {
-          sendBadGateway(clientChannel);
+          if (clientChannel.isActive()) {
+            Responses.send(HttpResponseStatus.BAD_GATEWAY, clientChannel, clientRequest, null, extraHeaders);
+          }
         }
         else {
           serverChannel1.closeFuture().addListener(serverChannelCloseListener);
-          sendToServer(clientChannel, clientRequest, pathToPubServe, serverChannel1);
+          sendToServer(clientChannel, clientRequest, extraHeaders, pathToPubServe, serverChannel1);
         }
       });
     }
     else {
-      sendToServer(clientChannel, clientRequest, pathToPubServe, serverChannel);
+      sendToServer(clientChannel, clientRequest, extraHeaders, pathToPubServe, serverChannel);
     }
   }
 
@@ -301,9 +315,9 @@ final class PubServerService extends NetService {
     return null;
   }
 
-  private void sendToServer(@NotNull final Channel clientChannel, @NotNull FullHttpRequest clientRequest, @NotNull String pathToPubServe, @NotNull Channel serverChannel) {
-    Channel oldClientChannel = serverToClientChannel.put(serverChannel, clientChannel);
-    LOG.assertTrue(oldClientChannel == null);
+  private void sendToServer(@NotNull final Channel clientChannel, @NotNull FullHttpRequest clientRequest, @NotNull HttpHeaders extraHeaders, @NotNull String pathToPubServe, @NotNull Channel serverChannel) {
+    ClientInfo oldClientInfo = serverToClientChannel.put(serverChannel, new ClientInfo(clientChannel, extraHeaders));
+    LOG.assertTrue(oldClientInfo == null);
 
     // duplicate - content will be shared (opposite to copy), so, we use duplicate. see ByteBuf javadoc.
     FullHttpRequest request = clientRequest.duplicate().setUri(pathToPubServe);
@@ -326,8 +340,8 @@ final class PubServerService extends NetService {
     @Override
     protected void messageReceived(@NotNull ChannelHandlerContext context, @NotNull HttpObject message) throws Exception {
       Channel serverChannel = context.channel();
-      Channel clientChannel = serverToClientChannel.get(serverChannel);
-      if (clientChannel == null || !clientChannel.isActive()) {
+      ClientInfo clientInfo = serverToClientChannel.get(serverChannel);
+      if (clientInfo == null || !clientInfo.channel.isActive()) {
         // client abort request, so, just close server channel as well and don't try to reuse it
         serverToClientChannel.remove(serverChannel);
         serverChannel.close();
@@ -337,8 +351,10 @@ final class PubServerService extends NetService {
         }
       }
       else {
-        if (message instanceof HttpMessage) {
-          HttpUtil.setKeepAlive(((HttpMessage)message), true);
+        if (message instanceof HttpResponse) {
+          HttpResponse response = (HttpResponse)message;
+          HttpUtil.setKeepAlive(response, true);
+          response.headers().add(clientInfo.extraHeaders);
         }
         if (message instanceof LastHttpContent) {
           serverToClientChannel.remove(serverChannel);
@@ -350,7 +366,7 @@ final class PubServerService extends NetService {
           }
         }
 
-        clientChannel.writeAndFlush(message);
+        clientInfo.channel.writeAndFlush(message);
       }
     }
   }

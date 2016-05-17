@@ -44,10 +44,6 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     return createFakeClass().findFunctionByName("a");
   }
 
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
-  }
-
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testChangeSignatureReturnType() throws Exception {
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");

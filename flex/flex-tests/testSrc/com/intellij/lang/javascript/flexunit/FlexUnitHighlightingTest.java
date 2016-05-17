@@ -94,11 +94,6 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
   public void testNoUnusedHighlighting() throws Exception {
     enableInspectionTool(new JSUnusedGlobalSymbolsInspection() {
-      @NotNull
-      @Override
-      public HighlightDisplayLevel getDefaultLevel() {
-        return HighlightDisplayLevel.WARNING;
-      }
     });
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }

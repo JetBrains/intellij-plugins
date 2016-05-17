@@ -15,11 +15,6 @@ public class AngularJSPerformanceTest extends LightPlatformCodeInsightFixtureTes
     return AngularTestUtil.getBaseTestDataPath(getClass());
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   public void testManyInjectionsHighlighting() {
     myFixture.configureByFiles("manyInjections.highlight.html", "angular.js", "custom.js");
     PlatformTestUtil.startPerformanceTest(getTestName(false), 60000, new ThrowableRunnable() {

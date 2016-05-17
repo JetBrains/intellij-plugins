@@ -26,10 +26,6 @@ import java.util.concurrent.Callable;
  * Date: 4/23/12
  */
 public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
 
   protected void doTest() throws Exception {
     myFixture.testHighlighting(true, false, true, Util.getInputDataFileName(getTestName(true)));

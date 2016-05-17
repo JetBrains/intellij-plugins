@@ -10,11 +10,6 @@ abstract public class DartExtractMethodTest extends DartCodeInsightFixtureTestCa
     return FileUtil.toSystemDependentName("/refactoring/extractMethod/");
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    super.tearDown();
-  }
-
   private void doTest() throws Throwable {
     myFixture.configureByFile(getTestName(true) + ".dart");
     doTestImpl();

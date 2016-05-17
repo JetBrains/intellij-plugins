@@ -54,8 +54,6 @@ import com.intellij.util.ArrayUtil;
 %unicode
 %function advance
 %type IElementType
-%eof{  return;
-%eof}
 %caseless
 %ignorecase
 

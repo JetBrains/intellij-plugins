@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     createList(clazz.getFunctions(), filter);
     myWholePanel.add(ScrollPaneFactory.createScrollPane(myList));
     myList.setCellRenderer(new ColoredListCellRenderer() {
-      protected void customizeCellRenderer(final JList list,
+      protected void customizeCellRenderer(@NotNull final JList list,
                                            final Object value,
                                            final int index,
                                            final boolean selected,

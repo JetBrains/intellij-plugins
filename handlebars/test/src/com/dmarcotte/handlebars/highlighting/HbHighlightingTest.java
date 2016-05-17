@@ -26,11 +26,6 @@ public class HbHighlightingTest extends LightPlatformCodeInsightFixtureTestCase 
     return HbTestUtils.BASE_TEST_DATA_PATH + getBasePath();
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   private void doTest(String extension) {
     myFixture.configureByFile(getTestName(true) + "." + extension);
     myFixture.checkHighlighting(true, false, true);

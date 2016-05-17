@@ -18,11 +18,6 @@ public class EmptyEventHandlerInspectionTest extends LightPlatformCodeInsightFix
     myFixture.enableInspections(EmptyEventHandlerInspection.class);
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   public void testSimple() {
     doTest();
   }

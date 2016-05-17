@@ -22,10 +22,6 @@ import com.intellij.openapi.editor.markup.RangeHighlighter;
  * @author vnikolaenko
  */
 public class CfmlUsagesHighlighterTest extends CfmlCodeInsightFixtureTestCase {
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
 
   private RangeHighlighter[] getUsages() {
     return myFixture.testHighlightUsages(Util.getInputDataFileName(getTestName(true)));

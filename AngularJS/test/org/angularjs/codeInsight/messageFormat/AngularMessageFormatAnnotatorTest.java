@@ -16,11 +16,6 @@ public class AngularMessageFormatAnnotatorTest extends LightPlatformCodeInsightF
     return AngularTestUtil.getBaseTestDataPath(AngularMessageFormatAnnotatorTest.class);
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   public void testCase1() throws Exception {
     doTest("case1.html");
   }

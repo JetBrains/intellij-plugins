@@ -122,8 +122,6 @@ import com.intellij.util.containers.Stack;
 %unicode
 %function advance
 %type IElementType
-%eof{  return;
-%eof}
 %caseless
 %ignorecase
 
