@@ -41,7 +41,7 @@ public class SimulatorRakeConsoleModifier implements RakeConsoleModifier {
   @NotNull
   @Override
   public ProcessHandler createProcessHandler(RakeRunConfiguration config, final GeneralCommandLine cmd, String runnerId) throws ExecutionException {
-    final MotionSimulatorRunExtension.MotionFileOutputReaders readers = cmd.getUserData(MotionSimulatorRunExtension.FILE_OUTPUT_READERS);
+    final MotionSimulatorRunExtension.MotionProcessOutputReaders readers = cmd.getUserData(MotionSimulatorRunExtension.FILE_OUTPUT_READERS);
     cmd.putUserData(MotionSimulatorRunExtension.FILE_OUTPUT_READERS, null);
     assert readers != null;
     final Module module = config.getModule();

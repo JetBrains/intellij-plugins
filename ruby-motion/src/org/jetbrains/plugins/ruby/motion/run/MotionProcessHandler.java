@@ -20,7 +20,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class MotionProcessHandler extends RubyProcessHandler implements ProcessHandlerWithPID, ProcessHandlerWithDetachSemaphore {
   private final ExecutionResult<Integer> myPIDResult = new ExecutionResult<Integer>();
-  private final MotionSimulatorRunExtension.MotionFileOutputReaders myReaders;
+  private final MotionSimulatorRunExtension.MotionProcessOutputReaders myReaders;
   private boolean mySimulateStarted = false;
   private final boolean isOSX;
   private Semaphore myDetachSemaphore;
@@ -28,7 +28,7 @@ public class MotionProcessHandler extends RubyProcessHandler implements ProcessH
   protected MotionProcessHandler(@NotNull final Module module, @NotNull Process process,
                                  @NotNull String commandLine,
                                  @Nullable String runnerId,
-                                 @NotNull MotionSimulatorRunExtension.MotionFileOutputReaders readers) {
+                                 @NotNull MotionSimulatorRunExtension.MotionProcessOutputReaders readers) {
     super(process, commandLine, RubyProcessHandler.getOutputEncoding(), runnerId);
     myReaders = readers;
     myReaders.setHandler(this);

@@ -36,7 +36,7 @@ public class SimulatorConsoleProcessHandler extends RubyConsoleProcessHandler im
                                                                                          AnsiEscapeDecoder.ColoredChunksAcceptor {
   private static final Pattern PROMPT = Pattern.compile("(\\(\\S*\\)[>?]).*");
   private final ExecutionResult<Integer> myPIDResult = new ExecutionResult<Integer>();
-  private final MotionSimulatorRunExtension.MotionFileOutputReaders myReaders;
+  private final MotionSimulatorRunExtension.MotionProcessOutputReaders myReaders;
   private String myLastMatched;
   private boolean mySimulateStarted = false;
   private final boolean isOSX;
@@ -45,7 +45,7 @@ public class SimulatorConsoleProcessHandler extends RubyConsoleProcessHandler im
   public SimulatorConsoleProcessHandler(@NotNull final Module module,
                                         Process process,
                                         String commandLine,
-                                        MotionSimulatorRunExtension.MotionFileOutputReaders readers) {
+                                        MotionSimulatorRunExtension.MotionProcessOutputReaders readers) {
     super(process, commandLine);
     myReaders = readers;
     myReaders.setHandler(this);
