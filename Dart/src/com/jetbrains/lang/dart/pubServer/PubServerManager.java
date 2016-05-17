@@ -13,6 +13,7 @@ import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 
@@ -89,13 +90,14 @@ public class PubServerManager implements Disposable {
 
   public void send(@NotNull Channel clientChannel,
                    @NotNull FullHttpRequest clientRequest,
+                   @NotNull HttpHeaders extraHeaders,
                    @NotNull VirtualFile servedDir,
                    @NotNull String pathForPubServer) {
     try {
       // servedDir - web or test, direct child of directory containing pubspec.yaml
       // "pub serve" process per dart project
       // todo uncomment /*.getParent()*/ below, serve subfolders of the same Dart project using the same pub serve process, manage it via admin port
-      dartProjectToPubService.get(servedDir/*.getParent()*/).sendToPubServer(clientChannel, clientRequest, servedDir, pathForPubServer);
+      dartProjectToPubService.get(servedDir/*.getParent()*/).sendToPubServer(clientChannel, clientRequest, extraHeaders, servedDir, pathForPubServer);
     }
     catch (ExecutionException e) {
       LOG.error(e);

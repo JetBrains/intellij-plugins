@@ -13,8 +13,10 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.builtInWebServer.BuiltInWebServerKt;
 import org.jetbrains.builtInWebServer.PathInfo;
 import org.jetbrains.builtInWebServer.WebServerPathHandlerAdapter;
 import org.jetbrains.builtInWebServer.WebServerPathToFileManager;
@@ -33,7 +35,10 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     final Pair<VirtualFile, String> servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path);
     if (servedDirAndPathForPubServer == null) return false;
 
-    PubServerManager.getInstance(project).send(context.channel(), request, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
+    HttpHeaders validateResult = BuiltInWebServerKt.validateToken(request, context.channel());
+    if (validateResult != null) {
+      PubServerManager.getInstance(project).send(context.channel(), request, validateResult, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
+    }
     return true;
   }
 
