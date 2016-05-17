@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.injection;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
@@ -11,7 +12,6 @@ import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
-import org.intellij.lang.regexp.RegExpLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +19,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class DartMultiHostInjector implements MultiHostInjector {
+
+  @Nullable private static final Language JS_REGEXP_LANG = Language.findLanguageByID("JSRegexp");
+
   @NotNull
   @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
@@ -50,6 +53,8 @@ public class DartMultiHostInjector implements MultiHostInjector {
   }
 
   private static void injectRegExp(@NotNull final MultiHostRegistrar registrar, @NotNull final DartStringLiteralExpression element) {
+    if (JS_REGEXP_LANG == null) return; // JavaScript plugin not available
+
     final PsiElement child = element.getFirstChild();
     final IElementType elementType = child.getNode().getElementType();
     if (elementType != DartTokenTypes.RAW_SINGLE_QUOTED_STRING || child.getNextSibling() != null) {
@@ -61,7 +66,7 @@ public class DartMultiHostInjector implements MultiHostInjector {
       return;
     }
 
-    registrar.startInjecting(RegExpLanguage.INSTANCE);
+    registrar.startInjecting(JS_REGEXP_LANG);
     registrar.addPlace(null, null, element, textAndRange.second);
     registrar.doneInjecting();
   }
