@@ -1,3 +1,3 @@
-<warning descr="No code assistance for JsTestDriver assertion framework">TestCase</warning>("", {
+<warning descr="No coding assistance for JsTestDriver assertion framework">TestCase</warning>("", {
 
 });

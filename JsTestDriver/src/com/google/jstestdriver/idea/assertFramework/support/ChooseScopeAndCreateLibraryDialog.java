@@ -52,7 +52,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
     myProject = project;
     myLibraryHelper = new JsLibraryHelper(myProject, desiredLibraryName, libraryFiles, frameworkDescriptor);
 
-    setTitle("Code Assistance For " + desiredLibraryName);
+    setTitle("Coding Assistance For " + desiredLibraryName);
 
     myModuleSelector = new ModuleScopeSelectorComponent(project, requestor);
     myLibraryNameTextField = createTextField(myLibraryHelper);
@@ -89,7 +89,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
       components.add(warnLabel);
       components.add(Box.createVerticalStrut(10));
     }
-    components.add(new JLabel("JavaScript library will be created to provide code assistance."));
+    components.add(new JLabel("JavaScript library will be created to provide coding assistance."));
     return SwingHelper.newLeftAlignedVerticalPanel(components);
   }
 
