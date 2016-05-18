@@ -234,11 +234,6 @@ public class DartVmServiceValue extends XNamedValue {
 
   private void computeDefaultPresentation(@NotNull final XValueNode node) {
     final Icon icon = myIsException ? AllIcons.Debugger.Db_exception_breakpoint : AllIcons.Debugger.Value;
-
-    if (myInstanceRef.getJson().get("id") == null) {
-      int i = 0;
-    }
-
     myDebugProcess.getVmServiceWrapper()
       .evaluateInTargetContext(myIsolateId, myInstanceRef.getId(), "toString()", new VmServiceConsumers.EvaluateConsumerWrapper() {
         @Override
@@ -279,8 +274,7 @@ public class DartVmServiceValue extends XNamedValue {
       myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
         @Override
         public void received(Obj instance) {
-          addFields(myDebugProcess, node, myIsolateId, ((Instance)instance).getFields());
-          node.addChildren(XValueChildrenList.EMPTY, true);
+          addFields(node, ((Instance)instance).getFields());
         }
 
         @Override
@@ -368,18 +362,15 @@ public class DartVmServiceValue extends XNamedValue {
     node.addChildren(childrenList, true);
   }
 
-  static void addFields(@NotNull final DartVmServiceDebugProcess debugProcess,
-                        @NotNull final XCompositeNode node,
-                        @NotNull String isolateId,
-                        @NotNull final ElementList<BoundField> fields) {
+  private void addFields(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundField> fields) {
     final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
     for (BoundField field : fields) {
       final InstanceRef value = field.getValue();
       if (value != null) {
-        childrenList.add(new DartVmServiceValue(debugProcess, isolateId, field.getDecl().getName(), value, field.getDecl(), false));
+        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value, field.getDecl(), false));
       }
     }
-    node.addChildren(childrenList, false);
+    node.addChildren(childrenList, true);
   }
 
   @NotNull

@@ -75,20 +75,27 @@ public class DartVmServiceStackFrame extends XStackFrame {
 
     final ElementList<BoundVariable> vars = myVmFrame.getVars();
 
-    if (vars.size() > 0 && "this".equals(vars.get(0).getName())) {
-      addStaticAndInstanceFieldsOfFirstVarAndOtherVars(node, vars);
+    BoundVariable thisVar = null;
+    for (BoundVariable var : vars) {
+      if ("this".equals(var.getName())) {
+        // in some cases "this" var is not the first one in the list, no idea why
+        thisVar = var;
+        break;
+      }
     }
-    else {
-      addVars(node, vars, 0);
-    }
+
+    addStaticFieldsIfPresentAndThenAllVars(node, thisVar, vars);
   }
 
-  // first var in 'vars' list must be 'this'.
-  private void addStaticAndInstanceFieldsOfFirstVarAndOtherVars(@NotNull final XCompositeNode node,
-                                                                @NotNull final ElementList<BoundVariable> vars) {
-    final BoundVariable firstVar = vars.get(0);
+  private void addStaticFieldsIfPresentAndThenAllVars(@NotNull final XCompositeNode node,
+                                                      @Nullable final BoundVariable thisVar,
+                                                      @NotNull final ElementList<BoundVariable> vars) {
+    if (thisVar == null) {
+      addVars(node, vars);
+      return;
+    }
 
-    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, firstVar.getValue().getClassRef().getId(), new GetObjectConsumer() {
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, thisVar.getValue().getClassRef().getId(), new GetObjectConsumer() {
       @Override
       public void received(Obj classObj) {
         final SmartList<FieldRef> staticFields = new SmartList<FieldRef>();
@@ -104,13 +111,7 @@ public class DartVmServiceStackFrame extends XStackFrame {
           node.addChildren(list, false);
         }
 
-        final InstanceKind kind = firstVar.getValue().getKind();
-        if (kind == InstanceKind.Null) {
-          addVars(node, vars, 0);
-        }
-        else {
-          addVarsAndFieldsOfFirstOne(node, vars);
-        }
+        addVars(node, vars);
       }
 
       @Override
@@ -125,38 +126,13 @@ public class DartVmServiceStackFrame extends XStackFrame {
     });
   }
 
-  private void addVarsAndFieldsOfFirstOne(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundVariable> vars) {
-    final BoundVariable firstVar = vars.get(0);
+  private void addVars(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundVariable> vars) {
+    final XValueChildrenList childrenList = new XValueChildrenList(vars.size());
 
-    node.addChildren(XValueChildrenList.singleton(
-      new DartVmServiceValue(myDebugProcess, myIsolateId, firstVar.getName(), firstVar.getValue(), null, false)), false);
-
-    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, firstVar.getValue().getId(), new GetObjectConsumer() {
-      @Override
-      public void received(Obj instance) {
-        DartVmServiceValue.addFields(myDebugProcess, node, myIsolateId, ((Instance)instance).getFields());
-        addVars(node, vars, 1);
-      }
-
-      @Override
-      public void received(Sentinel sentinel) {
-        node.setErrorMessage(sentinel.getValueAsString());
-      }
-
-      @Override
-      public void onError(RPCError error) {
-        node.setErrorMessage(error.getMessage());
-      }
-    });
-  }
-
-  private void addVars(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundVariable> vars, final int from) {
-    final XValueChildrenList childrenList = new XValueChildrenList(vars.size() - from);
-
-    for (int i = from; i < vars.size(); i++) {
-      final InstanceRef value = vars.get(i).getValue();
+    for (BoundVariable var : vars) {
+      final InstanceRef value = var.getValue();
       if (value != null) {
-        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, vars.get(i).getName(), value, null, false));
+        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, var.getName(), value, null, false));
       }
     }
 
