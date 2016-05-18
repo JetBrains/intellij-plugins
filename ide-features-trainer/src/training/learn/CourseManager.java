@@ -7,7 +7,6 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.*;
-import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -24,6 +23,8 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import training.learn.dialogs.SdkModuleProblemDialog;
 import training.learn.dialogs.SdkProjectProblemDialog;
 import training.learn.exceptons.*;
@@ -33,8 +34,6 @@ import training.ui.LearnToolWindow;
 import training.ui.LearnToolWindowFactory;
 import training.ui.MainLearnPanel;
 import training.util.MyClassLoader;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import training.util.generateModuleXml;
 
 import java.awt.*;
@@ -63,6 +62,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private LearnPanel myLearnPanel;
     private final static String LEARN_PROJECT_NAME = "LearnProject";
     private MainLearnPanel mainLearnPanel;
+    public static final String NOTIFICATION_ID = "Training plugin";
 
     CourseManager() {
         if (myState.modules == null || myState.modules.size() == 0) try {
@@ -128,6 +128,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     public synchronized void openLesson(Project project, final @Nullable Lesson lesson) throws BadModuleException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
         try {
+            setLastActivityTime(System.currentTimeMillis());
 
             assert lesson != null;
             checkEnvironment(project, lesson.getModule());
@@ -588,6 +589,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         public final ArrayList<Module> modules = new ArrayList<>();
         String learnProjectPath;
         GlobalLessonLog globalLessonLog = new GlobalLessonLog();
+        public long lastActivityTime;
 
         public State() {
         }
@@ -612,6 +614,14 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return myState.globalLessonLog;
     }
 
+    public long getLastActivityTime() {
+        return myState.lastActivityTime;
+    }
+
+    public void setLastActivityTime(long time) {
+        myState.lastActivityTime = time;
+    }
+
     @Override
     public State getState() {
         return myState;
@@ -621,6 +631,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     public void loadState(State state) {
         myState.learnProjectPath = null;
         myState.globalLessonLog = state.globalLessonLog;
+        if (state.lastActivityTime == 0)
+            myState.lastActivityTime = System.currentTimeMillis();
+        else
+            myState.lastActivityTime = state.lastActivityTime;
 
         if (state.modules == null || state.modules.size() == 0) {
             try {
@@ -669,6 +683,18 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         scrollPane.setViewportView(mainLearnPanel);
         scrollPane.revalidate();
         scrollPane.repaint();
+    }
+
+
+    public int calcUnpassedLessons(){
+        int result = 0;
+        if (getModules() == null) return 0;
+        for (Module module : getModules()) {
+            for (Lesson lesson : module.getLessons()) {
+                if (!lesson.getPassed()) result++;
+            }
+        }
+        return result;
     }
 
     /**
