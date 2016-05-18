@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.LayeredIcon;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XKeywordValuePresentation;
@@ -19,6 +20,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class DartVmServiceValue extends XNamedValue {
+
+  private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.FinalMark);
+  private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.StaticMark);
+  private static final LayeredIcon STATIC_FINAL_FIELD_ICON =
+    new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.StaticMark, AllIcons.Nodes.FinalMark);
 
   @NotNull private final DartVmServiceDebugProcess myDebugProcess;
   @NotNull private String myIsolateId;
@@ -123,39 +129,70 @@ public class DartVmServiceValue extends XNamedValue {
 
   @Override
   public void computePresentation(@NotNull final XValueNode node, @NotNull final XValuePlace place) {
-    if (computeVarHavingStringValuePresentation(node, myInstanceRef)) return;
-    if (computeRegExpPresentation(node, myInstanceRef)) return;
-    if (computeMapPresentation(node, myInstanceRef)) return;
-    if (computeListPresentation(node, myInstanceRef)) return;
+    if (computeVarHavingStringValuePresentation(node)) return;
+    if (computeRegExpPresentation(node)) return;
+    if (computeMapPresentation(node)) return;
+    if (computeListPresentation(node)) return;
     computeDefaultPresentation(node);
     // todo handle other special kinds: Type, TypeParameter, Pattern, may be some others as well
   }
 
-  private boolean computeVarHavingStringValuePresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
+  private Icon getIcon() {
+    if (myIsException) return AllIcons.Debugger.Db_exception_breakpoint;
+
+    if (myFieldRef != null) {
+      if (myFieldRef.isStatic() && (myFieldRef.isFinal() || myFieldRef.isConst())) {
+        return STATIC_FINAL_FIELD_ICON;
+      }
+      if (myFieldRef.isStatic()) {
+        return STATIC_FIELD_ICON;
+      }
+      if (myFieldRef.isFinal() || myFieldRef.isConst()) {
+        return FINAL_FIELD_ICON;
+      }
+      return AllIcons.Nodes.Field;
+    }
+
+    final InstanceKind kind = myInstanceRef.getKind();
+
+    if (kind == InstanceKind.Map || isListKind(kind)) return AllIcons.Debugger.Db_array;
+
+    if (kind == InstanceKind.Null ||
+        kind == InstanceKind.Bool ||
+        kind == InstanceKind.Double ||
+        kind == InstanceKind.Int ||
+        kind == InstanceKind.String) {
+      return AllIcons.Debugger.Db_primitive;
+    }
+
+    return AllIcons.Debugger.Value;
+  }
+
+  private boolean computeVarHavingStringValuePresentation(@NotNull final XValueNode node) {
     // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
-    switch (instanceRef.getKind()) {
+    switch (myInstanceRef.getKind()) {
       case Null:
       case Bool:
-        node.setPresentation(AllIcons.Debugger.Db_primitive, new XKeywordValuePresentation(instanceRef.getValueAsString()), false);
+        node.setPresentation(getIcon(), new XKeywordValuePresentation(myInstanceRef.getValueAsString()), false);
         break;
       case Double:
       case Int:
-        node.setPresentation(AllIcons.Debugger.Db_primitive, new XNumericValuePresentation(instanceRef.getValueAsString()), false);
+        node.setPresentation(getIcon(), new XNumericValuePresentation(myInstanceRef.getValueAsString()), false);
         break;
       case String:
-        final String presentableValue = StringUtil.replace(instanceRef.getValueAsString(), "\"", "\\\"");
-        node.setPresentation(AllIcons.Debugger.Db_primitive, new XStringValuePresentation(presentableValue), false);
+        final String presentableValue = StringUtil.replace(myInstanceRef.getValueAsString(), "\"", "\\\"");
+        node.setPresentation(getIcon(), new XStringValuePresentation(presentableValue), false);
 
-        if (instanceRef.getValueAsStringIsTruncated()) {
-          addFullStringValueEvaluator(node, instanceRef);
+        if (myInstanceRef.getValueAsStringIsTruncated()) {
+          addFullStringValueEvaluator(node, myInstanceRef);
         }
         break;
       case Float32x4:
       case Float64x2:
       case Int32x4:
       case StackTrace:
-        node.setFullValueEvaluator(new ImmediateFullValueEvaluator("Click to see stack trace...", instanceRef.getValueAsString()));
-        node.setPresentation(AllIcons.Debugger.Value, instanceRef.getClassRef().getName(), "", true);
+        node.setFullValueEvaluator(new ImmediateFullValueEvaluator("Click to see stack trace...", myInstanceRef.getValueAsString()));
+        node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), "", true);
         break;
       default:
         return false;
@@ -189,18 +226,18 @@ public class DartVmServiceValue extends XNamedValue {
     });
   }
 
-  private boolean computeRegExpPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
-    if (instanceRef.getKind() == InstanceKind.RegExp) {
+  private boolean computeRegExpPresentation(@NotNull final XValueNode node) {
+    if (myInstanceRef.getKind() == InstanceKind.RegExp) {
       // The pattern is always an instance of kind String.
-      final InstanceRef pattern = instanceRef.getPattern();
+      final InstanceRef pattern = myInstanceRef.getPattern();
       assert pattern.getKind() == InstanceKind.String : pattern;
 
       final String patternString = StringUtil.replace(pattern.getValueAsString(), "\"", "\\\"");
-      node.setPresentation(AllIcons.Debugger.Value, new XStringValuePresentation(patternString) {
+      node.setPresentation(getIcon(), new XStringValuePresentation(patternString) {
         @Nullable
         @Override
         public String getType() {
-          return instanceRef.getClassRef().getName();
+          return myInstanceRef.getClassRef().getName();
         }
       }, true);
 
@@ -213,27 +250,25 @@ public class DartVmServiceValue extends XNamedValue {
     return false;
   }
 
-  private static boolean computeMapPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
-    // Map kind only
-    if (instanceRef.getKind() == InstanceKind.Map) {
-      final String value = "size = " + instanceRef.getLength();
-      node.setPresentation(AllIcons.Debugger.Db_array, instanceRef.getClassRef().getName(), value, instanceRef.getLength() > 0);
+  private boolean computeMapPresentation(@NotNull final XValueNode node) {
+    if (myInstanceRef.getKind() == InstanceKind.Map) {
+      final String value = "size = " + myInstanceRef.getLength();
+      node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), value, myInstanceRef.getLength() > 0);
       return true;
     }
     return false;
   }
 
-  private static boolean computeListPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
-    if (isListKind(instanceRef.getKind())) {
-      final String value = "size = " + instanceRef.getLength();
-      node.setPresentation(AllIcons.Debugger.Db_array, instanceRef.getClassRef().getName(), value, instanceRef.getLength() > 0);
+  private boolean computeListPresentation(@NotNull final XValueNode node) {
+    if (isListKind(myInstanceRef.getKind())) {
+      final String value = "size = " + myInstanceRef.getLength();
+      node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), value, myInstanceRef.getLength() > 0);
       return true;
     }
     return false;
   }
 
   private void computeDefaultPresentation(@NotNull final XValueNode node) {
-    final Icon icon = myIsException ? AllIcons.Debugger.Db_exception_breakpoint : AllIcons.Debugger.Value;
     myDebugProcess.getVmServiceWrapper()
       .evaluateInTargetContext(myIsolateId, myInstanceRef.getId(), "toString()", new VmServiceConsumers.EvaluateConsumerWrapper() {
         @Override
@@ -245,7 +280,7 @@ public class DartVmServiceValue extends XNamedValue {
               noGoodResult();
             }
             else {
-              node.setPresentation(icon, myInstanceRef.getClassRef().getName(), string, true);
+              node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), string, true);
             }
           }
           else {
@@ -255,7 +290,7 @@ public class DartVmServiceValue extends XNamedValue {
 
         @Override
         public void noGoodResult() {
-          node.setPresentation(icon, myInstanceRef.getClassRef().getName(), "", true);
+          node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), "", true);
         }
       });
   }
