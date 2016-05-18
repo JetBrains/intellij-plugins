@@ -198,11 +198,8 @@ public class JstdCoverageEngine extends CoverageEngine {
   private static void refresh(@NotNull File file) {
     final VirtualFile vFile = VfsUtil.findFileByIoFile(file, true);
     if (vFile != null) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          vFile.refresh(false, false);
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        vFile.refresh(false, false);
       });
     }
   }

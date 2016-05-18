@@ -131,20 +131,18 @@ public class FlexUnitPrecompileTask implements CompileTask {
     final Ref<FlexBuildConfiguration> bcRef = new Ref<FlexBuildConfiguration>();
     final Ref<FlexUnitSupport> supportRef = new Ref<FlexUnitSupport>();
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      public void run() {
-        if (DumbService.getInstance(myProject).isDumb()) return;
+    ApplicationManager.getApplication().runReadAction(() -> {
+      if (DumbService.getInstance(myProject).isDumb()) return;
 
-        try {
-          final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(myProject);
-          moduleRef.set(moduleAndBC.first);
-          bcRef.set(moduleAndBC.second);
-          supportRef.set(FlexUnitSupport.getSupport(moduleAndBC.second, moduleAndBC.first));
-        }
-        catch (RuntimeConfigurationError e) {
-          // already checked above, can't happen
-          throw new RuntimeException(e);
-        }
+      try {
+        final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(myProject);
+        moduleRef.set(moduleAndBC.first);
+        bcRef.set(moduleAndBC.second);
+        supportRef.set(FlexUnitSupport.getSupport(moduleAndBC.second, moduleAndBC.first));
+      }
+      catch (RuntimeConfigurationError e) {
+        // already checked above, can't happen
+        throw new RuntimeException(e);
       }
     });
 

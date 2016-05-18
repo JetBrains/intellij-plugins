@@ -100,12 +100,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     myAfterCommitRunnable = null;
 
-    myCompletionPerformer = new Runnable() {
-      @Override
-      public void run() {
-        FlexCompletionTest.super.complete();
-      }
-    };
+    myCompletionPerformer = () -> FlexCompletionTest.super.complete();
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -150,44 +145,41 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   private Runnable createMultiCompletionPerformerWithVariantsCheck(final boolean strict) {
-    return new Runnable() {
-      @Override
-      public void run() {
-        final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(myProject, getEditor().getDocument());
-        for (Map.Entry<Integer, String> entry : map.entrySet()) {
-          myItems = null;
-          getEditor().getCaretModel().moveToOffset(entry.getKey());
+    return () -> {
+      final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(myProject, getEditor().getDocument());
+      for (Map.Entry<Integer, String> entry : map.entrySet()) {
+        myItems = null;
+        getEditor().getCaretModel().moveToOffset(entry.getKey());
 
-          Editor savedEditor = myEditor;
-          PsiFile savedFile = myFile;
+        Editor savedEditor = myEditor;
+        PsiFile savedFile = myFile;
 
-          PsiFile injectedPsi = InjectedLanguageUtil.findInjectedPsiNoCommit(myFile, myEditor.getCaretModel().getOffset());
-          if (injectedPsi != null) {
-            myEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myEditor, myFile);
-            myFile = injectedPsi;
+        PsiFile injectedPsi = InjectedLanguageUtil.findInjectedPsiNoCommit(myFile, myEditor.getCaretModel().getOffset());
+        if (injectedPsi != null) {
+          myEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myEditor, myFile);
+          myFile = injectedPsi;
+        }
+
+        FlexCompletionTest.super.complete();
+
+        myEditor = savedEditor;
+        myFile = savedFile;
+
+        final String[] expected = entry.getValue().length() == 0 ? new String[]{} : entry.getValue().split(",");
+
+        final String[] variants = new String[myItems == null ? 0 : myItems.length];
+        if (myItems != null && myItems.length > 0) {
+          for (int i = 0; i < myItems.length; i++) {
+            variants[i] = myItems[i].getLookupString();
           }
+        }
 
-          FlexCompletionTest.super.complete();
-
-          myEditor = savedEditor;
-          myFile = savedFile;
-
-          final String[] expected = entry.getValue().length() == 0 ? new String[]{} : entry.getValue().split(",");
-
-          final String[] variants = new String[myItems == null ? 0 : myItems.length];
-          if (myItems != null && myItems.length > 0) {
-            for (int i = 0; i < myItems.length; i++) {
-              variants[i] = myItems[i].getLookupString();
-            }
-          }
-
-          if (strict || expected.length == 0) {
-            assertSameElements(variants, expected);
-          }
-          else {
-            for (final String variant : expected) {
-              assertTrue("Missing from completion list: " + variant, ArrayUtil.contains(variant, variants));
-            }
+        if (strict || expected.length == 0) {
+          assertSameElements(variants, expected);
+        }
+        else {
+          for (final String variant : expected) {
+            assertTrue("Missing from completion list: " + variant, ArrayUtil.contains(variant, variants));
           }
         }
       }
@@ -267,12 +259,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testCompletionInMxml5() throws Exception {
-    withNoAbsoluteReferences(new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        defaultTest();
-      }
-    });
+    withNoAbsoluteReferences(() -> defaultTest());
   }
 
   @JSTestOptions(
@@ -518,12 +505,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testCompleteInFileName() throws Exception {
-    withNoAbsoluteReferences(new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        doTest("", "as");
-      }
-    });
+    withNoAbsoluteReferences(() -> doTest("", "as"));
   }
 
   public final void testNoComplete() throws Exception {
@@ -761,11 +743,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testComponentFromManifestCompletion() throws Exception {
     final String name = getTestName(false);
 
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
-        bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
-      }
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+      final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
+      bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
     });
 
     VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + name + ".mxml"), getVirtualFile(BASE_PATH + name + "_other.as")};
@@ -776,12 +756,10 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testComponentFromManifestCompletionWithNamespaceAutoInsert() throws Exception {
     final String name = getTestName(false);
 
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
-        bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace",
-                                                                       "schema://www.MyNamespace.com/2010\t" + manifest));
-      }
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+      final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
+      bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace",
+                                                                     "schema://www.MyNamespace.com/2010\t" + manifest));
     });
 
     final String testName = getTestName(false);
@@ -815,12 +793,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final String testName = getTestName(false);
     final VirtualFile secondSourceRoot = getVirtualFile(BASE_PATH + testName);
     PsiTestUtil.addSourceRoot(myModule, secondSourceRoot);
-    withNoAbsoluteReferences(new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        doTest("", "mxml");
-      }
-    });
+    withNoAbsoluteReferences(() -> doTest("", "mxml"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
@@ -856,13 +829,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testResourceBundleFromLib() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addFlexLibrary(false, myModule, "Lib", false, getTestDataPath() + getBasePath(), getTestName(false) + ".swc", null,
-                                     null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addFlexLibrary(false, myModule, "Lib", false, getTestDataPath() + getBasePath(), getTestName(false) + ".swc", null,
+                                       null);
     doTest("", "as");
     doTest("", "mxml");
   }
@@ -871,14 +840,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testIgnoreClassesFromOnlyLibSources() throws Exception {
     final String testName = getTestName(false);
 
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils
-          .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
-                      null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils
+      .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
+                  null);
 
     assertNull(doTest("_1", "as"));
     assertNull(doTest("_2", "as"));
@@ -967,34 +931,28 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testTwoCompletions() throws Exception {
-    myCompletionPerformer = new Runnable() {
-      @Override
-      public void run() {
-        FlexCompletionTest.super.complete();
-        FlexCompletionTest.super.complete();
-      }
+    myCompletionPerformer = () -> {
+      FlexCompletionTest.super.complete();
+      FlexCompletionTest.super.complete();
     };
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testObsoleteContext() throws Exception {
-    myCompletionPerformer = new Runnable() {
-      @Override
-      public void run() {
-        final int offset = myEditor.getCaretModel().getOffset();
+    myCompletionPerformer = () -> {
+      final int offset = myEditor.getCaretModel().getOffset();
 
-        FlexCompletionTest.super.complete();
+      FlexCompletionTest.super.complete();
 
-        assertEquals("\n" + "    var v = myButtonOne;\n" + "  ", getEditor().getDocument().getText());
+      assertEquals("\n" + "    var v = myButtonOne;\n" + "  ", getEditor().getDocument().getText());
 
-        replace("myButtonOne", "myButton", getEditor());
-        replace("myButtonOne", "myButtonTwo", ((EditorWindow)myEditor).getDelegate());
+      replace("myButtonOne", "myButton", getEditor());
+      replace("myButtonOne", "myButtonTwo", ((EditorWindow)myEditor).getDelegate());
 
-        myEditor.getCaretModel().moveToOffset(offset);
+      myEditor.getCaretModel().moveToOffset(offset);
 
-        FlexCompletionTest.super.complete();
-      }
+      FlexCompletionTest.super.complete();
     };
     mxmlTest();
   }
@@ -1002,11 +960,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   private static void replace(final String original, final String replacement, final Editor editor) {
     final int offset = editor.getDocument().getText().indexOf(original);
     assertTrue(offset != -1);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        editor.getDocument().replaceString(offset, offset + original.length(), replacement);
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      editor.getDocument().replaceString(offset, offset + original.length(), replacement);
     });
 
     PsiDocumentManager.getInstance(editor.getProject()).commitDocument(editor.getDocument());
@@ -1024,12 +979,10 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationConstantsInAs() throws Exception {
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        bc.getCompilerOptions()
-          .setAdditionalConfigFilePath(getTestDataPath() + "/" + getBasePath() + "/" + getTestName(false) + "_custom_config.xml");
-        bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", ""));
-      }
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+      bc.getCompilerOptions()
+        .setAdditionalConfigFilePath(getTestDataPath() + "/" + getBasePath() + "/" + getTestName(false) + "_custom_config.xml");
+      bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", ""));
     });
     // following is ignored because overridden at bc level
     FlexBuildConfigurationManager.getInstance(myModule).getModuleLevelCompilerOptions()
@@ -1041,11 +994,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationConstantsInMxml() throws Exception {
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        bc.getCompilerOptions() .setAllOptions(Collections.singletonMap("compiler.define", "CONFIG1::defined1\t\nCONFIG1::defined2\t-1"));
-        bc.getCompilerOptions().setAdditionalOptions("-compiler.define=CONFIG2::defined3,true");
-      }
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+      bc.getCompilerOptions() .setAllOptions(Collections.singletonMap("compiler.define", "CONFIG1::defined1\t\nCONFIG1::defined2\t-1"));
+      bc.getCompilerOptions().setAdditionalOptions("-compiler.define=CONFIG2::defined3,true");
     });
 
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
@@ -1088,16 +1039,13 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testNoCompletionInFxPrivate() throws Exception {
-    myCompletionPerformer = new Runnable() {
-      @Override
-      public void run() {
-        final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(myProject, getEditor().getDocument());
-        for (Map.Entry<Integer, String> entry : map.entrySet()) {
-          myItems = null;
-          getEditor().getCaretModel().moveToOffset(entry.getKey());
-          FlexCompletionTest.super.complete();
-          assertNull(myItems);
-        }
+    myCompletionPerformer = () -> {
+      final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(myProject, getEditor().getDocument());
+      for (Map.Entry<Integer, String> entry : map.entrySet()) {
+        myItems = null;
+        getEditor().getCaretModel().moveToOffset(entry.getKey());
+        FlexCompletionTest.super.complete();
+        assertNull(myItems);
       }
     };
 
@@ -1379,13 +1327,11 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexLib, JSTestOption.WithSmartCompletion})
   public void testNonApplicableInheritors() throws Exception {
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        final ModifiableFlexBuildConfiguration bc2 = editor.copyConfiguration(bc1, BuildConfigurationNature.DEFAULT);
-        bc2.setName("bc 2");
-        bc2.getDependencies().getModifiableEntries().clear();
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      final ModifiableFlexBuildConfiguration bc2 = editor.copyConfiguration(bc1, BuildConfigurationNature.DEFAULT);
+      bc2.setName("bc 2");
+      bc2.getDependencies().getModifiableEntries().clear();
     });
 
     LookupElement[] elements = doTest("", "as");
@@ -1464,11 +1410,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   public void testVectorObject() throws Exception {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        FlexTestUtils.setSdk(bc1, sdk45);
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      FlexTestUtils.setSdk(bc1, sdk45);
     });
     final LookupElement[] elements = doTest("", "as");
     assertStartsWith(elements, "concat", "every", "filter");
@@ -1476,16 +1420,13 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public void testCompletionPerformance() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addFlexLibrary(false, myModule, "playerglobal", false, getTestDataPath() + getBasePath(), "playerglobal.swc",
-                                     null, null);
+    myAfterCommitRunnable = () -> {
+      FlexTestUtils.addFlexLibrary(false, myModule, "playerglobal", false, getTestDataPath() + getBasePath(), "playerglobal.swc",
+                                   null, null);
 
-        final PsiElement clazz = ActionScriptClassResolver
-          .findClassByQNameStatic("flash.display3D.textures.CubeTexture", GlobalSearchScope.moduleWithLibrariesScope(myModule));
-        clazz.getNode(); // this is required to switch from stubs to AST for library.swf from playerglobal.swc
-      }
+      final PsiElement clazz = ActionScriptClassResolver
+        .findClassByQNameStatic("flash.display3D.textures.CubeTexture", GlobalSearchScope.moduleWithLibrariesScope(myModule));
+      clazz.getNode(); // this is required to switch from stubs to AST for library.swf from playerglobal.swc
     };
 
     configureByFile(BASE_PATH + getTestName(false) + ".as");
@@ -1493,12 +1434,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final boolean doProfiling = false;
     if (doProfiling) ProfilingUtil.startCPUProfiling();
     try {
-      PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, new ThrowableRunnable() {
-        @Override
-        public void run() throws Throwable {
-          complete();
-        }
-      }).cpuBound().usesAllCPUCores().useLegacyScaling().assertTiming();
+      PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, () -> complete()).cpuBound().usesAllCPUCores().useLegacyScaling().assertTiming();
     }
     finally {
       if (doProfiling) ProfilingUtil.captureCPUSnapshot();

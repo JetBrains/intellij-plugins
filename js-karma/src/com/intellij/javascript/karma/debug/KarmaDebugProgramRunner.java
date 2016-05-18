@@ -112,12 +112,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
         @Override
         public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
           final RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, env);
-          karmaServer.onBrowsersReady(new Runnable() {
-            @Override
-            public void run() {
-              ExecutionUtil.restartIfActive(descriptor);
-            }
-          });
+          karmaServer.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
           return descriptor;
         }
       });
@@ -160,11 +155,6 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
                                                            @NotNull DebuggableWebBrowser debuggableWebBrowser,
                                                            @NotNull final RunProfileStarter starter) {
     return debuggableWebBrowser.getDebugEngine().prepareDebugger(project, debuggableWebBrowser.getWebBrowser())
-      .then(new Function<Unit, RunProfileStarter>() {
-        @Override
-        public RunProfileStarter fun(Unit aVoid) {
-          return starter;
-        }
-      });
+      .then(aVoid -> starter);
   }
 }

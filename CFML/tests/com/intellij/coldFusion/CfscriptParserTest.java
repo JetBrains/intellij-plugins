@@ -130,12 +130,9 @@ public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testDefaultFunctionNameInCf8() throws Throwable {
-    Util.runTestWithLanguageLevel(new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        doTest();
-        return null;
-      }
+    Util.runTestWithLanguageLevel(() -> {
+      doTest();
+      return null;
     }, CfmlLanguage.CF8, getProject());
   }
 

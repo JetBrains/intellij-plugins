@@ -179,10 +179,5 @@ public class OsgiRunState extends JavaCommandLineState {
     }
   }
 
-  public static final Comparator<SelectedBundle> START_LEVEL_COMPARATOR = new Comparator<SelectedBundle>() {
-    @Override
-    public int compare(@NotNull SelectedBundle b1, @NotNull SelectedBundle b2) {
-      return b1.getStartLevel() - b2.getStartLevel();
-    }
-  };
+  public static final Comparator<SelectedBundle> START_LEVEL_COMPARATOR = (b1, b2) -> b1.getStartLevel() - b2.getStartLevel();
 }

@@ -31,12 +31,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ActionJavaAnnotatorTest extends BasicLightHighlightingTestCase {
 
-  private final Function<PsiElement, String> ACTION_NAME_RESOLVE = new Function<PsiElement, String>() {
-    @Override
-    public String fun(final PsiElement psiElement) {
-      return ((XmlTag)psiElement).getAttributeValue("name");
-    }
-  };
+  private final Function<PsiElement, String> ACTION_NAME_RESOLVE = psiElement -> ((XmlTag)psiElement).getAttributeValue("name");
 
   @Override
   @NotNull
@@ -75,11 +70,6 @@ public class ActionJavaAnnotatorTest extends BasicLightHighlightingTestCase {
     createStrutsFileSet("struts-validation.xml");
     myFixture.copyFileToProject("/com/MyValidationAction-validation.xml");
 
-    checkGutterTargetElements("/com/MyValidationAction.java", new Function<PsiElement, String>() {
-      @Override
-      public String fun(final PsiElement psiElement) {
-        return ((PsiFile)psiElement).getName();
-      }
-    }, "MyValidationAction-validation.xml");
+    checkGutterTargetElements("/com/MyValidationAction.java", psiElement -> ((PsiFile)psiElement).getName(), "MyValidationAction-validation.xml");
   }
 }

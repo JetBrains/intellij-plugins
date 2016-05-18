@@ -44,15 +44,12 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
     final List<TypeHierarchyItem> hierarchyItems =
       DartAnalysisServerService.getInstance().search_getTypeHierarchy(fileRef.get(), offsetRef.get(), false);
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        final List<DartComponent> components = componentTypeRef.get() == DartComponentType.CLASS
-                                               ? getSubClasses(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems)
-                                               : getSubMembers(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems);
-        for (DartComponent component : components) {
-          consumer.process(component);
-        }
+    ApplicationManager.getApplication().runReadAction(() -> {
+      final List<DartComponent> components = componentTypeRef.get() == DartComponentType.CLASS
+                                             ? getSubClasses(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems)
+                                             : getSubMembers(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems);
+      for (DartComponent component : components) {
+        consumer.process(component);
       }
     });
   }
@@ -61,30 +58,27 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
                               @NotNull final Ref<VirtualFile> fileRef,
                               @NotNull final Ref<Integer> offsetRef,
                               @NotNull final Ref<DartComponentType> componentTypeRef) {
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        final PsiElement element = parameters.getElement();
-        if (element.getLanguage() != DartLanguage.INSTANCE) return;
+    ApplicationManager.getApplication().runReadAction(() -> {
+      final PsiElement element = parameters.getElement();
+      if (element.getLanguage() != DartLanguage.INSTANCE) return;
 
-        final DartComponentType componentType = DartComponentType.typeOf(element);
-        if (componentType != DartComponentType.CLASS &&
-            componentType != DartComponentType.METHOD &&
-            componentType != DartComponentType.OPERATOR) {
-          return;
-        }
+      final DartComponentType componentType = DartComponentType.typeOf(element);
+      if (componentType != DartComponentType.CLASS &&
+          componentType != DartComponentType.METHOD &&
+          componentType != DartComponentType.OPERATOR) {
+        return;
+      }
 
-        final DartComponentName componentName = element instanceof DartComponentName
-                                                ? (DartComponentName)element
-                                                : element instanceof DartComponent
-                                                  ? ((DartComponent)element).getComponentName()
-                                                  : null;
-        final VirtualFile file = componentName == null ? null : DartResolveUtil.getRealVirtualFile(componentName.getContainingFile());
-        if (file != null) {
-          fileRef.set(file);
-          offsetRef.set(componentName.getTextRange().getStartOffset());
-          componentTypeRef.set(componentType);
-        }
+      final DartComponentName componentName = element instanceof DartComponentName
+                                              ? (DartComponentName)element
+                                              : element instanceof DartComponent
+                                                ? ((DartComponent)element).getComponentName()
+                                                : null;
+      final VirtualFile file = componentName == null ? null : DartResolveUtil.getRealVirtualFile(componentName.getContainingFile());
+      if (file != null) {
+        fileRef.set(file);
+        offsetRef.set(componentName.getTextRange().getStartOffset());
+        componentTypeRef.set(componentType);
       }
     });
   }

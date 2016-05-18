@@ -75,11 +75,8 @@ public abstract class DartProjectTemplate {
         templates.add(new CmdLineAppTemplate());
       }
 
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          templatesConsumer.consume(templates);
-        }
+      ApplicationManager.getApplication().invokeLater(() -> {
+        templatesConsumer.consume(templates);
       }, ModalityState.any());
     }
   }
@@ -104,49 +101,44 @@ public abstract class DartProjectTemplate {
   }
 
   static void createWebRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {
-    DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(new Runnable() {
-      public void run() {
-        final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
-        if (dartium == null) return;
+    DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(() -> {
+      final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
+      if (dartium == null) return;
 
-        final Url url = WebBrowserServiceImpl.getDebuggableUrl(PsiManager.getInstance(module.getProject()).findFile(htmlFile));
-        if (url == null) return;
+      final Url url = WebBrowserServiceImpl.getDebuggableUrl(PsiManager.getInstance(module.getProject()).findFile(htmlFile));
+      if (url == null) return;
 
-        final RunManager runManager = RunManager.getInstance(module.getProject());
-        try {
-          final RunnerAndConfigurationSettings settings =
-            runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
-
-          ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
-          ((JavaScriptDebugConfiguration)settings.getConfiguration()).setEngineId(dartium.getId().toString());
-          settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
-
-          runManager.addConfiguration(settings, false);
-          runManager.setSelectedConfiguration(settings);
-        }
-        catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
-      }
-    }, module);
-  }
-
-  static void createCmdLineRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile mainDartFile) {
-    DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(new Runnable() {
-      @Override
-      public void run() {
-        final RunManager runManager = RunManager.getInstance(module.getProject());
+      final RunManager runManager = RunManager.getInstance(module.getProject());
+      try {
         final RunnerAndConfigurationSettings settings =
-          runManager.createRunConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+          runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
 
-        final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
-        runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
-        runConfiguration.getRunnerParameters()
-          .setWorkingDirectory(DartCommandLineRunnerParameters.suggestDartWorkingDir(module.getProject(), mainDartFile));
-
-        settings.setName(runConfiguration.suggestedName());
+        ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
+        ((JavaScriptDebugConfiguration)settings.getConfiguration()).setEngineId(dartium.getId().toString());
+        settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
 
         runManager.addConfiguration(settings, false);
         runManager.setSelectedConfiguration(settings);
       }
+      catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
+    }, module);
+  }
+
+  static void createCmdLineRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile mainDartFile) {
+    DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(() -> {
+      final RunManager runManager = RunManager.getInstance(module.getProject());
+      final RunnerAndConfigurationSettings settings =
+        runManager.createRunConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+
+      final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
+      runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
+      runConfiguration.getRunnerParameters()
+        .setWorkingDirectory(DartCommandLineRunnerParameters.suggestDartWorkingDir(module.getProject(), mainDartFile));
+
+      settings.setName(runConfiguration.suggestedName());
+
+      runManager.addConfiguration(settings, false);
+      runManager.setSelectedConfiguration(settings);
     }, module);
   }
 }

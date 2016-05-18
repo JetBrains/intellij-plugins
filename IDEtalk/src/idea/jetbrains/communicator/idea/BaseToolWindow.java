@@ -79,19 +79,13 @@ public abstract class BaseToolWindow implements ProjectComponent {
   public void expandToolWindow() {
     final Semaphore semaphore = new Semaphore(1);
     semaphore.tryAcquire();
-    UIUtil.invokeLater(new Runnable() {
-      public void run() {
-        ToolWindow window = myToolWindowManager.getToolWindow(getToolWindowId());
-        if (window != null) {
-          window.show(new Runnable() {
-            public void run() {
-              semaphore.release();
-            }
-          });
-        }
-        else {
-          semaphore.release();
-        }
+    UIUtil.invokeLater(() -> {
+      ToolWindow window = myToolWindowManager.getToolWindow(getToolWindowId());
+      if (window != null) {
+        window.show(() -> semaphore.release());
+      }
+      else {
+        semaphore.release();
       }
     });
     waitForOpen(semaphore);

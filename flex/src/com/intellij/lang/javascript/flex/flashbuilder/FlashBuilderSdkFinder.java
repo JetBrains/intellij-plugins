@@ -142,10 +142,8 @@ public class FlashBuilderSdkFinder {
     final File pluginsDir = new File(fbInstallationPath + "/eclipse/plugins");
     if (!pluginsDir.isDirectory()) return;
 
-    final File[] airSdkParents = pluginsDir.listFiles(new FilenameFilter() {
-      public boolean accept(final File dir, final String name) {
-        return name.startsWith("com.adobe.flash.compiler_");
-      }
+    final File[] airSdkParents = pluginsDir.listFiles((dir, name) -> {
+      return name.startsWith("com.adobe.flash.compiler_");
     });
 
     for (File airSdkParent : airSdkParents) {
@@ -205,12 +203,10 @@ public class FlashBuilderSdkFinder {
   public static String findFBInstallationPath() {
     final List<File> fbDirs = new ArrayList<File>();
 
-    final FileFilter filter = new FileFilter() {
-      public boolean accept(final File dir) {
-        final String name = dir.getName();
-        return dir.isDirectory() && (name.contains("Flash") || name.contains("Flex")) && name.contains("Builder")
-               && new File(dir, SDKS_FOLDER).isDirectory();
-      }
+    final FileFilter filter = dir -> {
+      final String name = dir.getName();
+      return dir.isDirectory() && (name.contains("Flash") || name.contains("Flex")) && name.contains("Builder")
+             && new File(dir, SDKS_FOLDER).isDirectory();
     };
 
     final String programsPath = SystemInfo.isMac ? "/Applications" : SystemInfo.isWindows ? System.getenv("ProgramFiles") : null;

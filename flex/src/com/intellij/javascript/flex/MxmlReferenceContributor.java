@@ -261,49 +261,42 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       }
     });
 
-    final Function<PsiReference, LocalQuickFix[]> quickFixProvider = new Function<PsiReference, LocalQuickFix[]>() {
-      @Nullable
-      @Override
-      public LocalQuickFix[] fun(PsiReference reference) {
-        final PsiElement element = reference.getElement();
+    final Function<PsiReference, LocalQuickFix[]> quickFixProvider = reference -> {
+      final PsiElement element = reference.getElement();
 
-        final String classFqn = getTrimmedValueAndRange((XmlElement)element).first;
-        final String tagOrAttrName = element instanceof XmlAttributeValue
-                                     ? ((XmlAttribute)element.getParent()).getName()
-                                     : ((XmlTag)element).getLocalName();
+      final String classFqn = getTrimmedValueAndRange((XmlElement)element).first;
+      final String tagOrAttrName = element instanceof XmlAttributeValue
+                                   ? ((XmlAttribute)element.getParent()).getName()
+                                   : ((XmlTag)element).getLocalName();
 
 
-        final CreateClassIntentionWithCallback[] intentions;
-        if (SKIN_CLASS_ATTR_NAME.equals(tagOrAttrName)) {
-          intentions = new CreateClassIntentionWithCallback[]{new CreateFlexSkinIntention(classFqn, element)};
-        }
-        else if ("firstView".equals(tagOrAttrName)) {
-          intentions = new CreateClassIntentionWithCallback[]{new CreateFlexMobileViewIntentionAndFix(classFqn, element, false)};
-        }
-        else {
-          intentions = new CreateClassIntentionWithCallback[]{
-            new CreateClassOrInterfaceFix(classFqn, null, element),
-            new CreateFlexComponentFix(classFqn, element)
-          };
-        }
-
-        for (CreateClassIntentionWithCallback intention : intentions) {
-          intention.setCreatedClassFqnConsumer(new Consumer<String>() {
-            @Override
-            public void consume(final String fqn) {
-              if (!element.isValid()) return;
-
-              if (element instanceof XmlAttributeValue) {
-                ((XmlAttribute)element.getParent()).setValue(fqn);
-              }
-              else {
-                ((XmlTag)element).getValue().setText(fqn);
-              }
-            }
-          });
-        }
-        return intentions;
+      final CreateClassIntentionWithCallback[] intentions;
+      if (SKIN_CLASS_ATTR_NAME.equals(tagOrAttrName)) {
+        intentions = new CreateClassIntentionWithCallback[]{new CreateFlexSkinIntention(classFqn, element)};
       }
+      else if ("firstView".equals(tagOrAttrName)) {
+        intentions = new CreateClassIntentionWithCallback[]{new CreateFlexMobileViewIntentionAndFix(classFqn, element, false)};
+      }
+      else {
+        intentions = new CreateClassIntentionWithCallback[]{
+          new CreateClassOrInterfaceFix(classFqn, null, element),
+          new CreateFlexComponentFix(classFqn, element)
+        };
+      }
+
+      for (CreateClassIntentionWithCallback intention : intentions) {
+        intention.setCreatedClassFqnConsumer(fqn -> {
+          if (!element.isValid()) return;
+
+          if (element instanceof XmlAttributeValue) {
+            ((XmlAttribute)element.getParent()).setValue(fqn);
+          }
+          else {
+            ((XmlTag)element).getValue().setText(fqn);
+          }
+        });
+      }
+      return intentions;
     };
 
     XmlUtil.registerXmlTagReferenceProvider(registrar, null, TrueFilter.INSTANCE, true,

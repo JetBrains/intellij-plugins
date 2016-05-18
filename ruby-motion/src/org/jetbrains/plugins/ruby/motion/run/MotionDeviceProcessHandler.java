@@ -112,24 +112,20 @@ public class MotionDeviceProcessHandler extends RubyProcessHandler implements De
   private String getDeviceId() {
     final Ref<String> deviceId = new Ref<String>();
     final int rakePid = UnixProcessManager.getProcessPid(myProcess);
-    UnixProcessManager.processPSOutput(UnixProcessManager.getPSCmd(false, false), new Processor<String>() {
-      @Override
-      @SuppressWarnings("UnusedDeclaration")
-      public boolean process(String s) {
-        final Scanner scanner = new Scanner(s);
-        final int ppid = scanner.nextInt();
-        final int pid = scanner.nextInt();
-        final String command = scanner.nextLine();
-        if (ppid == rakePid && command.contains("deploy")) {
-          final Scanner commandScanner = new Scanner(command);
-          final String deploy = commandScanner.next();
-          if (!commandScanner.hasNext()) return false;
-          final String id = commandScanner.next();
-          deviceId.set("-d".equals(id) ? commandScanner.next() : id);
-          return true;
-        }
-        return false;
+    UnixProcessManager.processPSOutput(UnixProcessManager.getPSCmd(false, false), s -> {
+      final Scanner scanner = new Scanner(s);
+      final int ppid = scanner.nextInt();
+      final int pid = scanner.nextInt();
+      final String command = scanner.nextLine();
+      if (ppid == rakePid && command.contains("deploy")) {
+        final Scanner commandScanner = new Scanner(command);
+        final String deploy = commandScanner.next();
+        if (!commandScanner.hasNext()) return false;
+        final String id = commandScanner.next();
+        deviceId.set("-d".equals(id) ? commandScanner.next() : id);
+        return true;
       }
+      return false;
     });
     return deviceId.get();
   }

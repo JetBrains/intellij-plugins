@@ -77,12 +77,8 @@ public class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspect
     }
 
     public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        public void run() {
-          RefactoringActionHandlerFactory.getInstance().createMoveHandler()
-            .invoke(project, editor, file, DataManager.getInstance().getDataContext());
-        }
-      });
+      ApplicationManager.getApplication().invokeLater(() -> RefactoringActionHandlerFactory.getInstance().createMoveHandler()
+        .invoke(project, editor, file, DataManager.getInstance().getDataContext()));
     }
 
     public boolean startInWriteAction() {

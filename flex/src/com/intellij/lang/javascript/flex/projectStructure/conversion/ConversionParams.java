@@ -160,10 +160,8 @@ public class ConversionParams {
       final LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
       model.setKind(FlexLibraryType.FLEX_LIBRARY);
       model.setProperties(FlexLibraryType.FLEX_LIBRARY.createDefaultProperties());
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          model.commit();
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        model.commit();
       });
     }
     else {
@@ -220,32 +218,22 @@ public class ConversionParams {
           FlexBuildConfigurationManagerImpl.State s =
             XmlSerializer.deserialize(buildConfigManagerElement, FlexBuildConfigurationManagerImpl.State.class);
 
-          return ContainerUtil.mapNotNull(s.CONFIGURATIONS, new Function<FlexBuildConfigurationState, String>() {
-            @Nullable
-            @Override
-            public String fun(final FlexBuildConfigurationState bcState) {
-              return bcState.OUTPUT_TYPE == OutputType.Library ? bcState.NAME : null;
-            }
-          });
+          return ContainerUtil.mapNotNull(s.CONFIGURATIONS, bcState -> bcState.OUTPUT_TYPE == OutputType.Library ? bcState.NAME : null);
         }
       }
       return Collections.emptyList();
     }
 
     final List<Element> facets = FlexModuleConverter.getFlexFacets(moduleSettings);
-    return ContainerUtil.mapNotNull(facets, new Function<Element, String>() {
-      @Nullable
-      @Override
-      public String fun(Element facet) {
-        Element oldConfigurationElement = facet.getChild(JpsFacetSerializer.CONFIGURATION_TAG);
-        if (oldConfigurationElement != null) {
-          FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
-          if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
-            return FlexModuleConverter.generateFacetBcName(facets, facet);
-          }
+    return ContainerUtil.mapNotNull(facets, facet -> {
+      Element oldConfigurationElement = facet.getChild(JpsFacetSerializer.CONFIGURATION_TAG);
+      if (oldConfigurationElement != null) {
+        FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
+        if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
+          return FlexModuleConverter.generateFacetBcName(facets, facet);
         }
-        return null;
       }
+      return null;
     });
   }
 }

@@ -88,15 +88,13 @@ public class DartExtractMethodHandler implements RefactoringActionHandler {
                                                  final PsiElement[] elements,
                                                  final DartControlFlow controlFlow,
                                                  final Scope scope) {
-    CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-      public void run() {
-        AccessToken l = WriteAction.start();
-        try {
-          doRefactoring(editor, elements, controlFlow, scope);
-        }
-        finally {
-          l.finish();
-        }
+    CommandProcessor.getInstance().executeCommand(project, () -> {
+      AccessToken l = WriteAction.start();
+      try {
+        doRefactoring(editor, elements, controlFlow, scope);
+      }
+      finally {
+        l.finish();
       }
     }, DartBundle.message("dart.extract.method"), null);
   }

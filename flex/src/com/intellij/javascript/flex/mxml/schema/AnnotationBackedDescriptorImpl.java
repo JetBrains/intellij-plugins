@@ -357,16 +357,13 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       final XmlDocument document = ((XmlFile)descriptorDeclaration).getDocument();
       final XmlTag rootTag = document == null ? null : document.getRootTag();
       if (rootTag != null) {
-        ClassBackedElementDescriptor.processClassBackedTagsWithIdAttribute(rootTag, new Processor<Pair<XmlAttribute, String>>() {
-          @Override
-          public boolean process(final Pair<XmlAttribute, String> idAttributeAndItsType) {
-            final XmlAttributeValue xmlAttributeValue = idAttributeAndItsType.first.getValueElement();
-            if (xmlAttributeValue != null && xmlAttributeValue.getValue().equals(AnnotationBackedDescriptorImpl.this.name)) {
-              resultRef.set(xmlAttributeValue);
-              return false;
-            }
-            return true;
+        ClassBackedElementDescriptor.processClassBackedTagsWithIdAttribute(rootTag, idAttributeAndItsType -> {
+          final XmlAttributeValue xmlAttributeValue = idAttributeAndItsType.first.getValueElement();
+          if (xmlAttributeValue != null && xmlAttributeValue.getValue().equals(AnnotationBackedDescriptorImpl.this.name)) {
+            resultRef.set(xmlAttributeValue);
+            return false;
           }
+          return true;
         });
       }
 

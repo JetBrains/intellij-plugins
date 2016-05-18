@@ -103,34 +103,19 @@ public abstract class BaseUserImpl implements User {
   private void setCanAccessWithEvent(final boolean canAccessMyFiles, EventBroadcaster broadcaster) {
     if (canAccessMyFiles == canAccessMyFiles()) return;
     broadcaster.doChange(new UserEvent.Updated(this, CAN_ACCESS_MY_FILES,
-        canAccessMyFiles(), canAccessMyFiles), new Runnable() {
-      @Override
-      public void run() {
-        myCanAccessMyFiles = canAccessMyFiles;
-      }
-    });
+        canAccessMyFiles(), canAccessMyFiles), () -> myCanAccessMyFiles = canAccessMyFiles);
   }
 
   private void setGroupWithEvent(final String group, EventBroadcaster broadcaster) {
     if (myGroup.equals(group)) return;
 
-    broadcaster.doChange(new UserEvent.Updated(this, GROUP, myGroup, group), new Runnable() {
-      @Override
-      public void run() {
-        myGroup = group;
-      }
-    });
+    broadcaster.doChange(new UserEvent.Updated(this, GROUP, myGroup, group), () -> myGroup = group);
   }
 
   private void setDisplayNameWithEvent(final String name, EventBroadcaster broadcaster) {
     if (myDisplayName.equals(name)) return;
 
-    broadcaster.doChange(new UserEvent.Updated(this, DISPLAY_NAME, myDisplayName, name), new Runnable() {
-      @Override
-      public void run() {
-        myDisplayName = name;
-      }
-    });
+    broadcaster.doChange(new UserEvent.Updated(this, DISPLAY_NAME, myDisplayName, name), () -> myDisplayName = name);
 
   }
 

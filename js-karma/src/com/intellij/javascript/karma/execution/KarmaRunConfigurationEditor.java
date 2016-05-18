@@ -90,31 +90,27 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     final TextFieldWithHistory textFieldWithHistory = karmaPackageDirPathComponent.getChildComponent();
     textFieldWithHistory.setHistorySize(-1);
     textFieldWithHistory.setMinimumAndPreferredWidth(0);
-    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
-      @NotNull
-      @Override
-      public List<String> produce() {
-        NodeJsLocalInterpreter interpreter = NodeJsLocalInterpreter.tryCast(myNodeInterpreterField.getInterpreter());
-        List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
-        VirtualFile requester = KarmaUtil.getRequester(
-          myProject,
-          myConfigPathTextFieldWithBrowseButton.getChildComponent().getText()
-        );
-        NodeModuleSearchUtil.findModulesWithName(modules,
-                                                 KarmaUtil.NODE_PACKAGE_NAME,
-                                                 requester,
-                                                 NodeSettings.create(interpreter),
-                                                 true);
-        List<String> moduleDirs = ContainerUtil.newArrayListWithCapacity(modules.size());
-        for (CompletionModuleInfo module : modules) {
-          VirtualFile dir = module.getVirtualFile();
-          if (dir != null && dir.isDirectory()) {
-            moduleDirs.add(FileUtil.toSystemDependentName(dir.getPath()));
-          }
+    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, () -> {
+      NodeJsLocalInterpreter interpreter = NodeJsLocalInterpreter.tryCast(myNodeInterpreterField.getInterpreter());
+      List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
+      VirtualFile requester = KarmaUtil.getRequester(
+        myProject,
+        myConfigPathTextFieldWithBrowseButton.getChildComponent().getText()
+      );
+      NodeModuleSearchUtil.findModulesWithName(modules,
+                                               KarmaUtil.NODE_PACKAGE_NAME,
+                                               requester,
+                                               NodeSettings.create(interpreter),
+                                               true);
+      List<String> moduleDirs = ContainerUtil.newArrayListWithCapacity(modules.size());
+      for (CompletionModuleInfo module : modules) {
+        VirtualFile dir = module.getVirtualFile();
+        if (dir != null && dir.isDirectory()) {
+          moduleDirs.add(FileUtil.toSystemDependentName(dir.getPath()));
         }
-        Collections.sort(moduleDirs);
-        return moduleDirs;
       }
+      Collections.sort(moduleDirs);
+      return moduleDirs;
     });
 
     //noinspection DialogTitleCapitalization
@@ -133,20 +129,13 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     final TextFieldWithHistory textFieldWithHistory = textFieldWithHistoryWithBrowseButton.getChildComponent();
     textFieldWithHistory.setHistorySize(-1);
     textFieldWithHistory.setMinimumAndPreferredWidth(0);
-    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
-      @NotNull
-      @Override
-      public List<String> produce() {
-        List<VirtualFile> newFiles = KarmaUtil.listPossibleConfigFilesInProject(project);
-        List<String> newFilePaths = ContainerUtil.map(newFiles, new Function<VirtualFile, String>() {
-          @Override
-          public String fun(VirtualFile file) {
-            return FileUtil.toSystemDependentName(file.getPath());
-          }
-        });
-        Collections.sort(newFilePaths);
-        return newFilePaths;
-      }
+    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, () -> {
+      List<VirtualFile> newFiles = KarmaUtil.listPossibleConfigFilesInProject(project);
+      List<String> newFilePaths = ContainerUtil.map(newFiles, file -> {
+        return FileUtil.toSystemDependentName(file.getPath());
+      });
+      Collections.sort(newFilePaths);
+      return newFilePaths;
     });
 
     SwingHelper.installFileCompletionAndBrowseDialog(
@@ -183,11 +172,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       myNodeInterpreterField.setPreferredWidthToFitText();
       SwingHelper.setPreferredWidthToFitText(myKarmaPackageDirPathTextFieldWithBrowseButton);
       SwingHelper.setPreferredWidthToFitText(myConfigPathTextFieldWithBrowseButton);
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          SwingHelper.adjustDialogSizeToFitPreferredSize(dialogWrapper);
-        }
+      ApplicationManager.getApplication().invokeLater(() -> {
+        SwingHelper.adjustDialogSizeToFitPreferredSize(dialogWrapper);
       }, ModalityState.any());
     }
   }

@@ -125,11 +125,7 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
 
     final Function<PathReference, Icon> iconFunction;
     if (staticIcon == null) {
-      iconFunction = new Function<PathReference, Icon>() {
-        public Icon fun(final PathReference webPath) {
-          return target.getIcon(Iconable.ICON_FLAG_READ_STATUS);
-        }
-      };
+      iconFunction = webPath -> target.getIcon(Iconable.ICON_FLAG_READ_STATUS);
     } else {
       iconFunction = new ConstantFunction<PathReference, Icon>(staticIcon);
     }

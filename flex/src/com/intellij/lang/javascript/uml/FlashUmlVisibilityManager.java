@@ -25,12 +25,10 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
     }
   }
 
-  private static final Comparator<VisibilityLevel> COMPARATOR = new Comparator<VisibilityLevel>() {
-    public int compare(VisibilityLevel o1, VisibilityLevel o2) {
-      final int ind1 = predefinedLevels.indexOf(o1);
-      final int ind2 = predefinedLevels.indexOf(o2);
-      return ind1 == ind2 ? 0 : ind1 < 0 ? 1 : ind1 - ind2;
-    }
+  private static final Comparator<VisibilityLevel> COMPARATOR = (o1, o2) -> {
+    final int ind1 = predefinedLevels.indexOf(o1);
+    final int ind2 = predefinedLevels.indexOf(o2);
+    return ind1 == ind2 ? 0 : ind1 < 0 ? 1 : ind1 - ind2;
   };
 
   //@Override

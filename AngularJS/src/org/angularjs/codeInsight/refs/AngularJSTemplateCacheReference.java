@@ -46,14 +46,11 @@ public class AngularJSTemplateCacheReference extends AngularJSReferenceBase<JSLi
     final Ref<PsiElement> result = new Ref<PsiElement>();
     for (VirtualFile file : files) {
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-      AngularTemplateCacheIndex.processTemplates(psiFile, new Processor<XmlAttribute>() {
-        @Override
-        public boolean process(XmlAttribute attribute) {
-          if (id.equals(attribute.getValue())) {
-            result.set(attribute.getValueElement());
-          }
-          return result.isNull();
+      AngularTemplateCacheIndex.processTemplates(psiFile, attribute -> {
+        if (id.equals(attribute.getValue())) {
+          result.set(attribute.getValueElement());
         }
+        return result.isNull();
       });
     }
 

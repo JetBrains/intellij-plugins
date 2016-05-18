@@ -113,16 +113,13 @@ public class DesignerApplicationManager {
     LOG.assertTrue(application != null);
     final DesignerApplication disposedApp = application;
     application = null;
-    AppUIUtil.invokeOnEdt(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          Disposer.dispose(disposedApp);
-        }
-        finally {
-          serviceManager.disposeComponent();
-          serviceManager = null;
-        }
+    AppUIUtil.invokeOnEdt(() -> {
+      try {
+        Disposer.dispose(disposedApp);
+      }
+      finally {
+        serviceManager.disposeComponent();
+        serviceManager = null;
       }
     });
   }
@@ -218,12 +215,7 @@ public class DesignerApplicationManager {
       Application app = ApplicationManager.getApplication();
       if (app.isDispatchThread()) {
         final DocumentInfo finalDocumentInfo = documentInfo;
-        app.executeOnPooledThread(new Runnable() {
-          @Override
-          public void run() {
-            handler.consume(finalDocumentInfo);
-          }
-        });
+        app.executeOnPooledThread(() -> handler.consume(finalDocumentInfo));
       }
       else {
         handler.consume(documentInfo);
@@ -275,16 +267,13 @@ public class DesignerApplicationManager {
   }
 
   public static Consumer<DocumentInfo> createDocumentRenderedNotificationDoneHandler(final boolean syncTimestamp) {
-    return new Consumer<DocumentInfo>() {
-      @Override
-      public void consume(DocumentInfo info) {
-        Document document = FileDocumentManager.getInstance().getCachedDocument(info.getElement());
-        if (document != null) {
-          if (syncTimestamp) {
-            info.documentModificationStamp = document.getModificationStamp();
-          }
-          ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).documentRendered(info);
+    return info -> {
+      Document document = FileDocumentManager.getInstance().getCachedDocument(info.getElement());
+      if (document != null) {
+        if (syncTimestamp) {
+          info.documentModificationStamp = document.getModificationStamp();
         }
+        ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).documentRendered(info);
       }
     };
   }
@@ -292,22 +281,12 @@ public class DesignerApplicationManager {
   @NotNull
   public AsyncResult<BufferedImage> getDocumentImage(@NotNull XmlFile psiFile) {
     final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
-    renderIfNeed(psiFile, new Consumer<DocumentInfo>() {
-      @Override
-      public void consume(DocumentInfo documentInfo) {
-        Client.getInstance().getDocumentImage(documentInfo, result);
-      }
-    }, result, false);
+    renderIfNeed(psiFile, documentInfo -> Client.getInstance().getDocumentImage(documentInfo, result), result, false);
     return result;
   }
 
   public void openDocument(@NotNull final XmlFile psiFile, final boolean debug) {
-    renderIfNeed(psiFile, new Consumer<DocumentInfo>() {
-      @Override
-      public void consume(DocumentInfo documentInfo) {
-        Client.getInstance().selectComponent(documentInfo.getId(), 0);
-      }
-    }, null, debug);
+    renderIfNeed(psiFile, documentInfo -> Client.getInstance().selectComponent(documentInfo.getId(), 0), null, debug);
   }
 
   @TestOnly
@@ -353,15 +332,12 @@ public class DesignerApplicationManager {
                      ? FlashUIDesignerBundle.message("module.sdk.is.not.specified", module.getName())
                      : FlashUIDesignerBundle.message("module.sdk.is.not.compatible", sdk.getVersionString(), module.getName());
 
-    notifyUser(debug, message, module.getProject(), new Consumer<String>() {
-      @Override
-      public void consume(String id) {
-        if ("edit".equals(id)) {
-          FlexSdkUtils.openModuleConfigurable(module);
-        }
-        else {
-          LOG.error("unexpected id: " + id);
-        }
+    notifyUser(debug, message, module.getProject(), id -> {
+      if ("edit".equals(id)) {
+        FlexSdkUtils.openModuleConfigurable(module);
+      }
+      else {
+        LOG.error("unexpected id: " + id);
       }
     });
   }
@@ -374,19 +350,16 @@ public class DesignerApplicationManager {
     synchronized (initialRenderQueue) {
       final AtomicBoolean result = new AtomicBoolean();
       if (!initialRenderQueue.isEmpty()) {
-        initialRenderQueue.processActions(new Processor<RenderAction>() {
-          @Override
-          public boolean process(RenderAction renderAction) {
-            if (renderAction.file == null) {
-              ComplexRenderAction action = (ComplexRenderAction)renderAction;
-              if (onlyStyle == action.onlyStyle) {
-                action.merge(documents);
-                result.set(true);
-                return false;
-              }
+        initialRenderQueue.processActions(renderAction -> {
+          if (renderAction.file == null) {
+            ComplexRenderAction action = (ComplexRenderAction)renderAction;
+            if (onlyStyle == action.onlyStyle) {
+              action.merge(documents);
+              result.set(true);
+              return false;
             }
-            return true;
           }
+          return true;
         });
       }
 
@@ -477,29 +450,21 @@ public class DesignerApplicationManager {
         }
 
         if (unregisterTaskQueueProcessor == null) {
-          unregisterTaskQueueProcessor = new QueueProcessor<Module>(new Consumer<Module>() {
-            @Override
-            public void consume(Module module) {
-              boolean hasError = true;
-              final ActionCallback callback;
-              initialRenderQueue.suspend();
-              try {
-                callback = Client.getInstance().unregisterModule(module);
-                hasError = false;
-              }
-              finally {
-                if (hasError) {
-                  initialRenderQueue.resume();
-                }
-              }
-
-              callback.doWhenProcessed(new Runnable() {
-                @Override
-                public void run() {
-                  initialRenderQueue.resume();
-                }
-              });
+          unregisterTaskQueueProcessor = new QueueProcessor<Module>(module1 -> {
+            boolean hasError = true;
+            final ActionCallback callback;
+            initialRenderQueue.suspend();
+            try {
+              callback = Client.getInstance().unregisterModule(module1);
+              hasError = false;
             }
+            finally {
+              if (hasError) {
+                initialRenderQueue.resume();
+              }
+            }
+
+            callback.doWhenProcessed(() -> initialRenderQueue.resume());
           });
         }
 
@@ -559,11 +524,8 @@ public class DesignerApplicationManager {
           }
         }
       });
-      renderResult.doWhenProcessed(new Runnable() {
-        @Override
-        public void run() {
-          processed.set(true);
-        }
+      renderResult.doWhenProcessed(() -> {
+        processed.set(true);
       });
 
       while (!processed.get()) {

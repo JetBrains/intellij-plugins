@@ -91,15 +91,12 @@ public class DartExtractMethodRefactoringTest extends CodeInsightFixtureTestCase
     // apply the SourceChange
     final SourceChange change = refactoring.getChange();
     assertNotNull(change);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          AssistUtils.applySourceChange(myFixture.getProject(), change, false);
-        }
-        catch (DartSourceEditException e) {
-          fail(e.getMessage());
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        AssistUtils.applySourceChange(myFixture.getProject(), change, false);
+      }
+      catch (DartSourceEditException e) {
+        fail(e.getMessage());
       }
     });
     // validate

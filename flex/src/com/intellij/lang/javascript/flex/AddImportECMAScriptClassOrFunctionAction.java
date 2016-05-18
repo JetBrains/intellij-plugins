@@ -203,11 +203,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
           public boolean execute(@NotNull final JSQualifiedNamedElement element) {
             CommandProcessor.getInstance().executeCommand(
                 project,
-                new Runnable() {
-                  public void run() {
-                    doImport(element.getQualifiedName());
-                  }
-                },
+                () -> doImport(element.getQualifiedName()),
                 getClass().getName(),
                 this
              );
@@ -219,11 +215,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     }
     else {
       if (myUnambiguousTheFlyMode) {
-        CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
-          public void run() {
-            doImport(candidates.iterator().next().getQualifiedName());
-          }
-        });
+        CommandProcessor.getInstance().runUndoTransparentAction(() -> doImport(candidates.iterator().next().getQualifiedName()));
       }
       else {
         doImport(candidates.iterator().next().getQualifiedName());
@@ -232,17 +224,14 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
   }
 
   private void doImport(final String qName) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final PsiElement element = myReference.getElement();
-        SmartPsiElementPointer<PsiElement> pointer =
-          SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
-        ImportUtils.doImport(element, qName, true);
-        PsiElement newElement = pointer.getElement();
-        if (newElement != null) {
-          ImportUtils.insertUseNamespaceIfNeeded(qName, newElement);
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final PsiElement element = myReference.getElement();
+      SmartPsiElementPointer<PsiElement> pointer =
+        SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
+      ImportUtils.doImport(element, qName, true);
+      PsiElement newElement = pointer.getElement();
+      if (newElement != null) {
+        ImportUtils.insertUseNamespaceIfNeeded(qName, newElement);
       }
     });
   }

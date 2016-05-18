@@ -30,12 +30,10 @@ import java.util.List;
 
 public class FlexProjectStructureDetector extends ProjectStructureDetector {
 
-  public static final NullableFunction<CharSequence, String> PACKAGE_NAME_FETCHER = new NullableFunction<CharSequence, String>() {
-    public String fun(final CharSequence charSequence) {
-      Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
-      lexer.start(charSequence);
-      return readPackageName(charSequence, lexer);
-    }
+  public static final NullableFunction<CharSequence, String> PACKAGE_NAME_FETCHER = charSequence -> {
+    Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
+    lexer.start(charSequence);
+    return readPackageName(charSequence, lexer);
   };
 
   public static boolean isActionScriptFile(File file) {

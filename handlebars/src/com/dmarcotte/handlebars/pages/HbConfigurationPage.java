@@ -87,11 +87,8 @@ public class HbConfigurationPage implements SearchableConfigurable {
     HbConfig.setCommenterLanguage((Language)myCommenterLanguage.getSelectedItem());
 
     if (HbConfig.setShouldOpenHtmlAsHandlebars(htmlAsHb.isSelected(), myProject)) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          FileTypeManagerEx.getInstanceEx().fireFileTypesChanged();
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        FileTypeManagerEx.getInstanceEx().fireFileTypesChanged();
       });
     }
   }
@@ -112,12 +109,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
     // add using the native Handlebars commenter as an option
     languages.add(HbLanguage.INSTANCE);
 
-    Collections.sort(languages, new Comparator<Language>() {
-      @Override
-      public int compare(final Language o1, final Language o2) {
-        return o1.getID().compareTo(o2.getID());
-      }
-    });
+    Collections.sort(languages, (o1, o2) -> o1.getID().compareTo(o2.getID()));
     for (Language language : languages) {
       model.addElement(language);
     }

@@ -75,40 +75,31 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     final String sdkName = generateSdkName(sdkVersion);
     Sdk sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
     if (sdk == null) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          FlexSdkType2 sdkType = FlexSdkType2.getInstance();
-          Sdk sdk = new ProjectJdkImpl(sdkName, sdkType, flexSdkRootPath, "");
-          ProjectJdkTable.getInstance().addJdk(sdk);
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        FlexSdkType2 sdkType = FlexSdkType2.getInstance();
+        Sdk sdk1 = new ProjectJdkImpl(sdkName, sdkType, flexSdkRootPath, "");
+        ProjectJdkTable.getInstance().addJdk(sdk1);
 
-          Disposer.register(getSdkParentDisposable(), new Disposable() {
-            @Override
-            public void dispose() {
-              ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                @Override
-                public void run() {
-                  ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();
-                  sdkTable.removeJdk(sdkTable.findJdk(sdkName));
-                }
-              });
-            }
-          });
+        Disposer.register(getSdkParentDisposable(), new Disposable() {
+          @Override
+          public void dispose() {
+            ApplicationManager.getApplication().runWriteAction(() -> {
+              ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();
+              sdkTable.removeJdk(sdkTable.findJdk(sdkName));
+            });
+          }
+        });
 
-          final SdkModificator modificator = sdk.getSdkModificator();
-          modificator.setVersionString(FlexSdkType2.getInstance().getVersionString(sdk.getHomePath()));
-          modifySdk(sdk, modificator);
-          modificator.commitChanges();
-        }
+        final SdkModificator modificator = sdk1.getSdkModificator();
+        modificator.setVersionString(FlexSdkType2.getInstance().getVersionString(sdk1.getHomePath()));
+        modifySdk(sdk1, modificator);
+        modificator.commitChanges();
       });
     }
 
-    FlexTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexBuildConfiguration>() {
-      @Override
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        bc.setNature(new BuildConfigurationNature(targetPlatform, false, getOutputType()));
-        bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdkName));
-      }
+    FlexTestUtils.modifyBuildConfiguration(module, bc -> {
+      bc.setNature(new BuildConfigurationNature(targetPlatform, false, getOutputType()));
+      bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdkName));
     });
   }
 

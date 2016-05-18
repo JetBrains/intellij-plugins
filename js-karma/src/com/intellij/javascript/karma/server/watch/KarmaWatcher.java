@@ -40,12 +40,7 @@ public class KarmaWatcher {
           JsonPrimitive p = pattern.getAsJsonPrimitive();
           paths.add(p.getAsString());
         }
-        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-          @Override
-          public void run() {
-            mySession = new KarmaWatchSession(myServer, paths);
-          }
-        });
+        ApplicationManager.getApplication().executeOnPooledThread((Runnable)() -> mySession = new KarmaWatchSession(myServer, paths));
       }
     };
   }

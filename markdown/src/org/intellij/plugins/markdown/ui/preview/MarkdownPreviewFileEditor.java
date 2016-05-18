@@ -83,12 +83,9 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
         @Override
         public void documentChanged(final DocumentEvent e) {
-          myPooledAlarm.addRequest(new Runnable() {
-            @Override
-            public void run() {
-              //myLastScrollOffset = e.getOffset();
-              updateHtml(true);
-            }
+          myPooledAlarm.addRequest(() -> {
+            //myLastScrollOffset = e.getOffset();
+            updateHtml(true);
           }, PARSING_CALL_TIMEOUT_MS);
         }
       }, this);
@@ -117,14 +114,11 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       if (myLastScrollRequest != null) {
         mySwingAlarm.cancelRequest(myLastScrollRequest);
       }
-      myLastScrollRequest = new Runnable() {
-        @Override
-        public void run() {
-          myLastScrollOffset = offset;
-          myPanel.scrollToMarkdownSrcOffset(myLastScrollOffset);
-          synchronized (REQUESTS_LOCK) {
-            myLastScrollRequest = null;
-          }
+      myLastScrollRequest = () -> {
+        myLastScrollOffset = offset;
+        myPanel.scrollToMarkdownSrcOffset(myLastScrollOffset);
+        synchronized (REQUESTS_LOCK) {
+          myLastScrollRequest = null;
         }
       };
       mySwingAlarm.addRequest(myLastScrollRequest, RENDERING_DELAY_MS, ModalityState.stateForComponent(getComponent()));
@@ -166,12 +160,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Override
   public void selectNotify() {
     myPooledAlarm.cancelAllRequests();
-    myPooledAlarm.addRequest(new Runnable() {
-      @Override
-      public void run() {
-        updateHtml(true);
-      }
-    }, 0);
+    myPooledAlarm.addRequest(() -> updateHtml(true), 0);
   }
 
   @Nullable("Null means leave current panel")
@@ -221,23 +210,20 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       if (myLastHtmlOrRefreshRequest != null) {
         mySwingAlarm.cancelRequest(myLastHtmlOrRefreshRequest);
       }
-      myLastHtmlOrRefreshRequest = new Runnable() {
-        @Override
-        public void run() {
-          final String currentHtml = "<html><head></head>" + html + "</html>";
-          if (!currentHtml.equals(myLastRenderedHtml)) {
-            myLastRenderedHtml = currentHtml;
-            myPanel.setHtml(myLastRenderedHtml);
+      myLastHtmlOrRefreshRequest = () -> {
+        final String currentHtml = "<html><head></head>" + html + "</html>";
+        if (!currentHtml.equals(myLastRenderedHtml)) {
+          myLastRenderedHtml = currentHtml;
+          myPanel.setHtml(myLastRenderedHtml);
 
-            if (preserveScrollOffset) {
-              myPanel.scrollToMarkdownSrcOffset(myLastScrollOffset);
-            }
+          if (preserveScrollOffset) {
+            myPanel.scrollToMarkdownSrcOffset(myLastScrollOffset);
           }
+        }
 
-          myPanel.render();
-          synchronized (REQUESTS_LOCK) {
-            myLastHtmlOrRefreshRequest = null;
-          }
+        myPanel.render();
+        synchronized (REQUESTS_LOCK) {
+          myLastHtmlOrRefreshRequest = null;
         }
       };
       mySwingAlarm.addRequest(myLastHtmlOrRefreshRequest, RENDERING_DELAY_MS, ModalityState.stateForComponent(getComponent()));
@@ -334,13 +320,10 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     public void onSettingsChange(@NotNull MarkdownApplicationSettings settings) {
       final MarkdownHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
 
-      mySwingAlarm.addRequest(new Runnable() {
-        @Override
-        public void run() {
-          myPanel = detachOldPanelAndCreateAndAttachNewOne(myHtmlPanelWrapper, myPanel, newPanelProvider);
-          myPanel.setHtml(myLastRenderedHtml);
-          updatePanelCssSettings(myPanel, settings.getMarkdownCssSettings());
-        }
+      mySwingAlarm.addRequest(() -> {
+        myPanel = detachOldPanelAndCreateAndAttachNewOne(myHtmlPanelWrapper, myPanel, newPanelProvider);
+        myPanel.setHtml(myLastRenderedHtml);
+        updatePanelCssSettings(myPanel, settings.getMarkdownCssSettings());
       }, 0, ModalityState.stateForComponent(getComponent()));
     }
   }

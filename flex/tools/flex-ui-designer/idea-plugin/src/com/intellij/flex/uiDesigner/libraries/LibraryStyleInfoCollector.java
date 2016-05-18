@@ -42,12 +42,9 @@ class LibraryStyleInfoCollector {
     final GlobalSearchScope searchScope = GlobalSearchScope.fileScope(module.getProject(), libraryFile);
 
     final List<String> dataKeys = new ArrayList<String>(32);
-    fileBasedIndex.processAllKeys(FlexStyleIndex.INDEX_ID, new Processor<String>() {
-      @Override
-      public boolean process(String dataKey) {
-        dataKeys.add(dataKey);
-        return true;
-      }
+    fileBasedIndex.processAllKeys(FlexStyleIndex.INDEX_ID, dataKey -> {
+      dataKeys.add(dataKey);
+      return true;
     }, module.getProject());
 
     final THashSet<String> uniqueGuard = new THashSet<String>();

@@ -109,36 +109,22 @@ public class PersistentUserModelImplTest extends BaseTestCase {
   }
 
   public void testConcurrentModifications() throws Exception {
-    Runnable createUserCommand = new Runnable() {
-      @Override
-      public void run() {
-        User user = myUserModel.createUser("bob" + System.nanoTime(), MockTransport.NAME);
-        myUserModel.addUser(user);
-      }
+    Runnable createUserCommand = () -> {
+      User user = myUserModel.createUser("bob" + System.nanoTime(), MockTransport.NAME);
+      myUserModel.addUser(user);
     };
-    Runnable createGroupCommand = new Runnable() {
-      @Override
-      public void run() {
-        myUserModel.addGroup("group" + System.nanoTime());
-      }
-    };
+    Runnable createGroupCommand = () -> myUserModel.addGroup("group" + System.nanoTime());
 
-    Runnable removeUserCommand = new Runnable() {
-      @Override
-      public void run() {
-        User[] allUsers = myUserModel.getAllUsers();
-        if (allUsers.length > 0) {
-          myUserModel.removeUser(allUsers[0]);
-        }
+    Runnable removeUserCommand = () -> {
+      User[] allUsers = myUserModel.getAllUsers();
+      if (allUsers.length > 0) {
+        myUserModel.removeUser(allUsers[0]);
       }
     };
-    Runnable removeGroupCommand = new Runnable() {
-      @Override
-      public void run() {
-        String[] groups = myUserModel.getGroups();
-        if (groups.length > 0) {
-          myUserModel.removeGroup(groups[0]);
-        }
+    Runnable removeGroupCommand = () -> {
+      String[] groups = myUserModel.getGroups();
+      if (groups.length > 0) {
+        myUserModel.removeGroup(groups[0]);
       }
     };
 
@@ -161,16 +147,13 @@ public class PersistentUserModelImplTest extends BaseTestCase {
   }
 
   private Runnable createCycle(final Runnable r) {
-    return new Runnable() {
-      @Override
-      public void run() {
-        for (int i = 0; i < 10; i ++) {
-          try {
-            r.run();
-          } catch (RuntimeException e) {
-            ourShouldFail = true;
-            throw e;
-          }
+    return () -> {
+      for (int i = 0; i < 10; i ++) {
+        try {
+          r.run();
+        } catch (RuntimeException e) {
+          ourShouldFail = true;
+          throw e;
         }
       }
     };

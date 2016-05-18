@@ -538,21 +538,17 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     final File appDir = new File("/Applications");
     if (appDir.isDirectory()) {
       final String relPath = "/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs";
-      final File[] xCodeDirs = appDir.listFiles(new FileFilter() {
-        public boolean accept(final File file) {
-          final String name = file.getName().toLowerCase();
-          return file.isDirectory() && name.startsWith("xcode") && name.endsWith(".app")
-                 && new File(file.getPath() + relPath).isDirectory();
-        }
+      final File[] xCodeDirs = appDir.listFiles(file -> {
+        final String name = file.getName().toLowerCase();
+        return file.isDirectory() && name.startsWith("xcode") && name.endsWith(".app")
+               && new File(file.getPath() + relPath).isDirectory();
       });
 
       if (xCodeDirs.length > 0) {
         final File sdksDir = new File(xCodeDirs[0] + relPath);
-        final File[] simulatorSdkDirs = sdksDir.listFiles(new FileFilter() {
-          public boolean accept(final File file) {
-            final String filename = file.getName().toLowerCase();
-            return file.isDirectory() && filename.startsWith("iphonesimulator") && filename.endsWith(".sdk");
-          }
+        final File[] simulatorSdkDirs = sdksDir.listFiles(file -> {
+          final String filename = file.getName().toLowerCase();
+          return file.isDirectory() && filename.startsWith("iphonesimulator") && filename.endsWith(".sdk");
         });
 
         if (simulatorSdkDirs.length > 0) {

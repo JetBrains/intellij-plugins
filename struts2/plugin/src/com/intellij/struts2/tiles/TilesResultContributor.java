@@ -93,11 +93,7 @@ public class TilesResultContributor extends StrutsResultContributor {
     private final String definitionName;
 
     private static final Function<TilesModel, Collection<? extends Definition>> DEFINITION_COLLECTOR =
-      new Function<TilesModel, Collection<? extends Definition>>() {
-        public Collection<? extends Definition> fun(final TilesModel tilesModel) {
-          return tilesModel.getDefinitions();
-        }
-      };
+      tilesModel -> tilesModel.getDefinitions();
 
     private TilesDefinitionReference(@NotNull final XmlTag xmlElement,
                                      @NotNull final List<TilesModel> allTilesModels) {

@@ -139,18 +139,15 @@ public class KarmaProcessOutputManager {
   }
 
   public void addOutputListener(@NotNull final ArchivedOutputListener outputListener) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        synchronized (myArchivedTexts) {
-          if (myArchiveTextsTruncated) {
-            outputListener.onOutputAvailable("... too much output to process, truncated\n", ProcessOutputTypes.SYSTEM, true);
-          }
-          for (Pair<String, Key> text : myArchivedTexts) {
-            outputListener.onOutputAvailable(text.getFirst(), text.getSecond(), true);
-          }
-          myOutputListeners.add(outputListener);
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      synchronized (myArchivedTexts) {
+        if (myArchiveTextsTruncated) {
+          outputListener.onOutputAvailable("... too much output to process, truncated\n", ProcessOutputTypes.SYSTEM, true);
         }
+        for (Pair<String, Key> text : myArchivedTexts) {
+          outputListener.onOutputAvailable(text.getFirst(), text.getSecond(), true);
+        }
+        myOutputListeners.add(outputListener);
       }
     });
   }

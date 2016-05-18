@@ -32,12 +32,7 @@ public class JstdTestProxyFilterProvider implements TestProxyFilterProvider {
     if ("browser".equals(nodeType) && nodeArguments != null) {
       final File basePath = new File(nodeArguments);
       if (basePath.isAbsolute() && basePath.isDirectory()) {
-        Function<String, File> fileFinder = new Function<String, File>() {
-          @Override
-          public File fun(String path) {
-            return findFileByPath(basePath, path);
-          }
-        };
+        Function<String, File> fileFinder = path -> findFileByPath(basePath, path);
         return new BrowserStacktraceFilter(myProject, nodeName, fileFinder);
       }
     }

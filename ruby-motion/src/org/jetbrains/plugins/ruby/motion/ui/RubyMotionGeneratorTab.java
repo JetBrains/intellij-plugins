@@ -118,18 +118,15 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
 
   private void addSdk() {
     Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(myContentPane));
-    final NullableConsumer<Sdk> onSdkCreatedCallBack = new NullableConsumer<Sdk>() {
-      @Override
-      public void consume(@Nullable Sdk sdk) {
-        if (sdk != null) {
-          SdkConfigurationUtil.addSdk(sdk);
-          refreshSdkList();
-          myRubyInterpreterComboBox.setSelectedItem(sdk);
-        }
-        else {
-          myRubyInterpreterComboBox.setSelectedItem(mySettingsHolder.getSdk());
-          myRubyInterpreterComboBox.repaint();
-        }
+    final NullableConsumer<Sdk> onSdkCreatedCallBack = sdk -> {
+      if (sdk != null) {
+        SdkConfigurationUtil.addSdk(sdk);
+        refreshSdkList();
+        myRubyInterpreterComboBox.setSelectedItem(sdk);
+      }
+      else {
+        myRubyInterpreterComboBox.setSelectedItem(mySettingsHolder.getSdk());
+        myRubyInterpreterComboBox.repaint();
       }
     };
     SdkConfigurationUtil.createSdk(project,

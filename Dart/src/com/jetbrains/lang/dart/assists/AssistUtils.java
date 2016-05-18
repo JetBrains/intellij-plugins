@@ -81,17 +81,14 @@ public class AssistUtils {
       }
     }
     // do apply the change
-    CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-      @Override
-      public void run() {
-        for (Map.Entry<VirtualFile, SourceFileEdit> entry : changeMap.entrySet()) {
-          final VirtualFile file = entry.getKey();
-          final SourceFileEdit fileEdit = entry.getValue();
-          applyFileEdit(file, fileEdit, excludedIds);
-        }
-        if (withLinkedEdits) {
-          runLinkedEdits(project, sourceChange);
-        }
+    CommandProcessor.getInstance().executeCommand(project, () -> {
+      for (Map.Entry<VirtualFile, SourceFileEdit> entry : changeMap.entrySet()) {
+        final VirtualFile file = entry.getKey();
+        final SourceFileEdit fileEdit = entry.getValue();
+        applyFileEdit(file, fileEdit, excludedIds);
+      }
+      if (withLinkedEdits) {
+        runLinkedEdits(project, sourceChange);
       }
     }, sourceChange.getMessage(), null);
   }

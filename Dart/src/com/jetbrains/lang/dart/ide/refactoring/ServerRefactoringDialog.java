@@ -50,13 +50,10 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
     myRefactoring.setListener(new ServerRefactoring.ServerRefactoringListener() {
       @Override
       public void requestStateChanged(final boolean hasPendingRequests, @NotNull final RefactoringStatus optionsStatus) {
-        final Runnable runnable = new Runnable() {
-          @Override
-          public void run() {
-            myHasPendingRequests = hasPendingRequests;
-            myOptionsStatus = optionsStatus;
-            validateButtons();
-          }
+        final Runnable runnable = () -> {
+          myHasPendingRequests = hasPendingRequests;
+          myOptionsStatus = optionsStatus;
+          validateButtons();
         };
 
         final ModalityState modalityState = ModalityState.stateForComponent(getWindow());

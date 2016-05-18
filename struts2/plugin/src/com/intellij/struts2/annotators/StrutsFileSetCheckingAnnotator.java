@@ -181,10 +181,8 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
           public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
             selectedValue.addFile(file.getVirtualFile());
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-              public void run() {
-                ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
-              }
+            ApplicationManager.getApplication().runWriteAction(() -> {
+              ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
             });
 
             // re-highlight (remove annotation)

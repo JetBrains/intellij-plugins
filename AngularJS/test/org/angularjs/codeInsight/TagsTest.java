@@ -57,21 +57,13 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomTagsCompletion20TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom.ts");
-      }
-    });
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom.ts"));
   }
 
   public void testCustomTagsCompletion20JavaScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom2.js");
-      }
-    });
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom2.js"));
   }
 
   public void testCustomTagsViaFunctionCompletion() {
@@ -121,62 +113,53 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomTagsResolve20TypeScriptComponent() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        myFixture.configureByFiles("custom.after.html", "angular2.js", "custom.ts");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-        assertNotNull(ref);
-        PsiElement resolve = ref.resolve();
-        assertNotNull(resolve);
-        assertEquals("custom.ts", resolve.getContainingFile().getName());
-        assertEquals("Component({\n" +
-                     "    selector: 'my-customer',\n" +
-                     "    properties: {\n" +
-                     "        'id':'dependency'\n" +
-                     "    }\n" +
-                     "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
-      }
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("custom.after.html", "angular2.js", "custom.ts");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("custom.ts", resolve.getContainingFile().getName());
+      assertEquals("Component({\n" +
+                   "    selector: 'my-customer',\n" +
+                   "    properties: {\n" +
+                   "        'id':'dependency'\n" +
+                   "    }\n" +
+                   "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
     });
   }
 
   public void testCustomTagsResolve20TypeScriptDirective() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        myFixture.configureByFiles("custom.after.html", "angular2.js", "custom_directive.ts");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-        assertNotNull(ref);
-        PsiElement resolve = ref.resolve();
-        assertNotNull(resolve);
-        assertEquals("custom_directive.ts", resolve.getContainingFile().getName());
-        assertEquals("Directive({\n" +
-                     "    selector: 'my-customer',\n" +
-                     "    properties: {\n" +
-                     "        'id':'dependency'\n" +
-                     "    }\n" +
-                     "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
-      }
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("custom.after.html", "angular2.js", "custom_directive.ts");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("custom_directive.ts", resolve.getContainingFile().getName());
+      assertEquals("Directive({\n" +
+                   "    selector: 'my-customer',\n" +
+                   "    properties: {\n" +
+                   "        'id':'dependency'\n" +
+                   "    }\n" +
+                   "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
     });
   }
 
   public void testCustomTagsResolve20JavaScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        myFixture.configureByFiles("custom.after.html", "angular2.js", "custom2.js");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-        assertNotNull(ref);
-        PsiElement resolve = ref.resolve();
-        assertNotNull(resolve);
-        assertEquals("custom2.js", resolve.getContainingFile().getName());
-        assertEquals("new angular.ComponentAnnotation({\n" +
-                     "    selector: 'my-customer'\n" +
-                     "  })", AngularTestUtil.getDirectiveDefinitionText(resolve));
-      }
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("custom.after.html", "angular2.js", "custom2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("custom2.js", resolve.getContainingFile().getName());
+      assertEquals("new angular.ComponentAnnotation({\n" +
+                   "    selector: 'my-customer'\n" +
+                   "  })", AngularTestUtil.getDirectiveDefinitionText(resolve));
     });
   }
 

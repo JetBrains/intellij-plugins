@@ -41,11 +41,7 @@ import java.util.List;
  */
 public class StrutsConstantHelper {
 
-  private static final Function<String, String> DOT_PATH_FUNCTION = new Function<String, String>() {
-    public String fun(final String s) {
-      return "." + s;
-    }
-  };
+  private static final Function<String, String> DOT_PATH_FUNCTION = s -> "." + s;
 
   private StrutsConstantHelper() {
   }

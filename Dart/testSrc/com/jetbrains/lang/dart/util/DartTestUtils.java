@@ -93,29 +93,23 @@ public class DartTestUtils {
       sdkHome = SDK_HOME_PATH;
     }
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        DartSdkGlobalLibUtil.ensureDartSdkConfigured(sdkHome);
-        DartSdkGlobalLibUtil.enableDartSdk(module);
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      DartSdkGlobalLibUtil.ensureDartSdkConfigured(sdkHome);
+      DartSdkGlobalLibUtil.enableDartSdk(module);
     });
 
     Disposer.register(disposable, new Disposable() {
       @Override
       public void dispose() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            if (!module.isDisposed()) {
-              DartSdkGlobalLibUtil.disableDartSdk(Collections.singletonList(module));
-            }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          if (!module.isDisposed()) {
+            DartSdkGlobalLibUtil.disableDartSdk(Collections.singletonList(module));
+          }
 
-            ApplicationLibraryTable libraryTable = ApplicationLibraryTable.getApplicationTable();
-            final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
-            if (library != null) {
-              libraryTable.removeLibrary(library);
-            }
+          ApplicationLibraryTable libraryTable = ApplicationLibraryTable.getApplicationTable();
+          final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
+          if (library != null) {
+            libraryTable.removeLibrary(library);
           }
         });
       }
@@ -167,42 +161,39 @@ public class DartTestUtils {
    * Use this method in finally{} clause if the test modifies excluded roots or configures module libraries
    */
   public static void resetModuleRoots(@NotNull final Module module) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
 
-        try {
-          final List<OrderEntry> entriesToRemove = new SmartList<OrderEntry>();
+      try {
+        final List<OrderEntry> entriesToRemove = new SmartList<OrderEntry>();
 
-          for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
-            if (orderEntry instanceof LibraryOrderEntry) {
-              entriesToRemove.add(orderEntry);
-            }
-          }
-
-          for (OrderEntry orderEntry : entriesToRemove) {
-            modifiableModel.removeOrderEntry(orderEntry);
-          }
-
-          final ContentEntry[] contentEntries = modifiableModel.getContentEntries();
-          TestCase.assertTrue("Expected one content root, got: " + contentEntries.length, contentEntries.length == 1);
-
-          final ContentEntry oldContentEntry = contentEntries[0];
-          if (oldContentEntry.getSourceFolders().length != 1 || oldContentEntry.getExcludeFolderUrls().size() > 0) {
-            modifiableModel.removeContentEntry(oldContentEntry);
-            final ContentEntry newContentEntry = modifiableModel.addContentEntry(oldContentEntry.getUrl());
-            newContentEntry.addSourceFolder(newContentEntry.getUrl(), false);
-          }
-
-          if (modifiableModel.isChanged()) {
-            modifiableModel.commit();
+        for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
+          if (orderEntry instanceof LibraryOrderEntry) {
+            entriesToRemove.add(orderEntry);
           }
         }
-        finally {
-          if (!modifiableModel.isDisposed()) {
-            modifiableModel.dispose();
-          }
+
+        for (OrderEntry orderEntry : entriesToRemove) {
+          modifiableModel.removeOrderEntry(orderEntry);
+        }
+
+        final ContentEntry[] contentEntries = modifiableModel.getContentEntries();
+        TestCase.assertTrue("Expected one content root, got: " + contentEntries.length, contentEntries.length == 1);
+
+        final ContentEntry oldContentEntry = contentEntries[0];
+        if (oldContentEntry.getSourceFolders().length != 1 || oldContentEntry.getExcludeFolderUrls().size() > 0) {
+          modifiableModel.removeContentEntry(oldContentEntry);
+          final ContentEntry newContentEntry = modifiableModel.addContentEntry(oldContentEntry.getUrl());
+          newContentEntry.addSourceFolder(newContentEntry.getUrl(), false);
+        }
+
+        if (modifiableModel.isChanged()) {
+          modifiableModel.commit();
+        }
+      }
+      finally {
+        if (!modifiableModel.isDisposed()) {
+          modifiableModel.dispose();
         }
       }
     });

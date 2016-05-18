@@ -68,53 +68,48 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
 
       // sorted - for predictable caret position after quick fix
       final SortedMap<JSFunction, Collection<PsiReference>> functionToReferences =
-        new TreeMap<JSFunction, Collection<PsiReference>>(new Comparator<JSFunction>() {
-          public int compare(final JSFunction f1, final JSFunction f2) {
-            return f1.getTextRange().getStartOffset() - f2.getTextRange().getStartOffset();
-          }
-        });
+        new TreeMap<JSFunction, Collection<PsiReference>>(
+          (f1, f2) -> f1.getTextRange().getStartOffset() - f2.getTextRange().getStartOffset());
 
       final Map<JSFunction, PsiElement> functionToFirstReadUsage = new THashMap<JSFunction, PsiElement>();
       final Map<JSFunction, PsiElement> functionToFirstWriteUsage = new THashMap<JSFunction, PsiElement>();
 
       final PsiFile topLevelFile = InjectedLanguageManager.getInstance(field.getProject()).getTopLevelFile(field);
 
-      final boolean ok = ReferencesSearch.search(field, new LocalSearchScope(topLevelFile)).forEach(new Processor<PsiReference>() {
-        public boolean process(final PsiReference reference) {
+      final boolean ok = ReferencesSearch.search(field, new LocalSearchScope(topLevelFile)).forEach(reference -> {
 
-          final PsiElement element = reference.getElement();
-          if (JSResolveUtil.isSelfReference(element)) return true;
-          if (!(element instanceof JSReferenceExpression)) return false;
-          if (((JSReferenceExpression)element).getQualifier() != null) return false;
+        final PsiElement element = reference.getElement();
+        if (JSResolveUtil.isSelfReference(element)) return true;
+        if (!(element instanceof JSReferenceExpression)) return false;
+        if (((JSReferenceExpression)element).getQualifier() != null) return false;
 
-          final JSFunction function = PsiTreeUtil.getParentOfType(element, JSFunction.class);
-          if (function == null) return false;
+        final JSFunction function = PsiTreeUtil.getParentOfType(element, JSFunction.class);
+        if (function == null) return false;
 
-          Collection<PsiReference> references = functionToReferences.get(function);
-          if (references == null) {
-            references = new ArrayList<PsiReference>();
-            functionToReferences.put(function, references);
-          }
-          references.add(reference);
-
-          final ReadWriteAccessDetector.Access access = JSReadWriteAccessDetector.ourInstance.getExpressionAccess(element);
-
-          if (access == ReadWriteAccessDetector.Access.Read || access == ReadWriteAccessDetector.Access.ReadWrite) {
-            final PsiElement previous = functionToFirstReadUsage.get(function);
-            if (previous == null || element.getTextRange().getStartOffset() < previous.getTextRange().getStartOffset()) {
-              functionToFirstReadUsage.put(function, element);
-            }
-          }
-
-          if (access == ReadWriteAccessDetector.Access.Write || access == ReadWriteAccessDetector.Access.ReadWrite) {
-            final PsiElement previous = functionToFirstWriteUsage.get(function);
-            if (previous == null || element.getTextRange().getStartOffset() < previous.getTextRange().getStartOffset()) {
-              functionToFirstWriteUsage.put(function, element);
-            }
-          }
-
-          return true;
+        Collection<PsiReference> references = functionToReferences.get(function);
+        if (references == null) {
+          references = new ArrayList<PsiReference>();
+          functionToReferences.put(function, references);
         }
+        references.add(reference);
+
+        final ReadWriteAccessDetector.Access access = JSReadWriteAccessDetector.ourInstance.getExpressionAccess(element);
+
+        if (access == ReadWriteAccessDetector.Access.Read || access == ReadWriteAccessDetector.Access.ReadWrite) {
+          final PsiElement previous = functionToFirstReadUsage.get(function);
+          if (previous == null || element.getTextRange().getStartOffset() < previous.getTextRange().getStartOffset()) {
+            functionToFirstReadUsage.put(function, element);
+          }
+        }
+
+        if (access == ReadWriteAccessDetector.Access.Write || access == ReadWriteAccessDetector.Access.ReadWrite) {
+          final PsiElement previous = functionToFirstWriteUsage.get(function);
+          if (previous == null || element.getTextRange().getStartOffset() < previous.getTextRange().getStartOffset()) {
+            functionToFirstWriteUsage.put(function, element);
+          }
+        }
+
+        return true;
       });
 
       if (!ok) return;

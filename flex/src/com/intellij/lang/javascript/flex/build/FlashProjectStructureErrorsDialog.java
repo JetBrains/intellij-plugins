@@ -154,33 +154,31 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     close(CANCEL_EXIT_CODE);
 
     final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(myProject);
-    ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable, new Runnable() {
-      public void run() {
-        final Place place;
+    ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable, () -> {
+      final Place place;
 
-        if (problemRef.get() instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem) {
-          place = new Place()
-            .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getProjectConfig());
-        }
-        else if (moduleRef.isNull()) {
-          place = new Place()
-            .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getModulesConfig());
-        }
-        else if (bcRef.isNull()) {
-          place = new Place()
-            .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getModulesConfig())
-            .putPath(MasterDetailsComponent.TREE_OBJECT, moduleRef.get());
-        }
-        else {
-          place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(moduleRef.get(), bcRef.get().getName());
-          if (!problemRef.isNull()) {
-            place.putPath(CompositeConfigurable.TAB_NAME, problemRef.get().tabName);
-            place.putPath(FlexBCConfigurable.LOCATION_ON_TAB, problemRef.get().locationOnTab);
-          }
-        }
-
-        configurable.navigateTo(place, true);
+      if (problemRef.get() instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem) {
+        place = new Place()
+          .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getProjectConfig());
       }
+      else if (moduleRef.isNull()) {
+        place = new Place()
+          .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getModulesConfig());
+      }
+      else if (bcRef.isNull()) {
+        place = new Place()
+          .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getModulesConfig())
+          .putPath(MasterDetailsComponent.TREE_OBJECT, moduleRef.get());
+      }
+      else {
+        place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(moduleRef.get(), bcRef.get().getName());
+        if (!problemRef.isNull()) {
+          place.putPath(CompositeConfigurable.TAB_NAME, problemRef.get().tabName);
+          place.putPath(FlexBCConfigurable.LOCATION_ON_TAB, problemRef.get().locationOnTab);
+        }
+      }
+
+      configurable.navigateTo(place, true);
     });
   }
 }

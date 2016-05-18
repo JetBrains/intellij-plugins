@@ -122,12 +122,7 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
       final BndProjectImporter importer = new BndProjectImporter(project, myWorkspace, toImport);
       Module rootModule = importer.createRootModule(model);
       importer.setupProject();
-      StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
-        @Override
-        public void run() {
-          importer.resolve(false);
-        }
-      });
+      StartupManager.getInstance(project).registerPostStartupActivity(() -> importer.resolve(false));
       return Collections.singletonList(rootModule);
     }
     else {
@@ -141,20 +136,14 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
   }
 
   private static void commitModel(final ModifiableModuleModel moduleModel) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        moduleModel.commit();
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      moduleModel.commit();
     });
   }
 
   private static void disposeModel(final ModifiableModuleModel moduleModel) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        moduleModel.dispose();
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      moduleModel.dispose();
     });
   }
 

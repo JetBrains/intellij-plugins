@@ -91,15 +91,12 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
       catch (IOException ignored) {/**/}
     }
 
-    MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
-      @Override
-      public void run() {
-        // need to refresh externally created file
-        for (RLMInfo info : myRlmInfos) {
-          final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(info.myConfigFilePath);
-          if (file != null) {
-            file.refresh(false, false);
-          }
+    MavenUtil.invokeAndWaitWriteAction(project, () -> {
+      // need to refresh externally created file
+      for (RLMInfo info : myRlmInfos) {
+        final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(info.myConfigFilePath);
+        if (file != null) {
+          file.refresh(false, false);
         }
       }
     });

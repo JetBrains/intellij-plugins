@@ -103,15 +103,12 @@ public class DartNameSuggesterUtil {
     // prefer shorter names
     ArrayList<String> reversed = new ArrayList<String>(possibleNames);
     Collections.reverse(reversed);
-    return ContainerUtil.map(reversed, new Function<String, String>() {
-      @Override
-      public String fun(String name) {
-        if (name.indexOf('_') == -1) {
-          return name;
-        }
-        name = StringUtil.capitalizeWords(name, "_", true, true);
-        return StringUtil.decapitalize(name.replaceAll("_", ""));
+    return ContainerUtil.map(reversed, name1 -> {
+      if (name1.indexOf('_') == -1) {
+        return name1;
       }
+      name1 = StringUtil.capitalizeWords(name1, "_", true, true);
+      return StringUtil.decapitalize(name1.replaceAll("_", ""));
     });
   }
 }

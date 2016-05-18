@@ -41,12 +41,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
     final Document document = FileDocumentManager.getInstance().getDocument(position.getFile());
 
     final SortedMap<PsiElement, PsiBackedSmartStepIntoVariant> element2candidateMap =
-      new TreeMap<PsiElement, PsiBackedSmartStepIntoVariant>(new Comparator<PsiElement>() {
-        @Override
-        public int compare(final PsiElement o1, final PsiElement o2) {
-          return o1.getTextOffset() - o2.getTextOffset();
-        }
-      });
+      new TreeMap<PsiElement, PsiBackedSmartStepIntoVariant>((o1, o2) -> o1.getTextOffset() - o2.getTextOffset());
 
     compute(document, element2candidateMap, new THashSet<PsiElement>(), position.getLine(), position.getOffset());
 
@@ -67,12 +62,9 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
                        final THashSet<PsiElement> visited,
                        final int line,
                        final int offset) {
-    XDebuggerUtil.getInstance().iterateLine(myDebugProcess.getSession().getProject(), document, line, new Processor<PsiElement>() {
-      @Override
-      public boolean process(PsiElement psiElement) {
-        addVariants(psiElement, element2candidateMap, visited, offset);
-        return true;
-      }
+    XDebuggerUtil.getInstance().iterateLine(myDebugProcess.getSession().getProject(), document, line, psiElement -> {
+      addVariants(psiElement, element2candidateMap, visited, offset);
+      return true;
     });
   }
 

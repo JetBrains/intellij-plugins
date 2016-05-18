@@ -71,42 +71,39 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
 
     final Set<Action> actions = new HashSet<Action>();
     final List<GotoRelatedItem> items = new ArrayList<GotoRelatedItem>();
-    strutsModel.processActions(new Processor<Action>() {
-      @Override
-      public boolean process(final Action action) {
-        for (final Result result : action.getResults()) {
+    strutsModel.processActions(action -> {
+      for (final Result result : action.getResults()) {
 
-          final PathReference pathReference = result.getValue();
-          if (pathReference == null) {
-            continue;
-          }
-
-          final String path = pathReference.getPath();
-          if (!path.endsWith(filename)) {
-            continue;
-          }
-
-          final PsiElement resolve = pathReference.resolve();
-          if (ContainerUtil.find(allFiles, resolve) == null) {
-            continue;
-          }
-
-          if (!actions.contains(action)) {
-            items.add(new DomGotoRelatedItem(action));
-            actions.add(action);
-          }
-
-          final PsiClass actionClass = action.searchActionClass();
-          if (actionClass == null) {
-            continue;
-          }
-
-          final PsiMethod actionMethod = action.searchActionMethod();
-          items.add(new GotoRelatedItem(actionMethod != null ? actionMethod : actionClass));
+        final PathReference pathReference = result.getValue();
+        if (pathReference == null) {
+          continue;
         }
 
-        return true;
+        final String path = pathReference.getPath();
+        if (!path.endsWith(filename)) {
+          continue;
+        }
+
+        final PsiElement resolve = pathReference.resolve();
+        if (ContainerUtil.find(allFiles, resolve) == null) {
+          continue;
+        }
+
+        if (!actions.contains(action)) {
+          items.add(new DomGotoRelatedItem(action));
+          actions.add(action);
+        }
+
+        final PsiClass actionClass = action.searchActionClass();
+        if (actionClass == null) {
+          continue;
+        }
+
+        final PsiMethod actionMethod = action.searchActionMethod();
+        items.add(new GotoRelatedItem(actionMethod != null ? actionMethod : actionClass));
       }
+
+      return true;
     });
 
     return items;

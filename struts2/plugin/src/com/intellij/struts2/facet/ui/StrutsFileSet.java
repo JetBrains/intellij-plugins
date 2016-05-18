@@ -52,17 +52,9 @@ public class StrutsFileSet implements Disposable {
   @NonNls
   private static final String ID_PREFIX = "s2fileset";
 
-  private static final Function<StrutsFileSet, String> FILESET_NAME_FUNCTION = new Function<StrutsFileSet, String>() {
-    public String fun(final StrutsFileSet strutsFileSet) {
-      return strutsFileSet.getName();
-    }
-  };
+  private static final Function<StrutsFileSet, String> FILESET_NAME_FUNCTION = strutsFileSet -> strutsFileSet.getName();
 
-  private static final Function<StrutsFileSet, String> FILESET_ID_FUNCTION = new Function<StrutsFileSet, String>() {
-    public String fun(final StrutsFileSet strutsFileSet) {
-      return strutsFileSet.getId();
-    }
-  };
+  private static final Function<StrutsFileSet, String> FILESET_ID_FUNCTION = strutsFileSet -> strutsFileSet.getId();
 
   public StrutsFileSet(@NotNull @NonNls final String id,
                        @NotNull @NonNls final String name,

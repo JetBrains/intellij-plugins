@@ -48,11 +48,8 @@ public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
   private void doTest(String... files) throws Exception {
     myFixture.configureByFiles(files);
     expandTemplate(myFixture.getEditor());
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
-      }
+    WriteCommandAction.runWriteCommandAction(null, () -> {
+      CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
     });
     myFixture.getEditor().getSelectionModel().removeSelection();
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");

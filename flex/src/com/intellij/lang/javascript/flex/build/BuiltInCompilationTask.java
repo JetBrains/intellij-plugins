@@ -25,11 +25,8 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
   }
 
   protected void doStart(final FlexCompilationManager compilationManager) {
-    final String plainCommand = StringUtil.join(buildCommand(), new Function<String, String>() {
-      public String fun(final String s) {
-        return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
-      }
-    }, " ");
+    final String plainCommand = StringUtil.join(buildCommand(),
+                                                s -> s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s, " ");
 
     compilationManager.addMessage(this, CompilerMessageCategory.INFORMATION, plainCommand, null, -1, -1);
 

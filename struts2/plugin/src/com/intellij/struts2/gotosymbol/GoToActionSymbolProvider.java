@@ -46,11 +46,9 @@ public class GoToActionSymbolProvider extends GoToSymbolProvider {
       return;
     }
 
-    strutsModel.processActions(new Processor<Action>() {
-      public boolean process(final Action action) {
-        result.add(action.getName().getStringValue());
-        return true;
-      }
+    strutsModel.processActions(action -> {
+      result.add(action.getName().getStringValue());
+      return true;
     });
   }
 

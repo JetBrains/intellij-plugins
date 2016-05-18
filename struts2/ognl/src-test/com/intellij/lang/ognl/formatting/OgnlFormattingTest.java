@@ -101,11 +101,8 @@ public class OgnlFormattingTest extends LightPlatformCodeInsightFixtureTestCase 
   private void doTest(final String before,
                       final String after) {
     myFixture.configureByText(OgnlFileType.INSTANCE, OgnlTestUtils.createExpression(before));
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
-      }
+    WriteCommandAction.runWriteCommandAction(null, () -> {
+      CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
     });
     myFixture.checkResult(OgnlTestUtils.createExpression(after));
   }

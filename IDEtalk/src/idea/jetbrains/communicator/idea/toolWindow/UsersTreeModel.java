@@ -57,11 +57,9 @@ public class UsersTreeModel extends DefaultTreeModel implements Disposable {
 
           @Override public void visitUserRemoved(UserEvent.Removed event) {
             updateTree(null);
-            UIUtil.invokeLater(new Runnable() {
-              public void run() {
-                if (myTree.getRowCount() > 1) {
-                  myTree.setSelectionRow(0);
-                }
+            UIUtil.invokeLater(() -> {
+              if (myTree.getRowCount() > 1) {
+                myTree.setSelectionRow(0);
               }
             });
           }
@@ -89,17 +87,15 @@ public class UsersTreeModel extends DefaultTreeModel implements Disposable {
 
   void updateTree(final GroupEvent updated) {
 
-    UIUtil.invokeLater(new Runnable() {
-      public void run() {
-        TreeState state = new TreeState(myTree);
-        if (updated instanceof GroupEvent.Updated) {
-          GroupEvent.Updated evt = ((GroupEvent.Updated) updated);
-          state.addReplacement(evt.getOldGroup(), evt.getNewGroup());
-        }
-
-        setRoot(new RootNode(myUserModel, myLocalMessageDispatcher));
-        state.restore(myTree);
+    UIUtil.invokeLater(() -> {
+      TreeState state = new TreeState(myTree);
+      if (updated instanceof GroupEvent.Updated) {
+        GroupEvent.Updated evt = ((GroupEvent.Updated) updated);
+        state.addReplacement(evt.getOldGroup(), evt.getNewGroup());
       }
+
+      setRoot(new RootNode(myUserModel, myLocalMessageDispatcher));
+      state.restore(myTree);
     });
   }
 

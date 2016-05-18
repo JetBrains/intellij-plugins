@@ -173,13 +173,10 @@ public class FlexNavigationTest extends CodeInsightTestCase {
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testLibraryClass1() throws Exception {
     final String sources = "TestLibSources.zip";
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
-        FlexTestUtils.addLibrary(myModule, "LibWithSources", getTestDataPath() + BASE_PATH, "TestLib2.swc", sources, null);
-        FlexTestUtils.addLibrary(myModule, "LibWithAsdoc", getTestDataPath() + BASE_PATH, "TestLib3.swc", null, "TestLibAsdoc.zip");
-      }
+    myAfterCommitRunnable = () -> {
+      FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
+      FlexTestUtils.addLibrary(myModule, "LibWithSources", getTestDataPath() + BASE_PATH, "TestLib2.swc", sources, null);
+      FlexTestUtils.addLibrary(myModule, "LibWithAsdoc", getTestDataPath() + BASE_PATH, "TestLib3.swc", null, "TestLibAsdoc.zip");
     };
 
     final VirtualFile forSource = getFile(sources + "!/com/test/MyButton.as");
@@ -189,12 +186,9 @@ public class FlexNavigationTest extends CodeInsightTestCase {
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testLibraryClass2() throws Exception {
     final String libWithAsDocSwc = "TestLib3.swc";
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
-        FlexTestUtils.addLibrary(myModule, "LibWithAsdoc", getTestDataPath() + BASE_PATH, libWithAsDocSwc, null, "TestLibAsdoc.zip");
-      }
+    myAfterCommitRunnable = () -> {
+      FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
+      FlexTestUtils.addLibrary(myModule, "LibWithAsdoc", getTestDataPath() + BASE_PATH, libWithAsDocSwc, null, "TestLibAsdoc.zip");
     };
 
     final VirtualFile forAsdoc = getFile(libWithAsDocSwc + "!/library.swf");
@@ -203,12 +197,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testLibraryClass3() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
 
     final VirtualFile forSource = getFile("TestLib1.swc!/library.swf");
     doTest("LibraryClass.as", forSource, forSource);
@@ -223,12 +212,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
     FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
 
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
 
     VirtualFile forAsDoc = swc.findChild("library.swf");
     doTest("SdkClass.as", null, forAsDoc);
@@ -243,12 +227,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
     FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
 
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
 
     VirtualFile forAsDoc = swc.findChild("library.swf");
     doTest("SdkClass.as", null, forAsDoc);
@@ -257,12 +236,9 @@ public class FlexNavigationTest extends CodeInsightTestCase {
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testAmbiguousCssSelector() throws Exception {
     final String sources = "StyleableLibSources.zip";
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib1", getTestDataPath() + BASE_PATH, "StyleableLib.swc", sources, null);
-        FlexTestUtils.addLibrary(myModule, "Lib2", getTestDataPath() + BASE_PATH, "StyleableLib1.swc", null, null);
-      }
+    myAfterCommitRunnable = () -> {
+      FlexTestUtils.addLibrary(myModule, "Lib1", getTestDataPath() + BASE_PATH, "StyleableLib.swc", sources, null);
+      FlexTestUtils.addLibrary(myModule, "Lib2", getTestDataPath() + BASE_PATH, "StyleableLib1.swc", null, null);
     };
     final VirtualFile styleableFile = getFile(sources + "!/foo/Styleable1.as");
     doTest(getTestName(false) + ".css", styleableFile, null);
@@ -322,12 +298,8 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
   // we cannot use <caret> method, because lib css file is read-only
   private void doTestLibCss(int line, int column) throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "LibWithCssFile.swc", "LibWithCssFile_src.zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "LibWithCssFile.swc", "LibWithCssFile_src.zip", null);
     configureByFile(BASE_PATH + "CssEmptyFile.css");
 
     final VirtualFile cssFile = getFile("LibWithCssFile.swc!/defaults.css");
@@ -359,12 +331,8 @@ public class FlexNavigationTest extends CodeInsightTestCase {
       testName = getTestName(false);
     }
     final String sources = "StyleableLibSources.zip";
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "StyleableLib.swc", sources, null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "StyleableLib.swc", sources, null);
     final VirtualFile includedFile = getFile(sources + expectedSourceClass);
     doTest(testName + ".css", includedFile, null);
     PsiFile file = PsiManager.getInstance(myProject).findFile(includedFile);
@@ -384,13 +352,11 @@ public class FlexNavigationTest extends CodeInsightTestCase {
   public void testMonkeyPatching() throws Exception {
     final String testName = getTestName(false);
 
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        final VirtualFile sdkSrc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + testName + "_sdk_src");
-        final SdkModificator sdkModificator = FlexTestUtils.getFlexSdkModificator(myModule);
-        sdkModificator.addRoot(sdkSrc, OrderRootType.SOURCES);
-        sdkModificator.commitChanges();
-      }
+    myAfterCommitRunnable = () -> {
+      final VirtualFile sdkSrc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + testName + "_sdk_src");
+      final SdkModificator sdkModificator = FlexTestUtils.getFlexSdkModificator(myModule);
+      sdkModificator.addRoot(sdkSrc, OrderRootType.SOURCES);
+      sdkModificator.commitChanges();
     };
 
     configureByFiles(BASE_PATH + testName, BASE_PATH + testName + "/" + testName + ".as", BASE_PATH + testName + "/mx/events/FlexEvent.as");
@@ -409,11 +375,8 @@ public class FlexNavigationTest extends CodeInsightTestCase {
   public void testClassWithNoExplicitConstructor() throws Exception {
     final String testName = getTestName(false);
 
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        FlexTestUtils.addFlexLibrary(false, myModule, "foo", true, getTestDataPath() + BASE_PATH, testName + ".swc", testName + ".zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addFlexLibrary(false, myModule, "foo", true, getTestDataPath() + BASE_PATH, testName + ".swc", testName + ".zip", null);
 
     configureByFiles(null, BASE_PATH + testName + ".as");
 

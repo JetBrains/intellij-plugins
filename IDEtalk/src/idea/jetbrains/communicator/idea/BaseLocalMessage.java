@@ -66,11 +66,7 @@ public abstract class BaseLocalMessage implements LocalMessage {
   }
 
   public boolean send(final User user) {
-    UIUtil.invokeLater(new Runnable() {
-      public void run() {
-        showEventInConsoles(user);
-      }
-    });
+    UIUtil.invokeLater(() -> showEventInConsoles(user));
     return true;
   }
 

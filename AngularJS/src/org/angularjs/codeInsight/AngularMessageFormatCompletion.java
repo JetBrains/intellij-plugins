@@ -23,12 +23,8 @@ import java.util.*;
  * @author Irina.Chernushina on 12/7/2015.
  */
 public class AngularMessageFormatCompletion {
-  public static final Comparator<AngularJSPluralCategories> PLURAL_CATEGORIES_COMPARATOR = new Comparator<AngularJSPluralCategories>() {
-    @Override
-    public int compare(AngularJSPluralCategories o1, AngularJSPluralCategories o2) {
-      return new Integer(o1.getCompletionOrder()).compareTo(o2.getCompletionOrder());
-    }
-  };
+  public static final Comparator<AngularJSPluralCategories> PLURAL_CATEGORIES_COMPARATOR =
+    (o1, o2) -> new Integer(o1.getCompletionOrder()).compareTo(o2.getCompletionOrder());
   public static final InsertHandler<LookupElement> MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER = new InsertHandler<LookupElement>() {
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {

@@ -96,12 +96,10 @@ class EventsProcessor extends EventVisitor implements IDEtalkListener, Disposabl
   }
 
   private void makeWindowBlinking() {
-    UIUtil.invokeLater(new Runnable() {
-      public void run() {
-        Window window = myMessagesWindow.getWindow();
-        if (window != null) {
-          window.toFront();
-        }
+    UIUtil.invokeLater(() -> {
+      Window window = myMessagesWindow.getWindow();
+      if (window != null) {
+        window.toFront();
       }
     });
   }
@@ -113,15 +111,13 @@ class EventsProcessor extends EventVisitor implements IDEtalkListener, Disposabl
     final IdeaLocalMessage localMessage = (IdeaLocalMessage)ideFacade.createLocalMessageForIncomingEvent(event);
     if (localMessage == null) return;
 
-    UIUtil.invokeLater(new Runnable() {
-      public void run() {
-        JComponent content = localMessage.getPopupComponent(from, myProject);
-        Color backgroundColor = new Color(255, 255, 217);
-        content.setOpaque(true);
-        content.setBackground(backgroundColor);
-        WindowManager.getInstance().getStatusBar(myProject).fireNotificationPopup(
-          content, backgroundColor);
-      }
+    UIUtil.invokeLater(() -> {
+      JComponent content = localMessage.getPopupComponent(from, myProject);
+      Color backgroundColor = new Color(255, 255, 217);
+      content.setOpaque(true);
+      content.setBackground(backgroundColor);
+      WindowManager.getInstance().getStatusBar(myProject).fireNotificationPopup(
+        content, backgroundColor);
     });
   }
 

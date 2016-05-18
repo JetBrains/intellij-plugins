@@ -204,12 +204,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
       int line = document.getLineNumber(offset);
       boolean hasHint = !DaemonCodeAnalyzerEx.processHighlights(document, getProject(), HighlightSeverity.ERROR,
                                                                 document.getLineStartOffset(line),
-                                                                document.getLineEndOffset(line), new Processor<HighlightInfo>() {
-          @Override
-          public boolean process(HighlightInfo info) {
-            return !info.hasHint();
-          }
-        });
+                                                                document.getLineEndOffset(line), info -> !info.hasHint());
       if (!hasHint) {
         fail(
           "Auto import fix not found: " + DaemonCodeAnalyzerImpl.getHighlights(document, HighlightSeverity.INFORMATION, getProject()));

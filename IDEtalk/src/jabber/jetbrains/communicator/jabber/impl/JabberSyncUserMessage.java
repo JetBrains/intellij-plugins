@@ -43,11 +43,7 @@ class JabberSyncUserMessage implements Message {
       final Roster roster = jabberTransport.getFacade().getConnection().getRoster();
       final RosterEntry userEntry = roster.getEntry(myEvent.getUser().getName());
       if (userEntry != null) {
-        jabberTransport.runIngnoringUserEvents(new Runnable() {
-          public void run() {
-            processEvent(jabberTransport.getFacade(), userEntry);
-          }
-        });
+        jabberTransport.runIngnoringUserEvents(() -> processEvent(jabberTransport.getFacade(), userEntry));
       }
       return true;
     }

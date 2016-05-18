@@ -178,22 +178,14 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
           return;
         }
 
-        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-          @Override
-          public void run() {
-            final String currentText = myTarget.getTargetsField().getText();
-            final Set<String> targets = ContainerUtil.newLinkedHashSet(PhoneGapTargets.listTargets(targetsProvider, command));
-            if (!StringUtil.isEmpty(currentText) && !targets.contains(currentText)) {
-              targets.add(currentText);
-            }
-
-            UIUtil.invokeLaterIfNeeded(new Runnable() {
-              @Override
-              public void run() {
-                myTarget.onUpdateValues(targets);
-              }
-            });
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          final String currentText = myTarget.getTargetsField().getText();
+          final Set<String> targets = ContainerUtil.newLinkedHashSet(PhoneGapTargets.listTargets(targetsProvider, command));
+          if (!StringUtil.isEmpty(currentText) && !targets.contains(currentText)) {
+            targets.add(currentText);
           }
+
+          UIUtil.invokeLaterIfNeeded(() -> myTarget.onUpdateValues(targets));
         });
       }
 

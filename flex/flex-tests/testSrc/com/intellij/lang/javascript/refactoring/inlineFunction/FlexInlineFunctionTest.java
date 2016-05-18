@@ -138,12 +138,8 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
   }
 
   public void testMethodFromExternalLibrary() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
 
     shouldFail("Can not inline function defined in external library");
   }

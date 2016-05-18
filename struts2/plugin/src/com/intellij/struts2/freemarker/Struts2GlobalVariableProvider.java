@@ -93,32 +93,29 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
     installTaglibSupport(result, module,
                          StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_URI, StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_PREFIX);
 
-    final Processor<Action> processor = new Processor<Action>() {
-      @Override
-      public boolean process(final Action action) {
-        final PsiClass actionClass = action.searchActionClass();
-        if (actionClass != null) {
-          for (final Result result1 : action.getResults()) {
-            final ResultType resultType = result1.getEffectiveResultType();
-            if (resultType != null &&
-                FreeMarkerStrutsResultContributor.FREEMARKER.equals(resultType.getName().getStringValue())) {
-              final PathReference reference = result1.getValue();
-              final PsiElement target = reference == null ? null : reference.resolve();
-              if (target != null &&
-                  (file.getManager().areElementsEquivalent(file, target) ||
-                   file.getManager().areElementsEquivalent(file.getOriginalFile(), target))) {
-                final PsiClassType actionType = PsiTypesUtil.getClassType(actionClass);
-                final FtlPsiType ftlPsiType = FtlPsiType.wrap(actionType);
-                result.add(new MyFtlLightVariable("", action.getXmlTag(), ftlPsiType));
-                result.add(new MyFtlLightVariable("action", action.getXmlTag(), ftlPsiType));
-                return false; // stop after first match
-              }
+    final Processor<Action> processor = action -> {
+      final PsiClass actionClass = action.searchActionClass();
+      if (actionClass != null) {
+        for (final Result result1 : action.getResults()) {
+          final ResultType resultType = result1.getEffectiveResultType();
+          if (resultType != null &&
+              FreeMarkerStrutsResultContributor.FREEMARKER.equals(resultType.getName().getStringValue())) {
+            final PathReference reference = result1.getValue();
+            final PsiElement target = reference == null ? null : reference.resolve();
+            if (target != null &&
+                (file.getManager().areElementsEquivalent(file, target) ||
+                 file.getManager().areElementsEquivalent(file.getOriginalFile(), target))) {
+              final PsiClassType actionType = PsiTypesUtil.getClassType(actionClass);
+              final FtlPsiType ftlPsiType = FtlPsiType.wrap(actionType);
+              result.add(new MyFtlLightVariable("", action.getXmlTag(), ftlPsiType));
+              result.add(new MyFtlLightVariable("action", action.getXmlTag(), ftlPsiType));
+              return false; // stop after first match
             }
           }
         }
-
-        return true;
       }
+
+      return true;
     };
 
     for (final StrutsModel model : StrutsManager.getInstance(file.getProject()).getAllModels(module)) {

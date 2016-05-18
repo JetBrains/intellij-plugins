@@ -40,12 +40,10 @@ public class DartProjectGenerator extends WebProjectTemplate<DartProjectWizardDa
                                     @NotNull final DartProjectWizardData data,
                                     @NotNull final Module module) {
     ApplicationManager.getApplication().runWriteAction(
-      new Runnable() {
-        public void run() {
-          final ModifiableRootModel modifiableModel = ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
-          DartModuleBuilder.setupProject(modifiableModel, baseDir, data);
-          ModifiableModelsProvider.SERVICE.getInstance().commitModuleModifiableModel(modifiableModel);
-        }
+      () -> {
+        final ModifiableRootModel modifiableModel = ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
+        DartModuleBuilder.setupProject(modifiableModel, baseDir, data);
+        ModifiableModelsProvider.SERVICE.getInstance().commitModuleModifiableModel(modifiableModel);
       });
   }
 

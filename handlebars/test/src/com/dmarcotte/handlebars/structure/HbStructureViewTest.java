@@ -23,19 +23,16 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
   private void doStructureViewTest(final String fileText, final String expectedTree) {
     myFixture.configureByText(ourTestFileName, fileText);
 
-    testStructureView(myFixture.getFile(), new Consumer<StructureViewComposite>() {
-      @Override
-      public void consume(StructureViewComposite component) {
-        JTree tree = ((StructureViewComponent) component.getSelectedStructureView()).getTree();
+    testStructureView(myFixture.getFile(), component -> {
+      JTree tree = ((StructureViewComponent) component.getSelectedStructureView()).getTree();
 
-        // expand the whole tree
-        int rowCount = tree.getRowCount();
-        for (int i = 0; i <= rowCount; i++) {
-          tree.expandRow(i);
-        }
-
-        assertTreeEqual(tree, expectedTree + "\n");
+      // expand the whole tree
+      int rowCount = tree.getRowCount();
+      for (int i = 0; i <= rowCount; i++) {
+        tree.expandRow(i);
       }
+
+      assertTreeEqual(tree, expectedTree + "\n");
     });
   }
 

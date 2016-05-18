@@ -152,13 +152,10 @@ public class BndProjectImporter {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           if (resolve(indicator)) {
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                createProjectStructure();
-                if (refresh) {
-                  VirtualFileManager.getInstance().asyncRefresh(null);
-                }
+            ApplicationManager.getApplication().invokeLater(() -> {
+              createProjectStructure();
+              if (refresh) {
+                VirtualFileManager.getInstance().asyncRefresh(null);
               }
             }, ModalityState.NON_MODAL);
           }
@@ -245,35 +242,32 @@ public class BndProjectImporter {
       return;
     }
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        LanguageLevel projectLevel = LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel();
-        Map<Project, ModifiableRootModel> rootModels = ContainerUtil.newHashMap();
-        ModifiableModuleModel moduleModel = ModuleManager.getInstance(myProject).getModifiableModel();
-        LibraryTable.ModifiableModel libraryModel = ProjectLibraryTable.getInstance(myProject).getModifiableModel();
-        try {
-          for (Project project : myProjects) {
-            try {
-              rootModels.put(project, createModule(moduleModel, project, projectLevel));
-            }
-            catch (Exception e) {
-              LOG.error(e);  // should not happen, since project.prepare() is already called
-            }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      LanguageLevel projectLevel = LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel();
+      Map<Project, ModifiableRootModel> rootModels = ContainerUtil.newHashMap();
+      ModifiableModuleModel moduleModel = ModuleManager.getInstance(myProject).getModifiableModel();
+      LibraryTable.ModifiableModel libraryModel = ProjectLibraryTable.getInstance(myProject).getModifiableModel();
+      try {
+        for (Project project : myProjects) {
+          try {
+            rootModels.put(project, createModule(moduleModel, project, projectLevel));
           }
-          for (Project project : myProjects) {
-            try {
-              setDependencies(moduleModel, libraryModel, rootModels.get(project), project);
-            }
-            catch (Exception e) {
-              LOG.error(e);  // should not happen, since project.prepare() is already called
-            }
+          catch (Exception e) {
+            LOG.error(e);  // should not happen, since project.prepare() is already called
           }
         }
-        finally {
-          libraryModel.commit();
-          ModifiableModelCommitter.multiCommit(rootModels.values(), moduleModel);
+        for (Project project : myProjects) {
+          try {
+            setDependencies(moduleModel, libraryModel, rootModels.get(project), project);
+          }
+          catch (Exception e) {
+            LOG.error(e);  // should not happen, since project.prepare() is already called
+          }
         }
+      }
+      finally {
+        libraryModel.commit();
+        ModifiableModelCommitter.multiCommit(rootModels.values(), moduleModel);
       }
     });
   }

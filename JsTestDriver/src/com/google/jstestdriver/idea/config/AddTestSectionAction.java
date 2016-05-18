@@ -37,15 +37,12 @@ public class AddTestSectionAction implements IntentionAction {
   public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     if (file instanceof YAMLFile && file.isValid()) {
       final YAMLFile yamlFile = (YAMLFile) file;
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          PsiDocumentManager manager = PsiDocumentManager.getInstance(project);
-          Document document = manager.getDocument(yamlFile);
-          int length = document.getTextLength();
-          document.insertString(length, "\n" + "test:");
-          manager.commitDocument(document);
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        PsiDocumentManager manager = PsiDocumentManager.getInstance(project);
+        Document document = manager.getDocument(yamlFile);
+        int length = document.getTextLength();
+        document.insertString(length, "\n" + "test:");
+        manager.commitDocument(document);
       });
     }
   }

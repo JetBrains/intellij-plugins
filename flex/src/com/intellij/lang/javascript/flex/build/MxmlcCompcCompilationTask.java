@@ -51,33 +51,31 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
   }
 
   private void readInputStream(final FlexCompilationManager compilationManager) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream());
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream());
+
+      try {
+        char[] buf = new char[2048];
+        int read;
+        while ((read = reader.read(buf, 0, buf.length)) >= 0) {
+          final String output = new String(buf, 0, read);
+          final boolean ok = FlexCompilationUtils.handleCompilerOutput(compilationManager, MxmlcCompcCompilationTask.this, output);
+          if (!ok) {
+            myCompilationFailed = true;
+          }
+        }
+      }
+      catch (IOException e) {
+        compilationManager.addMessage(MxmlcCompcCompilationTask.this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
+        myCompilationFailed = true;
+      }
+      finally {
+        cancel();
 
         try {
-          char[] buf = new char[2048];
-          int read;
-          while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-            final String output = new String(buf, 0, read);
-            final boolean ok = FlexCompilationUtils.handleCompilerOutput(compilationManager, MxmlcCompcCompilationTask.this, output);
-            if (!ok) {
-              myCompilationFailed = true;
-            }
-          }
+          reader.close();
         }
-        catch (IOException e) {
-          compilationManager.addMessage(MxmlcCompcCompilationTask.this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
-          myCompilationFailed = true;
-        }
-        finally {
-          cancel();
-
-          try {
-            reader.close();
-          }
-          catch (IOException e) {/*ignore*/}
-        }
+        catch (IOException e) {/*ignore*/}
       }
     });
   }

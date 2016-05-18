@@ -32,14 +32,11 @@ public class MarkdownPreviewSettingsForm implements MarkdownPreviewSettings.Hold
     //noinspection unchecked
     final List<MarkdownHtmlPanelProvider.ProviderInfo> providerInfos =
       ContainerUtil.mapNotNull(MarkdownHtmlPanelProvider.getProviders(),
-                               new Function<MarkdownHtmlPanelProvider, MarkdownHtmlPanelProvider.ProviderInfo>() {
-                                 @Override
-                                 public MarkdownHtmlPanelProvider.ProviderInfo fun(MarkdownHtmlPanelProvider provider) {
-                                   if (provider.isAvailable() == MarkdownHtmlPanelProvider.AvailabilityInfo.UNAVAILABLE) {
-                                     return null;
-                                   }
-                                   return provider.getProviderInfo();
+                               provider -> {
+                                 if (provider.isAvailable() == MarkdownHtmlPanelProvider.AvailabilityInfo.UNAVAILABLE) {
+                                   return null;
                                  }
+                                 return provider.getProviderInfo();
                                });
     myPreviewPanelModel = new CollectionComboBoxModel<MarkdownHtmlPanelProvider.ProviderInfo>(providerInfos, providerInfos.get(0));
     myPreviewProvider = new ComboBox(myPreviewPanelModel);

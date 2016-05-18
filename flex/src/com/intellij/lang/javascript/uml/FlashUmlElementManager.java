@@ -167,11 +167,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
         // this sort causes parsing in order to get ast node offset but
         // when we have class on stub our fields / functions already in natural order
         // TODO once we have stubs for xmlbackedclass we should update the code
-        Collections.sort(elements, new Comparator<PsiElement>() {
-          public int compare(PsiElement o1, PsiElement o2) {
-            return o1.getTextOffset() - o2.getTextOffset();
-          }
-        });
+        Collections.sort(elements, (o1, o2) -> o1.getTextOffset() - o2.getTextOffset());
       }
       return PsiUtilCore.toPsiElementArray(elements);
     }

@@ -64,13 +64,10 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
         final XmlFile file = (XmlFile)inputData.getPsiFile();
 
         final Map<String, Void> result = new HashMap<String, Void>();
-        process(file, new Consumer<PsiElement>() {
-          @Override
-          public void consume(PsiElement element) {
-            String name = getName(element);
-            if (name != null) {
-              result.put(name, null);
-            }
+        process(file, element -> {
+          String name = getName(element);
+          if (name != null) {
+            result.put(name, null);
           }
         }, false);
         return result;
@@ -161,21 +158,18 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
       if (!(file instanceof XmlFile)) {
         continue;
       }
-      process((XmlFile)file, new Consumer<PsiElement>() {
-        @Override
-        public void consume(PsiElement element) {
-          if (name.equals(getName(element))) {
-            if (element instanceof JSNamedElement) {
-              result.add((JSNamedElement)element);
-            }
-            else {
-              XmlAttribute id = ((XmlTag)element).getAttribute("id");
-              if (id != null) {
-                XmlAttributeValue valueElement = id.getValueElement();
-                PsiElement[] children;
-                if (valueElement != null && (children = valueElement.getChildren()).length == 3) {
-                  result.add(new TagNavigationItem(children[1], name));
-                }
+      process((XmlFile)file, element -> {
+        if (name.equals(getName(element))) {
+          if (element instanceof JSNamedElement) {
+            result.add((JSNamedElement)element);
+          }
+          else {
+            XmlAttribute id = ((XmlTag)element).getAttribute("id");
+            if (id != null) {
+              XmlAttributeValue valueElement = id.getValueElement();
+              PsiElement[] children;
+              if (valueElement != null && (children = valueElement.getChildren()).length == 3) {
+                result.add(new TagNavigationItem(children[1], name));
               }
             }
           }

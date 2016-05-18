@@ -93,39 +93,36 @@ public abstract class BaseToggleStateAction extends ToggleAction implements Dumb
     }
 
 
-    WriteCommandAction.runWriteCommandAction(psiFile.getProject(), new Runnable() {
-      @Override
-      public void run() {
-        if (!psiFile.isValid()) {
-          return;
-        }
-
-        final Document document = editor.getDocument();
-        for (Caret caret : ContainerUtil.reverse(editor.getCaretModel().getAllCarets())) {
-          if (!state) {
-            final Couple<PsiElement> elements = MarkdownActionUtil.getElementsUnderCaretOrSelection(psiFile, caret);
-            if (elements == null) {
-              continue;
-            }
-
-            final PsiElement closestEmph = MarkdownActionUtil.getCommonParentOfType(elements.getFirst(),
-                                                                                    elements.getSecond(),
-                                                                                    getTargetNodeType());
-            if (closestEmph == null) {
-              LOG.warn("Could not find enclosing element on its destruction");
-              continue;
-            }
-
-            final TextRange range = closestEmph.getTextRange();
-            removeEmphFromSelection(document, caret, range);
-          }
-          else {
-            addEmphToSelection(document, caret);
-          }
-        }
-
-        PsiDocumentManager.getInstance(psiFile.getProject()).commitDocument(document);
+    WriteCommandAction.runWriteCommandAction(psiFile.getProject(), () -> {
+      if (!psiFile.isValid()) {
+        return;
       }
+
+      final Document document = editor.getDocument();
+      for (Caret caret : ContainerUtil.reverse(editor.getCaretModel().getAllCarets())) {
+        if (!state) {
+          final Couple<PsiElement> elements = MarkdownActionUtil.getElementsUnderCaretOrSelection(psiFile, caret);
+          if (elements == null) {
+            continue;
+          }
+
+          final PsiElement closestEmph = MarkdownActionUtil.getCommonParentOfType(elements.getFirst(),
+                                                                                  elements.getSecond(),
+                                                                                  getTargetNodeType());
+          if (closestEmph == null) {
+            LOG.warn("Could not find enclosing element on its destruction");
+            continue;
+          }
+
+          final TextRange range = closestEmph.getTextRange();
+          removeEmphFromSelection(document, caret, range);
+        }
+        else {
+          addEmphToSelection(document, caret);
+        }
+      }
+
+      PsiDocumentManager.getInstance(psiFile.getProject()).commitDocument(document);
     });
   }
 

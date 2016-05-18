@@ -26,11 +26,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.NAMED_CONSTRUCTOR_DECLARATI
 import static com.jetbrains.lang.dart.DartTokenTypesSets.FUNCTION_DEFINITION;
 
 public class DartHierarchyUtil {
-  private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = new Comparator<NodeDescriptor>() {
-    public int compare(final NodeDescriptor first, final NodeDescriptor second) {
-      return first.getIndex() - second.getIndex();
-    }
-  };
+  private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = (first, second) -> first.getIndex() - second.getIndex();
 
   private DartHierarchyUtil() {
   }

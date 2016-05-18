@@ -74,34 +74,31 @@ class FlexValue extends XValue {
     "mx.collections.AsyncListView"
   );
 
-  private static final Comparator<XValue> ourArrayElementsComparator = new Comparator<XValue>() {
-    @Override
-    public int compare(XValue o1, XValue o2) {
-      if (o1 instanceof FlexValue && o2 instanceof FlexValue) {
-        String name = ((FlexValue)o1).myName;
-        String name2 = ((FlexValue)o2).myName;
+  private static final Comparator<XValue> ourArrayElementsComparator = (o1, o2) -> {
+    if (o1 instanceof FlexValue && o2 instanceof FlexValue) {
+      String name = ((FlexValue)o1).myName;
+      String name2 = ((FlexValue)o2).myName;
 
-        if (!StringUtil.isEmpty(name) &&
-            !StringUtil.isEmpty(name2) &&
-            Character.isDigit(name.charAt(0)) &&
-            Character.isDigit(name2.charAt(0))
-          ) {
-          try {
-            return Integer.parseInt(name) - Integer.parseInt(name2);
-          }
-          catch (NumberFormatException ignore) {/**/}
+      if (!StringUtil.isEmpty(name) &&
+          !StringUtil.isEmpty(name2) &&
+          Character.isDigit(name.charAt(0)) &&
+          Character.isDigit(name2.charAt(0))
+        ) {
+        try {
+          return Integer.parseInt(name) - Integer.parseInt(name2);
         }
-
-        if (name == null) {
-          return name2 == null ? 0 : -1;
-        }
-        else if (name2 == null) {
-          return 1;
-        }
-        return name.compareToIgnoreCase(name2);
+        catch (NumberFormatException ignore) {/**/}
       }
-      return 1;
+
+      if (name == null) {
+        return name2 == null ? 0 : -1;
+      }
+      else if (name2 == null) {
+        return 1;
+      }
+      return name.compareToIgnoreCase(name2);
     }
+    return 1;
   };
 
   enum ValueType {
@@ -590,15 +587,13 @@ class FlexValue extends XValue {
           final XmlFile xmlFile = file instanceof XmlFile ? (XmlFile)file : null;
           final XmlTag rootTag = xmlFile == null ? null : xmlFile.getRootTag();
           if (rootTag != null) {
-            NodeClassInfo.processSubtagsRecursively(rootTag, new Processor<XmlTag>() {
-              public boolean process(final XmlTag tag) {
-                final XmlAttribute idAttr = tag.getAttribute("id");
-                final String id = idAttr == null ? null : idAttr.getValue();
-                if (id != null && id.equals(myName)) {
-                  fieldRef.set(idAttr);
-                }
-                return !MxmlJSClass.isTagThatAllowsAnyXmlContent(tag);
+            NodeClassInfo.processSubtagsRecursively(rootTag, tag -> {
+              final XmlAttribute idAttr = tag.getAttribute("id");
+              final String id = idAttr == null ? null : idAttr.getValue();
+              if (id != null && id.equals(myName)) {
+                fieldRef.set(idAttr);
               }
+              return !MxmlJSClass.isTagThatAllowsAnyXmlContent(tag);
             });
           }
         }

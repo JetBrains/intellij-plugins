@@ -21,24 +21,21 @@ public class FlexUnitTestRunner extends FlexRunner {
       return;
     }
 
-    Runnable startRunnable = new Runnable() {
-      @Override
-      public void run() {
-        try {
-          if (project.isDisposed()) return;
+    Runnable startRunnable = () -> {
+      try {
+        if (project.isDisposed()) return;
 
-          final RunContentDescriptor descriptor = doExecute(state, env);
-          if (callback != null) callback.processStarted(descriptor);
+        final RunContentDescriptor descriptor = doExecute(state, env);
+        if (callback != null) callback.processStarted(descriptor);
 
-          if (descriptor != null) {
-            ExecutionManager.getInstance(project).getContentManager().showRunContent(env.getExecutor(), descriptor);
-            final ProcessHandler processHandler = descriptor.getProcessHandler();
-            if (processHandler != null) processHandler.startNotify();
-          }
+        if (descriptor != null) {
+          ExecutionManager.getInstance(project).getContentManager().showRunContent(env.getExecutor(), descriptor);
+          final ProcessHandler processHandler = descriptor.getProcessHandler();
+          if (processHandler != null) processHandler.startNotify();
         }
-        catch (ExecutionException e) {
-          ExecutionUtil.handleExecutionError(env, e);
-        }
+      }
+      catch (ExecutionException e) {
+        ExecutionUtil.handleExecutionError(env, e);
       }
     };
 

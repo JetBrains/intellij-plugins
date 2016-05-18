@@ -101,18 +101,15 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     if (image != null) {
       try {
         IOUtil.saveImage(toolWindowForm.getPreviewPanel().getImage(),
-                         new File(DesignerApplicationManager.APP_DIR, LAST_PREVIEW_IMAGE_FILE_NAME), new Consumer<DataOutputStream>() {
-          @Override
-          public void consume(DataOutputStream out) {
-            try {
-              out.writeLong(file.getTimeStamp());
-              out.writeUTF(file.getUrl());
-            }
-            catch (IOException e) {
-              throw new RuntimeException(e);
-            }
-          }
-        });
+                         new File(DesignerApplicationManager.APP_DIR, LAST_PREVIEW_IMAGE_FILE_NAME), out -> {
+                           try {
+                             out.writeLong(file.getTimeStamp());
+                             out.writeUTF(file.getUrl());
+                           }
+                           catch (IOException e) {
+                             throw new RuntimeException(e);
+                           }
+                         });
       }
       catch (Throwable e) {
         LogMessageUtil.LOG.warn("Can't save image for last document", e);
@@ -202,12 +199,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       @Override
       public void documentRendered(DocumentFactoryManager.DocumentInfo info) {
         if (isApplicable(info) && !toolWindowForm.waitingForGetDocument) {
-          UIUtil.invokeLaterIfNeeded(new Runnable() {
-            @Override
-            public void run() {
-              render(false, false);
-            }
-          });
+          UIUtil.invokeLaterIfNeeded(() -> render(false, false));
         }
       }
 
@@ -225,16 +217,13 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
     try {
       final VirtualFile virtualFile = toolWindowForm.getFile();
-      BufferedImage image = IOUtil.readImage(file, new Processor<DataInputStream>() {
-        @Override
-        public boolean process(DataInputStream in) {
-          try {
-            return in.readLong() == virtualFile.getTimeStamp() &&
-                   in.readUTF().equals(virtualFile.getUrl());
-          }
-          catch (IOException e) {
-            throw new RuntimeException(e);
-          }
+      BufferedImage image = IOUtil.readImage(file, in -> {
+        try {
+          return in.readLong() == virtualFile.getTimeStamp() &&
+                 in.readUTF().equals(virtualFile.getUrl());
+        }
+        catch (IOException e) {
+          throw new RuntimeException(e);
         }
       });
       if (image != null) {
@@ -278,38 +267,22 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
       @Override
       public void process(final BufferedImage image) {
-        UIUtil.invokeLaterIfNeeded(new Runnable() {
-          @Override
-          public void run() {
-            toolWindowForm.getPreviewPanel().setImage(image);
-          }
-        });
+        UIUtil.invokeLaterIfNeeded(() -> toolWindowForm.getPreviewPanel().setImage(image));
       }
     });
 
-    result.doWhenProcessed(new Runnable() {
-      @Override
-      public void run() {
-        toolWindowForm.waitingForGetDocument = false;
-        if (isSlow && --loadingDecoratorStarted == 0 && toolWindowForm != null) {
-          toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
-        }
+    result.doWhenProcessed(() -> {
+      toolWindowForm.waitingForGetDocument = false;
+      if (isSlow && --loadingDecoratorStarted == 0 && toolWindowForm != null) {
+        toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
       }
     });
 
-    result.doWhenRejected(new Runnable() {
-      @Override
-      public void run() {
-        if (clearPreviousOnError) {
-          toolWindowForm.getPreviewPanel().setImage(null);
-        }
-        UIUtil.invokeLaterIfNeeded(new Runnable() {
-          @Override
-          public void run() {
-            toolWindowForm.getPreviewPanel().showCannotRender();
-          }
-        });
+    result.doWhenRejected(() -> {
+      if (clearPreviousOnError) {
+        toolWindowForm.getPreviewPanel().setImage(null);
       }
+      UIUtil.invokeLaterIfNeeded(() -> toolWindowForm.getPreviewPanel().showCannotRender());
     });
   }
 
@@ -378,36 +351,33 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
   private void processFileEditorChange(@Nullable final Editor newEditor) {
     toolWindowUpdateAlarm.cancelAllRequests();
-    toolWindowUpdateAlarm.addRequest(new Runnable() {
-      @Override
-      public void run() {
-        if (project.isDisposed() || !project.isOpen()) {
+    toolWindowUpdateAlarm.addRequest(() -> {
+      if (project.isDisposed() || !project.isOpen()) {
+        return;
+      }
+
+      if (toolWindow == null) {
+        if (newEditor == null) {
           return;
         }
+        initToolWindow();
+        // idea inspection bug
+        //noinspection ConstantConditions
+        assert toolWindow != null;
+      }
 
-        if (toolWindow == null) {
-          if (newEditor == null) {
-            return;
-          }
-          initToolWindow();
-          // idea inspection bug
-          //noinspection ConstantConditions
-          assert toolWindow != null;
-        }
+      VirtualFile psiFile = newEditor == null ? null : FileDocumentManager.getInstance().getFile(newEditor.getDocument());
+      if (psiFile == null) {
+        return;
+      }
 
-        VirtualFile psiFile = newEditor == null ? null : FileDocumentManager.getInstance().getFile(newEditor.getDocument());
-        if (psiFile == null) {
-          return;
-        }
+      final boolean doRender = !Comparing.equal(toolWindowForm.getFile(), psiFile);
+      if (doRender) {
+        toolWindowForm.setFile(psiFile);
+      }
 
-        final boolean doRender = !Comparing.equal(toolWindowForm.getFile(), psiFile);
-        if (doRender) {
-          toolWindowForm.setFile(psiFile);
-        }
-
-        if (toolWindowVisible) {
-          render(true, true);
-        }
+      if (toolWindowVisible) {
+        render(true, true);
       }
     }, 300);
   }

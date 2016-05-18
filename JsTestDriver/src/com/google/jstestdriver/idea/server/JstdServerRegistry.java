@@ -41,27 +41,16 @@ public class JstdServerRegistry {
 
   @NotNull
   private Promise<JstdServer> doStart(@NotNull final JstdServerSettings settings, @NotNull final AsyncPromise<JstdServer> promise) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          final JstdServer server = new JstdServer(settings);
-          UIUtil.invokeLaterIfNeeded(new Runnable() {
-            @Override
-            public void run() {
-              myServer = server;
-              promise.setResult(server);
-            }
-          });
-        }
-        catch (final Exception e) {
-          UIUtil.invokeLaterIfNeeded(new Runnable() {
-            @Override
-            public void run() {
-              promise.setError(e);
-            }
-          });
-        }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      try {
+        final JstdServer server = new JstdServer(settings);
+        UIUtil.invokeLaterIfNeeded(() -> {
+          myServer = server;
+          promise.setResult(server);
+        });
+      }
+      catch (final Exception e) {
+        UIUtil.invokeLaterIfNeeded(() -> promise.setError(e));
       }
     });
     return promise;

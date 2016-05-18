@@ -144,17 +144,15 @@ public class DartModuleBuilder extends ModuleBuilder {
   }
 
   private static void scheduleFilesOpeningAndPubGet(@NotNull final Module module, @NotNull final Collection<VirtualFile> files) {
-    runWhenNonModalIfModuleNotDisposed(new Runnable() {
-      public void run() {
-        final FileEditorManager manager = FileEditorManager.getInstance(module.getProject());
-        for (VirtualFile file : files) {
-          manager.openFile(file, true);
+    runWhenNonModalIfModuleNotDisposed(() -> {
+      final FileEditorManager manager = FileEditorManager.getInstance(module.getProject());
+      for (VirtualFile file : files) {
+        manager.openFile(file, true);
 
-          if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName())) {
-            final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
-            if (pubGetAction instanceof DartPubGetAction) {
-              ((DartPubGetAction)pubGetAction).performPubAction(module, file, false);
-            }
+        if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName())) {
+          final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
+          if (pubGetAction instanceof DartPubGetAction) {
+            ((DartPubGetAction)pubGetAction).performPubAction(module, file, false);
           }
         }
       }
@@ -162,20 +160,17 @@ public class DartModuleBuilder extends ModuleBuilder {
   }
 
   static void runWhenNonModalIfModuleNotDisposed(@NotNull final Runnable runnable, @NotNull final Module module) {
-    StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
-      @Override
-      public void run() {
-        if (ApplicationManager.getApplication().getCurrentModalityState() == ModalityState.NON_MODAL) {
-          runnable.run();
-        }
-        else {
-          ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, new Condition() {
-            @Override
-            public boolean value(final Object o) {
-              return module.isDisposed();
-            }
-          });
-        }
+    StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(() -> {
+      if (ApplicationManager.getApplication().getCurrentModalityState() == ModalityState.NON_MODAL) {
+        runnable.run();
+      }
+      else {
+        ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, new Condition() {
+          @Override
+          public boolean value(final Object o) {
+            return module.isDisposed();
+          }
+        });
       }
     });
   }

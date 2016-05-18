@@ -18,13 +18,9 @@ public class JasmineAdapterSupportInspection extends AbstractAddAdapterSupportIn
   public JasmineAdapterSupportInspection() {
     super(
       "Jasmine",
-      new NotNullProducer<List<VirtualFile>>() {
-        @NotNull
-        @Override
-        public List<VirtualFile> produce() {
-          String[] relativePaths = new String[]{"jasmine-1.1.0.js", "JasmineAdapter-1.1.2.js"};
-          return VfsUtils.findVirtualFilesByResourceNames(JasmineAdapterSrcMarker.class, relativePaths);
-        }
+      () -> {
+        String[] relativePaths = new String[]{"jasmine-1.1.0.js", "JasmineAdapter-1.1.2.js"};
+        return VfsUtils.findVirtualFilesByResourceNames(JasmineAdapterSrcMarker.class, relativePaths);
       },
       "https://github.com/ibolmo/jasmine-jstd-adapter"
     );

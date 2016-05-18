@@ -144,34 +144,31 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
     });
 
     if (BLOCK_PORT_843) {
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-        @Override
-        public void run() {
-          ServerSocket socket = null;
-          myStopBlocking = false;
-          try {
-            socket = new ServerSocket(843);
-            socket.setSoTimeout(50);
-            while (!myStopBlocking) {
-              try {
-                socket.accept();
-              }
-              catch (SocketTimeoutException e) {
-                // continue looping
-              }
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        ServerSocket socket = null;
+        myStopBlocking = false;
+        try {
+          socket = new ServerSocket(843);
+          socket.setSoTimeout(50);
+          while (!myStopBlocking) {
+            try {
+              socket.accept();
+            }
+            catch (SocketTimeoutException e) {
+              // continue looping
             }
           }
-          catch (IOException e) {
-            fail(e.getMessage());
-          }
-          finally {
-            if (socket != null) {
-              try {
-                socket.close();
-              }
-              catch (IOException e) {
-                // ignore
-              }
+        }
+        catch (IOException e) {
+          fail(e.getMessage());
+        }
+        finally {
+          if (socket != null) {
+            try {
+              socket.close();
+            }
+            catch (IOException e) {
+              // ignore
             }
           }
         }
@@ -208,12 +205,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   @Override
   protected void setUpJdk() {
     final Sdk sdk = FlexTestUtils.createSdk(FLEX4_SDK_HOME, "4.6.0");
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      @Override
-      public void consume(final ModifiableFlexBuildConfiguration configuration) {
-        FlexTestUtils.setSdk(configuration, sdk);
-      }
-    });
+    FlexTestUtils.modifyBuildConfiguration(myModule, configuration -> FlexTestUtils.setSdk(configuration, sdk));
   }
 
   @Override
@@ -286,11 +278,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
         AccessToken l = WriteAction.start();
 
         try {
-          FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-            public void consume(final ModifiableFlexBuildConfiguration configuration) {
-              configuration.setTargetPlatform(myTargetPlatform);
-            }
-          });
+          FlexTestUtils.modifyBuildConfiguration(myModule, configuration -> configuration.setTargetPlatform(myTargetPlatform));
         }
         finally {
           l.finish();
@@ -358,27 +346,24 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
     };
 
     final Ref<ExecutionConsole> executionConsole = new Ref<ExecutionConsole>();
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          runner.execute(env, new ProgramRunner.Callback() {
-            @Override
-            public void processStarted(RunContentDescriptor descriptor) {
-              compilation.up();
-              startup.down();
-              descriptor.getProcessHandler().addProcessListener(listener);
-              executionConsole.set(descriptor.getExecutionConsole());
-            }
-          });
-        }
-        catch (Throwable t) {
-          t.printStackTrace();
-          fail(t.getMessage());
-          compilation.up();
-          startup.up();
-          execution.up();
-        }
+    ApplicationManager.getApplication().invokeLater(() -> {
+      try {
+        runner.execute(env, new ProgramRunner.Callback() {
+          @Override
+          public void processStarted(RunContentDescriptor descriptor) {
+            compilation.up();
+            startup.down();
+            descriptor.getProcessHandler().addProcessListener(listener);
+            executionConsole.set(descriptor.getExecutionConsole());
+          }
+        });
+      }
+      catch (Throwable t) {
+        t.printStackTrace();
+        fail(t.getMessage());
+        compilation.up();
+        startup.up();
+        execution.up();
       }
     });
 

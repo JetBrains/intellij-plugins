@@ -31,12 +31,7 @@ public class FlashUIDesignerLineMarkerProvider implements LineMarkerProvider {
 
     //holder.createInfoAnnotation(textRange, null).setGutterIconRenderer(new MyRenderer());
     return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), PlatformIcons.UI_FORM_ICON, Pass.UPDATE_ALL,
-                                          new Function<PsiElement, String>() {
-                                            @Override
-                                            public String fun(PsiElement element) {
-                                              return FlashUIDesignerBundle.message("gutter.open");
-                                            }
-                                          },
+                                          element1 -> FlashUIDesignerBundle.message("gutter.open"),
                                           new GutterIconNavigationHandler<PsiElement>() {
                                             @Override
                                             public void navigate(MouseEvent e, PsiElement elt) {

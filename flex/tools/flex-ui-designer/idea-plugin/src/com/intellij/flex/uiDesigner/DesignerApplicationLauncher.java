@@ -140,16 +140,13 @@ public class DesignerApplicationLauncher extends DocumentTask {
         }
 
         adlProcessHandler = runAdl(adlRunConfiguration, DesignerApplicationManager.APP_DIR.getPath() + File.separatorChar + "descriptor-air" + appClassifierVersion + ".xml",
-          new Consumer<Integer>() {
-            @Override
-            public void consume(Integer exitCode) {
-              found.set(false);
-              if (!indicator.isCanceled()) {
-                LOG.info(describeAdlExit(exitCode));
-                semaphore.up();
-              }
-            }
-          });
+                                   exitCode -> {
+                                     found.set(false);
+                                     if (!indicator.isCanceled()) {
+                                       LOG.info(describeAdlExit(exitCode));
+                                       semaphore.up();
+                                     }
+                                   });
       }
       catch (ExecutionException e) {
         adlProcessHandler = null;
@@ -218,22 +215,16 @@ public class DesignerApplicationLauncher extends DocumentTask {
     final AtomicBoolean result = new AtomicBoolean();
     final Semaphore debuggerRunSemaphore = new Semaphore();
     debuggerRunSemaphore.down();
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          runDebugger(module, new Runnable() {
-            @Override
-            public void run() {
-              result.set(true);
-              debuggerRunSemaphore.up();
-            }
-          });
-        }
-        catch (ExecutionException e) {
-          LOG.error(e);
+    ApplicationManager.getApplication().invokeLater(() -> {
+      try {
+        runDebugger(module, () -> {
+          result.set(true);
           debuggerRunSemaphore.up();
-        }
+        });
+      }
+      catch (ExecutionException e) {
+        LOG.error(e);
+        debuggerRunSemaphore.up();
       }
     });
 
@@ -243,15 +234,12 @@ public class DesignerApplicationLauncher extends DocumentTask {
 
   private void notifyNoSuitableSdkToLaunch() {
     String message = FlashUIDesignerBundle.message(SystemInfo.isLinux ? "no.sdk.to.launch.designer.linux" : "no.sdk.to.launch.designer");
-    DesignerApplicationManager.notifyUser(debug, message, module.getProject(), new Consumer<String>() {
-      @Override
-      public void consume(String id) {
-        if ("edit".equals(id)) {
-          new ProjectJdksEditor(null, module.getProject(), WindowManager.getInstance().suggestParentWindow(myProject)).show();
-        }
-        else {
-          LOG.error("unexpected id: " + id);
-        }
+    DesignerApplicationManager.notifyUser(debug, message, module.getProject(), id -> {
+      if ("edit".equals(id)) {
+        new ProjectJdksEditor(null, module.getProject(), WindowManager.getInstance().suggestParentWindow(myProject)).show();
+      }
+      else {
+        LOG.error("unexpected id: " + id);
       }
     });
   }
@@ -268,12 +256,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
       }
     }
 
-    Collections.sort(sdks, new Comparator<Sdk>() {
-      @Override
-      public int compare(@NotNull Sdk o1, @NotNull Sdk o2) {
-        return StringUtil.compareVersionNumbers(o2.getVersionString(), o1.getVersionString());
-      }
-    });
+    Collections.sort(sdks, (o1, o2) -> StringUtil.compareVersionNumbers(o2.getVersionString(), o1.getVersionString()));
 
     final String installedRuntime = findInstalledRuntime();
     final List<AdlRunConfiguration> result = new ArrayList<AdlRunConfiguration>(sdks.size());
@@ -340,43 +323,39 @@ public class DesignerApplicationLauncher extends DocumentTask {
   }
 
   private void runInitializeLibrariesAndModuleThread() {
-    initializeTask = ApplicationManager.getApplication().executeOnPooledThread(new Callable<ProjectComponentReferenceCounter>() {
-      @Nullable
-      @Override
-      public ProjectComponentReferenceCounter call() {
-        try {
-          LibraryManager.getInstance().init();
-          indicator.checkCanceled();
+    initializeTask = ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      try {
+        LibraryManager.getInstance().init();
+        indicator.checkCanceled();
 
-          if (!StringRegistry.getInstance().isEmpty()) {
-            Client.getInstance().initStringRegistry();
-          }
-          indicator.setText(FlashUIDesignerBundle.message("collect.libraries"));
-
-          assert myProject != null;
-          DumbService dumbService = DumbService.getInstance(myProject);
-          if (dumbService.isDumb()) {
-            dumbService.waitForSmartMode();
-          }
-
-          return LibraryManager.getInstance().registerModule(module, problemsHolder);
+        if (!StringRegistry.getInstance().isEmpty()) {
+          Client.getInstance().initStringRegistry();
         }
-        catch (Throwable e) {
-          if (initializeTask == null || initializeTask.isCancelled()) {
-            return null;
-          }
+        indicator.setText(FlashUIDesignerBundle.message("collect.libraries"));
 
-          //noinspection InstanceofCatchParameter
-          if (e instanceof InitException) {
-            processInitException((InitException)e, module, debug);
-          }
-          else {
-            LOG.error(e);
-          }
+        assert myProject != null;
+        DumbService dumbService = DumbService.getInstance(myProject);
+        if (dumbService.isDumb()) {
+          dumbService.waitForSmartMode();
+        }
 
-          indicator.cancel();
+        return LibraryManager.getInstance().registerModule(module, problemsHolder);
+      }
+      catch (Throwable e) {
+        if (initializeTask == null || initializeTask.isCancelled()) {
           return null;
         }
+
+        //noinspection InstanceofCatchParameter
+        if (e instanceof InitException) {
+          processInitException((InitException)e, module, debug);
+        }
+        else {
+          LOG.error(e);
+        }
+
+        indicator.cancel();
+        return null;
       }
     });
   }

@@ -86,22 +86,19 @@ public class JstdServerMain {
   }
 
   private static void shutdownIfOrphan() {
-    Thread t = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        int c = 0;
-        while (c != -1) {
-          try {
-            c = System.in.read();
-          }
-          catch (IOException e) {
-            //noinspection CallToPrintStackTrace
-            e.printStackTrace();
-          }
+    Thread t = new Thread(() -> {
+      int c = 0;
+      while (c != -1) {
+        try {
+          c = System.in.read();
         }
-        System.out.println("JsTestDriver server is an orphan process. It will exit now.");
-        System.exit(123);
+        catch (IOException e) {
+          //noinspection CallToPrintStackTrace
+          e.printStackTrace();
+        }
       }
+      System.out.println("JsTestDriver server is an orphan process. It will exit now.");
+      System.exit(123);
     }, "Orphan server killer");
     t.setDaemon(true);
     t.start();

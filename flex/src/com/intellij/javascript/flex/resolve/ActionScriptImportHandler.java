@@ -86,81 +86,79 @@ public class ActionScriptImportHandler extends JSImportHandler {
     final Ref<JSImportedElementResolveResult> resultRef = new Ref<JSImportedElementResolveResult>();
 
     final String name1 = name;
-    JSResolveUtil.walkOverStructure(context, new Processor<PsiNamedElement>() {
-      public boolean process(PsiNamedElement context) {
-        JSImportedElementResolveResult resolved = null;
+    JSResolveUtil.walkOverStructure(context, context1 -> {
+      JSImportedElementResolveResult resolved = null;
 
-        if (context instanceof XmlBackedJSClassImpl) { // reference list in mxml
-          XmlTag rootTag = ((XmlBackedJSClassImpl)context).getParent();
-          if (rootTag != null && name1.equals(rootTag.getLocalName())) {
-            final XmlElementDescriptor descriptor = rootTag.getDescriptor();
-            PsiElement element = descriptor != null ? descriptor.getDeclaration():null;
-            if (element instanceof XmlFile) {
-              element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
-            }
-
-            final String s = element instanceof JSClass ? ((JSClass)element).getQualifiedName() : rootTag.getLocalName();
-            resolved = new JSImportedElementResolveResult(s);
-          } else {
-            resolved = resolveTypeNameUsingImports(name1, context);
+      if (context1 instanceof XmlBackedJSClassImpl) { // reference list in mxml
+        XmlTag rootTag = ((XmlBackedJSClassImpl)context1).getParent();
+        if (rootTag != null && name1.equals(rootTag.getLocalName())) {
+          final XmlElementDescriptor descriptor = rootTag.getDescriptor();
+          PsiElement element = descriptor != null ? descriptor.getDeclaration():null;
+          if (element instanceof XmlFile) {
+            element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
           }
-        } else if (context instanceof JSQualifiedNamedElement) {
-          if (context instanceof JSClass && name1.equals(context.getName())) {
-            resolved = new JSImportedElementResolveResult(((JSQualifiedNamedElement)context).getQualifiedName());
-          } else {
-            resolved = resolveTypeNameUsingImports(name1, context);
 
-            if (resolved == null && context.getParent() instanceof JSFile) {
-              final String qName = ((JSQualifiedNamedElement)context).getQualifiedName();
-              final String packageName = qName == null ? "" :
-                                         context instanceof JSPackageStatement ? qName + "." :
-                                         qName.substring( 0, qName.lastIndexOf('.') + 1);
+          final String s = element instanceof JSClass ? ((JSClass)element).getQualifiedName() : rootTag.getLocalName();
+          resolved = new JSImportedElementResolveResult(s);
+        } else {
+          resolved = resolveTypeNameUsingImports(name1, context1);
+        }
+      } else if (context1 instanceof JSQualifiedNamedElement) {
+        if (context1 instanceof JSClass && name1.equals(context1.getName())) {
+          resolved = new JSImportedElementResolveResult(((JSQualifiedNamedElement)context1).getQualifiedName());
+        } else {
+          resolved = resolveTypeNameUsingImports(name1, context1);
 
-              if (packageName.length() != 0) {
-                final PsiElement byQName = JSClassResolver.findClassFromNamespace(packageName + name1, context);
+          if (resolved == null && context1.getParent() instanceof JSFile) {
+            final String qName = ((JSQualifiedNamedElement)context1).getQualifiedName();
+            final String packageName = qName == null ? "" :
+                                       context1 instanceof JSPackageStatement ? qName + "." :
+                                       qName.substring( 0, qName.lastIndexOf('.') + 1);
 
-                if (byQName instanceof JSQualifiedNamedElement) {
-                  resolved = new JSImportedElementResolveResult(((JSQualifiedNamedElement)byQName).getQualifiedName());
-                }
+            if (packageName.length() != 0) {
+              final PsiElement byQName = JSClassResolver.findClassFromNamespace(packageName + name1, context1);
+
+              if (byQName instanceof JSQualifiedNamedElement) {
+                resolved = new JSImportedElementResolveResult(((JSQualifiedNamedElement)byQName).getQualifiedName());
               }
             }
           }
         }
-        else {
-          resolved = resolveTypeNameUsingImports(name1, context);
-          PsiElement contextOfContext;
-
-          if (resolved == null && context instanceof JSFile && (contextOfContext = context.getContext()) != null) {
-            XmlBackedJSClassImpl clazz = contextOfContext instanceof XmlElement
-                                         ? (XmlBackedJSClassImpl)XmlBackedJSClassImpl.getContainingComponent((XmlElement)contextOfContext)
-                                         : null;
-
-            if (clazz != null) {
-              SinkResolveProcessor r = new SinkResolveProcessor(name1, new ResolveResultSink(null, name1));
-              r.setForceImportsForPlace(true);
-              boolean b = clazz.doImportFromScripts(r, clazz);
-
-              if(!b) {
-                PsiElement resultFromProcessor = r.getResult();
-                JSQualifiedNamedElement clazzFromComponent =
-                  resultFromProcessor instanceof JSQualifiedNamedElement ? (JSQualifiedNamedElement)resultFromProcessor : null;
-
-                if (clazzFromComponent != null) {
-                  resolved = new JSImportedElementResolveResult(clazzFromComponent.getQualifiedName(), clazz, null);
-                }
-              }
-            }
-          }
-        }
-
-        if (resolved != null) {
-          resultRef.set(resolved);
-          return false;
-        }
-
-        if (context instanceof JSPackageStatement) return false;
-        return true;
       }
+      else {
+        resolved = resolveTypeNameUsingImports(name1, context1);
+        PsiElement contextOfContext;
+
+        if (resolved == null && context1 instanceof JSFile && (contextOfContext = context1.getContext()) != null) {
+          XmlBackedJSClassImpl clazz = contextOfContext instanceof XmlElement
+                                       ? (XmlBackedJSClassImpl)XmlBackedJSClassImpl.getContainingComponent((XmlElement)contextOfContext)
+                                       : null;
+
+          if (clazz != null) {
+            SinkResolveProcessor r = new SinkResolveProcessor(name1, new ResolveResultSink(null, name1));
+            r.setForceImportsForPlace(true);
+            boolean b = clazz.doImportFromScripts(r, clazz);
+
+            if(!b) {
+              PsiElement resultFromProcessor = r.getResult();
+              JSQualifiedNamedElement clazzFromComponent =
+                resultFromProcessor instanceof JSQualifiedNamedElement ? (JSQualifiedNamedElement)resultFromProcessor : null;
+
+              if (clazzFromComponent != null) {
+                resolved = new JSImportedElementResolveResult(clazzFromComponent.getQualifiedName(), clazz, null);
+              }
+            }
+          }
+        }
+      }
+
+      if (resolved != null) {
+        resultRef.set(resolved);
+        return false;
+      }
+
+      if (context1 instanceof JSPackageStatement) return false;
+      return true;
     });
 
     JSImportedElementResolveResult result = resultRef.get();

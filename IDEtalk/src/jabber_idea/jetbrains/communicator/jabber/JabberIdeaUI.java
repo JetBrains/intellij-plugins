@@ -77,25 +77,19 @@ public class JabberIdeaUI implements JabberUI {
 
   public void connectAndLoginAsync(final String message, final AtomicBoolean connected) {
     if (SwingUtilities.isEventDispatchThread()) {
-      myIdeFacade.runOnPooledThread(new Runnable() {
-        public void run() {
-          connectAndLoginAsync(message, connected);
-        }
-      });
+      myIdeFacade.runOnPooledThread(() -> connectAndLoginAsync(message, connected));
       return;
     }
 
     myFacade.connect();
 
     if (!myFacade.isConnectedAndAuthenticated()) {
-      Runnable runnable = new Runnable() {
-        public void run() {
-          RegistrationForm.INITIAL_MESSAGE = message;
-          login(null);
+      Runnable runnable = () -> {
+        RegistrationForm.INITIAL_MESSAGE = message;
+        login(null);
 
-          if (connected != null) {
-            connected.set(myFacade.isConnectedAndAuthenticated());
-          }
+        if (connected != null) {
+          connected.set(myFacade.isConnectedAndAuthenticated());
         }
       };
       UIUtil.invokeLater(runnable);

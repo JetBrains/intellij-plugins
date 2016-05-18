@@ -81,12 +81,8 @@ final class AdlUtil {
             @Override
             public void dispose() {
               if (!project.isDisposed()) {
-                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                  @Override
-                  public void run() {
-                    ExecutionManager.getInstance(project).getContentManager().removeRunContent(executor, descriptor);
-                  }
-                });
+                ApplicationManager.getApplication().invokeLater(
+                  () -> ExecutionManager.getInstance(project).getContentManager().removeRunContent(executor, descriptor));
               }
 
               processHandler.destroyProcess();

@@ -171,21 +171,15 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssSelectorMultiDocumentation() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
     doTest(getTestName(false), "css");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssSelectorMultiDocumentationInLookup() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
     String doc = testOne(new CssDocumentationProvider(), getTestName(false) + ".css");
     assertTrue(doc.indexOf("p1.MyClass") >= 0);
     assertTrue(doc.indexOf("p2.MyClass") >= 0);
@@ -293,44 +287,30 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testWithLibrary1() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testWithLibrary2() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
     doTest(getTestName(false), "as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testWithAsDoc1() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        FlexTestUtils
-          .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", (String)null, "LibWithAsdoc_docs.zip");
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils
+      .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", (String)null, "LibWithAsdoc_docs.zip");
 
     doTest(getTestName(false), "as", "WithAsDoc", true, Check.Content);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
   public void testWithAsDoc2() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        FlexTestUtils
-          .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", (String)null, "LibWithAsdoc_docs.zip");
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils
+      .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", (String)null, "LibWithAsdoc_docs.zip");
     doTest(getTestName(false), "mxml", "WithAsDoc", true, Check.Content);
   }
 
@@ -472,11 +452,8 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   public void testQuickNavigateInfoFromSource() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
     final String testName = getTestName(false);
     doNavigateTest(testName, "js2", "LibraryMain\npublic function someMethod(param:int):int");
   }

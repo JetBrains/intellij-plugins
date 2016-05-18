@@ -171,11 +171,9 @@ public class FlexTestUtils {
       final Sdk sdk = createSdk(flexSdkRootPath, sdkVersion);
 
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {
-        modifyBuildConfiguration(module, new Consumer<ModifiableFlexBuildConfiguration>() {
-          public void consume(final ModifiableFlexBuildConfiguration bc) {
-            bc.setNature(new BuildConfigurationNature(air ? TargetPlatform.Desktop : TargetPlatform.Web, false, OutputType.Application));
-            bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdk.getName()));
-          }
+        modifyBuildConfiguration(module, bc -> {
+          bc.setNature(new BuildConfigurationNature(air ? TargetPlatform.Desktop : TargetPlatform.Web, false, OutputType.Application));
+          bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdk.getName()));
         });
       }
 
@@ -260,12 +258,7 @@ public class FlexTestUtils {
   }
 
   public static void modifyBuildConfiguration(final Module module, final Consumer<ModifiableFlexBuildConfiguration> modifier) {
-    modifyConfigs(module.getProject(), new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        modifier.consume(editor.getConfigurations(module)[0]);
-      }
-    });
+    modifyConfigs(module.getProject(), editor -> modifier.consume(editor.getConfigurations(module)[0]));
   }
 
   public static void modifyConfigs(Project project, final Consumer<FlexProjectConfigurationEditor> modifier) {
@@ -319,13 +312,10 @@ public class FlexTestUtils {
 
       @Override
       public void commitModifiableModels() throws ConfigurationException {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            for (ModifiableRootModel model : models.values()) {
-              if (model.isChanged()) {
-                model.commit();
-              }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          for (ModifiableRootModel model : models.values()) {
+            if (model.isChanged()) {
+              model.commit();
             }
           }
         });
@@ -427,20 +417,17 @@ public class FlexTestUtils {
       }
 
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {
-        modifyConfigs(module.getProject(), new Consumer<FlexProjectConfigurationEditor>() {
-          @Override
-          public void consume(final FlexProjectConfigurationEditor e) {
-            final ModifiableFlexBuildConfiguration[] bcs = e.getConfigurations(module);
-            final ModifiableDependencyEntry dependencyEntry;
-            if (isProjectLibrary) {
-              dependencyEntry = e.createSharedLibraryEntry(bcs[0].getDependencies(), libraryName, LibraryTablesRegistrar.PROJECT_LEVEL);
-            }
-            else {
-              dependencyEntry = e.createModuleLibraryEntry(bcs[0].getDependencies(), committedLibraryId);
-            }
-            dependencyEntry.getDependencyType().setLinkageType(linkageType);
-            bcs[0].getDependencies().getModifiableEntries().add(dependencyEntry);
+        modifyConfigs(module.getProject(), e -> {
+          final ModifiableFlexBuildConfiguration[] bcs = e.getConfigurations(module);
+          final ModifiableDependencyEntry dependencyEntry;
+          if (isProjectLibrary) {
+            dependencyEntry = e.createSharedLibraryEntry(bcs[0].getDependencies(), libraryName, LibraryTablesRegistrar.PROJECT_LEVEL);
           }
+          else {
+            dependencyEntry = e.createModuleLibraryEntry(bcs[0].getDependencies(), committedLibraryId);
+          }
+          dependencyEntry.getDependencyType().setLinkageType(linkageType);
+          bcs[0].getDependencies().getModifiableEntries().add(dependencyEntry);
         });
       }
     }
@@ -534,16 +521,13 @@ public class FlexTestUtils {
   public static void addFlexModuleDependency(final Module dependent, final Module dependency) {
     new WriteCommandAction.Simple(null) {
       public void run() throws ConfigurationException {
-        modifyConfigs(dependency.getProject(), new Consumer<FlexProjectConfigurationEditor>() {
-          @Override
-          public void consume(final FlexProjectConfigurationEditor editor) {
-            final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(dependent)[0];
-            final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(dependency)[0];
-            dependencyBc.setOutputType(OutputType.Library);
-            final ModifiableBuildConfigurationEntry dependencyEntry =
-              editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
-            dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
-          }
+        modifyConfigs(dependency.getProject(), editor -> {
+          final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(dependent)[0];
+          final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(dependency)[0];
+          dependencyBc.setOutputType(OutputType.Library);
+          final ModifiableBuildConfigurationEntry dependencyEntry =
+            editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
+          dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
         });
       }
     }.execute().throwException();

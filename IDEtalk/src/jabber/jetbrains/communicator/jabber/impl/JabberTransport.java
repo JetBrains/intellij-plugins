@@ -122,12 +122,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   @Override
   public void initializeProject(String projectName, MutablePicoContainer projectLevelContainer) {
     myUI.initPerProject(projectLevelContainer);
-    myIdeFacade.runOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        myFacade.connect();
-      }
-    });
+    myIdeFacade.runOnPooledThread(() -> myFacade.connect());
   }
 
   @Override
@@ -216,15 +211,12 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
     if (xmlMessage.needsResponse()) {
       //noinspection HardCodedStringLiteral
-      final Runnable responseWaiterRunnable = new Runnable() {
-        @Override
-        public void run() {
-          try {
-            processResponse(xmlMessage, packetCollector);
-          }
-          finally {
-            packetCollector.cancel();
-          }
+      final Runnable responseWaiterRunnable = () -> {
+        try {
+          processResponse(xmlMessage, packetCollector);
+        }
+        finally {
+          packetCollector.cancel();
         }
       };
       myIdeFacade.runOnPooledThread(responseWaiterRunnable);
@@ -388,12 +380,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
       final UserPresence presence = _getUserPresence(user);
       IDEtalkEvent event = createPresenceChangeEvent(user, presence);
       if (event != null) {
-        getBroadcaster().doChange(event, new Runnable() {
-          @Override
-          public void run() {
-            myUser2Presence.put(user, presence);
-          }
-        });
+        getBroadcaster().doChange(event, () -> myUser2Presence.put(user, presence));
       }
     }
   }
@@ -625,12 +612,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
         return;
       }
 
-      UIUtil.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          acceptSubscription(presence, myUI.shouldAcceptSubscriptionRequest(presence));
-        }
-      });
+      UIUtil.invokeLater(() -> acceptSubscription(presence, myUI.shouldAcceptSubscriptionRequest(presence)));
     }
 
     private void acceptSubscription(final Presence presence, boolean subscribe) {
@@ -667,13 +649,10 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     private void doProcessPacket(Packet packet) {
       final Message message = ((Message) packet);
       if (message.getType() == Message.Type.ERROR) {
-        UIUtil.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            String from = (message.getFrom() != null) ? getMsg("from.0.lf", message.getFrom()) : "";
-            LOG.warn(getMsg("jabber.error.text", from,
-                (message.getError() == null ? "N/A" : message.getError().toString())));
-          }
+        UIUtil.invokeLater(() -> {
+          String from = (message.getFrom() != null) ? getMsg("from.0.lf", message.getFrom()) : "";
+          LOG.warn(getMsg("jabber.error.text", from,
+              (message.getError() == null ? "N/A" : message.getError().toString())));
         });
         return;
       }

@@ -67,36 +67,31 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
-    final Runnable runnable = new Runnable() {
-      public void run() {
-        final String path = psiFile.getVirtualFile().getPath();
+    final Runnable runnable = () -> {
+      final String path = psiFile.getVirtualFile().getPath();
 
-        final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
-        service.updateFilesContent();
-        final SourceFileEdit fileEdit = service.edit_sortMembers(path);
+      final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+      service.updateFilesContent();
+      final SourceFileEdit fileEdit = service.edit_sortMembers(path);
 
-        if (fileEdit == null) {
-          showHintLater(editor, DartBundle.message("dart.sort.members.hint.failed"), true);
-          LOG.warn("Unexpected response from edit_sortMembers, fileEdit is null");
-          return;
-        }
+      if (fileEdit == null) {
+        showHintLater(editor, DartBundle.message("dart.sort.members.hint.failed"), true);
+        LOG.warn("Unexpected response from edit_sortMembers, fileEdit is null");
+        return;
+      }
 
-        final List<SourceEdit> edits = fileEdit.getEdits();
-        if (edits == null || edits.size() == 0) {
-          showHintLater(editor, DartBundle.message("dart.sort.members.hint.already.good"), false);
-        }
-        else {
-          AssistUtils.applySourceEdits(document, edits);
-          showHintLater(editor, DartBundle.message("dart.sort.members.hint.success"), false);
-        }
+      final List<SourceEdit> edits = fileEdit.getEdits();
+      if (edits == null || edits.size() == 0) {
+        showHintLater(editor, DartBundle.message("dart.sort.members.hint.already.good"), false);
+      }
+      else {
+        AssistUtils.applySourceEdits(document, edits);
+        showHintLater(editor, DartBundle.message("dart.sort.members.hint.success"), false);
       }
     };
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null);
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null);
     });
   }
 
@@ -114,23 +109,21 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
 
     final Map<VirtualFile, SourceFileEdit> fileToFileEditMap = Maps.newHashMap();
 
-    final Runnable runnable = new Runnable() {
-      public void run() {
-        double fraction = 0.0;
-        for (final VirtualFile virtualFile : dartFiles) {
-          fraction += 1.0;
-          final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-          if (indicator != null) {
-            indicator.checkCanceled();
-            indicator.setFraction(fraction / dartFiles.size());
-            indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
-          }
+    final Runnable runnable = () -> {
+      double fraction = 0.0;
+      for (final VirtualFile virtualFile : dartFiles) {
+        fraction += 1.0;
+        final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+        if (indicator != null) {
+          indicator.checkCanceled();
+          indicator.setFraction(fraction / dartFiles.size());
+          indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
+        }
 
-          final String path = virtualFile.getPath();
-          final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance().edit_sortMembers(path);
-          if (fileEdit != null) {
-            fileToFileEditMap.put(virtualFile, fileEdit);
-          }
+        final String path = virtualFile.getPath();
+        final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance().edit_sortMembers(path);
+        if (fileEdit != null) {
+          fileToFileEditMap.put(virtualFile, fileEdit);
         }
       }
     };
@@ -141,28 +134,22 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
       .runProcessWithProgressSynchronously(runnable, DartBundle.message("dart.sort.members.action.name"), true, project);
 
     if (ok) {
-      final Runnable onSuccessRunnable = new Runnable() {
-        @Override
-        public void run() {
-          CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
+      final Runnable onSuccessRunnable = () -> {
+        CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
 
-          for (Map.Entry<VirtualFile, SourceFileEdit> entry : fileToFileEditMap.entrySet()) {
-            final VirtualFile file = entry.getKey();
-            final Document document = FileDocumentManager.getInstance().getDocument(file);
-            final SourceFileEdit fileEdit = entry.getValue();
-            if (document != null) {
-              AssistUtils.applySourceEdits(document, fileEdit.getEdits());
-            }
+        for (Map.Entry<VirtualFile, SourceFileEdit> entry : fileToFileEditMap.entrySet()) {
+          final VirtualFile file = entry.getKey();
+          final Document document = FileDocumentManager.getInstance().getDocument(file);
+          final SourceFileEdit fileEdit = entry.getValue();
+          if (document != null) {
+            AssistUtils.applySourceEdits(document, fileEdit.getEdits());
           }
         }
       };
 
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          CommandProcessor.getInstance()
-            .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.sort.members.action.name"), null);
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        CommandProcessor.getInstance()
+          .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.sort.members.action.name"), null);
       });
     }
   }

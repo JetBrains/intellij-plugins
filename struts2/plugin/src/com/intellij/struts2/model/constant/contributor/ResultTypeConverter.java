@@ -43,11 +43,7 @@ import java.util.List;
 class ResultTypeConverter extends DelimitedListConverter<ResultType> {
 
   private static final Function<StrutsPackage, Collection<? extends ResultType>> RESULT_TYPE_GETTER =
-      new Function<StrutsPackage, Collection<? extends ResultType>>() {
-        public Collection<? extends ResultType> fun(final StrutsPackage strutsPackage) {
-          return strutsPackage.getResultTypes();
-        }
-      };
+    strutsPackage -> strutsPackage.getResultTypes();
 
   ResultTypeConverter() {
     super(",");

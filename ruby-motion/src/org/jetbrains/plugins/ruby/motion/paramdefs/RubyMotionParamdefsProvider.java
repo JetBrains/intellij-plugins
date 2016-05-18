@@ -38,12 +38,7 @@ public class RubyMotionParamdefsProvider implements ParamDefProvider {
 
   private static void doRegisterParamdefs(ParamDefManager manager) {
     final Map<String, Map<String, Collection<Function>>> mergedFunctions = new HashMap<String, Map<String, Collection<Function>>>();
-    BridgeSupportLoader.getInstance().processFrameworks(new Consumer<Framework>() {
-      @Override
-      public void consume(Framework framework) {
-        loadAvailableSelectors(framework, mergedFunctions);
-      }
-    });
+    BridgeSupportLoader.getInstance().processFrameworks(framework -> loadAvailableSelectors(framework, mergedFunctions));
     for (Map.Entry<String, Map<String, Collection<Function>>> entry : mergedFunctions.entrySet()) {
       registerParamDef(manager, entry.getKey(), entry.getValue());
     }

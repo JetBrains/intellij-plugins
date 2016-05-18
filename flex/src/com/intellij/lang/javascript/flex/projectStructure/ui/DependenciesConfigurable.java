@@ -679,11 +679,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       myCombo.setCell(table, row, column);
       myCombo.setOptions(LinkageType.getSwcLinkageValues());
       myCombo.setDefaultValue(value);
-      myCombo.setToString(new Function<Object, String>() {
-        public String fun(final Object o) {
-          return ((LinkageType)o).getShortText();
-        }
-      });
+      myCombo.setToString(o -> ((LinkageType)o).getShortText());
       return myCombo;
     }
   };
@@ -1129,11 +1125,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           if (selectedValue.hasSubStep()) {
             return selectedValue.createSubStep();
           }
-          return doFinalStep(new Runnable() {
-            public void run() {
-              selectedValue.run();
-            }
-          });
+          return doFinalStep(() -> selectedValue.run());
         }
 
         @NotNull
@@ -1610,13 +1602,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       Module module = myConfigEditor.getModule(myDependencies);
       List<? extends FlexLibraryType> libraryTypes = Collections.singletonList(FlexLibraryType.getInstance());
       CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModelWrapper,
-                                                                    new Function<LibraryType, LibraryProperties>() {
-                                                                      @Override
-                                                                      public LibraryProperties fun(LibraryType type) {
-                                                                        return new FlexLibraryProperties(
-                                                                          FlexLibraryIdGenerator.generateId());
-                                                                      }
-                                                                    });
+                                                                    type -> new FlexLibraryProperties(
+                                                                      FlexLibraryIdGenerator.generateId()));
       final List<Library> libraries = c.chooseElements();
       if (libraries.isEmpty()) {
         return;
@@ -1889,15 +1876,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     protected Library[] getLibraries(@NotNull final LibraryTable table) {
       final StructureConfigurableContext context = ProjectStructureConfigurable.getInstance(myProject).getContext();
       final Library[] libraries = context.createModifiableModelProvider(table.getTableLevel()).getModifiableModel().getLibraries();
-      final List<Library> filtered = ContainerUtil.mapNotNull(libraries, new Function<Library, Library>() {
-        @Nullable
-        public Library fun(final Library library) {
-          Library liveLibrary = context.getLibraryModel(library);
-          if (liveLibrary == null || !FlexProjectRootsUtil.isFlexLibrary(liveLibrary) || !myFilter.value(liveLibrary)) {
-            return null;
-          }
-          return liveLibrary;
+      final List<Library> filtered = ContainerUtil.mapNotNull(libraries, library -> {
+        Library liveLibrary = context.getLibraryModel(library);
+        if (liveLibrary == null || !FlexProjectRootsUtil.isFlexLibrary(liveLibrary) || !myFilter.value(liveLibrary)) {
+          return null;
         }
+        return liveLibrary;
       });
       return filtered.toArray(new Library[filtered.size()]);
     }

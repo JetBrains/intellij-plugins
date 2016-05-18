@@ -173,11 +173,8 @@ public class FlexMxmlColorAnnotator implements Annotator {
 
               final String hex = CssPsiColorUtil.toHexColor(color);
               final String mxmlStyleHex = toCannonicalHex(hex, false);
-              ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                @Override
-                public void run() {
-                  myAttribute.setValue(mxmlStyleHex);
-                }
+              ApplicationManager.getApplication().runWriteAction(() -> {
+                myAttribute.setValue(mxmlStyleHex);
               });
             }
           }

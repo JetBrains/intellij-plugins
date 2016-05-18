@@ -29,12 +29,9 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return;
 
     final Project project = xmlTag.getProject();
-    DirectiveUtil.processTagDirectives(project, new Processor<JSImplicitElement>() {
-      @Override
-      public boolean process(JSImplicitElement directive) {
-        addLookupItem(elements, directive);
-        return true;
-      }
+    DirectiveUtil.processTagDirectives(project, directive -> {
+      addLookupItem(elements, directive);
+      return true;
     });
   }
 

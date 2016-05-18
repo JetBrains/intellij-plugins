@@ -51,12 +51,7 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
     if (server != null && !server.isStopped()) {
       return Promise.<RunProfileStarter>resolve(new JstdRunStarter(server, false));
     }
-    return jstdToolWindowManager.restartServer().then(new Function<JstdServer, RunProfileStarter>() {
-      @Override
-      public RunProfileStarter fun(JstdServer server) {
-        return server == null ? null : new JstdRunStarter(server, false);
-      }
-    });
+    return jstdToolWindowManager.restartServer().then(server1 -> server1 == null ? null : new JstdRunStarter(server1, false));
   }
 
   public static class JstdRunStarter extends RunProfileStarter {
@@ -95,12 +90,7 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
 
     private static void scheduleRestart(@NotNull final RunContentDescriptor descriptor, int timeoutMillis) {
       final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, descriptor);
-      alarm.addRequest(new Runnable() {
-        @Override
-        public void run() {
-          ExecutionUtil.restartIfActive(descriptor);
-        }
-      }, timeoutMillis);
+      alarm.addRequest(() -> ExecutionUtil.restartIfActive(descriptor), timeoutMillis);
     }
   }
 }

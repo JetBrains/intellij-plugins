@@ -140,12 +140,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
           String[] names = javaClassReference.getExtendClassNames();
           PsiElement context = javaClassReference.getCompletionContext();
           if (names != null && context instanceof PsiPackage) {
-            javaClassReference.processSubclassVariants((PsiPackage)context, names, new Consumer<LookupElement>() {
-              @Override
-              public void consume(LookupElement element) {
-                variants.add(element);
-              }
-            });
+            javaClassReference.processSubclassVariants((PsiPackage)context, names, element -> variants.add(element));
             continue;
           }
         }

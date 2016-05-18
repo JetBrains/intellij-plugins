@@ -128,11 +128,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   public Set<T> getElementsToProcess() {
     //noinspection unchecked,SuspiciousToArrayCall
     final T[] objects = (T[])elementsToProcess.toArray(new DartComponent[elementsToProcess.size()]);
-    final Comparator<T> tComparator = new Comparator<T>() {
-      public int compare(final T o1, final T o2) {
-        return o1.getTextRange().getStartOffset() - o2.getTextRange().getStartOffset();
-      }
-    };
+    final Comparator<T> tComparator = (o1, o2) -> o1.getTextRange().getStartOffset() - o2.getTextRange().getStartOffset();
 
     final int size = elementsToProcess.size();
     final LinkedHashSet<T> result = new LinkedHashSet<T>(size);

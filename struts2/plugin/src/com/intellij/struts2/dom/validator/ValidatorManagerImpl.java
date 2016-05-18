@@ -152,11 +152,8 @@ public class ValidatorManagerImpl extends ValidatorManager {
           }
         });
 
-    return ContainerUtil.map(filtered, new Function<DomFileElement<Validators>, XmlFile>() {
-      @Override
-      public XmlFile fun(final DomFileElement<Validators> validatorsDomFileElement) {
-        return validatorsDomFileElement.getFile();
-      }
+    return ContainerUtil.map(filtered, validatorsDomFileElement -> {
+      return validatorsDomFileElement.getFile();
     });
   }
 

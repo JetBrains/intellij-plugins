@@ -207,22 +207,19 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
 
   @NotNull
   private Runnable createRefactoringRunnable(@NotNull final UsageView usageView, @NotNull final Map<Usage, String> usageToEditIdMap) {
-    return new Runnable() {
-      @Override
-      public void run() {
-        final Set<String> excludedIds = new THashSet<String>();
+    return () -> {
+      final Set<String> excludedIds = new THashSet<String>();
 
-        // usageView.getExcludedUsages() and usageView.getUsages() doesn't contain deleted usages, that's why we need to start with full set usageToEditIdMap.keySet()
-        final Set<Usage> excludedUsages = new THashSet<Usage>(usageToEditIdMap.keySet());
-        excludedUsages.removeAll(usageView.getUsages());
-        excludedUsages.addAll(usageView.getExcludedUsages());
+      // usageView.getExcludedUsages() and usageView.getUsages() doesn't contain deleted usages, that's why we need to start with full set usageToEditIdMap.keySet()
+      final Set<Usage> excludedUsages = new THashSet<Usage>(usageToEditIdMap.keySet());
+      excludedUsages.removeAll(usageView.getUsages());
+      excludedUsages.addAll(usageView.getExcludedUsages());
 
-        for (Usage excludedUsage : excludedUsages) {
-          excludedIds.add(usageToEditIdMap.get(excludedUsage));
-        }
-
-        DartRenameDialog.super.doRefactoring(excludedIds);
+      for (Usage excludedUsage : excludedUsages) {
+        excludedIds.add(usageToEditIdMap.get(excludedUsage));
       }
+
+      DartRenameDialog.super.doRefactoring(excludedIds);
     };
   }
 }

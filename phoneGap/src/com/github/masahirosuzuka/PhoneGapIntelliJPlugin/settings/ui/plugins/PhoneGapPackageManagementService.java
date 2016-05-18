@@ -93,62 +93,45 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
                              @Nullable String extraOptions,
                              final Listener listener,
                              boolean installToUser) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        listener.operationStarted(repoPackage.getName());
-        final Ref<String> errorMessage = new Ref<String>();
-        try {
-          String appendVersion = version == null ? "" : "@" + version;
-          myCommands.pluginAdd(repoPackage.getName() + appendVersion);
-        }
-        catch (Exception e) {
-          String message = e.getMessage();
-          errorMessage.set(message == null ? e.toString() : message);
-        }
-        finally {
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              listener.operationFinished(repoPackage.getName(), ErrorDescription.fromMessage(errorMessage.get()));
-              scheduleFileSystemRefresh();
-            }
-          }, ModalityState.any());
-        }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      listener.operationStarted(repoPackage.getName());
+      final Ref<String> errorMessage = new Ref<String>();
+      try {
+        String appendVersion = version == null ? "" : "@" + version;
+        myCommands.pluginAdd(repoPackage.getName() + appendVersion);
+      }
+      catch (Exception e) {
+        String message = e.getMessage();
+        errorMessage.set(message == null ? e.toString() : message);
+      }
+      finally {
+        ApplicationManager.getApplication().invokeLater(() -> {
+          listener.operationFinished(repoPackage.getName(), ErrorDescription.fromMessage(errorMessage.get()));
+          scheduleFileSystemRefresh();
+        }, ModalityState.any());
       }
     });
   }
 
   @Override
   public void uninstallPackages(final List<InstalledPackage> installedPackages, final Listener listener) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        ContainerUtil.process(installedPackages, new Processor<InstalledPackage>() {
-          @Override
-          public boolean process(final InstalledPackage aPackage) {
-            listener.operationStarted(aPackage.getName());
-            final Ref<String> errorMessage = new Ref<String>();
-            try {
-              myCommands.pluginRemove(aPackage.getName());
-            }
-            catch (Exception e) {
-              errorMessage.set(e.getMessage() == null ? e.toString() : e.getMessage());
-            }
-            finally {
-              ApplicationManager.getApplication().invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                  listener.operationFinished(aPackage.getName(), ErrorDescription.fromMessage(errorMessage.get()));
-                  scheduleFileSystemRefresh();
-                }
-              }, ModalityState.any());
-            }
-            return true;
-          }
-        });
+    ApplicationManager.getApplication().executeOnPooledThread((Runnable)() -> ContainerUtil.process(installedPackages, aPackage -> {
+      listener.operationStarted(aPackage.getName());
+      final Ref<String> errorMessage = new Ref<String>();
+      try {
+        myCommands.pluginRemove(aPackage.getName());
       }
-    });
+      catch (Exception e) {
+        errorMessage.set(e.getMessage() == null ? e.toString() : e.getMessage());
+      }
+      finally {
+        ApplicationManager.getApplication().invokeLater(() -> {
+          listener.operationFinished(aPackage.getName(), ErrorDescription.fromMessage(errorMessage.get()));
+          scheduleFileSystemRefresh();
+        }, ModalityState.any());
+      }
+      return true;
+    }));
   }
 
   @Override

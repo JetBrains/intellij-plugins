@@ -71,18 +71,15 @@ public class DocumentProblemManager {
       .setShowCallout(false)
       .setHideOnAction(false)
       .createBalloon();
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        Window window = WindowManager.getInstance().getFrame(project);
-        if (window == null) {
-          window = JOptionPane.getRootFrame();
-        }
-        if (window instanceof IdeFrame) {
-          BalloonLayout layout = ((IdeFrame)window).getBalloonLayout();
-          if (layout != null) {
-            layout.add(balloon);
-          }
+    ApplicationManager.getApplication().invokeLater(() -> {
+      Window window = WindowManager.getInstance().getFrame(project);
+      if (window == null) {
+        window = JOptionPane.getRootFrame();
+      }
+      if (window instanceof IdeFrame) {
+        BalloonLayout layout = ((IdeFrame)window).getBalloonLayout();
+        if (layout != null) {
+          layout.add(balloon);
         }
       }
     });

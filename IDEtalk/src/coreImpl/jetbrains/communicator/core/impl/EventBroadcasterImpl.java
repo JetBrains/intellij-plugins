@@ -30,8 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class EventBroadcasterImpl implements EventBroadcaster {
   private static final Logger LOG = Logger.getLogger(EventBroadcasterImpl.class);
-  public static final Runnable NO_ACTION = new Runnable() { @Override
-                                                            public void run() { } };
+  public static final Runnable NO_ACTION = () -> { };
 
   private final List<IDEtalkListener> myListeners = new CopyOnWriteArrayList<IDEtalkListener>();
 

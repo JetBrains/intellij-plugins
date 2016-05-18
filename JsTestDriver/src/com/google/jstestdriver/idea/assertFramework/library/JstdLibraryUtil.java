@@ -34,13 +34,10 @@ public class JstdLibraryUtil {
   }
 
   private static void doInit(@NotNull final Project project) {
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
-        LibraryTable libraryTable = libraryManager.getLibraryTable(ScriptingLibraryModel.LibraryLevel.GLOBAL);
-        libraryTable.addListener(new MyLibraryChangeWatcher());
-      }
+    ApplicationManager.getApplication().runReadAction(() -> {
+      JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
+      LibraryTable libraryTable = libraryManager.getLibraryTable(ScriptingLibraryModel.LibraryLevel.GLOBAL);
+      libraryTable.addListener(new MyLibraryChangeWatcher());
     });
   }
 

@@ -48,14 +48,11 @@ public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
       // if both sources and swcs were detected, assume that source files are src attachment, otherwise assume they are raw as libraries
       Collections.reverse(types);
     }
-    return ContainerUtil.map(roots, new Function<DetectedLibraryRoot, DetectedLibraryRoot>() {
-      @Override
-      public DetectedLibraryRoot fun(final DetectedLibraryRoot root) {
-        if (root.getTypes().get(0).getType() == OrderRootType.SOURCES) {
-          return new DetectedLibraryRoot(root.getFile(), types);
-        }
-        return root;
+    return ContainerUtil.map(roots, root -> {
+      if (root.getTypes().get(0).getType() == OrderRootType.SOURCES) {
+        return new DetectedLibraryRoot(root.getFile(), types);
       }
+      return root;
     });
   }
 

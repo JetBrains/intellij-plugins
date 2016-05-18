@@ -106,22 +106,12 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
       public void selectionChanged(ContentManagerEvent event) {
         super.selectionChanged(event);
         // Process tab switching:
-        UIUtil.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            processMessagesOfVisibleTab();
-          }
-        });
+        UIUtil.invokeLater(() -> processMessagesOfVisibleTab());
       }
     });
 
     myPanel = new NonOpaquePanel(new BorderLayout());
-    UIUtil.runWhenShown(myPanel, new Runnable() {
-      @Override
-      public void run() {
-        showAllTabsOfUsersWithMessages();
-      }
-    });
+    UIUtil.runWhenShown(myPanel, () -> showAllTabsOfUsersWithMessages());
     myPanel.add(myContentManager.getComponent());
 
     AnAction toolbarGroup = myActionManager.getAction("IDEtalk.MessageWindowToolbar");
@@ -201,13 +191,10 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
 
     if (isFrameActive()) {
       final boolean wasInvisible = !myToolWindow.isVisible();
-      myToolWindow.show(new Runnable() {
-        @Override
-        public void run() {
-          MessagesTab tab = getTabForUser(user);
-          if (tab != null && wasInvisible) {
-            tab.requestFocus();
-          }
+      myToolWindow.show(() -> {
+        MessagesTab tab = getTabForUser(user);
+        if (tab != null && wasInvisible) {
+          tab.requestFocus();
         }
       });
     }
@@ -243,12 +230,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
 
   @Override
   public void newMessageAvailable(final User from, @Nullable final TransportEvent event) {
-    UIUtil.invokeLater( new Runnable() {
-      @Override
-      public void run() {
-        processNewMessage(from);
-      }
-    });
+    UIUtil.invokeLater(() -> processNewMessage(from));
   }
 
   @Override
@@ -315,12 +297,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
       myContentManager.setSelectedContent(tab.getContent());
     }
 
-    UIUtil.runWhenShown(tab.getComponent(), new Runnable(){
-      @Override
-      public void run() {
-        tab.showAllIncomingMessages();
-      }
-    });
+    UIUtil.runWhenShown(tab.getComponent(), () -> tab.showAllIncomingMessages());
   }
 
   private void installIconBlinker(final ToolWindow toolWindow) {

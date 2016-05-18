@@ -13,24 +13,18 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGa
 
 public class PhoneGapAndroidTargets extends PhoneGapTargets {
 
-  public static final Function<String, String> PARSER_VIRTUAL_DEVICES = new Function<String, String>() {
-    @Override
-    public String fun(String s) {
-      if (StringUtil.isEmpty(s)) return null;
-      if (isAndroidExcludedStrings(s)) return null;
+  public static final Function<String, String> PARSER_VIRTUAL_DEVICES = s -> {
+    if (StringUtil.isEmpty(s)) return null;
+    if (isAndroidExcludedStrings(s)) return null;
 
-      return s.trim();
-    }
+    return s.trim();
   };
 
-  public static final Function<String, String> PARSER_DEVICES = new Function<String, String>() {
-    @Override
-    public String fun(String s) {
-      if (StringUtil.isEmpty(s)) return null;
-      if (isAndroidExcludedStrings(s)) return null;
+  public static final Function<String, String> PARSER_DEVICES = s -> {
+    if (StringUtil.isEmpty(s)) return null;
+    if (isAndroidExcludedStrings(s)) return null;
 
-      return s.split("\t")[0].trim();
-    }
+    return s.split("\t")[0].trim();
   };
 
   public PhoneGapAndroidTargets(@NotNull Project project) {

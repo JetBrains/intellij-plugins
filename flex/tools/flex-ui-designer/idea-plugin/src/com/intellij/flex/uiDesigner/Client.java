@@ -178,15 +178,12 @@ public class Client implements Disposable {
     final ActionCallback callback = new ActionCallback("renderDocumentAndDependents");
     try {
       hasError = false;
-      beginMessage(ClientMethod.unregisterModule, callback, null, new Runnable() {
-        @Override
-        public void run() {
-          try {
-            SocketInputHandler.getInstance().unregisterDocumentFactories();
-          }
-          catch (IOException e) {
-            LogMessageUtil.LOG.error(e);
-          }
+      beginMessage(ClientMethod.unregisterModule, callback, null, () -> {
+        try {
+          SocketInputHandler.getInstance().unregisterDocumentFactories();
+        }
+        catch (IOException e) {
+          LogMessageUtil.LOG.error(e);
         }
       });
       writeId(module);
@@ -318,12 +315,8 @@ public class Client implements Disposable {
     final ActionCallback callback = new ActionCallback("renderDocument");
     boolean hasError = true;
     try {
-      beginMessage(ClientMethod.renderDocument, callback, result, new Runnable() {
-        @Override
-        public void run() {
-          result.setDone(DocumentFactoryManager.getInstance().getInfo(factoryId));
-        }
-      });
+      beginMessage(ClientMethod.renderDocument, callback, result,
+                   () -> result.setDone(DocumentFactoryManager.getInstance().getInfo(factoryId)));
 
       out.writeShort(factoryId);
       hasError = false;
@@ -499,25 +492,22 @@ public class Client implements Disposable {
     final ActionCallback callback = new ActionCallback("renderDocumentAndDependents");
     boolean hasError = true;
     try {
-      beginMessage(ClientMethod.renderDocumentsAndDependents, callback, result, new Runnable() {
-        @Override
-        public void run() {
-          final int[] ids;
-          try {
-            ids = SocketInputHandler.getInstance().getReader().readIntArray();
-          }
-          catch (IOException e) {
-            LogMessageUtil.processInternalError(e);
-            return;
-          }
-
-          DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
-          List<DocumentInfo> rendered = new ArrayList<DocumentInfo>(ids.length);
-          for (int id : ids) {
-            rendered.add(documentFactoryManager.getInfo(id));
-          }
-          result.setDone(rendered);
+      beginMessage(ClientMethod.renderDocumentsAndDependents, callback, result, () -> {
+        final int[] ids;
+        try {
+          ids = SocketInputHandler.getInstance().getReader().readIntArray();
         }
+        catch (IOException e) {
+          LogMessageUtil.processInternalError(e);
+          return;
+        }
+
+        DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
+        List<DocumentInfo> rendered = new ArrayList<DocumentInfo>(ids.length);
+        for (int id : ids) {
+          rendered.add(documentFactoryManager.getInfo(id));
+        }
+        result.setDone(rendered);
       });
 
       out.writeUInt29(outdatedLocalStyleHolders.size());
@@ -681,17 +671,14 @@ public class Client implements Disposable {
     final ActionCallback callback = new ActionCallback("getDocumentImage");
     boolean hasError = true;
     try {
-      beginMessage(ClientMethod.getDocumentImage, callback, result, new Runnable() {
-        @Override
-        public void run() {
-          Reader reader = SocketInputHandler.getInstance().getReader();
-          try {
-            result.setDone(reader.readImage());
-          }
-          catch (IOException e) {
-            LogMessageUtil.LOG.error(e);
-            result.setRejected();
-          }
+      beginMessage(ClientMethod.getDocumentImage, callback, result, () -> {
+        Reader reader = SocketInputHandler.getInstance().getReader();
+        try {
+          result.setDone(reader.readImage());
+        }
+        catch (IOException e) {
+          LogMessageUtil.LOG.error(e);
+          result.setRejected();
         }
       });
 

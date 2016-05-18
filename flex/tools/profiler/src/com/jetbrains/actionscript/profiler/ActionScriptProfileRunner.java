@@ -152,12 +152,9 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
         toolWindowPanel.setToolbar(toolbar.getComponent());
 
         final ToolWindow finalToolWindow = toolWindow;
-        profileControlPanel.setConnectionCallback(new Runnable() {
-          @Override
-          public void run() {
-            finalToolWindow.show(null);
-            removePreloadingOfProfilerSwf();
-          }
+        profileControlPanel.setConnectionCallback(() -> {
+          finalToolWindow.show(null);
+          removePreloadingOfProfilerSwf();
         });
 
         toolWindow.hide(null);

@@ -113,15 +113,12 @@ public class JabberUserFinderImpl implements JabberUserFinder {
   }
 
   protected void doRegister(final String jabberUserId, final String currentProjectId) {
-    myIdeFacade.runOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          URL url = new URL(myRegistryUrl + "?user=" + jabberUserId + "&id=" + currentProjectId);
-          url.getContent();
-        } catch (Exception e) {
-          LOG.debug(e.getMessage(), e);
-        }
+    myIdeFacade.runOnPooledThread(() -> {
+      try {
+        URL url = new URL(myRegistryUrl + "?user=" + jabberUserId + "&id=" + currentProjectId);
+        url.getContent();
+      } catch (Exception e) {
+        LOG.debug(e.getMessage(), e);
       }
     });
   }

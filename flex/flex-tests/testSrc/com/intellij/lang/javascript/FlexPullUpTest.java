@@ -123,11 +123,9 @@ public class FlexPullUpTest extends MultiFileTestCase {
     }
     assertSameElements(messages, expectedConflicts);
     if (conflicts.isEmpty()) {
-      WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-        public void run() {
-          new JSPullUpHelper(sourceClass, targetClass, infosArray, docCommentPolicy).moveMembersToBase();
-          myProject.getComponent(PostprocessReformattingAspect.class).doPostponedFormatting();
-        }
+      WriteCommandAction.runWriteCommandAction(null, () -> {
+        new JSPullUpHelper(sourceClass, targetClass, infosArray, docCommentPolicy).moveMembersToBase();
+        myProject.getComponent(PostprocessReformattingAspect.class).doPostponedFormatting();
       });
 
       FileDocumentManager.getInstance().saveAllDocuments();

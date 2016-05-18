@@ -42,12 +42,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
 
     KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (!server.areBrowsersReady()) {
-      server.onBrowsersReady(new Runnable() {
-        @Override
-        public void run() {
-          ExecutionUtil.restartIfActive(descriptor);
-        }
-      });
+      server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
     }
     else {
       RerunTestsNotification.showRerunNotification(environment.getContentToReuse(), executionResult.getExecutionConsole());

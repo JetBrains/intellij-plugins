@@ -95,16 +95,13 @@ class RenderActionQueue implements Runnable {
     }
 
     final Ref<AsyncResult> result = new Ref<AsyncResult>();
-    processActions(new Processor<RenderAction>() {
-      @Override
-      public boolean process(RenderAction action) {
-        if (Comparing.equal(action.file, file)) {
-          result.set(action.result);
-          return false;
-        }
-
-        return true;
+    processActions(action -> {
+      if (Comparing.equal(action.file, file)) {
+        result.set(action.result);
+        return false;
       }
+
+      return true;
     });
 
     return (T)result.get();

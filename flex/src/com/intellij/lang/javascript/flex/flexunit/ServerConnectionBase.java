@@ -35,16 +35,14 @@ public abstract class ServerConnectionBase {
     catch (IOException e) {
       throw new ExecutionException(FlexBundle.message("port.is.busy", port), e);
     }
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        try {
-          doRun();
-          setStatus(ConnectionStatus.DISCONNECTED);
-        }
-        catch (IOException e) {
-          LOG.warn(e);
-          setStatus(ConnectionStatus.CONNECTION_FAILED);
-        }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      try {
+        doRun();
+        setStatus(ConnectionStatus.DISCONNECTED);
+      }
+      catch (IOException e) {
+        LOG.warn(e);
+        setStatus(ConnectionStatus.CONNECTION_FAILED);
       }
     });
   }

@@ -78,16 +78,13 @@ public class DartMethodOverrideMarkerProvider implements LineMarkerProvider {
       element.getTextRange(),
       icon,
       Pass.UPDATE_ALL,
-      new Function<PsiElement, String>() {
-        @Override
-        public String fun(PsiElement element) {
-          final DartClass superDartClass = PsiTreeUtil.getParentOfType(methodDeclaration, DartClass.class);
-          if (superDartClass == null) return "null";
-          if (overrides) {
-            return DartBundle.message("overrides.method.in", methodDeclaration.getName(), superDartClass.getName());
-          }
-          return DartBundle.message("implements.method.in", methodDeclaration.getName(), superDartClass.getName());
+      element1 -> {
+        final DartClass superDartClass = PsiTreeUtil.getParentOfType(methodDeclaration, DartClass.class);
+        if (superDartClass == null) return "null";
+        if (overrides) {
+          return DartBundle.message("overrides.method.in", methodDeclaration.getName(), superDartClass.getName());
         }
+        return DartBundle.message("implements.method.in", methodDeclaration.getName(), superDartClass.getName());
       },
       new GutterIconNavigationHandler<PsiElement>() {
         @Override

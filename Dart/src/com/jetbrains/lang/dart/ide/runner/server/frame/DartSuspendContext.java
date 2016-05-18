@@ -41,15 +41,12 @@ public class DartSuspendContext extends XSuspendContext {
     if (myExecutionStacks == null) {
       final ArrayList<DartExecutionStack> stacks = new ArrayList<DartExecutionStack>();
 
-      myDebugProcess.processAllIsolates(new Consumer<VmIsolate>() {
-        @Override
-        public void consume(final VmIsolate isolate) {
-          if (isolate.getId() == myActiveExecutionStack.getIsolate().getId()) {
-            stacks.add(myActiveExecutionStack);
-          }
-          else {
-            stacks.add(new DartExecutionStack(myDebugProcess, isolate, null, null));
-          }
+      myDebugProcess.processAllIsolates(isolate -> {
+        if (isolate.getId() == myActiveExecutionStack.getIsolate().getId()) {
+          stacks.add(myActiveExecutionStack);
+        }
+        else {
+          stacks.add(new DartExecutionStack(myDebugProcess, isolate, null, null));
         }
       });
 

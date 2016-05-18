@@ -176,20 +176,17 @@ public class DartValue extends XNamedValue {
     }
 
 
-    computeListChildren(node, myDebugProcess, myVmValue, fromIndex, childrenToShow, new Consumer<List<DartValue>>() {
-      @Override
-      public void consume(final List<DartValue> listChildren) {
-        final XValueChildrenList resultList = new XValueChildrenList(listChildren.size());
-        for (DartValue value : listChildren) {
-          resultList.add(value);
-        }
+    computeListChildren(node, myDebugProcess, myVmValue, fromIndex, childrenToShow, listChildren -> {
+      final XValueChildrenList resultList = new XValueChildrenList(listChildren.size());
+      for (DartValue value : listChildren) {
+        resultList.add(value);
+      }
 
-        node.addChildren(resultList, true);
-        listChildrenAlreadyShown.set(listChildrenAlreadyShown.get() + listChildren.size());
+      node.addChildren(resultList, true);
+      listChildrenAlreadyShown.set(listChildrenAlreadyShown.get() + listChildren.size());
 
-        if (myVmValue.getLength() > listChildrenAlreadyShown.get()) {
-          node.tooManyChildren(myVmValue.getLength() - listChildrenAlreadyShown.get());
-        }
+      if (myVmValue.getLength() > listChildrenAlreadyShown.get()) {
+        node.tooManyChildren(myVmValue.getLength() - listChildrenAlreadyShown.get());
       }
     });
   }
@@ -204,11 +201,8 @@ public class DartValue extends XNamedValue {
 
     final AtomicInteger handledResponsesAmount = new AtomicInteger(0);
 
-    final SortedList<DartValue> sortedChildren = new SortedList<DartValue>(new Comparator<DartValue>() {
-      public int compare(DartValue o1, DartValue o2) {
-        return StringUtil.naturalCompare(o1.getName(), o2.getName());
-      }
-    });
+    final SortedList<DartValue> sortedChildren = new SortedList<DartValue>(
+      (o1, o2) -> StringUtil.naturalCompare(o1.getName(), o2.getName()));
 
     for (int listIndex = fromIndex; listIndex < fromIndex + childrenAmount; listIndex++) {
       final String nodeName = String.valueOf(listIndex);
@@ -288,20 +282,13 @@ public class DartValue extends XNamedValue {
       final int childrenToShow = Math.min(mapKeysList.getLength() - fromIndex, XCompositeNode.MAX_CHILDREN_TO_SHOW);
       DartCommandLineDebugProcess.LOG.assertTrue(childrenToShow > 0);
 
-      computeListChildren(node, myDebugProcess, mapKeysList, fromIndex, childrenToShow, new Consumer<List<DartValue>>() {
-        @Override
-        public void consume(final List<DartValue> mapKeys) {
-          try {
-            computeListChildren(node, myDebugProcess, mapValuesList, fromIndex, childrenToShow, new Consumer<List<DartValue>>() {
-              @Override
-              public void consume(final List<DartValue> mapValues) {
-                addMapChildrenToNode(node, mapKeys, mapValues, mapKeysList.getLength());
-              }
-            });
-          }
-          catch (IOException e) {
-            DartCommandLineDebugProcess.LOG.error(e);
-          }
+      computeListChildren(node, myDebugProcess, mapKeysList, fromIndex, childrenToShow, mapKeys -> {
+        try {
+          computeListChildren(node, myDebugProcess, mapValuesList, fromIndex, childrenToShow,
+                              mapValues -> addMapChildrenToNode(node, mapKeys, mapValues, mapKeysList.getLength()));
+        }
+        catch (IOException e) {
+          DartCommandLineDebugProcess.LOG.error(e);
         }
       });
     }

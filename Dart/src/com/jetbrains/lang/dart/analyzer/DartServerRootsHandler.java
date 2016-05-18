@@ -70,13 +70,10 @@ public class DartServerRootsHandler {
       DartAnalysisServerService.getInstance().addDocumentListener();
     }
 
-    ProgressManager.getInstance().executeNonCancelableSection(new Runnable() {
-      @Override
-      public void run() {
-        myTrackedProjects.add(project);
-        updateRoots();
-        DartAnalysisServerService.getInstance().updateVisibleFiles();
-      }
+    ProgressManager.getInstance().executeNonCancelableSection(() -> {
+      myTrackedProjects.add(project);
+      updateRoots();
+      DartAnalysisServerService.getInstance().updateVisibleFiles();
     });
 
     project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {

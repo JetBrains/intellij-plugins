@@ -42,11 +42,8 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     else {
       final Document document = FileDocumentManager.getInstance().getDocument(file.getVirtualFile());
       assert document != null;
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          document.setText(text);
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        document.setText(text);
       });
     }
 

@@ -47,18 +47,8 @@ public class SendToMayaCommand {
 
       new RunContentExecutor(myProject, process)
         .withTitle(getTitle())
-        .withRerun(new Runnable() {
-          @Override
-          public void run() {
-            SendToMayaCommand.this.run();
-          }
-        })
-        .withStop(new Runnable() {
-                    @Override
-                    public void run() {
-                      process.destroyProcess();
-                    }
-                  }, new Computable<Boolean>() {
+        .withRerun(() -> SendToMayaCommand.this.run())
+        .withStop(() -> process.destroyProcess(), new Computable<Boolean>() {
 
                     @Override
                     public Boolean compute() {

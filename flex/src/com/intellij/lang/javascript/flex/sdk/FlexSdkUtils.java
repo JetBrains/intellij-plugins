@@ -61,12 +61,7 @@ public class FlexSdkUtils {
     VirtualFile playerglobalSwcFile;
     VirtualFile[] children = playerDir.getChildren();
     VirtualFile[] sorted = Arrays.copyOf(children, children.length);
-    Arrays.sort(sorted, new Comparator<VirtualFile>() {
-      @Override
-      public int compare(final VirtualFile o1, final VirtualFile o2) {
-        return o1.getName().compareTo(o2.getName());
-      }
-    });
+    Arrays.sort(sorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
     for (final VirtualFile subDir : sorted) {
       if (subDir.isDirectory() &&
           (playerglobalSwcFile = subDir.findChild("playerglobal.swc")) != null &&
@@ -139,11 +134,7 @@ public class FlexSdkUtils {
     }
     else {
       final Ref<Sdk> sdkRef = new Ref<Sdk>();
-      ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-        public void run() {
-          sdkRef.set(doCreateSdk(sdkType, sdkHomePath));
-        }
-      }, ModalityState.defaultModalityState());
+      ApplicationManager.getApplication().invokeAndWait(() -> sdkRef.set(doCreateSdk(sdkType, sdkHomePath)), ModalityState.defaultModalityState());
       return sdkRef.get();
     }
   }
@@ -417,10 +408,8 @@ public class FlexSdkUtils {
 
   public static void openModuleConfigurable(final Module module) {
     final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
-    ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
-      public void run() {
-        projectStructureConfigurable.select(module.getName(), ClasspathEditor.NAME, true);
-      }
+    ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, () -> {
+      projectStructureConfigurable.select(module.getName(), ClasspathEditor.NAME, true);
     });
   }
 

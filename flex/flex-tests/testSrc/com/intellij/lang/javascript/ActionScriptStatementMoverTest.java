@@ -34,15 +34,12 @@ public class ActionScriptStatementMoverTest extends JSStatementMoverTestBase {
   }
 
   public void testMoveStatementInMxml() throws Exception {
-    doTestWithJSSupport(new Callable<Object>() {
-      @Override
-      public Object call() throws Exception {
-        FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), ActionScriptStatementMoverTest.this.getClass());
-        JSTestUtils.initJSIndexes(getProject());
+    doTestWithJSSupport(() -> {
+      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), ActionScriptStatementMoverTest.this.getClass());
+      JSTestUtils.initJSIndexes(getProject());
 
-        doMoveStatementTest("mxml");
-        return null;
-      }
+      doMoveStatementTest("mxml");
+      return null;
     });
   }
 

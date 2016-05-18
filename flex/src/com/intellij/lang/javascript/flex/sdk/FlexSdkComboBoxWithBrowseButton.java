@@ -171,22 +171,20 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
     if (!sdkList.isEmpty()) {
       // sort by version descending, Flexmojos SDKs - to the end of the list
-      Collections.sort(sdkList, new Comparator<Object>() {
-        public int compare(final Object sdk1, final Object sdk2) {
-          if (sdk1 == myBCSdk && sdk2 != myBCSdk) return -1;
-          if (sdk1 != myBCSdk && sdk2 == myBCSdk) return 1;
+      Collections.sort(sdkList, (sdk1, sdk2) -> {
+        if (sdk1 == myBCSdk && sdk2 != myBCSdk) return -1;
+        if (sdk1 != myBCSdk && sdk2 == myBCSdk) return 1;
 
-          if (sdk1 instanceof Sdk && sdk2 instanceof Sdk) {
-            final SdkTypeId type1 = ((Sdk)sdk1).getSdkType();
-            final SdkTypeId type2 = ((Sdk)sdk2).getSdkType();
+        if (sdk1 instanceof Sdk && sdk2 instanceof Sdk) {
+          final SdkTypeId type1 = ((Sdk)sdk1).getSdkType();
+          final SdkTypeId type2 = ((Sdk)sdk2).getSdkType();
 
-            if (type1 == type2) return -StringUtil.compareVersionNumbers(((Sdk)sdk1).getVersionString(), ((Sdk)sdk2).getVersionString());
-            if (type1 == FlexSdkType2.getInstance()) return -1;
-            if (type2 == FlexSdkType2.getInstance()) return 1;
-          }
-
-          return 0;
+          if (type1 == type2) return -StringUtil.compareVersionNumbers(((Sdk)sdk1).getVersionString(), ((Sdk)sdk2).getVersionString());
+          if (type1 == FlexSdkType2.getInstance()) return -1;
+          if (type2 == FlexSdkType2.getInstance()) return 1;
         }
+
+        return 0;
       });
 
       getComboBox().setModel(new DefaultComboBoxModel(ArrayUtil.toObjectArray(sdkList)));

@@ -97,12 +97,7 @@ class AbcMerger extends AbcTranscoder {
       length += 2 + (info.end - info.start);
     }
 
-    Collections.sort(symbols, new Comparator<SymbolInfo>() {
-      @Override
-      public int compare(SymbolInfo o1, SymbolInfo o2) {
-        return o1.newId - o2.newId;
-      }
-    });
+    Collections.sort(symbols, (o1, o2) -> o1.newId - o2.newId);
 
     buffer.clear();
     encodeTagHeader(TagTypes.SymbolClass, length + 2);

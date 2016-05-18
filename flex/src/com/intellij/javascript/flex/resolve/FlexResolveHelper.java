@@ -52,21 +52,19 @@ public class FlexResolveHelper implements JSResolveHelper {
 
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     final PsiManager manager = PsiManager.getInstance(project);
-    final Processor<VirtualFile> processor = new Processor<VirtualFile>() {
-      public boolean process(VirtualFile file) {
-        VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(file);
-        if (rootForFile == null) return true;
+    final Processor<VirtualFile> processor = file -> {
+      VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(file);
+      if (rootForFile == null) return true;
 
-        if (expectedPackage.equals(VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.'))) {
-          PsiFile psiFile = manager.findFile(file);
-          final JSClass clazz = psiFile instanceof XmlFile ? XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)psiFile):null;
-          if (clazz != null) {
-            result.set(clazz);
-            return false;
-          }
+      if (expectedPackage.equals(VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.'))) {
+        PsiFile psiFile = manager.findFile(file);
+        final JSClass clazz = psiFile instanceof XmlFile ? XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)psiFile):null;
+        if (clazz != null) {
+          result.set(clazz);
+          return false;
         }
-        return true;
       }
+      return true;
     };
 
     Collection<VirtualFile> files =
@@ -85,11 +83,8 @@ public class FlexResolveHelper implements JSResolveHelper {
     if (file instanceof JSFunction) return true;    // there is no need to process package stuff at function level
 
     if (file instanceof XmlBackedJSClassImpl) {
-      if (!processInlineComponentsInScope((XmlBackedJSClassImpl)file, new Processor<XmlBackedJSClass>() {
-        public boolean process(XmlBackedJSClass inlineComponent) {
-          return processor.execute(inlineComponent, ResolveState.initial());
-        }
-      })) {
+      if (!processInlineComponentsInScope((XmlBackedJSClassImpl)file,
+                                          inlineComponent -> processor.execute(inlineComponent, ResolveState.initial()))) {
         return false;
       }
     }
@@ -161,11 +156,8 @@ public class FlexResolveHelper implements JSResolveHelper {
   @Override
   public boolean resolveTypeNameUsingImports(final ResolveProcessor resolveProcessor, PsiNamedElement parent) {
     if (parent instanceof XmlBackedJSClassImpl) {
-      return processInlineComponentsInScope((XmlBackedJSClassImpl)parent, new Processor<XmlBackedJSClass>() {
-        public boolean process(XmlBackedJSClass inlineComponent) {
-          return resolveProcessor.execute(inlineComponent, ResolveState.initial());
-        }
-      });
+      return processInlineComponentsInScope((XmlBackedJSClassImpl)parent,
+                                            inlineComponent -> resolveProcessor.execute(inlineComponent, ResolveState.initial()));
     }
     return true;
   }

@@ -77,12 +77,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
                 new CreateFlexComponentFix(value, element)
               };
               for (CreateClassOrInterfaceFix fix : fixes) {
-                fix.setCreatedClassFqnConsumer(new Consumer<String>() {
-                  @Override
-                  public void consume(final String newFqn) {
-                    ElementManipulators.getManipulator(element).handleContentChange(element, newFqn);
-                  }
-                });
+                fix.setCreatedClassFqnConsumer(newFqn -> ElementManipulators.getManipulator(element).handleContentChange(element, newFqn));
               }
               return fixes;
             }

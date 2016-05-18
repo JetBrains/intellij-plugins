@@ -33,12 +33,9 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
 
   public static Collection<JSPsiElementBase> getItemsByName(final String name, PsiElement element) {
     final Collection<JSPsiElementBase> result = new ArrayList<JSPsiElementBase>();
-    AngularJSProcessor.process(element, new Consumer<JSPsiElementBase>() {
-      @Override
-      public void consume(JSPsiElementBase element) {
-        if (name.equals(element.getName())) {
-          result.add(element);
-        }
+    AngularJSProcessor.process(element, element1 -> {
+      if (name.equals(element1.getName())) {
+        result.add(element1);
       }
     });
     return result;
@@ -78,11 +75,8 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     } else if (myQualifier == null) {
       final Collection<JSPsiElementBase> localVariables = getItemsByName(myReferencedName, myRef);
       if (!localVariables.isEmpty()) {
-        return ContainerUtil.map2Array(localVariables, JSResolveResult.class, new Function<JSPsiElementBase, JSResolveResult>() {
-          @Override
-          public JSResolveResult fun(JSPsiElementBase item) {
-            return new JSResolveResult(item);
-          }
+        return ContainerUtil.map2Array(localVariables, JSResolveResult.class, item -> {
+          return new JSResolveResult(item);
         });
       }
     }

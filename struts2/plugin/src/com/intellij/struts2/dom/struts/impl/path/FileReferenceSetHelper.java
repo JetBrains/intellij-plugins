@@ -96,28 +96,26 @@ public class FileReferenceSetHelper {
     final WebDirectoryUtil directoryUtil = WebDirectoryUtil.getWebDirectoryUtil(psiElement.getProject());
     set.addCustomization(
         FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION,
-        new Function<PsiFile, Collection<PsiFileSystemItem>>() {
-          public Collection<PsiFileSystemItem> fun(final PsiFile file) {
-            final List<PsiFileSystemItem> basePathRoots = new ArrayList<PsiFileSystemItem>();
+        file -> {
+          final List<PsiFileSystemItem> basePathRoots = new ArrayList<PsiFileSystemItem>();
 
-            // 1. add all configured web root mappings
-            final List<WebRoot> webRoots = webFacet.getWebRoots(true);
-            for (final WebRoot webRoot : webRoots) {
-              final String webRootPath = webRoot.getRelativePath();
-              final WebDirectoryElement webRootBase =
-                  directoryUtil.findWebDirectoryElementByPath(webRootPath, webFacet);
-              ContainerUtil.addIfNotNull(webRootBase, basePathRoots);
-            }
-
-            // 2. add parent <package> "namespace" as result prefix directory path if not ROOT
-            if (!Comparing.equal(namespace, StrutsPackage.DEFAULT_NAMESPACE)) {
-              final WebDirectoryElement packageBase =
-                  directoryUtil.findWebDirectoryElementByPath(namespace, webFacet);
-              ContainerUtil.addIfNotNull(packageBase, basePathRoots);
-            }
-
-            return basePathRoots;
+          // 1. add all configured web root mappings
+          final List<WebRoot> webRoots = webFacet.getWebRoots(true);
+          for (final WebRoot webRoot : webRoots) {
+            final String webRootPath = webRoot.getRelativePath();
+            final WebDirectoryElement webRootBase =
+                directoryUtil.findWebDirectoryElementByPath(webRootPath, webFacet);
+            ContainerUtil.addIfNotNull(webRootBase, basePathRoots);
           }
+
+          // 2. add parent <package> "namespace" as result prefix directory path if not ROOT
+          if (!Comparing.equal(namespace, StrutsPackage.DEFAULT_NAMESPACE)) {
+            final WebDirectoryElement packageBase =
+                directoryUtil.findWebDirectoryElementByPath(namespace, webFacet);
+            ContainerUtil.addIfNotNull(packageBase, basePathRoots);
+          }
+
+          return basePathRoots;
         });
   }
 }

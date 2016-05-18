@@ -205,11 +205,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
             operation.setElement(expression);
             performActionOnElement(operation);
           }
-        }, new Function<DartExpression, String>() {
-          public String fun(DartExpression expression) {
-            return expression.getText();
-          }
-        }
+        }, expression -> expression.getText()
       );
       return true;
     }

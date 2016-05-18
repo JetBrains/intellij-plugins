@@ -45,11 +45,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
   public ManifestEditor(@NotNull Project project, final String text) {
     super("", project, ManifestFileTypeFactory.MANIFEST);
     addDocumentListener(listener);
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      public void run() {
-        setText(text);
-      }
-    });
+    UIUtil.invokeLaterIfNeeded(() -> setText(text));
   }
 
   @Override

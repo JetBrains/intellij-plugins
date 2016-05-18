@@ -258,12 +258,9 @@ public class FlexStackFrame extends XStackFrame {
 
 
     };
-    myDebugProcess.sendAndProcessOneCommand(command, new Function<Exception, Void>() {
-      @Override
-      public Void fun(final Exception e) {
-        FlexDebugProcess.log(e);
-        return null;
-      }
+    myDebugProcess.sendAndProcessOneCommand(command, e -> {
+      FlexDebugProcess.log(e);
+      return null;
     });
   }
 
@@ -362,12 +359,9 @@ public class FlexStackFrame extends XStackFrame {
               return CommandOutputProcessingMode.DONE;
             }
           };
-          myDebugProcess.sendAndProcessOneCommand(evaluateCommand, new Function<Exception, Void>() {
-            @Override
-            public Void fun(final Exception e) {
-              FlexDebugProcess.log(e);
-              return null;
-            }
+          myDebugProcess.sendAndProcessOneCommand(evaluateCommand, e -> {
+            FlexDebugProcess.log(e);
+            return null;
           });
         }
       } else if (scopeChain != null) {
@@ -383,12 +377,9 @@ public class FlexStackFrame extends XStackFrame {
                 return CommandOutputProcessingMode.DONE;
               }
             };
-            myDebugProcess.sendAndProcessOneCommand(evaluateCommand, new Function<Exception, Void>() {
-              @Override
-              public Void fun(final Exception e) {
-                FlexDebugProcess.log(e);
-                return null;
-              }
+            myDebugProcess.sendAndProcessOneCommand(evaluateCommand, e -> {
+              FlexDebugProcess.log(e);
+              return null;
             });
             if (resolved.get() == Boolean.TRUE) {
               handled = true;
@@ -409,13 +400,9 @@ public class FlexStackFrame extends XStackFrame {
       result = s.trim();
 
       if (callback != null) {
-        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-          @Override
-          public void run() {
-            callback.evaluated(new FlexValue(FlexStackFrame.this, myDebugProcess, mySourcePosition, expression, expression, result, null,
-                                             FlexValue.ValueType.Other));
-          }
-        });
+        ApplicationManager.getApplication().executeOnPooledThread(
+          () -> callback.evaluated(new FlexValue(FlexStackFrame.this, myDebugProcess, mySourcePosition, expression, expression, result, null,
+                                               FlexValue.ValueType.Other)));
       } else {
         synchronized (this) {
           myFinished = true;

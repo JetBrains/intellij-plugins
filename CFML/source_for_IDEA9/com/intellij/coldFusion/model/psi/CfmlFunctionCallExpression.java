@@ -170,13 +170,11 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
       return ArrayUtil.EMPTY_STRING_ARRAY;
     }
     final CfmlExpression[] args = argumentListEl.getArguments();
-    return ContainerUtil.map(args, new Function<CfmlExpression, String>() {
-      public String fun(CfmlExpression cfmlExpression) {
-        if (cfmlExpression instanceof CfmlStringLiteralExpression) {
-          return ((CfmlStringLiteralExpression)cfmlExpression).getValue().toLowerCase();
-        }
-        return "";
+    return ContainerUtil.map(args, cfmlExpression -> {
+      if (cfmlExpression instanceof CfmlStringLiteralExpression) {
+        return ((CfmlStringLiteralExpression)cfmlExpression).getValue().toLowerCase();
       }
+      return "";
     }, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
@@ -222,10 +220,8 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
       return PsiType.EMPTY_ARRAY;
     }
     CfmlExpression[] args = argumentsList.getArguments();
-    return ContainerUtil.map2Array(args, PsiType.class, new NullableFunction<CfmlExpression, PsiType>() {
-      public PsiType fun(final CfmlExpression expression) {
-        return expression.getPsiType();
-      }
+    return ContainerUtil.map2Array(args, PsiType.class, (NullableFunction<CfmlExpression, PsiType>)expression -> {
+      return expression.getPsiType();
     });
   }
 }

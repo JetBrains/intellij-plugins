@@ -38,30 +38,27 @@ public class JSCreateFieldAction extends NewJSMemberActionBase {
       return null;
     }
 
-    return new Runnable() {
-      @Override
-      public void run() {
-        if (d.getFieldType().contains(".")) {
-          ImportUtils.doImport(clazz, d.getFieldType(), false);
-        }
-        StringBuilder var = new StringBuilder(JSVisibilityUtil.getVisibilityKeyword(JSAttributeList.AccessType.valueOf(d.getVisibility())));
-        var.append(" ");
-        if (d.isStatic()) {
-          var.append("static ");
-        }
-        var.append(d.isConstant() ? "const " : "var ");
-        var.append(d.getFieldName()).append(":").append(d.getFieldType());
-
-        if (StringUtil.isNotEmpty(d.getInitializer())) {
-          var.append("=").append(d.getInitializer());
-        }
-        var.append(JSCodeStyleSettings.getSemicolon(clazz.getContainingFile()));
-
-        JSVarStatement varStatement = (JSVarStatement)JSChangeUtil.createStatementFromText(clazz.getProject(), var.toString(),
-                                                                                           JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
-        JSRefactoringUtil.addMemberToTargetClass(clazz, varStatement);
-        new ECMAScriptImportOptimizer().processFile(clazz.getContainingFile()).run();
+    return () -> {
+      if (d.getFieldType().contains(".")) {
+        ImportUtils.doImport(clazz, d.getFieldType(), false);
       }
+      StringBuilder var = new StringBuilder(JSVisibilityUtil.getVisibilityKeyword(JSAttributeList.AccessType.valueOf(d.getVisibility())));
+      var.append(" ");
+      if (d.isStatic()) {
+        var.append("static ");
+      }
+      var.append(d.isConstant() ? "const " : "var ");
+      var.append(d.getFieldName()).append(":").append(d.getFieldType());
+
+      if (StringUtil.isNotEmpty(d.getInitializer())) {
+        var.append("=").append(d.getInitializer());
+      }
+      var.append(JSCodeStyleSettings.getSemicolon(clazz.getContainingFile()));
+
+      JSVarStatement varStatement = (JSVarStatement)JSChangeUtil.createStatementFromText(clazz.getProject(), var.toString(),
+                                                                                         JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+      JSRefactoringUtil.addMemberToTargetClass(clazz, varStatement);
+      new ECMAScriptImportOptimizer().processFile(clazz.getContainingFile()).run();
     };
   }
 

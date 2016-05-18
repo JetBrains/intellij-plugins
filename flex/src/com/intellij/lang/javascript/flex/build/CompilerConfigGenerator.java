@@ -278,15 +278,12 @@ public class CompilerConfigGenerator {
 
   private void addNamespaces(final Element rootElement) {
     final StringBuilder namespaceBuilder = new StringBuilder();
-    FlexSdkUtils.processStandardNamespaces(myBC, new PairConsumer<String, String>() {
-      @Override
-      public void consume(final String namespace, final String relativePath) {
-        if (namespaceBuilder.length() > 0) {
-          namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-        }
-        namespaceBuilder.append(namespace).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
-          .append(CompilerOptionInfo.FLEX_SDK_MACRO + "/").append(relativePath);
+    FlexSdkUtils.processStandardNamespaces(myBC, (namespace, relativePath) -> {
+      if (namespaceBuilder.length() > 0) {
+        namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
       }
+      namespaceBuilder.append(namespace).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
+        .append(CompilerOptionInfo.FLEX_SDK_MACRO + "/").append(relativePath);
     });
 
     if (namespaceBuilder.length() == 0) return;

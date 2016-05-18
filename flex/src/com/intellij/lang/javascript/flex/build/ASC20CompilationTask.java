@@ -56,45 +56,43 @@ public class ASC20CompilationTask extends FlexCompilationTask {
   }
 
   private void readInputStream(final FlexCompilationManager compilationManager) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream());
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream());
 
-        try {
-          char[] buf = new char[2048];
-          int read;
+      try {
+        char[] buf = new char[2048];
+        int read;
 
-          while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-            final String output = new String(buf, 0, read);
+        while ((read = reader.read(buf, 0, buf.length)) >= 0) {
+          final String output = new String(buf, 0, read);
 
-            final StringTokenizer tokenizer = new StringTokenizer(output, "\r\n");
+          final StringTokenizer tokenizer = new StringTokenizer(output, "\r\n");
 
-            while (tokenizer.hasMoreElements()) {
-              final String message = tokenizer.nextElement();
-              if (StringUtil.isEmptyOrSpaces(message)) continue;
+          while (tokenizer.hasMoreElements()) {
+            final String message = tokenizer.nextElement();
+            if (StringUtil.isEmptyOrSpaces(message)) continue;
 
-              final boolean ok = handleCompilerMessage(compilationManager, message.trim());
+            final boolean ok = handleCompilerMessage(compilationManager, message.trim());
 
-              if (!ok) {
-                myCompilationFailed = true;
-              }
+            if (!ok) {
+              myCompilationFailed = true;
             }
           }
+        }
 
-          printPreviousLine(compilationManager);
-        }
-        catch (IOException e) {
-          compilationManager.addMessage(ASC20CompilationTask.this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
-          myCompilationFailed = true;
-        }
-        finally {
-          cancel();
+        printPreviousLine(compilationManager);
+      }
+      catch (IOException e) {
+        compilationManager.addMessage(ASC20CompilationTask.this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
+        myCompilationFailed = true;
+      }
+      finally {
+        cancel();
 
-          try {
-            reader.close();
-          }
-          catch (IOException e) {/*ignore*/}
+        try {
+          reader.close();
         }
+        catch (IOException e) {/*ignore*/}
       }
     });
   }

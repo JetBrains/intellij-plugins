@@ -45,14 +45,11 @@ public class DartRenamePsiElementProcessor extends RenamePsiElementProcessor {
         if (componentName != null && dartClass != null && componentName.equals(dartClass.getName())) {
           allRenames.put(dartClass.getComponentName(), newName);
         }
-        DefinitionsSearch.search(((DartComponent)parent).getComponentName()).forEach(new Processor<PsiElement>() {
-          @Override
-          public boolean process(PsiElement element) {
-            if (element instanceof DartComponent) {
-              allRenames.put(((DartComponent)element).getComponentName(), newName);
-            }
-            return true;
+        DefinitionsSearch.search(((DartComponent)parent).getComponentName()).forEach(element1 -> {
+          if (element1 instanceof DartComponent) {
+            allRenames.put(((DartComponent)element1).getComponentName(), newName);
           }
+          return true;
         });
       }
     }

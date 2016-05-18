@@ -77,34 +77,28 @@ public class FlexUnitTestCreator implements TestCreator {
       selectedMemberInfos = dialog.getSelectedMemberInfos();
     }
 
-    final Consumer<JSClass> postProcessRunnable = new Consumer<JSClass>() {
-      public void consume(final JSClass createdClass) {
-        final String methodsText =
-          getMethodsText(createdClass, generateSetUp, generateTearDown, selectedMemberInfos);
-        if (!methodsText.isEmpty()) {
-          final PsiElement methods =
-            JSChangeUtil.createJSTreeFromText(project, "{" + methodsText + "}", JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
-          if (methods != null) {
-            for (final PsiElement psiElement : PsiTreeUtil.getChildrenOfTypeAsList(methods, JSFunction.class)) {
-              createdClass.add(psiElement);
-            }
+    final Consumer<JSClass> postProcessRunnable = createdClass -> {
+      final String methodsText =
+        getMethodsText(createdClass, generateSetUp, generateTearDown, selectedMemberInfos);
+      if (!methodsText.isEmpty()) {
+        final PsiElement methods =
+          JSChangeUtil.createJSTreeFromText(project, "{" + methodsText + "}", JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+        if (methods != null) {
+          for (final PsiElement psiElement : PsiTreeUtil.getChildrenOfTypeAsList(methods, JSFunction.class)) {
+            createdClass.add(psiElement);
           }
         }
-
-        CodeStyleManager.getInstance(project).reformat(createdClass);
-        createdClass.navigate(true);
       }
+
+      CodeStyleManager.getInstance(project).reformat(createdClass);
+      createdClass.navigate(true);
     };
 
-    CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-      public void run() {
-        CreateClassOrInterfaceFix.createClass(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
-                                              packageName, superClass, Collections.<String>emptyList(), targetDirectory,
-                                              CodeInsightBundle.message("intention.create.test"), true,
-                                              Collections.<String, Object>emptyMap(),
-                                              postProcessRunnable);
-      }
-    }, CodeInsightBundle.message("intention.create.test"), null);
+    CommandProcessor.getInstance().executeCommand(project, () -> CreateClassOrInterfaceFix.createClass(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
+                                                                                                   packageName, superClass, Collections.<String>emptyList(), targetDirectory,
+                                                                                                   CodeInsightBundle.message("intention.create.test"), true,
+                                                                                                   Collections.<String, Object>emptyMap(),
+                                                                                                   postProcessRunnable), CodeInsightBundle.message("intention.create.test"), null);
   }
 
   private static String getMethodsText(final JSClass createdClass,

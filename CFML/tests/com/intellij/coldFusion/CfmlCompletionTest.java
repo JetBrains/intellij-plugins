@@ -309,12 +309,9 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   }
 
   public void testAttributeCfloopArrayCompletionInCf8() throws Throwable {
-    Util.runTestWithLanguageLevel(new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        doTest();
-        return null;
-      }
+    Util.runTestWithLanguageLevel(() -> {
+      doTest();
+      return null;
     }, CfmlLanguage.CF8, getProject());
   }
 

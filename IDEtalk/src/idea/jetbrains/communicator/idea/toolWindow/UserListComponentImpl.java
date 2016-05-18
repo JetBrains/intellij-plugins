@@ -153,25 +153,17 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
   }
 
   private void expandAndRepaintUserNode(final User user) {
-    UIUtil.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        myTree.expandUserNode(user);
-      }
-    });
+    UIUtil.invokeLater(() -> myTree.expandUserNode(user));
     repaintUserNode(user);
   }
 
   private void repaintUserNode(final User user) {
-    UIUtil.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        TreePath path = myTree.getPathForUser(user);
-        if (path != null) {
-          myTreeUi.invalidatePath(path);
-          myTree.revalidate();
-          myTree.repaint();
-        }
+    UIUtil.invokeLater(() -> {
+      TreePath path = myTree.getPathForUser(user);
+      if (path != null) {
+        myTreeUi.invalidatePath(path);
+        myTree.revalidate();
+        myTree.repaint();
       }
     });
   }
@@ -386,13 +378,8 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
         }
 
     private boolean problem(final String resourceCode) {
-      EdtExecutorService.getScheduledExecutorInstance().schedule(new Runnable(){
-        @Override
-        public void run() {
-          Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
-                           StringUtil.getMsg(resourceCode));
-        }
-      }, (long)100, TimeUnit.MILLISECONDS);
+      EdtExecutorService.getScheduledExecutorInstance().schedule(() -> Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
+                                                                                    StringUtil.getMsg(resourceCode)), (long)100, TimeUnit.MILLISECONDS);
       return false;
     }
 

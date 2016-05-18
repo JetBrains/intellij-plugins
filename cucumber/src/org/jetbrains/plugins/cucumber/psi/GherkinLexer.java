@@ -46,11 +46,7 @@ public class GherkinLexer extends LexerBase {
   private void updateLanguage(String language) {
     myCurLanguage = language;
     myKeywords = new ArrayList<String>(myKeywordProvider.getAllKeywords(language));
-    Collections.sort(myKeywords, new Comparator<String>() {
-      public int compare(String o1, String o2) {
-        return o2.length() - o1.length();
-      }
-    });
+    Collections.sort(myKeywords, (o1, o2) -> o2.length() - o1.length());
   }
 
   @Override

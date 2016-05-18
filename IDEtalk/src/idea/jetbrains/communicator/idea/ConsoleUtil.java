@@ -75,12 +75,9 @@ public class ConsoleUtil {
     printer.printMessage(project, console);
     //console.print("\n", ConsoleViewContentType.NORMAL_OUTPUT);
 
-    console.performWhenNoDeferredOutput(new Runnable() {
-      @Override
-      public void run() {
-        int allContent = console.getContentSize();
-        console.scrollTo(Math.min(allContent, contentSize + header.length()));
-      }
+    console.performWhenNoDeferredOutput(() -> {
+      int allContent = console.getContentSize();
+      console.scrollTo(Math.min(allContent, contentSize + header.length()));
     });
   }
 

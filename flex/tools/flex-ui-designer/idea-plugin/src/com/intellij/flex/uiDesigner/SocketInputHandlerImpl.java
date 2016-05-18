@@ -72,12 +72,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       callbacks.set(callbackIndex, actionCallback);
     }
 
-    actionCallback.doWhenProcessed(new Runnable() {
-      @Override
-      public void run() {
-        callbacks.set(callbackIndex, null);
-        callbackIdPool.dispose(callbackIndex);
-      }
+    actionCallback.doWhenProcessed(() -> {
+      callbacks.set(callbackIndex, null);
+      callbackIdPool.dispose(callbackIndex);
     });
     return callbackIndex + 1;
   }
@@ -297,19 +294,16 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       token.finish();
     }
     
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        final AccessToken token = WriteAction.start();
-        try {
-          tag.setAttribute(name, value);
-        }
-        finally {
-          token.finish();
-        }
-
-        info.documentModificationStamp = document.getModificationStamp();
+    ApplicationManager.getApplication().invokeLater(() -> {
+      final AccessToken token1 = WriteAction.start();
+      try {
+        tag.setAttribute(name, value);
       }
+      finally {
+        token1.finish();
+      }
+
+      info.documentModificationStamp = document.getModificationStamp();
     });
   }
 
@@ -361,12 +355,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private static void navigateToFile(final OpenFileDescriptor openFileDescriptor, final boolean activateApp) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        openFileDescriptor.navigate(true);
-        focusProjectWindow(openFileDescriptor.getProject(), activateApp);
-      }
+    ApplicationManager.getApplication().invokeLater(() -> {
+      openFileDescriptor.navigate(true);
+      focusProjectWindow(openFileDescriptor.getProject(), activateApp);
     });
   }
 
@@ -559,14 +550,11 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private void goToClass() throws IOException {
     final Module module = readModule();
     final String className = reader.readUTF();
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        JSClass classElement =
-          ((JSClass)ActionScriptClassResolver.findClassByQNameStatic(className, module.getModuleWithDependenciesAndLibrariesScope(false)));
-        classElement.navigate(true);
-        ProjectUtil.focusProjectWindow(classElement.getProject(), true);
-      }
+    ApplicationManager.getApplication().invokeLater(() -> {
+      JSClass classElement =
+        ((JSClass)ActionScriptClassResolver.findClassByQNameStatic(className, module.getModuleWithDependenciesAndLibrariesScope(false)));
+      classElement.navigate(true);
+      ProjectUtil.focusProjectWindow(classElement.getProject(), true);
     });
   }
 

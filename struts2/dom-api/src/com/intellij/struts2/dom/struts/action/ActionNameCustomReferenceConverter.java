@@ -48,13 +48,8 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
   @NonNls
   private static final String ACTION_SUFFIX = "action";
 
-  private final Function<String, Object> ACTION_NAME_FUNCTION = new Function<String, Object>() {
-    @Override
-    public Object fun(final String s) {
-      return StringUtil.endsWithIgnoreCase(s, ACTION_SUFFIX) ?
-             StringUtil.replaceIgnoreCase(s, ACTION_SUFFIX, "") : s;
-    }
-  };
+  private final Function<String, Object> ACTION_NAME_FUNCTION = s -> StringUtil.endsWithIgnoreCase(s, ACTION_SUFFIX) ?
+                                                                 StringUtil.replaceIgnoreCase(s, ACTION_SUFFIX, "") : s;
 
   @NotNull
   @Override
@@ -98,12 +93,9 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
 
         // remove existing action-names
         final List<Action> actions = action.getStrutsPackage().getActions();
-        ContainerUtil.process(actions, new Processor<Action>() {
-          @Override
-          public boolean process(final Action action) {
-            variants.remove(action.getName().getStringValue());
-            return true;
-          }
+        ContainerUtil.process(actions, action1 -> {
+          variants.remove(action1.getName().getStringValue());
+          return true;
         });
 
         return ContainerUtil.map2Array(variants, ACTION_NAME_FUNCTION);

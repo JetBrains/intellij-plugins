@@ -149,12 +149,7 @@ public class LibraryBundlingEditorComponent {
     if (index >= 0 && index != myLastSelected) {
       final LibraryBundlificationRule rule = myRulesModel.getElementAt(index);
       myLibraryRegex.setText(rule.getRuleRegex());
-      UIUtil.invokeLaterIfNeeded(new Runnable() {
-        @Override
-        public void run() {
-          myManifestEditor.setText(rule.getAdditionalProperties());
-        }
-      });
+      UIUtil.invokeLaterIfNeeded(() -> myManifestEditor.setText(rule.getAdditionalProperties()));
       myNeverBundle.setSelected(rule.isDoNotBundle());
       myStopAfterThisRule.setSelected(rule.isStopAfterThisRule());
       myLastSelected = index;

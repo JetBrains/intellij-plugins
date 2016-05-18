@@ -115,12 +115,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       testElement.getTextRange(),
       AllIcons.Vcs.Arrow_right,
       Pass.UPDATE_ALL,
-      new Function<PsiElement, String>() {
-        @Override
-        public String fun(PsiElement element) {
-          return "Execute '" + displayName + "'";
-        }
-      },
+      element -> "Execute '" + displayName + "'",
       new GutterIconNavigationHandler<PsiElement>() {
         @Override
         public void navigate(MouseEvent e, PsiElement elt) {
@@ -145,16 +140,13 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     PopupChooserBuilder builder = new PopupChooserBuilder(list);
     JBPopup popup = builder.
       setMovable(true).
-      setItemChoosenCallback(new Runnable() {
-        @Override
-        public void run() {
-          int[] ids = list.getSelectedIndices();
-          if (ids.length == 0) return;
-          Type type = ObjectUtils.tryCast(list.getSelectedValue(), Type.class);
-          if (type != null) {
-            if (psiElement.isValid()) {
-              execute(type.getExecutor(), psiElement);
-            }
+      setItemChoosenCallback(() -> {
+        int[] ids = list.getSelectedIndices();
+        if (ids.length == 0) return;
+        Type type = ObjectUtils.tryCast(list.getSelectedValue(), Type.class);
+        if (type != null) {
+          if (psiElement.isValid()) {
+            execute(type.getExecutor(), psiElement);
           }
         }
       }).

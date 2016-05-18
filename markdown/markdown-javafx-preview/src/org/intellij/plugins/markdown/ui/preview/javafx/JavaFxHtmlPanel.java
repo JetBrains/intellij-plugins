@@ -51,23 +51,20 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     //System.setProperty("prism.text", "t2k");
     myPanel = new JFXPanelWrapper();
 
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        myWebView = new WebView();
+    Platform.runLater(() -> {
+      myWebView = new WebView();
 
-        updateFontSmoothingType(myWebView, MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
-        myWebView.setContextMenuEnabled(false);
+      updateFontSmoothingType(myWebView, MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
+      myWebView.setContextMenuEnabled(false);
 
-        final WebEngine engine = myWebView.getEngine();
-        engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
-        engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
+      final WebEngine engine = myWebView.getEngine();
+      engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
+      engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
 
-        engine.loadContent("<html><body>" + getScriptingLines() + "</body></html>");
+      engine.loadContent("<html><body>" + getScriptingLines() + "</body></html>");
 
-        final Scene scene = new Scene(myWebView);
-        myPanel.setScene(scene);
-      }
+      final Scene scene = new Scene(myWebView);
+      myPanel.setScene(scene);
     });
 
     subscribeForGrayscaleSetting();
@@ -79,12 +76,9 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       new MarkdownApplicationSettings.SettingsChangedListener() {
         @Override
         public void onSettingsChange(@NotNull final MarkdownApplicationSettings settings) {
-          Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-              if (myWebView != null) {
-                updateFontSmoothingType(myWebView, settings.getMarkdownPreviewSettings().isUseGrayscaleRendering());
-              }
+          Platform.runLater(() -> {
+            if (myWebView != null) {
+              updateFontSmoothingType(myWebView, settings.getMarkdownPreviewSettings().isUseGrayscaleRendering());
             }
           });
         }
@@ -114,12 +108,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     myLastRawHtml = html;
     final String htmlToRender = prepareHtml(html);
 
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        getWebViewGuaranteed().getEngine().loadContent(htmlToRender);
-      }
-    });
+    Platform.runLater(() -> getWebViewGuaranteed().getEngine().loadContent(htmlToRender));
   }
 
   private String prepareHtml(@NotNull String html) {
@@ -137,41 +126,32 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @Override
   public void render() {
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        getWebViewGuaranteed().getEngine().reload();
-        myPanel.repaint();
-      }
+    Platform.runLater(() -> {
+      getWebViewGuaranteed().getEngine().reload();
+      myPanel.repaint();
     });
   }
 
   @Override
   public void scrollToMarkdownSrcOffset(final int offset) {
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        getWebViewGuaranteed().getEngine().executeScript(
-          "if ('__IntelliJTools' in window) " +
-          "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');"
-        );
-        final Object result = getWebViewGuaranteed().getEngine().executeScript(
-          "document.documentElement.scrollTop || document.body.scrollTop");
-        if (result instanceof Number) {
-          myScrollPreservingListener.myScrollY = ((Number)result).intValue();
-        }
+    Platform.runLater(() -> {
+      getWebViewGuaranteed().getEngine().executeScript(
+        "if ('__IntelliJTools' in window) " +
+        "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');"
+      );
+      final Object result = getWebViewGuaranteed().getEngine().executeScript(
+        "document.documentElement.scrollTop || document.body.scrollTop");
+      if (result instanceof Number) {
+        myScrollPreservingListener.myScrollY = ((Number)result).intValue();
       }
     });
   }
 
   @Override
   public void dispose() {
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myScrollPreservingListener);
-        getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myBridgeSettingListener);
-      }
+    Platform.runLater(() -> {
+      getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myScrollPreservingListener);
+      getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myBridgeSettingListener);
     });
   }
 

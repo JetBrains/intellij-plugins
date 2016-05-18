@@ -37,15 +37,12 @@ class HeaderParametersProvider extends CompletionProvider<CompletionParameters> 
   private final Collection<LookupElement> myLookupElements;
 
   public HeaderParametersProvider(String... names) {
-    myLookupElements = ContainerUtil.map2List(names, new Function<String, LookupElement>() {
-      @Override
-      public LookupElementBuilder fun(String name) {
-        boolean directive = StringUtil.endsWithChar(name, ':');
-        if (directive) name = name.substring(0, name.length() - 1);
-        return LookupElementBuilder.create(name)
-          .withCaseSensitivity(false)
-          .withInsertHandler(directive ? DIRECTIVE_HANDLER : ATTRIBUTE_HANDLER);
-      }
+    myLookupElements = ContainerUtil.map2List(names, name -> {
+      boolean directive = StringUtil.endsWithChar(name, ':');
+      if (directive) name = name.substring(0, name.length() - 1);
+      return LookupElementBuilder.create(name)
+        .withCaseSensitivity(false)
+        .withInsertHandler(directive ? DIRECTIVE_HANDLER : ATTRIBUTE_HANDLER);
     });
   }
 

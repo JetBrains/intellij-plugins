@@ -135,11 +135,9 @@ public class FlexSdkType2 extends SdkType {
     });
 
     if (playerDir != null) {
-      FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, new Processor<VirtualFile>() {
-        public boolean process(final VirtualFile playerglobalSwcFile) {
-          addSwcRoot(sdkModificator, playerglobalSwcFile);
-          return true;
-        }
+      FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, playerglobalSwcFile -> {
+        addSwcRoot(sdkModificator, playerglobalSwcFile);
+        return true;
       });
     }
 

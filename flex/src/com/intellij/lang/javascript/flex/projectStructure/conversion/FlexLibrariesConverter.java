@@ -60,12 +60,7 @@ class FlexLibrariesConverter extends ConversionProcessor<ProjectLibrariesSetting
   private Collection<String> getProjectLibrariesNames(final ProjectLibrariesSettings projectLibrariesSettings) {
     Set<String> librariesNames = new HashSet<String>();
     for (Element element : projectLibrariesSettings.getProjectLibraries()) {
-      if (!FlexModuleConverter.isApplicableLibrary(element, new Function<String, String>() {
-        @Override
-        public String fun(final String s) {
-          return myParams.expandPath(s);
-        }
-      })) {
+      if (!FlexModuleConverter.isApplicableLibrary(element, s -> myParams.expandPath(s))) {
         // ignore non-flex project library
         continue;
       }
@@ -83,9 +78,5 @@ class FlexLibrariesConverter extends ConversionProcessor<ProjectLibrariesSetting
     }
   }
 
-  private static final Function<Element, String> LIB_NAME_MAPPER = new Function<Element, String>() {
-    public String fun(final Element element) {
-      return element.getAttributeValue(LibraryImpl.LIBRARY_NAME_ATTR);
-    }
-  };
+  private static final Function<Element, String> LIB_NAME_MAPPER = element -> element.getAttributeValue(LibraryImpl.LIBRARY_NAME_ATTR);
 }

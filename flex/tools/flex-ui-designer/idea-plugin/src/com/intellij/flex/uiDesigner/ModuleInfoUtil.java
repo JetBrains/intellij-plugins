@@ -62,17 +62,7 @@ public final class ModuleInfoUtil {
       Application application = ApplicationManager.getApplication();
       LogMessageUtil.LOG.assertTrue(!application.isReadAccessAllowed());
 
-      application.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          psiDocumentManager.performWhenAllCommitted(new Runnable() {
-            @Override
-            public void run() {
-              semaphore.up();
-            }
-          });
-        }
-      });
+      application.invokeLater(() -> psiDocumentManager.performWhenAllCommitted(() -> semaphore.up()));
       semaphore.waitFor();
     }
 
@@ -145,43 +135,40 @@ public final class ModuleInfoUtil {
     final StyleTagWriter styleTagWriter =
       new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter));
     final List<LocalStyleHolder> result = new ArrayList<LocalStyleHolder>();
-    final Processor<JSClass> processor = new Processor<JSClass>() {
-      @Override
-      public boolean process(JSClass jsClass) {
-        PsiFile psiFile = jsClass.getNavigationElement().getContainingFile();
-        if (!(psiFile instanceof XmlFile)) {
-          return true;
-        }
+    final Processor<JSClass> processor = jsClass -> {
+      PsiFile psiFile = jsClass.getNavigationElement().getContainingFile();
+      if (!(psiFile instanceof XmlFile)) {
+        return true;
+      }
 
-        XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
-        if (rootTag == null) {
-          return true;
-        }
+      XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
+      if (rootTag == null) {
+        return true;
+      }
 
-        final VirtualFile virtualFile = psiFile.getVirtualFile();
-        problemsHolder.setCurrentFile(virtualFile);
-        try {
-          // IDEA-73558
-          for (final XmlTag subTag : rootTag.getSubTags()) {
-            if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
-                subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
-              try {
-                LocalStyleHolder localStyleHolder = styleTagWriter.write(subTag, module, virtualFile);
-                if (localStyleHolder != null) {
-                  result.add(localStyleHolder);
-                }
+      final VirtualFile virtualFile = psiFile.getVirtualFile();
+      problemsHolder.setCurrentFile(virtualFile);
+      try {
+        // IDEA-73558
+        for (final XmlTag subTag : rootTag.getSubTags()) {
+          if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
+              subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
+            try {
+              LocalStyleHolder localStyleHolder = styleTagWriter.write(subTag, module, virtualFile);
+              if (localStyleHolder != null) {
+                result.add(localStyleHolder);
               }
-              catch (InvalidPropertyException e) {
-                problemsHolder.add(e);
-              }
+            }
+            catch (InvalidPropertyException e) {
+              problemsHolder.add(e);
             }
           }
         }
-        finally {
-          problemsHolder.setCurrentFile(null);
-        }
-        return true;
       }
+      finally {
+        problemsHolder.setCurrentFile(null);
+      }
+      return true;
     };
 
     final GlobalSearchScope moduleScope = module.getModuleScope(false);

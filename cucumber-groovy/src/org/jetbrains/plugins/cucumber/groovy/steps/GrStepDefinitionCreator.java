@@ -133,18 +133,15 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
       public void templateFinished(Template template, boolean brokenOff) {
         if (brokenOff) return;
 
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            PsiDocumentManager.getInstance(project).commitDocument(editorToRunTemplate.getDocument());
-            final int offset = editorToRunTemplate.getCaretModel().getOffset();
-            GrMethodCall methodCall = PsiTreeUtil.findElementOfClassAtOffset(file, offset - 1, GrMethodCall.class, false);
-            if (methodCall != null) {
-              GrClosableBlock[] closures = methodCall.getClosureArguments();
-              if (closures.length == 1) {
-                GrClosableBlock closure = closures[0];
-                selectBody(closure, editor);
-              }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          PsiDocumentManager.getInstance(project).commitDocument(editorToRunTemplate.getDocument());
+          final int offset = editorToRunTemplate.getCaretModel().getOffset();
+          GrMethodCall methodCall1 = PsiTreeUtil.findElementOfClassAtOffset(file, offset - 1, GrMethodCall.class, false);
+          if (methodCall1 != null) {
+            GrClosableBlock[] closures = methodCall1.getClosureArguments();
+            if (closures.length == 1) {
+              GrClosableBlock closure1 = closures[0];
+              selectBody(closure1, editor);
             }
           }
         });

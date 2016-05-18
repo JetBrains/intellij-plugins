@@ -114,16 +114,13 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     if (postTask != null) {
       MavenUtil.invokeAndWait(project, postTask);
 
-      MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
-        @Override
-        public void run() {
-          for (Map.Entry<Module, String> entry : myModuleToConfigFilePath.entrySet()) {
-            if (entry.getKey().isDisposed()) continue;
+      MavenUtil.invokeAndWaitWriteAction(project, () -> {
+        for (Map.Entry<Module, String> entry : myModuleToConfigFilePath.entrySet()) {
+          if (entry.getKey().isDisposed()) continue;
 
-            final VirtualFile configFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(entry.getValue());
-            if (configFile != null && !configFile.isDirectory()) {
-              Flexmojos3GenerateConfigTask.updateMainClass(entry.getKey(), configFile);
-            }
+          final VirtualFile configFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(entry.getValue());
+          if (configFile != null && !configFile.isDirectory()) {
+            Flexmojos3GenerateConfigTask.updateMainClass(entry.getKey(), configFile);
           }
         }
       });

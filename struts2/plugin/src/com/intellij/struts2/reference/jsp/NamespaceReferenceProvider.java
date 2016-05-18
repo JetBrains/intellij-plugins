@@ -60,13 +60,9 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
       implements EmptyResolveMessageProvider {
 
     private static final Function<StrutsPackage, LookupElement> STRUTS_PACKAGE_LOOKUP_ELEMENT_FUNCTION =
-        new Function<StrutsPackage, LookupElement>() {
-          public LookupElement fun(final StrutsPackage strutsPackage) {
-            return LookupElementBuilder.create(strutsPackage.getXmlTag(),
-                                               strutsPackage.searchNamespace())
-                                       .withTypeText(strutsPackage.getName().getStringValue());
-          }
-        };
+      strutsPackage -> LookupElementBuilder.create(strutsPackage.getXmlTag(),
+                                         strutsPackage.searchNamespace())
+                                 .withTypeText(strutsPackage.getName().getStringValue());
 
     private final StrutsModel strutsModel;
 

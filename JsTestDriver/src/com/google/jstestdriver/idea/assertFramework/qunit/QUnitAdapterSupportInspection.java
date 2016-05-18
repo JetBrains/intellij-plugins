@@ -18,13 +18,9 @@ public class QUnitAdapterSupportInspection extends AbstractAddAdapterSupportInsp
   public QUnitAdapterSupportInspection() {
     super(
       "QUnit",
-      new NotNullProducer<List<VirtualFile>>() {
-        @NotNull
-        @Override
-        public List<VirtualFile> produce() {
-          String[] relativePaths = new String[]{"equiv.js", "QUnitAdapter.js"};
-          return VfsUtils.findVirtualFilesByResourceNames(QUnitAdapterSrcMarker.class, relativePaths);
-        }
+      () -> {
+        String[] relativePaths = new String[]{"equiv.js", "QUnitAdapter.js"};
+        return VfsUtils.findVirtualFilesByResourceNames(QUnitAdapterSrcMarker.class, relativePaths);
       },
       "https://github.com/exnor/QUnit-to-JsTestDriver-adapter"
     );

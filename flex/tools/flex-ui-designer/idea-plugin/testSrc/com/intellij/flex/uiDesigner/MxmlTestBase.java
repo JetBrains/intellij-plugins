@@ -86,12 +86,9 @@ abstract class MxmlTestBase extends AppTestBase {
       final XmlFile xmlFile = (XmlFile)psiManager.findFile(file);
       assert xmlFile != null;
 
-      final Callable<Void> action = new Callable<Void>() {
-        @Override
-        public Void call() throws Exception {
-          tester.test(file, xmlFile, originalVFile);
-          return null;
-        }
+      final Callable<Void> action = () -> {
+        tester.test(file, xmlFile, originalVFile);
+        return null;
       };
 
       if (TIMEOUT == 0) {

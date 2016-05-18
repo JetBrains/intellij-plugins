@@ -70,19 +70,11 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testCompositeFileHeaderAndExpandedImports() throws Exception {
-    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
-      public void consume(final CodeFoldingSettings settings) {
-        settings.COLLAPSE_IMPORTS = false;
-      }
-    });
+    doTestWithSpecificSettings(settings -> settings.COLLAPSE_IMPORTS = false);
   }
 
   public void testExpandedFileHeaderAndFoldedImports() throws Exception {
-    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
-      public void consume(final CodeFoldingSettings settings) {
-        settings.COLLAPSE_FILE_HEADER = false;
-      }
-    });
+    doTestWithSpecificSettings(settings -> settings.COLLAPSE_FILE_HEADER = false);
   }
 
   public void testFileHeaderBeforePartOf() throws Exception {
@@ -98,11 +90,7 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testDocCommentsCollapsed() throws Exception {
-    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
-      public void consume(final CodeFoldingSettings settings) {
-        settings.COLLAPSE_DOC_COMMENTS = true;
-      }
-    });
+    doTestWithSpecificSettings(settings -> settings.COLLAPSE_DOC_COMMENTS = true);
   }
 
   public void testFunctionBody() throws Exception {
@@ -110,11 +98,7 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionBodyCollapsedByDefault() throws Exception {
-    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
-      public void consume(final CodeFoldingSettings settings) {
-        settings.COLLAPSE_METHODS = true;
-      }
-    });
+    doTestWithSpecificSettings(settings -> settings.COLLAPSE_METHODS = true);
   }
 
   public void testCustomRegionsOverlappingWithCommentFoldings() throws Exception {
@@ -126,19 +110,11 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testTypeArgumentsByDefault() throws Exception {
-    doTestWithSpecificSettings(null, new Consumer<DartCodeFoldingSettings>() {
-      public void consume(final DartCodeFoldingSettings settings) {
-        settings.setCollapseGenericParameters(true);
-      }
-    });
+    doTestWithSpecificSettings(null, settings -> settings.setCollapseGenericParameters(true));
   }
 
   public void testParts() throws Exception {
-    doTestWithSpecificSettings(null, new Consumer<DartCodeFoldingSettings>() {
-      public void consume(final DartCodeFoldingSettings settings) {
-        settings.setCollapseParts(false);
-      }
-    });
+    doTestWithSpecificSettings(null, settings -> settings.setCollapseParts(false));
   }
 
   public void testPartsByDefault() throws Exception {

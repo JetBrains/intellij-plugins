@@ -38,17 +38,14 @@ public class ComboBoxWithMoreOption extends ComboBox {
 
           final Object prevItem = e.getItem();
 
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              if (getItemCount() != myStartItems.size() + myExtendedItems.size()) {
-                ComboBoxWithMoreOption.this.extend();
-                setSelectedItem(prevItem);
-              }
+          ApplicationManager.getApplication().invokeLater(() -> {
+            if (getItemCount() != myStartItems.size() + myExtendedItems.size()) {
+              ComboBoxWithMoreOption.this.extend();
+              setSelectedItem(prevItem);
+            }
 
-              if (!ComboBoxWithMoreOption.this.isPopupVisible()) {
-                ComboBoxWithMoreOption.this.showPopup();
-              }
+            if (!ComboBoxWithMoreOption.this.isPopupVisible()) {
+              ComboBoxWithMoreOption.this.showPopup();
             }
           });
         }

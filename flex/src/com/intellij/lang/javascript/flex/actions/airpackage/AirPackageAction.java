@@ -157,78 +157,74 @@ public class AirPackageAction extends DumbAwareAction {
                                                               final Iterator<Pair<ExternalTask, String>> iterator,
                                                               final String createdPackagePath,
                                                               final Map<String, List<String>> packagePathsToWarnings) {
-    return new Consumer<List<String>>() {
-      public void consume(final List<String> messages) {
-        packagePathsToWarnings.put(createdPackagePath, messages);
+    return messages -> {
+      packagePathsToWarnings.put(createdPackagePath, messages);
 
-        if (iterator.hasNext()) {
-          final Pair<ExternalTask, String> taskAndPackagePath = iterator.next();
-          final ExternalTask task = taskAndPackagePath.first;
-          final String packagePath = taskAndPackagePath.second;
-          final Consumer<List<String>> onSuccessRunnable = createSuccessConsumer(project, iterator, packagePath, packagePathsToWarnings);
-          ExternalTask
-            .runInBackground(task, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
-                             onSuccessRunnable, createFailureConsumer(project, packagePath, task));
-        }
-        else {
-          final StringBuilder hrefs = new StringBuilder();
-          for (Map.Entry<String, List<String>> entry : packagePathsToWarnings.entrySet()) {
-            final String packagePath = entry.getKey();
-            final List<String> warnings = entry.getValue();
+      if (iterator.hasNext()) {
+        final Pair<ExternalTask, String> taskAndPackagePath = iterator.next();
+        final ExternalTask task = taskAndPackagePath.first;
+        final String packagePath = taskAndPackagePath.second;
+        final Consumer<List<String>> onSuccessRunnable = createSuccessConsumer(project, iterator, packagePath, packagePathsToWarnings);
+        ExternalTask
+          .runInBackground(task, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
+                           onSuccessRunnable, createFailureConsumer(project, packagePath, task));
+      }
+      else {
+        final StringBuilder hrefs = new StringBuilder();
+        for (Map.Entry<String, List<String>> entry : packagePathsToWarnings.entrySet()) {
+          final String packagePath = entry.getKey();
+          final List<String> warnings = entry.getValue();
 
-            if (hrefs.length() > 0) {
-              hrefs.append("<br>");
-            }
-
-            hrefs.append("<a href='").append(packagePath).append("'>").append(PathUtil.getFileName(packagePath)).append("</a>");
-
-            if (!warnings.isEmpty()) {
-              hrefs.append("<br>");
-              for (String warning : warnings) {
-                hrefs.append(warning).append("<br>");
-              }
-            }
+          if (hrefs.length() > 0) {
+            hrefs.append("<br>");
           }
 
-          final String message = FlexBundle.message("air.application.created", packagePathsToWarnings.size(), hrefs);
+          hrefs.append("<a href='").append(packagePath).append("'>").append(PathUtil.getFileName(packagePath)).append("</a>");
 
-          final NotificationListener listener = new NotificationListener() {
-            public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
-              if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                notification.expire();
-                final String packagePath = event.getDescription();
-                ShowFilePathAction.openFile(new File(packagePath));
-              }
+          if (!warnings.isEmpty()) {
+            hrefs.append("<br>");
+            for (String warning : warnings) {
+              hrefs.append(warning).append("<br>");
             }
-          };
-
-          NOTIFICATION_GROUP.createNotification("", message, NotificationType.INFORMATION, listener).notify(project);
+          }
         }
+
+        final String message = FlexBundle.message("air.application.created", packagePathsToWarnings.size(), hrefs);
+
+        final NotificationListener listener = new NotificationListener() {
+          public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+            if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+              notification.expire();
+              final String packagePath = event.getDescription();
+              ShowFilePathAction.openFile(new File(packagePath));
+            }
+          }
+        };
+
+        NOTIFICATION_GROUP.createNotification("", message, NotificationType.INFORMATION, listener).notify(project);
       }
     };
   }
 
   private static Consumer<List<String>> createFailureConsumer(final Project project, final String packagePath, final ExternalTask task) {
-    return new Consumer<List<String>>() {
-      public void consume(final List<String> messages) {
-        String reason = StringUtil.join(messages, "<br>");
-        if (reason.length() > 1000) {
-          reason = reason.substring(0, 1000) + "...";
-        }
-
-        NOTIFICATION_GROUP
-          .createNotification("", FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason),
-                              NotificationType.ERROR, new NotificationListener() {
-              public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
-                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                  notification.expire();
-                  Messages.showIdeaMessageDialog(project, task.getCommandLine(), "ADT Command Line",
-                                                 new String[]{Messages.OK_BUTTON}, 0, null, null);
-                }
-              }
-            })
-          .notify(project);
+    return messages -> {
+      String reason = StringUtil.join(messages, "<br>");
+      if (reason.length() > 1000) {
+        reason = reason.substring(0, 1000) + "...";
       }
+
+      NOTIFICATION_GROUP
+        .createNotification("", FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason),
+                            NotificationType.ERROR, new NotificationListener() {
+            public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+              if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                notification.expire();
+                Messages.showIdeaMessageDialog(project, task.getCommandLine(), "ADT Command Line",
+                                               new String[]{Messages.OK_BUTTON}, 0, null, null);
+              }
+            }
+          })
+        .notify(project);
     };
   }
 

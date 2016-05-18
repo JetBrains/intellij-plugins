@@ -40,11 +40,7 @@ import java.util.Set;
 public class GoToPackageSymbolProvider extends GoToSymbolProvider {
 
   private static final Function<StrutsPackage, String> STRUTS_PACKAGE_NAME_FUNCTION =
-      new NullableFunction<StrutsPackage, String>() {
-        public String fun(final StrutsPackage strutsPackage) {
-          return strutsPackage.getName().getStringValue();
-        }
-      };
+    (NullableFunction<StrutsPackage, String>)strutsPackage -> strutsPackage.getName().getStringValue();
 
   protected boolean acceptModule(final Module module) {
     return StrutsFacet.getInstance(module) != null;

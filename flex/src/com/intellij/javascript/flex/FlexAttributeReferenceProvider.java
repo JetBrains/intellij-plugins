@@ -239,21 +239,18 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
         }
 
         final CreateClassOrInterfaceFix fix = new CreateClassOrInterfaceFix(fqn, baseClass, myElement);
-        fix.setCreatedClassFqnConsumer(new Consumer<String>() {
-          @Override
-          public void consume(final String fqn) {
-            if (myElement.isValid()) {
-              if (!fqn.equals(StringUtil.stripQuotesAroundValue(myElement.getValueNode().getText()))) {
-                final ASTNode oldValueNode = myElement.getValueNode();
-                final String oldText = oldValueNode.getText();
-                char quoteChar = oldText.length() > 0 ? oldText.charAt(0) : '"';
-                if (quoteChar != '\'' && quoteChar != '"') {
-                  quoteChar = '"';
-                }
-
-                final ASTNode newNode = JSChangeUtil.createExpressionFromText(myElement.getProject(), quoteChar + fqn + quoteChar);
-                myElement.getNode().replaceChild(oldValueNode, newNode.getFirstChildNode());
+        fix.setCreatedClassFqnConsumer(fqn1 -> {
+          if (myElement.isValid()) {
+            if (!fqn1.equals(StringUtil.stripQuotesAroundValue(myElement.getValueNode().getText()))) {
+              final ASTNode oldValueNode = myElement.getValueNode();
+              final String oldText = oldValueNode.getText();
+              char quoteChar = oldText.length() > 0 ? oldText.charAt(0) : '"';
+              if (quoteChar != '\'' && quoteChar != '"') {
+                quoteChar = '"';
               }
+
+              final ASTNode newNode = JSChangeUtil.createExpressionFromText(myElement.getProject(), quoteChar + fqn1 + quoteChar);
+              myElement.getNode().replaceChild(oldValueNode, newNode.getFirstChildNode());
             }
           }
         });

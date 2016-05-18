@@ -27,11 +27,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
   private void performWriteAction(final Project project, final Runnable action) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        CommandProcessor.getInstance().executeCommand(project, action, "test command", null);
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      CommandProcessor.getInstance().executeCommand(project, action, "test command", null);
     });
   }
 
@@ -48,12 +45,7 @@ public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtur
    */
   void doCharTest(final char charToType, @NotNull String before, @NotNull String expected) {
     final TypedAction typedAction = EditorActionManager.getInstance().getTypedAction();
-    doExecuteActionTest(before, expected, new Runnable() {
-      @Override
-      public void run() {
-        typedAction.actionPerformed(myFixture.getEditor(), charToType, ((EditorEx)myFixture.getEditor()).getDataContext());
-      }
-    });
+    doExecuteActionTest(before, expected, () -> typedAction.actionPerformed(myFixture.getEditor(), charToType, ((EditorEx)myFixture.getEditor()).getDataContext()));
   }
 
   /**
@@ -62,12 +54,8 @@ public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtur
    */
   protected void doEnterTest(@NotNull String before, @NotNull String expected) {
     final EditorActionHandler enterActionHandler = EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER);
-    doExecuteActionTest(before, expected, new Runnable() {
-      @Override
-      public void run() {
-        enterActionHandler.execute(myFixture.getEditor(), ((EditorEx)myFixture.getEditor()).getDataContext());
-      }
-    });
+    doExecuteActionTest(before, expected,
+                        () -> enterActionHandler.execute(myFixture.getEditor(), ((EditorEx)myFixture.getEditor()).getDataContext()));
   }
 
   /**
@@ -75,12 +63,8 @@ public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtur
    * See class documentation for more info: {@link HbActionHandlerTest}
    */
   void doLineCommentTest(@NotNull String before, @NotNull String expected) {
-    doExecuteActionTest(before, expected, new Runnable() {
-      @Override
-      public void run() {
-        new CommentByLineCommentAction().actionPerformedImpl(myFixture.getProject(), myFixture.getEditor());
-      }
-    });
+    doExecuteActionTest(before, expected,
+                        () -> new CommentByLineCommentAction().actionPerformedImpl(myFixture.getProject(), myFixture.getEditor()));
   }
 
   /**
@@ -88,13 +72,8 @@ public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtur
    * See class documentation for more info: {@link HbActionHandlerTest}
    */
   void doBlockCommentTest(@NotNull String before, @NotNull String expected) {
-    doExecuteActionTest(before, expected, new Runnable() {
-      @Override
-      public void run() {
-        new CommentByBlockCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(),
-                                                  myFixture.getEditor().getCaretModel().getPrimaryCaret(), myFixture.getFile());
-      }
-    });
+    doExecuteActionTest(before, expected, () -> new CommentByBlockCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(),
+                                                                                      myFixture.getEditor().getCaretModel().getPrimaryCaret(), myFixture.getFile()));
   }
 
   private void doExecuteActionTest(@NotNull String before, @NotNull String expected, @NotNull Runnable action) {

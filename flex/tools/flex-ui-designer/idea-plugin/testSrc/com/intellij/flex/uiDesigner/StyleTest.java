@@ -44,13 +44,10 @@ public class StyleTest extends MxmlTestBase {
   @Flex(version="4.1", requireLocalStyleHolder=true)
   // see mx.controls.ButtonBar line 528 in flex sdk 4.1
   public void testMxButtonBar41WithLocalStyleHolder() throws Exception {
-    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
-      @Override
-      public Void fun(ModifiableRootModel model, VirtualFile sourceDir, List<String> libs) {
-        final VirtualFile assetsDir = DesignerTests.getFile("assets");
-        model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
-        return null;
-      }
+    moduleInitializer = (model, sourceDir, libs1) -> {
+      final VirtualFile assetsDir = DesignerTests.getFile("assets");
+      model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
+      return null;
     };
 
     // must be tested with local style holder

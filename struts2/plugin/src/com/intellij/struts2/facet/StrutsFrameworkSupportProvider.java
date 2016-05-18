@@ -98,103 +98,97 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
                                 final ModifiableRootModel modifiableRootModel,
                                 final FrameworkVersion version) {
     final Module module = strutsFacet.getModule();
-    StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
-      public void run() {
-        DumbService.getInstance(module.getProject()).runWhenSmart(new Runnable() {
-          @Override
-          public void run() {
-            final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
-            if (sourceRoots.length <= 0) {
-              return;
-            }
+    StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(
+      () -> DumbService.getInstance(module.getProject()).runWhenSmart(() -> {
+        final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
+        if (sourceRoots.length <= 0) {
+          return;
+        }
 
-            final PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots[0]);
-            if (directory == null ||
-                directory.findFile(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME) != null) {
-              return;
-            }
+        final PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots[0]);
+        if (directory == null ||
+            directory.findFile(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME) != null) {
+          return;
+        }
 
-            final StrutsFileTemplateProvider templateProvider = new StrutsFileTemplateProvider(module);
-            final FileTemplate strutsXmlTemplate = templateProvider.determineFileTemplate(directory.getProject());
+        final StrutsFileTemplateProvider templateProvider = new StrutsFileTemplateProvider(module);
+        final FileTemplate strutsXmlTemplate = templateProvider.determineFileTemplate(directory.getProject());
 
-            try {
-              final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
+        try {
+          final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
 
-              // create empty struts.xml & fileset with all found struts-*.xml files (struts2.jar, plugins)
-              final PsiElement psiElement = FileTemplateUtil.createFromTemplate(strutsXmlTemplate,
-                                                                                StrutsConstants.STRUTS_XML_DEFAULT_FILENAME,
-                                                                                null,
-                                                                                directory);
-              final Set<StrutsFileSet> empty = Collections.emptySet();
-              final StrutsFileSet fileSet = new StrutsFileSet(StrutsFileSet.getUniqueId(empty),
-                                                              StrutsFileSet.getUniqueName("Default File Set", empty),
-                                                              strutsFacetConfiguration);
-              fileSet.addFile(((XmlFile)psiElement).getVirtualFile());
+          // create empty struts.xml & fileset with all found struts-*.xml files (struts2.jar, plugins)
+          final PsiElement psiElement = FileTemplateUtil.createFromTemplate(strutsXmlTemplate,
+                                                                            StrutsConstants.STRUTS_XML_DEFAULT_FILENAME,
+                                                                            null,
+                                                                            directory);
+          final Set<StrutsFileSet> empty = Collections.emptySet();
+          final StrutsFileSet fileSet = new StrutsFileSet(StrutsFileSet.getUniqueId(empty),
+                                                          StrutsFileSet.getUniqueName("Default File Set", empty),
+                                                          strutsFacetConfiguration);
+          fileSet.addFile(((XmlFile)psiElement).getVirtualFile());
 
-              final StrutsConfigsSearcher searcher = new StrutsConfigsSearcher(module);
-              searcher.search();
-              final MultiMap<VirtualFile, PsiFile> jarConfigFiles = searcher.getJars();
-              for (final VirtualFile virtualFile : jarConfigFiles.keySet()) {
-                final Collection<PsiFile> psiFiles = jarConfigFiles.get(virtualFile);
-                for (final PsiFile psiFile : psiFiles) {
-                  fileSet.addFile(psiFile.getVirtualFile());
-                }
-              }
-              strutsFacetConfiguration.getFileSets().add(fileSet);
-
-
-              // create filter & mapping in web.xml (if present)
-              new WriteCommandAction.Simple(modifiableRootModel.getProject()) {
-                protected void run() throws Throwable {
-                  final WebFacet webFacet = strutsFacet.getWebFacet();
-
-                  final ConfigFile configFile = webFacet.getWebXmlDescriptor();
-                  if (configFile == null) return;
-
-                  final XmlFile webXmlFile = configFile.getXmlFile();
-                  final WebApp webApp = JamCommonUtil.getRootElement(webXmlFile, WebApp.class, null);
-                  if (webApp == null) return;
-                  if (!FileModificationService.getInstance().prepareFileForWrite(webXmlFile)) return;
-
-                  final Filter strutsFilter = webApp.addFilter();
-                  strutsFilter.getFilterName().setStringValue("struts2");
-
-                  @NonNls final String filterClass = templateProvider.is21orNewer() ?
-                                                     StrutsConstants.STRUTS_2_1_FILTER_CLASS :
-                                                     StrutsConstants.STRUTS_2_0_FILTER_CLASS;
-                  strutsFilter.getFilterClass().setStringValue(filterClass);
-
-                  final FilterMapping filterMapping = webApp.addFilterMapping();
-                  filterMapping.getFilterName().setValue(strutsFilter);
-                  filterMapping.addUrlPattern().setStringValue("/*");
-                }
-              }.execute();
-
-
-              final NotificationListener showFacetSettingsListener = new NotificationListener() {
-                public void hyperlinkUpdate(@NotNull final Notification notification,
-                                            @NotNull final HyperlinkEvent event) {
-                  if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    notification.expire();
-                    ModulesConfigurator.showFacetSettingsDialog(strutsFacet, null);
-                  }
-                }
-              };
-
-              Notifications.Bus.notify(
-                new Notification("Struts 2", "Struts 2 Setup",
-                                 "Struts 2 Facet has been created, please check <a href=\"more\">created fileset</a>",
-                                 NotificationType.INFORMATION,
-                                 showFacetSettingsListener),
-                module.getProject());
-            }
-            catch (Exception e) {
-              LOG.error("error creating struts.xml from template", e);
+          final StrutsConfigsSearcher searcher = new StrutsConfigsSearcher(module);
+          searcher.search();
+          final MultiMap<VirtualFile, PsiFile> jarConfigFiles = searcher.getJars();
+          for (final VirtualFile virtualFile : jarConfigFiles.keySet()) {
+            final Collection<PsiFile> psiFiles = jarConfigFiles.get(virtualFile);
+            for (final PsiFile psiFile : psiFiles) {
+              fileSet.addFile(psiFile.getVirtualFile());
             }
           }
-        });
-      }
-    });
+          strutsFacetConfiguration.getFileSets().add(fileSet);
+
+
+          // create filter & mapping in web.xml (if present)
+          new WriteCommandAction.Simple(modifiableRootModel.getProject()) {
+            protected void run() throws Throwable {
+              final WebFacet webFacet = strutsFacet.getWebFacet();
+
+              final ConfigFile configFile = webFacet.getWebXmlDescriptor();
+              if (configFile == null) return;
+
+              final XmlFile webXmlFile = configFile.getXmlFile();
+              final WebApp webApp = JamCommonUtil.getRootElement(webXmlFile, WebApp.class, null);
+              if (webApp == null) return;
+              if (!FileModificationService.getInstance().prepareFileForWrite(webXmlFile)) return;
+
+              final Filter strutsFilter = webApp.addFilter();
+              strutsFilter.getFilterName().setStringValue("struts2");
+
+              @NonNls final String filterClass = templateProvider.is21orNewer() ?
+                                                 StrutsConstants.STRUTS_2_1_FILTER_CLASS :
+                                                 StrutsConstants.STRUTS_2_0_FILTER_CLASS;
+              strutsFilter.getFilterClass().setStringValue(filterClass);
+
+              final FilterMapping filterMapping = webApp.addFilterMapping();
+              filterMapping.getFilterName().setValue(strutsFilter);
+              filterMapping.addUrlPattern().setStringValue("/*");
+            }
+          }.execute();
+
+
+          final NotificationListener showFacetSettingsListener = new NotificationListener() {
+            public void hyperlinkUpdate(@NotNull final Notification notification,
+                                        @NotNull final HyperlinkEvent event) {
+              if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                notification.expire();
+                ModulesConfigurator.showFacetSettingsDialog(strutsFacet, null);
+              }
+            }
+          };
+
+          Notifications.Bus.notify(
+            new Notification("Struts 2", "Struts 2 Setup",
+                             "Struts 2 Facet has been created, please check <a href=\"more\">created fileset</a>",
+                             NotificationType.INFORMATION,
+                             showFacetSettingsListener),
+            module.getProject());
+        }
+        catch (Exception e) {
+          LOG.error("error creating struts.xml from template", e);
+        }
+      }));
   }
 
   private static class Struts2FrameworkSupportConfigurable extends FrameworkSupportConfigurableBase

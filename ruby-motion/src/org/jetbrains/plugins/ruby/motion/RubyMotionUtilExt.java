@@ -48,29 +48,23 @@ public class RubyMotionUtilExt {
 
         final RunManagerEx runManagerEx = RunManagerEx.getInstanceEx(project);
 
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-          public void run() {
-            // requires read action
+        ApplicationManager.getApplication().runReadAction(() -> {
+          // requires read action
 
-            // Rake : "simulator"
-            final String taskName = RubyMotionUtil.getInstance().getMainRakeTask(module);
-            final RunnerAndConfigurationSettings simulator = createAndAddRakeConfiguration(taskName, module, runManagerEx);
+          // Rake : "simulator"
+          final String taskName = RubyMotionUtil.getInstance().getMainRakeTask(module);
+          final RunnerAndConfigurationSettings simulator = createAndAddRakeConfiguration(taskName, module, runManagerEx);
 
-            // Rake : "spec"
-            createAndAddRakeConfiguration(RakeUtilBase.TASKS_SPEC_FULLCMD, module, runManagerEx);
+          // Rake : "spec"
+          createAndAddRakeConfiguration(RakeUtilBase.TASKS_SPEC_FULLCMD, module, runManagerEx);
 
-            // make development config active
-            runManagerEx.setSelectedConfiguration(simulator);
-          }
+          // make development config active
+          runManagerEx.setSelectedConfiguration(simulator);
         });
       }
     };
 
-    final Runnable taskRunner = new Runnable() {
-      public void run() {
-        ProgressManager.getInstance().run(task);
-      }
-    };
+    final Runnable taskRunner = () -> ProgressManager.getInstance().run(task);
     if (!project.isInitialized()) {
       StartupManager.getInstance(project).registerPostStartupActivity(taskRunner);
     }

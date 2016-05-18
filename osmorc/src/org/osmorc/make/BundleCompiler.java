@@ -81,11 +81,8 @@ public class BundleCompiler implements Reporter {
       .classes()
       .getPathsList().getPathList();
 
-    List<File> files = ContainerUtil.map(paths, new Function<String, File>() {
-      @Override
-      public File fun(String path) {
-        return new File(path);
-      }
+    List<File> files = ContainerUtil.map(paths, path -> {
+      return new File(path);
     });
 
     return new BndWrapper(this).bundlifyLibraries(files, outputDir, libRules);

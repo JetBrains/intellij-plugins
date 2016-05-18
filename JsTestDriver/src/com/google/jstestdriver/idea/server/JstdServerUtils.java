@@ -17,12 +17,7 @@ public class JstdServerUtils {
   private JstdServerUtils() {}
 
   public static void asyncFetchServerInfo(final String serverUrl, final Consumer<JstdServerFetchResult> consumer) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        consumer.consume(syncFetchServerInfo(serverUrl));
-      }
-    });
+    ApplicationManager.getApplication().executeOnPooledThread(() -> consumer.consume(syncFetchServerInfo(serverUrl)));
   }
 
   @NotNull

@@ -412,11 +412,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       final FlexBuildConfiguration bc = moduleAndBC.second;
 
       final Ref<String> errorMessageRef = new Ref<String>(null);
-      final Consumer<FlashProjectStructureProblem> consumer = new Consumer<FlashProjectStructureProblem>() {
-        public void consume(final FlashProjectStructureProblem problem) {
-          errorMessageRef.set(problem.errorMessage);
-        }
-      };
+      final Consumer<FlashProjectStructureProblem> consumer = problem -> errorMessageRef.set(problem.errorMessage);
 
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
         checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAirDesktopPackagingOptions(), consumer, true, getBCName());

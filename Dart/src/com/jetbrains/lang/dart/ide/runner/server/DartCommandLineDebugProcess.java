@@ -90,38 +90,36 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private void connect() {
     // see com.google.dart.tools.debug.core.server.ServerDebugTarget.connect()
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        long timeout = 10000;
-        long startTime = System.currentTimeMillis();
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      long timeout = 10000;
+      long startTime = System.currentTimeMillis();
 
-        try {
-          TimeoutUtil.sleep(50);
+      try {
+        TimeoutUtil.sleep(50);
 
-          while (true) {
-            try {
-              myVmConnection.connect();
-              break;
+        while (true) {
+          try {
+            myVmConnection.connect();
+            break;
+          }
+          catch (IOException ioe) {
+            if (!myVmConnection.isConnected()) {
+              throw ioe;
             }
-            catch (IOException ioe) {
-              if (!myVmConnection.isConnected()) {
-                throw ioe;
-              }
 
-              if (System.currentTimeMillis() > startTime + timeout) {
-                throw ioe;
-              }
-              else {
-                TimeoutUtil.sleep(20);
-              }
+            if (System.currentTimeMillis() > startTime + timeout) {
+              throw ioe;
+            }
+            else {
+              TimeoutUtil.sleep(20);
             }
           }
         }
-        catch (IOException ioe) {
-          getSession().getConsoleView()
-            .print("Unable to connect debugger to the Dart VM: " + ioe.getMessage(), ConsoleViewContentType.ERROR_OUTPUT);
-          getSession().stop();
-        }
+      }
+      catch (IOException ioe) {
+        getSession().getConsoleView()
+          .print("Unable to connect debugger to the Dart VM: " + ioe.getMessage(), ConsoleViewContentType.ERROR_OUTPUT);
+        getSession().stop();
       }
     });
   }

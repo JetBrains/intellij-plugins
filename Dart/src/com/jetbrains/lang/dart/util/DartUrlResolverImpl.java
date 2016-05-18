@@ -289,12 +289,8 @@ public class DartUrlResolverImpl extends DartUrlResolver {
         myLivePackageNameToDirMap.put(name, libFolder);
       }
 
-      PubspecYamlUtil.processInProjectPathPackagesRecursively(myProject, myPubspecYamlFile, new PairConsumer<String, VirtualFile>() {
-        @Override
-        public void consume(@NotNull final String packageName, @NotNull final VirtualFile packageDir) {
-          myLivePackageNameToDirMap.put(packageName, packageDir);
-        }
-      });
+      PubspecYamlUtil.processInProjectPathPackagesRecursively(myProject, myPubspecYamlFile,
+                                                              (packageName, packageDir) -> myLivePackageNameToDirMap.put(packageName, packageDir));
     }
   }
 

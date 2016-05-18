@@ -32,24 +32,22 @@ public class DartLibraryValue extends XNamedValue {
 
   @Override
   public void computeChildren(@NotNull final XCompositeNode node) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        if (node.isObsolete()) return;
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      if (node.isObsolete()) return;
 
-        final VmLibrary vmLibrary = myDebugProcess.getVmConnection().getLibraryPropertiesSync(myIsolate, myLibraryId);
-        final List<VmVariable> globals = vmLibrary == null ? null : vmLibrary.getGlobals();
+      final VmLibrary vmLibrary = myDebugProcess.getVmConnection().getLibraryPropertiesSync(myIsolate, myLibraryId);
+      final List<VmVariable> globals = vmLibrary == null ? null : vmLibrary.getGlobals();
 
-        if (globals != null) {
-          final XValueChildrenList childrenList = new XValueChildrenList(globals.size());
-          for (VmVariable vmVariable : globals) {
-            final VmValue vmValue = vmVariable.getValue();
-            if (vmValue != null) {
-              childrenList.add(new DartValue(myDebugProcess, vmVariable.getName(), vmValue, false));
-            }
+      if (globals != null) {
+        final XValueChildrenList childrenList = new XValueChildrenList(globals.size());
+        for (VmVariable vmVariable : globals) {
+          final VmValue vmValue = vmVariable.getValue();
+          if (vmValue != null) {
+            childrenList.add(new DartValue(myDebugProcess, vmVariable.getName(), vmValue, false));
           }
-
-          node.addChildren(childrenList, true);
         }
+
+        node.addChildren(childrenList, true);
       }
     });
   }

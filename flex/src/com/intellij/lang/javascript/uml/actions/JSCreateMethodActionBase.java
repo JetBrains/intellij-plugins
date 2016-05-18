@@ -39,21 +39,18 @@ public abstract class JSCreateMethodActionBase extends NewJSMemberActionBase {
       return null;
     }
 
-    return new Runnable() {
-      @Override
-      public void run() {
-        final JSFunction method = dialog.createMethod();
-        importType(clazz, dialog.getReturnTypeText());
-        for (JSParameterInfo param : dialog.getParameters()) {
-          importType(clazz, param.getTypeText());
-        }
-
-        final PsiElement added = JSRefactoringUtil.addMemberToTargetClass(clazz, method);
-        final List<FormatFixer> formatters = new ArrayList<FormatFixer>();
-        formatters.add(FormatFixer.create(added, FormatFixer.Mode.Reformat));
-        formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(clazz.getContainingFile()));
-        FormatFixer.fixAll(FormatFixer.merge(formatters));
+    return () -> {
+      final JSFunction method = dialog.createMethod();
+      importType(clazz, dialog.getReturnTypeText());
+      for (JSParameterInfo param : dialog.getParameters()) {
+        importType(clazz, param.getTypeText());
       }
+
+      final PsiElement added = JSRefactoringUtil.addMemberToTargetClass(clazz, method);
+      final List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+      formatters.add(FormatFixer.create(added, FormatFixer.Mode.Reformat));
+      formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(clazz.getContainingFile()));
+      FormatFixer.fixAll(FormatFixer.merge(formatters));
     };
   }
 

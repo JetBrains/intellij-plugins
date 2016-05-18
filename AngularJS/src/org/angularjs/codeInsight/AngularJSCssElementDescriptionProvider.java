@@ -41,12 +41,9 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
   @Override
   public String[] getSimpleSelectors(@NotNull PsiElement context) {
     final List<String> result = new LinkedList<String>();
-    DirectiveUtil.processTagDirectives(context.getProject(), new Processor<JSImplicitElement>() {
-      @Override
-      public boolean process(JSImplicitElement proxy) {
-        result.add(proxy.getName());
-        return true;
-      }
+    DirectiveUtil.processTagDirectives(context.getProject(), proxy -> {
+      result.add(proxy.getName());
+      return true;
     });
     return ArrayUtil.toStringArray(result);
   }

@@ -248,12 +248,7 @@ public class MovieSymbolTranscoder extends SymbolTranscoderBase {
 
   private void writeUsedPlacedObjects() throws IOException {
     // must be written in the same order as it was read
-    Collections.sort(usedPlacedObjects, new Comparator<PlacedObject>() {
-      @Override
-      public int compare(PlacedObject o1, PlacedObject o2) {
-        return o1.start < o2.start ? -1 : 1;
-      }
-    });
+    Collections.sort(usedPlacedObjects, (o1, o2) -> o1.start < o2.start ? -1 : 1);
 
     for (PlacedObject object : usedPlacedObjects) {
       writePlacedObject(object);

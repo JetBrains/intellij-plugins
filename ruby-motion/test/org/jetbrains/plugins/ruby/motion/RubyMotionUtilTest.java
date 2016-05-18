@@ -88,11 +88,8 @@ public class RubyMotionUtilTest extends RubyMotionLightFixtureTestCase {
   public void testFrameworkResolution() {
     defaultConfigure();
     final Collection<Framework> frameworks = ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).getFrameworks(getModule());
-    final List<String> names = ContainerUtil.map(frameworks, new Function<Framework, String>() {
-      @Override
-      public String fun(Framework framework) {
-        return framework.getName();
-      }
+    final List<String> names = ContainerUtil.map(frameworks, framework -> {
+      return framework.getName();
     });
     assertSameElements(names, "Accelerate",
                        "CFNetwork",

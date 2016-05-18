@@ -65,11 +65,9 @@ public class SendCommandToDebuggerAction extends AnAction {
           new DebuggerCommand(myCommandArea.getText(), CommandOutputProcessingType.SPECIAL_PROCESSING) {
             @Override
             CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
-              ApplicationManager.getApplication().invokeLater(new Runnable() {
-                public void run() {
-                  myResultArea.setText(s);
-                  getOKAction().setEnabled(true);
-                }
+              ApplicationManager.getApplication().invokeLater(() -> {
+                myResultArea.setText(s);
+                getOKAction().setEnabled(true);
               }, ModalityState.defaultModalityState());
 
               return CommandOutputProcessingMode.DONE;

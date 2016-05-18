@@ -162,42 +162,39 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   public void scheduleConnect() {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        long timeout = 5000;
-        long startTime = System.currentTimeMillis();
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      long timeout = 5000;
+      long startTime = System.currentTimeMillis();
 
-        try {
-          while (true) {
-            try {
-              connect();
-              break;
+      try {
+        while (true) {
+          try {
+            connect();
+            break;
+          }
+          catch (IOException e) {
+            if (System.currentTimeMillis() > startTime + timeout) {
+              throw e;
             }
-            catch (IOException e) {
-              if (System.currentTimeMillis() > startTime + timeout) {
-                throw e;
-              }
-              else {
-                TimeoutUtil.sleep(50);
-              }
+            else {
+              TimeoutUtil.sleep(50);
             }
           }
         }
-        catch (IOException e) {
-          String message = "Failed to connect to the VM observatory service: " + e.toString() + "\n";
-          Throwable cause = e.getCause();
-          while (cause != null) {
-            message += "Caused by: " + cause.toString() + "\n";
-            final Throwable cause1 = cause.getCause();
-            if (cause1 != cause) {
-              cause = cause1;
-            }
+      }
+      catch (IOException e) {
+        String message = "Failed to connect to the VM observatory service: " + e.toString() + "\n";
+        Throwable cause = e.getCause();
+        while (cause != null) {
+          message += "Caused by: " + cause.toString() + "\n";
+          final Throwable cause1 = cause.getCause();
+          if (cause1 != cause) {
+            cause = cause1;
           }
-
-          getSession().getConsoleView().print(message, ConsoleViewContentType.ERROR_OUTPUT);
-          getSession().stop();
         }
+
+        getSession().getConsoleView().print(message, ConsoleViewContentType.ERROR_OUTPUT);
+        getSession().stop();
       }
     });
   }

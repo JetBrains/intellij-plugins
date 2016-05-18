@@ -90,15 +90,13 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
             myFlexConfigInformer.showFlexConfigWarningIfNeeded(project);
           }
 
-          MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
-            public void run() {
-              // need to refresh externally created file
-              final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath);
-              if (file != null) {
-                file.refresh(false, false);
+          MavenUtil.invokeAndWaitWriteAction(project, () -> {
+            // need to refresh externally created file
+            final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath);
+            if (file != null) {
+              file.refresh(false, false);
 
-                updateMainClass(myModule, file);
-              }
+              updateMainClass(myModule, file);
             }
           });
         }
@@ -134,37 +132,35 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
                                                               final Collection<MavenProject> mavenProjects) throws IOException {
     final Ref<IOException> exception = new Ref<IOException>();
     final List<VirtualFile> temporaryFiles = new ArrayList<VirtualFile>();
-    MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
-      public void run() {
-        try {
-          for (MavenProject mavenProject : mavenProjects) {
-            if (ArrayUtil.contains(mavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
-              final String outputFilePath = FlexmojosImporter.getOutputFilePath(mavenProject);
-              final int lastSlashIndex = outputFilePath.lastIndexOf("/");
-              final String outputFileName = outputFilePath.substring(lastSlashIndex + 1);
-              final String outputFolderPath = outputFilePath.substring(0, Math.max(0, lastSlashIndex));
+    MavenUtil.invokeAndWaitWriteAction(project, () -> {
+      try {
+        for (MavenProject mavenProject : mavenProjects) {
+          if (ArrayUtil.contains(mavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
+            final String outputFilePath = FlexmojosImporter.getOutputFilePath(mavenProject);
+            final int lastSlashIndex = outputFilePath.lastIndexOf("/");
+            final String outputFileName = outputFilePath.substring(lastSlashIndex + 1);
+            final String outputFolderPath = outputFilePath.substring(0, Math.max(0, lastSlashIndex));
 
-              VirtualFile outputFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(outputFilePath);
-              if (outputFile == null) {
-                final VirtualFile outputDir = VfsUtil.createDirectoryIfMissing(outputFolderPath);
-                if (outputDir == null) throw new IOException(IdeBundle.message("error.failed.to.create.directory", outputFolderPath));
-                // if maven project is not compiled and output file doesn't exist flexmojos fails to generate Flex compiler configuration file.
-                // Workaround is to create empty placeholder file.
-                ChangeListManager.getInstance(project).addFilesToIgnore(IgnoredBeanFactory.ignoreFile(outputFilePath, project));
-                outputFile = FlexUtils.addFileWithContent(outputFileName, TEMPORARY_FILE_CONTENT, outputDir);
-                if (outputFile == null) throw new IOException(IdeBundle.message("error.message.unable.to.create.file", outputFileName));
-                temporaryFiles.add(outputFile);
-              }
-              workspaceMap.register(mavenProject.getMavenId(), new File(mavenProject.getFile().getPath()), new File(outputFile.getPath()));
+            VirtualFile outputFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(outputFilePath);
+            if (outputFile == null) {
+              final VirtualFile outputDir = VfsUtil.createDirectoryIfMissing(outputFolderPath);
+              if (outputDir == null) throw new IOException(IdeBundle.message("error.failed.to.create.directory", outputFolderPath));
+              // if maven project is not compiled and output file doesn't exist flexmojos fails to generate Flex compiler configuration file.
+              // Workaround is to create empty placeholder file.
+              ChangeListManager.getInstance(project).addFilesToIgnore(IgnoredBeanFactory.ignoreFile(outputFilePath, project));
+              outputFile = FlexUtils.addFileWithContent(outputFileName, TEMPORARY_FILE_CONTENT, outputDir);
+              if (outputFile == null) throw new IOException(IdeBundle.message("error.message.unable.to.create.file", outputFileName));
+              temporaryFiles.add(outputFile);
             }
-            else {
-              workspaceMap.register(mavenProject.getMavenId(), new File(mavenProject.getFile().getPath()));
-            }
+            workspaceMap.register(mavenProject.getMavenId(), new File(mavenProject.getFile().getPath()), new File(outputFile.getPath()));
+          }
+          else {
+            workspaceMap.register(mavenProject.getMavenId(), new File(mavenProject.getFile().getPath()));
           }
         }
-        catch (IOException e) {
-          exception.set(e);
-        }
+      }
+      catch (IOException e) {
+        exception.set(e);
       }
     });
     if (!exception.isNull()) throw exception.get();
@@ -172,18 +168,16 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
   }
 
   private static void removeTemporaryFiles(final Project project, final Collection<VirtualFile> files) {
-    MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
-      public void run() {
-        for (VirtualFile file : files) {
-          try {
-            if (file.isValid() &&
-                file.getLength() == TEMPORARY_FILE_CONTENT.length() &&
-                new String(file.contentsToByteArray()).equals(TEMPORARY_FILE_CONTENT)) {
-              file.delete(Flexmojos3GenerateConfigTask.class);
-            }
+    MavenUtil.invokeAndWaitWriteAction(project, () -> {
+      for (VirtualFile file : files) {
+        try {
+          if (file.isValid() &&
+              file.getLength() == TEMPORARY_FILE_CONTENT.length() &&
+              new String(file.contentsToByteArray()).equals(TEMPORARY_FILE_CONTENT)) {
+            file.delete(Flexmojos3GenerateConfigTask.class);
           }
-          catch (IOException e) {/*ignore*/}
         }
+        catch (IOException e) {/*ignore*/}
       }
     });
   }

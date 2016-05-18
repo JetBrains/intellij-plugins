@@ -222,12 +222,8 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testNoPropagateToSdkInheritor() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
     doTest("abc", JSAttributeList.AccessType.PACKAGE_LOCAL, "", new String[]{"bar", "listener"});
   }
 
@@ -271,20 +267,17 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
   }
 
   public void testAnonymousFunction6() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        AccessToken l = WriteAction.start();
-        try {
-          String root = getTestRoot() + getTestName(false) + "/module2";
-          Module module2 = ModuleManager.getInstance(myProject).newModule(getTestDataPath() + root, getModuleType().getId());
-          myModulesToDispose.add(module2);
-          PsiTestUtil.addSourceRoot(module2, getVirtualFile(root));
-          FlexTestUtils.addFlexModuleDependency(module2, myModule);
-        }
-        finally {
-          l.finish();
-        }
+    myAfterCommitRunnable = () -> {
+      AccessToken l = WriteAction.start();
+      try {
+        String root = getTestRoot() + getTestName(false) + "/module2";
+        Module module2 = ModuleManager.getInstance(myProject).newModule(getTestDataPath() + root, getModuleType().getId());
+        myModulesToDispose.add(module2);
+        PsiTestUtil.addSourceRoot(module2, getVirtualFile(root));
+        FlexTestUtils.addFlexModuleDependency(module2, myModule);
+      }
+      finally {
+        l.finish();
       }
     };
     doTestInaccessible();

@@ -56,12 +56,7 @@ public class ShowGeneratedManifestTest extends HeavyOsgiFixtureTestCase {
     AnActionEvent event = AnActionEvent.createFromAnAction(group, null, "", context);
     AnAction[] actions = group.getChildren(event);
     assertEquals(3, actions.length);
-    Arrays.sort(actions, new Comparator<AnAction>() {
-      @Override
-      public int compare(AnAction o1, AnAction o2) {
-        return Comparing.compare(o1.getTemplatePresentation().getText(), o2.getTemplatePresentation().getText());
-      }
-    });
+    Arrays.sort(actions, (o1, o2) -> Comparing.compare(o1.getTemplatePresentation().getText(), o2.getTemplatePresentation().getText()));
     assertEquals("[t0] t0.jar", actions[0].getTemplatePresentation().getText());
   }
 }

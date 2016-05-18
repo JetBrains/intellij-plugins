@@ -77,13 +77,7 @@ public class UsefulPsiTreeUtil {
   public static PsiElement getNextSiblingSkippingWhiteSpacesAndComments(PsiElement sibling) {
     return getSiblingSkippingCondition(
       sibling,
-      new Function<PsiElement, PsiElement>() {
-        @Nullable
-        @Override
-        public PsiElement fun(PsiElement element) {
-          return element.getNextSibling();
-        }
-      }, new Condition<PsiElement>() {
+      element -> element.getNextSibling(), new Condition<PsiElement>() {
         @Override
         public boolean value(PsiElement element) {
           return isWhitespaceOrComment(element);
@@ -126,13 +120,7 @@ public class UsefulPsiTreeUtil {
   private static PsiElement getPrevSiblingSkippingCondition(@Nullable PsiElement sibling,
                                                             Condition<PsiElement> condition,
                                                             boolean strictly) {
-    return getSiblingSkippingCondition(sibling, new Function<PsiElement, PsiElement>() {
-      @Nullable
-      @Override
-      public PsiElement fun(PsiElement element) {
-        return element.getPrevSibling();
-      }
-    }, condition, strictly);
+    return getSiblingSkippingCondition(sibling, element -> element.getPrevSibling(), condition, strictly);
   }
 
   @Nullable

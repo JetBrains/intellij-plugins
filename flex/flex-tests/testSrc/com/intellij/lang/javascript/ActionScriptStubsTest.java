@@ -71,30 +71,24 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   private void doTest(@Nullable final ThrowableRunnable<Exception> runnable, String... files) throws Exception {
-    Runnable r = runnable != null ? new Runnable() {
-      @Override
-      public void run() {
-        try {
-          runnable.run();
-        }
-        catch (Exception e) {
-          throw new RuntimeException(e);
-        }
+    Runnable r = runnable != null ? (Runnable)() -> {
+      try {
+        runnable.run();
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
       }
     } : null;
     doTestFor(true, r, files);
     assertNotParsed(myPsiFiles.subList(1, myPsiFiles.size())); // the first one was parsed during highlighting
 
     // we need to go though files open in editors
-    assertNotParsed(ContainerUtil.mapNotNull(FileEditorManager.getInstance(myProject).getOpenFiles(), new Function<VirtualFile, PsiFile>() {
-      @Override
-      public PsiFile fun(VirtualFile virtualFile) {
-        if (Comparing.equal(virtualFile, myFile.getVirtualFile())) {
-          return null; // this one is opened in editor
-        }
-        Document document = ((TextEditor)FileEditorManager.getInstance(myProject).getSelectedEditor(virtualFile)).getEditor().getDocument();
-        return PsiDocumentManager.getInstance(myProject).getPsiFile(document);
+    assertNotParsed(ContainerUtil.mapNotNull(FileEditorManager.getInstance(myProject).getOpenFiles(), virtualFile -> {
+      if (Comparing.equal(virtualFile, myFile.getVirtualFile())) {
+        return null; // this one is opened in editor
       }
+      Document document = ((TextEditor)FileEditorManager.getInstance(myProject).getSelectedEditor(virtualFile)).getEditor().getDocument();
+      return PsiDocumentManager.getInstance(myProject).getPsiFile(document);
     }));
   }
 
@@ -119,37 +113,28 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithLineMarkers})
   public void testCreateVariable() throws Exception {
-    doTest(new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        final IntentionAction action =
-          LightQuickFixTestCase
-            .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), "Create Field 'myfield'");
-        action.invoke(myProject, myEditor, myFile);
-        checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
-      }
+    doTest(() -> {
+      final IntentionAction action =
+        LightQuickFixTestCase
+          .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), "Create Field 'myfield'");
+      action.invoke(myProject, myEditor, myFile);
+      checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
     }, getTestName(false) + ".as", "restparam.swc");
   }
 
   // yole: I don't know why we care whether a user-initiated operation such as "override methods" expands stubs or not
   public void _testNoParseOnMethodOverride() throws Exception {
-    doTest(new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        PlatformTestUtil.invokeNamedAction("OverrideMethods");
-        checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
-      }
+    doTest(() -> {
+      PlatformTestUtil.invokeNamedAction("OverrideMethods");
+      checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
     }, getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
   // kostya: I don't know why we care whether a user-initiated operation such as "delegate methods" expands stubs or not
   public void _testNoParseOnMethodDelegate() throws Exception {
-    doTest(new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        PlatformTestUtil.invokeNamedAction("DelegateMethods");
-        checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
-      }
+    doTest(() -> {
+      PlatformTestUtil.invokeNamedAction("DelegateMethods");
+      checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
     }, getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 

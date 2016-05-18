@@ -115,30 +115,27 @@ public class DartFileListener extends VirtualFileAdapter {
 
     setDartPackageRootUpdateScheduledOrInProgress(project, Boolean.TRUE);
 
-    DumbService.getInstance(project).smartInvokeLater(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          final DartSdk sdk = DartSdk.getDartSdk(project);
-          final Library library = actualizePackagesLibrary(project, sdk);
+    DumbService.getInstance(project).smartInvokeLater(() -> {
+      try {
+        final DartSdk sdk = DartSdk.getDartSdk(project);
+        final Library library = actualizePackagesLibrary(project, sdk);
 
-          if (library == null) {
-            removeDartPackagesLibraryAndDependencies(project);
-          }
-          else {
-            final Condition<Module> moduleFilter = new Condition<Module>() {
-              @Override
-              public boolean value(final Module module) {
-                return DartSdkGlobalLibUtil.isDartSdkEnabled(module);
-              }
-            };
+        if (library == null) {
+          removeDartPackagesLibraryAndDependencies(project);
+        }
+        else {
+          final Condition<Module> moduleFilter = new Condition<Module>() {
+            @Override
+            public boolean value(final Module module) {
+              return DartSdkGlobalLibUtil.isDartSdkEnabled(module);
+            }
+          };
 
-            updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
-          }
+          updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
         }
-        finally {
-          setDartPackageRootUpdateScheduledOrInProgress(project, false);
-        }
+      }
+      finally {
+        setDartPackageRootUpdateScheduledOrInProgress(project, false);
       }
     }, ModalityState.NON_MODAL);
   }
@@ -214,24 +211,21 @@ public class DartFileListener extends VirtualFileAdapter {
     if ((!libInfo.isProjectWithoutPubspec() && isBrokenPackageMap(((LibraryEx)library).getProperties())) ||
         existingUrls.length != libRootUrls.size() ||
         !libRootUrls.containsAll(Arrays.asList(existingUrls))) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          final LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
-          for (String url : existingUrls) {
-            model.removeRoot(url, OrderRootType.CLASSES);
-          }
-
-          for (String url : libRootUrls) {
-            model.addRoot(url, OrderRootType.CLASSES);
-          }
-
-          final DartPackagesLibraryProperties libraryProperties = new DartPackagesLibraryProperties();
-          libraryProperties.setPackageNameToDirsMap(libInfo.getPackagesMap());
-          model.setProperties(libraryProperties);
-
-          model.commit();
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        final LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+        for (String url : existingUrls) {
+          model.removeRoot(url, OrderRootType.CLASSES);
         }
+
+        for (String url : libRootUrls) {
+          model.addRoot(url, OrderRootType.CLASSES);
+        }
+
+        final DartPackagesLibraryProperties libraryProperties = new DartPackagesLibraryProperties();
+        libraryProperties.setPackageNameToDirsMap(libInfo.getPackagesMap());
+        model.setProperties(libraryProperties);
+
+        model.commit();
       });
     }
 
@@ -257,11 +251,8 @@ public class DartFileListener extends VirtualFileAdapter {
 
     final Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     if (library != null) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          ProjectLibraryTable.getInstance(project).removeLibrary(library);
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        ProjectLibraryTable.getInstance(project).removeLibrary(library);
       });
     }
   }
@@ -291,11 +282,8 @@ public class DartFileListener extends VirtualFileAdapter {
       }
 
       if (modifiableModel.isChanged()) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            modifiableModel.commit();
-          }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          modifiableModel.commit();
         });
       }
     }
@@ -319,11 +307,8 @@ public class DartFileListener extends VirtualFileAdapter {
 
       modifiableModel.addLibraryEntry(library);
 
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          modifiableModel.commit();
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        modifiableModel.commit();
       });
     }
     finally {

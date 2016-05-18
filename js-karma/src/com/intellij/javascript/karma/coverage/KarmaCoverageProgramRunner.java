@@ -124,12 +124,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
     RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(env.getContentToReuse());
-    server.onBrowsersReady(new Runnable() {
-      @Override
-      public void run() {
-        ExecutionUtil.restartIfActive(descriptor);
-      }
-    });
+    server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
     return descriptor;
   }
 
@@ -146,22 +141,19 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       coveragePeer.startCoverageSession(new KarmaCoverageSession() {
         @Override
         public void onCoverageSessionFinished(@NotNull final File lcovFile) {
-          UIUtil.invokeLaterIfNeeded(new Runnable() {
-            @Override
-            public void run() {
-              try {
-                FileUtil.copy(lcovFile, new File(coverageFilePath));
-              }
-              catch (IOException e) {
-                LOG.error("Can't copy files from " + lcovFile.getAbsolutePath() + " to " + coverageFilePath, e);
-                return;
-              }
-              RunnerSettings runnerSettings = env.getRunnerSettings();
-              if (runnerSettings != null) {
-                KarmaCoverageRunner coverageRunner = KarmaCoverageRunner.getInstance();
-                coverageRunner.setKarmaServer(server);
-                CoverageDataManager.getInstance(env.getProject()).processGatheredCoverage(runConfiguration, runnerSettings);
-              }
+          UIUtil.invokeLaterIfNeeded(() -> {
+            try {
+              FileUtil.copy(lcovFile, new File(coverageFilePath));
+            }
+            catch (IOException e) {
+              LOG.error("Can't copy files from " + lcovFile.getAbsolutePath() + " to " + coverageFilePath, e);
+              return;
+            }
+            RunnerSettings runnerSettings = env.getRunnerSettings();
+            if (runnerSettings != null) {
+              KarmaCoverageRunner coverageRunner = KarmaCoverageRunner.getInstance();
+              coverageRunner.setKarmaServer(server);
+              CoverageDataManager.getInstance(env.getProject()).processGatheredCoverage(runConfiguration, runnerSettings);
             }
           });
         }

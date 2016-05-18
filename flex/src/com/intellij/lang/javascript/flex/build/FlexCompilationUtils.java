@@ -223,12 +223,7 @@ public class FlexCompilationUtils {
   public static void ensureOutputFileWritable(final Project project, final String filePath) {
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (file != null && !file.isWritable()) {
-      ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-        @Override
-        public void run() {
-          ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(file);
-        }
-      }, ModalityState.defaultModalityState());
+      ApplicationManager.getApplication().invokeAndWait(() -> ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(file), ModalityState.defaultModalityState());
     }
   }
 
@@ -491,47 +486,41 @@ public class FlexCompilationUtils {
                                             final boolean android, final boolean ios) throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
-    final Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        final Sdk sdk = bc.getSdk();
-        assert sdk != null;
+    final Runnable runnable = () -> {
+      final Sdk sdk = bc.getSdk();
+      assert sdk != null;
 
-        final String outputFilePath = bc.getActualOutputFilePath();
-        final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
-        final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
-        if (outputFolder == null) {
-          exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("output.folder.does.not.exist",
-                                                                              FileUtil.toSystemDependentName(outputFolderPath))));
-          return;
-        }
-
-        final String airVersion = FlexCommonUtils.getAirVersion(sdk.getHomePath(), sdk.getVersionString());
-        if (airVersion == null) {
-          exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.get.air.sdk.version.use.custom.descriptor")));
-          return;
-        }
-        final String appId = FlexCommonUtils.fixApplicationId(bc.getMainClass());
-        final String appName = StringUtil.getShortName(bc.getMainClass());
-        final String swfName = PathUtil.getFileName(outputFilePath);
-        final String[] extensions = getAirExtensionIDs(ModuleRootManager.getInstance(module), bc.getDependencies());
-
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            try {
-              final AirDescriptorOptions descriptorOptions =
-                new AirDescriptorOptions(airVersion, appId, appName, swfName, extensions, android, ios);
-              final String descriptorText = descriptorOptions.getAirDescriptorText();
-
-              FlexUtils.addFileWithContent(descriptorFileName, descriptorText, outputFolder);
-            }
-            catch (IOException e) {
-              exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.generate.air.descriptor", e.getMessage())));
-            }
-          }
-        });
+      final String outputFilePath = bc.getActualOutputFilePath();
+      final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
+      final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
+      if (outputFolder == null) {
+        exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("output.folder.does.not.exist",
+                                                                            FileUtil.toSystemDependentName(outputFolderPath))));
+        return;
       }
+
+      final String airVersion = FlexCommonUtils.getAirVersion(sdk.getHomePath(), sdk.getVersionString());
+      if (airVersion == null) {
+        exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.get.air.sdk.version.use.custom.descriptor")));
+        return;
+      }
+      final String appId = FlexCommonUtils.fixApplicationId(bc.getMainClass());
+      final String appName = StringUtil.getShortName(bc.getMainClass());
+      final String swfName = PathUtil.getFileName(outputFilePath);
+      final String[] extensions = getAirExtensionIDs(ModuleRootManager.getInstance(module), bc.getDependencies());
+
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        try {
+          final AirDescriptorOptions descriptorOptions =
+            new AirDescriptorOptions(airVersion, appId, appName, swfName, extensions, android, ios);
+          final String descriptorText = descriptorOptions.getAirDescriptorText();
+
+          FlexUtils.addFileWithContent(descriptorFileName, descriptorText, outputFolder);
+        }
+        catch (IOException e) {
+          exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.generate.air.descriptor", e.getMessage())));
+        }
+      });
     };
 
     ApplicationManager.getApplication().invokeAndWait(runnable, ModalityState.any());
@@ -651,28 +640,20 @@ public class FlexCompilationUtils {
 
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
-    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            try {
-              final String content = fixInitialContent(descriptorTemplateFile, PathUtil.getFileName(outputFilePath));
-              final String descriptorFileName = bc.isTempBCForCompilation() ? BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
-                                                                            : descriptorTemplateFile.getName();
-              FlexUtils.addFileWithContent(descriptorFileName, content, outputFolder);
-            }
-            catch (FlexCompilerException e) {
-              exceptionRef.set(e);
-            }
-            catch (IOException e) {
-              exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.copy.air.descriptor", e.getMessage())));
-            }
-          }
-        });
+    ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        final String content = fixInitialContent(descriptorTemplateFile, PathUtil.getFileName(outputFilePath));
+        final String descriptorFileName = bc.isTempBCForCompilation() ? BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
+                                                                      : descriptorTemplateFile.getName();
+        FlexUtils.addFileWithContent(descriptorFileName, content, outputFolder);
       }
-    }, ModalityState.any());
+      catch (FlexCompilerException e) {
+        exceptionRef.set(e);
+      }
+      catch (IOException e) {
+        exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.copy.air.descriptor", e.getMessage())));
+      }
+    }), ModalityState.any());
 
     if (!exceptionRef.isNull()) {
       throw exceptionRef.get();

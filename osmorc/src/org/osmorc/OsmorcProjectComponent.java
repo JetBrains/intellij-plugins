@@ -143,12 +143,7 @@ public class OsmorcProjectComponent implements ProjectComponent {
               BndProjectImporter.reimportWorkspace(myProject);
             }
           })
-          .whenExpired(new Runnable() {
-            @Override
-            public void run() {
-              myReimportNotification.set(false);
-            }
-          })
+          .whenExpired(() -> myReimportNotification.set(false))
           .notify(myProject);
       }
     });
@@ -188,12 +183,9 @@ public class OsmorcProjectComponent implements ProjectComponent {
       }
 
       if (!pairs.isEmpty()) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            for (Pair<SelectedBundle, String> pair : pairs) {
-              pair.first.setName(pair.second);
-            }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          for (Pair<SelectedBundle, String> pair : pairs) {
+            pair.first.setName(pair.second);
           }
         });
       }

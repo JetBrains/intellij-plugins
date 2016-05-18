@@ -340,32 +340,28 @@ public class FlexCompilationManager {
     final Ref<VirtualFile> outputFileRef = new Ref<VirtualFile>();
 
     final Application app = ApplicationManager.getApplication();
-    app.invokeAndWait(new Runnable() {
-      public void run() {
-        outputFileRef.set(app.runWriteAction(new NullableComputable<VirtualFile>() {
-          public VirtualFile compute() {
-            VirtualFile outputFile = localFileSystem.refreshAndFindFileByPath(outputFilePath);
-            //if (outputFile == null) {
-            //  outputFile =
-            //    localFileSystem.refreshAndFindFileByPath(FlexUtils.getFlexCompilerWorkDirPath(project, null) + "/" + outputFilePath);
-            //}
-            if (outputFile == null) {
-              for (final String baseDir : possibleBaseDirs) {
-                outputFile = localFileSystem.refreshAndFindFileByPath(baseDir + "/" + outputFilePath);
-                if (outputFile != null) {
-                  break;
-                }
-              }
+    app.invokeAndWait(() -> outputFileRef.set(app.runWriteAction(new NullableComputable<VirtualFile>() {
+      public VirtualFile compute() {
+        VirtualFile outputFile = localFileSystem.refreshAndFindFileByPath(outputFilePath);
+        //if (outputFile == null) {
+        //  outputFile =
+        //    localFileSystem.refreshAndFindFileByPath(FlexUtils.getFlexCompilerWorkDirPath(project, null) + "/" + outputFilePath);
+        //}
+        if (outputFile == null) {
+          for (final String baseDir : possibleBaseDirs) {
+            outputFile = localFileSystem.refreshAndFindFileByPath(baseDir + "/" + outputFilePath);
+            if (outputFile != null) {
+              break;
             }
-            if (outputFile == null) return null;
-
-            // it's important because this file has just been created
-            outputFile.refresh(false, false);
-            return outputFile;
           }
-        }));
+        }
+        if (outputFile == null) return null;
+
+        // it's important because this file has just been created
+        outputFile.refresh(false, false);
+        return outputFile;
       }
-    }, ModalityState.defaultModalityState());
+    })), ModalityState.defaultModalityState());
 
     return outputFileRef.get();
   }

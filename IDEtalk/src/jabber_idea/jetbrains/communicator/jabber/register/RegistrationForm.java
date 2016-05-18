@@ -185,11 +185,7 @@ public class RegistrationForm {
     myFacade.getMyAccount().setLoginAllowed(true);
 
     try {
-      UIUtil.run(myIdeFacade, StringUtil.getMsg("jabber.connecting"), new Runnable() {
-        public void run() {
-          doLogin(result);
-        }
-      });
+      UIUtil.run(myIdeFacade, StringUtil.getMsg("jabber.connecting"), () -> doLogin(result));
     } catch (CanceledException e) {
       result[0] = StringUtil.getMsg("connection.cancelled");
     }

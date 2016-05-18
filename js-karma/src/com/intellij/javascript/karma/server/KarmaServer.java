@@ -64,12 +64,7 @@ public class KarmaServer {
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
-    myProcessOutputManager = new KarmaProcessOutputManager(processHandler, new Consumer<String>() {
-      @Override
-      public void consume(String line) {
-        myState.onStandardOutputLineAvailable(line);
-      }
-    });
+    myProcessOutputManager = new KarmaProcessOutputManager(processHandler, line -> myState.onStandardOutputLineAvailable(line));
     myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
     myProcessOutputManager.startNotify();
@@ -196,12 +191,7 @@ public class KarmaServer {
 
   public void shutdownAsync() {
     LOG.info("Shutting down asynchronously Karma server " + myProcessHashCode);
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        shutdown();
-      }
-    });
+    ApplicationManager.getApplication().executeOnPooledThread(() -> shutdown());
   }
 
   private void shutdown() {
@@ -228,29 +218,23 @@ public class KarmaServer {
    * Executes {@code callback} in EDT when the server port is bound.
    */
   public void onPortBound(@NotNull final Runnable callback) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        if (myOnPortBoundCallbacks != null) {
-          myOnPortBoundCallbacks.add(callback);
-        }
-        else {
-          callback.run();
-        }
+    UIUtil.invokeLaterIfNeeded(() -> {
+      if (myOnPortBoundCallbacks != null) {
+        myOnPortBoundCallbacks.add(callback);
+      }
+      else {
+        callback.run();
       }
     });
   }
 
   void fireOnPortBound() {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        List<Runnable> callbacks = ContainerUtil.newArrayList(myOnPortBoundCallbacks);
-        myOnPortBoundCallbacks.clear();
-        myOnPortBoundCallbacks = null;
-        for (Runnable callback : callbacks) {
-          callback.run();
-        }
+    UIUtil.invokeLaterIfNeeded(() -> {
+      List<Runnable> callbacks = ContainerUtil.newArrayList(myOnPortBoundCallbacks);
+      myOnPortBoundCallbacks.clear();
+      myOnPortBoundCallbacks = null;
+      for (Runnable callback : callbacks) {
+        callback.run();
       }
     });
   }
@@ -268,29 +252,23 @@ public class KarmaServer {
    * Executes {@code callback} in EDT when at least one browser is captured and all config.browsers are captured.
    */
   public void onBrowsersReady(@NotNull final Runnable callback) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        if (myOnBrowsersReadyCallbacks != null) {
-          myOnBrowsersReadyCallbacks.add(callback);
-        }
-        else {
-          callback.run();
-        }
+    UIUtil.invokeLaterIfNeeded(() -> {
+      if (myOnBrowsersReadyCallbacks != null) {
+        myOnBrowsersReadyCallbacks.add(callback);
+      }
+      else {
+        callback.run();
       }
     });
   }
 
   void fireOnBrowsersReady() {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        List<Runnable> callbacks = ContainerUtil.newArrayList(myOnBrowsersReadyCallbacks);
-        myOnBrowsersReadyCallbacks.clear();
-        myOnBrowsersReadyCallbacks = null;
-        for (Runnable callback : callbacks) {
-          callback.run();
-        }
+    UIUtil.invokeLaterIfNeeded(() -> {
+      List<Runnable> callbacks = ContainerUtil.newArrayList(myOnBrowsersReadyCallbacks);
+      myOnBrowsersReadyCallbacks.clear();
+      myOnBrowsersReadyCallbacks = null;
+      for (Runnable callback : callbacks) {
+        callback.run();
       }
     });
   }
@@ -299,38 +277,27 @@ public class KarmaServer {
    * Executes {@code terminationCallback} in EDT when the server is shut down.
    */
   public void onTerminated(@NotNull final KarmaServerTerminatedListener terminationCallback) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        if (myExitCode != null) {
-          terminationCallback.onTerminated(myExitCode);
-        }
-        else {
-          myTerminationCallbacks.add(terminationCallback);
-        }
+    UIUtil.invokeLaterIfNeeded(() -> {
+      if (myExitCode != null) {
+        terminationCallback.onTerminated(myExitCode);
+      }
+      else {
+        myTerminationCallbacks.add(terminationCallback);
       }
     });
   }
 
   public void removeTerminatedListener(@NotNull final KarmaServerTerminatedListener listener) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        myTerminationCallbacks.remove(listener);
-      }
-    });
+    UIUtil.invokeLaterIfNeeded(() -> myTerminationCallbacks.remove(listener));
   }
 
   private void fireOnTerminated(final int exitCode) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        myExitCode = exitCode;
-        List<KarmaServerTerminatedListener> listeners = ContainerUtil.newArrayList(myTerminationCallbacks);
-        myTerminationCallbacks.clear();
-        for (KarmaServerTerminatedListener listener : listeners) {
-          listener.onTerminated(exitCode);
-        }
+    UIUtil.invokeLaterIfNeeded(() -> {
+      myExitCode = exitCode;
+      List<KarmaServerTerminatedListener> listeners = ContainerUtil.newArrayList(myTerminationCallbacks);
+      myTerminationCallbacks.clear();
+      for (KarmaServerTerminatedListener listener : listeners) {
+        listener.onTerminated(exitCode);
       }
     });
   }

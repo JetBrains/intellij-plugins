@@ -103,23 +103,15 @@ public class LiveObjectsView extends ProfileView implements Disposable {
       }
     });
 
-    liveObjectsTreeTable.setFrameLocationResolveFunction(new Function<FrameInfo, Navigatable>() {
-      @Override
-      public Navigatable fun(FrameInfo frameInfo) {
-        return new SampleLocationResolver(frameInfo, new ProjectAndLibrariesScope(getProject()));
-      }
-    });
+    liveObjectsTreeTable.setFrameLocationResolveFunction(
+      frameInfo -> new SampleLocationResolver(frameInfo, new ProjectAndLibrariesScope(getProject())));
 
-    liveObjectsTreeTable.setClassNameLocationResolveFunction(new Function<String, Navigatable>() {
-      @Nullable
-      @Override
-      public Navigatable fun(String s) {
-        PsiElement element = ResolveUtil.findClassByQName(s, getCurrentScope());
-        if (element instanceof JSClass) {
-          return element.getNavigationElement().getContainingFile();
-        }
-        return null;
+    liveObjectsTreeTable.setClassNameLocationResolveFunction(s -> {
+      PsiElement element = ResolveUtil.findClassByQName(s, getCurrentScope());
+      if (element instanceof JSClass) {
+        return element.getNavigationElement().getContainingFile();
       }
+      return null;
     });
 
     liveObjectsTreeTable.getTree().setShowsRootHandles(true);

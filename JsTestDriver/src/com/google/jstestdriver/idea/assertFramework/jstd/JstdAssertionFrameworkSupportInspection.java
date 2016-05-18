@@ -79,23 +79,20 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
 
     @Override
     public void invoke(@NotNull final Project project, Editor editor, final PsiFile file) throws IncorrectOperationException {
-      UIUtil.invokeLaterIfNeeded(new Runnable() {
-        @Override
-        public void run() {
-          List<VirtualFile> sources = getLibrarySourceFiles();
-          final VirtualFile fileRequestor = PsiUtilCore.getVirtualFile(file);
-          DialogWrapper dialog = new ChooseScopeAndCreateLibraryDialog(
-            project,
-            JstdLibraryUtil.LIBRARY_NAME,
-            sources,
-            new ScriptingFrameworkDescriptor(JstdLibraryUtil.LIBRARY_NAME, "1.3.5"),
-            fileRequestor,
-            false
-          );
-          boolean done = dialog.showAndGet();
-          if (done) {
-            FileContentUtil.reparseFiles(project, Collections.singletonList(fileRequestor), true);
-          }
+      UIUtil.invokeLaterIfNeeded(() -> {
+        List<VirtualFile> sources = getLibrarySourceFiles();
+        final VirtualFile fileRequestor = PsiUtilCore.getVirtualFile(file);
+        DialogWrapper dialog = new ChooseScopeAndCreateLibraryDialog(
+          project,
+          JstdLibraryUtil.LIBRARY_NAME,
+          sources,
+          new ScriptingFrameworkDescriptor(JstdLibraryUtil.LIBRARY_NAME, "1.3.5"),
+          fileRequestor,
+          false
+        );
+        boolean done = dialog.showAndGet();
+        if (done) {
+          FileContentUtil.reparseFiles(project, Collections.singletonList(fileRequestor), true);
         }
       });
     }

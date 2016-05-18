@@ -211,12 +211,8 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
 
 
   private void addLib() {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "untitled37lib.swc", "untitled37lib.zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "untitled37lib.swc", "untitled37lib.zip", null);
   }
 
 }

@@ -250,13 +250,11 @@ TODO not needed so far ?!
 
     @NotNull
     public Object[] getVariants() {
-      return ContainerUtil.map2Array(allStrutsPackages, Object.class, new Function<StrutsPackage, Object>() {
-        public Object fun(final StrutsPackage strutsPackage) {
-          final String packageNamespace = strutsPackage.searchNamespace();
-          return LookupElementBuilder.create(packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace)
-            .withIcon(StrutsIcons.STRUTS_PACKAGE)
-            .withTypeText(strutsPackage.getName().getStringValue());
-        }
+      return ContainerUtil.map2Array(allStrutsPackages, Object.class, (Function<StrutsPackage, Object>)strutsPackage -> {
+        final String packageNamespace = strutsPackage.searchNamespace();
+        return LookupElementBuilder.create(packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace)
+          .withIcon(StrutsIcons.STRUTS_PACKAGE)
+          .withTypeText(strutsPackage.getName().getStringValue());
       });
     }
 

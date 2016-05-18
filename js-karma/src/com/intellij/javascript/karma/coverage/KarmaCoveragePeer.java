@@ -81,35 +81,29 @@ public class KarmaCoveragePeer {
     else {
       final int timeoutMillis = 10000;
       final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
-      alarm.addRequest(new Runnable() {
-        @Override
-        public void run() {
-          if (myStartupStatus == null) {
-            if (myDisposed) {
-              LOG.info("Karma coverage was already disposed");
-            }
-            else {
-              LOG.error("Karma coverage hasn't been initialized in " + timeoutMillis + " ms");
-              myListeners.clear();
-            }
+      alarm.addRequest(() -> {
+        if (myStartupStatus == null) {
+          if (myDisposed) {
+            LOG.info("Karma coverage was already disposed");
           }
-          Disposer.dispose(alarm);
+          else {
+            LOG.error("Karma coverage hasn't been initialized in " + timeoutMillis + " ms");
+            myListeners.clear();
+          }
         }
+        Disposer.dispose(alarm);
       }, timeoutMillis, ModalityState.any());
       myListeners.add(callback);
     }
   }
 
   private void fireOnCoverageInitialized(@NotNull final KarmaCoverageStartupStatus startupStatus) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        myStartupStatus = startupStatus;
-        for (KarmaCoverageInitializationCallback listener : myListeners) {
-          listener.onCoverageInitialized(startupStatus);
-        }
-        myListeners.clear();
+    UIUtil.invokeLaterIfNeeded(() -> {
+      myStartupStatus = startupStatus;
+      for (KarmaCoverageInitializationCallback listener : myListeners) {
+        listener.onCoverageInitialized(startupStatus);
       }
+      myListeners.clear();
     });
   }
 
@@ -123,17 +117,9 @@ public class KarmaCoveragePeer {
                                                                true));
     }
     else {
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-        @Override
-        public void run() {
-          ApplicationManager.getApplication().runReadAction(new Runnable() {
-            @Override
-            public void run() {
-              checkCoveragePlugin(server);
-            }
-          });
-        }
-      });
+      ApplicationManager.getApplication().executeOnPooledThread(() -> ApplicationManager.getApplication().runReadAction(() -> {
+        checkCoveragePlugin(server);
+      }));
     }
   }
 

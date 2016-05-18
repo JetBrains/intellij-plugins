@@ -41,12 +41,9 @@ public class DefaultInterceptorRefResolveConverterImpl extends DefaultIntercepto
   @NotNull
   public Collection<? extends InterceptorStack> getVariants(final ConvertContext context) {
     final List<InterceptorStack> results = new SmartList<InterceptorStack>();
-    final Processor<StrutsPackage> processor = new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        results.addAll(strutsPackage.getInterceptorStacks());
-        return true;
-      }
+    final Processor<StrutsPackage> processor = strutsPackage -> {
+      results.addAll(strutsPackage.getInterceptorStacks());
+      return true;
     };
 
     final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(getCurrentStrutsPackage(context),
@@ -69,16 +66,13 @@ public class DefaultInterceptorRefResolveConverterImpl extends DefaultIntercepto
     };
 
     final Ref<InterceptorStack> resolveResult = new Ref<InterceptorStack>();
-    final Processor<StrutsPackage> processor = new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        final InterceptorStack result = ContainerUtil.find(strutsPackage.getInterceptorStacks(), nameCondition);
-        if (result != null) {
-          resolveResult.set(result);
-          return false;
-        }
-        return true;
+    final Processor<StrutsPackage> processor = strutsPackage -> {
+      final InterceptorStack result = ContainerUtil.find(strutsPackage.getInterceptorStacks(), nameCondition);
+      if (result != null) {
+        resolveResult.set(result);
+        return false;
       }
+      return true;
     };
     final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(getCurrentStrutsPackage(context),
                                                                                  processor);

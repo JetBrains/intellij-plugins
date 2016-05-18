@@ -44,15 +44,12 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
     if (StringUtil.startsWithIgnoreCase(browserName, "PhantomJS")) {
       return new NodeStackTraceFilter(myProject);
     }
-    Function<String, File> fileFinder = new Function<String, File>() {
-      @Override
-      public File fun(String s) {
-        File file = new File(s);
-        if (file.isFile() && file.isAbsolute()) {
-          return file;
-        }
-        return null;
+    Function<String, File> fileFinder = s -> {
+      File file = new File(s);
+      if (file.isFile() && file.isAbsolute()) {
+        return file;
       }
+      return null;
     };
     return new BrowserStacktraceFilter(myProject, browserName, fileFinder);
   }

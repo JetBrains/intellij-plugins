@@ -156,19 +156,13 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     myLoadingTemplatesPanel.add(asyncProcessIcon, new GridConstraints());  // defaults are ok: row = 0, column = 0
     asyncProcessIcon.resume();
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        final String sdkPath = mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim();
-        DartProjectTemplate.loadTemplatesAsync(sdkPath, new Consumer<List<DartProjectTemplate>>() {
-          @Override
-          public void consume(final List<DartProjectTemplate> templates) {
-            asyncProcessIcon.suspend();
-            Disposer.dispose(asyncProcessIcon);
-            onTemplatesLoaded(templates);
-          }
-        });
-      }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      final String sdkPath = mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim();
+      DartProjectTemplate.loadTemplatesAsync(sdkPath, templates -> {
+        asyncProcessIcon.suspend();
+        Disposer.dispose(asyncProcessIcon);
+        onTemplatesLoaded(templates);
+      });
     });
   }
 

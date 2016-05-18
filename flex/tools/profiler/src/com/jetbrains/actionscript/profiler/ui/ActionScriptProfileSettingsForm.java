@@ -41,12 +41,9 @@ public class ActionScriptProfileSettingsForm {
     myPathToMmCfgTextField.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        FileChooser.chooseFile(FlexUtils.createFileChooserDescriptor("cfg"), null, getPanel(), null, new Consumer<VirtualFile>() {
-          @Override
-          public void consume(VirtualFile file) {
-            customPathToMmCfg = file.getPath();
-            updateMmCfg();
-          }
+        FileChooser.chooseFile(FlexUtils.createFileChooserDescriptor("cfg"), null, getPanel(), null, file -> {
+          customPathToMmCfg = file.getPath();
+          updateMmCfg();
         });
       }
     });

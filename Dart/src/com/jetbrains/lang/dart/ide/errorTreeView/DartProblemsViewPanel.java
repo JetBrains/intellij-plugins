@@ -284,12 +284,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   @Override
   public void performCopy(@NotNull DataContext dataContext) {
     final List<DartProblem> selectedObjects = myTable.getSelectedObjects();
-    final String s = StringUtil.join(selectedObjects, new Function<DartProblem, String>() {
-      @Override
-      public String fun(final DartProblem problem) {
-        return problem.getSeverity() + ": " + problem.getErrorMessage() + " (" + problem.getPresentableLocation() + ")";
-      }
-    }, "\n");
+    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity() + ": " + problem.getErrorMessage() + " (" + problem.getPresentableLocation() + ")", "\n");
 
     if (!s.isEmpty()) {
       CopyPasteManager.getInstance().setContents(new StringSelection(s));

@@ -67,18 +67,10 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
   public static void processAllComponents(@NotNull final GlobalSearchScope scope,
                                           @Nullable final Condition<String> nameFilter,
                                           @NotNull final PairProcessor<String, DartComponentInfo> processor) {
-    final Processor<String> keysProcessor = new Processor<String>() {
-      @Override
-      public boolean process(final String componentName) {
-        if (nameFilter != null && !nameFilter.value(componentName)) return true;
+    final Processor<String> keysProcessor = componentName -> {
+      if (nameFilter != null && !nameFilter.value(componentName)) return true;
 
-        return processComponentsByName(componentName, scope, new Processor<DartComponentInfo>() {
-          @Override
-          public boolean process(DartComponentInfo info) {
-            return processor.process(componentName, info);
-          }
-        });
-      }
+      return processComponentsByName(componentName, scope, info -> processor.process(componentName, info));
     };
 
     FileBasedIndex.getInstance().processAllKeys(DART_COMPONENT_INDEX, keysProcessor, scope, null);

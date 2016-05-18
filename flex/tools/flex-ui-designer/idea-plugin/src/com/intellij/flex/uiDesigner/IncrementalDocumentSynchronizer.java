@@ -254,19 +254,11 @@ final class IncrementalDocumentSynchronizer extends Update {
       }
     }
 
-    Client.getInstance().updatePropertyOrStyle(info.getId(), componentId, new Consumer<AmfOutputStream>() {
-      @Override
-      public void consume(AmfOutputStream stream) {
-        stringWriter.writeTo(stream);
-        stream.write(descriptor.isStyle());
-        dataOut.writeTo(stream);
-      }
-    }).doWhenDone(new Runnable() {
-      @Override
-      public void run() {
-        DesignerApplicationManager.createDocumentRenderedNotificationDoneHandler(true).consume(info);
-      }
-    });
+    Client.getInstance().updatePropertyOrStyle(info.getId(), componentId, stream -> {
+      stringWriter.writeTo(stream);
+      stream.write(descriptor.isStyle());
+      dataOut.writeTo(stream);
+    }).doWhenDone(() -> DesignerApplicationManager.createDocumentRenderedNotificationDoneHandler(true).consume(info));
 
     return true;
   }

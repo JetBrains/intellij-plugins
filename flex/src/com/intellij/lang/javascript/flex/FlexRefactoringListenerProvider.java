@@ -138,12 +138,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().startsWith(oldPackageWithDot)) {
           final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
                                    bc.getMainClass().substring(oldPackageWithDot.length());
-          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
-            @Override
-            public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
-              configuration.setMainClass(mainClass);
-            }
-          });
+          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, configuration -> configuration.setMainClass(mainClass));
         }
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
@@ -167,12 +162,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
           }
 
           if (changed) {
-            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
-              @Override
-              public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
-                configuration.setRLMs(newRLMs);
-              }
-            });
+            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, configuration -> configuration.setRLMs(newRLMs));
           }
         }
       }
@@ -208,12 +198,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     private void classNameChanged(final String oldClassName, final String newClassName) {
       for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().equals(oldClassName)) {
-          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
-            @Override
-            public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
-              configuration.setMainClass(newClassName);
-            }
-          });
+          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, configuration -> configuration.setMainClass(newClassName));
         }
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
@@ -235,12 +220,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
           }
 
           if (changed) {
-            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
-              @Override
-              public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
-                configuration.setRLMs(newRLMs);
-              }
-            });
+            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, configuration -> configuration.setRLMs(newRLMs));
           }
         }
       }
@@ -301,12 +281,8 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
           }
 
           if (changed) {
-            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
-              @Override
-              public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
-                configuration.setCssFilesToCompile(newCssFiles);
-              }
-            });
+            FlexProjectConfigurationEditor.makeNonStructuralModification(bc,
+                                                                         configuration -> configuration.setCssFilesToCompile(newCssFiles));
           }
         }
       }
@@ -322,12 +298,8 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
       for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getCompilerOptions().getAdditionalConfigFilePath().equals(oldFilePath)) {
-          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
-            @Override
-            public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
-              configuration.getCompilerOptions().setAdditionalConfigFilePath(newFilePath);
-            }
-          });
+          FlexProjectConfigurationEditor.makeNonStructuralModification(bc,
+                                                                       configuration -> configuration.getCompilerOptions().setAdditionalConfigFilePath(newFilePath));
         }
 
         // TODO update services-config, manifest files

@@ -20,25 +20,21 @@ public class ProfilingManager {
 
   public ProfilingManager(int port) {
     myPort = port;
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        try {
-          while (true) {
-            myAsyncExecutionQueue.take().run();
-          }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      try {
+        while (true) {
+          myAsyncExecutionQueue.take().run();
         }
-        catch (InterruptedException e) {
-        }
+      }
+      catch (InterruptedException e) {
       }
     });
   }
 
   public void initializeProfiling(final ProfilerDataConsumer sampleProcessor, final Callback ioExceptionProcessor) {
-    myAsyncExecutionQueue.offer(new Runnable() {
-      public void run() {
-        myConnection = new ProfilingConnection(myPort, sampleProcessor, ioExceptionProcessor);
-        myConnection.connect();
-      }
+    myAsyncExecutionQueue.offer(() -> {
+      myConnection = new ProfilingConnection(myPort, sampleProcessor, ioExceptionProcessor);
+      myConnection.connect();
     });
   }
 
@@ -46,63 +42,53 @@ public class ProfilingManager {
   }
 
   public void startCollectingLiveObjects(final Callback finished) {
-    myAsyncExecutionQueue.offer(new Runnable() {
-      public void run() {
-        try {
-          myConnection.startCollectingLiveObjects(finished);
-        }
-        catch (IOException e) {
-          finished.finished(null, e);
-        }
+    myAsyncExecutionQueue.offer(() -> {
+      try {
+        myConnection.startCollectingLiveObjects(finished);
+      }
+      catch (IOException e) {
+        finished.finished(null, e);
       }
     });
   }
 
   public void stopCollectingLiveObjects(final Callback finished) {
-      myAsyncExecutionQueue.offer(new Runnable() {
-        public void run() {
-          try {
-            myConnection.stopCollectingLiveObjects(finished);
-          }
-          catch (IOException e) {
-            finished.finished(null, e);
-          }
+      myAsyncExecutionQueue.offer(() -> {
+        try {
+          myConnection.stopCollectingLiveObjects(finished);
+        }
+        catch (IOException e) {
+          finished.finished(null, e);
         }
       });
     }
 
   public void stopCpuProfiling(final Callback finished) {
-    myAsyncExecutionQueue.offer(new Runnable() {
-      public void run() {
-        try {
-          myConnection.stopCpuProfiling(finished);
-        } catch (IOException ex) {
-          finished.finished(null, ex);
-        }
+    myAsyncExecutionQueue.offer(() -> {
+      try {
+        myConnection.stopCpuProfiling(finished);
+      } catch (IOException ex) {
+        finished.finished(null, ex);
       }
     });
   }
 
   public void startCpuProfiling(final Callback finished) {
-    myAsyncExecutionQueue.offer(new Runnable() {
-      public void run() {
-        try {
-          myConnection.startCpuProfiling(finished);
-        } catch (IOException ex) {
-          finished.finished(null, ex);
-        }
+    myAsyncExecutionQueue.offer(() -> {
+      try {
+        myConnection.startCpuProfiling(finished);
+      } catch (IOException ex) {
+        finished.finished(null, ex);
       }
     });
   }
 
   public void doGc(final Callback finished) {
-    myAsyncExecutionQueue.offer(new Runnable() {
-      public void run() {
-        try {
-          myConnection.doGc(finished);
-        } catch (IOException e) {
-          finished.finished(null, e);
-        }
+    myAsyncExecutionQueue.offer(() -> {
+      try {
+        myConnection.doGc(finished);
+      } catch (IOException e) {
+        finished.finished(null, e);
       }
     });
   }

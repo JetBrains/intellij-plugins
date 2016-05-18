@@ -79,14 +79,11 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
 
   public static List<DartClass> getItemsByName(final DartClass dartClass) {
     final List<DartClass> result = new ArrayList<DartClass>();
-    DefinitionsScopedSearch.search(dartClass).forEach(new Processor<PsiElement>() {
-      @Override
-      public boolean process(PsiElement element) {
-        if (element instanceof DartClass) {
-          result.add((DartClass)element);
-        }
-        return true;
+    DefinitionsScopedSearch.search(dartClass).forEach(element -> {
+      if (element instanceof DartClass) {
+        result.add((DartClass)element);
       }
+      return true;
     });
     return result;
   }
@@ -117,16 +114,13 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
             DartClass dartClass = PsiTreeUtil.getParentOfType(dartComponent, DartClass.class);
             assert dartClass != null;
 
-            processInheritors(dartClass, queryParameters, new Processor<PsiElement>() {
-              @Override
-              public boolean process(PsiElement element) {
-                for (DartComponent subDartNamedComponent : DartResolveUtil.getNamedSubComponents((DartClass)element)) {
-                  if (nameToFind.equals(subDartNamedComponent.getName())) {
-                    consumer.process(subDartNamedComponent);
-                  }
+            processInheritors(dartClass, queryParameters, element -> {
+              for (DartComponent subDartNamedComponent : DartResolveUtil.getNamedSubComponents((DartClass)element)) {
+                if (nameToFind.equals(subDartNamedComponent.getName())) {
+                  consumer.process(subDartNamedComponent);
                 }
-                return true;
               }
+              return true;
             });
           }
           return true;

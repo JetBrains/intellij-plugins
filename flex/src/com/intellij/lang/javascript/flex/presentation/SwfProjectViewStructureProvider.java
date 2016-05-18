@@ -43,26 +43,23 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
   private static final Logger LOG = Logger.getInstance(SwfProjectViewStructureProvider.class.getName());
   private static final int MAX_TOTAL_SWFS_SIZE_IN_FOLDER_TO_SHOW_STRUCTURE = 5 * 1024 * 1024; // 5Mb
 
-  private static final Comparator<JSQualifiedNamedElement> QNAME_COMPARATOR = new Comparator<JSQualifiedNamedElement>() {
-    @Override
-    public int compare(JSQualifiedNamedElement o1, JSQualifiedNamedElement o2) {
-      final String qName = o1.getQualifiedName();
-      final String qName2 = o2.getQualifiedName();
-      if (qName == null || qName2 == null) return qName == null && qName2 == null ? 0 : qName != null ? 1 : -1;
-      String[] tokens1 = qName.split("\\.");
-      String[] tokens2 = qName2.split("\\.");
+  private static final Comparator<JSQualifiedNamedElement> QNAME_COMPARATOR = (o1, o2) -> {
+    final String qName = o1.getQualifiedName();
+    final String qName2 = o2.getQualifiedName();
+    if (qName == null || qName2 == null) return qName == null && qName2 == null ? 0 : qName != null ? 1 : -1;
+    String[] tokens1 = qName.split("\\.");
+    String[] tokens2 = qName2.split("\\.");
 
-      for (int i = 0; i < tokens1.length && i < tokens2.length; i++) {
-        int result = tokens1[i].compareTo(tokens2[i]);
-        if (result != 0) {
-          // class from package goes before subpackages
-          if (i == tokens1.length - 1 && i != tokens2.length - 1) return -1;
-          if (i != tokens1.length - 1 && i == tokens2.length - 1) return 1;
-          return result;
-        }
+    for (int i = 0; i < tokens1.length && i < tokens2.length; i++) {
+      int result = tokens1[i].compareTo(tokens2[i]);
+      if (result != 0) {
+        // class from package goes before subpackages
+        if (i == tokens1.length - 1 && i != tokens2.length - 1) return -1;
+        if (i != tokens1.length - 1 && i == tokens2.length - 1) return 1;
+        return result;
       }
-      return 0;
     }
+    return 0;
   };
 
   @Override
