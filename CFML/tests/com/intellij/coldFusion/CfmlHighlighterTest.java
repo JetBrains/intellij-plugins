@@ -42,13 +42,9 @@ public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
 
   public void testHighlightCfml11Tags() throws Exception {
     myFixture.enableInspections(new CfmlReferenceInspection());
-    Util.runTestWithLanguageLevel(new Callable<Void>() {
-
-      @Override
-      public Void call() throws Exception {
-        doTest();
-        return null;
-      }
+    Util.runTestWithLanguageLevel(() -> {
+      doTest();
+      return null;
     }, CfmlLanguage.CF11, getProject());
   }
 

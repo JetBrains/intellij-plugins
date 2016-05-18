@@ -39,11 +39,7 @@ public class ClearHistoryCommand implements UserCommand {
         StringUtil.getMsg("ClearHistoryCommand.title"),
         StringUtil.getMsg("ClearHistoryCommand.text"))) {
       try {
-        UIUtil.run(myIdeFacade, StringUtil.getMsg("ClearHistoryCommand.title"), new Runnable() {
-          public void run() {
-            myMessageDispatcher.clearHistory();
-          }
-        });
+        UIUtil.run(myIdeFacade, StringUtil.getMsg("ClearHistoryCommand.title"), () -> myMessageDispatcher.clearHistory());
       } catch (CanceledException e) {
         // ignore
       }

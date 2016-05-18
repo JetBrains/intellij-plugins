@@ -205,17 +205,15 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       return;
     }
 
-    final Runnable runnable = new Runnable() {
-      public void run() {
-        JSReferenceList refList =
-          !fromClass.isInterface() && toClass.isInterface() ? fromClass.getImplementsList() : fromClass.getExtendsList();
-        List<FormatFixer> formatters = new ArrayList<FormatFixer>();
-        JSRefactoringUtil.removeFromReferenceList(refList, toClass, formatters);
-        if (!(fromClass instanceof XmlBackedJSClassImpl) && needsImport(fromClass, toClass)) {
-          formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(fromClass.getContainingFile()));
-        }
-        FormatFixer.fixAll(formatters);
+    final Runnable runnable = () -> {
+      JSReferenceList refList =
+        !fromClass.isInterface() && toClass.isInterface() ? fromClass.getImplementsList() : fromClass.getExtendsList();
+      List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+      JSRefactoringUtil.removeFromReferenceList(refList, toClass, formatters);
+      if (!(fromClass instanceof XmlBackedJSClassImpl) && needsImport(fromClass, toClass)) {
+        formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(fromClass.getContainingFile()));
       }
+      FormatFixer.fixAll(formatters);
     };
 
     DiagramAction
@@ -806,21 +804,18 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
         return null;
       }
 
-      Callable<DiagramEdge<Object>> callable = new Callable<DiagramEdge<Object>>() {
-        @Override
-        public DiagramEdge<Object> call() throws Exception {
-          String targetQName = toClass.getQualifiedName();
-          JSRefactoringUtil.addToSupersList(fromClass, targetQName, true);
-          if (targetQName.contains(".") && !(fromClass instanceof XmlBackedJSClassImpl)) {
-            List<FormatFixer> formatters = new ArrayList<FormatFixer>();
-            formatters.add(ImportUtils.insertImportStatements(fromClass, Collections.singletonList(targetQName)));
-            formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(fromClass.getContainingFile()));
-            FormatFixer.fixAll(formatters);
-          }
-          return addEdgeAndRefresh(from, to, fromClass.isInterface()
-                                             ? FlashUmlRelationship.GENERALIZATION
-                                             : FlashUmlRelationship.INTERFACE_GENERALIZATION);
+      Callable<DiagramEdge<Object>> callable = () -> {
+        String targetQName = toClass.getQualifiedName();
+        JSRefactoringUtil.addToSupersList(fromClass, targetQName, true);
+        if (targetQName.contains(".") && !(fromClass instanceof XmlBackedJSClassImpl)) {
+          List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+          formatters.add(ImportUtils.insertImportStatements(fromClass, Collections.singletonList(targetQName)));
+          formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(fromClass.getContainingFile()));
+          FormatFixer.fixAll(formatters);
         }
+        return addEdgeAndRefresh(from, to, fromClass.isInterface()
+                                           ? FlashUmlRelationship.GENERALIZATION
+                                           : FlashUmlRelationship.INTERFACE_GENERALIZATION);
       };
       String commandName =
         FlexBundle
@@ -847,12 +842,9 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
             return null;
           }
         }
-        Callable<DiagramEdge<Object>> callable = new Callable<DiagramEdge<Object>>() {
-          @Override
-          public DiagramEdge<Object> call() throws Exception {
-            NewFlexComponentAction.setParentComponent((MxmlJSClass)fromClass, toClass.getQualifiedName());
-            return addEdgeAndRefresh(from, to, DiagramRelationships.GENERALIZATION);
-          }
+        Callable<DiagramEdge<Object>> callable = () -> {
+          NewFlexComponentAction.setParentComponent((MxmlJSClass)fromClass, toClass.getQualifiedName());
+          return addEdgeAndRefresh(from, to, DiagramRelationships.GENERALIZATION);
         };
         String commandName =
           FlexBundle.message("create.extends.relationship.command.name", fromClass.getQualifiedName(), toClass.getQualifiedName());
@@ -874,26 +866,23 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
             return null;
           }
         }
-        Callable<DiagramEdge<Object>> callable = new Callable<DiagramEdge<Object>>() {
-          @Override
-          public DiagramEdge<Object> call() throws Exception {
-            List<FormatFixer> formatters = new ArrayList<FormatFixer>();
-            boolean optimize = false;
-            if (superClasses.length > 0 && !JSResolveUtil.isObjectClass(superClasses[0])) {
-              JSRefactoringUtil.removeFromReferenceList(fromClass.getExtendsList(), superClasses[0], formatters);
-              optimize = needsImport(fromClass, superClasses[0]);
-            }
-            JSRefactoringUtil.addToSupersList(fromClass, toClass.getQualifiedName(), false);
-            if (needsImport(fromClass, toClass)) {
-              formatters.add(ImportUtils.insertImportStatements(fromClass, Collections.singletonList(toClass.getQualifiedName())));
-              optimize = true;
-            }
-            if (optimize) {
-              formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(fromClass.getContainingFile()));
-            }
-            FormatFixer.fixAll(formatters);
-            return addEdgeAndRefresh(from, to, DiagramRelationships.GENERALIZATION);
+        Callable<DiagramEdge<Object>> callable = () -> {
+          List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+          boolean optimize = false;
+          if (superClasses.length > 0 && !JSResolveUtil.isObjectClass(superClasses[0])) {
+            JSRefactoringUtil.removeFromReferenceList(fromClass.getExtendsList(), superClasses[0], formatters);
+            optimize = needsImport(fromClass, superClasses[0]);
           }
+          JSRefactoringUtil.addToSupersList(fromClass, toClass.getQualifiedName(), false);
+          if (needsImport(fromClass, toClass)) {
+            formatters.add(ImportUtils.insertImportStatements(fromClass, Collections.singletonList(toClass.getQualifiedName())));
+            optimize = true;
+          }
+          if (optimize) {
+            formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(fromClass.getContainingFile()));
+          }
+          FormatFixer.fixAll(formatters);
+          return addEdgeAndRefresh(from, to, DiagramRelationships.GENERALIZATION);
         };
         String commandName =
           FlexBundle.message("create.extends.relationship.command.name", fromClass.getQualifiedName(), toClass.getQualifiedName());

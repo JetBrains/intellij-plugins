@@ -93,37 +93,29 @@ public class JstdRunConfigurationServerSection extends AbstractRunSettingsSectio
     myTestConnectionButton.setEnabled(false);
     myTestConnectionResult.setForeground(UIUtil.getLabelForeground());
     myTestConnectionResult.setText("Connecting to " + serverUrl + " ...");
-    JstdServerUtils.asyncFetchServerInfo(serverUrl, new Consumer<JstdServerFetchResult>() {
-      @Override
-      public void consume(final JstdServerFetchResult serverFetchResult) {
-        UIUtil.invokeLaterIfNeeded(new Runnable() {
-          @Override
-          public void run() {
-            if (serverFetchResult.isError()) {
-              myTestConnectionResult.setForeground(JBColor.RED);
-              myTestConnectionResult.setText(serverFetchResult.getErrorMessage());
-            }
-            else {
-              JstdServerInfo serverInfo = serverFetchResult.getServerInfo();
-              int capturedBrowsers = serverInfo.getCapturedBrowsers().size();
-              final String browserMessage;
-              if (capturedBrowsers == 0) {
-                browserMessage = "no captured browsers found";
-              }
-              else if (capturedBrowsers == 1) {
-                browserMessage = "1 captured browser found";
-              }
-              else {
-                browserMessage = capturedBrowsers + " captured browsers found";
-              }
-              myTestConnectionResult.setForeground(UIUtil.getLabelForeground());
-              myTestConnectionResult.setText("Connected successfully, " + browserMessage);
-            }
-            myTestConnectionButton.setEnabled(true);
-          }
-        });
+    JstdServerUtils.asyncFetchServerInfo(serverUrl, serverFetchResult -> UIUtil.invokeLaterIfNeeded(() -> {
+      if (serverFetchResult.isError()) {
+        myTestConnectionResult.setForeground(JBColor.RED);
+        myTestConnectionResult.setText(serverFetchResult.getErrorMessage());
       }
-    });
+      else {
+        JstdServerInfo serverInfo = serverFetchResult.getServerInfo();
+        int capturedBrowsers = serverInfo.getCapturedBrowsers().size();
+        final String browserMessage;
+        if (capturedBrowsers == 0) {
+          browserMessage = "no captured browsers found";
+        }
+        else if (capturedBrowsers == 1) {
+          browserMessage = "1 captured browser found";
+        }
+        else {
+          browserMessage = capturedBrowsers + " captured browsers found";
+        }
+        myTestConnectionResult.setForeground(UIUtil.getLabelForeground());
+        myTestConnectionResult.setText("Connected successfully, " + browserMessage);
+      }
+      myTestConnectionButton.setEnabled(true);
+    }));
   }
 
   @NotNull

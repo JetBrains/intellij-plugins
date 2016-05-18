@@ -295,16 +295,13 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     final VirtualFile moduleOutputDir = CompilerPaths.getModuleOutputDirectory(myEditorContext.getModule(), false);
     VirtualFile toSelect = StringUtil.isNotEmpty(current) ? LocalFileSystem.getInstance().findFileByPath(current) : moduleOutputDir;
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(OsmorcBundle.message("facet.editor.select.bundle.dir.title"));
-    FileChooser.chooseFile(descriptor, myEditorContext.getProject(), toSelect, new Consumer<VirtualFile>() {
-      @Override
-      public void consume(VirtualFile file) {
-        if (moduleOutputDir != null && VfsUtilCore.isAncestor(moduleOutputDir, file, false)) {
-          Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"), CommonBundle.message("title.error"));
-          myJarOutputPathChooser.setText("");
-        }
-        else {
-          myJarOutputPathChooser.setText(file.getPath());
-        }
+    FileChooser.chooseFile(descriptor, myEditorContext.getProject(), toSelect, file -> {
+      if (moduleOutputDir != null && VfsUtilCore.isAncestor(moduleOutputDir, file, false)) {
+        Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"), CommonBundle.message("title.error"));
+        myJarOutputPathChooser.setText("");
+      }
+      else {
+        myJarOutputPathChooser.setText(file.getPath());
       }
     });
   }

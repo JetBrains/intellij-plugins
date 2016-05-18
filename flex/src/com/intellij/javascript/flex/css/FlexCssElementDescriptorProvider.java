@@ -523,11 +523,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       assert declaration instanceof JSClass;
       classes[i] = (JSClass)declaration;
     }
-    Arrays.sort(classes, new Comparator<JSClass>() {
-      public int compare(@NotNull JSClass c1, @NotNull JSClass c2) {
-        return Comparing.compare(c1.getQualifiedName(), c2.getQualifiedName());
-      }
-    });
+    Arrays.sort(classes, (c1, c2) -> Comparing.compare(c1.getQualifiedName(), c2.getQualifiedName()));
 
     StringBuilder builder = new StringBuilder();
     for (int i = 0, n = classes.length; i < n; i++) {

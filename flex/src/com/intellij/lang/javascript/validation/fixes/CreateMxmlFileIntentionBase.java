@@ -81,28 +81,26 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
       return;
     }
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        try {
-          final String fileName = myClassName + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT;
-          final PsiFile newFile = fileTextAndDir.second.createFile(fileName);
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        final String fileName = myClassName + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT;
+        final PsiFile newFile = fileTextAndDir.second.createFile(fileName);
 
-          final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
-          final Document document = psiDocumentManager.getDocument(newFile);
-          document.setText(fileTextAndDir.first);
-          psiDocumentManager.commitDocument(document);
-          CodeStyleManager.getInstance(project).reformat(newFile);
-          FileEditorManager.getInstance(project).openFile(newFile.getVirtualFile(), true);
+        final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+        final Document document = psiDocumentManager.getDocument(newFile);
+        document.setText(fileTextAndDir.first);
+        psiDocumentManager.commitDocument(document);
+        CodeStyleManager.getInstance(project).reformat(newFile);
+        FileEditorManager.getInstance(project).openFile(newFile.getVirtualFile(), true);
 
-          if (myCreatedClassFqnConsumer != null) {
-            final String packageName = ProjectRootManager.getInstance(project).getFileIndex().getPackageNameByDirectory(
-              fileTextAndDir.second.getVirtualFile());
-            myCreatedClassFqnConsumer.consume(packageName + (packageName.isEmpty() ? "" : ".") + myClassName);
-          }
+        if (myCreatedClassFqnConsumer != null) {
+          final String packageName = ProjectRootManager.getInstance(project).getFileIndex().getPackageNameByDirectory(
+            fileTextAndDir.second.getVirtualFile());
+          myCreatedClassFqnConsumer.consume(packageName + (packageName.isEmpty() ? "" : ".") + myClassName);
         }
-        catch (IncorrectOperationException e) {
-          Messages.showErrorDialog(project, e.getMessage(), getText());
-        }
+      }
+      catch (IncorrectOperationException e) {
+        Messages.showErrorDialog(project, e.getMessage(), getText());
       }
     });
   }

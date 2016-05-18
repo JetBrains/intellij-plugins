@@ -112,31 +112,29 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
       variants = ((PsiPolyVariantReference)element).multiResolve(true);
       if (variants.length != 0) {
         context.setItemsToShow(
-          ContainerUtil.map2Array(variants, CfmlFunctionDescription.class, new Function<ResolveResult, CfmlFunctionDescription>() {
-            public CfmlFunctionDescription fun(ResolveResult resolveResult) {
-              final PsiElement element1 = resolveResult.getElement();
-              if (CfmlPsiUtil.isFunctionDefinition(element1)) {
-                CfmlFunction function = CfmlPsiUtil.getFunctionDefinition(element1);
-                if (function != null) {
-                  return function.getFunctionInfo();
-                }
+          ContainerUtil.map2Array(variants, CfmlFunctionDescription.class, resolveResult -> {
+            final PsiElement element1 = resolveResult.getElement();
+            if (CfmlPsiUtil.isFunctionDefinition(element1)) {
+              CfmlFunction function = CfmlPsiUtil.getFunctionDefinition(element1);
+              if (function != null) {
+                return function.getFunctionInfo();
               }
-              else if (element1 instanceof PsiMethod) {
-                PsiMethod function = (PsiMethod)element1;
-                CfmlFunctionDescription javaMethodDescr =
-                  new CfmlFunctionDescription(function.getName(), function.getReturnType().getPresentableText());
-                final PsiParameter[] psiParameters = function.getParameterList().getParameters();
-                final int paramsNum = psiParameters.length;
-                for (int i = 0; i < paramsNum; i++) {
-                  PsiParameter psiParameter = psiParameters[i];
-                  javaMethodDescr.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(psiParameter.getName(),
-                                                                                                    psiParameter.getType()
-                                                                                                      .getPresentableText(), true));
-                }
-                return javaMethodDescr;
-              }
-              return null;
             }
+            else if (element1 instanceof PsiMethod) {
+              PsiMethod function = (PsiMethod)element1;
+              CfmlFunctionDescription javaMethodDescr =
+                new CfmlFunctionDescription(function.getName(), function.getReturnType().getPresentableText());
+              final PsiParameter[] psiParameters = function.getParameterList().getParameters();
+              final int paramsNum = psiParameters.length;
+              for (int i = 0; i < paramsNum; i++) {
+                PsiParameter psiParameter = psiParameters[i];
+                javaMethodDescr.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(psiParameter.getName(),
+                                                                                                  psiParameter.getType()
+                                                                                                    .getPresentableText(), true));
+              }
+              return javaMethodDescr;
+            }
+            return null;
           }));
         context.showHint(element, element.getTextRange().getStartOffset(), this);
         return;

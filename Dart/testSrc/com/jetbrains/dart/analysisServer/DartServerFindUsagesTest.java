@@ -50,19 +50,16 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
   }
 
   private void checkUsages(@NotNull final SearchScope scope, @NotNull final String... expected) {
-    final String[] actualResult = ContainerUtil.map2Array(findUsages(scope), String.class, new Function<UsageInfo, String>() {
-      @Override
-      public String fun(UsageInfo info) {
-        final PsiElement element = info.getElement();
-        assertNotNull(element);
-        final ProperTextRange range = info.getRangeInElement();
-        assertNotNull(range);
-        final int startOffset = element.getTextRange().getStartOffset() + range.getStartOffset();
-        final int endOffset = element.getTextRange().getStartOffset() + range.getEndOffset();
-        return element.getClass().getSimpleName() + " in " + element.getContainingFile().getName() + "@" + startOffset + ":" + endOffset +
-               (info.isDynamicUsage() ? " (dynamic usage)" : "") +
-               (info.isNonCodeUsage() ? " (non-code usage)" : "");
-      }
+    final String[] actualResult = ContainerUtil.map2Array(findUsages(scope), String.class, info -> {
+      final PsiElement element = info.getElement();
+      assertNotNull(element);
+      final ProperTextRange range = info.getRangeInElement();
+      assertNotNull(range);
+      final int startOffset = element.getTextRange().getStartOffset() + range.getStartOffset();
+      final int endOffset = element.getTextRange().getStartOffset() + range.getEndOffset();
+      return element.getClass().getSimpleName() + " in " + element.getContainingFile().getName() + "@" + startOffset + ":" + endOffset +
+             (info.isDynamicUsage() ? " (dynamic usage)" : "") +
+             (info.isNonCodeUsage() ? " (non-code usage)" : "");
     });
 
     assertSameElements(actualResult, expected);

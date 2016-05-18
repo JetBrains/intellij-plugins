@@ -96,17 +96,14 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   // TODO generalize
   private static void revertChanges(final PsiElement method, final String oldText) {
     //UndoManager.getInstance(method.getProject()).undoableActionPerformed(new );
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final PsiFile file = method.getContainingFile();
-        final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(method.getProject());
-        final Document document = documentManager.getDocument(file);
-        if (document != null) {
-          final TextRange textRange = method.getTextRange();
-          document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(), oldText);
-          documentManager.commitDocument(document);
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final PsiFile file = method.getContainingFile();
+      final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(method.getProject());
+      final Document document = documentManager.getDocument(file);
+      if (document != null) {
+        final TextRange textRange = method.getTextRange();
+        document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(), oldText);
+        documentManager.commitDocument(document);
       }
     });
   }

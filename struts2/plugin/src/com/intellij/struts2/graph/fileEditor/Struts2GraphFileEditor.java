@@ -103,16 +103,13 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
    */
   private Struts2GraphComponent createGraphComponent() {
     final Struts2GraphComponent[] graphComponent = {null};
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-      public void run() {
-        graphComponent[0] = ApplicationManager.getApplication().runReadAction(new Computable<Struts2GraphComponent>() {
-          @Override
-          public Struts2GraphComponent compute() {
-            return new Struts2GraphComponent(myXmlFile);
-          }
-        });
-      }
-    }, "Generating Graph", false, myXmlFile.getProject());
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      (Runnable)() -> graphComponent[0] = ApplicationManager.getApplication().runReadAction(new Computable<Struts2GraphComponent>() {
+        @Override
+        public Struts2GraphComponent compute() {
+          return new Struts2GraphComponent(myXmlFile);
+        }
+      }), "Generating Graph", false, myXmlFile.getProject());
 
 
     return graphComponent[0];

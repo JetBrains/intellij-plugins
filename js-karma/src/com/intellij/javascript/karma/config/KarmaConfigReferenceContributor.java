@@ -138,30 +138,27 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
             null,
             false);
       setEmptyPathAllowed(true);
-      super.addCustomization(FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION, new Function<PsiFile, Collection<PsiFileSystemItem>>() {
-        @Override
-        public Collection<PsiFileSystemItem> fun(PsiFile file) {
-          if (!(file instanceof JSFile)) {
-            return null;
-          }
-          PsiDirectory psiDirectory = file.getParent();
-          if (psiDirectory == null) {
-            return null;
-          }
-          String basePath = KarmaBasePathFinder.getInstance().fetchBasePath((JSFile) file);
-          if (StringUtil.isEmpty(basePath)) {
-            return Collections.<PsiFileSystemItem>singletonList(psiDirectory);
-          }
-          VirtualFile vDirectory = psiDirectory.getVirtualFile();
-          VirtualFile vChildDirectory = vDirectory.findFileByRelativePath(basePath);
-          if (vChildDirectory != null) {
-            PsiDirectory psiChildDirectory = psiDirectory.getManager().findDirectory(vChildDirectory);
-            if (psiChildDirectory != null) {
-              return Collections.<PsiFileSystemItem>singletonList(psiChildDirectory);
-            }
-          }
-          return Collections.emptyList();
+      super.addCustomization(FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION, file -> {
+        if (!(file instanceof JSFile)) {
+          return null;
         }
+        PsiDirectory psiDirectory = file.getParent();
+        if (psiDirectory == null) {
+          return null;
+        }
+        String basePath = KarmaBasePathFinder.getInstance().fetchBasePath((JSFile) file);
+        if (StringUtil.isEmpty(basePath)) {
+          return Collections.<PsiFileSystemItem>singletonList(psiDirectory);
+        }
+        VirtualFile vDirectory = psiDirectory.getVirtualFile();
+        VirtualFile vChildDirectory = vDirectory.findFileByRelativePath(basePath);
+        if (vChildDirectory != null) {
+          PsiDirectory psiChildDirectory = psiDirectory.getManager().findDirectory(vChildDirectory);
+          if (psiChildDirectory != null) {
+            return Collections.<PsiFileSystemItem>singletonList(psiChildDirectory);
+          }
+        }
+        return Collections.emptyList();
       });
       super.reparse();
     }

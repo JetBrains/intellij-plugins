@@ -32,33 +32,27 @@ public class FlexProjectRootsUtil {
                                          final boolean productionOnly) {
     final String libraryLevel = library.getTable() != null ? library.getTable().getTableLevel() : null;
     if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel) || LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryLevel)) {
-      return !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
-        @Override
-        public boolean process(DependencyEntry dependencyEntry) {
-          if (!(dependencyEntry instanceof SharedLibraryEntry)) {
-            return true;
-          }
-          if (!canDependOn(dependencyEntry, transitive, productionOnly)) {
-            return true;
-          }
-          return !((SharedLibraryEntry)dependencyEntry).getLibraryName().equals(library.getName()) ||
-                 !((SharedLibraryEntry)dependencyEntry).getLibraryLevel().equals(libraryLevel);
+      return !ContainerUtil.process(bc.getDependencies().getEntries(), dependencyEntry -> {
+        if (!(dependencyEntry instanceof SharedLibraryEntry)) {
+          return true;
         }
+        if (!canDependOn(dependencyEntry, transitive, productionOnly)) {
+          return true;
+        }
+        return !((SharedLibraryEntry)dependencyEntry).getLibraryName().equals(library.getName()) ||
+               !((SharedLibraryEntry)dependencyEntry).getLibraryLevel().equals(libraryLevel);
       });
     }
     else {
       final String libraryId = getLibraryId(library);
-      return libraryId != null && !ContainerUtil.process(bc.getDependencies().getEntries(), new Processor<DependencyEntry>() {
-        @Override
-        public boolean process(DependencyEntry dependencyEntry) {
-          if (!(dependencyEntry instanceof ModuleLibraryEntry)) {
-            return true;
-          }
-          if (!canDependOn(dependencyEntry, transitive, productionOnly)) {
-            return true;
-          }
-          return !((ModuleLibraryEntry)dependencyEntry).getLibraryId().equals(libraryId);
+      return libraryId != null && !ContainerUtil.process(bc.getDependencies().getEntries(), dependencyEntry -> {
+        if (!(dependencyEntry instanceof ModuleLibraryEntry)) {
+          return true;
         }
+        if (!canDependOn(dependencyEntry, transitive, productionOnly)) {
+          return true;
+        }
+        return !((ModuleLibraryEntry)dependencyEntry).getLibraryId().equals(libraryId);
       });
     }
   }
@@ -73,12 +67,7 @@ public class FlexProjectRootsUtil {
   public static boolean dependOnLibrary(Iterable<FlexBuildConfiguration> bcs,
                                         @NotNull final Library library,
                                         final boolean transitive, final boolean productionOnly) {
-    return !ContainerUtil.process(bcs, new Processor<FlexBuildConfiguration>() {
-      @Override
-      public boolean process(FlexBuildConfiguration configuration) {
-        return !dependsOnLibrary(configuration, library, transitive, productionOnly);
-      }
-    });
+    return !ContainerUtil.process(bcs, configuration -> !dependsOnLibrary(configuration, library, transitive, productionOnly));
   }
 
   public static String getLibraryId(Library library) {

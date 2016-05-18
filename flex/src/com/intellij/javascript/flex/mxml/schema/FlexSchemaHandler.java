@@ -147,13 +147,11 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     if (DumbService.isDumb(project)) return result;
 
     if (tagName == null) {
-      FileBasedIndex.getInstance().processAllKeys(JSPackageIndex.INDEX_ID, new Processor<String>() {
-        public boolean process(final String packageName) {
-          // packages that don't contain suitable classes will be filtered out
-          // in DefultXmlExtension.getAvailableTagNames -> TagNameReference.getTagNameVariants()
-          result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
-          return true;
-        }
+      FileBasedIndex.getInstance().processAllKeys(JSPackageIndex.INDEX_ID, packageName -> {
+        // packages that don't contain suitable classes will be filtered out
+        // in DefultXmlExtension.getAvailableTagNames -> TagNameReference.getTagNameVariants()
+        result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
+        return true;
       }, project);
     }
     else {

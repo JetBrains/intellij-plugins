@@ -190,12 +190,7 @@ public class DartConfigurable implements SearchableConfigurable {
     myCheckSdkUpdateButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        final Runnable runnable = new Runnable() {
-          @Override
-          public void run() {
-            checkSdkUpdate();
-          }
-        };
+        final Runnable runnable = () -> checkSdkUpdate();
         ApplicationManagerEx.getApplicationEx()
           .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject, myMainPanel);
       }
@@ -208,29 +203,26 @@ public class DartConfigurable implements SearchableConfigurable {
     final DartSdkUpdateChecker.SdkUpdateInfo sdkUpdateInfo =
       DartSdkUpdateChecker.getSdkUpdateInfo((DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem());
 
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if (sdkUpdateInfo == null) {
-          Messages.showErrorDialog(myProject,
-                                   DartBundle.message("dart.sdk.update.check.failed"),
-                                   DartBundle.message("dart.sdk.update.title"));
+    ApplicationManager.getApplication().invokeLater(() -> {
+      if (sdkUpdateInfo == null) {
+        Messages.showErrorDialog(myProject,
+                                 DartBundle.message("dart.sdk.update.check.failed"),
+                                 DartBundle.message("dart.sdk.update.title"));
+      }
+      else {
+        final String message;
+        if (currentSdkVersion.isEmpty()) {
+          message = DartBundle.message("dart.sdk.0.available.for.download", sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
+        }
+        else if (DartSdkUpdateChecker.compareDartSdkVersions(currentSdkVersion, sdkUpdateInfo.myVersion) >= 0) {
+          message = DartBundle.message("dart.sdk.0.is.up.to.date", currentSdkVersion);
         }
         else {
-          final String message;
-          if (currentSdkVersion.isEmpty()) {
-            message = DartBundle.message("dart.sdk.0.available.for.download", sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
-          }
-          else if (DartSdkUpdateChecker.compareDartSdkVersions(currentSdkVersion, sdkUpdateInfo.myVersion) >= 0) {
-            message = DartBundle.message("dart.sdk.0.is.up.to.date", currentSdkVersion);
-          }
-          else {
-            message =
-              DartBundle.message("new.dart.sdk.0.available.for.download..dialog", sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
-          }
-
-          Messages.showInfoMessage(myProject, message, DartBundle.message("dart.sdk.update.title"));
+          message =
+            DartBundle.message("new.dart.sdk.0.available.for.download..dialog", sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
         }
+
+        Messages.showInfoMessage(myProject, message, DartBundle.message("dart.sdk.update.title"));
       }
     }, ModalityState.defaultModalityState(), myProject.getDisposed());
   }
@@ -279,12 +271,7 @@ public class DartConfigurable implements SearchableConfigurable {
     }
 
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
-    Arrays.sort(modules, new Comparator<Module>() {
-      @Override
-      public int compare(final Module module1, final Module module2) {
-        return module1.getName().toLowerCase(Locale.US).compareTo(module2.getName().toLowerCase(Locale.US));
-      }
-    });
+    Arrays.sort(modules, (module1, module2) -> module1.getName().toLowerCase(Locale.US).compareTo(module2.getName().toLowerCase(Locale.US)));
 
     final CheckedTreeNode rootNode = new CheckedTreeNode(myProject);
     ((DefaultTreeModel)myModulesCheckboxTreeTable.getTree().getModel()).setRoot(rootNode);
@@ -468,55 +455,52 @@ public class DartConfigurable implements SearchableConfigurable {
   @Override
   public void apply() throws ConfigurationException {
     // similar to DartModuleBuilder.setupSdkAndDartium()
-    final Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        if (myEnableDartSupportCheckBox.isSelected()) {
-          final String sdkHomePath =
-            FileUtilRt.toSystemIndependentName(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
+    final Runnable runnable = () -> {
+      if (myEnableDartSupportCheckBox.isSelected()) {
+        final String sdkHomePath =
+          FileUtilRt.toSystemIndependentName(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
 
-          if (DartSdkUtil.isDartSdkHome(sdkHomePath)) {
-            DartSdkUtil.updateKnownSdkPaths(myProject, sdkHomePath);
+        if (DartSdkUtil.isDartSdkHome(sdkHomePath)) {
+          DartSdkUtil.updateKnownSdkPaths(myProject, sdkHomePath);
 
-            DartSdkGlobalLibUtil.ensureDartSdkConfigured(sdkHomePath);
-            DaemonCodeAnalyzer.getInstance(myProject).restart();
+          DartSdkGlobalLibUtil.ensureDartSdkConfigured(sdkHomePath);
+          DaemonCodeAnalyzer.getInstance(myProject).restart();
 
-            final Module[] modules = DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
-                                     ? myModulesCheckboxTreeTable.getCheckedNodes(Module.class)
-                                     : ModuleManager.getInstance(myProject).getModules();
-            DartSdkGlobalLibUtil.enableDartSdkForSpecifiedModulesAndDisableForOthers(myProject, modules);
+          final Module[] modules = DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
+                                   ? myModulesCheckboxTreeTable.getCheckedNodes(Module.class)
+                                   : ModuleManager.getInstance(myProject).getModules();
+          DartSdkGlobalLibUtil.enableDartSdkForSpecifiedModulesAndDisableForOthers(myProject, modules);
 
-            for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-              if (ArrayUtil.contains(module, modules)) {
-                final String customPackageRoot =
-                  DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport() || myCustomPackageRootCheckBox.isSelected()
-                  ? myModuleToCustomPackageRootCurrent.get(module)
-                  : null;
-                setCustomPackageRootPath(module, customPackageRoot);
-              }
-              else {
-                setCustomPackageRootPath(module, null);
-              }
+          for (Module module : ModuleManager.getInstance(myProject).getModules()) {
+            if (ArrayUtil.contains(module, modules)) {
+              final String customPackageRoot =
+                DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport() || myCustomPackageRootCheckBox.isSelected()
+                ? myModuleToCustomPackageRootCurrent.get(module)
+                : null;
+              setCustomPackageRootPath(module, customPackageRoot);
+            }
+            else {
+              setCustomPackageRootPath(module, null);
             }
           }
-
-          final DartSdkUpdateOption sdkUpdateOption = myCheckSdkUpdateCheckBox.isSelected()
-                                                      ? (DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem()
-                                                      : DartSdkUpdateOption.DoNotCheck;
-          DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
-
-          final String dartiumPath =
-            FileUtilRt.toSystemIndependentName(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
-          DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
         }
-        else {
-          if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
-            DartSdkGlobalLibUtil.disableDartSdk(myModulesWithDartSdkLibAttachedInitial);
-          }
 
-          for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
-            setCustomPackageRootPath(module, null);
-          }
+        final DartSdkUpdateOption sdkUpdateOption = myCheckSdkUpdateCheckBox.isSelected()
+                                                    ? (DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem()
+                                                    : DartSdkUpdateOption.DoNotCheck;
+        DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
+
+        final String dartiumPath =
+          FileUtilRt.toSystemIndependentName(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
+        DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
+      }
+      else {
+        if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
+          DartSdkGlobalLibUtil.disableDartSdk(myModulesWithDartSdkLibAttachedInitial);
+        }
+
+        for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
+          setCustomPackageRootPath(module, null);
         }
       }
     };

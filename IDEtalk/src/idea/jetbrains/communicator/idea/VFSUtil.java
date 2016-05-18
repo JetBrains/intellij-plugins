@@ -47,10 +47,8 @@ public class VFSUtil {
 
   public static VirtualFile getVirtualFile(final VFile file) {
     final VirtualFile [] result = new VirtualFile[1];
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      public void run() {
-        result[0] = _getVirtualFile(file);
-      }
+    ApplicationManager.getApplication().runReadAction(() -> {
+      result[0] = _getVirtualFile(file);
     });
     return result[0];
   }
@@ -58,10 +56,8 @@ public class VFSUtil {
   public static VFile createFileFrom(final VirtualFile file, final Project project) {
     final VFile []result = new VFile[1];
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      public void run() {
-        result[0] = _createFileFrom(project, file);
-      }
+    ApplicationManager.getApplication().runReadAction(() -> {
+      result[0] = _createFileFrom(project, file);
     });
 
     return result[0];

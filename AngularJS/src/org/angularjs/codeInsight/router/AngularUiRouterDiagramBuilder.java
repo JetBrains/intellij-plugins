@@ -56,35 +56,32 @@ public class AngularUiRouterDiagramBuilder {
 
     for (String id : stateIds) {
       if (id.startsWith(".")) continue;
-      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, new Processor<JSImplicitElement>() {
-        @Override
-        public boolean process(JSImplicitElement element) {
-          final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
+      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, element -> {
+        final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
 
-          JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
-          if (call == null) {
-            final PsiElement elementAt = element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
-            if (elementAt != null) {
-              call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
-            }
+        JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
+        if (call == null) {
+          final PsiElement elementAt = element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
+          if (elementAt != null) {
+            call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
           }
-          if (call != null) {
-            final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
-            if (methodExpression != null && methodExpression.getQualifier() != null && "state".equals(methodExpression.getReferenceName())) {
-              final JSExpression[] arguments = call.getArguments();
-              if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
-                state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
+        }
+        if (call != null) {
+          final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
+          if (methodExpression != null && methodExpression.getQualifier() != null && "state".equals(methodExpression.getReferenceName())) {
+            final JSExpression[] arguments = call.getArguments();
+            if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
+              state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
 
-                if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
-                  final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
-                  fillStateParameters(state, object);
-                }
+              if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
+                final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
+                fillStateParameters(state, object);
               }
             }
           }
-          myStates.add(state);
-          return true;
         }
+        myStates.add(state);
+        return true;
       });
     }
     getRootPages();
@@ -130,12 +127,7 @@ public class AngularUiRouterDiagramBuilder {
 
   private void getRootPages() {
     final List<VirtualFile> roots = new ArrayList<>();
-    Collections.sort(roots, new Comparator<VirtualFile>() {
-      @Override
-      public int compare(VirtualFile o1, VirtualFile o2) {
-        return Integer.compare(o2.getUrl().length(), o1.getUrl().length());
-      }
-    });
+    Collections.sort(roots, (o1, o2) -> Integer.compare(o2.getUrl().length(), o1.getUrl().length()));
 
     final Map<PsiFile, AngularNamedItemDefinition> files = new HashMap<>();
     final FileBasedIndex instance = FileBasedIndex.getInstance();
@@ -370,12 +362,9 @@ public class AngularUiRouterDiagramBuilder {
     final Set<String> placeholdersSet = new HashSet<>();
     final FileBasedIndex instance = FileBasedIndex.getInstance();
     final GlobalSearchScope scope = GlobalSearchScope.fileScope(project, templateFile.getVirtualFile());
-    instance.processAllKeys(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, new Processor<String>() {
-      @Override
-      public boolean process(String view) {
-        placeholdersSet.add(view);
-        return true;
-      }
+    instance.processAllKeys(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, view -> {
+      placeholdersSet.add(view);
+      return true;
     }, scope, null);
     final PsiFile finalTemplateFile = templateFile;
     for (String key : placeholdersSet) {

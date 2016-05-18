@@ -38,11 +38,8 @@ public class FlashBuildConfigurationsUsagesCollector extends AbstractApplication
         usedBcs.add(bc.getStatisticsEntry());
       }
     }
-    return ContainerUtil.map2Set(usedBcs, new Function<String, UsageDescriptor>() {
-      @Override
-      public UsageDescriptor fun(String s) {
-        return new UsageDescriptor(s, 1);
-      }
+    return ContainerUtil.map2Set(usedBcs, s -> {
+      return new UsageDescriptor(s, 1);
     });
   }
 

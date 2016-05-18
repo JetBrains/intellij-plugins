@@ -166,12 +166,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       doStart();
     }
     else {
-      application.executeOnPooledThread(new Runnable() {
-        @Override
-        public void run() {
-          doStart();
-        }
-      });
+      application.executeOnPooledThread(() -> doStart());
     }
   }
 
@@ -207,23 +202,20 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @Override
   public void initializeProject(final String projectName, MutablePicoContainer projectLevelContainer) {
-    getIdeFacade().runOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        User[] users = findUsers(new NullProgressIndicator());
-        Set<User> ourUsers = new HashSet<User>();
-        for (User user : users) {
-          if (Arrays.asList(user.getProjects()).contains(projectName)) {
-            ourUsers.add(user);
-          }
+    getIdeFacade().runOnPooledThread(() -> {
+      User[] users = findUsers(new NullProgressIndicator());
+      Set<User> ourUsers = new HashSet<User>();
+      for (User user : users) {
+        if (Arrays.asList(user.getProjects()).contains(projectName)) {
+          ourUsers.add(user);
         }
+      }
 
-        if (canAddUsers(projectName, ourUsers)) {
-          for (User user : ourUsers) {
-            if (!myUserModel.hasUser(user)) {
-              user.setGroup(projectName, myUserModel);
-              myUserModel.addUser(user);
-            }
+      if (canAddUsers(projectName, ourUsers)) {
+        for (User user : ourUsers) {
+          if (!myUserModel.hasUser(user)) {
+            user.setGroup(projectName, myUserModel);
+            myUserModel.addUser(user);
           }
         }
       }

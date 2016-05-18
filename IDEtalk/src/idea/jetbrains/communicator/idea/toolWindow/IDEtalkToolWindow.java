@@ -122,12 +122,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
   @Override
   protected void createToolWindowComponent() {
 
-    StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
-      @Override
-      public void run() {
-        initializeTransports(myProject.getName());
-      }
-    });
+    StartupManager.getInstance(myProject).registerPostStartupActivity(() -> initializeTransports(myProject.getName()));
 
     StatusToolbar statusToolbar = ((StatusToolbar) myContainer.getComponentInstanceOfType(StatusToolbar.class));
 

@@ -279,12 +279,10 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
     doTest(new PerformAction() {
       @Override
       public void performAction(final VirtualFile rootDir, final VirtualFile rootAfter) throws Exception {
-        FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-          public void consume(final FlexProjectConfigurationEditor editor) {
-            ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-            bc1.setName("1");
-            FlexTestUtils.setSdk(bc1, sdk);
-          }
+        FlexTestUtils.modifyConfigs(myProject, editor -> {
+          ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+          bc1.setName("1");
+          FlexTestUtils.setSdk(bc1, sdk);
         });
 
         FlexExtractSuperTest.this.performAction(false, "skins.MyNewSkin1", "skins.IMySkin", DocCommentPolicy.COPY,

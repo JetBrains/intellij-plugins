@@ -69,13 +69,10 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
 
   private final GlobalSearchScope projectScope;
 
-  private final Function<List<FrameInfo>, List<FrameInfo>> scopeMatcher = new Function<List<FrameInfo>, List<FrameInfo>>() {
-    @Override
-    public List<FrameInfo> fun(List<FrameInfo> traces) {
-      final GlobalSearchScope scope = getCurrentScope();
+  private final Function<List<FrameInfo>, List<FrameInfo>> scopeMatcher = traces -> {
+    final GlobalSearchScope scope = getCurrentScope();
 
-      return ResolveUtil.filterByScope(traces, scope);
-    }
+    return ResolveUtil.filterByScope(traces, scope);
   };
 
   public CPUSnapshotView(VirtualFile file, Project project) {
@@ -154,11 +151,9 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
     filterScope.getComboBox().addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         myAlarm.cancelAllRequests();
-        myAlarm.addRequest(new Runnable() {
-          public void run() {
-            buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel());
-            TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
-          }
+        myAlarm.addRequest(() -> {
+          buildPerformanceSamples(myHotSpotsTreeTable.getSortableTreeTableModel());
+          TreeUtil.expand(myHotSpotsTreeTable.getTree(), 1);
         }, 100);
       }
     });
@@ -183,20 +178,18 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
         myAlarm.cancelAllRequests();
         final MergedCallNode mergedCallNode = (MergedCallNode)node;
 
-        myAlarm.addRequest(new Runnable() {
-          public void run() {
-            FrameInfo[] frames = new FrameInfo[]{mergedCallNode.getFrameInfo()};
-            final Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> countMaps = mergedCallNode.getCallTree().getCalleesTimeMaps(frames);
-            final Map<FrameInfo, Long> countMap = countMaps.getFirst();
-            final Map<FrameInfo, Long> selfCountMap = countMaps.getSecond();
+        myAlarm.addRequest(() -> {
+          FrameInfo[] frames = new FrameInfo[]{mergedCallNode.getFrameInfo()};
+          final Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> countMaps = mergedCallNode.getCallTree().getCalleesTimeMaps(frames);
+          final Map<FrameInfo, Long> countMap = countMaps.getFirst();
+          final Map<FrameInfo, Long> selfCountMap = countMaps.getSecond();
 
-            DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)myTracesTreeTable.getSortableTreeTableModel().getRoot();
-            JTreeUtil.removeChildren(tracesRoot, myTracesTreeTable.getSortableTreeTableModel());
-            fillTreeModelRoot(tracesRoot, mergedCallNode.getCallTree(), countMap, selfCountMap, false, frames);
-            myTracesTreeTable.reload();
+          DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)myTracesTreeTable.getSortableTreeTableModel().getRoot();
+          JTreeUtil.removeChildren(tracesRoot, myTracesTreeTable.getSortableTreeTableModel());
+          fillTreeModelRoot(tracesRoot, mergedCallNode.getCallTree(), countMap, selfCountMap, false, frames);
+          myTracesTreeTable.reload();
 
-            TreeUtil.expand(myTracesTreeTable.getTree(), 1);
-          }
+          TreeUtil.expand(myTracesTreeTable.getTree(), 1);
         }, 500);
       }
     });

@@ -47,12 +47,9 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
 
       final List<ResolveResult> list = new ArrayList<ResolveResult>();
       AngularIndexUtil.multiResolve(myElement.getProject(), AngularUiRouterStatesIndex.KEY, id,
-                                    new Processor<JSImplicitElement>() {
-                                      @Override
-                                      public boolean process(JSImplicitElement element) {
-                                        list.add(new JSResolveResult(element));
-                                        return true;
-                                      }
+                                    element -> {
+                                      list.add(new JSResolveResult(element));
+                                      return true;
                                     });
       return list.toArray(new ResolveResult[list.size()]);
     }

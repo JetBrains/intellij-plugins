@@ -43,12 +43,8 @@ public class CfmlJavaClassNamesCompletion extends CompletionProvider<CompletionP
       CfmlExpression[] arguments = parentOfType.getArguments();
       if (arguments.length == 2 && "\"java\"".equalsIgnoreCase(arguments[0].getText())) {
         AllClassesGetter
-          .processJavaClasses(parameters, result.getPrefixMatcher(), parameters.getInvocationCount() <= 1, new Consumer<PsiClass>() {
-            @Override
-            public void consume(PsiClass psiClass) {
-              result.addElement(AllClassesGetter.createLookupItem(psiClass, AllClassesGetter.TRY_SHORTENING));
-            }
-          });
+          .processJavaClasses(parameters, result.getPrefixMatcher(), parameters.getInvocationCount() <= 1,
+                              psiClass -> result.addElement(AllClassesGetter.createLookupItem(psiClass, AllClassesGetter.TRY_SHORTENING)));
       }
     }
   }

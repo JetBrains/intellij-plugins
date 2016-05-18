@@ -122,13 +122,10 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testMixJsAndJs2_2() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_6, getProject(), new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        String testName = getTestName(false);
-        PsiReference[] references = findElementAtCaret(testName + ".js", testName + ".mxml", testName + ".js2");
-        assertEquals(3, references.length);
-      }
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_6, getProject(), () -> {
+      String testName = getTestName(false);
+      PsiReference[] references = findElementAtCaret(testName + ".js", testName + ".mxml", testName + ".js2");
+      assertEquals(3, references.length);
     });
   }
 

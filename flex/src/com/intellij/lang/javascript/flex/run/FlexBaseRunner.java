@@ -291,13 +291,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         break;
 
       case Browser:
-        final Runnable runnable1 = new Runnable() {
-          @Override
-          public void run() {
-            BrowserLauncher.getInstance().browse(BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath),
-                                                 launcherParams.getBrowser());
-          }
-        };
+        final Runnable runnable1 =
+          () -> BrowserLauncher.getInstance().browse(BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath),
+                                                   launcherParams.getBrowser());
 
         final Application application1 = ApplicationManager.getApplication();
         if (application1.isDispatchThread()) {
@@ -325,13 +321,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           // todo keep process to be able to kill it on user demand
         }
         catch (final IOException e) {
-          final Runnable runnable2 = new Runnable() {
-            @Override
-            public void run() {
-              Messages.showErrorDialog(FlexBundle.message("cant.launch", urlOrPath, launcherParams.getPlayerPath(), e.getMessage()),
-                                       CommonBundle.getErrorTitle());
-            }
-          };
+          final Runnable runnable2 =
+            () -> Messages.showErrorDialog(FlexBundle.message("cant.launch", urlOrPath, launcherParams.getPlayerPath(), e.getMessage()),
+                                         CommonBundle.getErrorTitle());
 
           final Application application2 = ApplicationManager.getApplication();
           if (application2.isDispatchThread()) {
@@ -508,13 +500,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     final Collection<VirtualFile> aneFiles = FlexCompilationUtils.getANEFiles(ModuleRootManager.getInstance(module), bc.getDependencies());
     if (!aneFiles.isEmpty()) {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-        @Override
-        public void run() {
-          final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-          if (indicator != null) indicator.setIndeterminate(true);
-          FlexCompilationUtils.unzipANEFiles(aneFiles, indicator);
-        }
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+        if (indicator != null) indicator.setIndeterminate(true);
+        FlexCompilationUtils.unzipANEFiles(aneFiles, indicator);
       }, "Unzipping ANE files", true, project);
     }
 
@@ -707,12 +696,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
           if ("BuildConfiguration".equals(event.getDescription())) {
             final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
-            ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
-              @Override
-              public void run() {
-                Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc.getName());
-                projectStructureConfigurable.navigateTo(p, true);
-              }
+            ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, () -> {
+              Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc.getName());
+              projectStructureConfigurable.navigateTo(p, true);
             });
           }
           else if ("DisableWarning".equals(event.getDescription())) {

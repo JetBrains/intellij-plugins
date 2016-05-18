@@ -89,12 +89,8 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithLineMarkers})
   public void testLineMarkersInSwf() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
     configureByFiles((String)null);
     VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + getTestName(false) + ".swc");
     vFile = JarFileSystem.getInstance().getJarRootForLocalFile(vFile).findChild("library.swf");

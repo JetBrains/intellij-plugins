@@ -25,11 +25,8 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
     myFixture.configureByFile(getTestName(false) + ".dart");
     final IntentionAction intention = myFixture.findSingleIntention(intentionName);
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        intention.invoke(getProject(), getEditor(), getFile());
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      intention.invoke(getProject(), getEditor(), getFile());
     });
 
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");

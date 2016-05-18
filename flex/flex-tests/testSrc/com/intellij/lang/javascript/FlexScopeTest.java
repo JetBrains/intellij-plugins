@@ -81,12 +81,9 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     doHighlightingTest("_2");
 
     // create another build configuration with no dependency on library
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        final ModifiableFlexBuildConfiguration bc = e.createConfiguration(myModule);
-        bc.setName("Second");
-      }
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      final ModifiableFlexBuildConfiguration bc = e.createConfiguration(myModule);
+      bc.setName("Second");
     });
     doHighlightingTest("_2");
 
@@ -115,15 +112,12 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     // now add bc-to-bc dependency, highlighting should not change because app-on-app dependency is ignored
     AccessToken writeAction = WriteAction.start();
     try {
-      FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-        @Override
-        public void consume(final FlexProjectConfigurationEditor editor) {
-          final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(myModule)[0];
-          final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(module2)[0];
-          final ModifiableBuildConfigurationEntry dependencyEntry =
-            editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
-          dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
-        }
+      FlexTestUtils.modifyConfigs(myProject, editor -> {
+        final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(myModule)[0];
+        final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(module2)[0];
+        final ModifiableBuildConfigurationEntry dependencyEntry =
+          editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
+        dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
       });
     }
     finally {
@@ -132,34 +126,25 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     doHighlightingTest("_1");
 
     // dependency with linkage type "Loaded" doesn't change highlighting as well
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(myModule)[0];
-        dependentBc.getDependencies().getModifiableEntries().get(0).getDependencyType().setLinkageType(LinkageType.LoadInRuntime);
-        editor.getConfigurations(module2)[0].setOutputType(OutputType.RuntimeLoadedModule);
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(myModule)[0];
+      dependentBc.getDependencies().getModifiableEntries().get(0).getDependencyType().setLinkageType(LinkageType.LoadInRuntime);
+      editor.getConfigurations(module2)[0].setOutputType(OutputType.RuntimeLoadedModule);
     });
     doHighlightingTest("_1");
 
     // app-on-lib dependency affects highlighting
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(myModule)[0];
-        dependentBc.getDependencies().getModifiableEntries().get(0).getDependencyType().setLinkageType(LinkageType.External);
-        editor.getConfigurations(module2)[0].setOutputType(OutputType.Library);
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(myModule)[0];
+      dependentBc.getDependencies().getModifiableEntries().get(0).getDependencyType().setLinkageType(LinkageType.External);
+      editor.getConfigurations(module2)[0].setOutputType(OutputType.Library);
     });
     doHighlightingTest("_2");
 
     // create another build configuration with no dependency on second BC
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        final ModifiableFlexBuildConfiguration bc = e.createConfiguration(myModule);
-        bc.setName("Second");
-      }
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      final ModifiableFlexBuildConfiguration bc = e.createConfiguration(myModule);
+      bc.setName("Second");
     });
     doHighlightingTest("_2");
 
@@ -177,18 +162,15 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   public void testBcDependencyInSameModule() throws Exception {
     AccessToken writeAction = WriteAction.start();
     try {
-      FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-        @Override
-        public void consume(final FlexProjectConfigurationEditor editor) {
-          final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      FlexTestUtils.modifyConfigs(myProject, editor -> {
+        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
 
-          final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
-          bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Library));
-          bc2.setName("2");
+        final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+        bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Library));
+        bc2.setName("2");
 
-          final ModifiableBuildConfigurationEntry entry = editor.createBcEntry(bc1.getDependencies(), bc2, null);
-          bc1.getDependencies().getModifiableEntries().add(entry);
-        }
+        final ModifiableBuildConfigurationEntry entry = editor.createBcEntry(bc1.getDependencies(), bc2, null);
+        bc1.getDependencies().getModifiableEntries().add(entry);
       });
     }
     finally {
@@ -227,15 +209,12 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   private static Consumer<PsiElement> belongsToSdk(final Sdk sdk) {
-    return new Consumer<PsiElement>() {
-      @Override
-      public void consume(final PsiElement psiElement) {
-        VirtualFile containingFile = psiElement.getContainingFile().getVirtualFile();
-        if (containingFile.getFileSystem() instanceof JarFileSystem) {
-          containingFile = JarFileSystem.getInstance().getVirtualFileForJar(containingFile);
-        }
-        assertTrue(VfsUtilCore.isAncestor(sdk.getHomeDirectory(), containingFile, true));
+    return psiElement -> {
+      VirtualFile containingFile = psiElement.getContainingFile().getVirtualFile();
+      if (containingFile.getFileSystem() instanceof JarFileSystem) {
+        containingFile = JarFileSystem.getInstance().getVirtualFileForJar(containingFile);
       }
+      assertTrue(VfsUtilCore.isAncestor(sdk.getHomeDirectory(), containingFile, true));
     };
   }
 
@@ -252,17 +231,14 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
 
     AccessToken writeAction = WriteAction.start();
     try {
-      FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-        @Override
-        public void consume(final FlexProjectConfigurationEditor editor) {
-          final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-          bc1.setName("1");
-          FlexTestUtils.setSdk(bc1, sdk1);
-          final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
-          bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
-          bc2.setName("2");
-          FlexTestUtils.setSdk(bc2, sdk2);
-        }
+      FlexTestUtils.modifyConfigs(myProject, editor -> {
+        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+        bc1.setName("1");
+        FlexTestUtils.setSdk(bc1, sdk1);
+        final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+        bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
+        bc2.setName("2");
+        FlexTestUtils.setSdk(bc2, sdk2);
       });
     }
     finally {
@@ -289,28 +265,25 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
 
     writeAction = WriteAction.start();
     try {
-      FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-        @Override
-        public void consume(final FlexProjectConfigurationEditor editor) {
-          final ModifiableFlexBuildConfiguration app1 = editor.getConfigurations(myModule)[0];
-          app1.setName("app1");
-          FlexTestUtils.setSdk(app1, sdk);
+      FlexTestUtils.modifyConfigs(myProject, editor -> {
+        final ModifiableFlexBuildConfiguration app1 = editor.getConfigurations(myModule)[0];
+        app1.setName("app1");
+        FlexTestUtils.setSdk(app1, sdk);
 
-          final ModifiableFlexBuildConfiguration lib1 = editor.getConfigurations(module2)[0];
-          lib1.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Library));
-          app1.setName("lib1");
-          FlexTestUtils.setSdk(lib1, sdk);
+        final ModifiableFlexBuildConfiguration lib1 = editor.getConfigurations(module2)[0];
+        lib1.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Library));
+        app1.setName("lib1");
+        FlexTestUtils.setSdk(lib1, sdk);
 
-          final ModifiableFlexBuildConfiguration lib2 = editor.createConfiguration(myModule);
-          lib2.setName("lib2");
-          lib2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Library));
-          FlexTestUtils.setSdk(lib2, sdk);
+        final ModifiableFlexBuildConfiguration lib2 = editor.createConfiguration(myModule);
+        lib2.setName("lib2");
+        lib2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Library));
+        FlexTestUtils.setSdk(lib2, sdk);
 
-          final ModifiableBuildConfigurationEntry dep1 = editor.createBcEntry(app1.getDependencies(), lib1, null);
-          app1.getDependencies().getModifiableEntries().add(dep1);
-          final ModifiableBuildConfigurationEntry dep2 = editor.createBcEntry(lib1.getDependencies(), lib2, null);
-          lib1.getDependencies().getModifiableEntries().add(dep2);
-        }
+        final ModifiableBuildConfigurationEntry dep1 = editor.createBcEntry(app1.getDependencies(), lib1, null);
+        app1.getDependencies().getModifiableEntries().add(dep1);
+        final ModifiableBuildConfigurationEntry dep2 = editor.createBcEntry(lib1.getDependencies(), lib2, null);
+        lib1.getDependencies().getModifiableEntries().add(dep2);
       });
     }
     finally {
@@ -323,21 +296,19 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
     final Module module3 = FlexTestUtils.createModule(myProject, "module3", getVirtualFile(getBasePath() + "m3"));
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        final ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
-        bc2.setOutputType(OutputType.Library);
-        final ModifiableFlexBuildConfiguration bc3 = editor.getConfigurations(module3)[0];
-        bc3.setOutputType(OutputType.Library);
-        final ModifiableFlexBuildConfiguration bc3a = editor.createConfiguration(module3);
-        bc3a.setOutputType(OutputType.Library);
-        bc3a.setName("bc3a");
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      final ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
+      bc2.setOutputType(OutputType.Library);
+      final ModifiableFlexBuildConfiguration bc3 = editor.getConfigurations(module3)[0];
+      bc3.setOutputType(OutputType.Library);
+      final ModifiableFlexBuildConfiguration bc3a = editor.createConfiguration(module3);
+      bc3a.setOutputType(OutputType.Library);
+      bc3a.setName("bc3a");
 
-        bc1.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc1.getDependencies(), bc2, null));
-        bc2.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc2.getDependencies(), bc3, null));
-        bc2.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc2.getDependencies(), bc3a, null));
-      }
+      bc1.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc1.getDependencies(), bc2, null));
+      bc2.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc2.getDependencies(), bc3, null));
+      bc2.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc2.getDependencies(), bc3a, null));
     });
 
     FlexTestUtils
@@ -357,14 +328,12 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
       }
 
       public void run() throws Exception {
-        FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-          public void consume(final FlexProjectConfigurationEditor editor) {
-            final ModifiableFlexBuildConfiguration bc = editor.getConfigurations(module2)[0];
-            final ModifiableDependencyEntry e1 = bc.getDependencies().getModifiableEntries().get(0);
-            e1.getDependencyType().setLinkageType(myLinkageType1);
-            final ModifiableDependencyEntry e2 = bc.getDependencies().getModifiableEntries().get(1);
-            e2.getDependencyType().setLinkageType(myLinkageType2);
-          }
+        FlexTestUtils.modifyConfigs(myProject, editor -> {
+          final ModifiableFlexBuildConfiguration bc = editor.getConfigurations(module2)[0];
+          final ModifiableDependencyEntry e1 = bc.getDependencies().getModifiableEntries().get(0);
+          e1.getDependencyType().setLinkageType(myLinkageType1);
+          final ModifiableDependencyEntry e2 = bc.getDependencies().getModifiableEntries().get(1);
+          e2.getDependencyType().setLinkageType(myLinkageType2);
         });
         doHighlightingTest(mySuffix);
       }
@@ -379,13 +348,11 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     new Test(LinkageType.RSL, LinkageType.Include, "_2").run();
     new Test(LinkageType.Include, LinkageType.Include, "_2").run();
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        final ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
-        final ModifiableDependencyEntry entry = bc2.getDependencies().getModifiableEntries().get(2);
-        assert entry instanceof ModifiableModuleLibraryEntry; // FlexLib
-        entry.getDependencyType().setLinkageType(LinkageType.Include);
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
+      final ModifiableDependencyEntry entry = bc2.getDependencies().getModifiableEntries().get(2);
+      assert entry instanceof ModifiableModuleLibraryEntry; // FlexLib
+      entry.getDependencyType().setLinkageType(LinkageType.Include);
     });
 
     new Test(LinkageType.Include, LinkageType.Include, "_3").run();
@@ -395,33 +362,31 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
     final Module module3 = FlexTestUtils.createModule(myProject, "module3", getVirtualFile(getBasePath() + "m3"));
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        final ModifiableFlexBuildConfiguration bc1a = editor.getConfigurations(myModule)[0];
-        bc1a.setName("1");
-        final ModifiableFlexBuildConfiguration bc1b = editor.createConfiguration(myModule);
-        bc1b.setName("2");
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc1a = editor.getConfigurations(myModule)[0];
+      bc1a.setName("1");
+      final ModifiableFlexBuildConfiguration bc1b = editor.createConfiguration(myModule);
+      bc1b.setName("2");
 
-        final ModifiableFlexBuildConfiguration bc2a = editor.getConfigurations(module2)[0];
-        bc2a.setOutputType(OutputType.Library);
-        bc2a.setName("1");
+      final ModifiableFlexBuildConfiguration bc2a = editor.getConfigurations(module2)[0];
+      bc2a.setOutputType(OutputType.Library);
+      bc2a.setName("1");
 
-        final ModifiableFlexBuildConfiguration bc2b = editor.createConfiguration(module2);
-        bc2b.setOutputType(OutputType.Library);
-        bc2b.setName("2");
+      final ModifiableFlexBuildConfiguration bc2b = editor.createConfiguration(module2);
+      bc2b.setOutputType(OutputType.Library);
+      bc2b.setName("2");
 
-        final ModifiableFlexBuildConfiguration bc3 = editor.getConfigurations(module3)[0];
-        bc3.setOutputType(OutputType.Library);
+      final ModifiableFlexBuildConfiguration bc3 = editor.getConfigurations(module3)[0];
+      bc3.setOutputType(OutputType.Library);
 
-        bc1a.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc1a.getDependencies(), bc2a, null));
-        bc1b.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc1b.getDependencies(), bc2b, null));
-        final ModifiableBuildConfigurationEntry entry1 = editor.createBcEntry(bc2a.getDependencies(), bc3, null);
-        bc2a.getDependencies().getModifiableEntries().add(entry1);
-        entry1.getDependencyType().setLinkageType(LinkageType.Include);
-        final ModifiableBuildConfigurationEntry entry2 = editor.createBcEntry(bc2b.getDependencies(), bc3, null);
-        bc2b.getDependencies().getModifiableEntries().add(entry2);
-        entry2.getDependencyType().setLinkageType(LinkageType.Merged);
-      }
+      bc1a.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc1a.getDependencies(), bc2a, null));
+      bc1b.getDependencies().getModifiableEntries().add(editor.createBcEntry(bc1b.getDependencies(), bc2b, null));
+      final ModifiableBuildConfigurationEntry entry1 = editor.createBcEntry(bc2a.getDependencies(), bc3, null);
+      bc2a.getDependencies().getModifiableEntries().add(entry1);
+      entry1.getDependencyType().setLinkageType(LinkageType.Include);
+      final ModifiableBuildConfigurationEntry entry2 = editor.createBcEntry(bc2b.getDependencies(), bc3, null);
+      bc2b.getDependencies().getModifiableEntries().add(entry2);
+      entry2.getDependencyType().setLinkageType(LinkageType.Merged);
     });
 
     final FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(myModule);
@@ -433,15 +398,13 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
 
   public void testMissingSdk() throws Exception {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        bc1.setName("1");
-        FlexTestUtils.setSdk(bc1, sdk);
-        final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
-        bc2.setName("2");
-        bc2.getDependencies().setSdkEntry(null);
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      bc1.setName("1");
+      FlexTestUtils.setSdk(bc1, sdk);
+      final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+      bc2.setName("2");
+      bc2.getDependencies().setSdkEntry(null);
     });
     final FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(myModule);
     m.setActiveBuildConfiguration(m.findConfigurationByName("1"));
@@ -462,26 +425,23 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     FlexTestUtils.addFlexLibrary(true, myModule, "Lib3", true, getTestDataPath() + getBasePath(), "Lib3", null, null, LinkageType.Test);
     FlexTestUtils.addFlexLibrary(true, myModule, "Lib4", true, getTestDataPath() + getBasePath(), "Lib4", null, null);
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        FlexTestUtils.setSdk(bc1, sdk46);
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      FlexTestUtils.setSdk(bc1, sdk46);
 
-        ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
-        bc2.setOutputType(OutputType.Library);
+      ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
+      bc2.setOutputType(OutputType.Library);
 
-        ModifiableFlexBuildConfiguration bc3 = editor.getConfigurations(module3)[0];
-        bc3.setOutputType(OutputType.Library);
+      ModifiableFlexBuildConfiguration bc3 = editor.getConfigurations(module3)[0];
+      bc3.setOutputType(OutputType.Library);
 
-        ModifiableBuildConfigurationEntry entry1 = editor.createBcEntry(bc1.getDependencies(), bc2, null);
-        entry1.getDependencyType().setLinkageType(LinkageType.Test);
-        bc1.getDependencies().getModifiableEntries().add(entry1);
+      ModifiableBuildConfigurationEntry entry1 = editor.createBcEntry(bc1.getDependencies(), bc2, null);
+      entry1.getDependencyType().setLinkageType(LinkageType.Test);
+      bc1.getDependencies().getModifiableEntries().add(entry1);
 
-        ModifiableBuildConfigurationEntry entry2 = editor.createBcEntry(bc2.getDependencies(), bc3, null);
-        entry2.getDependencyType().setLinkageType(LinkageType.Test);
-        bc2.getDependencies().getModifiableEntries().add(entry2);
-      }
+      ModifiableBuildConfigurationEntry entry2 = editor.createBcEntry(bc2.getDependencies(), bc3, null);
+      entry2.getDependencyType().setLinkageType(LinkageType.Test);
+      bc2.getDependencies().getModifiableEntries().add(entry2);
     });
 
     doHighlightingTest("_1", "as", false);

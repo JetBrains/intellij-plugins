@@ -69,15 +69,13 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       assert "compiler.define".equals(info.ID) && info.LIST_ELEMENTS.length == 2 : info.ID;
       getCurrentList().add(new StringBuilder(autoAddedConditionalCompilerDefinition).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR));
 
-      UiNotifyConnector.doWhenFirstShown(myTable, new Runnable() {
-        public void run() {
-          final int rowCount = myTable.getRowCount();
-          if (rowCount > 0) {
-            myTable.addRowSelectionInterval(rowCount - 1, rowCount - 1);
+      UiNotifyConnector.doWhenFirstShown(myTable, () -> {
+        final int rowCount = myTable.getRowCount();
+        if (rowCount > 0) {
+          myTable.addRowSelectionInterval(rowCount - 1, rowCount - 1);
 
-            // todo this doesn't work because editing is immediately stopped in JBTable.columnMarginChanged()
-            TableUtil.editCellAt(myTable, rowCount - 1, myInfo.LIST_ELEMENTS.length - 1);
-          }
+          // todo this doesn't work because editing is immediately stopped in JBTable.columnMarginChanged()
+          TableUtil.editCellAt(myTable, rowCount - 1, myInfo.LIST_ELEMENTS.length - 1);
         }
       });
     }

@@ -95,16 +95,13 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     // apply the SourceChange
     final SourceChange change = refactoring.getChange();
     assertNotNull(change);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final Set<String> excludedIds = refactoring.getPotentialEdits();
-        try {
-          AssistUtils.applySourceChange(myFixture.getProject(), change, false, excludedIds);
-        }
-        catch (DartSourceEditException e) {
-          fail(e.getMessage());
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final Set<String> excludedIds = refactoring.getPotentialEdits();
+      try {
+        AssistUtils.applySourceChange(myFixture.getProject(), change, false, excludedIds);
+      }
+      catch (DartSourceEditException e) {
+        fail(e.getMessage());
       }
     });
     // validate

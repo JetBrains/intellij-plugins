@@ -116,12 +116,7 @@ public class SimulatorConsoleProcessHandler extends RubyConsoleProcessHandler im
   }
 
   private void closeReaders() {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        myReaders.close();
-      }
-    });
+    ApplicationManager.getApplication().executeOnPooledThread(() -> myReaders.close());
   }
 
   @Override
@@ -134,32 +129,26 @@ public class SimulatorConsoleProcessHandler extends RubyConsoleProcessHandler im
     final int i = line.lastIndexOf('/');
     final String appName = i > 0 ? line.substring(i) : null;
     if (appName == null) return;
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        // let's wait for an app for 3 minutes with 100ms interval
-        for (int i = 0; i < 3 * 60 * 10; i++) {
-          UnixProcessManager.processPSOutput(UnixProcessManager.getPSCmd(false, true), new Processor<String>() {
-            @Override
-            public boolean process(String s) {
-              final Scanner scanner = new Scanner(s);
-              final int ppid = scanner.nextInt();
-              final int pid = scanner.nextInt();
-              final String command = scanner.nextLine();
-              if (command.contains(appName) && !pidResult.isDone()) {
-                pidResult.set(pid);
-                return true;
-              }
-              return false;
-            }
-          });
-          if (pidResult.isDone()) {
-            return;
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      // let's wait for an app for 3 minutes with 100ms interval
+      for (int i1 = 0; i1 < 3 * 60 * 10; i1++) {
+        UnixProcessManager.processPSOutput(UnixProcessManager.getPSCmd(false, true), s -> {
+          final Scanner scanner = new Scanner(s);
+          final int ppid = scanner.nextInt();
+          final int pid = scanner.nextInt();
+          final String command = scanner.nextLine();
+          if (command.contains(appName) && !pidResult.isDone()) {
+            pidResult.set(pid);
+            return true;
           }
-          TimeoutUtil.sleep(100);
+          return false;
+        });
+        if (pidResult.isDone()) {
+          return;
         }
-        CidrDebuggerLog.LOG.error("Failed to find pid for: " + appName);
+        TimeoutUtil.sleep(100);
       }
+      CidrDebuggerLog.LOG.error("Failed to find pid for: " + appName);
     });
   }
 

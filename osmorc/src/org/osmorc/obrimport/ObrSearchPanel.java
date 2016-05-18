@@ -81,44 +81,40 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
   }
 
   private void search() {
-    Thread t = new Thread(new Runnable() {
-      public void run() {
-        final Obr selectedObr = (Obr)_obrBox.getSelectedItem();
-        if (selectedObr != null) {
-          start();
-          switch (_queryType) {
-            case Maven:
-              List result = null;
-              try {
-                result = Arrays.asList(selectedObr.queryForMavenArtifact(_queryString.getText(), ObrSearchPanel.this));
-                setResults(result);
-              }
-              catch (final IOException e1) {
-                SwingUtilities.invokeLater(new Runnable() {
-                  public void run() {
-                    // dialog must be run on the event dispatch thread
-                    // TODO: icon
-                    int dialogResult = Messages
-                      .showDialog(_rootPanel, "Could not connect to " + selectedObr.getDisplayName() + ".\n" + e1.getMessage() + ".",
-                                  "Connection error", new String[]{"Retry", "Cancel", "Proxy Settings"}, 0, null);
-                    switch (dialogResult) {
-                      case 2:
-                        // show proxy settings
-                        HttpConfigurable.editConfigurable(_rootPanel);
-                        // fall through..
-                      case 0:
-                        search();
-                        break;
-                      default:
-                        // cancel
-                        break;
-                    }
-                  }
-                });
-              }
-          }
-          stop();
+    Thread t = new Thread(() -> {
+      final Obr selectedObr = (Obr)_obrBox.getSelectedItem();
+      if (selectedObr != null) {
+        start();
+        switch (_queryType) {
+          case Maven:
+            List result = null;
+            try {
+              result = Arrays.asList(selectedObr.queryForMavenArtifact(_queryString.getText(), ObrSearchPanel.this));
+              setResults(result);
+            }
+            catch (final IOException e1) {
+              SwingUtilities.invokeLater(() -> {
+                // dialog must be run on the event dispatch thread
+                // TODO: icon
+                int dialogResult = Messages
+                  .showDialog(_rootPanel, "Could not connect to " + selectedObr.getDisplayName() + ".\n" + e1.getMessage() + ".",
+                              "Connection error", new String[]{"Retry", "Cancel", "Proxy Settings"}, 0, null);
+                switch (dialogResult) {
+                  case 2:
+                    // show proxy settings
+                    HttpConfigurable.editConfigurable(_rootPanel);
+                    // fall through..
+                  case 0:
+                    search();
+                    break;
+                  default:
+                    // cancel
+                    break;
+                }
+              });
+            }
         }
+        stop();
       }
     }, "Obr search");
     t.start();
@@ -134,39 +130,28 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
 
   private void setResults(final List results) {
     //noinspection SSBasedInspection
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        _resultList.setModel(new CollectionListModel(results));
-      }
-    });
+    SwingUtilities.invokeLater(() -> _resultList.setModel(new CollectionListModel(results)));
   }
 
   @Override
   protected void onProgressChange() {
     //noinspection SSBasedInspection
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        _progressBar.setIndeterminate(isIndeterminate());
-        _progressBar.setValue((int)(100 * getFraction()));
-        _statusLabel.setText(getText());
-        _cancelButton.setEnabled(isRunning() && isCancelable());
-      }
+    SwingUtilities.invokeLater(() -> {
+      _progressBar.setIndeterminate(isIndeterminate());
+      _progressBar.setValue((int)(100 * getFraction()));
+      _statusLabel.setText(getText());
+      _cancelButton.setEnabled(isRunning() && isCancelable());
     });
   }
 
   @Override
   protected void onRunningChange() {
     //noinspection SSBasedInspection
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        _progressBar.setEnabled(isRunning());
-        _statusLabel.setEnabled(isRunning());
-        _cancelButton.setEnabled(isRunning() && isCancelable());
-        _searchButton.setEnabled(!isRunning());
-      }
+    SwingUtilities.invokeLater(() -> {
+      _progressBar.setEnabled(isRunning());
+      _statusLabel.setEnabled(isRunning());
+      _cancelButton.setEnabled(isRunning() && isCancelable());
+      _searchButton.setEnabled(!isRunning());
     });
   }
 

@@ -56,18 +56,15 @@ public class OsgiPsiUtilTest extends LightOsgiFixtureTestCase {
   private void doTest(String original, String expected, final boolean replace) {
     myFixture.configureByText("MANIFEST.MF", original);
 
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-          @Override
-          public void run() {
-        ManifestFile manifestFile = (ManifestFile)myFixture.getFile();
-        if (replace) {
-          OsgiPsiUtil.setHeader(manifestFile, "TestHeader", "TestValue");
-        }
-        else {
-          OsgiPsiUtil.appendToHeader(manifestFile, "TestHeader", "TestValue");
-        }
-      }
-    });
+    WriteCommandAction.runWriteCommandAction(null, () -> {
+  ManifestFile manifestFile = (ManifestFile)myFixture.getFile();
+  if (replace) {
+    OsgiPsiUtil.setHeader(manifestFile, "TestHeader", "TestValue");
+  }
+  else {
+    OsgiPsiUtil.appendToHeader(manifestFile, "TestHeader", "TestValue");
+  }
+});
 
     myFixture.checkResult(expected);
   }

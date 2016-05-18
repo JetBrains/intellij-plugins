@@ -297,11 +297,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
         }
       }
     }
-    Collections.sort(docElements, new Comparator<DocumentationElement>() {
-      public int compare(@NotNull DocumentationElement e1, @NotNull DocumentationElement e2) {
-        return Comparing.compare(e1.header, e2.header);
-      }
-    });
+    Collections.sort(docElements, (e1, e2) -> Comparing.compare(e1.header, e2.header));
     StringBuilder builder = new StringBuilder();
     for (int i = 0, n = docElements.size(); i < n; i++) {
       DocumentationElement docElement = docElements.get(i);

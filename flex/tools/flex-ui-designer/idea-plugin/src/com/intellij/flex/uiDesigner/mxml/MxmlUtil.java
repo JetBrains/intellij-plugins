@@ -42,12 +42,7 @@ public final class MxmlUtil {
     if (!psiDocumentManager.isCommitted(document)) {
       final Semaphore semaphore = new Semaphore();
       semaphore.down();
-      psiDocumentManager.performForCommittedDocument(document, new Runnable() {
-        @Override
-        public void run() {
-          semaphore.up();
-        }
-      });
+      psiDocumentManager.performForCommittedDocument(document, () -> semaphore.up());
       semaphore.waitFor();
     }
 

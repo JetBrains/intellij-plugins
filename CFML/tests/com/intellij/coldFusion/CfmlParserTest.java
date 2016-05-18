@@ -41,12 +41,9 @@ public class CfmlParserTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testRailoCfadminTag() throws Throwable {
-    Util.runTestWithLanguageLevel(new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        doTest();
-        return null;
-      }
+    Util.runTestWithLanguageLevel(() -> {
+      doTest();
+      return null;
     }, CfmlLanguage.RAILO, getProject());
   }
 

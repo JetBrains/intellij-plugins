@@ -46,12 +46,7 @@ public class JspActionAnnotatorTest extends BasicLightHighlightingTestCase {
                                                      @NonNls final String... expectedActionNames) {
     final GutterMark gutterIconRenderer = myFixture.findGutter(jspFile);
     assertNotNull(gutterIconRenderer);
-    AnnotatorTestUtils.checkGutterTargets(gutterIconRenderer, new Function<PsiElement, String>() {
-      @Override
-      public String fun(final PsiElement psiElement) {
-        return ((PsiMethod)psiElement).getName();
-      }
-    }, expectedActionNames);
+    AnnotatorTestUtils.checkGutterTargets(gutterIconRenderer, psiElement -> ((PsiMethod)psiElement).getName(), expectedActionNames);
   }
 
   public void testGutterActionAttribute() throws Throwable {

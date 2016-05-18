@@ -59,13 +59,10 @@ public class DartVmServiceListener implements VmServiceListener {
       case PauseInterrupted:
         myDebugProcess.isolateSuspended(event.getIsolate());
 
-        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-          @Override
-          public void run() {
-            final ElementList<Breakpoint> breakpoints = event.getKind() == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
-            final InstanceRef exception = event.getKind() == EventKind.PauseException ? event.getException() : null;
-            onIsolatePaused(event.getIsolate(), breakpoints, exception, event.getTopFrame());
-          }
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          final ElementList<Breakpoint> breakpoints = event.getKind() == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
+          final InstanceRef exception = event.getKind() == EventKind.PauseException ? event.getException() : null;
+          onIsolatePaused(event.getIsolate(), breakpoints, exception, event.getTopFrame());
         });
         break;
       case PauseExit:

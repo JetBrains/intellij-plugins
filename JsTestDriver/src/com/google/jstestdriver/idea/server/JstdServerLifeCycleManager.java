@@ -68,22 +68,19 @@ public class JstdServerLifeCycleManager implements JstdServerOutputListener {
 
   @Override
   public void onEvent(@NotNull final JsonObject obj) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        String type = JsonUtil.getChildAsString(obj, JstdCommonConstants.EVENT_TYPE);
-        if (JstdCommonConstants.SERVER_STARTED.equals(type)) {
-          onServerStarted();
-        }
-        else if (JstdCommonConstants.SERVER_STOPPED.equals(type)) {
-          onServerStopped();
-        }
-        else if (JstdCommonConstants.BROWSER_CAPTURED.equals(type)) {
-          onBrowserCaptured(obj);
-        }
-        else if (JstdCommonConstants.BROWSER_PANICKED.equals(type)) {
-          onBrowserPanicked(obj);
-        }
+    UIUtil.invokeLaterIfNeeded(() -> {
+      String type = JsonUtil.getChildAsString(obj, JstdCommonConstants.EVENT_TYPE);
+      if (JstdCommonConstants.SERVER_STARTED.equals(type)) {
+        onServerStarted();
+      }
+      else if (JstdCommonConstants.SERVER_STOPPED.equals(type)) {
+        onServerStopped();
+      }
+      else if (JstdCommonConstants.BROWSER_CAPTURED.equals(type)) {
+        onBrowserCaptured(obj);
+      }
+      else if (JstdCommonConstants.BROWSER_PANICKED.equals(type)) {
+        onBrowserPanicked(obj);
       }
     });
   }
@@ -154,17 +151,14 @@ public class JstdServerLifeCycleManager implements JstdServerOutputListener {
   }
 
   public void onTerminated(final int exitCode) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        if (!myServerStopped) {
-          onServerStopped();
-        }
-        for (JstdServerLifeCycleListener listener : myListeners) {
-          listener.onServerTerminated(exitCode);
-        }
-        dispose();
+    UIUtil.invokeLaterIfNeeded(() -> {
+      if (!myServerStopped) {
+        onServerStopped();
       }
+      for (JstdServerLifeCycleListener listener : myListeners) {
+        listener.onServerTerminated(exitCode);
+      }
+      dispose();
     });
   }
 

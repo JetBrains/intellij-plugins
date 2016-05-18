@@ -112,11 +112,9 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       @NotNull
       public String[] getUrls(@NotNull final OrderRootType rootType) {
         final Collection<String> result = new HashSet<String>();
-        forAllSdks(new Processor<Sdk>() {
-          public boolean process(final Sdk sdk) {
-            result.addAll(Arrays.asList(sdk.getRootProvider().getUrls(rootType)));
-            return true;
-          }
+        forAllSdks(sdk -> {
+          result.addAll(Arrays.asList(sdk.getRootProvider().getUrls(rootType)));
+          return true;
         });
         return ArrayUtil.toStringArray(result);
       }
@@ -124,41 +122,33 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       @NotNull
       public VirtualFile[] getFiles(@NotNull final OrderRootType rootType) {
         final Collection<VirtualFile> result = new HashSet<VirtualFile>();
-        forAllSdks(new Processor<Sdk>() {
-          public boolean process(final Sdk sdk) {
-            result.addAll(Arrays.asList(sdk.getRootProvider().getFiles(rootType)));
-            return true;
-          }
+        forAllSdks(sdk -> {
+          result.addAll(Arrays.asList(sdk.getRootProvider().getFiles(rootType)));
+          return true;
         });
         return result.toArray(new VirtualFile[result.size()]);
       }
 
       public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
-        forAllSdks(new Processor<Sdk>() {
-          public boolean process(final Sdk sdk) {
-            final RootProvider rootProvider = sdk.getRootProvider();
-            rootProvider.removeRootSetChangedListener(listener);
-            rootProvider.addRootSetChangedListener(listener);
-            return true;
-          }
+        forAllSdks(sdk -> {
+          final RootProvider rootProvider = sdk.getRootProvider();
+          rootProvider.removeRootSetChangedListener(listener);
+          rootProvider.addRootSetChangedListener(listener);
+          return true;
         });
       }
 
       public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener, @NotNull final Disposable parentDisposable) {
-        forAllSdks(new Processor<Sdk>() {
-          public boolean process(final Sdk sdk) {
-            sdk.getRootProvider().addRootSetChangedListener(listener, parentDisposable);
-            return true;
-          }
+        forAllSdks(sdk -> {
+          sdk.getRootProvider().addRootSetChangedListener(listener, parentDisposable);
+          return true;
         });
       }
 
       public void removeRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
-        forAllSdks(new Processor<Sdk>() {
-          public boolean process(final Sdk sdk) {
-            sdk.getRootProvider().removeRootSetChangedListener(listener);
-            return true;
-          }
+        forAllSdks(sdk -> {
+          sdk.getRootProvider().removeRootSetChangedListener(listener);
+          return true;
         });
       }
     };

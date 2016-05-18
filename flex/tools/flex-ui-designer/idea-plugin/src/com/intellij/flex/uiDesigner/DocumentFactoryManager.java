@@ -35,12 +35,7 @@ public class DocumentFactoryManager {
   }
 
   public void unregister(final int[] ids) {
-    files.remove(ids, new Consumer<DocumentInfo>() {
-      @Override
-      public void consume(DocumentInfo info) {
-        info.disposeRangeMarkers();
-      }
-    });
+    files.remove(ids, info -> info.disposeRangeMarkers());
   }
 
   public void unregister(final Project project) {
@@ -60,17 +55,8 @@ public class DocumentFactoryManager {
         return;
       }
 
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-            @Override
-            public void run() {
-              DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
-            }
-          });
-        }
-      });
+      ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().executeOnPooledThread(
+        () -> DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments)));
     }
   }
 

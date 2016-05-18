@@ -177,21 +177,18 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
 
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        {
-          final ModifiableFlexBuildConfiguration bc = e.getConfigurations(myModule)[0];
-          bc.setName("Flex");
-          bc.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
-          FlexTestUtils.setSdk(bc, sdk);
-        }
-        {
-          final ModifiableFlexBuildConfiguration bc = e.createConfiguration(myModule);
-          bc.setName("AIR");
-          bc.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
-          FlexTestUtils.setSdk(bc, sdk);
-        }
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      {
+        final ModifiableFlexBuildConfiguration bc = e.getConfigurations(myModule)[0];
+        bc.setName("Flex");
+        bc.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
+        FlexTestUtils.setSdk(bc, sdk);
+      }
+      {
+        final ModifiableFlexBuildConfiguration bc = e.createConfiguration(myModule);
+        bc.setName("AIR");
+        bc.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
+        FlexTestUtils.setSdk(bc, sdk);
       }
     });
 

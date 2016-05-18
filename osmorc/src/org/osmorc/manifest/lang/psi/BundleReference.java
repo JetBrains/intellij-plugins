@@ -90,31 +90,25 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
             final BundleManifestCache cache = BundleManifestCache.getInstance(module.getProject());
             ModuleRootManager manager = ModuleRootManager.getInstance(module);
 
-            manager.orderEntries().forEachModule(new Processor<Module>() {
-              @Override
-              public boolean process(Module module) {
-                BundleManifest manifest = cache.getManifest(module);
+            manager.orderEntries().forEachModule(module1 -> {
+              BundleManifest manifest = cache.getManifest(module1);
+              if (manifest != null && refText.equals(manifest.getBundleSymbolicName())) {
+                result.set(getTarget(manifest));
+                return false;
+              }
+              return true;
+            });
+            if (!result.isNull()) return result.get();
+
+            manager.orderEntries().forEachLibrary(library -> {
+              for (VirtualFile libRoot : library.getFiles(OrderRootType.CLASSES)) {
+                BundleManifest manifest = cache.getManifest(libRoot);
                 if (manifest != null && refText.equals(manifest.getBundleSymbolicName())) {
                   result.set(getTarget(manifest));
                   return false;
                 }
-                return true;
               }
-            });
-            if (!result.isNull()) return result.get();
-
-            manager.orderEntries().forEachLibrary(new Processor<Library>() {
-              @Override
-              public boolean process(Library library) {
-                for (VirtualFile libRoot : library.getFiles(OrderRootType.CLASSES)) {
-                  BundleManifest manifest = cache.getManifest(libRoot);
-                  if (manifest != null && refText.equals(manifest.getBundleSymbolicName())) {
-                    result.set(getTarget(manifest));
-                    return false;
-                  }
-                }
-                return true;
-              }
+              return true;
             });
             if (!result.isNull()) return result.get();
           }

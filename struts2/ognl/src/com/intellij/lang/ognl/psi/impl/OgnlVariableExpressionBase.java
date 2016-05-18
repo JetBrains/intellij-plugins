@@ -45,21 +45,12 @@ abstract class OgnlVariableExpressionBase extends OgnlExpressionImpl {
   private static class OgnlVariableReferencePsiReference extends PsiReferenceBase.Poly<PsiElement> {
 
     private static final Function<OgnlVariableReference, PsiElementResolveResult> RESOLVE_FUNCTION =
-      new Function<OgnlVariableReference, PsiElementResolveResult>() {
-        @Override
-        public PsiElementResolveResult fun(OgnlVariableReference reference) {
-          return new PsiElementResolveResult(reference.getNavigationElement());
-        }
-      };
-    private static final Function<OgnlVariableReference, Object> VARIANT_FUNCTION = new Function<OgnlVariableReference, Object>() {
-      @Override
-      public Object fun(OgnlVariableReference element) {
-        return LookupElementBuilder.create(element.getNavigationElement(), element.getName())
-          .withIcon(element.getIcon(0))
-          .withTailText(" (" + element.getOriginInfo() + ")", true)
-          .withTypeText(element.getType().getPresentableText());
-      }
-    };
+      reference -> new PsiElementResolveResult(reference.getNavigationElement());
+    private static final Function<OgnlVariableReference, Object> VARIANT_FUNCTION =
+      element -> LookupElementBuilder.create(element.getNavigationElement(), element.getName())
+        .withIcon(element.getIcon(0))
+        .withTailText(" (" + element.getOriginInfo() + ")", true)
+        .withTypeText(element.getType().getPresentableText());
 
     private OgnlVariableReferencePsiReference(OgnlVariableExpressionBase element) {
       super(element, TextRange.from(1, element.getTextLength() - 1), true);

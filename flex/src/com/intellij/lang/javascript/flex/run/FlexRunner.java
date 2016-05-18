@@ -244,11 +244,7 @@ public class FlexRunner extends FlexBaseRunner {
     }
 
     public void onData(final String line) {
-      Runnable runnable = new Runnable() {
-        public void run() {
-          myProcessHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
-        }
-      };
+      Runnable runnable = () -> myProcessHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
       if (ApplicationManager.getApplication().isUnitTestMode()) {
         try {
           SwingUtilities.invokeAndWait(runnable);

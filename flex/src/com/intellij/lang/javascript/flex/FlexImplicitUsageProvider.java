@@ -81,12 +81,9 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
               return true;
             }
 
-            boolean b = JSResolveUtil.processHierarchy(type, element.getContainingFile(), new Processor<JSClass>() {
-              public boolean process(JSClass jsClass) {
-                return !FlexCommonTypeNames.FLASH_EVENT_FQN.equals(jsClass.getQualifiedName()) &&
-                       !FlexCommonTypeNames.STARLING_EVENT_FQN.equals(jsClass.getQualifiedName());
-              }
-            }, false);
+            boolean b = JSResolveUtil.processHierarchy(type, element.getContainingFile(),
+                                                       jsClass -> !FlexCommonTypeNames.FLASH_EVENT_FQN.equals(jsClass.getQualifiedName()) &&
+                                                                                                         !FlexCommonTypeNames.STARLING_EVENT_FQN.equals(jsClass.getQualifiedName()), false);
             if (!b) return true;
           }
         }

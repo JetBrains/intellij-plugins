@@ -71,22 +71,19 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
 
   public void testSelectEntireLine() throws Exception {
     doTest(
-      new Function<PsiElement, JSExtractFunctionSettings>() {
-        @Override
-        public JSExtractFunctionSettings fun(PsiElement at) {
-          JSExtractFunctionSettings.ParametersInfo parametersInfo = new JSExtractFunctionSettings.ParametersInfo();
-          JSVariable var = PsiTreeUtil.getParentOfType(myFile.findElementAt(myEditor.getCaretModel().getOffset()), JSVariable.class);
-          assertNotNull(var);
-          parametersInfo.variables.add(var);
-          parametersInfo.variableOptions.put(var, new JSExtractFunctionSettings.ParameterInfo(var.getName() + "2", true, null, 0));
+      at -> {
+        JSExtractFunctionSettings.ParametersInfo parametersInfo = new JSExtractFunctionSettings.ParametersInfo();
+        JSVariable var = PsiTreeUtil.getParentOfType(myFile.findElementAt(myEditor.getCaretModel().getOffset()), JSVariable.class);
+        assertNotNull(var);
+        parametersInfo.variables.add(var);
+        parametersInfo.variableOptions.put(var, new JSExtractFunctionSettings.ParameterInfo(var.getName() + "2", true, null, 0));
 
-          return new MockJSExtractFunctionHandler.MyJSExtractFunctionSettings(
-            "created",
-            true,
-            false,
-            JSAttributeList.AccessType.PUBLIC, parametersInfo, at
-          );
-        }
+        return new MockJSExtractFunctionHandler.MyJSExtractFunctionSettings(
+          "created",
+          true,
+          false,
+          JSAttributeList.AccessType.PUBLIC, parametersInfo, at
+        );
       },
       getTestName(false),
       "js2"

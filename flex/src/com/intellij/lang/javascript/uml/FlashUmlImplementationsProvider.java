@@ -19,12 +19,10 @@ public class FlashUmlImplementationsProvider extends ImplementationsProvider<Obj
     JSClass clazz = (JSClass)element;
     final Collection<PsiElement> inheritors = Collections.synchronizedSet(new THashSet<PsiElement>());
 
-    final Processor<JSClass> p = new Processor<JSClass>() {
-      public boolean process(final JSClass aClass) {
-        final PsiElement navigationElement = aClass.getNavigationElement();
-        inheritors.add(navigationElement instanceof JSClass ? navigationElement : aClass);
-        return true;
-      }
+    final Processor<JSClass> p = aClass -> {
+      final PsiElement navigationElement = aClass.getNavigationElement();
+      inheritors.add(navigationElement instanceof JSClass ? navigationElement : aClass);
+      return true;
     };
     JSClassSearch.searchClassInheritors(clazz, true).forEach(p);
     if (clazz.isInterface()) {
@@ -42,10 +40,6 @@ public class FlashUmlImplementationsProvider extends ImplementationsProvider<Obj
   }
 
   public Comparator<Object> getComparator() {
-    return new Comparator<Object>() {
-      public int compare(Object o1, Object o2) {
-        return PSI_COMPARATOR.compare((PsiElement)o1, (PsiElement)o2);
-      }
-    };
+    return (o1, o2) -> PSI_COMPARATOR.compare((PsiElement)o1, (PsiElement)o2);
   }
 }

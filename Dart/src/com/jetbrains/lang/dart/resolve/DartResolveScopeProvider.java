@@ -161,12 +161,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
   private static Collection<VirtualFile> getPathPackageRoots(@NotNull final Project project, @NotNull final VirtualFile pubspecFile) {
     final Collection<VirtualFile> result = new SmartList<VirtualFile>();
 
-    PubspecYamlUtil.processInProjectPathPackagesRecursively(project, pubspecFile, new PairConsumer<String, VirtualFile>() {
-      @Override
-      public void consume(final String packageName, final VirtualFile packageDir) {
-        result.add(packageDir);
-      }
-    });
+    PubspecYamlUtil.processInProjectPathPackagesRecursively(project, pubspecFile, (packageName, packageDir) -> result.add(packageDir));
 
     return result;
   }

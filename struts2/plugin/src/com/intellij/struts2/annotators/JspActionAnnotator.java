@@ -58,11 +58,7 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
   @NonNls
   private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "reset", "submit", "url"};
 
-  private static final NullableFunction<Action, PsiMethod> ACTION_METHOD_FUNCTION = new NullableFunction<Action, PsiMethod>() {
-    public PsiMethod fun(final Action action) {
-      return action.searchActionMethod();
-    }
-  };
+  private static final NullableFunction<Action, PsiMethod> ACTION_METHOD_FUNCTION = action -> action.searchActionMethod();
 
   @Override
   public String getId() {

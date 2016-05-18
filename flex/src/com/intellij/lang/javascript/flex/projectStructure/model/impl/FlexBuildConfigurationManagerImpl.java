@@ -101,12 +101,9 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     }
 
     if (myModule != null) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          myActiveConfiguration = (FlexBuildConfigurationImpl)buildConfiguration;
-          resetHighlighting(myModule.getProject());
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        myActiveConfiguration = (FlexBuildConfigurationImpl)buildConfiguration;
+        resetHighlighting(myModule.getProject());
       });
     }
     else {
@@ -219,11 +216,8 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     if (duplicateName != null) {
       LOG.warn("Duplicate build configuration name: " + duplicateName);
       List<String> uniqueNames =
-        generateUniqueNames(ContainerUtil.map2List(configList, new Function<FlexBuildConfigurationImpl, String>() {
-          @Override
-          public String fun(FlexBuildConfigurationImpl bc) {
-            return bc.getName();
-          }
+        generateUniqueNames(ContainerUtil.map2List(configList, bc -> {
+          return bc.getName();
         }));
       for (int i = 0; i < configList.size(); i++) {
         configList.get(i).setName(uniqueNames.get(i));

@@ -88,11 +88,8 @@ public class FlashBuilderImportTest extends IdeaTestCase {
       if (myModule != null) {
         final Sdk sdk = FlexUtils.getSdkForActiveBC(myModule);
         if (sdk != null) {
-          ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-              ProjectJdkTable.getInstance().removeJdk(sdk);
-            }
+          ApplicationManager.getApplication().runWriteAction(() -> {
+            ProjectJdkTable.getInstance().removeJdk(sdk);
           });
         }
       }
@@ -169,11 +166,8 @@ public class FlashBuilderImportTest extends IdeaTestCase {
       FlexProjectConfigurationEditor.createEditor(myProject, Collections.singletonMap(myModule, rootModel), null, null);
     new FlashBuilderModuleImporter(myProject, flexEditor, allFBProjects, sdkFinder).setupModule(rootModel, flashBuilderProject);
     flexEditor.commit();
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        ModifiableModelCommitter.multiCommit(new ModifiableRootModel[]{rootModel}, moduleModel);
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      ModifiableModelCommitter.multiCommit(new ModifiableRootModel[]{rootModel}, moduleModel);
     });
   }
 
@@ -415,16 +409,13 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   private void commonASLibTest(final String flexLibPropertiesFileContent,
                                final String actionScriptPropertiesFileContent,
                                final TargetPlatform expectedTargetPlatform) throws IOException, ConfigurationException {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, flexLibPropertiesFileContent, myFlashBuilderProjectDir);
-          importProject(actionScriptPropertiesFileContent);
-        }
-        catch (Exception e) {
-          throw new RuntimeException(e);
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, flexLibPropertiesFileContent, myFlashBuilderProjectDir);
+        importProject(actionScriptPropertiesFileContent);
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
       }
     });
 

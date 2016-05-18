@@ -90,11 +90,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
 
           @Override
           public PopupStep onChosen(final Pair<PsiFile, BDDFrameworkType> selectedValue, boolean finalChoice) {
-            return doFinalStep(new Runnable() {
-              public void run() {
-                createStepOrSteps(step, selectedValue);
-              }
-            });
+            return doFinalStep(() -> createStepOrSteps(step, selectedValue));
           }
         });
 
@@ -143,24 +139,21 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     if (LocalFileSystem.getInstance().findFileByPath(filePath) == null) {
       final String parentDirPath = model.getDirectory().getVirtualFile().getPath();
 
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        public void run() {
-          new WriteCommandAction.Simple(step.getProject(), CucumberBundle.message("cucumber.quick.fix.create.step.command.name.create")) {
-            @Override
-            protected void run() throws Throwable {
-              final VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
-              final Project project = getProject();
-              assert project != null;
-              final PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);
-              assert parentPsiDir != null;
-              PsiFile newFile = CucumberStepsIndex.getInstance(step.getProject())
-                .createStepDefinitionFile(model.getDirectory(), model.getFileName(), frameworkType);
-              Pair<PsiFile, BDDFrameworkType> pair = Pair.create(newFile, frameworkType);
-              createStepDefinition(step, pair);
-            }
-          }.execute();
-        }
-      });
+      ApplicationManager.getApplication().invokeLater(
+        () -> new WriteCommandAction.Simple(step.getProject(), CucumberBundle.message("cucumber.quick.fix.create.step.command.name.create")) {
+          @Override
+          protected void run() throws Throwable {
+            final VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
+            final Project project = getProject();
+            assert project != null;
+            final PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);
+            assert parentPsiDir != null;
+            PsiFile newFile = CucumberStepsIndex.getInstance(step.getProject())
+              .createStepDefinitionFile(model.getDirectory(), model.getFileName(), frameworkType);
+            Pair<PsiFile, BDDFrameworkType> pair = Pair.create(newFile, frameworkType);
+            createStepDefinition(step, pair);
+          }
+        }.execute());
     }
     else {
       Messages.showErrorDialog(step.getProject(),

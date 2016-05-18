@@ -113,23 +113,13 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
   protected JComponent createCenterPanel() {
     DefaultMutableTreeNode root = new DefaultMutableTreeNode();
     List<Module> modules = new ArrayList<Module>(myTreeItems.keySet());
-    Collections.sort(modules, new Comparator<Module>() {
-      @Override
-      public int compare(final Module o1, final Module o2) {
-        return o1.getName().compareToIgnoreCase(o2.getName());
-      }
-    });
+    Collections.sort(modules, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
     for (Module module : modules) {
       DefaultMutableTreeNode moduleNode = new DefaultMutableTreeNode(module, true);
       root.add(moduleNode);
       List<FlexBCConfigurable> bcs = myTreeItems.get(module);
-      Collections.sort(bcs, new Comparator<FlexBCConfigurable>() {
-        @Override
-        public int compare(final FlexBCConfigurable o1, final FlexBCConfigurable o2) {
-          return o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName());
-        }
-      });
+      Collections.sort(bcs, (o1, o2) -> o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName()));
       for (FlexBCConfigurable bc : bcs) {
         DefaultMutableTreeNode bcNode = new DefaultMutableTreeNode(bc, false);
         moduleNode.add(bcNode);
@@ -228,11 +218,6 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
       return new FlexBCConfigurable[0];
     }
 
-    return ContainerUtil.map2Array(mySelection, FlexBCConfigurable.class, new Function<DefaultMutableTreeNode, FlexBCConfigurable>() {
-      @Override
-      public FlexBCConfigurable fun(DefaultMutableTreeNode node) {
-        return (FlexBCConfigurable)node.getUserObject();
-      }
-    });
+    return ContainerUtil.map2Array(mySelection, FlexBCConfigurable.class, node -> (FlexBCConfigurable)node.getUserObject());
   }
 }

@@ -199,11 +199,9 @@ public class AirPackageDialog extends DialogWrapper {
       }
 
       final Ref<String> firstErrorRef = new Ref<String>();
-      ValidateFlashConfigurationsPrecompileTask.checkPackagingOptions(moduleAndBC.first, bc, new Consumer<FlashProjectStructureProblem>() {
-        public void consume(final FlashProjectStructureProblem problem) {
-          if (problem.severity == ProjectStructureProblemType.Severity.ERROR && firstErrorRef.isNull()) {
-            firstErrorRef.set(problem.errorMessage);
-          }
+      ValidateFlashConfigurationsPrecompileTask.checkPackagingOptions(moduleAndBC.first, bc, problem -> {
+        if (problem.severity == ProjectStructureProblemType.Severity.ERROR && firstErrorRef.isNull()) {
+          firstErrorRef.set(problem.errorMessage);
         }
       });
 

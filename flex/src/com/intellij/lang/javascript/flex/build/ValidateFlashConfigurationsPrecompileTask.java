@@ -71,11 +71,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
       final Module module = moduleAndBC.first;
       final FlexBuildConfiguration bc = moduleAndBC.second;
 
-      final Consumer<FlashProjectStructureProblem> errorConsumer = new Consumer<FlashProjectStructureProblem>() {
-        public void consume(final FlashProjectStructureProblem problem) {
-          problems.add(Trinity.create(module, bc, problem));
-        }
-      };
+      final Consumer<FlashProjectStructureProblem> errorConsumer = problem -> problems.add(Trinity.create(module, bc, problem));
 
       checkConfiguration(module, bc, false, errorConsumer);
 
@@ -119,11 +115,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     }
 
     checkSimilarOutputFiles(modulesAndBCsToCompile,
-                            new Consumer<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>>() {
-                              public void consume(final Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem> trinity) {
-                                problems.add(trinity);
-                              }
-                            });
+                            trinity -> problems.add(trinity));
     return problems;
   }
 
@@ -713,22 +705,20 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     public void navigate(final boolean requestFocus) {
       final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(myModule.getProject());
 
-      ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), configurable, new Runnable() {
-        public void run() {
-          final Place place;
+      ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), configurable, () -> {
+        final Place place;
 
-          if (myProblem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem) {
-            place = new Place()
-              .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getProjectConfig());
-          }
-          else {
-            place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, myBCNme)
-              .putPath(CompositeConfigurable.TAB_NAME, myProblem.tabName)
-              .putPath(FlexBCConfigurable.LOCATION_ON_TAB, myProblem.locationOnTab);
-          }
-
-          configurable.navigateTo(place, true);
+        if (myProblem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem) {
+          place = new Place()
+            .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getProjectConfig());
         }
+        else {
+          place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, myBCNme)
+            .putPath(CompositeConfigurable.TAB_NAME, myProblem.tabName)
+            .putPath(FlexBCConfigurable.LOCATION_ON_TAB, myProblem.locationOnTab);
+        }
+
+        configurable.navigateTo(place, true);
       });
     }
   }

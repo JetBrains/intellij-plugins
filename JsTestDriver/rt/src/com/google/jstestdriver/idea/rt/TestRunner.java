@@ -199,11 +199,8 @@ public class TestRunner {
     JsTestDriver jstd = builder.build();
     jstd.runConfiguration();
     if (runCoverage) {
-      File[] coverageReportFiles = emptyOutputDir.listFiles(new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          return name.endsWith("-coverage.dat");
-        }
+      File[] coverageReportFiles = emptyOutputDir.listFiles((dir, name) -> {
+        return name.endsWith("-coverage.dat");
       });
       if (coverageReportFiles != null && coverageReportFiles.length == 1) {
         try {
@@ -232,12 +229,7 @@ public class TestRunner {
 
   @Nullable
   private static PluginInitializer getCoverageInitializer(List<String> filesExcludedFromCoverage) {
-    File[] coverageJarFiles = new File(".").listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return name.startsWith("coverage") && name.endsWith(".jar");
-      }
-    });
+    File[] coverageJarFiles = new File(".").listFiles((dir, name) -> name.startsWith("coverage") && name.endsWith(".jar"));
     if (coverageJarFiles != null && coverageJarFiles.length == 1) {
       Plugin plugin = new Plugin(
         "coverage",

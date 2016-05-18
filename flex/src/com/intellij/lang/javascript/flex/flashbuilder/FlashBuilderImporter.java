@@ -178,10 +178,8 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       final String moduleFilePath = flashBuilderProject.getProjectRootPath() + "/" + moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION;
 
       if (LocalFileSystem.getInstance().findFileByPath(moduleFilePath) != null) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          public void run() {
-            ModuleBuilder.deleteModuleFile(moduleFilePath);
-          }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          ModuleBuilder.deleteModuleFile(moduleFilePath);
         });
       }
 
@@ -217,12 +215,10 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
         Logger.getInstance(FlashBuilderImporter.class).error(e);
       }
 
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          final ModifiableRootModel[] rootModels =
-            moduleToModifiableModelMap.values().toArray(new ModifiableRootModel[moduleToModifiableModelMap.size()]);
-          ModifiableModelCommitter.multiCommit(rootModels, moduleModel);
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        final ModifiableRootModel[] rootModels =
+          moduleToModifiableModelMap.values().toArray(new ModifiableRootModel[moduleToModifiableModelMap.size()]);
+        ModifiableModelCommitter.multiCommit(rootModels, moduleModel);
       });
     }
 
@@ -250,13 +246,11 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
         extractNestedFxpAndAppendProjects(outputDir, dotProjectFiles);
 
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          public void run() {
-            for (String dotProjectFile : dotProjectFiles) {
-              final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(PathUtil.getParentPath(dotProjectFile));
-              if (file != null) {
-                file.refresh(false, true);
-              }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          for (String dotProjectFile : dotProjectFiles) {
+            final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(PathUtil.getParentPath(dotProjectFile));
+            if (file != null) {
+              file.refresh(false, true);
             }
           }
         });
@@ -274,11 +268,9 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
   }
 
   private static void extractNestedFxpAndAppendProjects(final File dir, final List<String> dotProjectFiles) throws IOException {
-    final FilenameFilter filter = new FilenameFilter() {
-      public boolean accept(final File dir, final String name) {
-        final String lowercased = name.toLowerCase();
-        return lowercased.endsWith(DOT_FXP) || lowercased.endsWith(DOT_FXPL);
-      }
+    final FilenameFilter filter = (dir1, name) -> {
+      final String lowercased = name.toLowerCase();
+      return lowercased.endsWith(DOT_FXP) || lowercased.endsWith(DOT_FXPL);
     };
 
     for (File file : dir.listFiles(filter)) {

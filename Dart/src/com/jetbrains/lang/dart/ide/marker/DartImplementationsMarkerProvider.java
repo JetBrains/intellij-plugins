@@ -73,12 +73,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
       componentName.getTextRange(),
       AllIcons.Gutter.OverridenMethod,
       Pass.UPDATE_OVERRIDDEN_MARKERS,
-      new Function<PsiElement, String>() {
-        @Override
-        public String fun(PsiElement element) {
-          return DaemonBundle.message("method.is.implemented.too.many");
-        }
-      },
+      element -> DaemonBundle.message("method.is.implemented.too.many"),
       new GutterIconNavigationHandler<PsiElement>() {
         @Override
         public void navigate(MouseEvent e, PsiElement elt) {
@@ -117,14 +112,9 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
       componentName.getTextRange(),
       isInterface ? AllIcons.Gutter.ImplementedMethod : AllIcons.Gutter.OverridenMethod,
       Pass.UPDATE_OVERRIDDEN_MARKERS,
-      new Function<PsiElement, String>() {
-        @Override
-        public String fun(PsiElement element) {
-          return isInterface
-                 ? DaemonBundle.message("method.is.implemented.too.many")
-                 : DaemonBundle.message("method.is.overridden.too.many");
-        }
-      },
+      element -> isInterface
+             ? DaemonBundle.message("method.is.implemented.too.many")
+             : DaemonBundle.message("method.is.overridden.too.many"),
       new GutterIconNavigationHandler<PsiElement>() {
         @Override
         public void navigate(MouseEvent e, PsiElement elt) {

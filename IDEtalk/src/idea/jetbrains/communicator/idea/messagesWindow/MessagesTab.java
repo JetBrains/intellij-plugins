@@ -135,12 +135,7 @@ public class MessagesTab implements Disposable {
   }
 
   private void setupDivider() {
-    UIUtil.runWhenShown(mySplitPane, new Runnable() {
-      @Override
-      public void run() {
-        mySplitPane.setDividerLocation(mySplitPane.getHeight() >> 1);
-      }
-    });
+    UIUtil.runWhenShown(mySplitPane, () -> mySplitPane.setDividerLocation(mySplitPane.getHeight() >> 1));
   }
 
 

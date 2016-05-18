@@ -53,24 +53,16 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
                               final CreateClassParameters params,
                               final AnActionEvent event) {
     final Ref<JSClass> clazz = new Ref<JSClass>();
-    CommandProcessor.getInstance().executeCommand(params.getTargetDirectory().getProject(), new Runnable() {
-      @Override
-      public void run() {
-        try {
-          CreateClassOrInterfaceFix
-            .createClass(params.getTemplateName(), params.getClassName(), params.getPackageName(), getSuperClass(params),
-                         params.getInterfacesFqns(), params.getTargetDirectory(), getActionName(), true,
-                         new HashMap<String, Object>(params.getTemplateAttributes()),
-                         new Consumer<JSClass>() {
-                           @Override
-                           public void consume(final JSClass jsClass) {
-                             clazz.set(jsClass);
-                           }
-                         });
-        }
-        catch (Exception e) {
-          throw new IncorrectOperationException(e);
-        }
+    CommandProcessor.getInstance().executeCommand(params.getTargetDirectory().getProject(), () -> {
+      try {
+        CreateClassOrInterfaceFix
+          .createClass(params.getTemplateName(), params.getClassName(), params.getPackageName(), getSuperClass(params),
+                       params.getInterfacesFqns(), params.getTargetDirectory(), getActionName(), true,
+                       new HashMap<String, Object>(params.getTemplateAttributes()),
+                       jsClass -> clazz.set(jsClass));
+      }
+      catch (Exception e) {
+        throw new IncorrectOperationException(e);
       }
     }, JSBundle.message(JSBundle.message("new.actionscript.class.command.name")), null);
     return clazz.get();

@@ -65,10 +65,8 @@ public class WebXmlStrutsConstantNameReferenceProvider extends PsiReferenceProvi
       final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(myElement.getProject());
       final List<StrutsConstant> constants = constantManager.getConstants(module);
 
-      return ContainerUtil.map2Array(constants, new Function<StrutsConstant, Object>() {
-        public Object fun(final StrutsConstant strutsConstant) {
-          return strutsConstant.getName();
-        }
+      return ContainerUtil.map2Array(constants, strutsConstant -> {
+        return strutsConstant.getName();
       });
     }
 

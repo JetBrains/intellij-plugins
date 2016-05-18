@@ -218,27 +218,25 @@ public class DartAnalysisServerService {
       if (analysisStatus != null && analysisStatus.isAnalyzing() || pubStatus != null && pubStatus.isListingPackageDirs()) {
         if (myServerBusy.compareAndSet(false, true)) {
           for (final Project project : myRootsHandler.getTrackedProjects()) {
-            final Runnable delayedRunnable = new Runnable() {
-              public void run() {
-                if (project.isDisposed() || !myServerBusy.get()) return;
+            final Runnable delayedRunnable = () -> {
+              if (project.isDisposed() || !myServerBusy.get()) return;
 
-                final Task.Backgroundable task =
-                  new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
-                    @Override
-                    public void run(@NotNull ProgressIndicator indicator) {
-                      if (ApplicationManager.getApplication().isDispatchThread()) {
-                        if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                          LOG.error("wait() in EDT");
-                        }
-                      }
-                      else {
-                        waitWhileServerBusy();
+              final Task.Backgroundable task =
+                new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
+                  @Override
+                  public void run(@NotNull ProgressIndicator indicator) {
+                    if (ApplicationManager.getApplication().isDispatchThread()) {
+                      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                        LOG.error("wait() in EDT");
                       }
                     }
-                  };
+                    else {
+                      waitWhileServerBusy();
+                    }
+                  }
+                };
 
-                ProgressManager.getInstance().run(task);
-              }
+              ProgressManager.getInstance().run(task);
             };
 
             // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events
@@ -345,12 +343,7 @@ public class DartAnalysisServerService {
     if (projects.size() != 1) return; // no idea how to map files from filePaths to several open projects
 
     final Project project = projects.iterator().next();
-    DumbService.getInstance(project).smartInvokeLater(new Runnable() {
-      @Override
-      public void run() {
-        doConfigureImportedLibraries(project, filePaths);
-      }
-    });
+    DumbService.getInstance(project).smartInvokeLater(() -> doConfigureImportedLibraries(project, filePaths));
   }
 
   private static void doConfigureImportedLibraries(@NotNull final Project project, @NotNull final Collection<String> filePaths) {
@@ -380,12 +373,7 @@ public class DartAnalysisServerService {
       }
     }
 
-    final Processor<? super PsiFileSystemItem> falseProcessor = new Processor<PsiFileSystemItem>() {
-      @Override
-      public boolean process(final PsiFileSystemItem item) {
-        return false;
-      }
-    };
+    final Processor<? super PsiFileSystemItem> falseProcessor = (Processor<PsiFileSystemItem>)item -> false;
 
     final Condition<Module> moduleFilter = new Condition<Module>() {
       @Override
@@ -507,15 +495,12 @@ public class DartAnalysisServerService {
   }
 
   void updateVisibleFiles() {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        for (Project project : myRootsHandler.getTrackedProjects()) {
-          // workaround for IDEA-148691
-          final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-          final VirtualFile currentFile = editor instanceof EditorEx ? ((EditorEx)editor).getVirtualFile() : null;
-          DartProblemsView.getInstance(project).setCurrentFile(currentFile);
-        }
+    UIUtil.invokeLaterIfNeeded(() -> {
+      for (Project project : myRootsHandler.getTrackedProjects()) {
+        // workaround for IDEA-148691
+        final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        final VirtualFile currentFile = editor instanceof EditorEx ? ((EditorEx)editor).getVirtualFile() : null;
+        DartProblemsView.getInstance(project).setCurrentFile(currentFile);
       }
     });
 
@@ -556,11 +541,8 @@ public class DartAnalysisServerService {
 
   public void updateFilesContent() {
     if (myServer != null) {
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        @Override
-        public void run() {
-          doUpdateFilesContent();
-        }
+      ApplicationManager.getApplication().runReadAction(() -> {
+        doUpdateFilesContent();
       });
     }
   }
@@ -653,22 +635,19 @@ public class DartAnalysisServerService {
   }
 
   private void onErrorsUpdated(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    ApplicationManager.getApplication().runReadAction(() -> {
+      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
 
-        for (final Project project : myRootsHandler.getTrackedProjects()) {
-          if (project.isDisposed()) continue;
+      for (final Project project : myRootsHandler.getTrackedProjects()) {
+        if (project.isDisposed()) continue;
 
-          if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
-            DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
-            updateFilesWithErrorsSet(filePath, errors);
-          }
-          else {
-            DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
-            updateFilesWithErrorsSet(filePath, AnalysisError.EMPTY_LIST);
-          }
+        if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
+          DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
+          updateFilesWithErrorsSet(filePath, errors);
+        }
+        else {
+          DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
+          updateFilesWithErrorsSet(filePath, AnalysisError.EMPTY_LIST);
         }
       }
     });
@@ -1120,11 +1099,8 @@ public class DartAnalysisServerService {
 
     server.analysis_reanalyze(roots);
 
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        clearAllErrors(myRootsHandler.getTrackedProjects());
-      }
+    ApplicationManager.getApplication().invokeLater(() -> {
+      clearAllErrors(myRootsHandler.getTrackedProjects());
     }, ModalityState.NON_MODAL);
   }
 
@@ -1390,11 +1366,8 @@ public class DartAnalysisServerService {
       final List<Project> projects = new ArrayList<Project>(myRootsHandler.getTrackedProjects());
       myRootsHandler.reset();
 
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          clearAllErrors(projects);
-        }
+      ApplicationManager.getApplication().invokeLater(() -> {
+        clearAllErrors(projects);
       }, ModalityState.NON_MODAL);
     }
   }

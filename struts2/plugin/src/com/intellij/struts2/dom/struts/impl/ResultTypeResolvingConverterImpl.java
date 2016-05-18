@@ -43,12 +43,9 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
   @NotNull
   public Collection<? extends ResultType> getVariants(final ConvertContext context) {
     final List<ResultType> results = new SmartList<ResultType>();
-    final Processor<StrutsPackage> processor = new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        results.addAll(strutsPackage.getResultTypes());
-        return true;
-      }
+    final Processor<StrutsPackage> processor = strutsPackage -> {
+      results.addAll(strutsPackage.getResultTypes());
+      return true;
     };
 
     final StrutsPackageHierarchyWalker walker =
@@ -71,17 +68,14 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
     };
 
     final Ref<ResultType> resolveResult = new Ref<ResultType>();
-    final Processor<StrutsPackage> processor = new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        final ResultType result = ContainerUtil.find(strutsPackage.getResultTypes(), nameCondition);
-        if (result != null) {
-          resolveResult.set(result);
-          return false;
-        }
-
-        return true;
+    final Processor<StrutsPackage> processor = strutsPackage -> {
+      final ResultType result = ContainerUtil.find(strutsPackage.getResultTypes(), nameCondition);
+      if (result != null) {
+        resolveResult.set(result);
+        return false;
       }
+
+      return true;
     };
     final StrutsPackageHierarchyWalker walker =
         new StrutsPackageHierarchyWalker(ConverterUtil.getCurrentStrutsPackage(context), processor);

@@ -92,12 +92,10 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
         StrutsProjectComponent.getInstance(project).getTilesFactory();
 
     final Set<TilesModel> struts2TilesModels = new HashSet<TilesModel>();
-    final Consumer<Set<XmlFile>> consumer = new Consumer<Set<XmlFile>>() {
-      public void consume(final Set<XmlFile> definitions) {
-        final DomFileElement<TilesDefinitions> domFileElement = factory.createMergedModelRoot(definitions);
-        if (domFileElement != null) {
-          struts2TilesModels.add(new TilesModelImpl(definitions, domFileElement, STRUTS2_TILES_MODEL));
-        }
+    final Consumer<Set<XmlFile>> consumer = definitions -> {
+      final DomFileElement<TilesDefinitions> domFileElement = factory.createMergedModelRoot(definitions);
+      if (domFileElement != null) {
+        struts2TilesModels.add(new TilesModelImpl(definitions, domFileElement, STRUTS2_TILES_MODEL));
       }
     };
 

@@ -256,16 +256,14 @@ public class FlashBuilderModuleImporter {
                                                final ModifiableFlexBuildConfiguration bc,
                                                final Collection<String> paths) {
     if (bc.getOutputType() == OutputType.Library) {
-      bc.getCompilerOptions().setFilesToIncludeInSWC(ContainerUtil.mapNotNull(paths, new Function<String, String>() {
-        public String fun(final String path) {
-          for (VirtualFile srcRoot : rootModel.getSourceRoots()) {
-            final VirtualFile assetFile = LocalFileSystem.getInstance().findFileByPath(srcRoot.getPath() + "/" + path);
-            if (assetFile != null) {
-              return assetFile.getPath();
-            }
+      bc.getCompilerOptions().setFilesToIncludeInSWC(ContainerUtil.mapNotNull(paths, path -> {
+        for (VirtualFile srcRoot : rootModel.getSourceRoots()) {
+          final VirtualFile assetFile = LocalFileSystem.getInstance().findFileByPath(srcRoot.getPath() + "/" + path);
+          if (assetFile != null) {
+            return assetFile.getPath();
           }
-          return null;
         }
+        return null;
       }));
     }
   }
@@ -608,10 +606,8 @@ public class FlashBuilderModuleImporter {
                                        OrderRootType.SOURCES);
       }
 
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          libraryModifiableModel.commit();
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        libraryModifiableModel.commit();
       });
 
       final ModifiableModuleLibraryEntry libraryEntry = myFlexConfigEditor.createModuleLibraryEntry(bc.getDependencies(), libraryId);

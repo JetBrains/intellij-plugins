@@ -116,18 +116,10 @@ public class JstdToolWindowSession {
   @NotNull
   public Promise<JstdServer> restart(@NotNull JstdServerSettings settings) {
     return JstdServerRegistry.getInstance().restartServer(settings)
-      .rejected(new Consumer<Throwable>() {
-        @Override
-        public void consume(Throwable error) {
-          showServerStartupError(error);
-        }
-      })
-      .then(new Function<JstdServer, JstdServer>() {
-        @Override
-        public JstdServer fun(JstdServer server) {
-          attachToServer(server);
-          return server;
-        }
+      .rejected(error -> showServerStartupError(error))
+      .then(server -> {
+        attachToServer(server);
+        return server;
       });
   }
 }

@@ -73,27 +73,24 @@ public class JstdDebugBrowserInfo {
     if (!BrowserFamily.CHROME.equals(myWebBrowser.getFamily())) {
       return;
     }
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        HttpClient client = new HttpClient();
-        while (!testRunnerProcessHandler.isProcessTerminated()) {
-          String url = "http://127.0.0.1:" + myServerSettings.getPort() + "/heartbeat";
-          PostMethod method = new PostMethod(url);
-          method.addParameter("id", myBrowserInfo.getId());
-          try {
-            int responseCode = client.executeMethod(method);
-            if (responseCode != 200) {
-              LOG.warn(url + ": response code: " + responseCode);
-            }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      HttpClient client = new HttpClient();
+      while (!testRunnerProcessHandler.isProcessTerminated()) {
+        String url = "http://127.0.0.1:" + myServerSettings.getPort() + "/heartbeat";
+        PostMethod method = new PostMethod(url);
+        method.addParameter("id", myBrowserInfo.getId());
+        try {
+          int responseCode = client.executeMethod(method);
+          if (responseCode != 200) {
+            LOG.warn(url + ": response code: " + responseCode);
           }
-          catch (IOException e) {
-            LOG.warn("Cannot request " + url, e);
-          }
-          TimeoutUtil.sleep(5000);
         }
-        client.getHttpConnectionManager().closeIdleConnections(0);
+        catch (IOException e) {
+          LOG.warn("Cannot request " + url, e);
+        }
+        TimeoutUtil.sleep(5000);
       }
+      client.getHttpConnectionManager().closeIdleConnections(0);
     });
   }
 

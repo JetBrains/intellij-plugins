@@ -19,11 +19,9 @@ import java.util.Comparator;
 
 public class FlexMethodChooserDialog extends DialogWrapper {
 
-  private static final Comparator<JSFunction> METHOD_NAME_COMPARATOR = new Comparator<JSFunction>() {
-    public int compare(final JSFunction method1, final JSFunction method2) {
-      //noinspection ConstantConditions
-      return method1.getName().compareToIgnoreCase(method2.getName());
-    }
+  private static final Comparator<JSFunction> METHOD_NAME_COMPARATOR = (method1, method2) -> {
+    //noinspection ConstantConditions
+    return method1.getName().compareToIgnoreCase(method2.getName());
   };
 
   private final SortedListModel<JSFunction> myListModel = new SortedListModel<JSFunction>(METHOD_NAME_COMPARATOR);

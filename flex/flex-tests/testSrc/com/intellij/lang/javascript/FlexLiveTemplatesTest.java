@@ -100,12 +100,9 @@ public class FlexLiveTemplatesTest extends CodeInsightTestCase {
 
     while (state != null && !state.isFinished()) {
       final int finalSegmentIndex = segmentIndex;
-      WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-        @Override
-        public void run() {
-          segmentHandler.consume(finalSegmentIndex);
-          state.nextTab();
-        }
+      WriteCommandAction.runWriteCommandAction(null, () -> {
+        segmentHandler.consume(finalSegmentIndex);
+        state.nextTab();
       });
       segmentIndex++;
     }
@@ -119,31 +116,28 @@ public class FlexLiveTemplatesTest extends CodeInsightTestCase {
                                                                        final int segmentIndex,
                                                                        final String whatToSelectAtThisSegment,
                                                                        final String... expectedLookupVariants) {
-    return new Consumer<Integer>() {
-      @Override
-      public void consume(final Integer currentSegmentIndex) {
-        if (currentSegmentIndex == segmentIndex) {
-          final LookupEx lookup = LookupManager.getInstance(project).getActiveLookup();
-          if (lookup != null) {
-            LookupElement selected = null;
+    return currentSegmentIndex -> {
+      if (currentSegmentIndex == segmentIndex) {
+        final LookupEx lookup = LookupManager.getInstance(project).getActiveLookup();
+        if (lookup != null) {
+          LookupElement selected = null;
 
-            final List<LookupElement> items = lookup.getItems();
-            final String[] lookupStrings = new String[items.size()];
-            for (int i = 0; i < items.size(); i++) {
-              lookupStrings[i] = items.get(i).getLookupString();
-              if (whatToSelectAtThisSegment.equals(lookupStrings[i])) {
-                selected = items.get(i);
-              }
+          final List<LookupElement> items = lookup.getItems();
+          final String[] lookupStrings = new String[items.size()];
+          for (int i = 0; i < items.size(); i++) {
+            lookupStrings[i] = items.get(i).getLookupString();
+            if (whatToSelectAtThisSegment.equals(lookupStrings[i])) {
+              selected = items.get(i);
             }
+          }
 
-            if (expectedLookupVariants.length > 0) {
-              assertSameElements(lookupStrings, expectedLookupVariants);
-            }
+          if (expectedLookupVariants.length > 0) {
+            assertSameElements(lookupStrings, expectedLookupVariants);
+          }
 
-            if (selected != null) {
-              lookup.setCurrentItem(selected);
-              ((LookupImpl)lookup).finishLookup(Lookup.NORMAL_SELECT_CHAR);
-            }
+          if (selected != null) {
+            lookup.setCurrentItem(selected);
+            ((LookupImpl)lookup).finishLookup(Lookup.NORMAL_SELECT_CHAR);
           }
         }
       }
@@ -165,23 +159,17 @@ public class FlexLiveTemplatesTest extends CodeInsightTestCase {
   }
 
   public void testArrayVarNotDuplicatesIndexVarName() throws Exception {
-    doTest("itar", "mxml", new Consumer<Integer>() {
-      @Override
-      public void consume(Integer segmentIndex) {
-        if (segmentIndex == 2) {
-          type("int");
-        }
+    doTest("itar", "mxml", segmentIndex -> {
+      if (segmentIndex == 2) {
+        type("int");
       }
     });
   }
 
   public void testFlexRitar() throws Exception {
-    doTest("ritar", "as", new Consumer<Integer>() {
-      @Override
-      public void consume(Integer segmentIndex) {
-        if (segmentIndex == 2) {
-          type("ISomething");
-        }
+    doTest("ritar", "as", segmentIndex -> {
+      if (segmentIndex == 2) {
+        type("ISomething");
       }
     });
   }
@@ -213,26 +201,22 @@ public class FlexLiveTemplatesTest extends CodeInsightTestCase {
   }
 
   public void testPublicFunctionWithTypingInMxml() throws Exception {
-    doTest("pf", "mxml", new Consumer<Integer>() {
+    doTest("pf", "mxml", segmentIndex -> {
+      final CaretModel caretModel = getEditor().getCaretModel();
 
-      @Override
-      public void consume(final Integer segmentIndex) {
-        final CaretModel caretModel = getEditor().getCaretModel();
-
-        switch (segmentIndex) {
-          case 0:
-            type("functionName");
-            caretModel.moveToOffset(caretModel.getOffset() + 1);
-            break;
-          case 1:
-            type("param:Object");
-            caretModel.moveToOffset(caretModel.getOffset() + 1);
-            break;
-          case 2:
-            type("String");
-            caretModel.moveToOffset(caretModel.getOffset() + 1);
-            break;
-        }
+      switch (segmentIndex) {
+        case 0:
+          type("functionName");
+          caretModel.moveToOffset(caretModel.getOffset() + 1);
+          break;
+        case 1:
+          type("param:Object");
+          caretModel.moveToOffset(caretModel.getOffset() + 1);
+          break;
+        case 2:
+          type("String");
+          caretModel.moveToOffset(caretModel.getOffset() + 1);
+          break;
       }
     });
   }
@@ -248,21 +232,17 @@ public class FlexLiveTemplatesTest extends CodeInsightTestCase {
   }
 
   public void testPrivateStaticFunctionWithTyping() throws Exception {
-    doTest("prsf", "as", new Consumer<Integer>() {
-
-      @Override
-      public void consume(final Integer segmentIndex) {
-        switch (segmentIndex) {
-          case 0:
-            type("functionName");
-            break;
-          case 1:
-            type("param:Object");
-            break;
-          case 2:
-            type("String");
-            break;
-        }
+    doTest("prsf", "as", segmentIndex -> {
+      switch (segmentIndex) {
+        case 0:
+          type("functionName");
+          break;
+        case 1:
+          type("param:Object");
+          break;
+        case 2:
+          type("String");
+          break;
       }
     });
   }

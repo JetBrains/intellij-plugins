@@ -132,11 +132,8 @@ public class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection
       VirtualFile directoryVFile = LocalFileSystem.getInstance().findFileByIoFile(dir);
       if (directoryVFile != null) {
         List<VirtualFile> configs = JstdSettingsUtil.collectJstdConfigFilesInDirectory(project, directoryVFile);
-        result = ContainerUtil.filter(ContainerUtil.map(configs, new NullableFunction<VirtualFile, String>() {
-          @Override
-          public String fun(VirtualFile virtualFile) {
-            return ProjectRootUtils.getRootRelativePath(project, virtualFile.getPath());
-          }
+        result = ContainerUtil.filter(ContainerUtil.map(configs, (NullableFunction<VirtualFile, String>)virtualFile -> {
+          return ProjectRootUtils.getRootRelativePath(project, virtualFile.getPath());
         }), Condition.NOT_NULL);
         Collections.sort(result);
       }

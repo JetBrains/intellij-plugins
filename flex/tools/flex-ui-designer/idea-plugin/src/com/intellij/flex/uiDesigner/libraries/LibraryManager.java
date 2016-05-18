@@ -232,12 +232,7 @@ public class LibraryManager implements Disposable {
       files[i] = libraries.get(i).getFile();
     }
     
-    Arrays.sort(files, new Comparator<VirtualFile>() {
-      @Override
-      public int compare(VirtualFile o1, VirtualFile o2) {
-        return StringUtil.compare(o1.getPath(), o2.getPath(), false);
-      }
-    });
+    Arrays.sort(files, (o1, o2) -> StringUtil.compare(o1.getPath(), o2.getPath(), false));
     
     final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
     try {

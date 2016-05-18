@@ -118,11 +118,7 @@ class ExtractLocalVariableProcessor {
         public void pass(DartExpression expression) {
           performOnExpression(expression);
         }
-      }, new Function<DartExpression, String>() {
-        public String fun(DartExpression expression) {
-          return expression.getText();
-        }
-      });
+      }, expression -> expression.getText());
     }
   }
 
@@ -165,17 +161,14 @@ class ExtractLocalVariableProcessor {
       }
     }
     // Apply the change.
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final SourceChange change = refactoring.getChange();
-        assert change != null;
-        try {
-          AssistUtils.applySourceChange(project, change, true);
-        }
-        catch (DartSourceEditException e) {
-          CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final SourceChange change = refactoring.getChange();
+      assert change != null;
+      try {
+        AssistUtils.applySourceChange(project, change, true);
+      }
+      catch (DartSourceEditException e) {
+        CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
       }
     });
   }

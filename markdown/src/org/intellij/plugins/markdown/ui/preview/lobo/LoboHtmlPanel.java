@@ -87,53 +87,50 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
 
   @Override
   public void scrollToMarkdownSrcOffset(final int offset) {
-    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-      @Override
-      public void run() {
-        final DOMNodeImpl root = myPanel.getRootNode();
-        final Ref<Pair<Node, Integer>> resultY = new Ref<Pair<Node, Integer>>();
-        root.visit(new NodeVisitor() {
-          @Override
-          public void visit(Node node) {
-            Node child = node.getFirstChild();
-            while (child != null) {
-              final Range<Integer> range = nodeToSrcRange(child);
-              if (range != null && child instanceof DOMNodeImpl) {
-                int currentDist = Math.min(Math.abs(range.getFrom() - offset),
-                                           Math.abs(range.getTo() - 1 - offset));
-                if (resultY.get() == null || resultY.get().getSecond() > currentDist) {
-                  resultY.set(Pair.create(child, currentDist));
-                }
-              }
-
-              if (range == null || range.getTo() <= offset) {
-                child = child.getNextSibling();
-                continue;
-              }
-
-              if (range.getFrom() > offset) {
-                break;
-              }
-              if (range.getTo() > offset) {
-                visit(child);
-                break;
+    ApplicationManager.getApplication().invokeAndWait(() -> {
+      final DOMNodeImpl root = myPanel.getRootNode();
+      final Ref<Pair<Node, Integer>> resultY = new Ref<Pair<Node, Integer>>();
+      root.visit(new NodeVisitor() {
+        @Override
+        public void visit(Node node) {
+          Node child = node.getFirstChild();
+          while (child != null) {
+            final Range<Integer> range = nodeToSrcRange(child);
+            if (range != null && child instanceof DOMNodeImpl) {
+              int currentDist = Math.min(Math.abs(range.getFrom() - offset),
+                                         Math.abs(range.getTo() - 1 - offset));
+              if (resultY.get() == null || resultY.get().getSecond() > currentDist) {
+                resultY.set(Pair.create(child, currentDist));
               }
             }
+
+            if (range == null || range.getTo() <= offset) {
+              child = child.getNextSibling();
+              continue;
+            }
+
+            if (range.getFrom() > offset) {
+              break;
+            }
+            if (range.getTo() > offset) {
+              visit(child);
+              break;
+            }
           }
-        });
-
-        if (resultY.get() != null) {
-          myPanel.scrollTo(resultY.get().getFirst());
-
-          final RBlockViewport viewport = ((RBlock)myPanel.getBlockRenderable()).getRBlockViewport();
-          final Rectangle renderBounds = myPanel.getBlockRenderable().getBounds();
-
-          if (viewport.getY() + viewport.getHeight() - renderBounds.getHeight() > 0) {
-            myPanel.scrollBy(0, -FOCUS_ELEMENT_DY);
-          }
-
-          myPanel.repaint();
         }
+      });
+
+      if (resultY.get() != null) {
+        myPanel.scrollTo(resultY.get().getFirst());
+
+        final RBlockViewport viewport = ((RBlock)myPanel.getBlockRenderable()).getRBlockViewport();
+        final Rectangle renderBounds = myPanel.getBlockRenderable().getBounds();
+
+        if (viewport.getY() + viewport.getHeight() - renderBounds.getHeight() > 0) {
+          myPanel.scrollBy(0, -FOCUS_ELEMENT_DY);
+        }
+
+        myPanel.repaint();
       }
     }, ModalityState.NON_MODAL);
   }

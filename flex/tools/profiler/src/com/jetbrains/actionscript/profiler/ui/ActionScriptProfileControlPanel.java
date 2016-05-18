@@ -73,12 +73,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
   }
 
   private void setStatus(final String status) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        myStatusLabel.setText(status);
-      }
-    });
+    ApplicationManager.getApplication().invokeLater(() -> myStatusLabel.setText(status));
   }
 
   private void setupComponents() {
@@ -105,12 +100,9 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
   private void doCPUSnapshot() {
     final CPUSnapshotNode newNode =
       new CPUSnapshotNode(runConfigurationName, module, new Date(), profilerDataConsumer.getProfileData().getCallTree());
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        final MutableTreeNode root = (MutableTreeNode)treeModel.getRoot();
-        treeModel.insertNodeInto(newNode, root, root.getChildCount());
-      }
+    ApplicationManager.getApplication().invokeLater(() -> {
+      final MutableTreeNode root = (MutableTreeNode)treeModel.getRoot();
+      treeModel.insertNodeInto(newNode, root, root.getChildCount());
     });
   }
 
@@ -126,13 +118,8 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
 
     setStatus(ProfilerBundle.message("agent.connection.waiting"));
     myAlarm.cancelAllRequests();
-    myAlarm.addRequest(new Runnable() {
-      @Override
-      public void run() {
-        NOTIFICATION_GROUP.createNotification(ProfilerBundle.message("profiler.connection.timeout"), NotificationType.ERROR)
-          .notify(module.getProject());
-      }
-    }, MINUTE);
+    myAlarm.addRequest(() -> NOTIFICATION_GROUP.createNotification(ProfilerBundle.message("profiler.connection.timeout"), NotificationType.ERROR)
+      .notify(module.getProject()), MINUTE);
     profilingManager.initializeProfiling(profilerDataConsumer, new ProfilingManager.Callback() {
       public void finished(@Nullable String data, @Nullable IOException ex) {
         if (data != null && connectionCallback != null) {
@@ -144,12 +131,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
         else if (ex != null) {
           setStatus(ProfilerBundle.message("agent.connection.close"));
           setCurrentState(State.NONE);
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              treeModel.removeNodeFromParent(liveObjectsNode);
-            }
-          });
+          ApplicationManager.getApplication().invokeLater(() -> treeModel.removeNodeFromParent(liveObjectsNode));
         }
       }
     });

@@ -58,65 +58,56 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
                               @NotNull Module module) {
     try {
 
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-        @Override
-        public void run() {
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
 
-          try {
-            ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-            indicator.setText("Creating...");
-            File tempProject = createTemp();
-            PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath());
+        try {
+          ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+          indicator.setText("Creating...");
+          File tempProject = createTemp();
+          PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath());
 
-            if (!commandLine.isCorrectExecutable()) {
-              showErrorMessage("Incorrect path");
-              return;
-            }
-            commandLine.createNewProject(settings.name());
-
-            File[] array = tempProject.listFiles();
-            if (array != null && array.length != 0) {
-              File from = ContainerUtil.getFirstItem(ContainerUtil.newArrayList(array));
-              assert from != null;
-              FileUtil.copyDir(from, new File(baseDir.getPath()));
-              deleteTemp(tempProject);
-            }
-            else {
-              showErrorMessage("Cannot find files in the directory " + tempProject.getAbsolutePath());
-            }
+          if (!commandLine.isCorrectExecutable()) {
+            showErrorMessage("Incorrect path");
+            return;
           }
-          catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+          commandLine.createNewProject(settings.name());
+
+          File[] array = tempProject.listFiles();
+          if (array != null && array.length != 0) {
+            File from = ContainerUtil.getFirstItem(ContainerUtil.newArrayList(array));
+            assert from != null;
+            FileUtil.copyDir(from, new File(baseDir.getPath()));
+            deleteTemp(tempProject);
           }
+          else {
+            showErrorMessage("Cannot find files in the directory " + tempProject.getAbsolutePath());
+          }
+        }
+        catch (Exception e) {
+          throw new RuntimeException(e.getMessage(), e);
         }
       }, "Creating Phonegap/Cordova project", false, project);
 
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
 
-          propertiesComponent.setValue(PhoneGapSettings.PHONEGAP_WORK_DIRECTORY, project.getBasePath());
-          PhoneGapSettings.State state = PhoneGapSettings.getInstance().getState();
-          if (!StringUtil.equals(settings.getExecutable(), state.getExecutablePath())) {
-            PhoneGapSettings.getInstance().loadState(new PhoneGapSettings.State(settings.executable, state.repositoriesList));
-          }
-          VfsUtil.markDirty(false, true, project.getBaseDir());
-          createRunConfiguration(project, settings);
-
-          baseDir.refresh(true, true, new Runnable() {
-            @Override
-            public void run() {
-              if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
-                VirtualFile platformsFolder = project.getBaseDir().findChild(PhoneGapUtil.FOLDER_PLATFORMS);
-
-                if (platformsFolder != null) {
-                  PhoneGapProjectComponent.excludePlatformFolder(project, platformsFolder);
-                }
-              }
-            }
-          });
+        propertiesComponent.setValue(PhoneGapSettings.PHONEGAP_WORK_DIRECTORY, project.getBasePath());
+        PhoneGapSettings.State state = PhoneGapSettings.getInstance().getState();
+        if (!StringUtil.equals(settings.getExecutable(), state.getExecutablePath())) {
+          PhoneGapSettings.getInstance().loadState(new PhoneGapSettings.State(settings.executable, state.repositoriesList));
         }
+        VfsUtil.markDirty(false, true, project.getBaseDir());
+        createRunConfiguration(project, settings);
+
+        baseDir.refresh(true, true, () -> {
+          if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
+            VirtualFile platformsFolder = project.getBaseDir().findChild(PhoneGapUtil.FOLDER_PLATFORMS);
+
+            if (platformsFolder != null) {
+              PhoneGapProjectComponent.excludePlatformFolder(project, platformsFolder);
+            }
+          }
+        });
       });
     }
     catch (Exception e) {

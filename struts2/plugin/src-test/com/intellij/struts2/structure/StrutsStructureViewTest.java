@@ -34,42 +34,36 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
 
   public void testDefaultPresentation() {
     myFixture.configureByFile("struts-structure.xml");
-    myFixture.testStructureView(new Consumer<StructureViewComponent>() {
-      @Override
-      public void consume(StructureViewComponent component) {
-        component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false);
-        TreeUtil.expandAll(component.getTree());
+    myFixture.testStructureView(component -> {
+      component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false);
+      TreeUtil.expandAll(component.getTree());
 
-        PlatformTestUtil.assertTreeEqual(component.getTree(),
-                                         "-struts-structure.xml\n" +
-                                         " myBean\n" +
-                                         " myConstant\n" +
-                                         " struts2.xml\n" +
-                                         " -myPackage\n" +
-                                         "  -myAction\n" +
-                                         "   success\n" +
-                                         "   paramName\n");
-      }
+      PlatformTestUtil.assertTreeEqual(component.getTree(),
+                                       "-struts-structure.xml\n" +
+                                       " myBean\n" +
+                                       " myConstant\n" +
+                                       " struts2.xml\n" +
+                                       " -myPackage\n" +
+                                       "  -myAction\n" +
+                                       "   success\n" +
+                                       "   paramName\n");
     });
   }
 
   public void testHideParam() {
     myFixture.configureByFile("struts-structure.xml");
-    myFixture.testStructureView(new Consumer<StructureViewComponent>() {
-      @Override
-      public void consume(StructureViewComponent component) {
-        component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, true);
-        TreeUtil.expandAll(component.getTree());
+    myFixture.testStructureView(component -> {
+      component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, true);
+      TreeUtil.expandAll(component.getTree());
 
-        PlatformTestUtil.assertTreeEqual(component.getTree(),
-                                         "-struts-structure.xml\n" +
-                                         " myBean\n" +
-                                         " myConstant\n" +
-                                         " struts2.xml\n" +
-                                         " -myPackage\n" +
-                                         "  -myAction\n" +
-                                         "   success\n");
-      }
+      PlatformTestUtil.assertTreeEqual(component.getTree(),
+                                       "-struts-structure.xml\n" +
+                                       " myBean\n" +
+                                       " myConstant\n" +
+                                       " struts2.xml\n" +
+                                       " -myPackage\n" +
+                                       "  -myAction\n" +
+                                       "   success\n");
     });
   }
 }

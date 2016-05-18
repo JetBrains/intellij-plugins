@@ -41,13 +41,10 @@ public class AngularJSCompletionContributor extends CompletionContributor {
       final PsiElement parent = ((JSReferenceExpressionImpl)ref).getParent();
       if (addFilterVariants(result, parameters, ref, parent)) return;
       if (addControllerVariants(result, parameters, ref, parent)) return;
-      AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSPsiElementBase>() {
-        @Override
-        public void consume(JSPsiElementBase element) {
-          final String name = element.getName();
-          if (name != null) {
-            result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, name, NG_VARIABLE_PRIORITY, false, false));
-          }
+      AngularJSProcessor.process(parameters.getPosition(), element -> {
+        final String name = element.getName();
+        if (name != null) {
+          result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, name, NG_VARIABLE_PRIORITY, false, false));
         }
       });
     }
@@ -73,13 +70,10 @@ public class AngularJSCompletionContributor extends CompletionContributor {
     for (String controller : keys) {
       result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY, false, false));
     }
-    result.runRemainingContributors(parameters, new Consumer<CompletionResult>() {
-      @Override
-      public void consume(CompletionResult result1) {
-        final String string = result1.getLookupElement().getLookupString();
-        if (!keys.contains(string)) {
-          result.passResult(result1);
-        }
+    result.runRemainingContributors(parameters, result1 -> {
+      final String string = result1.getLookupElement().getLookupString();
+      if (!keys.contains(string)) {
+        result.passResult(result1);
       }
     });
   }

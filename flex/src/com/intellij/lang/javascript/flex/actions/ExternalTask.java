@@ -50,11 +50,7 @@ public abstract class ExternalTask {
 
     for (String s : command) {
       if (s == null) {
-        LOG.error(StringUtil.join(command, new Function<String, String>() {
-          public String fun(final String s) {
-            return s == null ? "null" : s;
-          }
-        }, " "));
+        LOG.error(StringUtil.join(command, s1 -> s1 == null ? "null" : s1, " "));
       }
     }
 
@@ -125,52 +121,50 @@ public abstract class ExternalTask {
   }
 
   protected void scheduleInputStreamReading() {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        boolean usageStarted = false;
-        final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream());
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      boolean usageStarted = false;
+      final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream());
 
-        try {
-          char[] buf = new char[4096];
-          int read;
-          while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-            final String output = new String(buf, 0, read);
-            debug("Process output: " + output);
-            if (!usageStarted) {
-              final StringTokenizer tokenizer = new StringTokenizer(output, "\r\n");
+      try {
+        char[] buf = new char[4096];
+        int read;
+        while ((read = reader.read(buf, 0, buf.length)) >= 0) {
+          final String output = new String(buf, 0, read);
+          debug("Process output: " + output);
+          if (!usageStarted) {
+            final StringTokenizer tokenizer = new StringTokenizer(output, "\r\n");
 
-              while (tokenizer.hasMoreElements()) {
-                final String message = tokenizer.nextElement();
-                if (!StringUtil.isEmptyOrSpaces(message)) {
-                  if (message.trim().toLowerCase().startsWith("usage:")) {
-                    usageStarted = true;
-                    break;
-                  }
+            while (tokenizer.hasMoreElements()) {
+              final String message = tokenizer.nextElement();
+              if (!StringUtil.isEmptyOrSpaces(message)) {
+                if (message.trim().toLowerCase().startsWith("usage:")) {
+                  usageStarted = true;
+                  break;
+                }
 
-                  if (message.trim().endsWith("password:")) {
-                    final OutputStream outputStream = myProcess.getOutputStream();
-                    outputStream.write("\n".getBytes());
-                    outputStream.flush();
-                  }
-                  else {
-                    myMessages.add(message);
-                  }
+                if (message.trim().endsWith("password:")) {
+                  final OutputStream outputStream = myProcess.getOutputStream();
+                  outputStream.write("\n".getBytes());
+                  outputStream.flush();
+                }
+                else {
+                  myMessages.add(message);
                 }
               }
             }
           }
         }
-        catch (IOException e) {
-          myMessages.add(e.getMessage());
-        }
-        finally {
-          cancel();
+      }
+      catch (IOException e) {
+        myMessages.add(e.getMessage());
+      }
+      finally {
+        cancel();
 
-          try {
-            reader.close();
-          }
-          catch (IOException e) {/*ignore*/}
+        try {
+          reader.close();
         }
+        catch (IOException e) {/*ignore*/}
       }
     });
   }
@@ -192,19 +186,11 @@ public abstract class ExternalTask {
       public void onSuccess() {
         if (task.checkMessages()) {
           if (onSuccess != null) {
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-              public void run() {
-                onSuccess.consume(task.getMessages());
-              }
-            });
+            ApplicationManager.getApplication().invokeLater(() -> onSuccess.consume(task.getMessages()));
           }
         }
         else if (onFailure != null) {
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            public void run() {
-              onFailure.consume(task.getMessages());
-            }
-          });
+          ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(task.getMessages()));
         }
       }
     });
@@ -229,29 +215,27 @@ public abstract class ExternalTask {
   }
 
   private static Runnable createRunnable(final ExternalTask task) {
-    return new Runnable() {
-      public void run() {
-        final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-        if (indicator != null) {
-          indicator.setIndeterminate(true);
-        }
+    return () -> {
+      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+      if (indicator != null) {
+        indicator.setIndeterminate(true);
+      }
 
-        try {
-          AirPackageProjectParameters.getInstance(task.myProject).setPackagingInProgress(true);
+      try {
+        AirPackageProjectParameters.getInstance(task.myProject).setPackagingInProgress(true);
 
-          task.start();
+        task.start();
 
-          while (!task.isFinished()) {
-            if (indicator != null && indicator.isCanceled()) {
-              task.cancel();
-              break;
-            }
-            TimeoutUtil.sleep(200);
+        while (!task.isFinished()) {
+          if (indicator != null && indicator.isCanceled()) {
+            task.cancel();
+            break;
           }
+          TimeoutUtil.sleep(200);
         }
-        finally {
-          AirPackageProjectParameters.getInstance(task.myProject).setPackagingInProgress(false);
-        }
+      }
+      finally {
+        AirPackageProjectParameters.getInstance(task.myProject).setPackagingInProgress(false);
       }
     };
   }

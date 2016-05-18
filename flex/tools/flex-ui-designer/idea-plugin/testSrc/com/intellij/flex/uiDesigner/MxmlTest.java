@@ -26,58 +26,52 @@ public class MxmlTest extends MxmlTestBase {
   }
 
   public void testResolveResourceIfNameIsAmbiguous() throws Exception {
-    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
-      @Override
-      public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
-        final VirtualFile localesDir = DesignerTests.getFile("locales");
-        final ContentEntry localesContentEntry = model.addContentEntry(localesDir);
-        //noinspection ConstantConditions
-        localesContentEntry.addSourceFolder(localesDir.findChild("en_US"), false);
-        //localesContentEntry.addSourceFolder(localesDir.findChild("ru_RU"), false);
-        return null;
-      }
+    moduleInitializer = (model, file, libs1) -> {
+      final VirtualFile localesDir = DesignerTests.getFile("locales");
+      final ContentEntry localesContentEntry = model.addContentEntry(localesDir);
+      //noinspection ConstantConditions
+      localesContentEntry.addSourceFolder(localesDir.findChild("en_US"), false);
+      //localesContentEntry.addSourceFolder(localesDir.findChild("ru_RU"), false);
+      return null;
     };
 
     testFile("ResourceDirective.mxml");
   }
 
   private void init45And46Tests() {
-    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
-      @Override
-      public Void fun(ModifiableRootModel model, VirtualFile sourceDir, List<String> libs) {
-        libs.add(DebugPathManager.resolveTestArtifactPath("test-data-helper.swc"));
-        final VirtualFile assetsDir = DesignerTests.getFile("assets");
-        model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
+    moduleInitializer = (model, sourceDir, libs1) -> {
+      libs1.add(DebugPathManager.resolveTestArtifactPath("test-data-helper.swc"));
+      final VirtualFile assetsDir = DesignerTests.getFile("assets");
+      model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
 
-        THashSet<ProblemDescriptor> expectedProblems = new THashSet<ProblemDescriptor>();
-        TestDocumentProblemManager.setExpectedProblems(expectedProblems);
-        expectedProblems.add(new ProblemDescriptor("spark.components.supportClasses.TrackBase is abstract class",
-                                                   sourceDir.findFileByRelativePath("AbstractClass.mxml"), 3));
-        expectedProblems.add(new ProblemDescriptor("Default property not found for Rect", sourceDir.findFileByRelativePath("CannotFindDefaultProperty.mxml"), 2));
+      THashSet<ProblemDescriptor> expectedProblems = new THashSet<ProblemDescriptor>();
+      TestDocumentProblemManager.setExpectedProblems(expectedProblems);
+      expectedProblems.add(new ProblemDescriptor("spark.components.supportClasses.TrackBase is abstract class",
+                                                 sourceDir.findFileByRelativePath("AbstractClass.mxml"), 3));
+      expectedProblems.add(new ProblemDescriptor("Default property not found for Rect", sourceDir.findFileByRelativePath("CannotFindDefaultProperty.mxml"), 2));
 
-        VirtualFile file = sourceDir.findFileByRelativePath("ClassProperty.mxml");
-        expectedProblems.add(new ProblemDescriptor("Invalid class value", file, 6));
-        expectedProblems.add(new ProblemDescriptor("Invalid class value", file, 11));
+      VirtualFile file = sourceDir.findFileByRelativePath("ClassProperty.mxml");
+      expectedProblems.add(new ProblemDescriptor("Invalid class value", file, 6));
+      expectedProblems.add(new ProblemDescriptor("Invalid class value", file, 11));
 
-        expectedProblems.add(new ProblemDescriptor("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\"", sourceDir.findFileByRelativePath("Embed.mxml"), 3));
+      expectedProblems.add(new ProblemDescriptor("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\"", sourceDir.findFileByRelativePath("Embed.mxml"), 3));
 
-        file = sourceDir.findFileByRelativePath("InvalidColorNameOrNumericValue.mxml");
-        //noinspection SpellCheckingInspection
-        expectedProblems.add(new ProblemDescriptor("Invalid color name invalidcolorname", file, 2));
-        expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 3));
-        expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 4));
-        expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 5));
-        expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 6));
+      file = sourceDir.findFileByRelativePath("InvalidColorNameOrNumericValue.mxml");
+      //noinspection SpellCheckingInspection
+      expectedProblems.add(new ProblemDescriptor("Invalid color name invalidcolorname", file, 2));
+      expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 3));
+      expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 4));
+      expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 5));
+      expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 6));
 
-        //expectedProblems.add(new ProblemDescriptor("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a>", sourceDir.findFileByRelativePath("ItemRendererAndMixDefaultExplicitContent.mxml"), 9));
-        expectedProblems.add(new ProblemDescriptor("Unresolved variable or type unresolvedData", sourceDir.findFileByRelativePath("ArrayOfPrimitives.mxml"), 10));
+      //expectedProblems.add(new ProblemDescriptor("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a>", sourceDir.findFileByRelativePath("ItemRendererAndMixDefaultExplicitContent.mxml"), 9));
+      expectedProblems.add(new ProblemDescriptor("Unresolved variable or type unresolvedData", sourceDir.findFileByRelativePath("ArrayOfPrimitives.mxml"), 10));
 
-        file = sourceDir.findFileByRelativePath("ChildrenTypeCheck.mxml");
-        expectedProblems.add(new ProblemDescriptor("Initializer for Group cannot be represented in text", file, 2));
-        expectedProblems.add(new ProblemDescriptor("Initializer for Container cannot be represented in text", file, 5));
-        expectedProblems.add(new ProblemDescriptor("Children of Accordion must be mx.core.INavigatorContent", file, 8));
-        return null;
-      }
+      file = sourceDir.findFileByRelativePath("ChildrenTypeCheck.mxml");
+      expectedProblems.add(new ProblemDescriptor("Initializer for Group cannot be represented in text", file, 2));
+      expectedProblems.add(new ProblemDescriptor("Initializer for Container cannot be represented in text", file, 5));
+      expectedProblems.add(new ProblemDescriptor("Children of Accordion must be mx.core.INavigatorContent", file, 8));
+      return null;
     };
   }
 

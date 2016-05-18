@@ -91,12 +91,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     final int nameOffset = name.getTextRange().getStartOffset();
     return new LineMarkerInfo<PsiElement>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.UPDATE_ALL,
-                                          new Function<PsiElement, String>() {
-                                            @Override
-                                            public String fun(PsiElement element) {
-                                              return DaemonBundle.message("class.is.subclassed.too.many");
-                                            }
-                                          }, new GutterIconNavigationHandler<PsiElement>() {
+                                          element -> DaemonBundle.message("class.is.subclassed.too.many"), new GutterIconNavigationHandler<PsiElement>() {
       @Override
       public void navigate(MouseEvent e, PsiElement elt) {
         final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, nameOffset, false);
@@ -118,12 +113,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     final int nameOffset = name.getTextRange().getStartOffset();
     return new LineMarkerInfo<PsiElement>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.UPDATE_ALL,
-                                          new Function<PsiElement, String>() {
-                                            @Override
-                                            public String fun(PsiElement element) {
-                                              return DaemonBundle.message("method.is.overridden.too.many");
-                                            }
-                                          }, new GutterIconNavigationHandler<PsiElement>() {
+                                          element -> DaemonBundle.message("method.is.overridden.too.many"), new GutterIconNavigationHandler<PsiElement>() {
       @Override
       public void navigate(MouseEvent e, PsiElement elt) {
         final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, nameOffset, false);

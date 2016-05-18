@@ -541,19 +541,13 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   private void updateRLMsText() {
-    final String s = StringUtil.join(myRLMs, new Function<FlexBuildConfiguration.RLMInfo, String>() {
-      public String fun(final FlexBuildConfiguration.RLMInfo info) {
-        return info.MAIN_CLASS;
-      }
-    }, ", ");
+    final String s = StringUtil.join(myRLMs, info -> info.MAIN_CLASS, ", ");
     myRLMTextWithBrowse.setText(s);
   }
 
   private void updateCssFilesText() {
-    final String s = StringUtil.join(myCssFilesToCompile, new Function<String, String>() {
-      public String fun(final String path) {
-        return PathUtil.getFileName(path);
-      }
+    final String s = StringUtil.join(myCssFilesToCompile, path -> {
+      return PathUtil.getFileName(path);
     }, ", ");
     myCssFilesTextWithBrowse.setText(s);
   }

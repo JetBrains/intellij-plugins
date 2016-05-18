@@ -151,12 +151,9 @@ public class FlashUmlDependencyProvider {
 
     if (myClazz instanceof XmlBackedJSClassImpl) {
       // TODO process attributes
-      ((XmlBackedJSClassImpl)myClazz).processInjectedFiles(new Processor<JSFile>() {
-        @Override
-        public boolean process(final JSFile jsFile) {
-          jsFile.accept(visitor);
-          return true;
-        }
+      ((XmlBackedJSClassImpl)myClazz).processInjectedFiles(jsFile -> {
+        jsFile.accept(visitor);
+        return true;
       });
 
       myClazz.getParent().acceptChildren(new XmlElementVisitor() { // don't visit parent tag

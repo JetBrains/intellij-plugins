@@ -199,18 +199,15 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   private void configureLibrary(final VirtualFile root) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        final Library library = model.getModuleLibraryTable().createLibrary();
-        final Library.ModifiableModel libModel = library.getModifiableModel();
-        libModel.addRoot(root, OrderRootType.CLASSES);
-        libModel.commit();
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      final Library library = model.getModuleLibraryTable().createLibrary();
+      final Library.ModifiableModel libModel = library.getModifiableModel();
+      libModel.addRoot(root, OrderRootType.CLASSES);
+      libModel.commit();
 
-        model.getContentEntries()[0].addExcludeFolder(root);
-        model.commit();
-      }
+      model.getContentEntries()[0].addExcludeFolder(root);
+      model.commit();
     });
   }
 

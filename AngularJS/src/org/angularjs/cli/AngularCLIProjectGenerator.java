@@ -67,30 +67,25 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
                               @NotNull Object settings,
                               @NotNull Module module) {
     final String ng = "/usr/local/bin/ng";
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
-      public void run() {
-        try {
-          generateApp(ng, baseDir, project);
-          final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-          final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
-          if (entry != null) {
-            entry.addExcludeFolder(baseDir.getUrl() + "/dist");
-            entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
-          }
-          ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-              model.commit();
-              project.save();
-            }
-          });
+    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
+      try {
+        generateApp(ng, baseDir, project);
+        final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+        final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
+        if (entry != null) {
+          entry.addExcludeFolder(baseDir.getUrl() + "/dist");
+          entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
         }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-        catch (ExecutionException e) {
-          LOG.error(e);
-        }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          model.commit();
+          project.save();
+        });
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+      catch (ExecutionException e) {
+        LOG.error(e);
       }
     });
   }
@@ -116,12 +111,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
         for (VirtualFile file : instance.detectAllBuildfiles(project)) {
           instance.getFileManager(project).addBuildfile(file);
         }
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            instance.getToolWindowManager(project).setAvailable();
-          }
-        });
+        ApplicationManager.getApplication().invokeLater(() -> instance.getToolWindowManager(project).setAvailable());
       }
     });
     final Executor defaultExecutor = DefaultRunExecutor.getRunExecutorInstance();

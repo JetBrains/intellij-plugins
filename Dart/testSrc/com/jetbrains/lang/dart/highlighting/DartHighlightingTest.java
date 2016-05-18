@@ -19,38 +19,32 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   }
 
   private void excludeFolder(final String relPath) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        try {
-          final ContentEntry[] contentEntries = model.getContentEntries();
-          contentEntries[0].addExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
-          model.commit();
-        }
-        finally {
-          if (!model.isDisposed()) {
-            model.dispose();
-          }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      try {
+        final ContentEntry[] contentEntries = model.getContentEntries();
+        contentEntries[0].addExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
+        model.commit();
+      }
+      finally {
+        if (!model.isDisposed()) {
+          model.dispose();
         }
       }
     });
   }
 
   private void unexcludeFolder(final String relPath) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        try {
-          final ContentEntry[] contentEntries = model.getContentEntries();
-          contentEntries[0].removeExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
-          model.commit();
-        }
-        finally {
-          if (!model.isDisposed()) {
-            model.dispose();
-          }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      try {
+        final ContentEntry[] contentEntries = model.getContentEntries();
+        contentEntries[0].removeExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
+        model.commit();
+      }
+      finally {
+        if (!model.isDisposed()) {
+          model.dispose();
         }
       }
     });

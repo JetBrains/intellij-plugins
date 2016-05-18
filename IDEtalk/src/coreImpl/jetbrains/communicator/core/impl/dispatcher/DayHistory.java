@@ -83,11 +83,7 @@ class DayHistory {
   public void resort() {
     for (User user : myData.keySet()) {
       List<LocalMessage> list = myData.get(user);
-      Collections.sort(list, new Comparator<LocalMessage>() {
-        public int compare(LocalMessage o1, LocalMessage o2) {
-          return o1.getWhen().compareTo(o2.getWhen());
-        }
-      });
+      Collections.sort(list, (o1, o2) -> o1.getWhen().compareTo(o2.getWhen()));
     }
   }
 

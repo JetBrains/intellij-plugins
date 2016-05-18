@@ -117,17 +117,14 @@ public class FlashUmlTest extends CodeInsightTestCase {
     for (String file : files) {
       vFiles.add(getVirtualFile(BASE_PATH + file));
     }
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
-        final ModifiableRootModel rootModel = rootManager.getModifiableModel();
-        ContentEntry[] contentEntries = rootModel.getContentEntries();
-        for (ContentEntry contentEntry : contentEntries) {
-          rootModel.removeContentEntry(contentEntry);
-        }
-        rootModel.commit();
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
+      final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+      ContentEntry[] contentEntries = rootModel.getContentEntries();
+      for (ContentEntry contentEntry : contentEntries) {
+        rootModel.removeContentEntry(contentEntry);
       }
+      rootModel.commit();
     });
     configureByFiles(projectRoot, VfsUtilCore.toVirtualFileArray(vFiles));
 
@@ -159,11 +156,8 @@ public class FlashUmlTest extends CodeInsightTestCase {
         model.setShowDependencies(true);
         EnumSet<FlashUmlDependenciesSettingsOption> disabledOptions = EnumSet.complementOf(dependencies);
         configuration.categories
-          .put(provider.getID(), StringUtil.join(disabledOptions, new Function<FlashUmlDependenciesSettingsOption, String>() {
-            @Override
-            public String fun(final FlashUmlDependenciesSettingsOption option) {
-              return option.getDisplayName();
-            }
+          .put(provider.getID(), StringUtil.join(disabledOptions, option -> {
+            return option.getDisplayName();
           }, ";"));
       }
       else {
@@ -289,11 +283,9 @@ public class FlashUmlTest extends CodeInsightTestCase {
 
   private void initSdk() {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        FlexTestUtils.setSdk(bc1, sdk45);
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      FlexTestUtils.setSdk(bc1, sdk45);
     });
   }
 

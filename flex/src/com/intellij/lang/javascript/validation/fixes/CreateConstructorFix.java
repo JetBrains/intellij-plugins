@@ -105,12 +105,8 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
   @Override
   protected void applyFix(final Project project, final PsiElement psiElement, PsiFile file, Editor editor) {
     final AtomicInteger count = new AtomicInteger();
-    ReferencesSearch.search(myClass, myClass.getUseScope()).forEach(new Processor<PsiReference>() {
-      @Override
-      public boolean process(PsiReference psiReference) {
-        return !isClassInstantiation(psiReference) || count.incrementAndGet() < 2;
-      }
-    });
+    ReferencesSearch.search(myClass, myClass.getUseScope()).forEach(
+      psiReference -> !isClassInstantiation(psiReference) || count.incrementAndGet() < 2);
 
     int usages = count.get();
     if (usages < 2) {
@@ -257,14 +253,11 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
     @Override
     protected List<JSFunction> computeCallers() {
       final Collection<PsiReference> refs = Collections.synchronizedCollection(new ArrayList<PsiReference>());
-      ReferencesSearch.search(myClass, myClass.getUseScope(), true).forEach(new Processor<PsiReference>() {
-        @Override
-        public boolean process(PsiReference psiReference) {
-          if (isClassInstantiation(psiReference)) {
-            refs.add(psiReference);
-          }
-          return true;
+      ReferencesSearch.search(myClass, myClass.getUseScope(), true).forEach(psiReference -> {
+        if (isClassInstantiation(psiReference)) {
+          refs.add(psiReference);
         }
+        return true;
       });
 
       Set<JSFunction> result = new java.util.HashSet<JSFunction>();
@@ -295,15 +288,12 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
       final Collection<UsageInfo> declarations = Collections.synchronizedCollection(new HashSet<UsageInfo>());
       final Collection<OtherUsageInfo> usages = Collections.synchronizedCollection(new HashSet<OtherUsageInfo>());
 
-      ReferencesSearch.search(myClass, myClass.getUseScope()).forEach(new Processor<PsiReference>() {
-        @Override
-        public boolean process(PsiReference psiReference) {
-          if (isClassInstantiation(psiReference)) {
-            PsiElement element = psiReference.getElement();
-            usages.add(new OtherUsageInfo(element, null, myParameters, shouldPropagate(element), 0, 0));
-          }
-          return true;
+      ReferencesSearch.search(myClass, myClass.getUseScope()).forEach(psiReference -> {
+        if (isClassInstantiation(psiReference)) {
+          PsiElement element = psiReference.getElement();
+          usages.add(new OtherUsageInfo(element, null, myParameters, shouldPropagate(element), 0, 0));
         }
+        return true;
       });
 
       for (JSCallExpression superCall : JSInheritanceUtil.findSuperConstructorCalls(myClass)) {

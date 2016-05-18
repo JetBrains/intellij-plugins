@@ -47,23 +47,16 @@ public class DartSdkUpdateChecker {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) return;
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        if (!project.isDisposed()) {
-          PropertiesComponent.getInstance().setValue(DART_LAST_SDK_CHECK_KEY, String.valueOf(System.currentTimeMillis()));
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      if (!project.isDisposed()) {
+        PropertiesComponent.getInstance().setValue(DART_LAST_SDK_CHECK_KEY, String.valueOf(System.currentTimeMillis()));
 
-          final String currentSdkVersion = sdk.getVersion();
-          final SdkUpdateInfo sdkUpdateInfo = getSdkUpdateInfo(option);
+        final String currentSdkVersion = sdk.getVersion();
+        final SdkUpdateInfo sdkUpdateInfo = getSdkUpdateInfo(option);
 
-          if (sdkUpdateInfo != null && compareDartSdkVersions(sdkUpdateInfo.myVersion, currentSdkVersion) > 0) {
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
-              }
-            }, ModalityState.NON_MODAL, project.getDisposed());
-          }
+        if (sdkUpdateInfo != null && compareDartSdkVersions(sdkUpdateInfo.myVersion, currentSdkVersion) > 0) {
+          ApplicationManager.getApplication().invokeLater(
+            () -> notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl), ModalityState.NON_MODAL, project.getDisposed());
         }
       }
     });

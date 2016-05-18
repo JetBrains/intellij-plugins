@@ -49,16 +49,13 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
       final String searchedName = namespace + "::" + (searchForPrefix ? "" : constantName);
       final Ref<Boolean> result = new Ref<Boolean>(false);
 
-      processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
-        @Override
-        public boolean process(final Pair<String, String> nameAndValue) {
-          if ((searchForPrefix && nameAndValue.first.startsWith(searchedName)) ||
-              (!searchForPrefix && nameAndValue.first.equals(searchedName))) {
-            result.set(true);
-            return false;
-          }
-          return true;
+      processConditionalCompilationDefinitions(module, nameAndValue -> {
+        if ((searchForPrefix && nameAndValue.first.startsWith(searchedName)) ||
+            (!searchForPrefix && nameAndValue.first.equals(searchedName))) {
+          result.set(true);
+          return false;
         }
+        return true;
       });
 
       return result.get();
@@ -73,14 +70,11 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     if (module != null && ModuleType.get(module) instanceof FlexModuleType && !StringUtil.isEmpty(namespace)) {
       final String beginning = namespace + "::";
 
-      processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
-        @Override
-        public boolean process(final Pair<String, String> nameAndValue) {
-          if (nameAndValue.first.startsWith(beginning)) {
-            result.add(nameAndValue.first.substring(beginning.length()));
-          }
-          return true;
+      processConditionalCompilationDefinitions(module, nameAndValue -> {
+        if (nameAndValue.first.startsWith(beginning)) {
+          result.add(nameAndValue.first.substring(beginning.length()));
         }
+        return true;
       });
     }
 
@@ -92,12 +86,9 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     final Collection<String> result = new ArrayList<String>();
 
     if (module != null && ModuleType.get(module) instanceof FlexModuleType) {
-      processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
-        @Override
-        public boolean process(final Pair<String, String> nameAndValue) {
-          result.add(nameAndValue.first);
-          return true;
-        }
+      processConditionalCompilationDefinitions(module, nameAndValue -> {
+        result.add(nameAndValue.first);
+        return true;
       });
     }
 

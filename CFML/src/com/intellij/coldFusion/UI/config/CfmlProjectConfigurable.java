@@ -111,11 +111,7 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
             }
           }, project, indicator);
         }
-        ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-          public void run() {
-            FileContentUtil.reparseFiles(project, cfmlFiles, true);
-          }
-        }, ModalityState.NON_MODAL);
+        ApplicationManager.getApplication().invokeAndWait(() -> FileContentUtil.reparseFiles(project, cfmlFiles, true), ModalityState.NON_MODAL);
       }
     };
     ProgressManager.getInstance().run(task);

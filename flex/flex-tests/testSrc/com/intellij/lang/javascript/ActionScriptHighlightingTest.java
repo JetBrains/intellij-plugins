@@ -161,40 +161,34 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testHighlightExtends() throws Exception {
-    doTestFor(true, null, new Runnable() {
-      @Override
-      public void run() {
-        HighlightUsagesHandlerBase<PsiElement> handler = HighlightUsagesHandler.createCustomHandler(myEditor, myFile);
-        assertNotNull(handler);
-        List<PsiElement> targets = handler.getTargets();
-        assertEquals(1, targets.size());
-        assertTrue(targets.get(0).getText().indexOf("class Foo") != -1);
-        handler.computeUsages(targets);
-        List<TextRange> readUsages = handler.getReadUsages();
-        assertEquals(1, readUsages.size());
-        String text = myFile.getText();
-        assertEquals("foo", fileTextOfRange(readUsages.get(0)));
-      }
+    doTestFor(true, null, () -> {
+      HighlightUsagesHandlerBase<PsiElement> handler = HighlightUsagesHandler.createCustomHandler(myEditor, myFile);
+      assertNotNull(handler);
+      List<PsiElement> targets = handler.getTargets();
+      assertEquals(1, targets.size());
+      assertTrue(targets.get(0).getText().indexOf("class Foo") != -1);
+      handler.computeUsages(targets);
+      List<TextRange> readUsages = handler.getReadUsages();
+      assertEquals(1, readUsages.size());
+      String text = myFile.getText();
+      assertEquals("foo", fileTextOfRange(readUsages.get(0)));
     }, getTestName(false) + ".js2");
   }
 
   public void testHighlightImplements() throws Exception {
-    doTestFor(true, null, new Runnable() {
-      @Override
-      public void run() {
-        HighlightUsagesHandlerBase<PsiElement> handler = HighlightUsagesHandler.createCustomHandler(myEditor, myFile);
-        assertNotNull(handler);
-        List<PsiElement> targets = handler.getTargets();
-        assertEquals(2, targets.size());
-        assertTrue(targets.get(0).getText().indexOf("interface IFoo") != -1);
-        assertTrue(targets.get(1).getText().indexOf("interface IBar") != -1);
-        handler.computeUsages(targets);
-        List<TextRange> readUsages = handler.getReadUsages();
-        assertEquals(2, readUsages.size());
-        String text = myFile.getText();
-        assertEquals("foo", fileTextOfRange(readUsages.get(0)));
-        assertEquals("baz", fileTextOfRange(readUsages.get(1)));
-      }
+    doTestFor(true, null, () -> {
+      HighlightUsagesHandlerBase<PsiElement> handler = HighlightUsagesHandler.createCustomHandler(myEditor, myFile);
+      assertNotNull(handler);
+      List<PsiElement> targets = handler.getTargets();
+      assertEquals(2, targets.size());
+      assertTrue(targets.get(0).getText().indexOf("interface IFoo") != -1);
+      assertTrue(targets.get(1).getText().indexOf("interface IBar") != -1);
+      handler.computeUsages(targets);
+      List<TextRange> readUsages = handler.getReadUsages();
+      assertEquals(2, readUsages.size());
+      String text = myFile.getText();
+      assertEquals("foo", fileTextOfRange(readUsages.get(0)));
+      assertEquals("baz", fileTextOfRange(readUsages.get(1)));
     }, getTestName(false) + ".js2");
   }
 
@@ -284,11 +278,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       if (variantName.equals(l.getLookupString())) {
         lookup.setCurrentItem(l);
         selected = true;
-        WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-          @Override
-          public void run() {
-            ((LookupImpl)lookup).finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR);
-          }
+        WriteCommandAction.runWriteCommandAction(null, () -> {
+          ((LookupImpl)lookup).finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR);
         });
 
       }
@@ -1239,11 +1230,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       assertNull(complementaryActionName, complementaryAction);
     }
 
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        action.invoke(myProject, myEditor, myFile);
-      }
+    WriteCommandAction.runWriteCommandAction(null, () -> {
+      action.invoke(myProject, myEditor, myFile);
     });
 
     JSTestUtils.initJSIndexes(getProject());
@@ -1322,12 +1310,9 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testOverridingMarkers() throws Exception {
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        final PsiElement at = invokeGotoSuperMethodAction("AAA");
-        invokeShowImplementations(JSFunction.class, at);
-      }
+    doTestFor(true, () -> {
+      final PsiElement at = invokeGotoSuperMethodAction("AAA");
+      invokeShowImplementations(JSFunction.class, at);
     }, getTestName(false) + ".js2");
   }
 
@@ -1397,45 +1382,34 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
   public void testOverridingMarkers2() throws Exception {
     //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        checkSetProperty(myFile.findElementAt(myEditor.getCaretModel().getOffset()));
-        PsiElement at = invokeGotoSuperMethodAction("AAA");
-        checkSetProperty(at);
-        at = invokeShowImplementations(JSFunction.class, at);
-        checkSetProperty(at);
-        at = invokeGotoSuperMethodAction("IAAA");
-        checkSetProperty(at);
-      }
+    doTestFor(true, () -> {
+      checkSetProperty(myFile.findElementAt(myEditor.getCaretModel().getOffset()));
+      PsiElement at = invokeGotoSuperMethodAction("AAA");
+      checkSetProperty(at);
+      at = invokeShowImplementations(JSFunction.class, at);
+      checkSetProperty(at);
+      at = invokeGotoSuperMethodAction("IAAA");
+      checkSetProperty(at);
     }, getTestName(false) + ".js2");
   }
 
   @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
   public void testOverridingMarkers3() throws Exception {
     //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        checkGetProperty(myFile.findElementAt(myEditor.getCaretModel().getOffset()));
-        PsiElement at = invokeGotoSuperMethodAction("AAA");
-        checkGetProperty(at);
-        at = invokeShowImplementations(JSFunction.class, at);
-        checkGetProperty(at);
-        at = invokeGotoSuperMethodAction("IAAA");
-        checkGetProperty(at);
-      }
+    doTestFor(true, () -> {
+      checkGetProperty(myFile.findElementAt(myEditor.getCaretModel().getOffset()));
+      PsiElement at = invokeGotoSuperMethodAction("AAA");
+      checkGetProperty(at);
+      at = invokeShowImplementations(JSFunction.class, at);
+      checkGetProperty(at);
+      at = invokeGotoSuperMethodAction("IAAA");
+      checkGetProperty(at);
     }, getTestName(false) + ".js2");
   }
 
   @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testShowImplementationsForStatic() throws Exception {
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 0, true);
-      }
-    }, getTestName(false) + ".js2");
+    doTestFor(true, () -> invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 0, true), getTestName(false) + ".js2");
   }
 
   private static void checkSetProperty(final PsiElement at) {
@@ -1453,80 +1427,62 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testLocalClasses() throws Exception {
     final String fileName = getTestName(false) + ".js2";
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-        invokeShowImplemenationsForLineMarker(at, 1);
-        PsiElement elt = invokeShowImplementations(JSClass.class, at, 1, false);
+    doTestFor(true, () -> {
+      PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
+      invokeShowImplemenationsForLineMarker(at, 1);
+      PsiElement elt = invokeShowImplementations(JSClass.class, at, 1, false);
 
-        assertNull(ActionScriptClassResolver.findClassByQNameStatic("BaseType", elt));
-        PsiElement byQName = JSClassResolver.findClassFromNamespace("BaseType", elt);
-        assertEquals(fileName, byQName.getContainingFile().getName());
+      assertNull(ActionScriptClassResolver.findClassByQNameStatic("BaseType", elt));
+      PsiElement byQName = JSClassResolver.findClassFromNamespace("BaseType", elt);
+      assertEquals(fileName, byQName.getContainingFile().getName());
 
-        byQName = JSClassResolver.findClassFromNamespace("DerivedType", elt);
-        assertEquals(fileName, byQName.getContainingFile().getName());
-      }
+      byQName = JSClassResolver.findClassFromNamespace("DerivedType", elt);
+      assertEquals(fileName, byQName.getContainingFile().getName());
     }, fileName, getTestName(false) + "_2.js2");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testGotoSuperWorksFromClass() throws Exception {
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        final PsiElement at = invokeGotoSuperMethodAction("AAA");
-        invokeShowImplementations(JSClass.class, at, 1, false);
-        invokeShowImplemenationsForLineMarker(at, 1);
-      }
+    doTestFor(true, () -> {
+      final PsiElement at = invokeGotoSuperMethodAction("AAA");
+      invokeShowImplementations(JSClass.class, at, 1, false);
+      invokeShowImplemenationsForLineMarker(at, 1);
     }, getTestName(false) + ".js2");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithLineMarkers})
   public void testImplementsAndImplementedMarkers() throws Exception {
     //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        PsiElement at = invokeGotoSuperMethodAction("SecondInterface");
-        invokeShowImplementations(JSFunction.class, at, 3, false);
-        invokeShowImplemenationsForLineMarker(at, 5);
-      }
+    doTestFor(true, () -> {
+      PsiElement at = invokeGotoSuperMethodAction("SecondInterface");
+      invokeShowImplementations(JSFunction.class, at, 3, false);
+      invokeShowImplemenationsForLineMarker(at, 5);
     }, getTestName(false) + ".js2");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testShowImplementationsFromInterface() throws Exception {
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-        invokeShowImplementations(JSClass.class, at, 3, false);
-        invokeShowImplemenationsForLineMarker(at, 3);
-      }
+    doTestFor(true, () -> {
+      final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
+      invokeShowImplementations(JSClass.class, at, 3, false);
+      invokeShowImplemenationsForLineMarker(at, 3);
     }, getTestName(false) + ".js2");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithLineMarkers})
   public void testShowImplementationsFromInterface2() throws Exception {
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-        invokeShowImplementations(JSClass.class, at, 2, false);
-        invokeShowImplemenationsForLineMarker(at, 2);
-      }
+    doTestFor(true, () -> {
+      final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
+      invokeShowImplementations(JSClass.class, at, 2, false);
+      invokeShowImplemenationsForLineMarker(at, 2);
     }, getTestName(false) + ".js2");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testShowImplementationsFromInterfaceCall() throws Exception {
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-        invokeShowImplementations(JSFunction.class, at, 1, false);
-      }
+    doTestFor(true, () -> {
+      final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
+      invokeShowImplementations(JSFunction.class, at, 1, false);
     }, getTestName(false) + ".js2");
   }
 
@@ -1634,14 +1590,11 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testNonImplementedInterface2() throws Exception {
-    doTestFor(false, new Runnable() {
-      @Override
-      public void run() {
-        final int offset = myEditor.getCaretModel().getOffset();
-        invokeGotoSuperMethodAction("FirstClass");
-        myEditor.getCaretModel().moveToOffset(offset);
-        invokeActionWithCheck("FirstInterface", "GotoTypeDeclaration");
-      }
+    doTestFor(false, () -> {
+      final int offset = myEditor.getCaretModel().getOffset();
+      invokeGotoSuperMethodAction("FirstClass");
+      myEditor.getCaretModel().moveToOffset(offset);
+      invokeActionWithCheck("FirstInterface", "GotoTypeDeclaration");
     });
   }
 
@@ -1696,11 +1649,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testConditionalBlocks() throws Exception {
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG::debugging\t"));
-      }
-    });
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG::debugging\t")));
 
     enableInspectionTool(new BadExpressionStatementJSInspection());
     defaultTest();
@@ -1752,12 +1701,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions({JSTestOption.WithLineMarkers})
   public void testImplementingMarkerFromSwc() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
     doTestFor(true, getTestName(false) + ".as");
   }
 
@@ -1773,15 +1718,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testImplicitImplementMarker_() throws Exception {
-    doTestFor(true, new Runnable() {
-      @Override
-      public void run() {
-        final PsiElement element =
-          invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 1, false);
-        assertTrue(element instanceof JSFunction);
-        assertTrue(element.getParent() instanceof JSClass);
-        assertEquals("Base", ((JSClass)element.getParent()).getQualifiedName());
-      }
+    doTestFor(true, () -> {
+      final PsiElement element =
+        invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 1, false);
+      assertTrue(element instanceof JSFunction);
+      assertTrue(element.getParent() instanceof JSClass);
+      assertEquals("Base", ((JSClass)element.getParent()).getQualifiedName());
     }, getTestName(false) + ".as");
   }
 
@@ -1902,12 +1844,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   // IDEA-56342
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMultinamesInDecompiledSwc() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "playerglobal", FlexImporterTest.getTestDataPath(), "PlayerGlobal10.swc", null, null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "playerglobal", FlexImporterTest.getTestDataPath(), "PlayerGlobal10.swc", null, null);
     doTestFor(true, getTestName(false) + ".as");
   }
 
@@ -2017,28 +1955,22 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testNoImportSuggestForTestClass() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        final VirtualFile testsRoot = getVirtualFile(BASE_PATH + getTestName(false) + "_2");
-        PsiTestUtil.addSourceContentToRoots(myModule, testsRoot, true);
-      }
+    myAfterCommitRunnable = () -> {
+      final VirtualFile testsRoot = getVirtualFile(BASE_PATH + getTestName(false) + "_2");
+      PsiTestUtil.addSourceContentToRoots(myModule, testsRoot, true);
     };
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     assertInaccessible(infos, "a.TestClass?");
   }
 
   public void testImportSuggestForProductionClass() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        final ContentEntry[] contentEntries = ModuleRootManager.getInstance(myModule).getContentEntries();
-        final VirtualFile file = contentEntries[0].getFile();
-        PsiTestUtil.removeContentEntry(myModule, contentEntries[0].getFile());
-        PsiTestUtil.addSourceContentToRoots(myModule, file, true);
-        final VirtualFile productionRoot = getVirtualFile(BASE_PATH + getTestName(false) + "_2");
-        PsiTestUtil.addSourceContentToRoots(myModule, productionRoot, false);
-      }
+    myAfterCommitRunnable = () -> {
+      final ContentEntry[] contentEntries = ModuleRootManager.getInstance(myModule).getContentEntries();
+      final VirtualFile file = contentEntries[0].getFile();
+      PsiTestUtil.removeContentEntry(myModule, contentEntries[0].getFile());
+      PsiTestUtil.addSourceContentToRoots(myModule, file, true);
+      final VirtualFile productionRoot = getVirtualFile(BASE_PATH + getTestName(false) + "_2");
+      PsiTestUtil.addSourceContentToRoots(myModule, productionRoot, false);
     };
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     assertNotNull(findIntentionAction(infos, "a.ProductionClass?", myEditor, myFile));
@@ -2103,12 +2035,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testNoCreateMethodInLibraryClass() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     assertInaccessible(infos, "Create Method 'bar'");
   }
@@ -2239,35 +2167,30 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     final Ref<VirtualFile> fileFromModule2 = new Ref<VirtualFile>();
     final Ref<Sdk> sdk1 = new Ref<Sdk>();
     final Ref<Sdk> sdk2 = new Ref<Sdk>();
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        sdk1.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0"));
-        {
-          SdkModificator m = sdk1.get().getSdkModificator();
-          m.removeAllRoots();
-          m.addRoot(sdk1.get().getHomeDirectory().findChild("common_root"), OrderRootType.CLASSES);
-          m.addRoot(sdk1.get().getHomeDirectory().findChild("flex_root"), OrderRootType.CLASSES);
-          m.commitChanges();
-        }
-        sdk2.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0"));
-        {
-          SdkModificator m = sdk2.get().getSdkModificator();
-          m.removeAllRoots();
-          m.addRoot(sdk2.get().getHomeDirectory().findChild("common_root"), OrderRootType.CLASSES);
-          m.addRoot(sdk2.get().getHomeDirectory().findChild("air_root"), OrderRootType.CLASSES);
-          m.commitChanges();
-        }
-        fileFromModule2.set(copyFileToModule(module2, getTestDataPath() + BASE_PATH + getTestName(false) + "2.as"));
+    myAfterCommitRunnable = () -> {
+      sdk1.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0"));
+      {
+        SdkModificator m = sdk1.get().getSdkModificator();
+        m.removeAllRoots();
+        m.addRoot(sdk1.get().getHomeDirectory().findChild("common_root"), OrderRootType.CLASSES);
+        m.addRoot(sdk1.get().getHomeDirectory().findChild("flex_root"), OrderRootType.CLASSES);
+        m.commitChanges();
       }
+      sdk2.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0"));
+      {
+        SdkModificator m = sdk2.get().getSdkModificator();
+        m.removeAllRoots();
+        m.addRoot(sdk2.get().getHomeDirectory().findChild("common_root"), OrderRootType.CLASSES);
+        m.addRoot(sdk2.get().getHomeDirectory().findChild("air_root"), OrderRootType.CLASSES);
+        m.commitChanges();
+      }
+      fileFromModule2.set(copyFileToModule(module2, getTestDataPath() + BASE_PATH + getTestName(false) + "2.as"));
     };
     configureByFile(BASE_PATH + getTestName(false) + "1.as");
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        FlexTestUtils.setSdk(e.getConfigurations(myModule)[0], sdk1.get());
-        FlexTestUtils.setSdk(e.getConfigurations(module2)[0], sdk2.get());
-      }
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      FlexTestUtils.setSdk(e.getConfigurations(myModule)[0], sdk1.get());
+      FlexTestUtils.setSdk(e.getConfigurations(module2)[0], sdk2.get());
     });
 
     checkHighlighting(new ExpectedHighlightingData(myEditor.getDocument(), true, true, false, myFile));
@@ -2319,18 +2242,15 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     // has more recent timestamp than its brother from SDK 4.5/airglobal.swc
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        bc1.setTargetPlatform(TargetPlatform.Desktop);
-        FlexTestUtils.setSdk(bc1, sdk45);
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
+      bc1.setTargetPlatform(TargetPlatform.Desktop);
+      FlexTestUtils.setSdk(bc1, sdk45);
 
-        ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
-        bc2.setName("2");
-        bc1.setTargetPlatform(TargetPlatform.Mobile);
-        FlexTestUtils.setSdk(bc2, sdk46);
-      }
+      ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
+      bc2.setName("2");
+      bc1.setTargetPlatform(TargetPlatform.Mobile);
+      FlexTestUtils.setSdk(bc2, sdk46);
     });
     defaultTest();
   }
@@ -2339,18 +2259,15 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     // same as testSuperclassResolveMixedRoots()
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        bc1.setTargetPlatform(TargetPlatform.Desktop);
-        FlexTestUtils.setSdk(bc1, sdk45);
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
+      bc1.setTargetPlatform(TargetPlatform.Desktop);
+      FlexTestUtils.setSdk(bc1, sdk45);
 
-        ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
-        bc2.setName("2");
-        bc1.setTargetPlatform(TargetPlatform.Mobile);
-        FlexTestUtils.setSdk(bc2, sdk46);
-      }
+      ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
+      bc2.setName("2");
+      bc1.setTargetPlatform(TargetPlatform.Mobile);
+      FlexTestUtils.setSdk(bc2, sdk46);
     });
     defaultTest();
   }
@@ -2383,19 +2300,16 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testCorrectScopeForSuperclassCheck2() throws Exception { //
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        bc1.setName("web");
-        bc1.setTargetPlatform(TargetPlatform.Web);
-        FlexTestUtils.setSdk(bc1, sdk46);
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
+      bc1.setName("web");
+      bc1.setTargetPlatform(TargetPlatform.Web);
+      FlexTestUtils.setSdk(bc1, sdk46);
 
-        ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
-        bc2.setName("air");
-        bc1.setTargetPlatform(TargetPlatform.Desktop);
-        FlexTestUtils.setSdk(bc2, sdk46);
-      }
+      ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
+      bc2.setName("air");
+      bc1.setTargetPlatform(TargetPlatform.Desktop);
+      FlexTestUtils.setSdk(bc2, sdk46);
     });
     FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(myModule);
     m.setActiveBuildConfiguration(m.findConfigurationByName("air"));
@@ -2404,13 +2318,10 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testCorrectScopeForSuperclassCheck3() throws Exception { // IDEA-91539
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        bc1.setTargetPlatform(TargetPlatform.Desktop);
-        FlexTestUtils.setSdk(e.getConfigurations(myModule)[0], sdk46);
-      }
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
+      bc1.setTargetPlatform(TargetPlatform.Desktop);
+      FlexTestUtils.setSdk(e.getConfigurations(myModule)[0], sdk46);
     });
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.mxml");
   }
@@ -2420,26 +2331,18 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     final Module module2 = doCreateRealModuleIn("module2", myProject, FlexModuleType.getInstance());
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        FlexTestUtils.setSdk(bc1, sdk46);
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
+      FlexTestUtils.setSdk(bc1, sdk46);
 
-        ModifiableFlexBuildConfiguration bc2 = e.getConfigurations(module2)[0];
-        bc2.setOutputType(OutputType.Library);
-        FlexTestUtils.setSdk(bc2, sdk45);
+      ModifiableFlexBuildConfiguration bc2 = e.getConfigurations(module2)[0];
+      bc2.setOutputType(OutputType.Library);
+      FlexTestUtils.setSdk(bc2, sdk45);
 
-        bc1.getDependencies().getModifiableEntries().add(e.createBcEntry(bc1.getDependencies(), bc2, null));
-      }
+      bc1.getDependencies().getModifiableEntries().add(e.createBcEntry(bc1.getDependencies(), bc2, null));
     });
 
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        copyFileToModule(module2, getTestDataPath() + BASE_PATH + getTestName(false) + "_2.js2");
-      }
-    };
+    myAfterCommitRunnable = () -> copyFileToModule(module2, getTestDataPath() + BASE_PATH + getTestName(false) + "_2.js2");
     doTestFor(true, getTestName(false) + ".js2");
   }
 
@@ -2454,12 +2357,9 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     FlexTestUtils.addFlexLibrary(false, myModule, "foobar", true, getTestDataPath(), BASE_PATH + getTestName(false) + ".swc", null, null,
                                  LinkageType.Merged);
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        FlexTestUtils.setSdk(bc1, sdk45);
-      }
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
+      FlexTestUtils.setSdk(bc1, sdk45);
     });
     doTestFor(true, getTestName(false) + ".js2");
   }
@@ -2468,12 +2368,9 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     // monkey patching SDK class
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor e) {
-        ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        FlexTestUtils.setSdk(bc1, sdk45);
-      }
+    FlexTestUtils.modifyConfigs(myProject, e -> {
+      ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
+      FlexTestUtils.setSdk(bc1, sdk45);
     });
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
@@ -2482,12 +2379,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     // same FQNs in different modules
     final Module module2 = doCreateRealModuleIn("module2", myProject, FlexModuleType.getInstance());
 
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        copyFileToModule(module2, getTestDataPath() + BASE_PATH + getTestName(false) + "_2.js2");
-      }
-    };
+    myAfterCommitRunnable = () -> copyFileToModule(module2, getTestDataPath() + BASE_PATH + getTestName(false) + "_2.js2");
 
     configureByFiles(null, BASE_PATH + getTestName(false) + ".js2");
     final JSClassResolver resolver = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
@@ -2506,11 +2398,9 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testVectorWithSdk() throws Exception {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        FlexTestUtils.setSdk(bc1, sdk45);
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      FlexTestUtils.setSdk(bc1, sdk45);
     });
     doTestFor(true, getTestName(false) + ".as");
   }

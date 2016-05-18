@@ -19,27 +19,20 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testInlineTemplateCompletion2TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        myFixture.testCompletion("component.ts", "component.after.ts", "angular2.js");
-      }
-    });
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("component.ts", "component.after.ts", "angular2.js"));
   }
 
   public void testInlineTemplateResolveTypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        myFixture.configureByFiles("component.after.ts", "angular2.js");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("=\"onComple<caret>tedButton()", myFixture.getFile());
-        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-        assertNotNull(ref);
-        PsiElement resolve = ref.resolve();
-        assertNotNull(resolve);
-        assertEquals("component.after.ts", resolve.getContainingFile().getName());
-        assertInstanceOf(resolve, JSFunction.class);
-      }
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("component.after.ts", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("=\"onComple<caret>tedButton()", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("component.after.ts", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSFunction.class);
     });
 
   }

@@ -325,11 +325,9 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       }
     }
 
-    result.addAll(ContainerUtil.map2Set(variants, new Function<PsiNamedElement, LookupElement>() {
-      public LookupElement fun(final PsiNamedElement element) {
-        PsiElement scope = getScope();
-        return CfmlLookUpItemUtil.namedElementToLookupItem(element, scope != null ? scope.getText() : null);
-      }
+    result.addAll(ContainerUtil.map2Set(variants, element -> {
+      PsiElement scope = getScope();
+      return CfmlLookUpItemUtil.namedElementToLookupItem(element, scope != null ? scope.getText() : null);
     }));
     return result.toArray();
   }

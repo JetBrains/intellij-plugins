@@ -382,12 +382,8 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private Process launchFdb(final List<String> fdbLaunchCommand) throws IOException {
     ensureExecutable(fdbLaunchCommand.get(0));
-    myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand, new Function<String, String>() {
-      @Override
-      public String fun(final String s) {
-        return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
-      }
-    }, " ");
+    myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand,
+                                         s -> s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s, " ");
 
     final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
     sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
@@ -395,46 +391,43 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private void startCommandProcessingThread() {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        myDebuggerManagerThread = Thread.currentThread();
-        synchronized (FlexDebugProcess.this) {
-          if (!debugSessionInitialized) {
-            try {
-              FlexDebugProcess.this.wait();
-            }
-            catch (InterruptedException e) {
-              // ignore
-            }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      myDebuggerManagerThread = Thread.currentThread();
+      synchronized (FlexDebugProcess.this) {
+        if (!debugSessionInitialized) {
+          try {
+            FlexDebugProcess.this.wait();
+          }
+          catch (InterruptedException e) {
+            // ignore
           }
         }
+      }
 
+      try {
+        while (true) {
+          processOneCommandLoop();
+        }
+      }
+      catch (IOException ex) {
+        myConsoleView.print(ex.toString(), ConsoleViewContentType.ERROR_OUTPUT);
+        getProcessHandler().detachProcess();
+        fdbProcess.destroy();
+        LOG.warn(ex);
+      }
+      catch (InterruptedException e) {
+        return;
+      }
+      catch (RuntimeException ex) {
+        final Throwable throwable = ex.getCause();
+        if (throwable instanceof InterruptedException) return;
+        throw ex;
+      }
+      finally {
         try {
-          while (true) {
-            processOneCommandLoop();
-          }
+          fdbProcess.getInputStream().close();
         }
         catch (IOException ex) {
-          myConsoleView.print(ex.toString(), ConsoleViewContentType.ERROR_OUTPUT);
-          getProcessHandler().detachProcess();
-          fdbProcess.destroy();
-          LOG.warn(ex);
-        }
-        catch (InterruptedException e) {
-          return;
-        }
-        catch (RuntimeException ex) {
-          final Throwable throwable = ex.getCause();
-          if (throwable instanceof InterruptedException) return;
-          throw ex;
-        }
-        finally {
-          try {
-            fdbProcess.getInputStream().close();
-          }
-          catch (IOException ex) {
-          }
         }
       }
     });
@@ -688,14 +681,11 @@ public class FlexDebugProcess extends XDebugProcess {
                              : FlexBundle.message("not.boolean.breakpoint.condition", expression, result);
       final Ref<Boolean> stopRef = new Ref<Boolean>(false);
 
-      ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-        @Override
-        public void run() {
-          final Project project = getSession().getProject();
-          final int answer =
-            Messages.showYesNoDialog(project, message, FlexBundle.message("breakpoint.condition.error"), Messages.getQuestionIcon());
-          stopRef.set(answer == Messages.YES);
-        }
+      ApplicationManager.getApplication().invokeAndWait(() -> {
+        final Project project = getSession().getProject();
+        final int answer =
+          Messages.showYesNoDialog(project, message, FlexBundle.message("breakpoint.condition.error"), Messages.getQuestionIcon());
+        stopRef.set(answer == Messages.YES);
       }, ModalityState.defaultModalityState());
 
       return stopRef.get();
@@ -1103,37 +1093,29 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   void addPendingCommand(final DebuggerCommand command, int delay) {
-    myOutputAlarm.addRequest(new Runnable() {
-      @Override
-      public void run() {
-        sendCommand(command);
-      }
-    }, delay);
+    myOutputAlarm.addRequest(() -> sendCommand(command), delay);
   }
 
   private void scheduleFdbErrorStreamReading() {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream());
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream());
+      try {
+        char[] buf = new char[1024];
+        int read;
+        while ((read = myErrorStreamReader.read(buf, 0, buf.length)) >= 0) {
+          String message = new String(buf, 0, read);
+          LOG.debug("[fdb error stream]: " + message);
+          myConsoleView.print(message, ConsoleViewContentType.ERROR_OUTPUT);
+        }
+      }
+      catch (IOException e) {
+        LOG.debug("fdb error stream reading error", e);
+      }
+      finally {
         try {
-          char[] buf = new char[1024];
-          int read;
-          while ((read = myErrorStreamReader.read(buf, 0, buf.length)) >= 0) {
-            String message = new String(buf, 0, read);
-            LOG.debug("[fdb error stream]: " + message);
-            myConsoleView.print(message, ConsoleViewContentType.ERROR_OUTPUT);
-          }
+          myErrorStreamReader.close();
         }
-        catch (IOException e) {
-          LOG.debug("fdb error stream reading error", e);
-        }
-        finally {
-          try {
-            myErrorStreamReader.close();
-          }
-          catch (IOException e) {/*ignore*/}
-        }
+        catch (IOException e) {/*ignore*/}
       }
     });
   }
@@ -1407,69 +1389,63 @@ public class FlexDebugProcess extends XDebugProcess {
         throw new IOException(e.getMessage());
       }
 
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-        @Override
-        public void run() {
-          InputStreamReader reader = new InputStreamReader(adlProcess.getInputStream());
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        InputStreamReader reader12 = new InputStreamReader(adlProcess.getInputStream());
+        try {
+          char[] buf = new char[1024];
+          int read;
+          while ((read = reader12.read(buf, 0, buf.length)) >= 0) {
+            String message = new String(buf, 0, read);
+            LOG.debug("[adl input stream]: " + message);
+            if (!startupDone) {
+              myConsoleView.print(ADL_PREFIX + message + (message.endsWith("\n") ? "" : "\n"), ConsoleViewContentType.ERROR_OUTPUT);
+            }
+          }
+          // the process is likely already destroyed because input stream is finished, though double check makes no harm
+          adlProcess.destroy();
           try {
-            char[] buf = new char[1024];
-            int read;
-            while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-              String message = new String(buf, 0, read);
-              LOG.debug("[adl input stream]: " + message);
-              if (!startupDone) {
-                myConsoleView.print(ADL_PREFIX + message + (message.endsWith("\n") ? "" : "\n"), ConsoleViewContentType.ERROR_OUTPUT);
-              }
-            }
-            // the process is likely already destroyed because input stream is finished, though double check makes no harm
-            adlProcess.destroy();
-            try {
-              int exitCode = adlProcess.exitValue();
-              myConsoleView.print(ADL_PREFIX + IdeBundle.message("finished.with.exit.code.text.message", exitCode) + "\n",
-                                  exitCode == 0 ? ConsoleViewContentType.SYSTEM_OUTPUT : ConsoleViewContentType.ERROR_OUTPUT);
-            }
-            catch (IllegalThreadStateException ignore) {
-            }
-            // need to destroy fdb process that is waiting for player to start
-            getProcessHandler().detachProcess();
+            int exitCode = adlProcess.exitValue();
+            myConsoleView.print(ADL_PREFIX + IdeBundle.message("finished.with.exit.code.text.message", exitCode) + "\n",
+                                exitCode == 0 ? ConsoleViewContentType.SYSTEM_OUTPUT : ConsoleViewContentType.ERROR_OUTPUT);
           }
-          catch (IOException e) {
-            LOG.debug("adl input stream reading error", e);
-            myConsoleView.print(ADL_PREFIX + e.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+          catch (IllegalThreadStateException ignore) {
           }
-          finally {
-            if (myTempDirToDeleteWhenProcessFinished != null) {
-              FlexUtils.removeFileLater(myTempDirToDeleteWhenProcessFinished);
-            }
-            try {
-              reader.close();
-            }
-            catch (IOException e) {/*ignore*/}
+          // need to destroy fdb process that is waiting for player to start
+          getProcessHandler().detachProcess();
+        }
+        catch (IOException e) {
+          LOG.debug("adl input stream reading error", e);
+          myConsoleView.print(ADL_PREFIX + e.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+        }
+        finally {
+          if (myTempDirToDeleteWhenProcessFinished != null) {
+            FlexUtils.removeFileLater(myTempDirToDeleteWhenProcessFinished);
           }
+          try {
+            reader12.close();
+          }
+          catch (IOException e) {/*ignore*/}
         }
       });
 
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-        @Override
-        public void run() {
-          InputStreamReader reader = new InputStreamReader(adlProcess.getErrorStream());
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        InputStreamReader reader1 = new InputStreamReader(adlProcess.getErrorStream());
+        try {
+          char[] buf = new char[1024];
+          int read;
+          while ((read = reader1.read(buf, 0, buf.length)) >= 0) {
+            String message = new String(buf, 0, read);
+            LOG.debug("[adl error stream]: " + message);
+          }
+        }
+        catch (IOException e) {
+          LOG.debug("adl error stream reading error", e);
+        }
+        finally {
           try {
-            char[] buf = new char[1024];
-            int read;
-            while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-              String message = new String(buf, 0, read);
-              LOG.debug("[adl error stream]: " + message);
-            }
+            reader1.close();
           }
-          catch (IOException e) {
-            LOG.debug("adl error stream reading error", e);
-          }
-          finally {
-            try {
-              reader.close();
-            }
-            catch (IOException e) {/*ignore*/}
-          }
+          catch (IOException e) {/*ignore*/}
         }
       });
     }
@@ -1489,12 +1465,8 @@ public class FlexDebugProcess extends XDebugProcess {
 
     @Override
     void launchDebuggedApplication() throws IOException {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myDevice, myAppId, true);
-        }
-      });
+      ApplicationManager.getApplication().invokeLater(
+        () -> FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myDevice, myAppId, true));
     }
   }
 
@@ -1512,12 +1484,8 @@ public class FlexDebugProcess extends XDebugProcess {
 
     @Override
     void launchDebuggedApplication() throws IOException {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, true);
-        }
-      });
+      ApplicationManager.getApplication().invokeLater(
+        () -> FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, true));
     }
   }
 
@@ -1530,27 +1498,24 @@ public class FlexDebugProcess extends XDebugProcess {
 
     @Override
     void launchDebuggedApplication() throws IOException {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          final String adtVersion = AirPackageUtil.getAdtVersion(myModule.getProject(), myBC.getSdk());
-          if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
-            final String message = FlexBundle.message("ios.application.installed.to.debug", myAppName);
-            ToolWindowManager.getInstance(myModule.getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message);
-          }
-          else {
-            final String ipaName = myBC.getIosPackagingOptions().getPackageFileName() + ".ipa";
-            final String outputFolder = PathUtil.getParentPath(myBC.getActualOutputFilePath());
+      ApplicationManager.getApplication().invokeLater(() -> {
+        final String adtVersion = AirPackageUtil.getAdtVersion(myModule.getProject(), myBC.getSdk());
+        if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
+          final String message = FlexBundle.message("ios.application.installed.to.debug", myAppName);
+          ToolWindowManager.getInstance(myModule.getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message);
+        }
+        else {
+          final String ipaName = myBC.getIosPackagingOptions().getPackageFileName() + ".ipa";
+          final String outputFolder = PathUtil.getParentPath(myBC.getActualOutputFilePath());
 
-            final String message = FlexBundle.message("ios.application.packaged.to.debug", ipaName);
-            ToolWindowManager.getInstance(myModule.getProject())
-              .notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message, null, new HyperlinkAdapter() {
-                @Override
-                protected void hyperlinkActivated(final HyperlinkEvent e) {
-                  ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
-                }
-              });
-          }
+          final String message = FlexBundle.message("ios.application.packaged.to.debug", ipaName);
+          ToolWindowManager.getInstance(myModule.getProject())
+            .notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message, null, new HyperlinkAdapter() {
+              @Override
+              protected void hyperlinkActivated(final HyperlinkEvent e) {
+                ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
+              }
+            });
         }
       });
     }
@@ -1588,12 +1553,8 @@ public class FlexDebugProcess extends XDebugProcess {
                   ? FlexBundle.message("remote.flash.debug.mobile.network", device, FlexUtils.getOwnIpAddress())
                   : FlexBundle.message("remote.flash.debug.mobile.usb", device, String.valueOf(usbDebugPort));
       }
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          ToolWindowManager.getInstance(getSession().getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message);
-        }
-      });
+      ApplicationManager.getApplication().invokeLater(
+        () -> ToolWindowManager.getInstance(getSession().getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message));
     }
   }
 
@@ -1667,11 +1628,7 @@ public class FlexDebugProcess extends XDebugProcess {
         if (startupDone) {
           final Balloon balloon = ToolWindowManager.getInstance(getSession().getProject()).getToolWindowBalloon(ToolWindowId.DEBUG);
           if (balloon != null) {
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-              public void run() {
-                balloon.hide();
-              }
-            });
+            ApplicationManager.getApplication().invokeLater(() -> balloon.hide());
           }
 
           getSession().rebuildViews();

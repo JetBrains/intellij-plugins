@@ -52,11 +52,8 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
 
     List<DartNamedElementNode> selectedElements = Collections.emptyList();
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      selectedElements = ContainerUtil.map(candidates, new Function<DartComponent, DartNamedElementNode>() {
-        @Override
-        public DartNamedElementNode fun(DartComponent namedComponent) {
-          return new DartNamedElementNode(namedComponent);
-        }
+      selectedElements = ContainerUtil.map(candidates, namedComponent -> {
+        return new DartNamedElementNode(namedComponent);
       });
     }
     else if (!candidates.isEmpty()) {
@@ -182,11 +179,8 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
                                                                           @NotNull final Collection<DartComponent> candidates,
                                                                           @NotNull final String title) {
     final MemberChooser<DartNamedElementNode> chooser =
-      new MemberChooser<DartNamedElementNode>(ContainerUtil.map(candidates, new Function<DartComponent, DartNamedElementNode>() {
-        @Override
-        public DartNamedElementNode fun(DartComponent namedComponent) {
-          return new DartNamedElementNode(namedComponent);
-        }
+      new MemberChooser<DartNamedElementNode>(ContainerUtil.map(candidates, namedComponent -> {
+        return new DartNamedElementNode(namedComponent);
       }).toArray(new DartNamedElementNode[candidates.size()]), doAllowEmptySelection(), true, project, false) {
 
         protected JComponent createCenterPanel() {

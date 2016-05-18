@@ -332,27 +332,25 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
     final Ref<JSQualifiedNamedElement> withAsdoc = new Ref<JSQualifiedNamedElement>();
     final PsiElement sourceElement =
-      JSPsiImplUtils.findTopLevelNavigatableElementWithSource(element, new Consumer<JSQualifiedNamedElement>() {
-        public void consume(JSQualifiedNamedElement candidate) {
-          if (withAsdoc.isNull()) {
-            ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(candidate.getProject()).getFileIndex();
-            String relPath = getAsDocRelativePath(candidate);
-            final PsiFile file = candidate.getContainingFile();
-            if (file == null) {
-              return;
-            }
+      JSPsiImplUtils.findTopLevelNavigatableElementWithSource(element, candidate -> {
+        if (withAsdoc.isNull()) {
+          ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(candidate.getProject()).getFileIndex();
+          String relPath = getAsDocRelativePath(candidate);
+          final PsiFile file = candidate.getContainingFile();
+          if (file == null) {
+            return;
+          }
 
-            VirtualFile containingFile = file.getVirtualFile();
-            if (containingFile == null || projectFileIndex.getClassRootForFile(containingFile) == null) {
-              return;
-            }
+          VirtualFile containingFile = file.getVirtualFile();
+          if (containingFile == null || projectFileIndex.getClassRootForFile(containingFile) == null) {
+            return;
+          }
 
-            final List<OrderEntry> orderEntries = projectFileIndex.getOrderEntriesForFile(containingFile);
-            for (OrderEntry orderEntry : orderEntries) {
-              String[] roots = JavadocOrderRootType.getUrls(orderEntry);
-              if (PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(roots), relPath) != null) {
-                withAsdoc.set(candidate);
-              }
+          final List<OrderEntry> orderEntries = projectFileIndex.getOrderEntriesForFile(containingFile);
+          for (OrderEntry orderEntry : orderEntries) {
+            String[] roots = JavadocOrderRootType.getUrls(orderEntry);
+            if (PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(roots), relPath) != null) {
+              withAsdoc.set(candidate);
             }
           }
         }

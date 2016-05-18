@@ -149,16 +149,9 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
   @Override
   protected void doOKAction() {
     final Ref<ErrorMessage> errorMessageRef = Ref.create();
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, new Runnable() {
-          @Override
-          public void run() {
-            errorMessageRef.set(createLibraryAndAssociate());
-          }
-        });
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
+                                              () -> errorMessageRef.set(createLibraryAndAssociate()));
     });
     ErrorMessage errorMessage = errorMessageRef.get();
     if (errorMessage != null) {

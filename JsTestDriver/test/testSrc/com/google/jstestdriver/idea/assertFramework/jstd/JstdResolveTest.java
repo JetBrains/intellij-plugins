@@ -57,37 +57,30 @@ public class JstdResolveTest extends ResolveTestCase {
   }
 
   private static void removeLibrary(@NotNull final Project project) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        ScriptingLibraryManager libraryManager = ServiceManager.getService(project, JSLibraryManager.class);
-        ScriptingLibraryModel model = libraryManager.getLibraryByName(JstdLibraryUtil.LIBRARY_NAME);
-        assert model != null;
-        libraryManager.removeLibrary(model);
-        libraryManager.commitChanges();
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      ScriptingLibraryManager libraryManager = ServiceManager.getService(project, JSLibraryManager.class);
+      ScriptingLibraryModel model = libraryManager.getLibraryByName(JstdLibraryUtil.LIBRARY_NAME);
+      assert model != null;
+      libraryManager.removeLibrary(model);
+      libraryManager.commitChanges();
     });
   }
 
   private static void addJstdLibrary(@NotNull final Project project,
                                      @NotNull final Collection<VirtualFile> libSourceFiles) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-
-      @Override
-      public void run() {
-        JSLibraryManager jsLibraryManager = ServiceManager.getService(project, JSLibraryManager.class);
-        ScriptingLibraryModel libraryModel = jsLibraryManager.createLibrary(
-          JstdLibraryUtil.LIBRARY_NAME,
-          VfsUtilCore.toVirtualFileArray(libSourceFiles),
-          VirtualFile.EMPTY_ARRAY,
-          ArrayUtil.EMPTY_STRING_ARRAY,
-          ScriptingLibraryModel.LibraryLevel.GLOBAL,
-          false
-        );
-        JSLibraryMappings jsLibraryMappings = ServiceManager.getService(project, JSLibraryMappings.class);
-        jsLibraryMappings.associate(null, libraryModel.getName());
-        jsLibraryManager.commitChanges();
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      JSLibraryManager jsLibraryManager = ServiceManager.getService(project, JSLibraryManager.class);
+      ScriptingLibraryModel libraryModel = jsLibraryManager.createLibrary(
+        JstdLibraryUtil.LIBRARY_NAME,
+        VfsUtilCore.toVirtualFileArray(libSourceFiles),
+        VirtualFile.EMPTY_ARRAY,
+        ArrayUtil.EMPTY_STRING_ARRAY,
+        ScriptingLibraryModel.LibraryLevel.GLOBAL,
+        false
+      );
+      JSLibraryMappings jsLibraryMappings = ServiceManager.getService(project, JSLibraryMappings.class);
+      jsLibraryMappings.associate(null, libraryModel.getName());
+      jsLibraryManager.commitChanges();
     });
   }
 

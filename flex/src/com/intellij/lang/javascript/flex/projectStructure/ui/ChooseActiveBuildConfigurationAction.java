@@ -71,12 +71,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
     final FlexBuildConfiguration activeBc = manager.getActiveConfiguration();
     final FlexBuildConfiguration[] bcs = manager.getBuildConfigurations();
-    Arrays.sort(bcs, new Comparator<FlexBuildConfiguration>() {
-      @Override
-      public int compare(final FlexBuildConfiguration o1, final FlexBuildConfiguration o2) {
-        return o1.getName().compareToIgnoreCase(o2.getName());
-      }
-    });
+    Arrays.sort(bcs, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
     for (final FlexBuildConfiguration bc : bcs) {
       actionGroup.add(new SelectBcAction(bc, manager));
     }
@@ -190,12 +185,9 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     public void actionPerformed(AnActionEvent e) {
       final FlexBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
       final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myModule.getProject());
-      ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, new Runnable() {
-        @Override
-        public void run() {
-          Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration.getName());
-          c.navigateTo(p, true);
-        }
+      ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, () -> {
+        Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration.getName());
+        c.navigateTo(p, true);
       });
     }
   }

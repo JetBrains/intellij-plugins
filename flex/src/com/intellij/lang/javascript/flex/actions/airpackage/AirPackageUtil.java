@@ -154,15 +154,13 @@ public class AirPackageUtil {
 
       protected void scheduleInputStreamReading() {
         // Reading input stream causes hang on Windows because adb starts child process that never exits (IDEA-87648)
-        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-          public void run() {
-            try {
-              getProcess().waitFor();
-            }
-            catch (InterruptedException ignore) {/**/}
-            finally {
-              cancel();
-            }
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          try {
+            getProcess().waitFor();
+          }
+          catch (InterruptedException ignore) {/**/}
+          finally {
+            cancel();
           }
         });
       }

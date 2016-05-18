@@ -78,27 +78,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     Collections.addAll(INJECTABLE_METHODS, CONTROLLER, DIRECTIVE, COMPONENT, MODULE, "config", "run");
 
     INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.KEY);
-    NAME_CONVERTERS.put(DIRECTIVE, new Function<String, String>() {
-      @Override
-      public String fun(String s) {
-        return DirectiveUtil.getAttributeName(s);
-      }
-    });
-    DATA_CALCULATORS.put(DIRECTIVE, new Function<PsiElement, String>() {
-      @Override
-      public String fun(PsiElement element) {
-        return calculateRestrictions(element, DEFAULT_RESTRICTIONS);
-      }
-    });
+    NAME_CONVERTERS.put(DIRECTIVE, s -> DirectiveUtil.getAttributeName(s));
+    DATA_CALCULATORS.put(DIRECTIVE, element -> calculateRestrictions(element, DEFAULT_RESTRICTIONS));
 
     INDEXERS.put(COMPONENT, AngularDirectivesIndex.KEY);
     NAME_CONVERTERS.put(COMPONENT, NAME_CONVERTERS.get(DIRECTIVE));
-    DATA_CALCULATORS.put(COMPONENT, new Function<PsiElement, String>() {
-      @Override
-      public String fun(PsiElement element) {
-        return calculateRestrictions(element, "E");
-      }
-    });
+    DATA_CALCULATORS.put(COMPONENT, element -> calculateRestrictions(element, "E"));
 
     INDEXERS.put(CONTROLLER, AngularControllerIndex.KEY);
     INDEXERS.put(MODULE, AngularModuleIndex.KEY);
@@ -131,35 +116,21 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     CUSTOM_PROPERTY_PROCESSORS.put("otherwise", processor);
     CUSTOM_PROPERTY_PROCESSORS.put("state", processor);
     // example of nested states https://scotch.io/tutorials/angular-routing-using-ui-router
-    POLY_NAME_CONVERTERS.put(STATE, new NotNullFunction<String, List<String>>() {
-      @NotNull
-      @Override
-      public List<String> fun(String dom) {
-        final String[] parts = dom.split("\\.");
-        final List<String> result = new ArrayList<String>();
-        result.add(dom);
-        String tail = "";
-        for (int i = parts.length - 1; i > 0; i--) {
-          final String part = "." + parts[i] + tail;
-          result.add(part);
-          tail = part;
-        }
-        return result;
+    POLY_NAME_CONVERTERS.put(STATE, (NotNullFunction<String, List<String>>)dom -> {
+      final String[] parts = dom.split("\\.");
+      final List<String> result = new ArrayList<String>();
+      result.add(dom);
+      String tail = "";
+      for (int i = parts.length - 1; i > 0; i--) {
+        final String part = "." + parts[i] + tail;
+        result.add(part);
+        tail = part;
       }
+      return result;
     });
     // do NOT split module names by dot
-    POLY_NAME_CONVERTERS.put(MODULE, new Function<String, List<String>>() {
-      @Override
-      public List<String> fun(String s) {
-        return Collections.singletonList(s);
-      }
-    });
-    ARGUMENT_LIST_CHECKERS.put(MODULE, new Processor<JSArgumentList>() {
-      @Override
-      public boolean process(JSArgumentList list) {
-        return list.getArguments().length > 1;
-      }
-    });
+    POLY_NAME_CONVERTERS.put(MODULE, s -> Collections.singletonList(s));
+    ARGUMENT_LIST_CHECKERS.put(MODULE, list -> list.getArguments().length > 1);
   }
 
   static final String RESTRICT = "@restrict";
@@ -410,15 +381,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                                           @NotNull final JSElementIndexingData outData) {
     final List<String> keys = INDEXES.getKeysByValue(index);
     assert keys != null && keys.size() == 1;
-    final Consumer<JSImplicitElementImpl.Builder> adder = new Consumer<JSImplicitElementImpl.Builder>() {
-      @Override
-      public void consume(JSImplicitElementImpl.Builder builder) {
-        builder.setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
-          .setTypeString(value);
-        builder.setUserString(keys.get(0));
-        final JSImplicitElementImpl implicitElement = builder.toImplicitElement();
-        outData.addImplicitElement(implicitElement);
-      }
+    final Consumer<JSImplicitElementImpl.Builder> adder = builder -> {
+      builder.setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
+        .setTypeString(value);
+      builder.setUserString(keys.get(0));
+      final JSImplicitElementImpl implicitElement = builder.toImplicitElement();
+      outData.addImplicitElement(implicitElement);
     };
 
     final Function<String, List<String>> variants = POLY_NAME_CONVERTERS.get(command);
@@ -462,11 +430,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
             }
           } else if ("scope".equals(name)) {
             if (value instanceof JSObjectLiteralExpression) {
-              scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), new Function<JSProperty, String>() {
-                @Override
-                public String fun(JSProperty property) {
-                  return property.getName();
-                }
+              scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), property -> {
+                return property.getName();
               }, ","));
             }
           }

@@ -91,11 +91,7 @@ public class CfmlStackTraceFilterProvider implements Filter {
     }
 
     try {
-      GuiUtils.runOrInvokeAndWait(new Runnable() {
-        public void run() {
-          vFile.set(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file));
-        }
-      });
+      GuiUtils.runOrInvokeAndWait(() -> vFile.set(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)));
     }
     catch (InvocationTargetException e) {
       // skip

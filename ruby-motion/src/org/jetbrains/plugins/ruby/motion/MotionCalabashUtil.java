@@ -25,17 +25,15 @@ public class MotionCalabashUtil {
   private static Logger LOG = Logger.getInstance(MotionCalabashUtil.class);
 
   public static void addCalabashSupport(final Project project, final Module module, final String applicationHomePath) {
-    AppUIUtil.invokeLaterIfProjectAlive(project, new Runnable() {
-      public void run() {
-        try {
-          final boolean hadGemfile = addToGemfile(applicationHomePath);
-          if (!hadGemfile) {
-            addToRakefile(applicationHomePath);
-          }
-          ModuleGemInfrastructure.getInstance(module).updateModuleGemset();
-        } catch (IOException e) {
-          LOG.error(e);
+    AppUIUtil.invokeLaterIfProjectAlive(project, () -> {
+      try {
+        final boolean hadGemfile = addToGemfile(applicationHomePath);
+        if (!hadGemfile) {
+          addToRakefile(applicationHomePath);
         }
+        ModuleGemInfrastructure.getInstance(module).updateModuleGemset();
+      } catch (IOException e) {
+        LOG.error(e);
       }
     });
   }

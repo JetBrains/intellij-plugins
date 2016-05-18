@@ -83,19 +83,16 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   @Override
   protected UsageInfo[] findUsages() {
     final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<UsageInfo>());
-    ReferencesSearch.search(myElement, new LocalSearchScope(myElement.getContainingFile())).forEach(new Processor<PsiReference>() {
-      @Override
-      public boolean process(PsiReference reference) {
-        final PsiElement element = reference.getElement();
-        if (!(element instanceof JSReferenceExpression)) {
-          return true;
-        }
-        if (JSResolveUtil.isSelfReference(element)) {
-          return true;
-        }
-        result.add(new UsageInfo(element));
+    ReferencesSearch.search(myElement, new LocalSearchScope(myElement.getContainingFile())).forEach(reference -> {
+      final PsiElement element = reference.getElement();
+      if (!(element instanceof JSReferenceExpression)) {
         return true;
       }
+      if (JSResolveUtil.isSelfReference(element)) {
+        return true;
+      }
+      result.add(new UsageInfo(element));
+      return true;
     });
 
     if (myElement instanceof JSClass) {

@@ -37,22 +37,12 @@ public class DartCommandLineBreakpointHandler extends XBreakpointHandler<XLineBr
 
   public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
     myXBreakpoints.add(xBreakpoint);
-    myDebugProcess.processAllIsolates(new Consumer<VmIsolate>() {
-      @Override
-      public void consume(@NotNull final VmIsolate isolate) {
-        doRegisterBreakpoint(isolate, xBreakpoint);
-      }
-    });
+    myDebugProcess.processAllIsolates(isolate -> doRegisterBreakpoint(isolate, xBreakpoint));
   }
 
   public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint, final boolean temporary) {
     myXBreakpoints.remove(xBreakpoint);
-    myDebugProcess.processAllIsolates(new Consumer<VmIsolate>() {
-      @Override
-      public void consume(@NotNull final VmIsolate isolate) {
-        doUnregisterBreakpoint(isolate, xBreakpoint);
-      }
-    });
+    myDebugProcess.processAllIsolates(isolate -> doUnregisterBreakpoint(isolate, xBreakpoint));
   }
 
   private void doRegisterBreakpoint(@NotNull final VmIsolate isolate, @NotNull final XLineBreakpoint<?> xBreakpoint) {
@@ -62,50 +52,42 @@ public class DartCommandLineBreakpointHandler extends XBreakpointHandler<XLineBr
     final String dartUrl = myDebugProcess.getDartUrlResolver().getDartUrlForFile(position.getFile());
     final int line = position.getLine() + 1;
 
-    suspendVmPerformActionAndResume(isolate, new ThrowableRunnable<IOException>() {
-      public void run() throws IOException {
-        myDebugProcess.getVmConnection().setBreakpoint(isolate, dartUrl, line, new VmCallback<VmBreakpoint>() {
-          @Override
-          public void handleResult(final VmResult<VmBreakpoint> result) {
-            if (result.isError()) {
-              myDebugProcess.getSession().updateBreakpointPresentation(xBreakpoint, Db_invalid_breakpoint, result.getError());
-            }
-            else {
-              myXBreakpointToVmBreakpoints.putValue(xBreakpoint, result.getResult());
-            }
-          }
-        });
+    suspendVmPerformActionAndResume(isolate, () -> myDebugProcess.getVmConnection().setBreakpoint(isolate, dartUrl, line, new VmCallback<VmBreakpoint>() {
+      @Override
+      public void handleResult(final VmResult<VmBreakpoint> result) {
+        if (result.isError()) {
+          myDebugProcess.getSession().updateBreakpointPresentation(xBreakpoint, Db_invalid_breakpoint, result.getError());
+        }
+        else {
+          myXBreakpointToVmBreakpoints.putValue(xBreakpoint, result.getResult());
+        }
       }
-    });
+    }));
   }
 
   private void doUnregisterBreakpoint(@NotNull final VmIsolate isolate, @NotNull final XLineBreakpoint<?> xBreakpoint) {
     final XSourcePosition position = xBreakpoint.getSourcePosition();
     if (position == null || position.getFile().getFileType() != DartFileType.INSTANCE) return;
 
-    suspendVmPerformActionAndResume(isolate, new ThrowableRunnable<IOException>() {
-      public void run() throws IOException {
-        final Collection<VmBreakpoint> vmBreakpoints = myXBreakpointToVmBreakpoints.remove(xBreakpoint);
-        if (vmBreakpoints != null) {
-          for (VmBreakpoint vmBreakpoint : vmBreakpoints) {
-            myDebugProcess.getVmConnection().removeBreakpoint(vmBreakpoint.getIsolate(), vmBreakpoint);
-          }
+    suspendVmPerformActionAndResume(isolate, () -> {
+      final Collection<VmBreakpoint> vmBreakpoints = myXBreakpointToVmBreakpoints.remove(xBreakpoint);
+      if (vmBreakpoints != null) {
+        for (VmBreakpoint vmBreakpoint : vmBreakpoints) {
+          myDebugProcess.getVmConnection().removeBreakpoint(vmBreakpoint.getIsolate(), vmBreakpoint);
         }
       }
     });
   }
 
   private void suspendVmPerformActionAndResume(@NotNull final VmIsolate isolate, @NotNull final ThrowableRunnable<IOException> action) {
-    final Runnable runnable = new Runnable() {
-      public void run() {
-        try {
-          final VmInterruptResult interruptResult = myDebugProcess.getVmConnection().interruptConditionally(isolate);
-          action.run();
-          interruptResult.resume();
-        }
-        catch (IOException exception) {
-          LOG.error(exception);
-        }
+    final Runnable runnable = () -> {
+      try {
+        final VmInterruptResult interruptResult = myDebugProcess.getVmConnection().interruptConditionally(isolate);
+        action.run();
+        interruptResult.resume();
+      }
+      catch (IOException exception) {
+        LOG.error(exception);
       }
     };
 

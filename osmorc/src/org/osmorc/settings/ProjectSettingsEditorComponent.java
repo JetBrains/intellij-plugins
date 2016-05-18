@@ -111,15 +111,12 @@ public class ProjectSettingsEditorComponent {
     myApplyToAllButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-              OsmorcFacet facet = OsmorcFacet.getInstance(module);
-              if (facet != null) {
-                OsmorcFacetConfiguration configuration = facet.getConfiguration();
-                configuration.setJarFileLocation(configuration.getJarFileName(), OutputPathType.OsgiOutputPath);
-              }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          for (Module module : ModuleManager.getInstance(myProject).getModules()) {
+            OsmorcFacet facet = OsmorcFacet.getInstance(module);
+            if (facet != null) {
+              OsmorcFacetConfiguration configuration = facet.getConfiguration();
+              configuration.setJarFileLocation(configuration.getJarFileName(), OutputPathType.OsgiOutputPath);
             }
           }
         });

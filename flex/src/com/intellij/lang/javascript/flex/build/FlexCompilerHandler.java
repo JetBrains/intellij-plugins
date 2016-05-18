@@ -602,10 +602,8 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         trace(TraceType.ERR, errLine);
         if (errLine == null || errLine.length() == 0) continue;
 
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-          public void run() {
-            dispatchError(errLine, messagesBuffer);
-          }
+        ApplicationManager.getApplication().runReadAction(() -> {
+          dispatchError(errLine, messagesBuffer);
         });
       }
     }

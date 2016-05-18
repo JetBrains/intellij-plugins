@@ -50,14 +50,11 @@ public class LibrarySorterTest extends MxmlTestBase {
   }
 
   public void testMoveFlexSdkLibToSdkLibsIfNot() throws Exception {
-    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
-      @Override
-      public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
-        libs.add(flexSdkRootPath + "/frameworks/libs/framework.swc");
-        libs.add("MinimalComps_0_9_10.swc");
-        libs.add(DebugPathManager.resolveTestArtifactPath("test-data-helper.swc"));
-        return null;
-      }
+    moduleInitializer = (model, file, libs1) -> {
+      libs1.add(flexSdkRootPath + "/frameworks/libs/framework.swc");
+      libs1.add("MinimalComps_0_9_10.swc");
+      libs1.add(DebugPathManager.resolveTestArtifactPath("test-data-helper.swc"));
+      return null;
     };
 
     testFile("GenericMxmlSupport.mxml");
@@ -73,13 +70,10 @@ public class LibrarySorterTest extends MxmlTestBase {
 
   // AS-235
   public void testOverlappingContent() throws Exception {
-    moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
-      @Override
-      public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
-        libs.add("flexunit-4.1.0-8-flex_4.1.0.16076.swc");
-        libs.add("FlexUnit1Lib.swc");
-        return null;
-      }
+    moduleInitializer = (model, file, libs1) -> {
+      libs1.add("flexunit-4.1.0-8-flex_4.1.0.16076.swc");
+      libs1.add("FlexUnit1Lib.swc");
+      return null;
     };
 
     testFile(SPARK_COMPONENTS_FILE);

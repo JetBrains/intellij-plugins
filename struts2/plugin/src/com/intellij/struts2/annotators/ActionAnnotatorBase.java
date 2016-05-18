@@ -64,34 +64,26 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
       };
 
   private static final NotNullFunction<PathReference, Collection<? extends PsiElement>> PATH_REFERENCE_CONVERTER =
-      new NotNullFunction<PathReference, Collection<? extends PsiElement>>() {
-        @NotNull
-        @Override
-        public Collection<? extends PsiElement> fun(final PathReference pathReference) {
-          final PsiElement resolve = pathReference.resolve();
-          return resolve != null ? Collections.singleton(resolve) : Collections.<PsiElement>emptyList();
-        }
-      };
+    pathReference -> {
+      final PsiElement resolve = pathReference.resolve();
+      return resolve != null ? Collections.singleton(resolve) : Collections.<PsiElement>emptyList();
+    };
 
   private static final NotNullFunction<PathReference, Collection<? extends GotoRelatedItem>> PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER =
-      new NotNullFunction<PathReference, Collection<? extends GotoRelatedItem>>() {
-        @NotNull
+    pathReference -> {
+      final PsiElement resolve = pathReference.resolve();
+      return resolve != null ? Collections.singleton(new GotoRelatedItem(resolve) {
         @Override
-        public Collection<? extends GotoRelatedItem> fun(final PathReference pathReference) {
-          final PsiElement resolve = pathReference.resolve();
-          return resolve != null ? Collections.singleton(new GotoRelatedItem(resolve) {
-            @Override
-            public Icon getCustomIcon() {
-              return pathReference.getIcon();
-            }
-
-            @Override
-            public String getCustomName() {
-              return pathReference.getPath();
-            }
-          }) : Collections.<GotoRelatedItem>emptyList();
+        public Icon getCustomIcon() {
+          return pathReference.getIcon();
         }
-      };
+
+        @Override
+        public String getCustomName() {
+          return pathReference.getPath();
+        }
+      }) : Collections.<GotoRelatedItem>emptyList();
+    };
 
   /**
    * Determine the Action-PsiClass.

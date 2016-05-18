@@ -1067,12 +1067,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         final String fqn = StringUtil.getQualifiedName(contextPackage, nameIdentifier.getText());
 
         final CreateFlexMobileViewIntentionAndFix fix = new CreateFlexMobileViewIntentionAndFix(fqn, nameIdentifier, true);
-        fix.setCreatedClassFqnConsumer(new Consumer<String>() {
-          public void consume(final String fqn) {
-            final String packageName = StringUtil.getPackageName(fqn);
-            if (StringUtil.isNotEmpty(packageName) && !packageName.equals(contextPackage)) {
-              ImportUtils.doImport(nameIdentifier, fqn, true);
-            }
+        fix.setCreatedClassFqnConsumer(fqn1 -> {
+          final String packageName = StringUtil.getPackageName(fqn1);
+          if (StringUtil.isNotEmpty(packageName) && !packageName.equals(contextPackage)) {
+            ImportUtils.doImport(nameIdentifier, fqn1, true);
           }
         });
         return fix;

@@ -19,11 +19,8 @@ class SimpleProvider extends CompletionProvider<CompletionParameters> {
   private final Collection<LookupElement> myLookupElements;
 
   public SimpleProvider(String... items) {
-    myLookupElements = ContainerUtil.map2List(items, new Function<String, LookupElement>() {
-      @Override
-      public LookupElementBuilder fun(String item) {
-        return LookupElementBuilder.create(item).withCaseSensitivity(false);
-      }
+    myLookupElements = ContainerUtil.map2List(items, item -> {
+      return LookupElementBuilder.create(item).withCaseSensitivity(false);
     });
   }
 

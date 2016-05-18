@@ -44,15 +44,12 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
   public void initComponent() {
     // TODO remove, this should not be needed --> DOM unique name highlighting not working
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      @Override
-      public String fun(final Object o) {
-        if (o instanceof Result) {
-          final String resultName = ((Result) o).getName().getStringValue();
-          return resultName != null ? resultName : Result.DEFAULT_NAME;
-        }
-        return null;
+    ElementPresentationManager.registerNameProvider((NullableFunction<Object, String>)o -> {
+      if (o instanceof Result) {
+        final String resultName = ((Result) o).getName().getStringValue();
+        return resultName != null ? resultName : Result.DEFAULT_NAME;
       }
+      return null;
     });
 
     registerDocumentationProviders();
@@ -62,38 +59,36 @@ public class StrutsApplicationComponent implements ApplicationComponent {
   }
 
   private static void registerDocumentationProviders() {
-    ElementPresentationManager.registerDocumentationProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (o instanceof Action) {
-          final Action action = (Action) o;
-          final StrutsPackage strutsPackage = action.getStrutsPackage();
+    ElementPresentationManager.registerDocumentationProvider((NullableFunction<Object, String>)o -> {
+      if (o instanceof Action) {
+        final Action action = (Action) o;
+        final StrutsPackage strutsPackage = action.getStrutsPackage();
 
-          final DocumentationBuilder builder = new DocumentationBuilder();
-          final PsiClass actionClass = action.searchActionClass();
-          builder.addLine("Action", action.getName().getStringValue())
-                 .addLine("Class", actionClass != null ? actionClass.getQualifiedName() : null)
-                 .addLine("Method", action.getMethod().getStringValue())
-                 .addLine("Package", strutsPackage.getName().getStringValue())
-                 .addLine("Namespace", strutsPackage.searchNamespace());
+        final DocumentationBuilder builder = new DocumentationBuilder();
+        final PsiClass actionClass = action.searchActionClass();
+        builder.addLine("Action", action.getName().getStringValue())
+               .addLine("Class", actionClass != null ? actionClass.getQualifiedName() : null)
+               .addLine("Method", action.getMethod().getStringValue())
+               .addLine("Package", strutsPackage.getName().getStringValue())
+               .addLine("Namespace", strutsPackage.searchNamespace());
 
-          return builder.getText();
-        }
-
-        if (o instanceof Result) {
-          final Result result = (Result) o;
-          final PathReference pathReference = result.getValue();
-          final String displayPath = pathReference != null ? pathReference.getPath() : "???";
-          final ResultType resultType = result.getEffectiveResultType();
-          final String resultTypeValue = resultType != null ? resultType.getName().getStringValue() : "???";
-
-          final DocumentationBuilder builder = new DocumentationBuilder();
-          builder.addLine("Path", displayPath)
-                 .addLine("Type", resultTypeValue);
-          return builder.getText();
-        }
-
-        return null;
+        return builder.getText();
       }
+
+      if (o instanceof Result) {
+        final Result result = (Result) o;
+        final PathReference pathReference = result.getValue();
+        final String displayPath = pathReference != null ? pathReference.getPath() : "???";
+        final ResultType resultType = result.getEffectiveResultType();
+        final String resultTypeValue = resultType != null ? resultType.getName().getStringValue() : "???";
+
+        final DocumentationBuilder builder = new DocumentationBuilder();
+        builder.addLine("Path", displayPath)
+               .addLine("Type", resultTypeValue);
+        return builder.getText();
+      }
+
+      return null;
     });
   }
 

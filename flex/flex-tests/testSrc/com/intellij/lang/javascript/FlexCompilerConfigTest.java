@@ -242,10 +242,8 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
       assertEquals(expectedFile.getName(), replaceMacros(expectedText, bc.getSdk(), additionalMacros), text);
     }
     finally {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          ProjectJdkTable.getInstance().removeJdk(testSdk);
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        ProjectJdkTable.getInstance().removeJdk(testSdk);
       });
     }
   }
@@ -429,22 +427,19 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
 
     final ModifiableFlexBuildConfiguration bc = createBuildConfiguration(TargetPlatform.Web, false, OutputType.Application, "11.1");
     VirtualFile f = getVirtualFile(getTestName(false) + "_config.xml");
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        VirtualFile additionalConfigFile = null;
-        try {
-          additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
-                                                              replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion),
-                                                                            null),
-                                                              myModule.getModuleFile().getParent());
-        }
-        catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-        bc.setOutputFileName("SetInBC.swf");
-        bc.getCompilerOptions().setAdditionalConfigFilePath(additionalConfigFile.getPath());
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      VirtualFile additionalConfigFile = null;
+      try {
+        additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
+                                                            replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion),
+                                                                          null),
+                                                            myModule.getModuleFile().getParent());
       }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      bc.setOutputFileName("SetInBC.swf");
+      bc.getCompilerOptions().setAdditionalConfigFilePath(additionalConfigFile.getPath());
     });
 
     bc.getCompilerOptions().setAllOptions(createMap("compiler.locale", "en_US\nja_JP",
@@ -473,32 +468,29 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     FlexTestUtils.addFlexLibrary(true, myModule, "Lib3", true, getTestDataPath(), "Lib3", null, null, LinkageType.Test, moduleDir);
     FlexTestUtils.addFlexLibrary(true, myModule, "Lib4", true, getTestDataPath(), "Lib4", null, null, LinkageType.Merged, moduleDir);
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        bc1.getDependencies().setSdkEntry(Factory.createSdkEntry(TEST_FLEX_SDK_NAME));
-        bc1.setName("bc1");
-        setOutputPaths(bc1);
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      bc1.getDependencies().setSdkEntry(Factory.createSdkEntry(TEST_FLEX_SDK_NAME));
+      bc1.setName("bc1");
+      setOutputPaths(bc1);
 
-        ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
-        bc2.setOutputType(OutputType.Library);
-        bc2.setName("bc2");
-        setOutputPaths(bc2);
+      ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
+      bc2.setOutputType(OutputType.Library);
+      bc2.setName("bc2");
+      setOutputPaths(bc2);
 
-        ModifiableFlexBuildConfiguration bc3 = editor.getConfigurations(module3)[0];
-        bc3.setOutputType(OutputType.Library);
-        bc2.setName("bc3");
-        setOutputPaths(bc3);
+      ModifiableFlexBuildConfiguration bc3 = editor.getConfigurations(module3)[0];
+      bc3.setOutputType(OutputType.Library);
+      bc2.setName("bc3");
+      setOutputPaths(bc3);
 
-        ModifiableBuildConfigurationEntry entry1 = editor.createBcEntry(bc1.getDependencies(), bc2, null);
-        entry1.getDependencyType().setLinkageType(LinkageType.Test);
-        bc1.getDependencies().getModifiableEntries().add(entry1);
+      ModifiableBuildConfigurationEntry entry1 = editor.createBcEntry(bc1.getDependencies(), bc2, null);
+      entry1.getDependencyType().setLinkageType(LinkageType.Test);
+      bc1.getDependencies().getModifiableEntries().add(entry1);
 
-        ModifiableBuildConfigurationEntry entry2 = editor.createBcEntry(bc2.getDependencies(), bc3, null);
-        entry2.getDependencyType().setLinkageType(LinkageType.Test);
-        bc2.getDependencies().getModifiableEntries().add(entry2);
-      }
+      ModifiableBuildConfigurationEntry entry2 = editor.createBcEntry(bc2.getDependencies(), bc3, null);
+      entry2.getDependencyType().setLinkageType(LinkageType.Test);
+      bc2.getDependencies().getModifiableEntries().add(entry2);
     });
 
     final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();

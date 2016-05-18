@@ -58,12 +58,7 @@ public abstract class HeavyOsgiFixtureTestCase {
     myTempDirFixture.tearDown();
   }
 
-  private static final FileFilter VISIBLE_DIR_FILTER = new FileFilter() {
-    @Override
-    public boolean accept(File pathname) {
-      return pathname.isDirectory() && !pathname.getName().startsWith(".");
-    }
-  };
+  private static final FileFilter VISIBLE_DIR_FILTER = pathname -> pathname.isDirectory() && !pathname.getName().startsWith(".");
 
   private static void loadModules(String projectName, final Project project, String projectDirPath) throws Exception {
     final File projectDir = OsgiTestUtil.extractProject(projectName, projectDirPath);

@@ -246,12 +246,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       String orderEntryType = orderEntry.getAttributeValue(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR);
       if (ModuleLibraryOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         Element library = orderEntry.getChild(LibraryImpl.ELEMENT);
-        if (!isApplicableLibrary(library, new Function<String, String>() {
-          @Override
-          public String fun(final String s) {
-            return module.expandPath(s);
-          }
-        })) {
+        if (!isApplicableLibrary(library, s -> module.expandPath(s))) {
           // ignore non-flex module library
           orderEntriesToRemove.add(orderEntry);
           continue;
@@ -578,11 +573,8 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   public static String generateFacetBcName(List<Element> facets, Element facet) {
     // TODO cache names for module
-    List<String> names = FlexBuildConfigurationManagerImpl.generateUniqueNames(ContainerUtil.map(facets, new Function<Element, String>() {
-      @Override
-      public String fun(Element element) {
-        return element.getAttributeValue(JpsFacetSerializer.NAME_ATTRIBUTE);
-      }
+    List<String> names = FlexBuildConfigurationManagerImpl.generateUniqueNames(ContainerUtil.map(facets, element -> {
+      return element.getAttributeValue(JpsFacetSerializer.NAME_ATTRIBUTE);
     }));
     return names.get(facets.indexOf(facet));
   }

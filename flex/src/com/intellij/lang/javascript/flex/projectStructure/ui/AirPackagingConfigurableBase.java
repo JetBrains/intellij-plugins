@@ -189,30 +189,28 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   private void createUIComponents() {
-    final Runnable descriptorCreator = new Runnable() {
-      public void run() {
-        final String folderPath = FlexUtils.getContentOrModuleFolderPath(myModule);
-        final String mainClass = myAirDescriptorInfoProvider.getMainClass();
-        final String airVersion = myAirDescriptorInfoProvider.getAirVersion();
-        final String[] extensions = myAirDescriptorInfoProvider.getExtensionIDs();
-        final boolean androidEnabled = myAirDescriptorInfoProvider.isAndroidPackagingEnabled();
-        final boolean iosEnabled = myAirDescriptorInfoProvider.isIOSPackagingEnabled();
+    final Runnable descriptorCreator = () -> {
+      final String folderPath = FlexUtils.getContentOrModuleFolderPath(myModule);
+      final String mainClass = myAirDescriptorInfoProvider.getMainClass();
+      final String airVersion = myAirDescriptorInfoProvider.getAirVersion();
+      final String[] extensions = myAirDescriptorInfoProvider.getExtensionIDs();
+      final boolean androidEnabled = myAirDescriptorInfoProvider.isAndroidPackagingEnabled();
+      final boolean iosEnabled = myAirDescriptorInfoProvider.isIOSPackagingEnabled();
 
-        final CreateAirDescriptorTemplateDialog dialog =
-          new CreateAirDescriptorTemplateDialog(myModule.getProject(), folderPath, mainClass, airVersion, extensions,
-                                                androidEnabled, iosEnabled);
+      final CreateAirDescriptorTemplateDialog dialog =
+        new CreateAirDescriptorTemplateDialog(myModule.getProject(), folderPath, mainClass, airVersion, extensions,
+                                              androidEnabled, iosEnabled);
 
-        if (dialog.showAndGet()) {
-          final String descriptorPath = dialog.getDescriptorPath();
-          setUseCustomDescriptor(descriptorPath);
+      if (dialog.showAndGet()) {
+        final String descriptorPath = dialog.getDescriptorPath();
+        setUseCustomDescriptor(descriptorPath);
 
-          if (androidEnabled && iosEnabled && dialog.isBothAndroidAndIosSelected()) {
-            final int choice =
-              Messages.showYesNoDialog(myModule.getProject(), FlexBundle.message("use.same.descriptor.for.android.and.ios"),
-                                       CreateAirDescriptorTemplateDialog.TITLE, Messages.getQuestionIcon());
-            if (choice == Messages.YES) {
-              myAirDescriptorInfoProvider.setCustomDescriptorForAndroidAndIOS(descriptorPath);
-            }
+        if (androidEnabled && iosEnabled && dialog.isBothAndroidAndIosSelected()) {
+          final int choice =
+            Messages.showYesNoDialog(myModule.getProject(), FlexBundle.message("use.same.descriptor.for.android.and.ios"),
+                                     CreateAirDescriptorTemplateDialog.TITLE, Messages.getQuestionIcon());
+          if (choice == Messages.YES) {
+            myAirDescriptorInfoProvider.setCustomDescriptorForAndroidAndIOS(descriptorPath);
           }
         }
       }

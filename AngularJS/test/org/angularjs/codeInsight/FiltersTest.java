@@ -52,31 +52,25 @@ public class FiltersTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testPipeCompletion() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<RuntimeException>() {
-      @Override
-      public void run() throws RuntimeException {
-        myFixture.configureByFiles("filter.html", "angular2.js", "custom.ts");
-        final List<String> variants = myFixture.getCompletionVariants("filter.html");
-        assertContainsElements(variants, "filta");
-      }
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("filter.html", "angular2.js", "custom.ts");
+      final List<String> variants = myFixture.getCompletionVariants("filter.html");
+      assertContainsElements(variants, "filta");
     });
   }
 
   public void testPipeResolve() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<RuntimeException>() {
-      @Override
-      public void run() throws RuntimeException {
-        myFixture.configureByFiles("filterCustom.resolve.html", "angular2.js", "custom.ts");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("fil<caret>ta", myFixture.getFile());
-        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-        assertNotNull(ref);
-        PsiElement resolve = ref.resolve();
-        assertNotNull(resolve);
-        assertEquals("custom.ts", resolve.getContainingFile().getName());
-        assertEquals("Pipe({\n" +
-                     "    name: \"filta\"\n" +
-                     "})", resolve.getParent().getText());
-      }
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("filterCustom.resolve.html", "angular2.js", "custom.ts");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("fil<caret>ta", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("custom.ts", resolve.getContainingFile().getName());
+      assertEquals("Pipe({\n" +
+                   "    name: \"filta\"\n" +
+                   "})", resolve.getParent().getText());
     });
   }
 

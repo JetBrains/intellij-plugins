@@ -150,12 +150,9 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testAlignment3() throws Exception {
-    Util.runTestWithLanguageLevel(new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        doTest();
-        return null;
-      }
+    Util.runTestWithLanguageLevel(() -> {
+      doTest();
+      return null;
     }, CfmlLanguage.RAILO, getProject());
   }
 
@@ -209,11 +206,8 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
 
   private void doTest() throws Exception {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
-      }
+    WriteCommandAction.runWriteCommandAction(null, () -> {
+      CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
     });
     myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));
   }

@@ -38,15 +38,12 @@ public class UIUtilTest extends BaseTestCase {
   public void testRunLongProcessWithProgress() throws Exception {
 
     final long []start = new long[1];
-    Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        try {
-          start[0] = System.currentTimeMillis();
-          Thread.sleep(500);
-        } catch (InterruptedException e) {
-          fail();
-        }
+    Runnable runnable = () -> {
+      try {
+        start[0] = System.currentTimeMillis();
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        fail();
       }
     };
 
@@ -61,12 +58,7 @@ public class UIUtilTest extends BaseTestCase {
 
   public void testQuickProcess() throws Exception {
     final boolean[] wasRun = new boolean[1];
-    Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        wasRun[0] = true;
-      }
-    };
+    Runnable runnable = () -> wasRun[0] = true;
 
 
     UIUtil.run(myIdeFacade, "test text", runnable);
@@ -74,15 +66,12 @@ public class UIUtilTest extends BaseTestCase {
   }
 
   public void testCancelProcess() throws Exception {
-    Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        myIndicator.setCancelled();
-        try {
-          Thread.sleep(200);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+    Runnable runnable = () -> {
+      myIndicator.setCancelled();
+      try {
+        Thread.sleep(200);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
       }
     };
 

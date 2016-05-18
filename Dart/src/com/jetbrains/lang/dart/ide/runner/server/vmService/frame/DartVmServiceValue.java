@@ -113,17 +113,11 @@ public class DartVmServiceValue extends XNamedValue {
       return;
     }
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        final XSourcePosition sourcePosition = debugProcess.getSourcePosition(isolateId, location.getScript(), location.getTokenPos());
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-          @Override
-          public void run() {
-            navigatable.setSourcePosition(sourcePosition);
-          }
-        });
-      }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      final XSourcePosition sourcePosition = debugProcess.getSourcePosition(isolateId, location.getScript(), location.getTokenPos());
+      ApplicationManager.getApplication().runReadAction(() -> {
+        navigatable.setSourcePosition(sourcePosition);
+      });
     });
   }
 

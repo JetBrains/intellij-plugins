@@ -68,13 +68,10 @@ public class UserModelImpl implements UserModel, Disposable {
       return;
     }
 
-    myBroadcaster.doChange(new UserEvent.Added(user), new Runnable() {
-      @Override
-      public void run() {
-        synchronized (myUsersGroupsLock) {
-          myUsers.add(user);
-          myGroups.add(user.getGroup());
-        }
+    myBroadcaster.doChange(new UserEvent.Added(user), () -> {
+      synchronized (myUsersGroupsLock) {
+        myUsers.add(user);
+        myGroups.add(user.getGroup());
       }
     });
   }
@@ -87,12 +84,9 @@ public class UserModelImpl implements UserModel, Disposable {
       }
     }
 
-    myBroadcaster.doChange(new UserEvent.Removed(user), new Runnable() {
-      @Override
-      public void run() {
-        synchronized (myUsersGroupsLock) {
-          myUsers.remove(user);
-        }
+    myBroadcaster.doChange(new UserEvent.Removed(user), () -> {
+      synchronized (myUsersGroupsLock) {
+        myUsers.remove(user);
       }
     });
   }
@@ -134,14 +128,11 @@ public class UserModelImpl implements UserModel, Disposable {
     }
 
     usersList = getUsersList();
-    Arrays.sort(usersList, new Comparator<User>() {
-      @Override
-      public int compare(User u1, User u2) {
-        if (u1.getGroup().equals(u2.getGroup())) {
-          return UIUtil.compareUsers(u1, u2);
-        }
-        return u1.getGroup().compareTo(u2.getGroup());
+    Arrays.sort(usersList, (u1, u2) -> {
+      if (u1.getGroup().equals(u2.getGroup())) {
+        return UIUtil.compareUsers(u1, u2);
       }
+      return u1.getGroup().compareTo(u2.getGroup());
     });
 
     return myCachedUsers.compareAndSet(null, usersList) ? usersList : getAllUsers();
@@ -171,12 +162,9 @@ public class UserModelImpl implements UserModel, Disposable {
 
       if (Arrays.asList(getGroups()).contains(trimmedName)) return;
 
-      myBroadcaster.doChange(new GroupEvent.Added(trimmedName), new Runnable() {
-        @Override
-        public void run() {
-          synchronized (myUsersGroupsLock) {
-            myGroups.add(trimmedName);
-          }
+      myBroadcaster.doChange(new GroupEvent.Added(trimmedName), () -> {
+        synchronized (myUsersGroupsLock) {
+          myGroups.add(trimmedName);
         }
       });
     }
@@ -197,12 +185,9 @@ public class UserModelImpl implements UserModel, Disposable {
       }
     }
 
-    myBroadcaster.doChange(new GroupEvent.Removed(groupName), new Runnable() {
-      @Override
-      public void run() {
-        synchronized (myUsersGroupsLock) {
-          myGroups.remove(groupName);
-        }
+    myBroadcaster.doChange(new GroupEvent.Removed(groupName), () -> {
+      synchronized (myUsersGroupsLock) {
+        myGroups.remove(groupName);
       }
     });
     return true;
@@ -260,16 +245,13 @@ public class UserModelImpl implements UserModel, Disposable {
     final User[] users = getUsers(oldGroup);
     final String newName = StringUtil.fixGroup(newGroup);
 
-    myBroadcaster.doChange(new GroupEvent.Updated(oldGroup, newName), new Runnable() {
-      @Override
-      public void run() {
-        synchronized (myUsersGroupsLock) {
-          myGroups.remove(oldGroup);
-          for (final User user : users) {
-            user.setGroup(newName, null);
-          }
-          myGroups.add(newName);
+    myBroadcaster.doChange(new GroupEvent.Updated(oldGroup, newName), () -> {
+      synchronized (myUsersGroupsLock) {
+        myGroups.remove(oldGroup);
+        for (final User user : users) {
+          user.setGroup(newName, null);
         }
+        myGroups.add(newName);
       }
     });
 

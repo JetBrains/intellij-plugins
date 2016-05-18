@@ -571,16 +571,13 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       };
       FlexUtils.processMxmlTags(rootTag, true, injectedFilesVisitor);
 
-      processClassBackedTagsWithIdAttribute(rootTag, new Processor<Pair<XmlAttribute, String>>() {
-        @Override
-        public boolean process(final Pair<XmlAttribute, String> idAttributeAndItsType) {
-          final XmlAttribute idAttribute = idAttributeAndItsType.first;
-          final String idAttributeValue = idAttribute.getValue();
-          final String type = idAttributeAndItsType.second;
-          map.put(idAttributeValue,
-                  new AnnotationBackedDescriptorImpl(idAttributeValue, ClassBackedElementDescriptor.this, false, type, null, idAttribute));
-          return true;
-        }
+      processClassBackedTagsWithIdAttribute(rootTag, idAttributeAndItsType -> {
+        final XmlAttribute idAttribute = idAttributeAndItsType.first;
+        final String idAttributeValue = idAttribute.getValue();
+        final String type = idAttributeAndItsType.second;
+        map.put(idAttributeValue,
+                new AnnotationBackedDescriptorImpl(idAttributeValue, ClassBackedElementDescriptor.this, false, type, null, idAttribute));
+        return true;
       });
     }
   }

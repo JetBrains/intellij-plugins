@@ -82,33 +82,30 @@ public class DartProblemsView {
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
     Disposer.register(project, myAlarm);
 
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        if (project.isDisposed()) {
-          return;
-        }
-
-        myPanel = new DartProblemsViewPanel(project, myFilter);
-
-        final ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
-        toolWindow.setIcon(DartIcons.Dart_13);
-
-        final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
-        toolWindow.getContentManager().addContent(content);
-
-        if (PropertiesComponent.getInstance(project).getBoolean("dart.analysis.tool.window.force.activate", true)) {
-          PropertiesComponent.getInstance(project).setValue("dart.analysis.tool.window.force.activate", false, true);
-          toolWindow.activate(null, false);
-        }
-
-        Disposer.register(project, new Disposable() {
-          @Override
-          public void dispose() {
-            toolWindow.getContentManager().removeAllContents(true);
-          }
-        });
+    UIUtil.invokeLaterIfNeeded(() -> {
+      if (project.isDisposed()) {
+        return;
       }
+
+      myPanel = new DartProblemsViewPanel(project, myFilter);
+
+      final ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+      toolWindow.setIcon(DartIcons.Dart_13);
+
+      final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
+      toolWindow.getContentManager().addContent(content);
+
+      if (PropertiesComponent.getInstance(project).getBoolean("dart.analysis.tool.window.force.activate", true)) {
+        PropertiesComponent.getInstance(project).setValue("dart.analysis.tool.window.force.activate", false, true);
+        toolWindow.activate(null, false);
+      }
+
+      Disposer.register(project, new Disposable() {
+        @Override
+        public void dispose() {
+          toolWindow.getContentManager().removeAllContents(true);
+        }
+      });
     });
   }
 

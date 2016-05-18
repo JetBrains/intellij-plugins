@@ -83,14 +83,12 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
   public List<StrutsConstant> getConstants(@NotNull final Module module) {
     return ContainerUtil.concat(
         Extensions.getExtensions(EP_NAME),
-        new Function<StrutsConstantContributor, Collection<? extends StrutsConstant>>() {
-          public Collection<? extends StrutsConstant> fun(final StrutsConstantContributor contributor) {
-            if (!contributor.isAvailable(module)) {
-              return Collections.emptyList();
-            }
-
-            return contributor.getStrutsConstantDefinitions(module);
+        contributor -> {
+          if (!contributor.isAvailable(module)) {
+            return Collections.emptyList();
           }
+
+          return contributor.getStrutsConstantDefinitions(module);
         });
   }
 

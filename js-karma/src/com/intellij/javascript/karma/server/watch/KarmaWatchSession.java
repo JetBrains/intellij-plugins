@@ -27,15 +27,12 @@ public class KarmaWatchSession {
     myChangedFilesManager = new KarmaChangedFilesManager(server);
     myFileSystem = LocalFileSystem.getInstance();
     final List<KarmaWatchPattern> watchPatterns = ContainerUtil.newArrayList();
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        for (String path : paths) {
-          KarmaWatchPattern watchPattern = new KarmaWatchPattern(myFileSystem, myChangedFilesManager, path);
-          watchPatterns.add(watchPattern);
-        }
-        myFileSystem.addVirtualFileListener(myVfsListener);
+    ApplicationManager.getApplication().runReadAction(() -> {
+      for (String path : paths) {
+        KarmaWatchPattern watchPattern = new KarmaWatchPattern(myFileSystem, myChangedFilesManager, path);
+        watchPatterns.add(watchPattern);
       }
+      myFileSystem.addVirtualFileListener(myVfsListener);
     });
     myWatchPatterns = ImmutableList.copyOf(watchPatterns);
   }
@@ -58,14 +55,11 @@ public class KarmaWatchSession {
   }
 
   public void stop() {
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        for (KarmaWatchPattern watchPattern : myWatchPatterns) {
-          watchPattern.stopWatching();
-        }
-        myFileSystem.removeVirtualFileListener(myVfsListener);
+    ApplicationManager.getApplication().runReadAction(() -> {
+      for (KarmaWatchPattern watchPattern : myWatchPatterns) {
+        watchPattern.stopWatching();
       }
+      myFileSystem.removeVirtualFileListener(myVfsListener);
     });
   }
 

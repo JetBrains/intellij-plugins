@@ -61,49 +61,31 @@ public class KarmaServerRegistry {
                              @NotNull final CatchingConsumer<KarmaServer, Exception> consumer) {
     if (myStartingServers.putIfAbsent(serverSettings, serverSettings) != null) {
       LOG.warn(new Throwable("Unexpected subsequent karma server starting:" + serverSettings.toString()));
-      JobScheduler.getScheduler().schedule(new Runnable() {
-        @Override
-        public void run() {
-          startServer(serverSettings, consumer);
-        }
-      }, 100, TimeUnit.MILLISECONDS);
+      JobScheduler.getScheduler().schedule(() -> startServer(serverSettings, consumer), 100, TimeUnit.MILLISECONDS);
       return;
     }
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      try {
+        final KarmaServer server;
         try {
-          final KarmaServer server;
-          try {
-            server = new KarmaServer(myProject, serverSettings);
-            myServers.put(serverSettings, server);
-            myServerByConfigFile.put(serverSettings.getConfigurationFilePath(), server);
-          }
-          finally {
-            myStartingServers.remove(serverSettings);
-          }
-          server.onTerminated(new KarmaServerTerminatedListener() {
-            @Override
-            public void onTerminated(int exitCode) {
-              myServers.remove(serverSettings, server);
-              myServerByConfigFile.remove(serverSettings.getConfigurationFilePath(), server);
-            }
-          });
-          UIUtil.invokeLaterIfNeeded(new Runnable() {
-            @Override
-            public void run() {
-              consumer.consume(server);
-            }
-          });
+          server = new KarmaServer(myProject, serverSettings);
+          myServers.put(serverSettings, server);
+          myServerByConfigFile.put(serverSettings.getConfigurationFilePath(), server);
         }
-        catch (final Exception e) {
-          UIUtil.invokeLaterIfNeeded(new Runnable() {
-            @Override
-            public void run() {
-              consumer.consume(e);
-            }
-          });
+        finally {
+          myStartingServers.remove(serverSettings);
         }
+        server.onTerminated(new KarmaServerTerminatedListener() {
+          @Override
+          public void onTerminated(int exitCode) {
+            myServers.remove(serverSettings, server);
+            myServerByConfigFile.remove(serverSettings.getConfigurationFilePath(), server);
+          }
+        });
+        UIUtil.invokeLaterIfNeeded(() -> consumer.consume(server));
+      }
+      catch (final Exception e) {
+        UIUtil.invokeLaterIfNeeded(() -> consumer.consume(e));
       }
     });
   }

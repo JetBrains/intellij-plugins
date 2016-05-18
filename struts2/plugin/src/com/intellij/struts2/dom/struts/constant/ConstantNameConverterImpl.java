@@ -31,11 +31,7 @@ import java.util.Collections;
  */
 public class ConstantNameConverterImpl extends ConstantNameConverter {
 
-  private static final Function<StrutsConstant, String> CONSTANT_NAME_FUNCTION = new Function<StrutsConstant, String>() {
-    public String fun(final StrutsConstant strutsConstant) {
-      return strutsConstant.getName();
-    }
-  };
+  private static final Function<StrutsConstant, String> CONSTANT_NAME_FUNCTION = strutsConstant -> strutsConstant.getName();
 
   @NotNull
   public Collection<? extends String> getVariants(final ConvertContext context) {

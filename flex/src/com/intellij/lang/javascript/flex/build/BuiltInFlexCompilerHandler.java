@@ -96,11 +96,7 @@ public class BuiltInFlexCompilerHandler {
     processBuilder.redirectErrorStream(true);
     processBuilder.directory(new File(FlexUtils.getFlexCompilerWorkDirPath(myProject, null)));
 
-    final String plainCommand = StringUtil.join(processBuilder.command(), new Function<String, String>() {
-      public String fun(final String s) {
-        return s.contains(" ") ? "\"" + s + "\"" : s;
-      }
-    }, " ");
+    final String plainCommand = StringUtil.join(processBuilder.command(), s -> s.contains(" ") ? "\"" + s + "\"" : s, " ");
     context.addMessage(CompilerMessageCategory.INFORMATION, "Starting Flex compiler:\n" + plainCommand, null, -1, -1);
 
     final Process process = processBuilder.start();
@@ -108,34 +104,32 @@ public class BuiltInFlexCompilerHandler {
   }
 
   private void readInputStreamUntilConnected(final Process process, final CompileContext context) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(process.getInputStream());
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(process.getInputStream());
 
+      try {
+        char[] buf = new char[1024];
+        int read;
+        while ((read = reader.read(buf, 0, buf.length)) >= 0) {
+          final String output = new String(buf, 0, read);
+          if (output.startsWith(CONNECTION_SUCCESSFUL)) {
+            break;
+          }
+          else {
+            closeSocket();
+            context.addMessage(CompilerMessageCategory.ERROR, output, null, -1, -1);
+          }
+        }
+      }
+      catch (IOException e) {
+        closeSocket();
+        context.addMessage(CompilerMessageCategory.ERROR, "Failed to start Flex compiler: " + e.toString(), null, -1, -1);
+      }
+      finally {
         try {
-          char[] buf = new char[1024];
-          int read;
-          while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-            final String output = new String(buf, 0, read);
-            if (output.startsWith(CONNECTION_SUCCESSFUL)) {
-              break;
-            }
-            else {
-              closeSocket();
-              context.addMessage(CompilerMessageCategory.ERROR, output, null, -1, -1);
-            }
-          }
+          reader.close();
         }
-        catch (IOException e) {
-          closeSocket();
-          context.addMessage(CompilerMessageCategory.ERROR, "Failed to start Flex compiler: " + e.toString(), null, -1, -1);
-        }
-        finally {
-          try {
-            reader.close();
-          }
-          catch (IOException e) {/*ignore*/}
-        }
+        catch (IOException e) {/*ignore*/}
       }
     });
   }
@@ -229,11 +223,9 @@ public class BuiltInFlexCompilerHandler {
   }
 
   public void stopCompilerProcess() {
-    final Runnable runnable = new Runnable() {
-      public void run() {
-        cancelAllCompilations(true);
-        closeSocket();
-      }
+    final Runnable runnable = () -> {
+      cancelAllCompilations(true);
+      closeSocket();
     };
 
     final Application application = ApplicationManager.getApplication();

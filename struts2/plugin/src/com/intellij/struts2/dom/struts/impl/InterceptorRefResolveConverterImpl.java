@@ -41,13 +41,10 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
   @NotNull
   public Collection<? extends InterceptorOrStackBase> getVariants(final ConvertContext context) {
     final List<InterceptorOrStackBase> results = new SmartList<InterceptorOrStackBase>();
-    final Processor<StrutsPackage> processor = new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        final List<InterceptorOrStackBase> allInterceptors = getAllInterceptors(strutsPackage);
-        results.addAll(allInterceptors);
-        return true;
-      }
+    final Processor<StrutsPackage> processor = strutsPackage -> {
+      final List<InterceptorOrStackBase> allInterceptors = getAllInterceptors(strutsPackage);
+      results.addAll(allInterceptors);
+      return true;
     };
     final StrutsPackageHierarchyWalker walker =
         new StrutsPackageHierarchyWalker(ConverterUtil.getCurrentStrutsPackage(context), processor);
@@ -69,17 +66,14 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
     };
 
     final Ref<InterceptorOrStackBase> resolveResult = new Ref<InterceptorOrStackBase>();
-    final Processor<StrutsPackage> processor = new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        final InterceptorOrStackBase result = ContainerUtil.find(getAllInterceptors(strutsPackage), nameCondition);
-        if (result != null) {
-          resolveResult.set(result);
-          return false;
-        }
-
-        return true;
+    final Processor<StrutsPackage> processor = strutsPackage -> {
+      final InterceptorOrStackBase result = ContainerUtil.find(getAllInterceptors(strutsPackage), nameCondition);
+      if (result != null) {
+        resolveResult.set(result);
+        return false;
       }
+
+      return true;
     };
     final StrutsPackageHierarchyWalker walker =
         new StrutsPackageHierarchyWalker(ConverterUtil.getCurrentStrutsPackage(context), processor);

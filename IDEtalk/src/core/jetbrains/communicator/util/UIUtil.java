@@ -54,12 +54,9 @@ public class UIUtil {
     jFrame.getContentPane().setLayout(new BorderLayout());
     jFrame.getContentPane().add(component);
     jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        jFrame.pack();
-        jFrame.setVisible(true);
-      }
+    invokeLater(() -> {
+      jFrame.pack();
+      jFrame.setVisible(true);
     });
   }
 
@@ -74,12 +71,7 @@ public class UIUtil {
 
   public static void setupUserList(JList userListComponent, List<User> users) {
 
-    Collections.sort(users, new Comparator<User>() {
-      @Override
-      public int compare(User o1, User o2) {
-        return compareUsers(o1, o2);
-      }
-    });
+    Collections.sort(users, (o1, o2) -> compareUsers(o1, o2));
 
     userListComponent.setUI(new MultipleSelectionListUI());
     userListComponent.setListData(users.toArray());

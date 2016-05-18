@@ -524,29 +524,22 @@ public class FlexProjectConfigurationEditor implements Disposable {
       myModulesModelChangeEventDispatcher.getMulticaster().modulesModelsChanged(modulesWithChangedModifiableModel);
     }
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        for (Module module : myModule2Editors.keySet()) {
-          Function<Editor, FlexBuildConfigurationImpl> f = new Function<Editor, FlexBuildConfigurationImpl>() {
-            @Override
-            public FlexBuildConfigurationImpl fun(Editor editor) {
-              return editor.commit();
-            }
-          };
-          FlexBuildConfigurationImpl[] current =
-            ContainerUtil.map2Array(myModule2Editors.get(module), FlexBuildConfigurationImpl.class, f);
-          ((FlexBuildConfigurationManagerImpl)FlexBuildConfigurationManager.getInstance(module)).setBuildConfigurations(current);
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      for (Module module : myModule2Editors.keySet()) {
+        Function<Editor, FlexBuildConfigurationImpl> f = editor -> editor.commit();
+        FlexBuildConfigurationImpl[] current =
+          ContainerUtil.map2Array(myModule2Editors.get(module), FlexBuildConfigurationImpl.class, f);
+        ((FlexBuildConfigurationManagerImpl)FlexBuildConfigurationManager.getInstance(module)).setBuildConfigurations(current);
+      }
 
-        //if (mySdksEditor.isModified()) {
-        //  mySdksEditor.commit();
-        //}
+      //if (mySdksEditor.isModified()) {
+      //  mySdksEditor.commit();
+      //}
 
-        if (myProject != null) {
-          FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
-          if (!renamedConfigs.isEmpty()) {
-            myProject.getMessageBus().syncPublisher(FlexBuildConfigurationChangeListener.TOPIC).buildConfigurationsRenamed(renamedConfigs);
-          }
+      if (myProject != null) {
+        FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
+        if (!renamedConfigs.isEmpty()) {
+          myProject.getMessageBus().syncPublisher(FlexBuildConfigurationChangeListener.TOPIC).buildConfigurationsRenamed(renamedConfigs);
         }
       }
     });

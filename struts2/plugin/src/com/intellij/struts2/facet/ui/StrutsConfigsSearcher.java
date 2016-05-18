@@ -47,11 +47,8 @@ public class StrutsConfigsSearcher extends ConfigFileSearcher {
       DomService.getInstance().getFileElements(StrutsRoot.class, project,
                                                GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
 
-    return ContainerUtil.map2Set(elements, new Function<DomFileElement<StrutsRoot>, PsiFile>() {
-      @Override
-      public PsiFile fun(DomFileElement<StrutsRoot> element) {
-        return element.getFile();
-      }
+    return ContainerUtil.map2Set(elements, element -> {
+      return element.getFile();
     });
   }
 }

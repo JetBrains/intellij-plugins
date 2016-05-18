@@ -69,12 +69,9 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
   public void initComponent() {
     if (ApplicationManager.getApplication().isUnitTestMode()) return;
 
-    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-      @Override
-      public boolean dispatchKeyEvent(KeyEvent e) {
-        activity();
-        return false;
-      }
+    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+      activity();
+      return false;
     });
 
     AWTEventListener listener = new AWTEventListener() {

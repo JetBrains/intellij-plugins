@@ -51,20 +51,18 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
       myFixture.addFileToProject("dir2/example/web/foo.dart", "");
       myFixture.addFileToProject("dir2/example/web/sub/foo.dart", "");
 
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-          final ContentEntry contentEntry = model.getContentEntries()[0];
-          contentEntry.addExcludeFolder(rootUrl + "/dir1/someFolder");
-          contentEntry.addExcludeFolder(rootUrl + "/dir1/packages/project1");
-          contentEntry.addExcludeFolder(rootUrl + "/dir1/web/packages");
-          contentEntry.addExcludeFolder(rootUrl + "/dir2/packages/oldProject2Name");
-          contentEntry.addExcludeFolder(rootUrl + "/dir2/someFolder");
-          contentEntry.addExcludeFolder(rootUrl + "/dir2/lib/someFolder");
-          contentEntry.addExcludeFolder(rootUrl + "/dir2/example/nonexistent/packages");
-          contentEntry.addExcludeFolder(rootUrl + "/dir2/example/packages/oldProject3Name");
-          model.commit();
-        }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+        final ContentEntry contentEntry = model.getContentEntries()[0];
+        contentEntry.addExcludeFolder(rootUrl + "/dir1/someFolder");
+        contentEntry.addExcludeFolder(rootUrl + "/dir1/packages/project1");
+        contentEntry.addExcludeFolder(rootUrl + "/dir1/web/packages");
+        contentEntry.addExcludeFolder(rootUrl + "/dir2/packages/oldProject2Name");
+        contentEntry.addExcludeFolder(rootUrl + "/dir2/someFolder");
+        contentEntry.addExcludeFolder(rootUrl + "/dir2/lib/someFolder");
+        contentEntry.addExcludeFolder(rootUrl + "/dir2/example/nonexistent/packages");
+        contentEntry.addExcludeFolder(rootUrl + "/dir2/example/packages/oldProject3Name");
+        model.commit();
       });
 
       DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec2);
@@ -176,19 +174,17 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
 
 
     try {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-          try {
-            final Library library = modifiableModel.getModuleLibraryTable().createLibrary("Dart custom package root");
-            final Library.ModifiableModel libModel = library.getModifiableModel();
-            libModel.addRoot(customPack.getUrl(), OrderRootType.CLASSES);
-            libModel.commit();
-            modifiableModel.commit();
-          }
-          catch (Exception e) {
-            if (!modifiableModel.isDisposed()) modifiableModel.dispose();
-          }
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
+        try {
+          final Library library = modifiableModel.getModuleLibraryTable().createLibrary("Dart custom package root");
+          final Library.ModifiableModel libModel = library.getModifiableModel();
+          libModel.addRoot(customPack.getUrl(), OrderRootType.CLASSES);
+          libModel.commit();
+          modifiableModel.commit();
+        }
+        catch (Exception e) {
+          if (!modifiableModel.isDisposed()) modifiableModel.dispose();
         }
       });
 
@@ -204,18 +200,16 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     }
     finally {
       ApplicationManager.getApplication().runWriteAction(
-        new Runnable() {
-          public void run() {
-            final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-            for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
-              if (entry instanceof LibraryOrderEntry && "Dart custom package root".equals(((LibraryOrderEntry)entry).getLibraryName())) {
-                modifiableModel.removeOrderEntry(entry);
-                break;
-              }
+        () -> {
+          final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
+          for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
+            if (entry instanceof LibraryOrderEntry && "Dart custom package root".equals(((LibraryOrderEntry)entry).getLibraryName())) {
+              modifiableModel.removeOrderEntry(entry);
+              break;
             }
-
-            modifiableModel.commit();
           }
+
+          modifiableModel.commit();
         }
       );
     }

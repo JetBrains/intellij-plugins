@@ -162,12 +162,7 @@ public class JstdServer {
   }
 
   public void addOutputListener(@NotNull final JstdServerOutputListener listener) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        myOutputProcessor.addListener(listener);
-      }
-    });
+    UIUtil.invokeLaterIfNeeded(() -> myOutputProcessor.addListener(listener));
   }
 
   public void addLifeCycleListener(@NotNull JstdServerLifeCycleListener listener, @NotNull final Disposable disposable) {
@@ -181,12 +176,9 @@ public class JstdServer {
   public void shutdownAsync() {
     if (!myProcessHandler.isProcessTerminated()) {
       LOG.info(myName + ": shutting down asynchronously...");
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-        @Override
-        public void run() {
-          if (!myProcessHandler.isProcessTerminated()) {
-            ScriptRunnerUtil.terminateProcessHandler(myProcessHandler, 1000, myProcessHandler.getCommandLine());
-          }
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        if (!myProcessHandler.isProcessTerminated()) {
+          ScriptRunnerUtil.terminateProcessHandler(myProcessHandler, 1000, myProcessHandler.getCommandLine());
         }
       });
     }

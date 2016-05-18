@@ -218,14 +218,11 @@ public class IDEAFacade implements IDEFacade {
 
     final ProjectsData result = new ProjectsData();
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          new ProjectsDataFiller(result).fillProjectsData();
-        } catch (Throwable e) {
-          LOG.info(e, e);
-        }
+    ApplicationManager.getApplication().runReadAction(() -> {
+      try {
+        new ProjectsDataFiller(result).fillProjectsData();
+      } catch (Throwable e) {
+        LOG.info(e, e);
       }
     });
 
@@ -281,13 +278,10 @@ public class IDEAFacade implements IDEFacade {
     final VirtualFile virtualFile = VFSUtil.getVirtualFile(vFile);
     if (virtualFile == null) return;
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-        if (document != null) {
-          vFile.setContents(document.getText());
-        }
+    ApplicationManager.getApplication().runReadAction(() -> {
+      Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+      if (document != null) {
+        vFile.setContents(document.getText());
       }
     });
   }

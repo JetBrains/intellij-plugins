@@ -31,10 +31,6 @@ public class FlashUmlSupersProvider extends SupersProvider<Object> {
   }
 
   public Comparator<Object> getComparator() {
-    return new Comparator<Object>() {
-      public int compare(Object o1, Object o2) {
-        return PSI_COMPARATOR.compare((PsiElement)o1, (PsiElement)o2);
-      }
-    };
+    return (o1, o2) -> PSI_COMPARATOR.compare((PsiElement)o1, (PsiElement)o2);
   }
 }

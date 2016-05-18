@@ -155,11 +155,8 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     // check sdk
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) {
-      throw new RuntimeConfigurationError(DartBundle.message("dart.sdk.is.not.configured"), new Runnable() {
-        public void run() {
-          DartConfigurable.openDartSettings(project);
-        }
-      });
+      throw new RuntimeConfigurationError(DartBundle.message("dart.sdk.is.not.configured"),
+                                          () -> DartConfigurable.openDartSettings(project));
     }
 
     // check main dart file

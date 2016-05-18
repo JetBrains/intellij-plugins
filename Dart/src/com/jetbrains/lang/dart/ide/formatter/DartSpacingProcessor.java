@@ -853,12 +853,7 @@ public class DartSpacingProcessor {
   }
 
   private static Comparator<ASTNode> textRangeSorter() {
-    return new Comparator<ASTNode>() {
-      @Override
-      public int compare(ASTNode o1, ASTNode o2) {
-        return o1.getTextRange().getStartOffset() - o2.getTextRange().getStartOffset();
-      }
-    };
+    return (o1, o2) -> o1.getTextRange().getStartOffset() - o2.getTextRange().getStartOffset();
   }
 
   private CallChain collectSurroundingMessageSends() {

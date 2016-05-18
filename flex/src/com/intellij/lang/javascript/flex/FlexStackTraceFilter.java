@@ -179,15 +179,13 @@ public class FlexStackTraceFilter implements Filter {
         final PopupChooserBuilder builder = new PopupChooserBuilder(list);
 
         final JBPopup popup = builder
-          .setItemChoosenCallback(new Runnable() {
-            public void run() {
-              final Object[] selectedElements = list.getSelectedValues();
-              if (selectedElements != null && selectedElements.length == 1 && selectedElements[0] instanceof PsiFile) {
-                final VirtualFile file = ((PsiFile)selectedElements[0]).getVirtualFile();
-                if (file != null) {
-                  FileEditorManager.getInstance(project)
-                    .openTextEditor(new OpenFileDescriptor(project, file, myLine, 0), true);
-                }
+          .setItemChoosenCallback(() -> {
+            final Object[] selectedElements = list.getSelectedValues();
+            if (selectedElements != null && selectedElements.length == 1 && selectedElements[0] instanceof PsiFile) {
+              final VirtualFile file = ((PsiFile)selectedElements[0]).getVirtualFile();
+              if (file != null) {
+                FileEditorManager.getInstance(project)
+                  .openTextEditor(new OpenFileDescriptor(project, file, myLine, 0), true);
               }
             }
           })

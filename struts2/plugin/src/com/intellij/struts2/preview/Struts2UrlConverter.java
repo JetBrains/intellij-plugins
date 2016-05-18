@@ -40,23 +40,21 @@ public class Struts2UrlConverter extends DeployedFileUrlConverter {
     final String actionExtension = actionExtensions.get(0);
 
     @NonNls final ArrayList<String> list = new ArrayList<String>();
-    combinedModel.processActions(new Processor<Action>() {
-      public boolean process(final Action action) {
-        for (final Result result : action.getResults()) {
-          final PathReference pathReference = result.getValue();
-          if (pathReference != null) {
-            final PsiElement psiElement = pathReference.resolve();
-            if (psiElement != null && psiElement.equals(sourceFile)) {
-              String namespace = action.getNamespace();
-              if (!Comparing.equal(namespace, StrutsPackage.DEFAULT_NAMESPACE)) {
-                namespace += "/";
-              }
-              list.add(namespace + action.getName().getStringValue() + actionExtension);
+    combinedModel.processActions(action -> {
+      for (final Result result : action.getResults()) {
+        final PathReference pathReference = result.getValue();
+        if (pathReference != null) {
+          final PsiElement psiElement = pathReference.resolve();
+          if (psiElement != null && psiElement.equals(sourceFile)) {
+            String namespace = action.getNamespace();
+            if (!Comparing.equal(namespace, StrutsPackage.DEFAULT_NAMESPACE)) {
+              namespace += "/";
             }
+            list.add(namespace + action.getName().getStringValue() + actionExtension);
           }
         }
-        return true;
       }
+      return true;
     });
 
     return list;

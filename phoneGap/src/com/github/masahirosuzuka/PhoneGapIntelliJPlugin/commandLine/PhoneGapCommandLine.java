@@ -77,12 +77,7 @@ public class PhoneGapCommandLine {
   private boolean myPassParentEnv = true;
   private Map<String, String> myEnv = ContainerUtil.newHashMap();
 
-  public static final Function<String, String> REMOVE_QUOTE_AND_TRIM = new Function<String, String>() {
-    @Override
-    public String fun(String s) {
-      return s.replace("'", "").trim();
-    }
-  };
+  public static final Function<String, String> REMOVE_QUOTE_AND_TRIM = s -> s.replace("'", "").trim();
 
   public PhoneGapCommandLine(@NotNull String path, @Nullable String dir, boolean isPassEnv, Map<String, String> env) {
     myWorkDir = dir;

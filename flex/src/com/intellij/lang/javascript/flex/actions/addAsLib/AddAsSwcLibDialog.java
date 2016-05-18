@@ -147,15 +147,12 @@ public class AddAsSwcLibDialog extends DialogWrapper {
       Logger.getInstance(AddAsSwcLibDialog.class).error(e);
     }
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        globalLibsModel.commit();
-        projectLibsModel.commit();
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      globalLibsModel.commit();
+      projectLibsModel.commit();
 
-        for (ModifiableRootModel modifiableRootModel : moduleToModifiableModelMap.values()) {
-          modifiableRootModel.commit();
-        }
+      for (ModifiableRootModel modifiableRootModel : moduleToModifiableModelMap.values()) {
+        modifiableRootModel.commit();
       }
     });
 
@@ -201,11 +198,8 @@ public class AddAsSwcLibDialog extends DialogWrapper {
           libraryModifiableModel.addRoot(file, OrderRootType.CLASSES);
         }
 
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            libraryModifiableModel.commit();
-          }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          libraryModifiableModel.commit();
         });
 
         final ModifiableModuleLibraryEntry libraryEntry = flexConfigEditor.createModuleLibraryEntry(bc.getDependencies(), libraryId);
@@ -250,21 +244,15 @@ public class AddAsSwcLibDialog extends DialogWrapper {
   }
 
   private void openProjectStructure(final Module module, final FlexBuildConfiguration bc) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(myProject);
+    ApplicationManager.getApplication().invokeLater(() -> {
+      final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(myProject);
 
-        ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable, new Runnable() {
-          @Override
-          public void run() {
-            final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator()
-              .getPlaceFor(module, bc.getName())
-              .putPath(CompositeConfigurable.TAB_NAME, DependenciesConfigurable.TAB_NAME);
-            configurable.navigateTo(place, true);
-          }
-        });
-      }
+      ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable, () -> {
+        final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator()
+          .getPlaceFor(module, bc.getName())
+          .putPath(CompositeConfigurable.TAB_NAME, DependenciesConfigurable.TAB_NAME);
+        configurable.navigateTo(place, true);
+      });
     });
   }
 }

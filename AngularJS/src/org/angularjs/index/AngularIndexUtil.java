@@ -53,27 +53,19 @@ public class AngularIndexUtil {
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
-  public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = new Function<JSImplicitElement, ResolveResult>() {
-    @Override
-    public ResolveResult fun(JSImplicitElement element) {
-      return new JSResolveResult(element);
-    }
-  };
+  public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = element -> new JSResolveResult(element);
 
   public static JSImplicitElement resolve(final Project project, final StubIndexKey<String, JSImplicitElementProvider> index, final String lookupKey) {
     final Ref<JSImplicitElement> result = new Ref<JSImplicitElement>(null);
-    final Processor<JSImplicitElement> processor = new Processor<JSImplicitElement>() {
-      @Override
-      public boolean process(JSImplicitElement element) {
-        if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
-                                                    AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
-          result.set(element);
-          if (DialectDetector.isTypeScript(element)) {
-            return false;
-          }
+    final Processor<JSImplicitElement> processor = element -> {
+      if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
+                                                  AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
+        result.set(element);
+        if (DialectDetector.isTypeScript(element)) {
+          return false;
         }
-        return true;
       }
+      return true;
     };
     multiResolve(project, index, lookupKey, processor);
 
@@ -86,20 +78,17 @@ public class AngularIndexUtil {
                                    final Processor<JSImplicitElement> processor) {
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     StubIndex.getInstance().processElements(
-      index, lookupKey, project, scope, JSImplicitElementProvider.class, new Processor<JSImplicitElementProvider>() {
-        @Override
-        public boolean process(JSImplicitElementProvider provider) {
-          final JSElementIndexingData indexingData = provider.getIndexingData();
-          if (indexingData != null) {
-            final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
-            if (elements != null) {
-              for (JSImplicitElement element : elements) {
-                if (!processor.process(element)) return false;
-              }
+      index, lookupKey, project, scope, JSImplicitElementProvider.class, provider -> {
+        final JSElementIndexingData indexingData = provider.getIndexingData();
+        if (indexingData != null) {
+          final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
+          if (elements != null) {
+            for (JSImplicitElement element : elements) {
+              if (!processor.process(element)) return false;
             }
           }
-          return true;
         }
+        return true;
       }
     );
   }
@@ -131,11 +120,8 @@ public class AngularIndexUtil {
         }
       }
     }
-    final List<ResolveResult> list = ContainerUtil.map(elements, new Function<JSImplicitElement, ResolveResult>() {
-      @Override
-      public ResolveResult fun(JSImplicitElement element) {
-        return new JSResolveResult(element);
-      }
+    final List<ResolveResult> list = ContainerUtil.map(elements, element -> {
+      return new JSResolveResult(element);
     });
     return list.toArray(new ResolveResult[list.size()]);
   }
@@ -216,12 +202,7 @@ public class AngularIndexUtil {
         public boolean value(String key) {
           return id instanceof StubIndexKey ?
                  !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
-                                            new Processor<PsiElement>() {
-                                              @Override
-                                              public boolean process(PsiElement element) {
-                                                return false;
-                                              }
-                                            }) :
+                                            element -> false) :
                  !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
                    @Override
                    public boolean process(VirtualFile file, Object value) {

@@ -34,41 +34,35 @@ public class ValidationStructureViewTest extends BasicLightHighlightingTestCase 
 
   public void testDefaultPresentation() {
     myFixture.configureByFile("validation-structure.xml");
-    myFixture.testStructureView(new Consumer<StructureViewComponent>() {
-      @Override
-      public void consume(StructureViewComponent component) {
-        component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false);
-        TreeUtil.expandAll(component.getTree());
+    myFixture.testStructureView(component -> {
+      component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false);
+      TreeUtil.expandAll(component.getTree());
 
-        PlatformTestUtil.assertTreeEqual(component.getTree(),
-                                         "-validation-structure.xml\n" +
-                                         " -Validator\n" +
-                                         "  validatorParam\n" +
-                                         "  anything\n" +
-                                         " -myField\n" +
-                                         "  -fieldexpression\n" +
-                                         "   expression\n" +
-                                         "   anything\n");
-      }
+      PlatformTestUtil.assertTreeEqual(component.getTree(),
+                                       "-validation-structure.xml\n" +
+                                       " -Validator\n" +
+                                       "  validatorParam\n" +
+                                       "  anything\n" +
+                                       " -myField\n" +
+                                       "  -fieldexpression\n" +
+                                       "   expression\n" +
+                                       "   anything\n");
     });
   }
 
   public void testHideParam() {
     myFixture.configureByFile("validation-structure.xml");
-    myFixture.testStructureView(new Consumer<StructureViewComponent>() {
-      @Override
-      public void consume(StructureViewComponent component) {
-        component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, true);
-        TreeUtil.expandAll(component.getTree());
+    myFixture.testStructureView(component -> {
+      component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, true);
+      TreeUtil.expandAll(component.getTree());
 
-        PlatformTestUtil.assertTreeEqual(component.getTree(),
-                                         "-validation-structure.xml\n" +
-                                         " -Validator\n" +
-                                         "  anything\n" +
-                                         " -myField\n" +
-                                         "  -fieldexpression\n" +
-                                         "   anything\n");
-      }
+      PlatformTestUtil.assertTreeEqual(component.getTree(),
+                                       "-validation-structure.xml\n" +
+                                       " -Validator\n" +
+                                       "  anything\n" +
+                                       " -myField\n" +
+                                       "  -fieldexpression\n" +
+                                       "   anything\n");
     });
   }
 }

@@ -15,13 +15,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   public static final String INPUT = "Input";
-  public static final NotNullFunction<JSNamedElement, XmlAttributeDescriptor> FACTORY = new NotNullFunction<JSNamedElement, XmlAttributeDescriptor>() {
-    @NotNull
-    @Override
-    public XmlAttributeDescriptor fun(JSNamedElement dom) {
-      return createBinding(dom);
-    }
-  };
+  public static final NotNullFunction<JSNamedElement, XmlAttributeDescriptor> FACTORY = dom -> createBinding(dom);
   private final PsiElement myElement;
 
   public AngularBindingDescriptor(PsiElement element,

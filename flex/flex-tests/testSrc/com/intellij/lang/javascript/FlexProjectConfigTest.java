@@ -61,14 +61,11 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
     final String libraryId = createModuleLibrary();
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(FlexProjectConfigurationEditor configEditor) {
-        ModifiableFlexBuildConfiguration[] configurations = configEditor.getConfigurations(myModule);
-        assertEquals(1, configurations.length);
-        ModifiableFlexBuildConfiguration c = configurations[0];
-        configEditor.createModuleLibraryEntry(c.getDependencies(), libraryId);
-      }
+    FlexTestUtils.modifyConfigs(myProject, configEditor -> {
+      ModifiableFlexBuildConfiguration[] configurations = configEditor.getConfigurations(myModule);
+      assertEquals(1, configurations.length);
+      ModifiableFlexBuildConfiguration c = configurations[0];
+      configEditor.createModuleLibraryEntry(c.getDependencies(), libraryId);
     });
 
     OrderEntry libraryEntry = findLibraryEntry(myModule, libraryId);
@@ -80,15 +77,12 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
     final String libraryId = createModuleLibrary();
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(FlexProjectConfigurationEditor configEditor) {
-        ModifiableFlexBuildConfiguration[] configurations = configEditor.getConfigurations(myModule);
-        assertEquals(1, configurations.length);
-        ModifiableFlexBuildConfiguration c = configurations[0];
-        final ModifiableModuleLibraryEntry e = configEditor.createModuleLibraryEntry(c.getDependencies(), libraryId);
-        c.getDependencies().getModifiableEntries().add(e);
-      }
+    FlexTestUtils.modifyConfigs(myProject, configEditor -> {
+      ModifiableFlexBuildConfiguration[] configurations = configEditor.getConfigurations(myModule);
+      assertEquals(1, configurations.length);
+      ModifiableFlexBuildConfiguration c = configurations[0];
+      final ModifiableModuleLibraryEntry e = configEditor.createModuleLibraryEntry(c.getDependencies(), libraryId);
+      c.getDependencies().getModifiableEntries().add(e);
     });
 
     OrderEntry libraryEntry = findLibraryEntry(myModule, libraryId);
@@ -99,49 +93,40 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     final Module module2 = createModule("module2");
     assertFalse(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
-        ModifiableFlexBuildConfiguration module2Config = editor.getConfigurations(module2)[0];
-        ModifiableBuildConfigurationEntry entry = editor.createBcEntry(module1Config.getDependencies(), module2Config, null);
-        editor.setEntries(module1Config.getDependencies(), Collections.singletonList(entry));
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
+      ModifiableFlexBuildConfiguration module2Config = editor.getConfigurations(module2)[0];
+      ModifiableBuildConfigurationEntry entry = editor.createBcEntry(module1Config.getDependencies(), module2Config, null);
+      editor.setEntries(module1Config.getDependencies(), Collections.singletonList(entry));
     });
     assertTrue(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));
 
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
-        editor.setEntries(module1Config.getDependencies(), new ArrayList<ModifiableDependencyEntry>());
-      }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
+      editor.setEntries(module1Config.getDependencies(), new ArrayList<ModifiableDependencyEntry>());
     });
     assertFalse(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));
 
     final Module module3 = createModule("module3");
     final Module module4 = createModule("module4");
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration m1bc1 = editor.getConfigurations(myModule)[0];
-        ModifiableFlexBuildConfiguration m1bc2 = createConfiguration(editor, myModule);
-        ModifiableFlexBuildConfiguration m1bc3 = createConfiguration(editor, myModule);
-        ModifiableFlexBuildConfiguration m1bc4 = createConfiguration(editor, myModule);
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration m1bc1 = editor.getConfigurations(myModule)[0];
+      ModifiableFlexBuildConfiguration m1bc2 = createConfiguration(editor, myModule);
+      ModifiableFlexBuildConfiguration m1bc3 = createConfiguration(editor, myModule);
+      ModifiableFlexBuildConfiguration m1bc4 = createConfiguration(editor, myModule);
 
-        ModifiableFlexBuildConfiguration m2bc1 = editor.getConfigurations(module2)[0];
-        ModifiableFlexBuildConfiguration m3bc1 = editor.getConfigurations(module3)[0];
-        ModifiableFlexBuildConfiguration m2bc2 = createConfiguration(editor, module2);
+      ModifiableFlexBuildConfiguration m2bc1 = editor.getConfigurations(module2)[0];
+      ModifiableFlexBuildConfiguration m3bc1 = editor.getConfigurations(module3)[0];
+      ModifiableFlexBuildConfiguration m2bc2 = createConfiguration(editor, module2);
 
-        ModifiableBuildConfigurationEntry e1 = editor.createBcEntry(m1bc1.getDependencies(), m2bc1, null);
-        editor.setEntries(m1bc1.getDependencies(), Collections.singletonList(e1));
+      ModifiableBuildConfigurationEntry e1 = editor.createBcEntry(m1bc1.getDependencies(), m2bc1, null);
+      editor.setEntries(m1bc1.getDependencies(), Collections.singletonList(e1));
 
-        ModifiableBuildConfigurationEntry e2 = editor.createBcEntry(m1bc2.getDependencies(), m2bc2, null);
-        ModifiableBuildConfigurationEntry e3 = editor.createBcEntry(m1bc2.getDependencies(), m3bc1, null);
-        editor.setEntries(m1bc1.getDependencies(), Arrays.asList(e2, e3));
-      }
+      ModifiableBuildConfigurationEntry e2 = editor.createBcEntry(m1bc2.getDependencies(), m2bc2, null);
+      ModifiableBuildConfigurationEntry e3 = editor.createBcEntry(m1bc2.getDependencies(), m3bc1, null);
+      editor.setEntries(m1bc1.getDependencies(), Arrays.asList(e2, e3));
     });
     assertTrue(doesDepend(myModule, module2));
     assertTrue(doesDepend(myModule, module3));
@@ -183,12 +168,8 @@ public class FlexProjectConfigTest extends ModuleTestCase {
   }
 
   private static boolean doesDepend(Module dependant, final Module dependency) {
-    return !ContainerUtil.process(ModuleRootManager.getInstance(dependant).getOrderEntries(), new Processor<OrderEntry>() {
-      @Override
-      public boolean process(OrderEntry orderEntry) {
-        return !(orderEntry instanceof ModuleOrderEntry) || ((ModuleOrderEntry)orderEntry).getModule() != dependency;
-      }
-    });
+    return !ContainerUtil.process(ModuleRootManager.getInstance(dependant).getOrderEntries(),
+                                  orderEntry -> !(orderEntry instanceof ModuleOrderEntry) || ((ModuleOrderEntry)orderEntry).getModule() != dependency);
   }
 
   @Nullable
@@ -215,12 +196,9 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     LibraryEx library = (LibraryEx)libraryTable.createLibrary("test", FlexLibraryType.FLEX_LIBRARY);
     String libraryId = UUID.randomUUID().toString();
     ((FlexLibraryProperties)library.getProperties()).setId(libraryId);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        libraryTable.commit();
-        modifiableModel.commit();
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      libraryTable.commit();
+      modifiableModel.commit();
     });
     return libraryId;
   }

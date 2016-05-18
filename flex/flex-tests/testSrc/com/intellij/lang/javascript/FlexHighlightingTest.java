@@ -231,12 +231,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexWithCss4() throws Exception {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
     doTestFor(true, getTestName(false) + ".css");
   }
 
@@ -250,12 +246,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexWithCss6() throws Exception {
     registerCommonCssInspections();
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
     defaultTest();
   }
 
@@ -363,12 +355,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     final String libFileName = "CssInside.zip";
     final String basePath = getTestDataPath() + getBasePath() + "/";
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "lib", basePath, libFileName, null, null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils.addLibrary(myModule, "lib", basePath, libFileName, null, null);
 
     // warm up
     configureByFile(getBasePath() + "/FlexWithCss7.css");
@@ -529,29 +516,26 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexWithMockFlex2() throws Exception {
     final String testName = getTestName(false);
-    doTestFor(true, null, new Function<Collection<HighlightInfo>, Void>() {
-      @Override
-      public Void fun(final Collection<HighlightInfo> highlightInfos) {
-        myFile.accept(new XmlRecursiveElementVisitor() {
-          @Override
-          public void visitXmlAttribute(final XmlAttribute attribute) {
-            final XmlAttributeDescriptor descriptor = attribute.getDescriptor();
-            if (descriptor instanceof AnnotationBackedDescriptor) {
-              assertNotNull(descriptor.getDeclaration());
-            }
+    doTestFor(true, null, highlightInfos -> {
+      myFile.accept(new XmlRecursiveElementVisitor() {
+        @Override
+        public void visitXmlAttribute(final XmlAttribute attribute) {
+          final XmlAttributeDescriptor descriptor = attribute.getDescriptor();
+          if (descriptor instanceof AnnotationBackedDescriptor) {
+            assertNotNull(descriptor.getDeclaration());
           }
-        });
+        }
+      });
 
-        try {
-          final String actionName = "Create Method 'bar'";
-          findAndInvokeIntentionAction(highlightInfos, actionName, myEditor, myFile);
-          assertNull(findIntentionAction(doHighlighting(), actionName, myEditor, myFile));
-        }
-        catch (IncorrectOperationException ex) {
-          throw new RuntimeException(ex);
-        }
-        return null;
+      try {
+        final String actionName = "Create Method 'bar'";
+        findAndInvokeIntentionAction(highlightInfos, actionName, myEditor, myFile);
+        assertNull(findIntentionAction(doHighlighting(), actionName, myEditor, myFile));
       }
+      catch (IncorrectOperationException ex) {
+        throw new RuntimeException(ex);
+      }
+      return null;
     }, testName + ".mxml", testName + "_2.mxml", testName + "_2.as", testName + "_3.mxml");
   }
 
@@ -575,15 +559,12 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testInclude() throws Exception {
     final String testName = getTestName(false);
 
-    doTestFor(true, null, new Runnable() {
-      @Override
-      public void run() {
-        PsiElement element =
-          InjectedLanguageManager.getInstance(myProject).findInjectedElementAt(myFile, myEditor.getCaretModel().getOffset());
-        PsiReference reference = PsiTreeUtil.getParentOfType(element, JSReferenceExpression.class);
-        assertNotNull(reference);
-        assertNotNull(reference.resolve());
-      }
+    doTestFor(true, null, () -> {
+      PsiElement element =
+        InjectedLanguageManager.getInstance(myProject).findInjectedElementAt(myFile, myEditor.getCaretModel().getOffset());
+      PsiReference reference = PsiTreeUtil.getParentOfType(element, JSReferenceExpression.class);
+      assertNotNull(reference);
+      assertNotNull(reference.resolve());
     }, testName + ".mxml", testName + "_2.as", testName + "_3.as", testName + "_4.as");
   }
 
@@ -1265,11 +1246,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testNamespacesAndManifestFiles() throws Exception {
     final String name = getTestName(false);
 
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
-        bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
-      }
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+      final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
+      bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
     });
 
     doTestFor(true, name + ".mxml", name + "_other.mxml", name + "_other2.as");
@@ -1279,11 +1258,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testNamespacesAndManifestsFromCustomConfigFile() throws Exception {
     final String testName = getTestName(false);
 
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        final String path = getTestDataPath() + "/" + getBasePath() + "/" + testName + "_custom_config.xml";
-        bc.getCompilerOptions().setAdditionalConfigFilePath(path);
-      }
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+      final String path = getTestDataPath() + "/" + getBasePath() + "/" + testName + "_custom_config.xml";
+      bc.getCompilerOptions().setAdditionalConfigFilePath(path);
     });
 
     doTestFor(true, testName + ".mxml", testName + "_other.as");
@@ -1367,18 +1344,10 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
 
     final String absPath = LocalFileSystem.getInstance().findFileByPath("").getPath();
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
-            ModuleRootModificationUtil.addDependency(myModule, dependentModule);
-          }
-        });
-      }
-    };
+    myAfterCommitRunnable = () -> ApplicationManager.getApplication().runWriteAction(() -> {
+      replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
+      ModuleRootModificationUtil.addDependency(myModule, dependentModule);
+    });
 
     doTestFor(true, getDefaultProjectRoot(testName), (Runnable)null, testName + "/" + fileRelPath);
   }
@@ -1401,12 +1370,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final String fileRelPath = "pack/" + testName + ".mxml";
 
     final String absPath = LocalFileSystem.getInstance().findFileByPath("").getPath();
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", testName + "/" + testName + ".swc", null, null);
-        replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
-      }
+    myAfterCommitRunnable = () -> {
+      FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", testName + "/" + testName + ".swc", null, null);
+      replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
     };
 
     doTestFor(true, getDefaultProjectRoot(testName), (Runnable)null, testName + "/" + fileRelPath);
@@ -1471,12 +1437,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + ".zip");
     final VirtualFile srcFile = JarFileSystem.getInstance().getJarRootForLocalFile(srcZipFile).findChild(testName + "_sdk_src.as");
 
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", testName + ".zip", null);
-      }
-    };
+    myAfterCommitRunnable =
+      () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", testName + ".zip", null);
     configureByFile(getBasePath() + "/" + testName + ".as"); // file not used; we need just to have content root configured
 
     setActiveEditor(createEditor(srcFile));
@@ -1487,14 +1449,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testIgnoreClassesFromOnlyLibSources() throws Exception {
     final String testName = getTestName(false);
 
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils
-          .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
-                      null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils
+      .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
+                  null);
 
     doTestFor(true, testName + "/" + testName + ".mxml");
   }
@@ -1554,14 +1511,12 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationDefinitions() throws Exception {
     final String testName = getTestName(false);
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        bc.getCompilerOptions()
-          .setAdditionalConfigFilePath(getTestDataPath() + "/" + getBasePath() + "/" + testName + "_custom_config.xml");
-        bc.getCompilerOptions().setAdditionalOptions(
-          "-some_path=\"with space\" -define=CONFIG::Object,'string_value' -define+=CONFIG::defined2,true -define CONFIG::defined3 -1");
-        bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG::defined4\tfalse\nCONFIG::defined5\t"));
-      }
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+      bc.getCompilerOptions()
+        .setAdditionalConfigFilePath(getTestDataPath() + "/" + getBasePath() + "/" + testName + "_custom_config.xml");
+      bc.getCompilerOptions().setAdditionalOptions(
+        "-some_path=\"with space\" -define=CONFIG::Object,'string_value' -define+=CONFIG::defined2,true -define CONFIG::defined3 -1");
+      bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG::defined4\tfalse\nCONFIG::defined5\t"));
     });
 
     final ModuleOrProjectCompilerOptions projectLevelOptions =
@@ -1660,13 +1615,10 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testPackagesAsNamespaces() throws Exception {
     final String testName = getTestName(false);
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        final VirtualFile srcRoot =
-          LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/");
-        PsiTestUtil.addSourceRoot(myModule, srcRoot);
-      }
+    myAfterCommitRunnable = () -> {
+      final VirtualFile srcRoot =
+        LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/");
+      PsiTestUtil.addSourceRoot(myModule, srcRoot);
     };
     doTestFor(true, testName + "/" + testName + ".mxml");
 
@@ -1732,13 +1684,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public final void testDoNotForgetSdkComponents() throws Exception {
     final String testName = getTestName(false);
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils
-          .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", null, null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils
+      .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", null, null);
     doTestFor(true, testName + ".mxml");
   }
 
@@ -1786,13 +1733,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testMonkeyPatching() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils
-          .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils
+      .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
@@ -1920,14 +1862,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testResolveToClassWithBiggestTimestamp() throws Exception {
     final String testName = getTestName(false);
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils
-          .addLibrary(myModule, "lib_1", getTestDataPath() + getBasePath() + "/", testName + "_lib_1.swc", testName + "_lib_1_src.zip",
-                      null);
-      }
-    };
+    myAfterCommitRunnable = () -> FlexTestUtils
+      .addLibrary(myModule, "lib_1", getTestDataPath() + getBasePath() + "/", testName + "_lib_1.swc", testName + "_lib_1_src.zip",
+                  null);
     doTestFor(true, testName + ".as");
     FlexTestUtils.addLibrary(myModule, "lib_2", getTestDataPath() + getBasePath() + "/", testName + "_lib_2.swc", null, null);
 
@@ -1942,12 +1879,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     // newer lib (lib1) contains SomeClass implementing SomeInterface
     // must resolve to newer SomeClass
     final String testName = getTestName(false);
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        FlexTestUtils.addLibrary(myModule, "lib_1", getTestDataPath() + getBasePath() + "/", testName + "_lib1.swc", null, null);
-        FlexTestUtils.addLibrary(myModule, "lib_2", getTestDataPath() + getBasePath() + "/", testName + "_lib2.swc", null, null);
-      }
+    myAfterCommitRunnable = () -> {
+      FlexTestUtils.addLibrary(myModule, "lib_1", getTestDataPath() + getBasePath() + "/", testName + "_lib1.swc", null, null);
+      FlexTestUtils.addLibrary(myModule, "lib_2", getTestDataPath() + getBasePath() + "/", testName + "_lib2.swc", null, null);
     };
     doTestFor(true, testName + ".as");
   }
@@ -2215,15 +2149,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   private void useTestSourceRoot() {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        final ContentEntry contentEntry = model.getContentEntries()[0];
-        final SourceFolder sourceFolder = contentEntry.getSourceFolders()[0];
-        contentEntry.clearSourceFolders();
-        contentEntry.addSourceFolder(sourceFolder.getUrl(), true);
-        model.commit();
-      }
+    myAfterCommitRunnable = () -> {
+      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      final ContentEntry contentEntry = model.getContentEntries()[0];
+      final SourceFolder sourceFolder = contentEntry.getSourceFolders()[0];
+      contentEntry.clearSourceFolders();
+      contentEntry.addSourceFolder(sourceFolder.getUrl(), true);
+      model.commit();
     };
   }
 
@@ -2275,13 +2207,11 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testOutOfSourceRoot() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      public void run() {
-        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        final ContentEntry contentEntry = model.getContentEntries()[0];
-        contentEntry.clearSourceFolders();
-        model.commit();
-      }
+    myAfterCommitRunnable = () -> {
+      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      final ContentEntry contentEntry = model.getContentEntries()[0];
+      contentEntry.clearSourceFolders();
+      model.commit();
     };
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml");
@@ -2318,17 +2248,14 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
     AccessToken writeAction = WriteAction.start();
     try {
-      FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-        @Override
-        public void consume(final FlexProjectConfigurationEditor editor) {
-          final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-          FlexTestUtils.setSdk(bc1, sdk);
+      FlexTestUtils.modifyConfigs(myProject, editor -> {
+        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+        FlexTestUtils.setSdk(bc1, sdk);
 
-          final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
-          bc2.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
-          bc2.setName("2");
-          FlexTestUtils.setSdk(bc2, sdk);
-        }
+        final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+        bc2.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
+        bc2.setName("2");
+        FlexTestUtils.setSdk(bc2, sdk);
       });
     }
     finally {
@@ -2349,23 +2276,15 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
   public void testUseOfTestClass() throws Exception {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            ModifiableRootModel m = ModuleRootManager.getInstance(myModule).getModifiableModel();
-            ContentEntry contentEntry = m.getContentEntries()[0];
-            SourceFolder sourceFolder = contentEntry.getSourceFolders()[0];
-            contentEntry.removeSourceFolder(sourceFolder);
-            contentEntry.addSourceFolder(contentEntry.getFile().findChild("src"), false);
-            contentEntry.addSourceFolder(contentEntry.getFile().findChild("tests"), true);
-            m.commit();
-          }
-        });
-      }
-    };
+    myAfterCommitRunnable = () -> ApplicationManager.getApplication().runWriteAction(() -> {
+      ModifiableRootModel m = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      ContentEntry contentEntry = m.getContentEntries()[0];
+      SourceFolder sourceFolder = contentEntry.getSourceFolders()[0];
+      contentEntry.removeSourceFolder(sourceFolder);
+      contentEntry.addSourceFolder(contentEntry.getFile().findChild("src"), false);
+      contentEntry.addSourceFolder(contentEntry.getFile().findChild("tests"), true);
+      m.commit();
+    });
 
     File projectRoot = new File(getTestDataPath() + getBasePath() + "/" + getTestName(false));
     doTestFor(false, projectRoot, (Runnable)null, getTestName(false) + "/src/Main.mxml");
@@ -2385,12 +2304,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     AccessToken writeAction = WriteAction.start();
     try {
-      FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-        @Override
-        public void consume(final ModifiableFlexBuildConfiguration bc) {
-          FlexTestUtils.setSdk(bc, sdk);
-        }
-      });
+      FlexTestUtils.modifyBuildConfiguration(myModule, bc -> FlexTestUtils.setSdk(bc, sdk));
     }
     finally {
       writeAction.finish();

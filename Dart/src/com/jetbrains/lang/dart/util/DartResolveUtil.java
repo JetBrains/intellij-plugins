@@ -503,17 +503,14 @@ public class DartResolveUtil {
 
   @NotNull
   public static List<DartComponent> findNamedSubComponents(boolean unique, @NotNull DartClass... rootDartClasses) {
-    final List<DartComponent> unfilteredResult = findSubComponents(new Function<DartClass, List<DartComponent>>() {
-      @Override
-      public List<DartComponent> fun(DartClass dartClass) {
-        final List<DartComponent> result = new ArrayList<DartComponent>();
-        for (DartComponent namedComponent : getNamedSubComponents(dartClass)) {
-          if (namedComponent.getName() != null) {
-            result.add(namedComponent);
-          }
+    final List<DartComponent> unfilteredResult = findSubComponents(dartClass -> {
+      final List<DartComponent> result = new ArrayList<DartComponent>();
+      for (DartComponent namedComponent : getNamedSubComponents(dartClass)) {
+        if (namedComponent.getName() != null) {
+          result.add(namedComponent);
         }
-        return result;
       }
+      return result;
     }, rootDartClasses);
     if (!unique) {
       return unfilteredResult;
@@ -522,20 +519,17 @@ public class DartResolveUtil {
   }
 
   public static List<DartMethodDeclaration> findOperators(AbstractDartPsiClass dartPsiClass) {
-    return findSubComponents(new Function<DartClass, List<DartMethodDeclaration>>() {
-      @Override
-      public List<DartMethodDeclaration> fun(DartClass dartClass) {
-        List<DartMethodDeclaration> operators = Lists.newArrayList();
-        final DartMethodDeclaration[] methods = PsiTreeUtil.getChildrenOfType(getBody(dartClass), DartMethodDeclaration.class);
-        if (methods != null) {
-          for (DartMethodDeclaration method : methods) {
-            if (method.isOperator()) {
-              operators.add(method);
-            }
+    return findSubComponents(dartClass -> {
+      List<DartMethodDeclaration> operators = Lists.newArrayList();
+      final DartMethodDeclaration[] methods = PsiTreeUtil.getChildrenOfType(getBody(dartClass), DartMethodDeclaration.class);
+      if (methods != null) {
+        for (DartMethodDeclaration method : methods) {
+          if (method.isOperator()) {
+            operators.add(method);
           }
         }
-        return operators;
       }
+      return operators;
     }, dartPsiClass);
   }
 
@@ -729,11 +723,8 @@ public class DartResolveUtil {
   }
 
   public static List<DartClassResolveResult> resolveClassesByTypes(List<DartType> types) {
-    return ContainerUtil.map(types, new Function<DartType, DartClassResolveResult>() {
-      @Override
-      public DartClassResolveResult fun(DartType dartType) {
-        return resolveClassByType(dartType);
-      }
+    return ContainerUtil.map(types, dartType -> {
+      return resolveClassByType(dartType);
     });
   }
 

@@ -104,23 +104,14 @@ public final class UserImpl extends BaseUserImpl {
 
   @Override
   public void sendMessage(final String message, EventBroadcaster eventBroadcaster) {
-    eventBroadcaster.doChange(new SendMessageEvent(message, this), new Runnable() {
-      @Override
-      public void run() {
-        sendXmlMessage(new TextXmlMessage(message));
-      }
-    });
+    eventBroadcaster.doChange(new SendMessageEvent(message, this), () -> sendXmlMessage(new TextXmlMessage(message)));
   }
 
   @Override
   public void sendCodeIntervalPointer(final VFile file, final CodePointer pointer,
                                       final String comment, EventBroadcaster eventBroadcaster) {
-    eventBroadcaster.doChange(new SendCodePointerEvent(comment, file, pointer, this), new Runnable() {
-      @Override
-      public void run() {
-        sendXmlMessage(new CodePointerXmlMessage(comment, pointer, file));
-      }
-    });
+    eventBroadcaster.doChange(new SendCodePointerEvent(comment, file, pointer, this),
+                              () -> sendXmlMessage(new CodePointerXmlMessage(comment, pointer, file)));
   }
 
   @Override

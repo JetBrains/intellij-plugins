@@ -179,50 +179,48 @@ public class FlexBCConfigurator {
   }
 
   private Runnable createBCNatureModifier(final ModifiableFlexBuildConfiguration bc) {
-    return new Runnable() {
-      public void run() {
-        final CompositeConfigurable compositeConfigurable = myConfigurablesMap.get(bc);
-        final BuildConfigurationNature oldNature = bc.getNature();
-        final AddBuildConfigurationDialog dialog =
-          new AddBuildConfigurationDialog(myConfigEditor.getProject(), FlexBundle.message("change.bc.type.title"),
-                                          Collections.<String>emptyList(), oldNature, false);
-        dialog.reset(bc.getName(), bc.getAndroidPackagingOptions().isEnabled(), bc.getIosPackagingOptions().isEnabled());
-        if (!dialog.showAndGet()) {
-          return;
-        }
+    return () -> {
+      final CompositeConfigurable compositeConfigurable = myConfigurablesMap.get(bc);
+      final BuildConfigurationNature oldNature = bc.getNature();
+      final AddBuildConfigurationDialog dialog =
+        new AddBuildConfigurationDialog(myConfigEditor.getProject(), FlexBundle.message("change.bc.type.title"),
+                                        Collections.<String>emptyList(), oldNature, false);
+      dialog.reset(bc.getName(), bc.getAndroidPackagingOptions().isEnabled(), bc.getIosPackagingOptions().isEnabled());
+      if (!dialog.showAndGet()) {
+        return;
+      }
 
-        final BuildConfigurationNature newNature = dialog.getNature();
-        if (newNature.equals(oldNature)) {
-          if (newNature.isApp() && newNature.isMobilePlatform()) {
-            bc.getAndroidPackagingOptions().setEnabled(dialog.isAndroidEnabled());
-            bc.getIosPackagingOptions().setEnabled(dialog.isIOSEnabled());
-            compositeConfigurable.reset();
-          }
-
-          return;
-        }
-
-        bc.setNature(newNature);
-        fixOutputFileExtension(bc);
-        if (newNature.targetPlatform != oldNature.targetPlatform || newNature.outputType != oldNature.outputType) {
-          // set package names only if corresponding tabs were not applicable before
-          updatePackageFileName(bc, PathUtil.suggestFileName(bc.getName()));
-        }
-
+      final BuildConfigurationNature newNature = dialog.getNature();
+      if (newNature.equals(oldNature)) {
         if (newNature.isApp() && newNature.isMobilePlatform()) {
           bc.getAndroidPackagingOptions().setEnabled(dialog.isAndroidEnabled());
           bc.getIosPackagingOptions().setEnabled(dialog.isIOSEnabled());
+          compositeConfigurable.reset();
         }
 
-        FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(bc);
-
-        final FlexBCConfigurable bcConfigurable = FlexBCConfigurable.unwrap(compositeConfigurable);
-        bcConfigurable.createChildConfigurables();
-        bcConfigurable.updateTabs(compositeConfigurable);
-        compositeConfigurable.reset();
-
-        myEventDispatcher.getMulticaster().natureChanged(bcConfigurable);
+        return;
       }
+
+      bc.setNature(newNature);
+      fixOutputFileExtension(bc);
+      if (newNature.targetPlatform != oldNature.targetPlatform || newNature.outputType != oldNature.outputType) {
+        // set package names only if corresponding tabs were not applicable before
+        updatePackageFileName(bc, PathUtil.suggestFileName(bc.getName()));
+      }
+
+      if (newNature.isApp() && newNature.isMobilePlatform()) {
+        bc.getAndroidPackagingOptions().setEnabled(dialog.isAndroidEnabled());
+        bc.getIosPackagingOptions().setEnabled(dialog.isIOSEnabled());
+      }
+
+      FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(bc);
+
+      final FlexBCConfigurable bcConfigurable = FlexBCConfigurable.unwrap(compositeConfigurable);
+      bcConfigurable.createChildConfigurables();
+      bcConfigurable.updateTabs(compositeConfigurable);
+      compositeConfigurable.reset();
+
+      myEventDispatcher.getMulticaster().natureChanged(bcConfigurable);
     };
   }
 
@@ -438,11 +436,8 @@ public class FlexBCConfigurator {
 
   public List<CompositeConfigurable> getBCConfigurables(@NotNull Module module) {
     return ContainerUtil.map(myConfigEditor.getConfigurations(module),
-                             new Function<ModifiableFlexBuildConfiguration, CompositeConfigurable>() {
-                               @Override
-                               public CompositeConfigurable fun(ModifiableFlexBuildConfiguration configuration) {
-                                 return myConfigurablesMap.get(configuration);
-                               }
+                             configuration -> {
+                               return myConfigurablesMap.get(configuration);
                              });
   }
 

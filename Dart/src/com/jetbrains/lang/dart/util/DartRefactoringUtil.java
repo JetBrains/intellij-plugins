@@ -25,12 +25,8 @@ import java.util.Set;
 
 public class DartRefactoringUtil {
   public static Set<String> collectUsedNames(PsiElement context) {
-    return new THashSet<String>(ContainerUtil.map(collectUsedComponents(context), new Function<DartComponentName, String>() {
-      @Nullable
-      @Override
-      public String fun(DartComponentName componentName) {
-        return componentName.getName();
-      }
+    return new THashSet<String>(ContainerUtil.map(collectUsedComponents(context), componentName -> {
+      return componentName.getName();
     }));
   }
 
@@ -128,11 +124,8 @@ public class DartRefactoringUtil {
 
     // don't forget about leafs (ex. ';')
     final ASTNode[] astResult = UsefulPsiTreeUtil.findChildrenRange(statements.getNode().getChildren(null), startOffset, endOffset);
-    return ContainerUtil.map2Array(astResult, PsiElement.class, new Function<ASTNode, PsiElement>() {
-      @Override
-      public PsiElement fun(ASTNode node) {
-        return node.getPsi();
-      }
+    return ContainerUtil.map2Array(astResult, PsiElement.class, node -> {
+      return node.getPsi();
     });
   }
 

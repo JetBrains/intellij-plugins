@@ -119,12 +119,7 @@ public class FlexUtils {
     final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream)).replace("${class.name}", sampleClassName);
     final VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
     if (sampleApplicationFile != null) {
-      final Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-          FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
-        }
-      };
+      final Runnable runnable = () -> FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
 
       if (project.isInitialized()) {
         runnable.run();

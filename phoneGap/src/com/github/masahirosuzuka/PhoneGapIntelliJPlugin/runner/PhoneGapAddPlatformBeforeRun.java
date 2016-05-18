@@ -89,41 +89,39 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
     final Semaphore targetDone = new Semaphore();
     final Ref<Boolean> result = new Ref<Boolean>(true);
     final List<Exception> exceptions = new ArrayList<Exception>();
-    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-      public void run() {
+    ApplicationManager.getApplication().invokeAndWait(() -> {
 
-        //Save all opened documents
-        FileDocumentManager.getInstance().saveAllDocuments();
-        targetDone.down();
+      //Save all opened documents
+      FileDocumentManager.getInstance().saveAllDocuments();
+      targetDone.down();
 
-        new Task.Backgroundable(project, "Init PhoneGap/Cordova platform", true) {
+      new Task.Backgroundable(project, "Init PhoneGap/Cordova platform", true) {
 
-          public boolean shouldStartInBackground() {
-            return true;
-          }
+        public boolean shouldStartInBackground() {
+          return true;
+        }
 
-          public void run(@NotNull final ProgressIndicator indicator) {
-            try {
-              String platform = phoneGapRunConfiguration.getPlatform();
-              assert platform != null;
-              ProcessOutput output = line.platformAdd(platform);
-              if (output.getExitCode() != 0) {
-                ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, true);
-                result.set(false);
-                targetDone.up();
-                return;
-              }
-
-              targetDone.up();
-            }
-            catch (final ExecutionException e) {
-              exceptions.add(e);
+        public void run(@NotNull final ProgressIndicator indicator) {
+          try {
+            String platform = phoneGapRunConfiguration.getPlatform();
+            assert platform != null;
+            ProcessOutput output = line.platformAdd(platform);
+            if (output.getExitCode() != 0) {
+              ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, true);
               result.set(false);
               targetDone.up();
+              return;
             }
+
+            targetDone.up();
           }
-        }.queue();
-      }
+          catch (final ExecutionException e) {
+            exceptions.add(e);
+            result.set(false);
+            targetDone.up();
+          }
+        }
+      }.queue();
     }, ModalityState.NON_MODAL);
     targetDone.waitFor();
     if (!exceptions.isEmpty()) {

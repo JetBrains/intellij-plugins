@@ -45,18 +45,15 @@ public class DartStructureViewElement extends PsiTreeElementBase<NavigatablePsiE
       }
     }
 
-    Collections.sort(result, new Comparator<StructureViewTreeElement>() {
-      @Override
-      public int compare(StructureViewTreeElement o1, StructureViewTreeElement o2) {
-        PsiElement element1, element2;
-        if (o1 instanceof DartStructureViewElement &&
-            o2 instanceof DartStructureViewElement &&
-            (element1 = ((DartStructureViewElement)o1).getElement()) != null &&
-            (element2 = ((DartStructureViewElement)o2).getElement()) != null) {
-          return element1.getTextRange().getStartOffset() - element2.getTextRange().getStartOffset();
-        }
-        return 0;
+    Collections.sort(result, (o1, o2) -> {
+      PsiElement element1, element2;
+      if (o1 instanceof DartStructureViewElement &&
+          o2 instanceof DartStructureViewElement &&
+          (element1 = ((DartStructureViewElement)o1).getElement()) != null &&
+          (element2 = ((DartStructureViewElement)o2).getElement()) != null) {
+        return element1.getTextRange().getStartOffset() - element2.getTextRange().getStartOffset();
       }
+      return 0;
     });
 
     return result;

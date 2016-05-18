@@ -86,20 +86,10 @@ public class DartSdkUtil {
                                                    final @NotNull JBCheckBox checkedModeCheckBox,
                                                    final @NotNull Computable<Boolean> isResettingControlsComputable) {
     dartSdkPathComponent.getComboBox().setEditable(true);
-    addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, new BooleanFunction<String>() {
-      @Override
-      public boolean fun(String path) {
-        return isDartSdkHome(path);
-      }
-    });
+    addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, path -> isDartSdkHome(path));
 
     dartiumPathComponent.getComboBox().setEditable(true);
-    addKnownPathsToCombo(dartiumPathComponent.getComboBox(), DARTIUM_KNOWN_PATHS, new BooleanFunction<String>() {
-      @Override
-      public boolean fun(String path) {
-        return !path.isEmpty() && new File(path).exists();
-      }
-    });
+    addKnownPathsToCombo(dartiumPathComponent.getComboBox(), DARTIUM_KNOWN_PATHS, path -> !path.isEmpty() && new File(path).exists());
 
     final String sdkHomePath = dartSdkPathComponent.getComboBox().getEditor().getItem().toString().trim();
     versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));

@@ -103,21 +103,18 @@ class DependenciesImpl implements ModifiableDependencies {
     copy.myComponentSet = myComponentSet;
     copy.myFrameworkLinkage = myFrameworkLinkage;
     copy.myEntries.clear();
-    copy.myEntries.addAll(ContainerUtil.map(myEntries, new Function<ModifiableDependencyEntry, ModifiableDependencyEntry>() {
-      @Override
-      public ModifiableDependencyEntry fun(ModifiableDependencyEntry e) {
-        if (e instanceof ModuleLibraryEntryImpl) {
-          return ((ModuleLibraryEntryImpl)e).getCopy();
-        }
-        else if (e instanceof SharedLibraryEntryImpl) {
-          return ((SharedLibraryEntryImpl)e).getCopy();
-        }
-        else if (e instanceof BuildConfigurationEntryImpl) {
-          return ((BuildConfigurationEntryImpl)e).getCopy();
-        }
-        else {
-          throw new RuntimeException("Unexpected entry type: " + e);
-        }
+    copy.myEntries.addAll(ContainerUtil.map(myEntries, (Function<ModifiableDependencyEntry, ModifiableDependencyEntry>)e -> {
+      if (e instanceof ModuleLibraryEntryImpl) {
+        return ((ModuleLibraryEntryImpl)e).getCopy();
+      }
+      else if (e instanceof SharedLibraryEntryImpl) {
+        return ((SharedLibraryEntryImpl)e).getCopy();
+      }
+      else if (e instanceof BuildConfigurationEntryImpl) {
+        return ((BuildConfigurationEntryImpl)e).getCopy();
+      }
+      else {
+        throw new RuntimeException("Unexpected entry type: " + e);
       }
     }));
     copy.mySdk = mySdk != null ? mySdk.getCopy() : null;
@@ -143,15 +140,12 @@ class DependenciesImpl implements ModifiableDependencies {
     state.COMPONENT_SET = myComponentSet;
     state.FRAMEWORK_LINKAGE = myFrameworkLinkage.getSerializedText();
     state.ENTRIES = ContainerUtil.mapNotNull(myEntries.toArray(new ModifiableDependencyEntry[myEntries.size()]),
-                                             new Function<ModifiableDependencyEntry, EntryState>() {
-                                               @Override
-                                               public EntryState fun(ModifiableDependencyEntry entry) {
-                                                 if (entry instanceof StatefulDependencyEntry) {
-                                                   return ((StatefulDependencyEntry)entry).getState();
-                                                 }
-                                                 else {
-                                                   throw new RuntimeException("Unexpected entry type: " + entry);
-                                                 }
+                                             entry -> {
+                                               if (entry instanceof StatefulDependencyEntry) {
+                                                 return ((StatefulDependencyEntry)entry).getState();
+                                               }
+                                               else {
+                                                 throw new RuntimeException("Unexpected entry type: " + entry);
                                                }
                                              }, new EntryState[0]);
 

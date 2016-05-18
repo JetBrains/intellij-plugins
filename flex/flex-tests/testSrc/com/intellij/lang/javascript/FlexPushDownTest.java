@@ -85,13 +85,8 @@ public class FlexPushDownTest extends MultiFileTestCase {
       protected UsageInfo[] findUsages() {
         // ensure stable order
         final UsageInfo[] usages = super.findUsages();
-        Arrays.sort(usages, new Comparator<UsageInfo>() {
-          @Override
-          @SuppressWarnings({"ConstantConditions"})
-          public int compare(UsageInfo o1, UsageInfo o2) {
-            return ((JSClass)o1.getElement()).getQualifiedName().compareTo(((JSClass)o2.getElement()).getQualifiedName());
-          }
-        });
+        Arrays.sort(usages,
+                    (o1, o2) -> ((JSClass)o1.getElement()).getQualifiedName().compareTo(((JSClass)o2.getElement()).getQualifiedName()));
         return usages;
       }
     }.run();

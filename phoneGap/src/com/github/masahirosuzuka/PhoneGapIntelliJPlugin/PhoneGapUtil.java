@@ -41,14 +41,7 @@ public class PhoneGapUtil {
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapExecutableTextField(@Nullable Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
       project, PhoneGapBundle.message("phonegap.conf.executable.name"),
-      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), new NotNullProducer<List<String>>() {
-        @NotNull
-        @Override
-        public List<String> produce() {
-          return
-            getDefaultExecutablePaths();
-        }
-      });
+      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), () -> getDefaultExecutablePaths());
     String executablePath = PhoneGapSettings.getInstance().getExecutablePath();
     setDefaultValue(field, executablePath);
 
@@ -59,13 +52,7 @@ public class PhoneGapUtil {
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(@Nullable final Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
       project, PhoneGapBundle.message("phonegap.conf.work.dir.name"),
-      FileChooserDescriptorFactory.createSingleFolderDescriptor(), new NotNullProducer<List<String>>() {
-        @NotNull
-        @Override
-        public List<String> produce() {
-          return getDefaultWorkingDirectory(project);
-        }
-      });
+      FileChooserDescriptorFactory.createSingleFolderDescriptor(), () -> getDefaultWorkingDirectory(project));
     setDefaultValue(field, PhoneGapSettings.getInstance().getWorkingDirectory(project));
 
     return field;

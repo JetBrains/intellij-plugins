@@ -63,12 +63,7 @@ public class NewActionScriptClassAction extends AnAction {
     final PsiDirectory dir = view.getOrChooseDirectory();
     if (dir == null || project == null) return;
 
-    CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-      @Override
-      public void run() {
-        createAction(dir).execute();
-      }
-    }, getCommandName(), null);
+    CommandProcessor.getInstance().executeCommand(project, () -> createAction(dir).execute(), getCommandName(), null);
 
   }
 

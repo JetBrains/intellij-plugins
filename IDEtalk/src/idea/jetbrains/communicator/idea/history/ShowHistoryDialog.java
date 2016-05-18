@@ -69,12 +69,7 @@ public class ShowHistoryDialog extends IdeaDialog {
 
     init();
 
-    UIUtil.runWhenShown(myConsole.getComponent(), new Runnable() {
-      @Override
-      public void run() {
-        outputMessages();
-      }
-    });
+    UIUtil.runWhenShown(myConsole.getComponent(), () -> outputMessages());
   }
 
   private void outputMessages() {

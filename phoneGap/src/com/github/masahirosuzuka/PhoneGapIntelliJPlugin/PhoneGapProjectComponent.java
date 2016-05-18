@@ -33,11 +33,9 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
 
   @Override
   public void projectOpened() {
-    StartupManager.getInstance(myProject).runWhenProjectIsInitialized(new Runnable() {
-      public void run() {
-        if (PhoneGapUtil.isPhoneGapProject(myProject) && PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
-          excludePlatformFolders();
-        }
+    StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
+      if (PhoneGapUtil.isPhoneGapProject(myProject) && PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
+        excludePlatformFolders();
       }
     });
 

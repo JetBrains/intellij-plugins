@@ -54,12 +54,7 @@ public class PhoneGapPluginsView {
       return;
     }
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        runOnPooledThread(path, workDir, repositoryStore, callback);
-      }
-    });
+    ApplicationManager.getApplication().executeOnPooledThread(() -> runOnPooledThread(path, workDir, repositoryStore, callback));
   }
 
   private synchronized void runOnPooledThread(String path,
@@ -81,20 +76,17 @@ public class PhoneGapPluginsView {
       error.set(PhoneGapBundle.message("phonegap.plugins.executable.error"));
     }
 
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        myPanel.updatePackages(service.get());
-        if (error.get() != null) {
-          packagesNotificationPanel.showError(error.get(), null, null);
-        }
-
-        if (warning.get() != null) {
-          packagesNotificationPanel.showWarning(warning.get());
-        }
-
-        callback.forVersion(version.get());
+    UIUtil.invokeLaterIfNeeded(() -> {
+      myPanel.updatePackages(service.get());
+      if (error.get() != null) {
+        packagesNotificationPanel.showError(error.get(), null, null);
       }
+
+      if (warning.get() != null) {
+        packagesNotificationPanel.showWarning(warning.get());
+      }
+
+      callback.forVersion(version.get());
     });
   }
 

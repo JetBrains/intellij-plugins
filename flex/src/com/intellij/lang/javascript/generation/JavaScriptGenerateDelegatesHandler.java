@@ -240,12 +240,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
       targetCandidates.add(new JSNamedElementNode(field));
     }
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      Collections.sort(targetCandidates, new Comparator<JSNamedElementNode>() {
-        @Override
-        public int compare(JSNamedElementNode o1, JSNamedElementNode o2) {
-          return o1.getText().compareTo(o2.getText());
-        }
-      });
+      Collections.sort(targetCandidates, (o1, o2) -> o1.getText().compareTo(o2.getText()));
     }
     return targetCandidates;
   }

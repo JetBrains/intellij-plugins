@@ -31,11 +31,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
 
   private static final Logger LOG = Logger.getInstance(ActionScriptArrangementEntry.class.getName());
 
-  static final Comparator<ActionScriptArrangementEntry> COMPARATOR = new Comparator<ActionScriptArrangementEntry>() {
-    public int compare(final ActionScriptArrangementEntry entry1, final ActionScriptArrangementEntry entry2) {
-      return entry1.getStartOffset() - entry2.getStartOffset();
-    }
-  };
+  static final Comparator<ActionScriptArrangementEntry> COMPARATOR = (entry1, entry2) -> entry1.getStartOffset() - entry2.getStartOffset();
 
 
   private final String                        myName;

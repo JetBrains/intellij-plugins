@@ -95,20 +95,18 @@ public class MxmlTagNameReference extends TagNameReference {
 
     final Ref<Boolean> hasUsagesRef = new Ref<Boolean>(false);
     ReferencesSearch.search(schemaPrefix, GlobalSearchScope.fileScope(schemaPrefix.getContainingFile()))
-      .forEach(new Processor<PsiReference>() {
-        public boolean process(final PsiReference reference) {
-          final TextRange range = schemaPrefix.getTextRange();
-          if (range != null
-              && (reference.getElement().getTextRange().getStartOffset() + reference.getRangeInElement().getStartOffset()
-                  == range.getStartOffset())
-              && reference.getRangeInElement().getLength() == range.getLength()) {
-            // self reference
-            return true;
-          }
-
-          hasUsagesRef.set(true);
-          return false;
+      .forEach(reference -> {
+        final TextRange range = schemaPrefix.getTextRange();
+        if (range != null
+            && (reference.getElement().getTextRange().getStartOffset() + reference.getRangeInElement().getStartOffset()
+                == range.getStartOffset())
+            && reference.getRangeInElement().getLength() == range.getLength()) {
+          // self reference
+          return true;
         }
+
+        hasUsagesRef.set(true);
+        return false;
       });
 
     if (!hasUsagesRef.get()) {

@@ -47,29 +47,23 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("JavaFX WebKit-based preview renderer is available.");
-    panel.createActionLabel("Change preview browser to JavaFX", new Runnable() {
-      @Override
-      public void run() {
-        final boolean isSuccess = availabilityInfo.checkAvailability(panel);
-        if (isSuccess) {
-          markdownApplicationSettings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(
-            oldPreviewSettings.getSplitEditorLayout(),
-            new JavaFxHtmlPanelProvider().getProviderInfo(),
-            oldPreviewSettings.isUseGrayscaleRendering()
-          ));
-          EditorNotifications.updateAll();
-        }
-        else {
-          Logger.getInstance(JavaFxCouldBeEnabledNotificationProvider.class).warn("Could not install and apply OpenJFX");
-        }
-      }
-    });
-    panel.createActionLabel("Do not show again", new Runnable() {
-      @Override
-      public void run() {
-        PropertiesComponent.getInstance().setValue(DONT_ASK_TO_CHANGE_PROVIDER_TYPE_KEY, true);
+    panel.createActionLabel("Change preview browser to JavaFX", () -> {
+      final boolean isSuccess = availabilityInfo.checkAvailability(panel);
+      if (isSuccess) {
+        markdownApplicationSettings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(
+          oldPreviewSettings.getSplitEditorLayout(),
+          new JavaFxHtmlPanelProvider().getProviderInfo(),
+          oldPreviewSettings.isUseGrayscaleRendering()
+        ));
         EditorNotifications.updateAll();
       }
+      else {
+        Logger.getInstance(JavaFxCouldBeEnabledNotificationProvider.class).warn("Could not install and apply OpenJFX");
+      }
+    });
+    panel.createActionLabel("Do not show again", () -> {
+      PropertiesComponent.getInstance().setValue(DONT_ASK_TO_CHANGE_PROVIDER_TYPE_KEY, true);
+      EditorNotifications.updateAll();
     });
     return panel;
   }

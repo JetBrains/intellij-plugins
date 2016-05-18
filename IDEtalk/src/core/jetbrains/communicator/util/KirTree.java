@@ -68,13 +68,10 @@ public class KirTree extends Tree {
         else if (e.getClickCount() == 1) {
 
           if (e.getButton() == MouseEvent.BUTTON1) {
-            UIUtil.invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                TreePath path = getSelectionPath();
-                if (path != null && path.equals(closestPath)) {
-                  onClick(path, path.getLastPathComponent(), e);
-                }
+            UIUtil.invokeLater(() -> {
+              TreePath path = getSelectionPath();
+              if (path != null && path.equals(closestPath)) {
+                onClick(path, path.getLastPathComponent(), e);
               }
             });
           }

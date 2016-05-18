@@ -74,12 +74,7 @@ public class AppTest extends AppTestBase {
   private void callClientAssert(VirtualFile file) throws IOException, InterruptedException {
     semaphore.down();
     ActionCallback callback = client.test(null, DocumentFactoryManager.getInstance().getId(file), getTestName(false), APP_TEST_CLASS_ID);
-    callback.doWhenProcessed(new Runnable() {
-      @Override
-      public void run() {
-        semaphore.up();
-      }
-    });
+    callback.doWhenProcessed(() -> semaphore.up());
     await();
   }
 
@@ -97,11 +92,8 @@ public class AppTest extends AppTestBase {
     AsyncResult<DocumentInfo> result =
       DesignerApplicationManager.getInstance().renderDocument(myModule, Tests.virtualToPsi(myProject, file));
 
-    result.doWhenProcessed(new Runnable() {
-      @Override
-      public void run() {
-        semaphore.up();
-      }
+    result.doWhenProcessed(() -> {
+      semaphore.up();
     });
 
     await();
@@ -123,11 +115,8 @@ public class AppTest extends AppTestBase {
   private void insertString(VirtualFile file, final int offset, @NotNull final CharSequence s) throws InterruptedException {
     final Document document = FileDocumentManager.getInstance().getDocument(file);
     assertNotNull(document);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        document.insertString(offset, s);
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      document.insertString(offset, s);
     });
 
     semaphore.down();

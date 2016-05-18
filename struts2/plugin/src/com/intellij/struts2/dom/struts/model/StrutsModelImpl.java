@@ -47,19 +47,10 @@ import java.util.Set;
 class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   private static final NotNullFunction<DomFileElement<StrutsRoot>, StrutsRoot> ROOT_ELEMENT_MAPPER =
-    new NotNullFunction<DomFileElement<StrutsRoot>, StrutsRoot>() {
-      @NotNull
-      public StrutsRoot fun(final DomFileElement<StrutsRoot> strutsRootDomFileElement) {
-        return strutsRootDomFileElement.getRootElement();
-      }
-    };
+    strutsRootDomFileElement -> strutsRootDomFileElement.getRootElement();
 
   private static final Function<StrutsRoot, Collection<? extends StrutsPackage>> STRUTS_PACKAGE_COLLECTOR =
-    new Function<StrutsRoot, Collection<? extends StrutsPackage>>() {
-      public Collection<? extends StrutsPackage> fun(final StrutsRoot strutsRoot) {
-        return strutsRoot.getPackages();
-      }
-    };
+    strutsRoot -> strutsRoot.getPackages();
 
   StrutsModelImpl(@NotNull final DomFileElement<StrutsRoot> strutsRootDomFileElement,
                   @NotNull final Set<XmlFile> xmlFiles) {

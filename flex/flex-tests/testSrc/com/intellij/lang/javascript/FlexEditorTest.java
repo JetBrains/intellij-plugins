@@ -40,21 +40,16 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   }
 
   protected void doTestWithJSSupportLoaderAndFlex(final char ch) throws Exception {
-    doTestWithJSSupportLoaderAndFlex(new Callable<Void>() {
-      public Void call() throws Exception {
-        doTypingTest("mxml", String.valueOf(ch));
-        return null;
-      }
+    doTestWithJSSupportLoaderAndFlex(() -> {
+      doTypingTest("mxml", String.valueOf(ch));
+      return null;
     });
   }
 
   protected void doTestWithJSSupportLoaderAndFlex(final Callable<Void> call) throws Exception {
-    doTestWithJSSupport(new Callable<Object>() {
-      @Override
-      public Object call() throws Exception {
-        FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), FlexEditorTest.this.getClass());
-        return call.call();
-      }
+    doTestWithJSSupport((Callable<Object>)() -> {
+      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), FlexEditorTest.this.getClass());
+      return call.call();
     });
   }
 

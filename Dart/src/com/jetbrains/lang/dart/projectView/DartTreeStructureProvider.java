@@ -36,31 +36,28 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
                                              final @NotNull Collection<AbstractTreeNode> children,
                                              final ViewSettings settings) {
     if (parentNode instanceof ExternalLibrariesNode) {
-      return ContainerUtil.map(children, new Function<AbstractTreeNode, AbstractTreeNode>() {
-        @Override
-        public AbstractTreeNode fun(AbstractTreeNode node) {
-          if (node instanceof NamedLibraryElementNode &&
-              (DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(node.getName()) ||
-               DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(node.getName()))) {
-            final boolean isSdkRoot = DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(node.getName());
+      return ContainerUtil.map(children, node -> {
+        if (node instanceof NamedLibraryElementNode &&
+            (DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(node.getName()) ||
+             DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(node.getName()))) {
+          final boolean isSdkRoot = DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(node.getName());
 
-            return new NamedLibraryElementNode(node.getProject(), ((NamedLibraryElementNode)node).getValue(), settings) {
-              @Override
-              public boolean canNavigate() {
-                return isSdkRoot; // no sense to navigate anywhere in case of "Dart Packages" library
-              }
+          return new NamedLibraryElementNode(node.getProject(), ((NamedLibraryElementNode)node).getValue(), settings) {
+            @Override
+            public boolean canNavigate() {
+              return isSdkRoot; // no sense to navigate anywhere in case of "Dart Packages" library
+            }
 
-              @Override
-              public void navigate(boolean requestFocus) {
-                final Project project = getProject();
-                if (project != null) {
-                  DartConfigurable.openDartSettings(project);
-                }
+            @Override
+            public void navigate(boolean requestFocus) {
+              final Project project = getProject();
+              if (project != null) {
+                DartConfigurable.openDartSettings(project);
               }
-            };
-          }
-          return node;
+            }
+          };
         }
+        return node;
       });
     }
 
@@ -69,15 +66,12 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
          DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(parentNode.getName()))) {
       final boolean isSdkRoot = DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(parentNode.getName());
 
-      return ContainerUtil.map(children, new Function<AbstractTreeNode, AbstractTreeNode>() {
-        @Override
-        public AbstractTreeNode fun(AbstractTreeNode node) {
-          final VirtualFile dir = node instanceof PsiDirectoryNode ? ((PsiDirectoryNode)node).getVirtualFile() : null;
-          if (dir != null && dir.isInLocalFileSystem() && dir.isDirectory() && "lib".equals(dir.getName())) {
-            return new DartSdkOrLibraryRootNode(node.getProject(), ((PsiDirectoryNode)node).getValue(), isSdkRoot, settings);
-          }
-          return node;
+      return ContainerUtil.map(children, node -> {
+        final VirtualFile dir = node instanceof PsiDirectoryNode ? ((PsiDirectoryNode)node).getVirtualFile() : null;
+        if (dir != null && dir.isInLocalFileSystem() && dir.isDirectory() && "lib".equals(dir.getName())) {
+          return new DartSdkOrLibraryRootNode(node.getProject(), ((PsiDirectoryNode)node).getValue(), isSdkRoot, settings);
         }
+        return node;
       });
     }
 
@@ -98,17 +92,15 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
       final ArrayList<AbstractTreeNode> modifiedChildren = new ArrayList<AbstractTreeNode>(children);
 
       final DartUrlResolver resolver = DartUrlResolver.getInstance(project, pubspecYamlFile);
-      resolver.processLivePackages(new PairConsumer<String, VirtualFile>() {
-        public void consume(final @NotNull String packageName, final @NotNull VirtualFile packageDir) {
-          final VirtualFile folder = packagesDir.findChild(packageName);
-          if (folder != null) {
-            final AbstractTreeNode node = getFolderNode(children, folder);
-            if (node == null) {
-              modifiedChildren.add(new SymlinkToLivePackageNode(project, packageName, packageDir));
-            }
-            else {
-              node.getPresentation().setLocationString(getPackageLocationString(packageDir));
-            }
+      resolver.processLivePackages((packageName, packageDir) -> {
+        final VirtualFile folder = packagesDir.findChild(packageName);
+        if (folder != null) {
+          final AbstractTreeNode node = getFolderNode(children, folder);
+          if (node == null) {
+            modifiedChildren.add(new SymlinkToLivePackageNode(project, packageName, packageDir));
+          }
+          else {
+            node.getPresentation().setLocationString(getPackageLocationString(packageDir));
           }
         }
       });

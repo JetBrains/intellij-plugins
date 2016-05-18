@@ -59,12 +59,9 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
 
     module.putUserData(RubyMotionUtilImpl.PROJECT_TYPE, projectType);
     RubyMotionFacetConfigurator.configure(baseDir, module);
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
-      @Override
-      public void run() {
-        ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).generateApp(baseDir, module, sdk, projectType, settings.isUseCalabash());
-        RModuleUtil.getInstance().refreshRubyModuleTypeContent(module);
-      }
+    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
+      ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).generateApp(baseDir, module, sdk, projectType, settings.isUseCalabash());
+      RModuleUtil.getInstance().refreshRubyModuleTypeContent(module);
     });
   }
 

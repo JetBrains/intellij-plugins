@@ -109,23 +109,17 @@ public class PhoneGapPluginsList {
   }
 
   public static List<InstalledPackage> wrapInstalled(List<String> names) {
-    return ContainerUtil.map(names, new Function<String, InstalledPackage>() {
-      @Override
-      public InstalledPackage fun(String s) {
-        String[] split = s.split(" ");
-        String name = ArrayUtil.getFirstElement(split);
-        String version = split.length > 1 ? split[1] : "";
-        return new InstalledPackage(name, version);
-      }
+    return ContainerUtil.map(names, s -> {
+      String[] split = s.split(" ");
+      String name = ArrayUtil.getFirstElement(split);
+      String version = split.length > 1 ? split[1] : "";
+      return new InstalledPackage(name, version);
     });
   }
 
   public static List<RepoPackage> wrapRepo(List<String> names) {
-    return ContainerUtil.map(names, new Function<String, RepoPackage>() {
-      @Override
-      public RepoPackage fun(String s) {
-        return new RepoPackage(s, s);
-      }
+    return ContainerUtil.map(names, s -> {
+      return new RepoPackage(s, s);
     });
   }
 }

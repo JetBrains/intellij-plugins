@@ -15,13 +15,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
   public static final String OUTPUT = "Output";
-  public static final NotNullFunction<JSNamedElement, XmlAttributeDescriptor> FACTORY = new NotNullFunction<JSNamedElement, XmlAttributeDescriptor>() {
-    @NotNull
-    @Override
-    public XmlAttributeDescriptor fun(JSNamedElement function) {
-      return createEvenHandler(function);
-    }
-  };
+  public static final NotNullFunction<JSNamedElement, XmlAttributeDescriptor> FACTORY = function -> createEvenHandler(function);
   private final PsiElement myElement;
 
   public AngularEventHandlerDescriptor(PsiElement element,

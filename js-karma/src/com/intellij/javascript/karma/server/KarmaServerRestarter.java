@@ -31,27 +31,21 @@ public class KarmaServerRestarter {
 
   private void listenForConfigurationFileChanges(@NotNull final File configurationFile,
                                                  @NotNull final Disposable parentDisposable) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(configurationFile);
-            if (virtualFile != null && virtualFile.isValid() && !virtualFile.isDirectory()) {
-              Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-              if (document != null && !Disposer.isDisposed(parentDisposable)) {
-                document.addDocumentListener(new DocumentAdapter() {
-                  @Override
-                  public void documentChanged(DocumentEvent e) {
-                    myConfigChanged.set(true);
-                  }
-                }, parentDisposable);
+    ApplicationManager.getApplication().invokeLater(() -> {
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(configurationFile);
+        if (virtualFile != null && virtualFile.isValid() && !virtualFile.isDirectory()) {
+          Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+          if (document != null && !Disposer.isDisposed(parentDisposable)) {
+            document.addDocumentListener(new DocumentAdapter() {
+              @Override
+              public void documentChanged(DocumentEvent e) {
+                myConfigChanged.set(true);
               }
-            }
+            }, parentDisposable);
           }
-        });
-      }
+        }
+      });
     }, ModalityState.any());
   }
 

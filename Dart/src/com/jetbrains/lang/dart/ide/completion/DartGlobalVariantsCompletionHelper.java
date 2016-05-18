@@ -44,17 +44,14 @@ public class DartGlobalVariantsCompletionHelper {
     };
 
     DartComponentIndex.processAllComponents(scope, nameFilter,
-                                            new PairProcessor<String, DartComponentInfo>() {
-                                              @Override
-                                              public boolean process(String componentName, DartComponentInfo info) {
-                                                final String libraryName = info.getLibraryName();
-                                                if (!StringUtil.startsWithChar(componentName, '_') &&
-                                                    (libraryName == null || !libraryName.startsWith("dart._")) &&
-                                                    (infoFilter == null || infoFilter.value(info))) {
-                                                  result.addElement(buildElement(componentName, info));
-                                                }
-                                                return true;
+                                            (componentName, info) -> {
+                                              final String libraryName = info.getLibraryName();
+                                              if (!StringUtil.startsWithChar(componentName, '_') &&
+                                                  (libraryName == null || !libraryName.startsWith("dart._")) &&
+                                                  (infoFilter == null || infoFilter.value(info))) {
+                                                result.addElement(buildElement(componentName, info));
                                               }
+                                              return true;
                                             });
   }
 

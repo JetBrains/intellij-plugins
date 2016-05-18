@@ -38,11 +38,8 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
     final AngularJSMessageFormatParser.ExtensionType type = expression.getExtensionType();
     if (type == null) myHolder.createErrorAnnotation(expression, "missing or unknown message format extension");// will not happen, but
     final List<PsiElement> elements = expression.getSelectionKeywordElements();
-    final List<String> selectionKeywords = ContainerUtil.map(elements, new Function<PsiElement, String>() {
-      @Override
-      public String fun(PsiElement element) {
-        return element.getText();
-      }
+    final List<String> selectionKeywords = ContainerUtil.map(elements, element -> {
+      return element.getText();
     });
 
     checkOptions(type, expression);

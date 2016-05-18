@@ -110,40 +110,37 @@ public class VmConnection {
     final InputStream in = socket.getInputStream();
 
     // Start a reader thread.
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        for (VmListener listener : listeners) {
-          listener.connectionOpened(VmConnection.this);
-        }
-
-        try {
-          processVmEvents(in);
-        }
-        catch (EOFException e) {
-
-        }
-        catch (SocketException se) {
-          // ignore java.net.SocketException: Connection reset
-          final String reset = "Connection reset";
-
-          if (!(se.getMessage() != null && se.getMessage().contains(reset))) {
-            LOG.warn(se);
-          }
-        }
-        catch (IOException e) {
-          LOG.warn(e);
-        }
-        finally {
-          socket = null;
-        }
-
-        for (VmListener listener : listeners) {
-          listener.connectionClosed(VmConnection.this);
-        }
-
-        handleTerminated();
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      for (VmListener listener : listeners) {
+        listener.connectionOpened(VmConnection.this);
       }
+
+      try {
+        processVmEvents(in);
+      }
+      catch (EOFException e) {
+
+      }
+      catch (SocketException se) {
+        // ignore java.net.SocketException: Connection reset
+        final String reset = "Connection reset";
+
+        if (!(se.getMessage() != null && se.getMessage().contains(reset))) {
+          LOG.warn(se);
+        }
+      }
+      catch (IOException e) {
+        LOG.warn(e);
+      }
+      finally {
+        socket = null;
+      }
+
+      for (VmListener listener : listeners) {
+        listener.connectionClosed(VmConnection.this);
+      }
+
+      handleTerminated();
     });
   }
 
@@ -976,31 +973,28 @@ public class VmConnection {
   }
 
   protected void processJson(final JSONObject result) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          if (LOG.isDebugEnabled()) {
-            LOG.debug("<== (" + Thread.currentThread().getName() + ")" + result);
-          }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      try {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("<== (" + Thread.currentThread().getName() + ")" + result);
+        }
 
-          if (result.has("id")) {
-            processResponse(result);
-          }
-          else {
-            processNotification(result);
-          }
+        if (result.has("id")) {
+          processResponse(result);
         }
-        catch (IOException exception) {
-          LOG.info(exception);
+        else {
+          processNotification(result);
         }
-        catch (JSONException exception) {
-          LOG.info(exception);
-        }
-        //catch (Throwable exception) {
-        //  LOG.info(exception);
-        //}
       }
+      catch (IOException exception) {
+        LOG.info(exception);
+      }
+      catch (JSONException exception) {
+        LOG.info(exception);
+      }
+      //catch (Throwable exception) {
+      //  LOG.info(exception);
+      //}
     });
   }
 

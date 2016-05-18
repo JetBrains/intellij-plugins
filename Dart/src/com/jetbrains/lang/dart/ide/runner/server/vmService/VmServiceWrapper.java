@@ -116,48 +116,28 @@ public class VmServiceWrapper implements Disposable {
   }
 
   private void streamListen(@NotNull final String streamId, @NotNull final SuccessConsumer consumer) {
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myVmService.streamListen(streamId, consumer);
-      }
-    });
+    addRequest(() -> myVmService.streamListen(streamId, consumer));
   }
 
   private void getVm(@NotNull final VMConsumer consumer) {
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myVmService.getVM(consumer);
-      }
-    });
+    addRequest(() -> myVmService.getVM(consumer));
   }
 
   private void getIsolate(@NotNull final String isolateId, @NotNull final GetIsolateConsumer consumer) {
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myVmService.getIsolate(isolateId, consumer);
-      }
-    });
+    addRequest(() -> myVmService.getIsolate(isolateId, consumer));
   }
 
   public void handleIsolatePausedOnStart(@NotNull final IsolateRef isolateRef) {
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (myIsolatesInfo.addIsolate(isolateRef)) {
-      addRequest(new Runnable() {
-        @Override
-        public void run() {
-          myVmService.setExceptionPauseMode(isolateRef.getId(),
-                                            ExceptionPauseMode.Unhandled,
-                                            new VmServiceConsumers.SuccessConsumerWrapper() {
-                                              @Override
-                                              public void received(Success response) {
-                                                setInitialBreakpointsAndResume(isolateRef.getId());
-                                              }
-                                            });
-        }
-      });
+      addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
+                                                     ExceptionPauseMode.Unhandled,
+                                                     new VmServiceConsumers.SuccessConsumerWrapper() {
+                                          @Override
+                                          public void received(Success response) {
+                                            setInitialBreakpointsAndResume(isolateRef.getId());
+                                          }
+                                        }));
     }
   }
 
@@ -223,13 +203,10 @@ public class VmServiceWrapper implements Disposable {
       return;
     }
 
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        final String uri = myDebugProcess.getUriForFile(position.getFile());
-        final int line = position.getLine() + 1;
-        myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
-      }
+    addRequest(() -> {
+      final String uri = myDebugProcess.getUriForFile(position.getFile());
+      final int line = position.getLine() + 1;
+      myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
     });
   }
 
@@ -254,21 +231,13 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void removeBreakpoint(@NotNull final String isolateId, @NotNull final String vmBreakpointId) {
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myVmService.removeBreakpoint(isolateId, vmBreakpointId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
-      }
-    });
+    addRequest(() -> myVmService.removeBreakpoint(isolateId, vmBreakpointId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
   }
 
   public void resumeIsolate(@NotNull final String isolateId, @Nullable final StepOption stepOption) {
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myLatestStep = stepOption;
-        myVmService.resume(isolateId, stepOption, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
-      }
+    addRequest(() -> {
+      myLatestStep = stepOption;
+      myVmService.resume(isolateId, stepOption, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
     });
   }
 
@@ -276,39 +245,31 @@ public class VmServiceWrapper implements Disposable {
                                  final int firstFrameIndex,
                                  @NotNull final XExecutionStack.XStackFrameContainer container,
                                  @Nullable final InstanceRef exception) {
-    addRequest(new Runnable() {
+    addRequest(() -> myVmService.getStack(isolateId, new StackConsumer() {
       @Override
-      public void run() {
-        myVmService.getStack(isolateId, new StackConsumer() {
-          @Override
-          public void received(final Stack vmStack) {
-            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-              @Override
-              public void run() {
-                InstanceRef exceptionToAddToFrame = exception;
-                final List<XStackFrame> result = new ArrayList<XStackFrame>(vmStack.getFrames().size());
-                for (Frame vmFrame : vmStack.getFrames()) {
-                  final DartVmServiceStackFrame stackFrame =
-                    new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, exceptionToAddToFrame);
-                  result.add(stackFrame);
+      public void received(final Stack vmStack) {
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          InstanceRef exceptionToAddToFrame = exception;
+          final List<XStackFrame> result = new ArrayList<XStackFrame>(vmStack.getFrames().size());
+          for (Frame vmFrame : vmStack.getFrames()) {
+            final DartVmServiceStackFrame stackFrame =
+              new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, exceptionToAddToFrame);
+            result.add(stackFrame);
 
-                  if (!stackFrame.isInDartSdkPatchFile()) {
-                    // exception (if any) is added to the frame where debugger stops and to the upper frames
-                    exceptionToAddToFrame = null;
-                  }
-                }
-                container.addStackFrames(firstFrameIndex == 0 ? result : result.subList(firstFrameIndex, result.size()), true);
-              }
-            });
+            if (!stackFrame.isInDartSdkPatchFile()) {
+              // exception (if any) is added to the frame where debugger stops and to the upper frames
+              exceptionToAddToFrame = null;
+            }
           }
-
-          @Override
-          public void onError(final RPCError error) {
-            container.errorOccurred(error.getMessage());
-          }
+          container.addStackFrames(firstFrameIndex == 0 ? result : result.subList(firstFrameIndex, result.size()), true);
         });
       }
-    });
+
+      @Override
+      public void onError(final RPCError error) {
+        container.errorOccurred(error.getMessage());
+      }
+    }));
   }
 
   @Nullable
@@ -320,40 +281,30 @@ public class VmServiceWrapper implements Disposable {
 
     final Ref<Script> resultRef = Ref.create();
 
-    addRequest(new Runnable() {
+    addRequest(() -> myVmService.getObject(isolateId, scriptId, new GetObjectConsumer() {
       @Override
-      public void run() {
-        myVmService.getObject(isolateId, scriptId, new GetObjectConsumer() {
-          @Override
-          public void received(Obj script) {
-            resultRef.set((Script)script);
-            semaphore.up();
-          }
-
-          @Override
-          public void received(Sentinel response) {
-            semaphore.up();
-          }
-
-          @Override
-          public void onError(RPCError error) {
-            semaphore.up();
-          }
-        });
+      public void received(Obj script) {
+        resultRef.set((Script)script);
+        semaphore.up();
       }
-    });
+
+      @Override
+      public void received(Sentinel response) {
+        semaphore.up();
+      }
+
+      @Override
+      public void onError(RPCError error) {
+        semaphore.up();
+      }
+    }));
 
     semaphore.waitFor(RESPONSE_WAIT_TIMEOUT);
     return resultRef.get();
   }
 
   public void getObject(@NotNull final String isolateId, @NotNull final String objectId, @NotNull final GetObjectConsumer consumer) {
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myVmService.getObject(isolateId, objectId, consumer);
-      }
-    });
+    addRequest(() -> myVmService.getObject(isolateId, objectId, consumer));
   }
 
   public void getCollectionObject(@NotNull final String isolateId,
@@ -361,12 +312,7 @@ public class VmServiceWrapper implements Disposable {
                                   final int offset,
                                   final int count,
                                   @NotNull final GetObjectConsumer consumer) {
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myVmService.getObject(isolateId, objectId, offset, count, consumer);
-      }
-    });
+    addRequest(() -> myVmService.getObject(isolateId, objectId, offset, count, consumer));
   }
 
   public void evaluateInFrame(@NotNull final String isolateId,
@@ -374,42 +320,32 @@ public class VmServiceWrapper implements Disposable {
                               @NotNull final String expression,
                               @NotNull final XDebuggerEvaluator.XEvaluationCallback callback,
                               final boolean reportIfError) {
-    addRequest(new Runnable() {
+    addRequest(() -> myVmService.evaluateInFrame(isolateId, vmFrame.getIndex(), expression, new EvaluateInFrameConsumer() {
       @Override
-      public void run() {
-        myVmService.evaluateInFrame(isolateId, vmFrame.getIndex(), expression, new EvaluateInFrameConsumer() {
-          @Override
-          public void received(InstanceRef instanceRef) {
-            callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef, null, false));
-          }
-
-          @Override
-          public void received(ErrorRef errorRef) {
-            if (reportIfError) {
-              callback.errorOccurred(DartDebuggerEvaluator.getPresentableError(errorRef.getMessage()));
-            }
-          }
-
-          @Override
-          public void onError(RPCError error) {
-            if (reportIfError) {
-              callback.errorOccurred(error.getMessage());
-            }
-          }
-        });
+      public void received(InstanceRef instanceRef) {
+        callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef, null, false));
       }
-    });
+
+      @Override
+      public void received(ErrorRef errorRef) {
+        if (reportIfError) {
+          callback.errorOccurred(DartDebuggerEvaluator.getPresentableError(errorRef.getMessage()));
+        }
+      }
+
+      @Override
+      public void onError(RPCError error) {
+        if (reportIfError) {
+          callback.errorOccurred(error.getMessage());
+        }
+      }
+    }));
   }
 
   public void evaluateInTargetContext(@NotNull final String isolateId,
                                       @NotNull final String targetId,
                                       @NotNull final String expression,
                                       @NotNull final EvaluateConsumer consumer) {
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myVmService.evaluate(isolateId, targetId, expression, consumer);
-      }
-    });
+    addRequest(() -> myVmService.evaluate(isolateId, targetId, expression, consumer));
   }
 }

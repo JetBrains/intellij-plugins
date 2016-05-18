@@ -127,14 +127,12 @@ public class NodeClassInfo {
       final XmlFile xmlFile = file instanceof XmlFile ? (XmlFile)file : null;
       final XmlTag rootTag = xmlFile == null ? null : xmlFile.getRootTag();
       if (rootTag != null) {
-        processSubtagsRecursively(rootTag, new Processor<XmlTag>() {
-          public boolean process(final XmlTag tag) {
-            final String id = tag.getAttributeValue("id");
-            if (id != null) {
-              fields.put(id, tag.getIcon(Iconable.ICON_FLAG_VISIBILITY));
-            }
-            return !MxmlJSClass.isTagThatAllowsAnyXmlContent(tag);
+        processSubtagsRecursively(rootTag, tag -> {
+          final String id = tag.getAttributeValue("id");
+          if (id != null) {
+            fields.put(id, tag.getIcon(Iconable.ICON_FLAG_VISIBILITY));
           }
+          return !MxmlJSClass.isTagThatAllowsAnyXmlContent(tag);
         });
       }
     }

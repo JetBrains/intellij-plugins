@@ -171,12 +171,8 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     }
 
     if (!result.isEmpty() || superResult.length > 0) {
-      return ArrayUtil.mergeArrays(superResult, ContainerUtil.map2Array(result, Object.class, new Function<LookupElement, Object>() {
-        @Override
-        public Object fun(LookupElement lookupElement) {
-          return lookupElement;
-        }
-      }));
+      return ArrayUtil.mergeArrays(superResult, ContainerUtil.map2Array(result, Object.class,
+                                                                        (Function<LookupElement, Object>)lookupElement -> lookupElement));
     }
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }

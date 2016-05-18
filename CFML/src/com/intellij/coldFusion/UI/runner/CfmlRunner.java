@@ -91,17 +91,14 @@ public class CfmlRunner extends DefaultProgramRunner {
     db.setTitle(CfmlBundle.message("cfml.runconfig.dialog.template.title"));
     db.addOkAction().setText(CfmlBundle.message("cfml.runconfig.dialog.template.button.run"));
     db.addCancelAction().setText(CfmlBundle.message("cfml.runconfig.dialog.template.button.cancel"));
-    db.setOkOperation(new Runnable() {
-      @Override
-      public void run() {
-        runProfile.setFromDefaultHost(false);
-        final CfmlRunnerParameters params = runProfile.getRunnerParameters();
-        RunnerAndConfigurationSettings configurationTemplate =
-          RunManager.getInstance(env.getProject()).getConfigurationTemplate(runProfile.getFactory());
-        ((CfmlRunConfiguration)configurationTemplate.getConfiguration()).getRunnerParameters().setUrl(webPathField.getText());
-        BrowserLauncher.getInstance().browse(params.getUrl(), params.getCustomBrowser(), env.getProject());
-        db.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
-      }
+    db.setOkOperation(() -> {
+      runProfile.setFromDefaultHost(false);
+      final CfmlRunnerParameters params = runProfile.getRunnerParameters();
+      RunnerAndConfigurationSettings configurationTemplate =
+        RunManager.getInstance(env.getProject()).getConfigurationTemplate(runProfile.getFactory());
+      ((CfmlRunConfiguration)configurationTemplate.getConfiguration()).getRunnerParameters().setUrl(webPathField.getText());
+      BrowserLauncher.getInstance().browse(params.getUrl(), params.getCustomBrowser(), env.getProject());
+      db.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
     });
     db.show();
   }

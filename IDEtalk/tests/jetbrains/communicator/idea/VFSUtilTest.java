@@ -82,18 +82,15 @@ public class VFSUtilTest extends PlatformTestCase {
 
   @Override
   protected void runTest() throws Throwable {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          VFSUtilTest.super.runTest();
-        }
-        catch (AssertionFailedError e) {
-          throw e;
-        }
-        catch (Throwable throwable) {
-          throw new RuntimeException(throwable);
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        VFSUtilTest.super.runTest();
+      }
+      catch (AssertionFailedError e) {
+        throw e;
+      }
+      catch (Throwable throwable) {
+        throw new RuntimeException(throwable);
       }
     });
   }
@@ -142,17 +139,14 @@ public class VFSUtilTest extends PlatformTestCase {
   }
 
   private void updateRoots(final Updater updater) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(getModule()).getModifiableModel();
-          updater.update(modifiableModel);
-          modifiableModel.commit();
-        }
-        catch (Throwable e) {
-          throw new RuntimeException(e);
-        }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(getModule()).getModifiableModel();
+        updater.update(modifiableModel);
+        modifiableModel.commit();
+      }
+      catch (Throwable e) {
+        throw new RuntimeException(e);
       }
     });
   }

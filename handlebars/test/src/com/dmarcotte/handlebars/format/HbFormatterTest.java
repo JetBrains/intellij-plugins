@@ -108,17 +108,14 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
     FormatRunnableFactory fullFormatRunnableFactory = new FormatRunnableFactory() {
       @Override
       Runnable createFormatRunnable(final PsiFile file) {
-        return new Runnable() {
-          @Override
-          public void run() {
-            try {
-              TextRange rangeToUse = file.getTextRange();
-              CodeStyleManager styleManager = CodeStyleManager.getInstance(getProject());
-              styleManager.reformatText(file, rangeToUse.getStartOffset(), rangeToUse.getEndOffset());
-            }
-            catch (IncorrectOperationException e) {
-              assertTrue(e.getLocalizedMessage(), false);
-            }
+        return () -> {
+          try {
+            TextRange rangeToUse = file.getTextRange();
+            CodeStyleManager styleManager = CodeStyleManager.getInstance(getProject());
+            styleManager.reformatText(file, rangeToUse.getStartOffset(), rangeToUse.getEndOffset());
+          }
+          catch (IncorrectOperationException e) {
+            assertTrue(e.getLocalizedMessage(), false);
           }
         };
       }
@@ -128,30 +125,27 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
     FormatRunnableFactory lineFormatRunnableFactory = new FormatRunnableFactory() {
       @Override
       Runnable createFormatRunnable(final PsiFile file) {
-        return new Runnable() {
-          @Override
-          public void run() {
-            try {
-              final PsiDocumentManager manager = PsiDocumentManager.getInstance(getProject());
-              final Document document = manager.getDocument(file);
+        return () -> {
+          try {
+            final PsiDocumentManager manager = PsiDocumentManager.getInstance(getProject());
+            final Document document = manager.getDocument(file);
 
-              assert document != null;
+            assert document != null;
 
-              for (int lineNum = 0; lineNum < document.getLineCount(); lineNum++) {
-                CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(getProject());
-                int offset = document.getLineStartOffset(lineNum);
-                @SuppressWarnings("deprecation") // if this breaks at some point, we should
-                  // refactor to invoke AutoIndentLinesAction
-                  // instead of doing the indent directly
-                  boolean lineToBeIndented = codeStyleManager.isLineToBeIndented(file, offset);
-                if (lineToBeIndented) {
-                  codeStyleManager.adjustLineIndent(file, offset);
-                }
+            for (int lineNum = 0; lineNum < document.getLineCount(); lineNum++) {
+              CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(getProject());
+              int offset = document.getLineStartOffset(lineNum);
+              @SuppressWarnings("deprecation") // if this breaks at some point, we should
+                // refactor to invoke AutoIndentLinesAction
+                // instead of doing the indent directly
+                boolean lineToBeIndented = codeStyleManager.isLineToBeIndented(file, offset);
+              if (lineToBeIndented) {
+                codeStyleManager.adjustLineIndent(file, offset);
               }
             }
-            catch (IncorrectOperationException e) {
-              assertTrue(e.getLocalizedMessage(), false);
-            }
+          }
+          catch (IncorrectOperationException e) {
+            assertTrue(e.getLocalizedMessage(), false);
           }
         };
       }
@@ -176,12 +170,8 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
     final PsiFile file = PsiManager.getInstance(getProject()).findFile(virtualFile);
     assert file != null;
 
-    CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(formatAction.createFormatRunnable(file));
-      }
-    }, "", "");
+    CommandProcessor.getInstance().executeCommand(getProject(),
+                                                  () -> ApplicationManager.getApplication().runWriteAction(formatAction.createFormatRunnable(file)), "", "");
 
     TemplateDataLanguageMappings.getInstance(getProject()).cleanupForNextTest();
 
@@ -195,17 +185,9 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
 
     // Strip trailing spaces
     final Document doc = EditorFactory.getInstance().createDocument(actual);
-    CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            ((DocumentImpl)doc).stripTrailingSpaces(getProject());
-          }
-        });
-      }
-    }, "formatting", null);
+    CommandProcessor.getInstance().executeCommand(getProject(), () -> ApplicationManager.getApplication().runWriteAction(() -> {
+      ((DocumentImpl)doc).stripTrailingSpaces(getProject());
+    }), "formatting", null);
 
     return doc.getText();
   }

@@ -19,12 +19,7 @@ import java.util.List;
  */
 public class GrCucumberLineMarkerProvider implements LineMarkerProvider {
 
-  private static final Function<GrMethodCall, String> TOOLTIP_PROVIDER = new Function<GrMethodCall, String>() {
-    @Override
-    public String fun(GrMethodCall stepDef) {
-      return stepDef.getPresentation().getPresentableText();
-    }
-  };
+  private static final Function<GrMethodCall, String> TOOLTIP_PROVIDER = stepDef -> stepDef.getPresentation().getPresentableText();
 
   @Nullable
   @Override

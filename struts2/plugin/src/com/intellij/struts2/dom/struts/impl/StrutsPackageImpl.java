@@ -42,15 +42,12 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
   @NotNull
   public String searchNamespace() {
     final Ref<String> result = new Ref<String>();
-    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        if (DomUtil.hasXml(strutsPackage.getNamespace())) {
-          result.set(strutsPackage.getNamespace().getStringValue());
-          return false;
-        }
-        return true;
+    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, strutsPackage -> {
+      if (DomUtil.hasXml(strutsPackage.getNamespace())) {
+        result.set(strutsPackage.getNamespace().getStringValue());
+        return false;
       }
+      return true;
     });
     walker.walkUp();
 
@@ -60,15 +57,12 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
   @Nullable
   public DefaultClassRef searchDefaultClassRef() {
     final Ref<DefaultClassRef> result = new Ref<DefaultClassRef>();
-    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        if (DomUtil.hasXml(strutsPackage.getDefaultClassRef())) {
-          result.set(strutsPackage.getDefaultClassRef());
-          return false;
-        }
-        return true;
+    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, strutsPackage -> {
+      if (DomUtil.hasXml(strutsPackage.getDefaultClassRef())) {
+        result.set(strutsPackage.getDefaultClassRef());
+        return false;
       }
+      return true;
     });
     walker.walkUp();
 
@@ -92,20 +86,17 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
           public Result<ResultType> compute() {
             final Ref<ResultType> result = new Ref<ResultType>();
             final StrutsPackageHierarchyWalker walker =
-              new StrutsPackageHierarchyWalker(StrutsPackageImpl.this, new Processor<StrutsPackage>() {
-                @Override
-                public boolean process(final StrutsPackage strutsPackage) {
-                  final List<ResultType> resultTypes = strutsPackage.getResultTypes();
-                  for (final ResultType resultType : resultTypes) {
-                    final GenericAttributeValue<Boolean> defaultAttribute = resultType.getDefault();
-                    if (DomUtil.hasXml(defaultAttribute) &&
-                        defaultAttribute.getValue() == Boolean.TRUE) {
-                      result.set(resultType);
-                      return false;
-                    }
+              new StrutsPackageHierarchyWalker(StrutsPackageImpl.this, strutsPackage -> {
+                final List<ResultType> resultTypes = strutsPackage.getResultTypes();
+                for (final ResultType resultType : resultTypes) {
+                  final GenericAttributeValue<Boolean> defaultAttribute = resultType.getDefault();
+                  if (DomUtil.hasXml(defaultAttribute) &&
+                      defaultAttribute.getValue() == Boolean.TRUE) {
+                    result.set(resultType);
+                    return false;
                   }
-                  return true;
                 }
+                return true;
               });
             walker.walkUp();
 

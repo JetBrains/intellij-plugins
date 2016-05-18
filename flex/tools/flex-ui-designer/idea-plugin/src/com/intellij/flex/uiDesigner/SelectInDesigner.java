@@ -39,32 +39,29 @@ public class SelectInDesigner extends SelectInTargetBase {
       return;
     }
 
-    DesignerApplicationManager.getInstance().renderIfNeed((XmlFile)element.getContainingFile(), new Consumer<DocumentInfo>() {
-      @Override
-      public void consume(DocumentInfo info) {
-        int componentId = 0;
-        if (!(element instanceof XmlFile)) {
-          PsiElement effectiveElement = element;
-          do {
-            if (effectiveElement instanceof XmlTag && ((XmlTag)effectiveElement).getDescriptor() instanceof ClassBackedElementDescriptor) {
-              componentId = info.rangeMarkerIndexOf(effectiveElement);
-              if (componentId != -1) {
-                break;
-              }
+    DesignerApplicationManager.getInstance().renderIfNeed((XmlFile)element.getContainingFile(), info -> {
+      int componentId = 0;
+      if (!(element instanceof XmlFile)) {
+        PsiElement effectiveElement = element;
+        do {
+          if (effectiveElement instanceof XmlTag && ((XmlTag)effectiveElement).getDescriptor() instanceof ClassBackedElementDescriptor) {
+            componentId = info.rangeMarkerIndexOf(effectiveElement);
+            if (componentId != -1) {
+              break;
             }
-
-            effectiveElement = effectiveElement.getContext();
           }
-          while (effectiveElement != null);
 
-          if (componentId == -1) {
-            componentId = 0; // select root
-            LogMessageUtil.LOG.warn("Can't find target component");
-          }
+          effectiveElement = effectiveElement.getContext();
         }
+        while (effectiveElement != null);
 
-        Client.getInstance().selectComponent(info.getId(), componentId);
+        if (componentId == -1) {
+          componentId = 0; // select root
+          LogMessageUtil.LOG.warn("Can't find target component");
+        }
       }
+
+      Client.getInstance().selectComponent(info.getId(), componentId);
     });
   }
 

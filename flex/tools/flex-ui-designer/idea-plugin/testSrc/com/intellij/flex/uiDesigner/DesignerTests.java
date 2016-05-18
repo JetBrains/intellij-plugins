@@ -69,15 +69,12 @@ public final class DesignerTests {
         @Override
         public void dispose() {
           FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
-          ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-              try {
-                sourceDir.delete(null);
-              }
-              catch (IOException e) {
-                throw new RuntimeException(e);
-              }
+          ApplicationManager.getApplication().runWriteAction(() -> {
+            try {
+              sourceDir.delete(null);
+            }
+            catch (IOException e) {
+              throw new RuntimeException(e);
             }
           });
         }

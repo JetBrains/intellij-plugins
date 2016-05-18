@@ -150,11 +150,7 @@ class MessageHistory {
   private void doLoadHistorySince(Date since) {
     File historyDir = getHistoryDir();
 
-    String[] historyFiles = historyDir.list(new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        return name.endsWith(".xml");
-      }
-    });
+    String[] historyFiles = historyDir.list((dir, name) -> name.endsWith(".xml"));
 
     Arrays.sort(historyFiles);
     for (int i = historyFiles.length - 1; i >= 0; i--) {
@@ -181,17 +177,15 @@ class MessageHistory {
 
   private void triggerSave() {
     if (myPendingSave == null) {
-      myPendingSave = myFacade.runOnPooledThread(new Runnable(){
-        public void run() {
-          try {
-            Thread.sleep(SAVE_TIMEOUT);
-          } catch (InterruptedException e) {
-            // Ignore here.
-          }
-          finally {
-            saveHistory();
-            myPendingSave = null;
-          }
+      myPendingSave = myFacade.runOnPooledThread(() -> {
+        try {
+          Thread.sleep(SAVE_TIMEOUT);
+        } catch (InterruptedException e) {
+          // Ignore here.
+        }
+        finally {
+          saveHistory();
+          myPendingSave = null;
         }
       });
     }

@@ -142,11 +142,9 @@ public class BCUtils {
 
       if (playerDir != null) {
         final Collection<String> availablePlayers = new ArrayList<String>(2);
-        FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, new Processor<VirtualFile>() {
-          public boolean process(final VirtualFile playerglobalSwcFile) {
-            availablePlayers.add(playerglobalSwcFile.getParent().getName());
-            return true;
-          }
+        FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, playerglobalSwcFile -> {
+          availablePlayers.add(playerglobalSwcFile.getParent().getName());
+          return true;
         });
 
         final Object selectedItem = targetPlayerCombo.getSelectedItem();

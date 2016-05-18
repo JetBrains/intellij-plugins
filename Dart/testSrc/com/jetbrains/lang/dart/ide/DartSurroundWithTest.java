@@ -23,11 +23,8 @@ public class DartSurroundWithTest extends LightPlatformCodeInsightTestCase {
 
   private void doTest(final Surrounder handler) throws Exception {
     configureByFile(getTestName(false) + ".dart");
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), handler);
-      }
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), handler);
     });
 
     checkResultByFile(getTestName(false) + ".after.dart");

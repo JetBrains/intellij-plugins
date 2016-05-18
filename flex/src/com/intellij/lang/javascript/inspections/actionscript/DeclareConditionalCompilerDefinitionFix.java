@@ -36,15 +36,13 @@ public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionActi
   protected void applyFix(final Project project, final PsiElement psiElement, final PsiFile file, final Editor editor) {
     final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(project);
 
-    ShowSettingsUtil.getInstance().editConfigurable(project, configurable, new Runnable() {
-      public void run() {
-        final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
-        final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, bc.getName())
-          .putPath(CompositeConfigurable.TAB_NAME, CompilerOptionsConfigurable.TAB_NAME)
-          .putPath(FlexBCConfigurable.LOCATION_ON_TAB, CompilerOptionsConfigurable.Location.ConditionalCompilerDefinition)
-          .putPath(CompilerOptionsConfigurable.CONDITIONAL_COMPILER_DEFINITION_NAME, myConditionalCompilerDefinitionName);
-      configurable.navigateTo(place, true);
-      }
+    ShowSettingsUtil.getInstance().editConfigurable(project, configurable, () -> {
+      final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
+      final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, bc.getName())
+        .putPath(CompositeConfigurable.TAB_NAME, CompilerOptionsConfigurable.TAB_NAME)
+        .putPath(FlexBCConfigurable.LOCATION_ON_TAB, CompilerOptionsConfigurable.Location.ConditionalCompilerDefinition)
+        .putPath(CompilerOptionsConfigurable.CONDITIONAL_COMPILER_DEFINITION_NAME, myConditionalCompilerDefinitionName);
+    configurable.navigateTo(place, true);
     });
   }
 }

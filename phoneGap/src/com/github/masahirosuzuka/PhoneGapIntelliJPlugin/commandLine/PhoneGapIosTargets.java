@@ -11,19 +11,9 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGa
 
 public class PhoneGapIosTargets extends PhoneGapTargets {
 
-  private static final Function<String, String> PARSER_DEVICE_LINE = new Function<String, String>() {
-    @Override
-    public String fun(String s) {
-      return parseDevice(s);
-    }
-  };
+  private static final Function<String, String> PARSER_DEVICE_LINE = s -> parseDevice(s);
 
-  private static final Function<String, String> PARSER_VIRTUAL_DEVICE_LINE = new Function<String, String>() {
-    @Override
-    public String fun(String s) {
-      return parseVirtualDevice(s);
-    }
-  };
+  private static final Function<String, String> PARSER_VIRTUAL_DEVICE_LINE = s -> parseVirtualDevice(s);
 
   private static final String IOS_SIM = "ios-sim";
   private static final String IOS_DEPLOY = "ios-deploy";

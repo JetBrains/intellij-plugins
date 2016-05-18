@@ -64,12 +64,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final String uriPrefix = getPrefixIfCompletingUri(parameters);
                final CompletionResultSet resultSet = uriPrefix != null ? originalResultSet.withPrefixMatcher(uriPrefix) : originalResultSet;
 
-               DartAnalysisServerService.getInstance().addCompletions(completionId, new Consumer<CompletionSuggestion>() {
-                 @Override
-                 public void consume(CompletionSuggestion suggestion) {
-                   final LookupElement lookupElement = createLookupElement(project, suggestion);
-                   resultSet.addElement(lookupElement);
-                 }
+               DartAnalysisServerService.getInstance().addCompletions(completionId, suggestion -> {
+                 final LookupElement lookupElement = createLookupElement(project, suggestion);
+                 resultSet.addElement(lookupElement);
                });
              }
            });

@@ -64,12 +64,7 @@ public class FlexMoveTest extends JSMoveTestBase {
   protected FlexMoveClassProcessor createCustomMoveProcessor(Collection<PsiElement> files,
                                                              PsiDirectory targetDirectory,
                                                              String targetDirName) {
-    return new FlexMoveClassProcessor(ContainerUtil.map(files, new Function<PsiElement, JSQualifiedNamedElement>() {
-      @Override
-      public JSQualifiedNamedElement fun(PsiElement psiElement) {
-        return (JSQualifiedNamedElement)psiElement;
-      }
-    }), targetDirectory, targetDirName.replace("/", ".").replace("\\", "."), true, true, null);
+    return new FlexMoveClassProcessor(ContainerUtil.map(files, psiElement -> (JSQualifiedNamedElement)psiElement), targetDirectory, targetDirName.replace("/", ".").replace("\\", "."), true, true, null);
   }
 
   public void testMovePackage() throws Exception {
@@ -140,11 +135,7 @@ public class FlexMoveTest extends JSMoveTestBase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConfigUpdatedOnPackageMove() throws Exception {
-    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
-      public void consume(final ModifiableFlexBuildConfiguration bc) {
-        bc.setMainClass("foo.SomeClass");
-      }
-    });
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.SomeClass"));
 
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
     FlexTestUtils

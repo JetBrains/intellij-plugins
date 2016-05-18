@@ -92,11 +92,9 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "target", "3.2.0.3958", "en_US", "target/project-1.0-Module2-config-report.xml");
 
     final Module module = ModuleManager.getInstance(myProject).findModuleByName("project");
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        for (ModifiableFlexBuildConfiguration bc : editor.getConfigurations(module)) {
-          bc.getCompilerOptions().setAdditionalOptions("custom options");
-        }
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      for (ModifiableFlexBuildConfiguration bc : editor.getConfigurations(module)) {
+        bc.getCompilerOptions().setAdditionalOptions("custom options");
       }
     });
 

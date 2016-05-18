@@ -293,15 +293,13 @@ public class CodeContext {
       }
     }
 
-    FlexUtils.processCompilerOption(module, bc, "compiler.namespaces.namespace", new Processor<Pair<String, String>>() {
-      public boolean process(final Pair<String, String> namespaceAndManifest) {
-        // namespaces configured in IDEA are always included in SWC
-        final VirtualFile manifestFile = VfsUtil.findRelativeFile(namespaceAndManifest.second, configFile);
-        if (manifestFile != null && !manifestFile.isDirectory()) {
-          processManifestFile(module, contextsOfModule, manifestFile, namespaceAndManifest.first, configFile);
-        }
-        return true;
+    FlexUtils.processCompilerOption(module, bc, "compiler.namespaces.namespace", namespaceAndManifest -> {
+      // namespaces configured in IDEA are always included in SWC
+      final VirtualFile manifestFile = VfsUtil.findRelativeFile(namespaceAndManifest.second, configFile);
+      if (manifestFile != null && !manifestFile.isDirectory()) {
+        processManifestFile(module, contextsOfModule, manifestFile, namespaceAndManifest.first, configFile);
       }
+      return true;
     });
   }
 
@@ -323,19 +321,17 @@ public class CodeContext {
   private static void processCatalogFile(final Module module,
                                          final Map<String, CodeContext> contextsOfModule,
                                          final VirtualFile catalogFile) {
-    SwcCatalogXmlUtil.processComponentsFromCatalogXml(catalogFile, new Consumer<SwcCatalogXmlUtil.ComponentFromCatalogXml>() {
-      public void consume(final SwcCatalogXmlUtil.ComponentFromCatalogXml componentFromCatalogXml) {
-        CodeContext codeContext = identifyCodeContext(module, contextsOfModule, componentFromCatalogXml.myUri);
-        codeContext.addDependency(catalogFile);
-        codeContext.putDescriptor(componentFromCatalogXml.myName,
-                                  new ClassBackedElementDescriptor(componentFromCatalogXml.myName,
-                                                                   componentFromCatalogXml.myClassFqn,
-                                                                   codeContext,
-                                                                   module.getProject(),
-                                                                   false,
-                                                                   componentFromCatalogXml.myIcon),
-                                  true);
-      }
+    SwcCatalogXmlUtil.processComponentsFromCatalogXml(catalogFile, componentFromCatalogXml -> {
+      CodeContext codeContext = identifyCodeContext(module, contextsOfModule, componentFromCatalogXml.myUri);
+      codeContext.addDependency(catalogFile);
+      codeContext.putDescriptor(componentFromCatalogXml.myName,
+                                new ClassBackedElementDescriptor(componentFromCatalogXml.myName,
+                                                                 componentFromCatalogXml.myClassFqn,
+                                                                 codeContext,
+                                                                 module.getProject(),
+                                                                 false,
+                                                                 componentFromCatalogXml.myIcon),
+                                true);
     });
   }
 
@@ -375,16 +371,12 @@ public class CodeContext {
   private static void processManifestFile(final VirtualFile manifestFile, final CodeContext codeContext) {
     codeContext.addDependency(manifestFile);
 
-    SwcCatalogXmlUtil.processManifestFile(manifestFile, new Consumer<SwcCatalogXmlUtil.ComponentFromManifest>() {
-      public void consume(final SwcCatalogXmlUtil.ComponentFromManifest componentFromManifest) {
-        codeContext.putDescriptor(componentFromManifest.myComponentName,
-                                  new ClassBackedElementDescriptor(componentFromManifest.myComponentName,
-                                                                   componentFromManifest.myClassFqn,
-                                                                   codeContext,
-                                                                   codeContext.module.getProject()),
-                                  true);
-      }
-    });
+    SwcCatalogXmlUtil.processManifestFile(manifestFile, componentFromManifest -> codeContext.putDescriptor(componentFromManifest.myComponentName,
+                                                                                                       new ClassBackedElementDescriptor(componentFromManifest.myComponentName,
+                                                               componentFromManifest.myClassFqn,
+                                                               codeContext,
+                                                               codeContext.module.getProject()),
+                                                                                                       true));
   }
 
   private static void addFileBackedDescriptor(final VirtualFile file,
@@ -471,13 +463,11 @@ public class CodeContext {
     final VirtualFile sdkHome = homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);
     if (sdkHome == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 
-    FlexSdkUtils.processStandardNamespaces(bc, new PairConsumer<String, String>() {
-      public void consume(final String namespace, final String relativePath) {
-        final VirtualFile manifestFile = VfsUtil.findRelativeFile(relativePath, sdkHome);
+    FlexSdkUtils.processStandardNamespaces(bc, (namespace1, relativePath) -> {
+      final VirtualFile manifestFile = VfsUtil.findRelativeFile(relativePath, sdkHome);
 
-        if (manifestFile != null) {
-          handleStandardManifest(module, namespace, manifestFile, sdkHome);
-        }
+      if (manifestFile != null) {
+        handleStandardManifest(module, namespace1, manifestFile, sdkHome);
       }
     });
   }

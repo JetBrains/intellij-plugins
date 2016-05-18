@@ -105,67 +105,63 @@ public class ProfilingConnection {
       return;
     }
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        int bytesRead = 0;
-        try {
-          while (true) {
-            String x = myInputStream.readUTF();
-            if (x == null) break;
-            LOG.debug(x);
-            bytesRead += x.length();
-            try {
-              if (myCurrentPacketProcessor == null) {
-                String marker = x;
-                int i = x.indexOf('\0');
-                if (i != -1) marker = x.substring(0, i + 1);
-                myCurrentPacketProcessor = myInitialString2ProcessorsMap.get(marker);
-                if (myCurrentPacketProcessor != null) {
-                  myCurrentPacketProcessor.startingPacket(x);
-                }
-              }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      int bytesRead = 0;
+      try {
+        while (true) {
+          String x = myInputStream.readUTF();
+          if (x == null) break;
+          LOG.debug(x);
+          bytesRead += x.length();
+          try {
+            if (myCurrentPacketProcessor == null) {
+              String marker = x;
+              int i = x.indexOf('\0');
+              if (i != -1) marker = x.substring(0, i + 1);
+              myCurrentPacketProcessor = myInitialString2ProcessorsMap.get(marker);
               if (myCurrentPacketProcessor != null) {
-                PacketProcessor.ProcessingResult processingResult = myCurrentPacketProcessor.process(x);
-                if (processingResult == PacketProcessor.ProcessingResult.FINISHED) myCurrentPacketProcessor = null;
-                if (processingResult == PacketProcessor.ProcessingResult.STOP) return;
-              }
-              else {
-                LOG.warn("No processing:" + x);
+                myCurrentPacketProcessor.startingPacket(x);
               }
             }
-            catch (Exception e) {
-              LOG.error(e);
+            if (myCurrentPacketProcessor != null) {
+              PacketProcessor.ProcessingResult processingResult = myCurrentPacketProcessor.process(x);
+              if (processingResult == PacketProcessor.ProcessingResult.FINISHED) myCurrentPacketProcessor = null;
+              if (processingResult == PacketProcessor.ProcessingResult.STOP) return;
+            }
+            else {
+              LOG.warn("No processing:" + x);
             }
           }
+          catch (Exception e) {
+            LOG.error(e);
+          }
         }
-        catch (IOException ex) {
-          LOG.debug("Bytes read:" + bytesRead);
-          myIoHandler.finished(null, ex);
-        }
-        catch (Throwable t) {
-          LOG.error(t);
-        }
+      }
+      catch (IOException ex) {
+        LOG.debug("Bytes read:" + bytesRead);
+        myIoHandler.finished(null, ex);
+      }
+      catch (Throwable t) {
+        LOG.error(t);
       }
     });
   }
 
   private void ensurePolicyServedEvenOnFlashSecurityPort() {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        try {
-          myPolicyServerSocket = new ServerSocket(843);
-          while (true) {
-            final Socket socket = myPolicyServerSocket.accept();
-            final OutputStream outputStream = socket.getOutputStream();
-            outputStream.write(policyFileRequestAnswer(myPort).getBytes());
-            LOG.debug("policy served from 843");
-            outputStream.close();
-          }
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      try {
+        myPolicyServerSocket = new ServerSocket(843);
+        while (true) {
+          final Socket socket = myPolicyServerSocket.accept();
+          final OutputStream outputStream = socket.getOutputStream();
+          outputStream.write(policyFileRequestAnswer(myPort).getBytes());
+          LOG.debug("policy served from 843");
+          outputStream.close();
         }
-        catch (IOException e) {
-          if (e instanceof SocketException && myAbortingSocketConnection) return;
-          if (myPolicyServerSocket != null) LOG.error(e); // myPolicyServerSocket == null is bind failed
-        }
+      }
+      catch (IOException e) {
+        if (e instanceof SocketException && myAbortingSocketConnection) return;
+        if (myPolicyServerSocket != null) LOG.error(e); // myPolicyServerSocket == null is bind failed
       }
     });
   }

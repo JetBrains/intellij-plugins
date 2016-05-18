@@ -56,14 +56,12 @@ public class FlashBuilderProjectFinder {
   }
 
   static boolean collectAllProjectPaths(final @Nullable Project project, final List<String> projectPaths, final String dirPath) {
-    final Runnable runnable = new Runnable() {
-      public void run() {
-        if (isFlashBuilderWorkspace(dirPath)) {
-          collectProjectPathsInWorkspace(projectPaths, dirPath);
-        }
-        else {
-          collectProjectPathsInDirectory(projectPaths, dirPath);
-        }
+    final Runnable runnable = () -> {
+      if (isFlashBuilderWorkspace(dirPath)) {
+        collectProjectPathsInWorkspace(projectPaths, dirPath);
+      }
+      else {
+        collectProjectPathsInDirectory(projectPaths, dirPath);
       }
     };
 

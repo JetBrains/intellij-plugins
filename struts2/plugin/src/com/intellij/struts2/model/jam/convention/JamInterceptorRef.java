@@ -61,11 +61,7 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
 
   private static final JamAnnotationAttributeMeta.Collection<JamInterceptorRef> INTERCEPTOR_REFS_VALUE_ATTRIBUTE =
     JamAttributeMeta.annoCollection(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME, INTERCEPTOR_REF_META, JamInterceptorRef.class)
-      .addPomTargetProducer(new PairConsumer<JamInterceptorRef, Consumer<PomTarget>>() {
-        public void consume(final JamInterceptorRef named, final Consumer<PomTarget> pomTargetConsumer) {
-          pomTargetConsumer.consume(named.getPomTarget());
-        }
-      });
+      .addPomTargetProducer((named, pomTargetConsumer) -> pomTargetConsumer.consume(named.getPomTarget()));
 
   private static final JamAnnotationMeta INTERCEPTOR_REFS_META =
     new JamAnnotationMeta(ANNOTATION_NAME_LIST).addAttribute(INTERCEPTOR_REFS_VALUE_ATTRIBUTE);
