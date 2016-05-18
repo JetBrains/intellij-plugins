@@ -50,34 +50,30 @@ public class AddNewMixinAction extends AddNewElementAction<MixinsNode> {
     builder.setButtonsAlignment(SwingConstants.CENTER);
     builder.setPreferredFocusComponent(addNewMixinDialog.getNameComponent());
 
-    builder.setOkOperation(new Runnable() {
-      public void run() {
-        final String mixinName = addNewMixinDialog.getName();
+    builder.setOkOperation(() -> {
+      final String mixinName = addNewMixinDialog.getName();
 
-        if (!Validators.isValidComponentName(mixinName)) {
-          Messages.showErrorDialog("Invalid mixin name!", CommonBundle.getErrorTitle());
-          return;
-        }
-
-        // Set default values
-        String classSourceDir = addNewMixinDialog.getClassSourceDirectory().getPath();
-
-        TapestryModuleSupportLoader.getInstance(module).getState().setNewPagesClassesSourceDirectory(classSourceDir);
-
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          public void run() {
-            try {
-              PsiDirectory classSourceDirectory =
-                  PsiManager.getInstance(module.getProject()).findDirectory(addNewMixinDialog.getClassSourceDirectory());
-              TapestryUtils.createMixin(module, classSourceDirectory, mixinName, addNewMixinDialog.isReplaceExistingFiles());
-            }
-            catch (IllegalStateException ex) {
-              Messages.showWarningDialog(module.getProject(), ex.getMessage(), "Error creating mixin");
-            }
-          }
-        });
-        builder.getWindow().dispose();
+      if (!Validators.isValidComponentName(mixinName)) {
+        Messages.showErrorDialog("Invalid mixin name!", CommonBundle.getErrorTitle());
+        return;
       }
+
+      // Set default values
+      String classSourceDir = addNewMixinDialog.getClassSourceDirectory().getPath();
+
+      TapestryModuleSupportLoader.getInstance(module).getState().setNewPagesClassesSourceDirectory(classSourceDir);
+
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        try {
+          PsiDirectory classSourceDirectory =
+              PsiManager.getInstance(module.getProject()).findDirectory(addNewMixinDialog.getClassSourceDirectory());
+          TapestryUtils.createMixin(module, classSourceDirectory, mixinName, addNewMixinDialog.isReplaceExistingFiles());
+        }
+        catch (IllegalStateException ex) {
+          Messages.showWarningDialog(module.getProject(), ex.getMessage(), "Error creating mixin");
+        }
+      });
+      builder.getWindow().dispose();
     });
 
     builder.showModal(true);

@@ -49,47 +49,43 @@ public class AddNewComponentAction extends AddNewElementAction<ComponentsNode> {
     builder.setButtonsAlignment(SwingConstants.CENTER);
     builder.setPreferredFocusComponent(addNewComponentDialog.getNameComponent());
 
-    builder.setOkOperation(new Runnable() {
-      public void run() {
-        final String componentName = addNewComponentDialog.getName();
+    builder.setOkOperation(() -> {
+      final String componentName = addNewComponentDialog.getName();
 
-        if (!Validators.isValidComponentName(componentName)) {
-          Messages.showErrorDialog("Invalid component name!", CommonBundle.getErrorTitle());
-          return;
-        }
-
-        // Set default values.
-        String classSourceDir = addNewComponentDialog.getClassSourceDirectory().getPath();
-        String templateSourceDir = addNewComponentDialog.getTemplateSourceDirectory().getPath();
-
-        TapestryModuleSupportLoader.getInstance(module).getState().setNewComponentsClassesSourceDirectory(classSourceDir);
-        TapestryModuleSupportLoader.getInstance(module).getState().setNewComponentsTemplatesSourceDirectory(templateSourceDir);
-
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          public void run() {
-            try {
-              PsiDirectory classSourceDirectory =
-                  PsiManager.getInstance(module.getProject()).findDirectory(addNewComponentDialog.getClassSourceDirectory());
-              PsiDirectory templateSourceDirectory =
-                  PsiManager.getInstance(module.getProject()).findDirectory(addNewComponentDialog.getTemplateSourceDirectory());
-
-              if (addNewComponentDialog.isNotCreatingTemplate()) {
-                TapestryUtils
-                    .createComponent(module, classSourceDirectory, null, componentName, addNewComponentDialog.isReplaceExistingFiles());
-              }
-              else {
-                TapestryUtils.createComponent(module, classSourceDirectory, templateSourceDirectory, componentName,
-                                              addNewComponentDialog.isReplaceExistingFiles());
-              }
-
-            }
-            catch (IllegalStateException ex) {
-              Messages.showWarningDialog(module.getProject(), ex.getMessage(), "Error creating page");
-            }
-          }
-        });
-        builder.getWindow().dispose();
+      if (!Validators.isValidComponentName(componentName)) {
+        Messages.showErrorDialog("Invalid component name!", CommonBundle.getErrorTitle());
+        return;
       }
+
+      // Set default values.
+      String classSourceDir = addNewComponentDialog.getClassSourceDirectory().getPath();
+      String templateSourceDir = addNewComponentDialog.getTemplateSourceDirectory().getPath();
+
+      TapestryModuleSupportLoader.getInstance(module).getState().setNewComponentsClassesSourceDirectory(classSourceDir);
+      TapestryModuleSupportLoader.getInstance(module).getState().setNewComponentsTemplatesSourceDirectory(templateSourceDir);
+
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        try {
+          PsiDirectory classSourceDirectory =
+              PsiManager.getInstance(module.getProject()).findDirectory(addNewComponentDialog.getClassSourceDirectory());
+          PsiDirectory templateSourceDirectory =
+              PsiManager.getInstance(module.getProject()).findDirectory(addNewComponentDialog.getTemplateSourceDirectory());
+
+          if (addNewComponentDialog.isNotCreatingTemplate()) {
+            TapestryUtils
+                .createComponent(module, classSourceDirectory, null, componentName, addNewComponentDialog.isReplaceExistingFiles());
+          }
+          else {
+            TapestryUtils.createComponent(module, classSourceDirectory, templateSourceDirectory, componentName,
+                                          addNewComponentDialog.isReplaceExistingFiles());
+          }
+
+        }
+        catch (IllegalStateException ex) {
+          Messages.showWarningDialog(module.getProject(), ex.getMessage(), "Error creating page");
+        }
+      });
+      builder.getWindow().dispose();
     });
 
     builder.showModal(true);

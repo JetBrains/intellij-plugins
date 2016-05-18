@@ -105,15 +105,13 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
             if (ImportUtils.hasOnDemandImportConflict(type.getFullyQualifiedName(), (PsiJavaFile) ((IntellijJavaClassType) baseClass).getPsiClass().getContainingFile())) {
 
                 IdeaUtils.runWriteCommand(
-                        null, new Runnable() {
-                    public void run() {
-                        try {
-                            addImport(importList, ((IntellijJavaClassType) type).getPsiClass());
-                        } catch (IncorrectOperationException ex) {
-                            _logger.error(ex);
-                        }
-                    }
-                }
+                  null, () -> {
+                      try {
+                          addImport(importList, ((IntellijJavaClassType) type).getPsiClass());
+                      } catch (IncorrectOperationException ex) {
+                          _logger.error(ex);
+                      }
+                  }
                 );
 
                 PsiDocumentManager.getInstance(_module.getProject())
@@ -122,15 +120,13 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
             }
         } else if (importList.findSingleClassImportStatement(type.getFullyQualifiedName()) == null) {
             IdeaUtils.runWriteCommand(
-                    null, new Runnable() {
-                public void run() {
-                    try {
-                        addImport(importList, ((IntellijJavaClassType) type).getPsiClass());
-                    } catch (IncorrectOperationException ex) {
-                        _logger.error(ex);
-                    }
-                }
-            }
+              null, () -> {
+                  try {
+                      addImport(importList, ((IntellijJavaClassType) type).getPsiClass());
+                  } catch (IncorrectOperationException ex) {
+                      _logger.error(ex);
+                  }
+              }
             );
 
             if (FileEditorManager.getInstance(_module.getProject()).getSelectedFiles().length > 0) {

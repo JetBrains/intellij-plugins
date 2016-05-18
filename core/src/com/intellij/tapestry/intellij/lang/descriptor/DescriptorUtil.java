@@ -199,12 +199,8 @@ class DescriptorUtil {
   private static XmlElementDescriptor[] getParameterDescriptors(@NotNull final Component component,
                                                                 final String namespacePrefix,
                                                                 List<Mixin> mixins, final TapestryNamespaceDescriptor descriptor) {
-    final Function<TapestryParameter, XmlElementDescriptor> mapping = new Function<TapestryParameter, XmlElementDescriptor>() {
-      @Override
-      public XmlElementDescriptor fun(TapestryParameter parameter) {
-        return new TapestryParameterDescriptor(component, parameter, namespacePrefix, descriptor);
-      }
-    };
+    final Function<TapestryParameter, XmlElementDescriptor> mapping =
+      parameter -> new TapestryParameterDescriptor(component, parameter, namespacePrefix, descriptor);
     final List<XmlElementDescriptor> result =
       new ArrayList<XmlElementDescriptor>(ContainerUtil.map(component.getParameters().values(), mapping));
     for (Mixin mixin : mixins) {

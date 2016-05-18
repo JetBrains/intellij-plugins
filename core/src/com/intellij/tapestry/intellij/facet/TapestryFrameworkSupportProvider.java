@@ -56,39 +56,34 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
   @Override
   protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final FrameworkVersion version) {
     final Project project = facet.getModule().getProject();
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
-      public void run() {
-        final TapestryFacetConfiguration configuration = facet.getConfiguration();
+    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
+      final TapestryFacetConfiguration configuration = facet.getConfiguration();
 
-        final NewFacetDialog newFacetDialog = new NewFacetDialog(configuration);
-        final DialogBuilder builder = new DialogBuilder(project);
+      final NewFacetDialog newFacetDialog = new NewFacetDialog(configuration);
+      final DialogBuilder builder = new DialogBuilder(project);
 
-        builder.removeAllActions();
-        builder.addOkAction();
-        builder.setCenterPanel(newFacetDialog.getMainPanel());
-        builder.setTitle("New Tapestry Support");
-        builder.setButtonsAlignment(SwingConstants.CENTER);
-        builder.setOkOperation(new Runnable() {
+      builder.removeAllActions();
+      builder.addOkAction();
+      builder.setCenterPanel(newFacetDialog.getMainPanel());
+      builder.setTitle("New Tapestry Support");
+      builder.setButtonsAlignment(SwingConstants.CENTER);
+      builder.setOkOperation(() -> {
+        facet.getConfiguration();
+        if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {
+          Messages.showErrorDialog("Invalid package!", CommonBundle.getErrorTitle());
+          return;
+        }
+        configuration.setFilterName(newFacetDialog.getFilterName());
+        configuration.setApplicationPackage(newFacetDialog.getApplicationPackage());
 
-          public void run() {
-            facet.getConfiguration();
-            if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {
-              Messages.showErrorDialog("Invalid package!", CommonBundle.getErrorTitle());
-              return;
-            }
-            configuration.setFilterName(newFacetDialog.getFilterName());
-            configuration.setApplicationPackage(newFacetDialog.getApplicationPackage());
-
-            builder.getWindow().dispose();
-          }
-        });
-        builder.showModal(true);
+        builder.getWindow().dispose();
+      });
+      builder.showModal(true);
 
 
-        AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel.getModule(), configuration,
-                                                              newFacetDialog.shouldGenerateStartupApplication(),
-                                                              newFacetDialog.shouldGeneratePom());
-      }
+      AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel.getModule(), configuration,
+                                                            newFacetDialog.shouldGenerateStartupApplication(),
+                                                            newFacetDialog.shouldGeneratePom());
     });
   }
 

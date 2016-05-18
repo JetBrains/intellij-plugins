@@ -52,15 +52,11 @@ public class TapestryParamInfoTest extends TapestryBaseTestCase {
     MockParameterInfoUIContext context = new MockParameterInfoUIContext<PsiElement>(tag);
     handler.updateUI(descriptor, context);
 
-    String joined = StringUtil.join(handler.getParametersForDocumentation(descriptor, createContext), new Function<Object, String>() {
-
-      @Override
-      public String fun(Object o) {
-        if (o instanceof XmlAttributeDescriptorImpl) {
+    String joined = StringUtil.join(handler.getParametersForDocumentation(descriptor, createContext), o -> {
+      if (o instanceof XmlAttributeDescriptorImpl) {
 //          return o.
-        }
-        return ((XmlAttributeDescriptor)o).getName();
       }
+      return ((XmlAttributeDescriptor)o).getName();
     }, " ");
     assertEquals(attrs, joined);
 

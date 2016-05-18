@@ -161,26 +161,24 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     processVariantsInner(processor, ResolveState.initial());
 
     final PsiNamedElement[] elements = processor.getVariants(PsiNamedElement.EMPTY_ARRAY);
-    return ContainerUtil.map2Array(elements, LookupElement.class, new Function<PsiNamedElement, LookupElement>() {
-      public LookupElement fun(final PsiNamedElement element) {
-        if (element instanceof PsiMethod) {
-          return new SimpleMethodCallLookupElement((PsiMethod)element);
-        }
-        final String name = element.getName();
-        assert name != null;
-        LookupElementBuilder lookupElement = LookupElementBuilder.create(element, name);
-        lookupElement = lookupElement.withLookupString(name);
-        if (element instanceof PsiField) {
-          return lookupElement.withTypeText(((PsiField)element).getType().getPresentableText());
-        }
-        if (element instanceof BeanPropertyElement) {
-          final PsiType type = ((BeanPropertyElement)element).getPropertyType();
-          if (type != null) {
-            return lookupElement.withTypeText(type.getPresentableText());
-          }
-        }
-        return lookupElement;
+    return ContainerUtil.map2Array(elements, LookupElement.class, element -> {
+      if (element instanceof PsiMethod) {
+        return new SimpleMethodCallLookupElement((PsiMethod)element);
       }
+      final String name = element.getName();
+      assert name != null;
+      LookupElementBuilder lookupElement = LookupElementBuilder.create(element, name);
+      lookupElement = lookupElement.withLookupString(name);
+      if (element instanceof PsiField) {
+        return lookupElement.withTypeText(((PsiField)element).getType().getPresentableText());
+      }
+      if (element instanceof BeanPropertyElement) {
+        final PsiType type = ((BeanPropertyElement)element).getPropertyType();
+        if (type != null) {
+          return lookupElement.withTypeText(type.getPresentableText());
+        }
+      }
+      return lookupElement;
     });
   }
 
@@ -250,10 +248,8 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     if (!resolvedWithError) {
       return TapestryBundle.message("error.cannot.resolve.method", referenceName, typeName);
     }
-    String argumentTypes = StringUtil.join(((TelMethodCallExpression)elementParent).getArgumentTypes(), new Function<PsiType, String>() {
-      public String fun(final PsiType psiType) {
-        return TelPsiUtil.getPresentableText(psiType);
-      }
+    String argumentTypes = StringUtil.join(((TelMethodCallExpression)elementParent).getArgumentTypes(), psiType -> {
+      return TelPsiUtil.getPresentableText(psiType);
     }, ", ");
     return TapestryBundle.message("error.no.applicable.method", referenceName, typeName, "(" + argumentTypes + ")");
   }

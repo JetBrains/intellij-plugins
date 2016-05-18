@@ -159,11 +159,7 @@ public class IdeaUtils {
    * @param runnable the code to execute.
    */
   public static void runWriteCommand(Project project, final Runnable runnable) {
-    CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(runnable);
-      }
-    }, "", null);
+    CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(runnable), "", null);
   }
 
   /**
