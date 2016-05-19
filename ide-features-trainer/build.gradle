@@ -23,6 +23,9 @@ sourceSets {
         java.srcDir 'src'
         resources.srcDir 'res'
     }
+    test {
+        java.srcDir 'tests'
+    }
 }
 
 repositories {
