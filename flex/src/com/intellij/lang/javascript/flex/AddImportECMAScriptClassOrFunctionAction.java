@@ -204,7 +204,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
             CommandProcessor.getInstance().executeCommand(
                 project,
                 () -> doImport(element.getQualifiedName()),
-                getClass().getName(),
+                "Import " + element.getQualifiedName(),
                 this
              );
 
@@ -214,11 +214,17 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
       ).showInBestPositionFor(editor);
     }
     else {
+      final JSQualifiedNamedElement element = candidates.iterator().next();
       if (myUnambiguousTheFlyMode) {
-        CommandProcessor.getInstance().runUndoTransparentAction(() -> doImport(candidates.iterator().next().getQualifiedName()));
+        CommandProcessor.getInstance().runUndoTransparentAction(() -> doImport(element.getQualifiedName()));
       }
       else {
-        doImport(candidates.iterator().next().getQualifiedName());
+        CommandProcessor.getInstance().executeCommand(
+          project,
+          () -> doImport(element.getQualifiedName()),
+          "Import " + element.getQualifiedName(),
+          this
+        );
       }
     }
   }
