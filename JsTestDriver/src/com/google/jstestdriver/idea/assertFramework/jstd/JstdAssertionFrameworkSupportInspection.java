@@ -43,7 +43,7 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
 
   @Override
   protected String getProblemDescription() {
-    return "No code assistance for JsTestDriver assertion framework";
+    return "No coding assistance for JsTestDriver assertion framework";
   }
 
   @Override
