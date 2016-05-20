@@ -378,28 +378,34 @@ public class DartServerData {
 
   public static class DartError extends DartRegion {
     private final String myAnalysisErrorFileSD;
-    private final String myType;
     private final String mySeverity;
+    private final String myType;
+    private final String myCode;
     private final String myMessage;
 
     private DartError(@NotNull final AnalysisError error) {
       super(error.getLocation().getOffset(), error.getLocation().getLength());
       myAnalysisErrorFileSD = error.getLocation().getFile().intern();
-      myType = error.getType().intern();
-      myMessage = error.getMessage();
       mySeverity = error.getSeverity().intern();
+      myType = error.getType().intern();
+      myCode = error.getCode().intern();
+      myMessage = error.getMessage();
     }
 
     public String getAnalysisErrorFileSD() {
       return myAnalysisErrorFileSD;
     }
 
+    public String getSeverity() {
+      return mySeverity;
+    }
+
     public String getType() {
       return myType;
     }
 
-    public String getSeverity() {
-      return mySeverity;
+    public String getCode() {
+      return myCode;
     }
 
     public String getMessage() {

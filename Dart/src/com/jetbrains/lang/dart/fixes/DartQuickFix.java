@@ -20,6 +20,7 @@ import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
+import com.jetbrains.lang.dart.ide.annotator.DartProblemGroup;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @NotNull private final DartQuickFixSet myQuickFixSet;
   private final int myIndex;
   @Nullable private SourceChange mySourceChange;
+  @Nullable private DartProblemGroup.DartSuppressAction mySuppressActionDelegate;
 
   public DartQuickFix(@NotNull final DartQuickFixSet quickFixSet, final int index) {
     myIndex = index;
@@ -43,6 +45,11 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @NotNull
   @Override
   public String getFamilyName() {
+    if (mySuppressActionDelegate != null) {
+      //noinspection DialogTitleCapitalization
+      return mySuppressActionDelegate.getFamilyName();
+    }
+
     return getText();
   }
 
@@ -50,6 +57,11 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @Override
   public String getText() {
     myQuickFixSet.ensureInitialized();
+
+    if (mySuppressActionDelegate != null) {
+      return mySuppressActionDelegate.getText();
+    }
+
     return mySourceChange == null ? "" : mySourceChange.getMessage();
   }
 
@@ -63,6 +75,10 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
 
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+    if (mySuppressActionDelegate != null) {
+      mySuppressActionDelegate.invoke(project, editor, file);
+    }
+
     if (mySourceChange == null) return;
 
     final SourceFileEdit fileEdit = mySourceChange.getEdits().get(0);
@@ -109,6 +125,11 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
     myQuickFixSet.ensureInitialized();
+
+    if (mySuppressActionDelegate != null) {
+      return mySuppressActionDelegate.isAvailable(project, editor, file);
+    }
+
     if (mySourceChange == null) return false;
 
     final List<SourceFileEdit> fileEdits = mySourceChange.getEdits();
@@ -125,8 +146,12 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     return true;
   }
 
-  public void setSourceChange(@Nullable final SourceChange sourceChange) {
+  void setSourceChange(@Nullable final SourceChange sourceChange) {
     mySourceChange = sourceChange;
+  }
+
+  void setSuppressActionDelegate(@Nullable final DartProblemGroup.DartSuppressAction suppressActionDelegate) {
+    mySuppressActionDelegate = suppressActionDelegate;
   }
 
   @Override
