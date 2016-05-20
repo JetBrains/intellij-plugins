@@ -34,8 +34,8 @@ public class ErrorRequestSink implements RequestSink {
 
   public ErrorRequestSink(ResponseSink responseSink, String code, String message) {
     if (responseSink == null || code == null || message == null) {
-      throw new IllegalArgumentException("Unexpected null argument: " + responseSink + " "
-          + code + " " + message);
+      throw new IllegalArgumentException("Unexpected null argument: " + responseSink + " " + code
+          + " " + message);
     }
     this.responseSink = responseSink;
     this.code = code;

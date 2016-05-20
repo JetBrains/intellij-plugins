@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * The interface {@code GetReachableSourcesConsumer} defines the behavior of objects that consume
  * the transitive closure of reachable sources for a given file.
- *
+ * 
  * @coverage dart.server
  */
 public interface GetReachableSourcesConsumer extends Consumer {
@@ -38,7 +38,7 @@ public interface GetReachableSourcesConsumer extends Consumer {
   /**
    * If a transitive closure cannot be passed back, some {@link RequestError} is passed back
    * instead.
-   *
+   * 
    * @param requestError the reason why a result was not passed back
    */
   public void onError(RequestError requestError);
