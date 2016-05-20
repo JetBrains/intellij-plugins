@@ -33,6 +33,7 @@ public class FlexReferenceImporter implements ReferenceImporter {
   private static boolean doAutoImportReferenceAt(final Editor editor,
                                                  final PsiFile file,
                                                  final int offset) {
+    if (!ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly()) return false;
     if (!(file instanceof JSFile) || file.getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return false;
 
     Document document = editor.getDocument();

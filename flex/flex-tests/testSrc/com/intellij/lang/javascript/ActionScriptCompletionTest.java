@@ -377,7 +377,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
   }
 
-  public final void testInsertImportForStaticField() throws Exception {
+  // Looks like tested functionality has never worked in run time, previously test passed because of a trick in base test class
+  public final void _testInsertImportForStaticField() throws Exception {
     final String testName = getTestName(false);
     VirtualFile files[] = new VirtualFile[]{
       getVirtualFile(BASE_PATH + testName + ".js2"),
@@ -681,7 +682,6 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testCompleteAmbiguousClass() throws Exception {
-    myNeedImportReferenceAtCursor = false;
     doTest("");
     assertNotNull(myItems);
     assertEquals(2, myItems.length);
@@ -693,7 +693,6 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testCompleteStaticFunction() throws Exception {
-    myNeedImportReferenceAtCursor = false;
     doTest("");
     assertNotNull(myItems);
     assertEquals(2, myItems.length);
@@ -706,12 +705,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testCompleteClassWithConstructor() throws Exception {
-    myNeedImportReferenceAtCursor = false;
     doTest("");
   }
 
   public void testNamesakeConstructors() throws Exception {
-    myNeedImportReferenceAtCursor = false;
     doTest("");
     assertNotNull(myItems);
     assertEquals(2, myItems.length);
@@ -720,12 +717,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public void testUnambiguousConstructor() throws Exception {
-    myNeedImportReferenceAtCursor = true;
     doTest("");
   }
 
   public void testAmbiguousConstructor() throws Exception {
-    myNeedImportReferenceAtCursor = true;
     doTest("");
 
     assertNotNull(myItems);
@@ -797,7 +792,6 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public void testConditionalCompileBlock() throws Exception {
-    myNeedImportReferenceAtCursor = true;
     doTest("");
   }
 

@@ -123,9 +123,6 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionTest
       editorTextField.setText(editorInfo.getNewFileText());
       editorInfo.applyToEditor(myEditor);
 
-      if (myNeedImportReferenceAtCursor) {
-        DaemonCodeAnalyzer.getInstance(myProject).autoImportReferenceAtCursor(myEditor, myFile);
-      }
       complete();
     }
     finally {
