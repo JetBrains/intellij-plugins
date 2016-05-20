@@ -380,7 +380,7 @@ public class DartServerData {
     private final String myAnalysisErrorFileSD;
     private final String mySeverity;
     private final String myType;
-    private final String myCode;
+    @Nullable private final String myCode;
     private final String myMessage;
 
     private DartError(@NotNull final AnalysisError error) {
@@ -388,7 +388,7 @@ public class DartServerData {
       myAnalysisErrorFileSD = error.getLocation().getFile().intern();
       mySeverity = error.getSeverity().intern();
       myType = error.getType().intern();
-      myCode = error.getCode().intern();
+      myCode = error.getCode() == null ? null : error.getCode().intern();
       myMessage = error.getMessage();
     }
 
@@ -404,6 +404,7 @@ public class DartServerData {
       return myType;
     }
 
+    @Nullable
     public String getCode() {
       return myCode;
     }
