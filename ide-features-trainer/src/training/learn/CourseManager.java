@@ -1,9 +1,16 @@
 package training.learn;
 
+import com.intellij.ide.DataManager;
 import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.*;
@@ -25,6 +32,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import training.actions.OpenLessonAction;
 import training.learn.dialogs.SdkModuleProblemDialog;
 import training.learn.dialogs.SdkProjectProblemDialog;
 import training.learn.exceptons.*;
@@ -34,9 +42,10 @@ import training.ui.LearnToolWindow;
 import training.ui.LearnToolWindowFactory;
 import training.ui.MainLearnPanel;
 import training.util.MyClassLoader;
-import training.util.generateModuleXml;
+import training.util.GenerateModuleXml;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -60,19 +69,20 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     private Project learnProject;
     private LearnPanel myLearnPanel;
-    private final static String LEARN_PROJECT_NAME = "LearnProject";
+    public final static String LEARN_PROJECT_NAME = "LearnProject";
     private MainLearnPanel mainLearnPanel;
     public static final String NOTIFICATION_ID = "Training plugin";
 
     CourseManager() {
         if (myState.modules == null || myState.modules.size() == 0) try {
             initModules();
+            learnProject = null;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private HashMap<Module, VirtualFile> mapModuleVirtualFile = new HashMap<>();
+    public HashMap<Module, VirtualFile> mapModuleVirtualFile = new HashMap<>();
     private State myState = new State();
 
     public static CourseManager getInstance() {
@@ -80,10 +90,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     private void initModules() throws JDOMException, IOException, URISyntaxException, BadModuleException, BadLessonException {
-        Element modulesRoot = Module.getRootFromPath(generateModuleXml.MODULE_ALLMODULE_FILENAME);
+        Element modulesRoot = Module.getRootFromPath(GenerateModuleXml.MODULE_ALLMODULE_FILENAME);
         for (Element element : modulesRoot.getChildren()) {
-            if (element.getName().equals(generateModuleXml.MODULE_TYPE_ATTR)) {
-                String moduleFilename = element.getAttribute(generateModuleXml.MODULE_NAME_ATTR).getValue();
+            if (element.getName().equals(GenerateModuleXml.MODULE_TYPE_ATTR)) {
+                String moduleFilename = element.getAttribute(GenerateModuleXml.MODULE_NAME_ATTR).getValue();
                 final Module module = Module.initModule(moduleFilename);
                 addModule(module);
             }
@@ -102,7 +112,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return null;
     }
 
-    private void registerVirtualFile(Module module, VirtualFile virtualFile) {
+    public void registerVirtualFile(Module module, VirtualFile virtualFile) {
         mapModuleVirtualFile.put(module, virtualFile);
     }
 
@@ -125,327 +135,26 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
 
-    public synchronized void openLesson(Project project, final @Nullable Lesson lesson) throws BadModuleException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
+    public synchronized void openLesson(Project project, final @Nullable Lesson lesson) {
 
-        try {
-            setLastActivityTime(System.currentTimeMillis());
+        final AnAction action = ActionManager.getInstance().getAction("learn.open.lesson");
 
-            assert lesson != null;
-            checkEnvironment(project, lesson.getModule());
+        final Component focusOwner = IdeFocusManager.getInstance(project).getFocusOwner();
+        DataContext parent = DataManager.getInstance().getDataContext(focusOwner);
+        final DataContext context = SimpleDataContext.getSimpleContext(OpenLessonAction.LESSON_DATA_KEY.getName(), lesson, parent);
+        final AnActionEvent event = AnActionEvent.createFromAnAction(action, null, "", context);
 
-            if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getName() + " is opened");
+        ActionUtil.performActionDumbAware(action, event);
 
-            //If lesson doesn't have parent module
-            if (lesson.getModule() == null)
-                throw new BadLessonException("Unable to open lesson without specified module");
-            final Project myProject = project;
-            final String scratchFileName = "Learning...";
-            final VirtualFile vf = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>) () -> {
-                try {
-                    if (lesson.getModule().moduleType == Module.ModuleType.SCRATCH) {
-                        return getScratchFile(myProject, lesson, scratchFileName);
-                    } else {
-//                        if (!initLearnProjectAndOpenLesson(myProject)) return null;
-                        //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
-                        if (learnProject == null && getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
-                            learnProject = getCurrentProject();
-                            return getFileInLearnProject(lesson);
-                        //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
-                        } else if (learnProject == null && !getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
-                                Project myLearnProject = initLearnProject(myProject);
-                                assert myLearnProject != null;
-                                StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
-                                    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
-                                    final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-                                    if (learnToolWindow != null) {
-                                        learnToolWindow.show(null);
-                                        try {
-                                            CourseManager.getInstance().setLessonView(myLearnProject);
-                                            CourseManager.getInstance().openLesson(myLearnProject, lesson);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                            return null;
-                            //2. learnProject != null and learnProject is disposed then reinitProject and getFileInLearnProject
-                        } else if (learnProject.isDisposed()) {
-                            Project myLearnProject = initLearnProject(myProject);
-                            assert myLearnProject != null;
-                            StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
-                                final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
-                                final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-                                if (learnToolWindow != null) {
-                                    learnToolWindow.show(null);
-                                    try {
-                                        CourseManager.getInstance().setLessonView(myLearnProject);
-                                        CourseManager.getInstance().openLesson(myLearnProject, lesson);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-                            return null;
-                            //3. learnProject != null and learnProject is opened but not focused then focus Project and getFileInLearnProject
-                        } else if (learnProject.isOpen() && !getCurrentProject().equals(learnProject)) {
-                            return getFileInLearnProject(lesson);
-                        //4. learnProject != null and learnProject is opened and focused getFileInLearnProject
-                        } else if (learnProject.isOpen() && getCurrentProject().equals(learnProject)) {
-                            return getFileInLearnProject(lesson);
-                        } else {
-                            throw new Exception("Unable to start Learn project");
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            });
-            if (vf == null) return; //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
-            if (lesson.getModule().moduleType != Module.ModuleType.SCRATCH) project = learnProject;
-
-            //open next lesson if current is passed
-            final Project currentProject = project;
-            CourseManager.getInstance().setLessonView(currentProject);
-
-            lesson.onStart();
-
-            lesson.addLessonListener(new LessonListenerAdapter() {
-                @Override
-                public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadModuleException, LessonIsOpenedException {
-                    if (lesson.getModule() == null) return;
-
-                    if (lesson.getModule().hasNotPassedLesson()) {
-                        Lesson nextLesson = lesson.getModule().giveNotPassedAndNotOpenedLesson();
-                        if (nextLesson == null)
-                            throw new BadLessonException("Unable to obtain not passed and not opened lessons");
-                        openLesson(currentProject, nextLesson);
-                    }
-                }
-            });
-
-            final String target;
-            if (lesson.getTargetPath() != null) {
-                InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getModule().getAnswersPath() + lesson.getTargetPath());
-                if (is == null) throw new IOException("Unable to get answer for \"" + lesson.getName() + "\" lesson");
-                target = new Scanner(is).useDelimiter("\\Z").next();
-            } else {
-                target = null;
-            }
-
-
-            //Dispose balloon while scratch file is closing. InfoPanel still exists.
-            project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
-                @Override
-                public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-                }
-
-                @Override
-                public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-                    lesson.close();
-                }
-
-                @Override
-                public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-
-                }
-            });
-
-            //to start any lesson we need to do 4 steps:
-            //1. open editor or find editor
-            TextEditor textEditor = null;
-            if (FileEditorManager.getInstance(project).isFileOpen(vf)) {
-                FileEditor[] editors = FileEditorManager.getInstance(project).getEditors(vf);
-                for (FileEditor fileEditor : editors) {
-                    if (fileEditor instanceof TextEditor) {
-                        textEditor = (TextEditor) fileEditor;
-                    }
-                }
-            }
-            if (textEditor != null) {
-            }
-            if (textEditor == null) {
-                final java.util.List<FileEditor> editors = FileEditorManager.getInstance(project).openEditor(new OpenFileDescriptor(project, vf), true);
-                for (FileEditor fileEditor : editors) {
-                    if (fileEditor instanceof TextEditor) {
-                        textEditor = (TextEditor) fileEditor;
-                    }
-                }
-            }
-            if (textEditor.getEditor().isDisposed()) {
-                throw new Exception("Editor is already disposed!!!");
-            }
-
-            //2. set the focus on this editor
-            //FileEditorManager.getInstance(project).setSelectedEditor(vf, TextEditorProvider.getInstance().getEditorTypeId());
-            FileEditorManager.getInstance(project).openEditor(new OpenFileDescriptor(project, vf), true);
-
-            //3. update tool window
-            CourseManager.getInstance().getLearnPanel().clear();
-
-
-            //4. Process lesson
-            LessonProcessor.process(project, lesson, textEditor.getEditor(), target);
-
-        } catch (NoSdkException | InvalidSdkException noSdkException) {
-            showSdkProblemDialog(project, noSdkException.getMessage());
-        } catch (NoJavaModuleException noJavaModuleException) {
-            showModuleProblemDialog(project);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private VirtualFile getFileInLearnProject(Lesson lesson) throws IOException {
-
-        final VirtualFile sourceRootFile = ProjectRootManager.getInstance(learnProject).getContentSourceRoots()[0];
-        String fileName = "Test.java";
-        if (lesson.getModule() != null) {
-            String extensionFile = ".java";
-            if (lesson.getLang() != null) extensionFile = "." + lesson.getLang().toLowerCase();
-            fileName = lesson.getModule().getName() + extensionFile;
-        }
-
-        VirtualFile lessonVirtualFile = sourceRootFile.findChild(fileName);
-        if (lessonVirtualFile == null) {
-            lessonVirtualFile = sourceRootFile.createChildData(this, fileName);
-        }
-
-        registerVirtualFile(lesson.getModule(), lessonVirtualFile);
-        return lessonVirtualFile;
-    }
-
-    private Project initLearnProject(Project projectToClose) {
-        Project myLearnProject = null;
-
-        //if projectToClose is open
-        final Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
-        for (Project openProject : openProjects) {
-            final String name = openProject.getName();
-            if (name.equals(LEARN_PROJECT_NAME)) {
-                myLearnProject = openProject;
-                if (ApplicationManager.getApplication().isUnitTestMode()) return openProject;
-            }
-        }
-        if (myLearnProject == null || myLearnProject.getProjectFile() == null) {
-
-            if (!ApplicationManager.getApplication().isUnitTestMode())
-                if (!NewLearnProjectUtil.showDialogOpenLearnProject(projectToClose))
-                    return null; //if user abort to open lesson in a new Project
-            if (myState.learnProjectPath != null) {
-                try {
-                    myLearnProject = ProjectManager.getInstance().loadAndOpenProject(myState.learnProjectPath);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-
-                try {
-                    final Sdk newJdk = getJavaSdkInWA();
-                    myLearnProject = NewLearnProjectUtil.createLearnProject(LEARN_PROJECT_NAME, projectToClose, newJdk);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if (myLearnProject != null) {
-
-            learnProject = myLearnProject;
-
-            assert learnProject != null;
-            assert learnProject.getProjectFile() != null;
-            assert learnProject.getProjectFile().getParent() != null;
-            assert learnProject.getProjectFile().getParent().getParent() != null;
-
-            myState.learnProjectPath = learnProject.getBasePath();
-            //Hide LearnProject from Recent projects
-            RecentProjectsManager.getInstance().removePath(learnProject.getPresentableUrl());
-
-            return myLearnProject;
-        }
-
-        return null;
-
-    }
-
-    @Deprecated
-    private void initLearnProjectAndOpenLesson(Project projectToClose, @Nullable Lesson lesson) {
-
-        Project myLearnProject = initLearnProject(projectToClose);
-        if (myLearnProject == projectToClose) {
-            final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
-            final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-            if (learnToolWindow != null) {
-                learnToolWindow.show(null);
-                try {
-                    CourseManager.getInstance().setLessonView(myLearnProject);
-                    openLesson(myLearnProject, lesson);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            if (myLearnProject != null) {
-                StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
-                    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
-                    final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-                    if (learnToolWindow != null) {
-                        learnToolWindow.show(null);
-                        try {
-                            CourseManager.getInstance().setLessonView(myLearnProject);
-                            openLesson(myLearnProject, lesson);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-    @NotNull
-    private Sdk getJavaSdkInWA() {
-        final Sdk newJdk;
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            newJdk = ApplicationManager.getApplication().runWriteAction((Computable<Sdk>) () -> {
-                return getJavaSdk();
-            });
-        } else {
-            newJdk = getJavaSdk();
-        }
-        return newJdk;
-    }
-
-    @NotNull
-    private Sdk getJavaSdk() {
-        JavaSdk javaSdk = JavaSdk.getInstance();
-        final String suggestedHomePath = javaSdk.suggestHomePath();
-        final String versionString = javaSdk.getVersionString(suggestedHomePath);
-        assert versionString != null;
-        assert suggestedHomePath != null;
-        final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath, false);
-
-        final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
-        if (foundJdk == null) {
-            ProjectJdkTable.getInstance().addJdk(newJdk);
-        }
-        //fix: No IDEA annotations attached to the JDK
-        ApplicationManager.getApplication().runWriteAction(() -> {
-            SdkModificator modificator = newJdk.getSdkModificator();
-            JavaSdkImpl.attachJdkAnnotations(modificator);
-            modificator.commitChanges();
-        });
-        return newJdk;
     }
 
     @Nullable
     public Project getLearnProject() {
-        if (learnProject == null || learnProject.isDisposed()) {
-            return initLearnProject(getCurrentProject());
-        } else {
-            return learnProject;
-        }
+        return learnProject;
+    }
+
+    public void setLearnProject(Project project) {
+        learnProject = project;
     }
 
     @Nullable
@@ -455,36 +164,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return lastFocusedFrame.getProject();
     }
 
-    @NotNull
-    private VirtualFile getScratchFile(@NotNull final Project project, @Nullable Lesson lesson, @NotNull final String filename) throws IOException {
-        VirtualFile vf = null;
-        assert lesson != null;
-        assert lesson.getModule() != null;
-        String myLanguage = lesson.getLang() != null ? lesson.getLang() : "JAVA";
-
-        if (mapModuleVirtualFile.containsKey(lesson.getModule())) {
-            vf = mapModuleVirtualFile.get(lesson.getModule());
-            ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID(myLanguage));
-        }
-        if (vf == null || !vf.isValid()) {
-            //while module info is not stored
-
-            //find file if it is existed
-            vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), filename, ScratchFileService.Option.existing_only);
-            if (vf != null) {
-                FileEditorManager.getInstance(project).closeFile(vf);
-                ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID(myLanguage));
-            }
-
-            if (vf == null || !vf.isValid()) {
-                vf = ScratchRootType.getInstance().createScratchFile(project, filename, Language.findLanguageByID(myLanguage), "");
-                final VirtualFile finalVf = vf;
-                assert vf != null;
-            }
-            registerVirtualFile(lesson.getModule(), vf);
-        }
-        return vf;
-    }
 
     /**
      * checking environment to start learning plugin. Checking SDK.
@@ -533,16 +212,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     }
 
-    private void showSdkProblemDialog(Project project, String sdkMessage) {
-//        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
-        final SdkProjectProblemDialog dialog = new SdkProjectProblemDialog(project, sdkMessage);
-        dialog.show();
-    }
-
-    private void showModuleProblemDialog(Project project) {
-        final SdkModuleProblemDialog dialog = new SdkModuleProblemDialog(project);
-        dialog.show();
-    }
 
     @Nullable
     public Lesson findLesson(String lessonName) {
@@ -561,7 +230,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         myLearnPanel = learnPanel;
     }
 
-    LearnPanel getLearnPanel() {
+    public LearnPanel getLearnPanel() {
         myLearnPanel.updateButtonUi();
         return myLearnPanel;
     }
@@ -582,6 +251,14 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         scrollPane.getViewport().repaint();
         scrollPane.revalidate();
         scrollPane.repaint();
+    }
+
+    public String getLearnProjectPath() {
+        return myState.learnProjectPath;
+    }
+
+    public void setLearnProjectPath(String learnProjectPath) {
+        myState.learnProjectPath = learnProjectPath;
     }
 
 
@@ -686,7 +363,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
 
-    public int calcUnpassedLessons(){
+    public int calcUnpassedLessons() {
         int result = 0;
         if (getModules() == null) return 0;
         for (Module module : getModules()) {

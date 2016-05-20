@@ -24,6 +24,8 @@
 23. Change disposable parent for GotItMessage
 24. LeanPanel и MainLearnPanel должны создаваться на проект + синхронизация
 25. ~~Вынести registerPostStartupActivity из метода openLesson~~
+26. ~~Уроки со скретчами создают новые файлы Learning~~ (встречается, когда 2 одновременно окна обучения)
+27. Обернуть в DumbAware action
 
 #REMOVE FROM RELEASE
 1. LearnUiUtil

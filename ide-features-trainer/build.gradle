@@ -25,6 +25,7 @@ sourceSets {
     }
     test {
         java.srcDir 'tests'
+        java.srcDir 'testsData'
     }
 }
 
