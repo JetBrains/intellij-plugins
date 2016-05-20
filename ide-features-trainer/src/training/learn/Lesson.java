@@ -142,7 +142,7 @@ public class Lesson {
     }
 
     @Nullable
-    String getTargetPath() {
+    public String getTargetPath() {
         return targetPath;
     }
 
@@ -154,7 +154,7 @@ public class Lesson {
     }
 
     //Listeners
-    void addLessonListener(LessonListener lessonListener){
+    public void addLessonListener(LessonListener lessonListener){
         if (lessonListeners == null) lessonListeners = new ArrayList<>();
 
         lessonListeners.add(lessonListener);
@@ -166,7 +166,7 @@ public class Lesson {
         }
     }
 
-    void onStart(){
+    public void onStart(){
         lessonLog = new LessonLog(this);
         lessonLog.log("Lesson started");
         exerciseCount = 0;
