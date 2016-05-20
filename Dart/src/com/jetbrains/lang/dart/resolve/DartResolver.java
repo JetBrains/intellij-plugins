@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -174,7 +173,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   }
 
   @Nullable
-  private static PsiElement getElementForNavigationTarget(Project project, DartNavigationTarget target) {
+  public static PsiElement getElementForNavigationTarget(Project project, DartNavigationTarget target) {
     String targetPath = target.getFile();
     PsiFile file = findPsiFile(project, targetPath);
     if (file != null) {

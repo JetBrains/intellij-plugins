@@ -5,7 +5,8 @@ import com.intellij.ide.util.treeView.AlphaComparator;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.PsiElement;
+import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -20,10 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import static com.jetbrains.lang.dart.DartTokenTypes.FACTORY_CONSTRUCTOR_DECLARATION;
-import static com.jetbrains.lang.dart.DartTokenTypes.NAMED_CONSTRUCTOR_DECLARATION;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.FUNCTION_DEFINITION;
 
 public class DartHierarchyUtil {
   private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = (first, second) -> first.getIndex() - second.getIndex();
@@ -57,7 +54,18 @@ public class DartHierarchyUtil {
     return DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), false);
   }
 
-  public static boolean isTypeExecutable(IElementType type) {
-    return FUNCTION_DEFINITION.contains(type) || type == FACTORY_CONSTRUCTOR_DECLARATION || type == NAMED_CONSTRUCTOR_DECLARATION;
+  public static boolean isExecutable(@NotNull PsiElement component) {
+    if (component instanceof DartComponentName) return false;
+    final DartComponentType componentType = DartComponentType.typeOf(component);
+    if (componentType == null) return false;
+    switch (componentType) {
+      case CONSTRUCTOR:
+      case FUNCTION:
+      case METHOD:
+      case OPERATOR:
+        return true;
+      default:
+        return false;
+    }
   }
 }
