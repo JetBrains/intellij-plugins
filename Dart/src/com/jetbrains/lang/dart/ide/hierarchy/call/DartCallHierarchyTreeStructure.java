@@ -4,12 +4,10 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandler;
@@ -39,10 +37,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
     if (element != null) {
       Condition<PsiElement> isExecutable = object -> {
         if (object == null) return false;
-        ASTNode node = object.getNode();
-        if (node == null) return false;
-        IElementType type = node.getElementType();
-        return DartHierarchyUtil.isTypeExecutable(type);
+        return DartHierarchyUtil.isExecutable(object);
       };
       PsiElement ref = PsiTreeUtil.findFirstParent(element, isExecutable);
       if (ref != null) {
@@ -61,12 +56,10 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
     if (descriptor instanceof DartHierarchyNodeDescriptor) {
       final DartHierarchyNodeDescriptor dartDescriptor = (DartHierarchyNodeDescriptor)descriptor;
       PsiElement element = dartDescriptor.getPsiElement();
-      ASTNode node;
-      if (element == null || (node = element.getNode()) == null) {
+      if (element == null) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
-      IElementType type = node.getElementType();
-      boolean isCallable = DartHierarchyUtil.isTypeExecutable(type);
+      boolean isCallable = DartHierarchyUtil.isExecutable(element);
       HierarchyNodeDescriptor nodeDescriptor = getBaseDescriptor();
       if (!(element instanceof DartComponent) || !isCallable || nodeDescriptor == null) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;

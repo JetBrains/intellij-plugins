@@ -65,7 +65,7 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
     assertSameElements(actualResult, expected);
   }
 
-  public void testBoolUsagesWithScope() {
+  public void _testBoolUsagesWithScope() {
     final PsiFile psiFile1 = myFixture.configureByText("file.dart", "/// [bool]\n" +
                                                                     "<caret>bool foo() {\n" +
                                                                     "  var bool = #bool;\n" +

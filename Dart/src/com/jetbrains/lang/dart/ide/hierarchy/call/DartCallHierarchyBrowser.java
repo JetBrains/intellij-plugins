@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.ui.PopupHandler;
 import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import org.jetbrains.annotations.NotNull;
@@ -53,8 +52,7 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
 
   @Override
   protected boolean isApplicableElement(@NotNull PsiElement element) {
-    IElementType type = element.getNode().getElementType();
-    return DartHierarchyUtil.isTypeExecutable(type);
+    return DartHierarchyUtil.isExecutable(element);
   }
 
   @Nullable
