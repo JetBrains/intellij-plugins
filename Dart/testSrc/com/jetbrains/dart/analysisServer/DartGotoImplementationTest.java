@@ -63,7 +63,7 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     doTest(3);
   }
 
-  public void _testIterableSubclasses() throws Throwable {
+  public void testIterableSubclasses() throws Throwable {
     myFixture.configureByText("foo.dart", "");
     myFixture.doHighlighting();
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
