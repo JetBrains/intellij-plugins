@@ -4,6 +4,7 @@ import com.intellij.ide.impl.NewProjectUtil;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.ide.util.projectWizard.ProjectBuilder;
+import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
@@ -24,12 +25,9 @@ import java.io.IOException;
 /**
  * Created by karashevich on 24/09/15.
  */
-class NewLearnProjectUtil {
+public class NewLearnProjectUtil {
 
-    public NewLearnProjectUtil() {
-    }
-
-    static Project createLearnProject(@NotNull String projectName, @Nullable Project projectToClose, @Nullable final Sdk projectSdk) throws IOException {
+    public static Project createLearnProject(@NotNull String projectName, @Nullable Project projectToClose, @Nullable final Sdk projectSdk) throws IOException {
         final ProjectManagerEx projectManager = ProjectManagerEx.getInstanceEx();
 
         String allProjectsDir = "/Users/jetbrains/IdeaProjects";
@@ -68,37 +66,10 @@ class NewLearnProjectUtil {
             if (!projectBuilder.validate(projectToClose, newProject)) {
                 return projectToClose;
             }
-
             if (newProject != projectToClose && !ApplicationManager.getApplication().isUnitTestMode()) {
                 NewProjectUtil.closePreviousProject(projectToClose);
             }
-
             projectBuilder.commit(newProject, null, ModulesProvider.EMPTY_MODULES_PROVIDER);
-
-            final boolean need2OpenProjectStructure = projectBuilder.isOpenProjectSettingsAfter();
-//            StartupManager.getInstance(newProject).registerPostStartupActivity(new Runnable() {
-//                public void run() {
-//                     ensure the dialog is shown after all startup activities are done
-//                    noinspection SSBasedInspection
-//                    SwingUtilities.invokeLater(new Runnable() {
-//                        public void run() {
-//                            if (newProject.isDisposed() || ApplicationManager.getApplication().isUnitTestMode()) return;
-//                            if (need2OpenProjectStructure) {
-//                                ModulesConfigurator.showDialog(newProject, null, null);
-//                            }
-//                            ApplicationManager.getApplication().invokeLater(new Runnable() {
-//                                public void run() {
-//                                    if (newProject.isDisposed()) return;
-//                                    final ToolWindow toolWindow = ToolWindowManager.getInstance(newProject).getToolWindow(ToolWindowId.PROJECT_VIEW);
-//                                    if (toolWindow != null) {
-//                                        toolWindow.activate(null);
-//                                    }
-//                                }
-//                            }, ModalityState.NON_MODAL);
-//                        }
-//                    });
-//                }
-//            });
 
             if (newProject != projectToClose) {
                 ProjectUtil.updateLastProjectLocation(projectFilePath);
@@ -113,27 +84,24 @@ class NewLearnProjectUtil {
                         }
                     }
                 }
-
-//                if(ApplicationManager.getApplication().isUnitTestMode()) {
-//                    newProject.save();
-//                    return newProject;
-//                }
                 if (ApplicationManager.getApplication().isUnitTestMode()) return newProject;
                 else projectManager.openProject(newProject);
             }
 
             newProject.save();
+
             return newProject;
         } finally {
             projectBuilder.cleanup();
         }
     }
 
-    static boolean showDialogOpenLearnProject(Project project){
+    public static boolean showDialogOpenLearnProject(Project project){
         //        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
         final LearnProjectWarningDialog dialog = new LearnProjectWarningDialog(project);
         dialog.show();
         return dialog.isOK();
     }
+
 
 }

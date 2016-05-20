@@ -1,6 +1,5 @@
 package training.learn;
 
-import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.exceptons.BadModuleException;
 import training.learn.exceptons.BadLessonException;
-import training.util.generateModuleXml;
+import training.util.GenerateModuleXml;
 import training.util.MyClassLoader;
 
 import java.io.IOException;
@@ -96,19 +95,19 @@ public class Module{
         lessons = new ArrayList<>();
         this.name = name;
         this.root = root;
-        modulePath = generateModuleXml.MODULE_MODULES_PATH;
-        moduleDescription = root.getAttribute(generateModuleXml.MODULE_DESCRIPTION_ATTR) != null ? root.getAttributeValue(generateModuleXml.MODULE_DESCRIPTION_ATTR) : null;
+        modulePath = GenerateModuleXml.MODULE_MODULES_PATH;
+        moduleDescription = root.getAttribute(GenerateModuleXml.MODULE_DESCRIPTION_ATTR) != null ? root.getAttributeValue(GenerateModuleXml.MODULE_DESCRIPTION_ATTR) : null;
         initLessons();
-        if (root.getAttribute(generateModuleXml.MODULE_ANSWER_PATH_ATTR) != null) {
-            answersPath = root.getAttribute(generateModuleXml.MODULE_ANSWER_PATH_ATTR).getValue();
+        if (root.getAttribute(GenerateModuleXml.MODULE_ANSWER_PATH_ATTR) != null) {
+            answersPath = root.getAttribute(GenerateModuleXml.MODULE_ANSWER_PATH_ATTR).getValue();
         } else {
             answersPath = null;
         }
-        id = root.getAttribute(generateModuleXml.MODULE_ID_ATTR).getValue();
-        if (root.getAttribute(generateModuleXml.MODULE_SDK_TYPE) != null){
-            mySdkType = generateModuleXml.getSdkTypeFromString(root.getAttribute(generateModuleXml.MODULE_SDK_TYPE).getValue());
+        id = root.getAttribute(GenerateModuleXml.MODULE_ID_ATTR).getValue();
+        if (root.getAttribute(GenerateModuleXml.MODULE_SDK_TYPE) != null){
+            mySdkType = GenerateModuleXml.getSdkTypeFromString(root.getAttribute(GenerateModuleXml.MODULE_SDK_TYPE).getValue());
         }
-        final Attribute attributeFileType = root.getAttribute(generateModuleXml.MODULE_FILE_TYPE);
+        final Attribute attributeFileType = root.getAttribute(GenerateModuleXml.MODULE_FILE_TYPE);
         if (attributeFileType != null) {
             if(attributeFileType.getValue().toUpperCase().equals(ModuleType.SCRATCH.toString().toUpperCase())) moduleType = ModuleType.SCRATCH;
             else if(attributeFileType.getValue().toUpperCase().equals(ModuleType.PROJECT.toString().toUpperCase())) moduleType = ModuleType.PROJECT;
@@ -131,8 +130,8 @@ public class Module{
 
         //Check DOM with Module
         Element init_root = getRootFromPath(modulePath);
-        if(init_root.getAttribute(generateModuleXml.MODULE_NAME_ATTR) == null) return null;
-        String init_name = init_root.getAttribute(generateModuleXml.MODULE_NAME_ATTR).getValue();
+        if(init_root.getAttribute(GenerateModuleXml.MODULE_NAME_ATTR) == null) return null;
+        String init_name = init_root.getAttribute(GenerateModuleXml.MODULE_NAME_ATTR).getValue();
 
         return new Module(init_name, init_root);
 
@@ -159,21 +158,21 @@ public class Module{
     private void initLessons() throws BadModuleException, BadLessonException, JDOMException, IOException, URISyntaxException {
 
         assert root != null;
-        name = root.getAttribute(generateModuleXml.MODULE_NAME_ATTR).getValue();
+        name = root.getAttribute(GenerateModuleXml.MODULE_NAME_ATTR).getValue();
 
-        if (root.getAttribute(generateModuleXml.MODULE_LESSONS_PATH_ATTR) != null) {
+        if (root.getAttribute(GenerateModuleXml.MODULE_LESSONS_PATH_ATTR) != null) {
 
             //retrieve list of xml files inside lessonspath directory
-            String lessonsPath = getModulePath() + root.getAttribute(generateModuleXml.MODULE_LESSONS_PATH_ATTR).getValue();
+            String lessonsPath = getModulePath() + root.getAttribute(GenerateModuleXml.MODULE_LESSONS_PATH_ATTR).getValue();
 //            String lessonsFullpath = MyClassLoader.getInstance().getDataPath() + lessonsPath;
 //            URL url = Module.class.getResource(lessonsFullpath);
 //            File dir = new File(Module.class.getResource("/data/" + lessonsPath).toURI());
 
             for (Element lessonElement : root.getChildren()) {
-                if (!lessonElement.getName().equals(generateModuleXml.MODULE_LESSON_ELEMENT))
+                if (!lessonElement.getName().equals(GenerateModuleXml.MODULE_LESSON_ELEMENT))
                     throw new BadModuleException("Module file is corrupted or cannot be read properly");
 
-                String lessonFilename = lessonElement.getAttributeValue(generateModuleXml.MODULE_LESSON_FILENAME_ATTR);
+                String lessonFilename = lessonElement.getAttributeValue(GenerateModuleXml.MODULE_LESSON_FILENAME_ATTR);
                 String lessonPath = lessonsPath + lessonFilename;
                 try {
                     Scenario scn = new Scenario(lessonPath);
@@ -201,14 +200,14 @@ public class Module{
     }
 
     @Nullable
-    Lesson giveNotPassedAndNotOpenedLesson() {
+    public Lesson giveNotPassedAndNotOpenedLesson() {
         for (Lesson lesson : lessons) {
             if (!lesson.getPassed() && !lesson.isOpen()) return lesson;
         }
         return null;
     }
 
-    boolean hasNotPassedLesson() {
+    public boolean hasNotPassedLesson() {
         for (Lesson lesson : lessons) {
             if (!lesson.getPassed()) return true;
         }

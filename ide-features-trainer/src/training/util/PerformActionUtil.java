@@ -30,12 +30,6 @@ import java.util.concurrent.*;
  */
 public class PerformActionUtil {
 
-    /**
-     * Some util method for <i>performAction</i> method
-     *
-     * @param actionName - please see it in <i>performAction</i> method
-     * @return
-     */
     public static InputEvent getInputEvent(String actionName) {
         final Shortcut[] shortcuts = KeymapManager.getInstance().getActiveKeymap().getShortcuts(actionName);
         KeyStroke keyStroke = null;
@@ -59,11 +53,6 @@ public class PerformActionUtil {
         }
     }
 
-    /**
-     * performing internal platform action
-     *
-     * @param actionName - name of IntelliJ Action. For full list please see http://git.jetbrains.org/?p=idea/community.git;a=blob;f=platform/platform-api/src/com/intellij/openapi/actionSystem/IdeActions.java;hb=HEAD
-     */
     public static void performAction(final String actionName, final Editor editor, final Project project, final Runnable runnable) throws InterruptedException, ExecutionException {
 
         final ActionManager am = ActionManager.getInstance();
@@ -83,11 +72,6 @@ public class PerformActionUtil {
         });
     }
 
-    /**
-     * performing internal platform action
-     *
-     * @param actionName - name of IntelliJ Action. For full list please see http://git.jetbrains.org/?p=idea/community.git;a=blob;f=platform/platform-api/src/com/intellij/openapi/actionSystem/IdeActions.java;hb=HEAD
-     */
     public static void performAction(final String actionName, final Editor editor, final Project project) throws InterruptedException, ExecutionException {
 
         final ActionManager am = ActionManager.getInstance();
@@ -108,11 +92,6 @@ public class PerformActionUtil {
     }
 
 
-    /**
-     * performing internal platform action
-     *
-     * @param actionName - name of IntelliJ Action. For full list please see http://git.jetbrains.org/?p=idea/community.git;a=blob;f=platform/platform-api/src/com/intellij/openapi/actionSystem/IdeActions.java;hb=HEAD
-     */
     public static void performAction(final String actionName, final Editor editor, final AnActionEvent e, final Runnable runnable) throws InterruptedException, ExecutionException {
 
         final ActionManager am = ActionManager.getInstance();
@@ -144,9 +123,6 @@ public class PerformActionUtil {
 
             final ActionManagerEx amEx = ActionManagerEx.getInstanceEx();
             final String actionName = ActionManager.getInstance().getId(action);
-            final InputEvent inputEvent = getInputEvent(actionName);
-
-            final Presentation presentation = action.getTemplatePresentation().clone();
 
             Object hostEditor = editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor;
             Map<String, Object> map = ((fileEditor != null) ? ContainerUtil.newHashMap(Pair.create(CommonDataKeys.HOST_EDITOR.getName(), hostEditor), Pair.createNonNull(CommonDataKeys.EDITOR.getName(), editor),
@@ -179,9 +155,6 @@ public class PerformActionUtil {
         final InputEvent inputEvent = getInputEvent(actionName);
 
         final Presentation presentation = action.getTemplatePresentation().clone();
-//        final DataManager dataManager = DataManager.getInstance();
-//        Component contextComponent = editor.getContentComponent();
-//        final DataContext context = (contextComponent != null ? dataManager.getDataContext(contextComponent) : dataManager.getDataContext());
 
         Object hostEditor = editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor;
         Map<String, Object> map = ((fileEditor != null) ? ContainerUtil.newHashMap(Pair.create(CommonDataKeys.HOST_EDITOR.getName(), hostEditor), Pair.createNonNull(CommonDataKeys.EDITOR.getName(), editor),
@@ -221,48 +194,5 @@ public class PerformActionUtil {
         ActionUtil.performActionDumbAware(action, event);
         amEx.queueActionPerformedEvent(action, context, event);
 
-    }
-
-    public static void sleepHere(final Editor editor, final int delay) throws InterruptedException {
-
-        Thread sleepThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (editor) {
-                    try {
-                        Thread.sleep(delay);
-                        editor.notify();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-
-        sleepThread.start();
-        synchronized(editor){
-            editor.wait();
-        }
-        sleepThread.join();
-
-
-//        alarm.addRequest(new Runnable() {
-//            @Override
-//            public void run() {
-//                synchronized (editor) {
-//                    System.err.println("run");
-//                    editor.notifyAll();
-//                }
-//            }
-//        }, delay);
-//
-//        synchronized(editor) {
-//                try {
-//                    System.err.println("waited");
-//                    editor.wait();
-//                    System.err.println("stop waited");
-//                } catch (InterruptedException e) {
-//            }
-//        }
     }
 }
