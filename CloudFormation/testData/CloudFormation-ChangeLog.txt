@@ -430,7 +430,7 @@ User Guide (API Version 2010-05-15)
                 + Amazon EMR Cluster JobFlowInstancesConfig
                   InstanceGroupConfig
                 + Amazon EMR EbsConfiguration
-                + Amazon EMR EbsConfiguration EbsBlockDeviceConfig
+                + Amazon EMR EbsConfiguration EbsBlockDeviceConfigs
                 + Amazon EMR EbsConfiguration EbsBlockDeviceConfig
                   VolumeSpecification
                 + Amazon EMR Step HadoopJarStepConfig

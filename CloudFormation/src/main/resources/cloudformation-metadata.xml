@@ -1080,7 +1080,7 @@
     &lt;dd&gt;
      &lt;p&gt;The resources used for the response&apos;s content type. Specify response models as key-value pairs (string-to-string maps), with a content type as the key and a &lt;a class=&quot;link&quot; href=&quot;#&quot;&gt;&lt;code class=&quot;code&quot;&gt;Model&lt;/code&gt;&lt;/a&gt; resource name as the value.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of key-value pairs&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Mapping of key-value pairs&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
@@ -1088,9 +1088,9 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;RequestParameters&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;Request parameters that API Gateway accepts. Specify request parameters as key-value pairs (string-to-Boolean maps), with a source as the key and a Boolean as the value. The Boolean specifies whether a parameter is required. A source must match the following format &lt;code class=&quot;code&quot;&gt;method.request.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;location&lt;/code&gt;&lt;/em&gt;.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;, where the &lt;code class=&quot;code&quot;&gt;location&lt;/code&gt; is a query string, path, or header, and &lt;code class=&quot;code&quot;&gt;name&lt;/code&gt; is a valid, unique parameter name.&lt;/p&gt;
+     &lt;p&gt;Request parameters that API Gateway accepts. Specify request parameters as key-value pairs (string-to-Boolean maps), with a source as the key and a Boolean as the value. The Boolean specifies whether a parameter is required. A source must match the following format &lt;code class=&quot;code&quot;&gt;method.request.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;location&lt;/code&gt;&lt;/em&gt;.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;, where the &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;location&lt;/code&gt;&lt;/em&gt; is &lt;code class=&quot;code&quot;&gt;querystring&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;path&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;header&lt;/code&gt;, and &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt; is a valid, unique parameter name.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of key-value pairs&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Mapping of key-value pairs&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
@@ -1223,7 +1223,7 @@
             <ResourceProperty>
               <name>RequestModels</name>
               <description>&lt;p&gt;The resources used for the response&apos;s content type. Specify response models as key-value pairs (string-to-string maps), with a content type as the key and a &lt;a class=&quot;link&quot; href=&quot;#&quot;&gt;&lt;code class=&quot;code&quot;&gt;Model&lt;/code&gt;&lt;/a&gt; resource name as the value.&lt;/p&gt;</description>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of key-value pairs&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Mapping of key-value pairs&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -1232,8 +1232,8 @@
             <string>RequestParameters</string>
             <ResourceProperty>
               <name>RequestParameters</name>
-              <description>&lt;p&gt;Request parameters that API Gateway accepts. Specify request parameters as key-value pairs (string-to-Boolean maps), with a source as the key and a Boolean as the value. The Boolean specifies whether a parameter is required. A source must match the following format &lt;code class=&quot;code&quot;&gt;method.request.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;location&lt;/code&gt;&lt;/em&gt;.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;, where the &lt;code class=&quot;code&quot;&gt;location&lt;/code&gt; is a query string, path, or header, and &lt;code class=&quot;code&quot;&gt;name&lt;/code&gt; is a valid, unique parameter name.&lt;/p&gt;</description>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of key-value pairs&lt;/p&gt;</type>
+              <description>&lt;p&gt;Request parameters that API Gateway accepts. Specify request parameters as key-value pairs (string-to-Boolean maps), with a source as the key and a Boolean as the value. The Boolean specifies whether a parameter is required. A source must match the following format &lt;code class=&quot;code&quot;&gt;method.request.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;location&lt;/code&gt;&lt;/em&gt;.&lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt;&lt;/code&gt;, where the &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;location&lt;/code&gt;&lt;/em&gt; is &lt;code class=&quot;code&quot;&gt;querystring&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;path&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;header&lt;/code&gt;, and &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;name&lt;/code&gt;&lt;/em&gt; is a valid, unique parameter name.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Mapping of key-value pairs&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -2016,7 +2016,7 @@
     &lt;dd&gt;
      &lt;p&gt;A map (string to string map) that defines the stage variables, where the variable name is the key and the variable value is the value. Variable names are limited to alphanumeric characters. Values must match the following regular expression: &lt;code class=&quot;code&quot;&gt;[A-Za-z0-9-._~:/?#&amp;amp;amp;=,]+&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of key-value pairs&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Mapping of key-value pairs&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
    &lt;/dl&gt;
@@ -2168,7 +2168,7 @@
             <ResourceProperty>
               <name>Variables</name>
               <description>&lt;p&gt;A map (string to string map) that defines the stage variables, where the variable name is the key and the variable value is the value. Variable names are limited to alphanumeric characters. Values must match the following regular expression: &lt;code class=&quot;code&quot;&gt;[A-Za-z0-9-._~:/?#&amp;amp;amp;=,]+&lt;/code&gt;.&lt;/p&gt;</description>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of key-value pairs&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Mapping of key-value pairs&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -12009,7 +12009,7 @@
       &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface.html#cfn-awsec2networkinterface-secondaryprivateipcount&quot;&gt;SecondaryPrivateIpAddressCount&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/em&gt;,
       &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface.html#cfn-awsec2networkinterface-sourcedestcheck&quot;&gt;SourceDestCheck&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Boolean&lt;/code&gt;&lt;/em&gt;,
       &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface.html#cfn-awsec2networkinterface-subnetid&quot;&gt;SubnetId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface.html#cfn-awsec2networkinterface-tags&quot;&gt;Tags&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Resource Tag, ...&lt;/code&gt;&lt;/em&gt; ],
+      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface.html#cfn-awsec2networkinterface-tags&quot;&gt;Tags&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Resource Tag, ...&lt;/code&gt;&lt;/em&gt; ]
    }
 }
       &lt;/code&gt;&lt;/pre&gt;
@@ -12367,7 +12367,7 @@
       &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface-attachment.html#cfn-ec2-network-interface-attachment-deleteonterm&quot;&gt;DeleteOnTermination&lt;/a&gt;&quot;: &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Boolean&lt;/code&gt;&lt;/em&gt;,
       &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface-attachment.html#cfn-ec2-network-interface-attachment-deviceindex&quot;&gt;DeviceIndex&lt;/a&gt;&quot;: &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
       &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface-attachment.html#cfn-ec2-network-interface-attachment-instanceid&quot;&gt;InstanceId&lt;/a&gt;&quot;: &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface-attachment.html#cfn-ec2-network-interface-attachment-networkinterfaceid&quot;&gt;NetworkInterfaceId&lt;/a&gt;&quot;: &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-network-interface-attachment.html#cfn-ec2-network-interface-attachment-networkinterfaceid&quot;&gt;NetworkInterfaceId&lt;/a&gt;&quot;: &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
    }
 }&lt;/code&gt;&lt;/pre&gt;
  &lt;/div&gt;
@@ -17972,7 +17972,6 @@
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-applications&quot;&gt;&lt;code class=&quot;code&quot;&gt;Applications&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Applications, ...&lt;/code&gt;&lt;/em&gt; ],
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-bootstrapactions&quot;&gt;&lt;code class=&quot;code&quot;&gt;BootstrapActions&lt;/code&gt;&lt;/a&gt;&quot; [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Bootstrap Actions, ...&lt;/code&gt;&lt;/em&gt; ],
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-configurations&quot;&gt;&lt;code class=&quot;code&quot;&gt;Configurations&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Configurations, ...&lt;/code&gt;&lt;/em&gt; ],
-    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-ebsconfiguration&quot;&gt;&lt;code class=&quot;code&quot;&gt;EbsConfiguration&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;EBSConfiguration&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-instances&quot;&gt;&lt;code class=&quot;code&quot;&gt;Instances&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;JobFlowInstancesConfig&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-jobflowrole&quot;&gt;&lt;code class=&quot;code&quot;&gt;JobFlowRole&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-loguri&quot;&gt;&lt;code class=&quot;code&quot;&gt;LogUri&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
@@ -18032,16 +18031,6 @@
      &lt;p&gt;The software configuration of the Amazon EMR cluster.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-configuration.html&quot; title=&quot;Amazon Elastic MapReduce Cluster Configuration&quot;&gt;Amazon Elastic MapReduce Cluster Configuration&lt;/a&gt;&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
-    &lt;/dd&gt;
-    &lt;dt&gt;
-     &lt;a name=&quot;cfn-emr-cluster-ebsconfiguration&quot;&gt;&lt;/a&gt;
-     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;EbsConfiguration&lt;/code&gt;&lt;/span&gt;
-    &lt;/dt&gt;
-    &lt;dd&gt;
-     &lt;p&gt;Configures Amazon Elastic Block Store (Amazon EBS) storage volumes to attach to your instances.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-ebsconfiguration.html&quot; title=&quot;Amazon Elastic MapReduce EbsConfiguration&quot;&gt;Amazon Elastic MapReduce EbsConfiguration&lt;/a&gt;&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
@@ -18259,16 +18248,6 @@
               <name>Configurations</name>
               <description>&lt;p&gt;The software configuration of the Amazon EMR cluster.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-configuration.html&quot; title=&quot;Amazon Elastic MapReduce Cluster Configuration&quot;&gt;Amazon Elastic MapReduce Cluster Configuration&lt;/a&gt;&lt;/p&gt;</type>
-              <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
-            </ResourceProperty>
-          </entry>
-          <entry>
-            <string>EbsConfiguration</string>
-            <ResourceProperty>
-              <name>EbsConfiguration</name>
-              <description>&lt;p&gt;Configures Amazon Elastic Block Store (Amazon EBS) storage volumes to attach to your instances.&lt;/p&gt;</description>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-ebsconfiguration.html&quot; title=&quot;Amazon Elastic MapReduce EbsConfiguration&quot;&gt;Amazon Elastic MapReduce EbsConfiguration&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -30994,7 +30973,7 @@
      &lt;p&gt;A friendly description of the RDS parameter group. For example, &lt;code class=&quot;code&quot;&gt;&quot;My Parameter Group&quot;&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type:&lt;/em&gt;&lt;/span&gt; String&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-rds-dbparametergroup-family&quot;&gt;&lt;/a&gt;
@@ -31004,7 +30983,7 @@
      &lt;p&gt;The database family of this RDS parameter group. For example, &lt;code class=&quot;code&quot;&gt;&quot;MySQL5.1&quot;&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type:&lt;/em&gt;&lt;/span&gt; String&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-rds-dbparametergroup-parameters&quot;&gt;&lt;/a&gt;
@@ -31067,7 +31046,7 @@
               <description>&lt;p&gt;A friendly description of the RDS parameter group. For example, &lt;code class=&quot;code&quot;&gt;&quot;My Parameter Group&quot;&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;&lt;/em&gt;&lt;/span&gt; String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -31077,7 +31056,7 @@
               <description>&lt;p&gt;The database family of this RDS parameter group. For example, &lt;code class=&quot;code&quot;&gt;&quot;MySQL5.1&quot;&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;&lt;/em&gt;&lt;/span&gt; String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -35255,7 +35234,7 @@
     &lt;/dd&gt;
    &lt;/dl&gt;
   &lt;/div&gt;
-  &lt;p&gt;For sample &lt;code class=&quot;code&quot;&gt;AWS::SNS::TopicPolicy&lt;/code&gt; snippts, see &lt;a class=&quot;link&quot; href=&quot;quickref-iam.html#scenario-sns-policy&quot; title=&quot;Declaring an Amazon SNS Topic Policy&quot;&gt;Declaring an Amazon SNS Topic Policy&lt;/a&gt;.&lt;/p&gt;
+  &lt;p&gt;For sample &lt;code class=&quot;code&quot;&gt;AWS::SNS::TopicPolicy&lt;/code&gt; snippets, see &lt;a class=&quot;link&quot; href=&quot;quickref-iam.html#scenario-sns-policy&quot; title=&quot;Declaring an Amazon SNS Topic Policy&quot;&gt;Declaring an Amazon SNS Topic Policy&lt;/a&gt;.&lt;/p&gt;
  &lt;/div&gt;
 &lt;/div&gt;</description>
         <properties class="linked-hash-map">
