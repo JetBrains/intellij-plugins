@@ -40,8 +40,9 @@ public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
     return parent4 instanceof YAMLKeyValue &&
            parent4.getParent() instanceof YAMLMapping &&
            parent4.getParent().getParent() instanceof YAMLDocument &&
-           ((PubspecYamlUtil.DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText()) ||
-             PubspecYamlUtil.DEV_DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText())));
+           (PubspecYamlUtil.DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText()) ||
+            PubspecYamlUtil.DEV_DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText()) ||
+            PubspecYamlUtil.DEPENDENCY_OVERRIDES.equals(((YAMLKeyValue)parent4).getKeyText()));
   }
 
   private static class PubspecYamlReferenceProvider extends PsiReferenceProvider {

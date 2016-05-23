@@ -33,6 +33,7 @@ public class PubspecYamlUtil {
   private static final String NAME = "name";
   public static final String DEPENDENCIES = "dependencies";
   public static final String DEV_DEPENDENCIES = "dev_dependencies";
+  public static final String DEPENDENCY_OVERRIDES = "dependency_overrides";
   public static final String PATH = "path";
 
   public static final String LIB_DIR_NAME = "lib";
@@ -83,6 +84,7 @@ public class PubspecYamlUtil {
 
     processYamlDepsRecursively(project, processedPubspecs, pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEPENDENCIES));
     processYamlDepsRecursively(project, processedPubspecs, pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEV_DEPENDENCIES));
+    processYamlDepsRecursively(project, processedPubspecs, pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEPENDENCY_OVERRIDES));
   }
 
   // Path packages: https://www.dartlang.org/tools/pub/dependencies.html#path-packages
