@@ -3,7 +3,6 @@ package org.angularjs.codeInsight.router;
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
@@ -27,7 +26,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   @Override
   public void actionPerformed(AnActionEvent e) {
     UsageTrigger.trigger(USAGE_KEY);
-    final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+    final Project project = e.getProject();
     if (project == null) return;
 
     // todo read action?
@@ -66,7 +65,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
 
   @Override
   public void update(AnActionEvent e) {
-    final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+    final Project project = e.getProject();
     final RegistryValue value = Registry.get("angular.js.ui.router.diagram");
     e.getPresentation().setEnabled(value.isBoolean() && value.asBoolean() && project != null && AngularIndexUtil.hasAngularJS(project));
 
