@@ -54,6 +54,11 @@ public class AnalysisError {
   private final String type;
 
   /**
+   * The code of the error that can be used for error suppresion.
+   */
+  private final String code;
+
+  /**
    * The location associated with the error.
    */
   private final Location location;
@@ -85,9 +90,10 @@ public class AnalysisError {
   /**
    * Constructor for {@link AnalysisError}.
    */
-  public AnalysisError(String severity, String type, Location location, String message, String correction, Boolean hasFix) {
+  public AnalysisError(String severity, String type, String code, Location location, String message, String correction, Boolean hasFix) {
     this.severity = severity;
     this.type = type;
+    this.code = code;
     this.location = location;
     this.message = message;
     this.correction = correction;
@@ -101,6 +107,7 @@ public class AnalysisError {
       return
         ObjectUtilities.equals(other.severity, severity) &&
         ObjectUtilities.equals(other.type, type) &&
+        ObjectUtilities.equals(other.code, code) &&
         ObjectUtilities.equals(other.location, location) &&
         ObjectUtilities.equals(other.message, message) &&
         ObjectUtilities.equals(other.correction, correction) &&
@@ -112,11 +119,12 @@ public class AnalysisError {
   public static AnalysisError fromJson(JsonObject jsonObject) {
     String severity = jsonObject.get("severity").getAsString();
     String type = jsonObject.get("type").getAsString();
+    String code = jsonObject.get("code") == null ? null : jsonObject.get("code").getAsString();
     Location location = Location.fromJson(jsonObject.get("location").getAsJsonObject());
     String message = jsonObject.get("message").getAsString();
     String correction = jsonObject.get("correction") == null ? null : jsonObject.get("correction").getAsString();
     Boolean hasFix = jsonObject.get("hasFix") == null ? null : jsonObject.get("hasFix").getAsBoolean();
-    return new AnalysisError(severity, type, location, message, correction, hasFix);
+    return new AnalysisError(severity, type, code, location, message, correction, hasFix);
   }
 
   public static List<AnalysisError> fromJsonArray(JsonArray jsonArray) {
@@ -182,11 +190,19 @@ public class AnalysisError {
     return type;
   }
 
+  /**
+   * The code of the error that can be used for error suppresion.
+   */
+  public String getCode() {
+    return code;
+  }
+
   @Override
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
     builder.append(severity);
     builder.append(type);
+    builder.append(code);
     builder.append(location);
     builder.append(message);
     builder.append(correction);
@@ -198,6 +214,7 @@ public class AnalysisError {
     JsonObject jsonObject = new JsonObject();
     jsonObject.addProperty("severity", severity);
     jsonObject.addProperty("type", type);
+    jsonObject.addProperty("code", code);
     jsonObject.add("location", location.toJson());
     jsonObject.addProperty("message", message);
     if (correction != null) {
@@ -217,6 +234,8 @@ public class AnalysisError {
     builder.append(severity + ", ");
     builder.append("type=");
     builder.append(type + ", ");
+    builder.append("code=");
+    builder.append(code + ", ");
     builder.append("location=");
     builder.append(location + ", ");
     builder.append("message=");

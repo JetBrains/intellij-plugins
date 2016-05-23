@@ -239,9 +239,15 @@ public class DartAnnotator implements Annotator {
       final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
 
       if (annotation != null) {
-        final DartQuickFixSet quickFixSet = new DartQuickFixSet(psiFile.getManager(), file.getPath(), error.getOffset());
+        final DartQuickFixSet quickFixSet =
+          new DartQuickFixSet(psiFile.getManager(), file.getPath(), error.getOffset(), error.getCode(), error.getSeverity());
+
         for (IntentionAction quickFix : quickFixSet.getQuickFixes()) {
           annotation.registerFix(quickFix);
+        }
+
+        if (error.getCode() != null) {
+          annotation.setProblemGroup(new DartProblemGroup(error.getCode(), error.getSeverity()));
         }
       }
     }

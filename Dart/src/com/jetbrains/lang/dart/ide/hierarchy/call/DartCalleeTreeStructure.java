@@ -1,13 +1,15 @@
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartRecursiveVisitor;
+import com.jetbrains.lang.dart.psi.DartReferenceExpression;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.dartlang.analysis.server.protocol.ElementKind;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,78 +68,8 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
   }
 
   private static PsiElement getDeclaration(DartNavigationTarget target, PsiElement reference) {
-    String name = target.getFile();
-    int offset = target.getOffset();
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(name);
-    if (vFile != null) {
-      final PsiFile targetFile = reference.getManager().findFile(vFile);
-      if (targetFile != null) {
-        final PsiElement[] result = new PsiElement[1];
-        try {
-          targetFile.accept(new DartRecursiveVisitor() {
-            public void visitMethodDeclaration(@NotNull DartMethodDeclaration element) {
-              if (element.getTextOffset() == offset) {
-                result[0] = element;
-                throw new ExitVisitor();
-              }
-              super.visitMethodDeclaration(element);
-            }
-
-            public void visitFunctionDeclarationWithBodyOrNative(@NotNull DartFunctionDeclarationWithBodyOrNative element) {
-              if (element.getTextOffset() == offset) {
-                result[0] = element;
-                throw new ExitVisitor();
-              }
-              super.visitFunctionDeclarationWithBodyOrNative(element);
-            }
-
-            public void visitFunctionDeclarationWithBody(@NotNull DartFunctionDeclarationWithBody element) {
-              if (element.getTextOffset() == offset) {
-                result[0] = element;
-                throw new ExitVisitor();
-              }
-              super.visitFunctionDeclarationWithBody(element);
-            }
-
-            public void visitSetterDeclaration(@NotNull DartSetterDeclaration element) {
-              if (element.getTextOffset() == offset) {
-                result[0] = element;
-                throw new ExitVisitor();
-              }
-              super.visitSetterDeclaration(element);
-            }
-
-            public void visitGetterDeclaration(@NotNull DartGetterDeclaration element) {
-              if (element.getTextOffset() == offset) {
-                result[0] = element;
-                throw new ExitVisitor();
-              }
-              super.visitGetterDeclaration(element);
-            }
-
-            public void visitFactoryConstructorDeclaration(@NotNull DartFactoryConstructorDeclaration element) {
-              if (element.getTextOffset() == offset) {
-                result[0] = element;
-                throw new ExitVisitor();
-              }
-              super.visitFactoryConstructorDeclaration(element);
-            }
-
-            public void visitNamedConstructorDeclaration(@NotNull DartNamedConstructorDeclaration element) {
-              if (element.getTextOffset() == offset) {
-                result[0] = element;
-                throw new ExitVisitor();
-              }
-              super.visitNamedConstructorDeclaration(element);
-            }
-          });
-        }
-        catch (ExitVisitor ex) {
-          return result[0];
-        }
-      }
-    }
-    return null;
+    PsiElement found = DartResolver.getElementForNavigationTarget(reference.getProject(), target);
+    return found == null ? null : found.getParent();
   }
 
   @NotNull
@@ -158,8 +90,5 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
     final List<PsiElement> list = new ArrayList<>();
     getCallees(element, list);
     return list;
-  }
-
-  private static class ExitVisitor extends Error {
   }
 }

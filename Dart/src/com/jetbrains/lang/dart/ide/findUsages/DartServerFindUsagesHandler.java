@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.PsiSearchScopeUtil;
@@ -40,8 +41,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartServerFindUsagesHandler extends FindUsagesHandler {
-  public DartServerFindUsagesHandler(PsiElement element) {
-    super(element);
+  public DartServerFindUsagesHandler(@NotNull final PsiElement element) {
+    super(mayBeChangeToNameIdentifier(element));
+  }
+
+  @NotNull
+  private static PsiElement mayBeChangeToNameIdentifier(@NotNull final PsiElement element) {
+    if (element instanceof PsiNameIdentifierOwner) {
+      final PsiElement nameIdentifier = ((PsiNameIdentifierOwner)element).getNameIdentifier();
+      if (nameIdentifier != null) return nameIdentifier;
+    }
+    return element;
   }
 
   @Override
