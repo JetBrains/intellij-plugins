@@ -56,8 +56,14 @@ public class AngularUiRouterDiagramBuilder {
 
     for (String id : stateIds) {
       if (id.startsWith(".")) continue;
-      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, element -> {
-        final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
+      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, new Processor<JSImplicitElement>() {
+        @Override
+        public boolean process(JSImplicitElement element) {
+          final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
+          if (!element.getContainingFile().getLanguage().isKindOf(JavascriptLanguage.INSTANCE)
+            && PsiTreeUtil.getParentOfType(element, JSEmbeddedContent.class) != null) {
+            createRootTemplatesForEmbedded(element.getContainingFile());
+          }
 
         JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
         if (call == null) {
@@ -96,7 +102,8 @@ public class AngularUiRouterDiagramBuilder {
     for (Map.Entry<VirtualFile, RootTemplate> entry : myRootTemplates.entrySet()) {
       final Set<VirtualFile> modulesFiles = entry.getValue().getModulesFiles();
       for (UiRouterState state : myStates) {
-        if (modulesFiles.contains(state.getFile())) {
+        final PsiElement element = entry.getValue().getPointer().getElement();
+        if (modulesFiles.contains(state.getFile()) || element != null && element.getContainingFile().getVirtualFile().equals(state.getFile())) {
           putState2map(entry.getKey(), state, myRootTemplates2States);
           statesUsedInRoots.add(state);
         }
@@ -164,6 +171,13 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
+  private void createRootTemplatesForEmbedded(@NotNull PsiFile containingFile) {
+    final Template template = readTemplateFromFile(myProject, "/", containingFile);
+    final RootTemplate rootTemplate = new RootTemplate(mySmartPointerManager.createSmartPsiElementPointer(containingFile),
+                                                       "/", template, Collections.singleton(containingFile.getVirtualFile()));
+    myRootTemplates.put(containingFile.getVirtualFile(), rootTemplate);
+  }
+
   private static class NonCyclicQueue<T> {
     private final Set<T> processed = new HashSet<>();
     private final ArrayDeque<T> toProcess = new ArrayDeque<>();
@@ -229,7 +243,7 @@ public class AngularUiRouterDiagramBuilder {
     Set<VirtualFile> processed = filesQueue.getProcessed();
     // todo more effective filtering for being in the project, not libs. but?
     final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(myProject);
-    processed = new HashSet<>(ContainerUtil.filter(processed, new Condition<VirtualFile>() {
+    processed = new HashSet<VirtualFile>(ContainerUtil.filter(processed, new Condition<VirtualFile>() {
       @Override
       public boolean value(VirtualFile file) {
         return file.getFileType() instanceof LanguageFileType && ((LanguageFileType)file.getFileType()).getLanguage().isKindOf(
