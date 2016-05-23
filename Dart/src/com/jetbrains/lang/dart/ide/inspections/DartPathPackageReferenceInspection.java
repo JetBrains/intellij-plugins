@@ -79,8 +79,9 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
       public void visitElement(final PsiElement element) {
         ProgressIndicatorProvider.checkCanceled();
 
-        if (!(element instanceof YAMLKeyValue) || !PubspecYamlReferenceContributor.isPathPackageDefinition((YAMLKeyValue)element)
-          || ((YAMLKeyValue)element).getValue() == null) {
+        if (!(element instanceof YAMLKeyValue) ||
+            !PubspecYamlReferenceContributor.isPathPackageDefinition((YAMLKeyValue)element) ||
+            ((YAMLKeyValue)element).getValue() == null) {
           return;
         }
 
@@ -212,7 +213,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
         DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
         ? DartBundle.message("content.root.added.to.module", module.getName(), FileUtil.toSystemDependentName(root.getPath()))
         : DartBundle.message("content.root.added.to.project", FileUtil.toSystemDependentName(root.getPath()), CommonBundle.settingsTitle(),
-                             module.getProject().getName(), getProjectRootsConfigurableName());
+                             getProjectRootsConfigurableName());
 
       Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, title, message, NotificationType.INFORMATION,
                                                 new NotificationListener.Adapter() {
