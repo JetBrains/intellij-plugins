@@ -21,9 +21,7 @@ public class TelMethodCallExpression extends TelCompositeElement implements TelR
   @NotNull
   public PsiType[] getArgumentTypes() {
     TelExpression[] args = getArgumentList().getArguments();
-    return ContainerUtil.map2Array(args, PsiType.class, (NullableFunction<TelExpression, PsiType>)expression -> {
-      return expression.getPsiType();
-    });
+    return ContainerUtil.map2Array(args, PsiType.class, (NullableFunction<TelExpression, PsiType>)expression -> expression.getPsiType());
   }
 
   @NotNull

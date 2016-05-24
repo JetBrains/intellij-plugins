@@ -248,9 +248,7 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     if (!resolvedWithError) {
       return TapestryBundle.message("error.cannot.resolve.method", referenceName, typeName);
     }
-    String argumentTypes = StringUtil.join(((TelMethodCallExpression)elementParent).getArgumentTypes(), psiType -> {
-      return TelPsiUtil.getPresentableText(psiType);
-    }, ", ");
+    String argumentTypes = StringUtil.join(((TelMethodCallExpression)elementParent).getArgumentTypes(), psiType -> TelPsiUtil.getPresentableText(psiType), ", ");
     return TapestryBundle.message("error.no.applicable.method", referenceName, typeName, "(" + argumentTypes + ")");
   }
 }
