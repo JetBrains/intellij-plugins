@@ -12,10 +12,11 @@ Dart File
       PsiWhiteSpace(' ')
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
-        PsiElement(REGULAR_STRING_PART)('</html>')
+        PsiElement(REGULAR_STRING_PART)(' </html>')
         PsiElement(CLOSING_QUOTE)(''')
         HtmlFile:HtmlInStrings.dart
           PsiElement(HTML_DOCUMENT)
+            PsiWhiteSpace(' ')
             PsiElement(XML_PROLOG)
               <empty list>
             PsiErrorElement:Closing tag matches nothing
@@ -595,3 +596,21 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('List<int>')
         PsiElement(CLOSING_QUOTE)('"')
   PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('b5')
+    PsiWhiteSpace(' ')
+    VAR_INIT
+      PsiElement(=)('=')
+      PsiWhiteSpace(' ')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('x<html/>')
+        PsiElement(CLOSING_QUOTE)('"')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n')
