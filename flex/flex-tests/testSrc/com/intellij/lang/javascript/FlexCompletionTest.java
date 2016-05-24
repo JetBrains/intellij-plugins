@@ -960,9 +960,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   private static void replace(final String original, final String replacement, final Editor editor) {
     final int offset = editor.getDocument().getText().indexOf(original);
     assertTrue(offset != -1);
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      editor.getDocument().replaceString(offset, offset + original.length(), replacement);
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> editor.getDocument().replaceString(offset, offset + original.length(), replacement));
 
     PsiDocumentManager.getInstance(editor.getProject()).commitDocument(editor.getDocument());
 

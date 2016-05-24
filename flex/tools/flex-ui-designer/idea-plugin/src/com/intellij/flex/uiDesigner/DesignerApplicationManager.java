@@ -524,9 +524,7 @@ public class DesignerApplicationManager {
           }
         }
       });
-      renderResult.doWhenProcessed(() -> {
-        processed.set(true);
-      });
+      renderResult.doWhenProcessed(() -> processed.set(true));
 
       while (!processed.get()) {
         try {

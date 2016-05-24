@@ -32,9 +32,7 @@ public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
     new ListTemplatesAction().actionPerformedImpl(project, editor);
     final LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(editor);
     assertNotNull(lookup);
-    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
-                                               lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR);
-                                             });
+    WriteCommandAction.runWriteCommandAction(getProject(), () -> lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR));
     TemplateState template = TemplateManagerImpl.getTemplateState(editor);
     if (template != null) {
       Disposer.dispose(template);

@@ -74,9 +74,7 @@ public class CfmlSurroundWithTest extends CfmlCodeInsightFixtureTestCase {
   private void doTest(final Surrounder surrounder) throws Exception {
 
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
-    WriteCommandAction.runWriteCommandAction(null, () -> {
-      SurroundWithHandler.invoke(getProject(), myFixture.getEditor(), myFixture.getFile(), surrounder);
-    });
+    WriteCommandAction.runWriteCommandAction(null, () -> SurroundWithHandler.invoke(getProject(), myFixture.getEditor(), myFixture.getFile(), surrounder));
     myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));
   }
 

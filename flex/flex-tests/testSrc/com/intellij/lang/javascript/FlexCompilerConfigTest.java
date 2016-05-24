@@ -242,9 +242,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
       assertEquals(expectedFile.getName(), replaceMacros(expectedText, bc.getSdk(), additionalMacros), text);
     }
     finally {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        ProjectJdkTable.getInstance().removeJdk(testSdk);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> ProjectJdkTable.getInstance().removeJdk(testSdk));
     }
   }
 

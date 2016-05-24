@@ -48,8 +48,6 @@ public class OgnlLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
     new ListTemplatesAction().actionPerformedImpl(myFixture.getProject(), myFixture.getEditor());
     LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(myFixture.getEditor());
     assertNotNull(lookup);
-    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
-      lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR);
-    });
+    WriteCommandAction.runWriteCommandAction(getProject(), () -> lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR));
   }
 }

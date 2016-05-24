@@ -160,9 +160,7 @@ public class ConversionParams {
       final LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
       model.setKind(FlexLibraryType.FLEX_LIBRARY);
       model.setProperties(FlexLibraryType.FLEX_LIBRARY.createDefaultProperties());
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        model.commit();
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> model.commit());
     }
     else {
       myProjectLibrariesToMakeFlex.add(libraryName);

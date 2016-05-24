@@ -81,9 +81,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       }
     };
 
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.style.action.name"), null);
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.style.action.name"), null));
   }
 
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
@@ -140,9 +138,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
         }
       };
 
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        CommandProcessor.getInstance().executeCommand(project, onSuccessRunnable, DartBundle.message("dart.style.action.name"), null);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, onSuccessRunnable, DartBundle.message("dart.style.action.name"), null));
     }
   }
 

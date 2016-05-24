@@ -75,9 +75,7 @@ public abstract class DartProjectTemplate {
         templates.add(new CmdLineAppTemplate());
       }
 
-      ApplicationManager.getApplication().invokeLater(() -> {
-        templatesConsumer.consume(templates);
-      }, ModalityState.any());
+      ApplicationManager.getApplication().invokeLater(() -> templatesConsumer.consume(templates), ModalityState.any());
     }
   }
 

@@ -45,9 +45,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
                                 boolean searchForTextOccurencies,
                                 @Nullable MoveCallback callback) {
     super(elements.iterator().next().getProject(),
-          ContainerUtil.map2Array(elements, PsiElement.class, (Function<JSQualifiedNamedElement, PsiElement>)e -> {
-            return e.getContainingFile();
-          }),
+          ContainerUtil.map2Array(elements, PsiElement.class, (Function<JSQualifiedNamedElement, PsiElement>)e -> e.getContainingFile()),
           targetDirectory, true, searchInComments, searchForTextOccurencies, callback, null);
     myElements = elements;
     myTargetPackage = targetPackage;

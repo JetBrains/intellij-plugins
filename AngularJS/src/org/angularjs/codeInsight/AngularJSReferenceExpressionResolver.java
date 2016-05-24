@@ -75,9 +75,7 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     } else if (myQualifier == null) {
       final Collection<JSPsiElementBase> localVariables = getItemsByName(myReferencedName, myRef);
       if (!localVariables.isEmpty()) {
-        return ContainerUtil.map2Array(localVariables, JSResolveResult.class, item -> {
-          return new JSResolveResult(item);
-        });
+        return ContainerUtil.map2Array(localVariables, JSResolveResult.class, item -> new JSResolveResult(item));
       }
     }
     return super.doResolve();

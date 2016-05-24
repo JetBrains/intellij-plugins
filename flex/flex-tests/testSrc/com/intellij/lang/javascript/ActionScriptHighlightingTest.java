@@ -278,9 +278,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       if (variantName.equals(l.getLookupString())) {
         lookup.setCurrentItem(l);
         selected = true;
-        WriteCommandAction.runWriteCommandAction(null, () -> {
-          ((LookupImpl)lookup).finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR);
-        });
+        WriteCommandAction.runWriteCommandAction(null, () -> ((LookupImpl)lookup).finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR));
 
       }
     }
@@ -1230,9 +1228,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       assertNull(complementaryActionName, complementaryAction);
     }
 
-    WriteCommandAction.runWriteCommandAction(null, () -> {
-      action.invoke(myProject, myEditor, myFile);
-    });
+    WriteCommandAction.runWriteCommandAction(null, () -> action.invoke(myProject, myEditor, myFile));
 
     JSTestUtils.initJSIndexes(getProject());
 

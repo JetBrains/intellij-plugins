@@ -564,9 +564,7 @@ public class FlashBuilderProjectLoadUtil {
     final File pluginsDir = new File(fbPath + "/eclipse/plugins");
     if (!pluginsDir.isDirectory()) return null;
 
-    final File[] flexUnitDirs = pluginsDir.listFiles((dir, name) -> {
-      return name.startsWith("com.adobe.flexbuilder.flexunit_");
-    });
+    final File[] flexUnitDirs = pluginsDir.listFiles((dir, name) -> name.startsWith("com.adobe.flexbuilder.flexunit_"));
 
     for (File flexUnitDir : flexUnitDirs) {
       final String flexUnitLibPath = flexUnitDir.getPath() + "/flexunitframework";

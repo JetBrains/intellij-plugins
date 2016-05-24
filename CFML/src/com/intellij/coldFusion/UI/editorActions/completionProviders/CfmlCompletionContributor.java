@@ -126,9 +126,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
                String[] attributeValues = text.indexOf('.') == -1 ?
                                           CfmlUtil.getAttributeValues("cffunction", "returntype", position.getProject()):
                                           ArrayUtil.EMPTY_STRING_ARRAY;
-               Set<LookupElement> lookupResult = ContainerUtil.map2Set(attributeValues, argumentValue -> {
-                 return LookupElementBuilder.create(argumentValue).withCaseSensitivity(false);
-               });
+               Set<LookupElement> lookupResult = ContainerUtil.map2Set(attributeValues, argumentValue -> LookupElementBuilder.create(argumentValue).withCaseSensitivity(false));
 
                Object[] objects =
                  CfmlComponentReference.buildVariants(text, position.getContainingFile(), position.getProject(), null, false);

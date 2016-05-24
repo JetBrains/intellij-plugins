@@ -27,9 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
   private void performWriteAction(final Project project, final Runnable action) {
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      CommandProcessor.getInstance().executeCommand(project, action, "test command", null);
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, action, "test command", null));
   }
 
   private void validateTestStrings(@NotNull String before, @NotNull String expected) {

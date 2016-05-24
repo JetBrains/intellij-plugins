@@ -92,9 +92,7 @@ public class AppTest extends AppTestBase {
     AsyncResult<DocumentInfo> result =
       DesignerApplicationManager.getInstance().renderDocument(myModule, Tests.virtualToPsi(myProject, file));
 
-    result.doWhenProcessed(() -> {
-      semaphore.up();
-    });
+    result.doWhenProcessed(() -> semaphore.up());
 
     await();
   }
@@ -115,9 +113,7 @@ public class AppTest extends AppTestBase {
   private void insertString(VirtualFile file, final int offset, @NotNull final CharSequence s) throws InterruptedException {
     final Document document = FileDocumentManager.getInstance().getDocument(file);
     assertNotNull(document);
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      document.insertString(offset, s);
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> document.insertString(offset, s));
 
     semaphore.down();
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();

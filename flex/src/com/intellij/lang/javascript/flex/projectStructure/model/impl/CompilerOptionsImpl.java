@@ -68,9 +68,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     if (myResetHighlightingOnCommit) {
       FlexCompilerHandler.getInstance(myProject).getCompilerDependenciesCache().clear();
 
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> FlexBuildConfigurationManagerImpl.resetHighlighting(myProject));
       myDispatcher.getMulticaster().optionsInTableChanged();
     }
   }
@@ -116,9 +114,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     if (myResetHighlightingOnCommit) {
       FlexCompilerHandler.getInstance(myProject).getCompilerDependenciesCache().clear();
 
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> FlexBuildConfigurationManagerImpl.resetHighlighting(myProject));
       myDispatcher.getMulticaster().additionalOptionsChanged();
     }
   }

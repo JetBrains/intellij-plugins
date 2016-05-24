@@ -60,9 +60,7 @@ public class CfmlMatcherTest extends CfmlCodeInsightFixtureTestCase {
     }
 
     Document document = myFixture.getEditor().getDocument();
-    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
-                                               document.replaceString(pairOffset, pairOffset + pairMarker.length(), "");
-                                             });
+    WriteCommandAction.runWriteCommandAction(getProject(), () -> document.replaceString(pairOffset, pairOffset + pairMarker.length(), ""));
     PsiDocumentManager.getInstance(getProject()).commitDocument(document);
 
     return pairOffset;

@@ -120,9 +120,7 @@ public class AngularIndexUtil {
         }
       }
     }
-    final List<ResolveResult> list = ContainerUtil.map(elements, element -> {
-      return new JSResolveResult(element);
-    });
+    final List<ResolveResult> list = ContainerUtil.map(elements, element -> new JSResolveResult(element));
     return list.toArray(new ResolveResult[list.size()]);
   }
 

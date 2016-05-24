@@ -149,10 +149,8 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
   @Override
   protected void doOKAction() {
     final Ref<ErrorMessage> errorMessageRef = Ref.create();
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
-                                              () -> errorMessageRef.set(createLibraryAndAssociate()));
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
+                                                                                                   () -> errorMessageRef.set(createLibraryAndAssociate())));
     ErrorMessage errorMessage = errorMessageRef.get();
     if (errorMessage != null) {
       Messages.showErrorDialog(errorMessage.getDescription(), "Adding " + myLibraryHelper.getJsLibraryName());

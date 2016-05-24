@@ -198,9 +198,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
           libraryModifiableModel.addRoot(file, OrderRootType.CLASSES);
         }
 
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          libraryModifiableModel.commit();
-        });
+        ApplicationManager.getApplication().runWriteAction(() -> libraryModifiableModel.commit());
 
         final ModifiableModuleLibraryEntry libraryEntry = flexConfigEditor.createModuleLibraryEntry(bc.getDependencies(), libraryId);
         libraryEntry.getDependencyType().setLinkageType(LinkageType.Merged);

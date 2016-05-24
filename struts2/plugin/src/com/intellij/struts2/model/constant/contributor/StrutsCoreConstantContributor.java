@@ -132,9 +132,7 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
       @Override
       protected Set<String> compute() {
         return ContainerUtil.map2Set(CharsetToolkit.getAvailableCharsets(),
-                                     charset -> {
-                                       return charset.name();
-                                     });
+                                     charset -> charset.name());
       }
     };
 

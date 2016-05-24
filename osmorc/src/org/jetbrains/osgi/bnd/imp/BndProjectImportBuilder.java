@@ -136,15 +136,11 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
   }
 
   private static void commitModel(final ModifiableModuleModel moduleModel) {
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      moduleModel.commit();
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> moduleModel.commit());
   }
 
   private static void disposeModel(final ModifiableModuleModel moduleModel) {
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      moduleModel.dispose();
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> moduleModel.dispose());
   }
 
   @Override

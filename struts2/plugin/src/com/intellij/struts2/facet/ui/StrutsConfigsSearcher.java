@@ -47,8 +47,6 @@ public class StrutsConfigsSearcher extends ConfigFileSearcher {
       DomService.getInstance().getFileElements(StrutsRoot.class, project,
                                                GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
 
-    return ContainerUtil.map2Set(elements, element -> {
-      return element.getFile();
-    });
+    return ContainerUtil.map2Set(elements, element -> element.getFile());
   }
 }

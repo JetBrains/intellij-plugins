@@ -199,9 +199,7 @@ public class TestRunner {
     JsTestDriver jstd = builder.build();
     jstd.runConfiguration();
     if (runCoverage) {
-      File[] coverageReportFiles = emptyOutputDir.listFiles((dir, name) -> {
-        return name.endsWith("-coverage.dat");
-      });
+      File[] coverageReportFiles = emptyOutputDir.listFiles((dir, name) -> name.endsWith("-coverage.dat"));
       if (coverageReportFiles != null && coverageReportFiles.length == 1) {
         try {
           CoverageReport coverageReport = CoverageSerializationUtils.readLCOV(coverageReportFiles[0]);

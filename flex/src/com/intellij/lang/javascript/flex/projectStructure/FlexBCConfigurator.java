@@ -436,9 +436,7 @@ public class FlexBCConfigurator {
 
   public List<CompositeConfigurable> getBCConfigurables(@NotNull Module module) {
     return ContainerUtil.map(myConfigEditor.getConfigurations(module),
-                             configuration -> {
-                               return myConfigurablesMap.get(configuration);
-                             });
+                             configuration -> myConfigurablesMap.get(configuration));
   }
 
   public FlexBCConfigurable getBCConfigurable(@NotNull ModifiableFlexBuildConfiguration bc) {

@@ -87,9 +87,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
     HbConfig.setCommenterLanguage((Language)myCommenterLanguage.getSelectedItem());
 
     if (HbConfig.setShouldOpenHtmlAsHandlebars(htmlAsHb.isSelected(), myProject)) {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        FileTypeManagerEx.getInstanceEx().fireFileTypesChanged();
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> FileTypeManagerEx.getInstanceEx().fireFileTypesChanged());
     }
   }
 

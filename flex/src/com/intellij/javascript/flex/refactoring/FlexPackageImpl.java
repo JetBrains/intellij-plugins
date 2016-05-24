@@ -70,9 +70,7 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
           final PsiManager manager = PsiManager.getInstance(getProject());
           Collection<PsiDirectory> directories = ContainerUtil.map(DirectoryIndex.getInstance(getProject())
                                                                      .getDirectoriesByPackageName(getQualifiedName(), true).findAll(),
-                                                                   virtualFile -> {
-                                                                     return manager.findDirectory(virtualFile);
-                                                                   });
+                                                                   virtualFile -> manager.findDirectory(virtualFile));
 
           return Result.create(directories,
                                PsiModificationTracker.MODIFICATION_COUNT,

@@ -62,9 +62,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   protected String getElementText() {
     final ASTNode node = getNode();
     final ASTNode[] children = node.getChildren(TEXT_FILTER);
-    return StringUtil.join(children, astNode -> {
-      return astNode.getText();
-    }, "").trim();
+    return StringUtil.join(children, astNode -> astNode.getText(), "").trim();
   }
 
   @Nullable

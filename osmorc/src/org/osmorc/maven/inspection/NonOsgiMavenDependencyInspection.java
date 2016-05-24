@@ -155,9 +155,7 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
 
           // add new repository if needed
 
-          Set<String> projectRepositoryUrls = ContainerUtil.map2Set(model.getRepositories().getRepositories(), repository -> {
-            return repository.getUrl().getStringValue();
-          });
+          Set<String> projectRepositoryUrls = ContainerUtil.map2Set(model.getRepositories().getRepositories(), repository -> repository.getUrl().getStringValue());
 
           List<MavenRepository> newRepositories = ContainerUtil.newSmartList(result.getBundleRepository().getMavenRepositories());
 

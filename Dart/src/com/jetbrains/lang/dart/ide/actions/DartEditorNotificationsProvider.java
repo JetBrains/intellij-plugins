@@ -130,9 +130,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
     @Override
     public void run() {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        DartSdkGlobalLibUtil.enableDartSdk(myModule);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> DartSdkGlobalLibUtil.enableDartSdk(myModule));
     }
   }
 

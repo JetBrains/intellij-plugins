@@ -723,9 +723,7 @@ public class DartResolveUtil {
   }
 
   public static List<DartClassResolveResult> resolveClassesByTypes(List<DartType> types) {
-    return ContainerUtil.map(types, dartType -> {
-      return resolveClassByType(dartType);
-    });
+    return ContainerUtil.map(types, dartType -> resolveClassByType(dartType));
   }
 
   @NotNull

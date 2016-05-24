@@ -156,9 +156,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
         model.setShowDependencies(true);
         EnumSet<FlashUmlDependenciesSettingsOption> disabledOptions = EnumSet.complementOf(dependencies);
         configuration.categories
-          .put(provider.getID(), StringUtil.join(disabledOptions, option -> {
-            return option.getDisplayName();
-          }, ";"));
+          .put(provider.getID(), StringUtil.join(disabledOptions, option -> option.getDisplayName(), ";"));
       }
       else {
         model.setShowDependencies(false);

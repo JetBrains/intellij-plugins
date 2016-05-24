@@ -136,9 +136,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
   }
 
   private static ColumnInfo[] wrap(ColumnInfo[] columns) {
-    return ContainerUtil.map2Array(columns, ColumnInfo.class, (Function<ColumnInfo, ColumnInfo>)columnInfo -> {
-      return new ColumnInfoWrapper(columnInfo);
-    });
+    return ContainerUtil.map2Array(columns, ColumnInfo.class, (Function<ColumnInfo, ColumnInfo>)columnInfo -> new ColumnInfoWrapper(columnInfo));
   }
 
   public void refresh() {

@@ -22,9 +22,7 @@ import com.intellij.util.Consumer;
 public abstract class ReadActionConsumer<T> implements Consumer<T> {
   @Override
   public void consume(final T t) {
-    ApplicationManager.getApplication().runReadAction(() -> {
-      consumeInReadAction(t);
-    });
+    ApplicationManager.getApplication().runReadAction(() -> consumeInReadAction(t));
   }
 
   public abstract void consumeInReadAction(T t);

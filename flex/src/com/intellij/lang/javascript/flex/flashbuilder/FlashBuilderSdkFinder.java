@@ -142,9 +142,7 @@ public class FlashBuilderSdkFinder {
     final File pluginsDir = new File(fbInstallationPath + "/eclipse/plugins");
     if (!pluginsDir.isDirectory()) return;
 
-    final File[] airSdkParents = pluginsDir.listFiles((dir, name) -> {
-      return name.startsWith("com.adobe.flash.compiler_");
-    });
+    final File[] airSdkParents = pluginsDir.listFiles((dir, name) -> name.startsWith("com.adobe.flash.compiler_"));
 
     for (File airSdkParent : airSdkParents) {
       final String airSdkHome = airSdkParent.getPath() + "/AIRSDK";
