@@ -251,9 +251,7 @@ public class DartFileListener extends VirtualFileAdapter {
 
     final Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     if (library != null) {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        ProjectLibraryTable.getInstance(project).removeLibrary(library);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> ProjectLibraryTable.getInstance(project).removeLibrary(library));
     }
   }
 
@@ -282,9 +280,7 @@ public class DartFileListener extends VirtualFileAdapter {
       }
 
       if (modifiableModel.isChanged()) {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          modifiableModel.commit();
-        });
+        ApplicationManager.getApplication().runWriteAction(() -> modifiableModel.commit());
       }
     }
     finally {
@@ -307,9 +303,7 @@ public class DartFileListener extends VirtualFileAdapter {
 
       modifiableModel.addLibraryEntry(library);
 
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        modifiableModel.commit();
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> modifiableModel.commit());
     }
     finally {
       if (!modifiableModel.isDisposed()) {

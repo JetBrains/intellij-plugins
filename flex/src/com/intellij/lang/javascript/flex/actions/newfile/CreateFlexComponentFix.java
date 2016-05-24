@@ -110,9 +110,7 @@ public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
     final XmlTag tag = (XmlTag)jsClass.getParent();
     if (superClassFqn != null && superClassFqn.equals(tag.getName())) {
       // raw fqn have likely been inserted by template (that equals to what user have entered)
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        NewFlexComponentAction.setParentComponent((MxmlJSClass)jsClass, superClassFqn);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> NewFlexComponentAction.setParentComponent((MxmlJSClass)jsClass, superClassFqn));
     }
   }
 

@@ -284,9 +284,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final LibraryEx library = (LibraryEx)ApplicationLibraryTable.getApplicationTable().getLibraryByName("Dart SDK");
     final PersistentLibraryKind<?> kind = library == null ? null : library.getKind();
     if (library != null && kind != null && "javaScript".equals(kind.getKindId())) {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        ApplicationLibraryTable.getApplicationTable().removeLibrary(library);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> ApplicationLibraryTable.getApplicationTable().removeLibrary(library));
     }
   }
 

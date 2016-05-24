@@ -95,8 +95,6 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
       return Collections.emptyList();
     }
     return ContainerUtil.map2List(tags,
-                                  cfmlTag -> {
-                                    return new CfmlStructureViewElement(cfmlTag);
-                                  });
+                                  cfmlTag -> new CfmlStructureViewElement(cfmlTag));
   }
 }

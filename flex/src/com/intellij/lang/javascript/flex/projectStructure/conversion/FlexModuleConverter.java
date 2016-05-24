@@ -573,9 +573,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   public static String generateFacetBcName(List<Element> facets, Element facet) {
     // TODO cache names for module
-    List<String> names = FlexBuildConfigurationManagerImpl.generateUniqueNames(ContainerUtil.map(facets, element -> {
-      return element.getAttributeValue(JpsFacetSerializer.NAME_ATTRIBUTE);
-    }));
+    List<String> names = FlexBuildConfigurationManagerImpl.generateUniqueNames(ContainerUtil.map(facets, element -> element.getAttributeValue(JpsFacetSerializer.NAME_ATTRIBUTE)));
     return names.get(facets.indexOf(facet));
   }
 

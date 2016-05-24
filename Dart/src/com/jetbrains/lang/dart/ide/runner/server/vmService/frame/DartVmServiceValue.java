@@ -121,9 +121,7 @@ public class DartVmServiceValue extends XNamedValue {
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       final XSourcePosition sourcePosition = debugProcess.getSourcePosition(isolateId, location.getScript(), location.getTokenPos());
-      ApplicationManager.getApplication().runReadAction(() -> {
-        navigatable.setSourcePosition(sourcePosition);
-      });
+      ApplicationManager.getApplication().runReadAction(() -> navigatable.setSourcePosition(sourcePosition));
     });
   }
 

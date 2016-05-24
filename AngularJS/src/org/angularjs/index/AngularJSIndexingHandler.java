@@ -430,9 +430,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
             }
           } else if ("scope".equals(name)) {
             if (value instanceof JSObjectLiteralExpression) {
-              scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), property -> {
-                return property.getName();
-              }, ","));
+              scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), property -> property.getName(), ","));
             }
           }
         }

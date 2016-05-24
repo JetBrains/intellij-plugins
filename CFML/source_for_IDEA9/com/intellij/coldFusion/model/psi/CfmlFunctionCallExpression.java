@@ -220,8 +220,6 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
       return PsiType.EMPTY_ARRAY;
     }
     CfmlExpression[] args = argumentsList.getArguments();
-    return ContainerUtil.map2Array(args, PsiType.class, (NullableFunction<CfmlExpression, PsiType>)expression -> {
-      return expression.getPsiType();
-    });
+    return ContainerUtil.map2Array(args, PsiType.class, (NullableFunction<CfmlExpression, PsiType>)expression -> expression.getPsiType());
   }
 }

@@ -115,9 +115,7 @@ public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
     myApplyCustomCssText.setSelected(settings.isTextEnabled());
     myCssText = settings.getStylesheetText();
     if (myEditor != null && !myEditor.isDisposed()) {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        myEditor.getDocument().setText(myCssText);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> myEditor.getDocument().setText(myCssText));
     }
 
     //noinspection ConstantConditions

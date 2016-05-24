@@ -256,9 +256,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   private void updateFilesToIncludeInSWCText() {
-    final String s = StringUtil.join(myFilesToIncludeInSWC, path -> {
-      return PathUtil.getFileName(path);
-    }, ", ");
+    final String s = StringUtil.join(myFilesToIncludeInSWC, path -> PathUtil.getFileName(path), ", ");
     myIncludeInSWCField.setText(s);
   }
 
@@ -908,9 +906,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
               new RepeatableValueDialog(myProject, StringUtil.capitalizeWords(myInfo.DISPLAY_NAME, true), buffers, myInfo,
                                         myAddedConditionalCompilerDefinition);
             if (dialog.showAndGet()) {
-              myValue = StringUtil.join(dialog.getCurrentList(), stringBuilder -> {
-                return stringBuilder.toString();
-              }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+              myValue = StringUtil.join(dialog.getCurrentList(), stringBuilder -> stringBuilder.toString(), CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
             }
           }
           TableUtil.stopEditing(myTreeTable);

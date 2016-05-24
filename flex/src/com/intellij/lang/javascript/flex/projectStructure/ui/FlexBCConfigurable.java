@@ -546,9 +546,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   private void updateCssFilesText() {
-    final String s = StringUtil.join(myCssFilesToCompile, path -> {
-      return PathUtil.getFileName(path);
-    }, ", ");
+    final String s = StringUtil.join(myCssFilesToCompile, path -> PathUtil.getFileName(path), ", ");
     myCssFilesTextWithBrowse.setText(s);
   }
 

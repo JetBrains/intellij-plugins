@@ -90,9 +90,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
       }
     };
 
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null);
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null));
   }
 
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
@@ -147,10 +145,8 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
         }
       };
 
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        CommandProcessor.getInstance()
-          .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.sort.members.action.name"), null);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance()
+        .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.sort.members.action.name"), null));
     }
   }
 }

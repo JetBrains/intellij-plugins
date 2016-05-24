@@ -541,9 +541,7 @@ public class DartAnalysisServerService {
 
   public void updateFilesContent() {
     if (myServer != null) {
-      ApplicationManager.getApplication().runReadAction(() -> {
-        doUpdateFilesContent();
-      });
+      ApplicationManager.getApplication().runReadAction(() -> doUpdateFilesContent());
     }
   }
 
@@ -1099,9 +1097,7 @@ public class DartAnalysisServerService {
 
     server.analysis_reanalyze(roots);
 
-    ApplicationManager.getApplication().invokeLater(() -> {
-      clearAllErrors(myRootsHandler.getTrackedProjects());
-    }, ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(myRootsHandler.getTrackedProjects()), ModalityState.NON_MODAL);
   }
 
   private void analysis_setPriorityFiles() {
@@ -1366,9 +1362,7 @@ public class DartAnalysisServerService {
       final List<Project> projects = new ArrayList<Project>(myRootsHandler.getTrackedProjects());
       myRootsHandler.reset();
 
-      ApplicationManager.getApplication().invokeLater(() -> {
-        clearAllErrors(projects);
-      }, ModalityState.NON_MODAL);
+      ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(projects), ModalityState.NON_MODAL);
     }
   }
 

@@ -117,9 +117,7 @@ public class KarmaCoveragePeer {
                                                                true));
     }
     else {
-      ApplicationManager.getApplication().executeOnPooledThread(() -> ApplicationManager.getApplication().runReadAction(() -> {
-        checkCoveragePlugin(server);
-      }));
+      ApplicationManager.getApplication().executeOnPooledThread(() -> ApplicationManager.getApplication().runReadAction(() -> checkCoveragePlugin(server)));
     }
   }
 

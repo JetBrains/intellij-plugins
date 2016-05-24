@@ -22,9 +22,7 @@ public class GherkinInplaceRenameTest extends LightPlatformCodeInsightFixtureTes
     boolean b = RefactoringSettings.getInstance().RENAME_SEARCH_IN_COMMENTS_FOR_FILE;
     try {
       myFixture.configureByFile(getTestName(true) + ".feature");
-      WriteCommandAction.runWriteCommandAction(getProject(), () -> {
-        CodeInsightTestUtil.doInlineRename(new GherkinInplaceRenameHandler(), newName, myFixture);
-      });
+      WriteCommandAction.runWriteCommandAction(getProject(), () -> CodeInsightTestUtil.doInlineRename(new GherkinInplaceRenameHandler(), newName, myFixture));
 
       myFixture.checkResultByFile(getTestName(true) + "_after.feature");
     }

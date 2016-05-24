@@ -89,9 +89,7 @@ public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
   public void testCompletionVariantsConstantName() throws Throwable {
     final StrutsCoreConstantContributor coreConstantContributor = new StrutsCoreConstantContributor();
     final List<StrutsConstant> constants = coreConstantContributor.getStrutsConstantDefinitions(myModule);
-    final String[] variants = ContainerUtil.map2Array(constants, String.class, strutsConstant -> {
-      return strutsConstant.getName();
-    });
+    final String[] variants = ContainerUtil.map2Array(constants, String.class, strutsConstant -> strutsConstant.getName());
 
     performCompletionVariantTest("struts-completionvariants-constant_name.xml", variants);
   }

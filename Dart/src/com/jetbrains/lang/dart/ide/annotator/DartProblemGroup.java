@@ -173,7 +173,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       final int commentIndex = StringUtil.indexOf(lineText, "//");
       if (commentIndex >= 0) {
         // before existing comment
-        document.insertString(lineStartOffset + commentIndex, "// ignore: " + errorCode + " ");
+        document.insertString(lineStartOffset + commentIndex, "// ignore: " + errorCode + ", ");
       }
       else {
         int index = lineEndOffset - 1;

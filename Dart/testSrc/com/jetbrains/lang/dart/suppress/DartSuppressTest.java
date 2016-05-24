@@ -93,7 +93,7 @@ public class DartSuppressTest extends DartCodeInsightFixtureTestCase {
       () -> new DartProblemGroup.DartSuppressAction("x", "", true)
         .invoke(getProject(), myFixture.getEditor(), myFixture.getElementAtCaret())), null, null);
 
-    myFixture.checkResult("var <caret>a; // ignore: x //comment");
+    myFixture.checkResult("var <caret>a; // ignore: x, //comment");
   }
 
   public void testUpdateEolComment() {

@@ -75,9 +75,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
       Collection<VirtualFile> dirs =
         DirectoryIndex.getInstance(project).getDirectoriesByPackageName(dirAndPackage.second, false).findAll();
       final PsiManager psiManager = PsiManager.getInstance(project);
-      PsiDirectory[] psiDirs = ContainerUtil.map2Array(dirs, PsiDirectory.class, virtualFile -> {
-        return psiManager.findDirectory(virtualFile);
-      });
+      PsiDirectory[] psiDirs = ContainerUtil.map2Array(dirs, PsiDirectory.class, virtualFile -> psiManager.findDirectory(virtualFile));
       PsiDirectory dir = DirectoryChooserUtil.selectDirectory(project, psiDirs, null, null);
       if (dir == null) {
         return null;

@@ -71,9 +71,7 @@ class CfmlTagNamesCompletionProvider extends CompletionProvider<CompletionParame
     final VirtualFile folder = CfmlUtil.findFileByLibTag(originalFile, libtag);
     if (folder != null && folder.isDirectory()) {
       final Set<String> names = new THashSet<String>(CfmlIndex.getInstance(originalFile.getProject()).getAllComponentsNames());
-      names.retainAll(ContainerUtil.map(folder.getChildren(), virtualFile -> {
-        return FileUtil.getNameWithoutExtension(virtualFile.getName()).toLowerCase();
-      }));
+      names.retainAll(ContainerUtil.map(folder.getChildren(), virtualFile -> FileUtil.getNameWithoutExtension(virtualFile.getName()).toLowerCase()));
       for (String componentName : names) {
         result.addElement(LookupElementBuilder.create(prefix + ':' + componentName).withCaseSensitivity(false));
       }

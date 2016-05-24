@@ -118,8 +118,6 @@ public class PhoneGapPluginsList {
   }
 
   public static List<RepoPackage> wrapRepo(List<String> names) {
-    return ContainerUtil.map(names, s -> {
-      return new RepoPackage(s, s);
-    });
+    return ContainerUtil.map(names, s -> new RepoPackage(s, s));
   }
 }

@@ -27,13 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInjector {
   public static final String PRIVATE_TAG_NAME = "Private";
   private static final String FUNCTION_CALL_PREFIX = "(function (... _){}) (";
-  private static final String FUNCTION_CALL_SUFFIX = "\n);";
+  private static final String FUNCTION_CALL_SUFFIX = ");";
   private static final Language regexpLanguage = Language.findLanguageByID("RegExp");
   private static final Language cssLanguage = Language.findLanguageByID("CSS");
 

@@ -126,9 +126,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
         ConsoleViewContentType contentType = ConsoleViewContentType.getConsoleViewType(outputType);
         console.print(text, contentType);
         if (!archived && text.startsWith("ERROR ")) {
-          ApplicationManager.getApplication().invokeLater(() -> {
-            content.fireAlert();
-          }, ModalityState.any());
+          ApplicationManager.getApplication().invokeLater(() -> content.fireAlert(), ModalityState.any());
         }
       }
     };

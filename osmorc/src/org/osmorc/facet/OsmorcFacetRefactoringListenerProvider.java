@@ -72,16 +72,12 @@ public class OsmorcFacetRefactoringListenerProvider implements RefactoringElemen
     }
 
     public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
-      application.runWriteAction(() -> {
-        osmorcFacetConfiguration.setBundleActivator(((PsiClass)newElement).getQualifiedName());
-      });
+      application.runWriteAction(() -> osmorcFacetConfiguration.setBundleActivator(((PsiClass)newElement).getQualifiedName()));
     }
 
     @Override
     public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull final String oldQualifiedName) {
-      application.runWriteAction(() -> {
-        osmorcFacetConfiguration.setBundleActivator(oldQualifiedName);
-      });
+      application.runWriteAction(() -> osmorcFacetConfiguration.setBundleActivator(oldQualifiedName));
     }
   }
 }

@@ -131,9 +131,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     textFieldWithHistory.setMinimumAndPreferredWidth(0);
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, () -> {
       List<VirtualFile> newFiles = KarmaUtil.listPossibleConfigFilesInProject(project);
-      List<String> newFilePaths = ContainerUtil.map(newFiles, file -> {
-        return FileUtil.toSystemDependentName(file.getPath());
-      });
+      List<String> newFilePaths = ContainerUtil.map(newFiles, file -> FileUtil.toSystemDependentName(file.getPath()));
       Collections.sort(newFilePaths);
       return newFilePaths;
     });
@@ -172,9 +170,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       myNodeInterpreterField.setPreferredWidthToFitText();
       SwingHelper.setPreferredWidthToFitText(myKarmaPackageDirPathTextFieldWithBrowseButton);
       SwingHelper.setPreferredWidthToFitText(myConfigPathTextFieldWithBrowseButton);
-      ApplicationManager.getApplication().invokeLater(() -> {
-        SwingHelper.adjustDialogSizeToFitPreferredSize(dialogWrapper);
-      }, ModalityState.any());
+      ApplicationManager.getApplication().invokeLater(() -> SwingHelper.adjustDialogSizeToFitPreferredSize(dialogWrapper), ModalityState.any());
     }
   }
 

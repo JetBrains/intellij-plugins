@@ -606,9 +606,7 @@ public class FlashBuilderModuleImporter {
                                        OrderRootType.SOURCES);
       }
 
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        libraryModifiableModel.commit();
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> libraryModifiableModel.commit());
 
       final ModifiableModuleLibraryEntry libraryEntry = myFlexConfigEditor.createModuleLibraryEntry(bc.getDependencies(), libraryId);
       libraryEntry.getDependencyType().setLinkageType(LinkageType.Merged); // todo set correct linkage!

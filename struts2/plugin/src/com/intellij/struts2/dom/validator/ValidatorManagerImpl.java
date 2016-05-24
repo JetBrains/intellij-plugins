@@ -152,9 +152,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
           }
         });
 
-    return ContainerUtil.map(filtered, validatorsDomFileElement -> {
-      return validatorsDomFileElement.getFile();
-    });
+    return ContainerUtil.map(filtered, validatorsDomFileElement -> validatorsDomFileElement.getFile());
   }
 
   /**

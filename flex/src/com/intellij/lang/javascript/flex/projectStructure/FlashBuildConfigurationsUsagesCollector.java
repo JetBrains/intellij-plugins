@@ -38,9 +38,7 @@ public class FlashBuildConfigurationsUsagesCollector extends AbstractApplication
         usedBcs.add(bc.getStatisticsEntry());
       }
     }
-    return ContainerUtil.map2Set(usedBcs, s -> {
-      return new UsageDescriptor(s, 1);
-    });
+    return ContainerUtil.map2Set(usedBcs, s -> new UsageDescriptor(s, 1));
   }
 
   @NotNull

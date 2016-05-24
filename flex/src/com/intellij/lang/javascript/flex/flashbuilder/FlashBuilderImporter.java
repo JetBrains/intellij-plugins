@@ -178,9 +178,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       final String moduleFilePath = flashBuilderProject.getProjectRootPath() + "/" + moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION;
 
       if (LocalFileSystem.getInstance().findFileByPath(moduleFilePath) != null) {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          ModuleBuilder.deleteModuleFile(moduleFilePath);
-        });
+        ApplicationManager.getApplication().runWriteAction(() -> ModuleBuilder.deleteModuleFile(moduleFilePath));
       }
 
       final Module module = moduleModel.newModule(moduleFilePath, FlexModuleType.getInstance().getId());

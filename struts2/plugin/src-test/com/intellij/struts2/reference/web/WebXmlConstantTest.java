@@ -55,9 +55,7 @@ public class WebXmlConstantTest extends BasicLightHighlightingTestCase {
   public void testNameCompletion() throws Throwable {
     final StrutsCoreConstantContributor coreConstantContributor = new StrutsCoreConstantContributor();
     final List<StrutsConstant> constants = coreConstantContributor.getStrutsConstantDefinitions(myModule);
-    final String[] variants = ContainerUtil.map2Array(constants, String.class, strutsConstant -> {
-      return strutsConstant.getName();
-    });
+    final String[] variants = ContainerUtil.map2Array(constants, String.class, strutsConstant -> strutsConstant.getName());
     myFixture.testCompletionVariants("/WEB-INF/web_name_completion.xml", variants);
   }
 

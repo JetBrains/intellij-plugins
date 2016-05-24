@@ -88,9 +88,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
       if (myModule != null) {
         final Sdk sdk = FlexUtils.getSdkForActiveBC(myModule);
         if (sdk != null) {
-          ApplicationManager.getApplication().runWriteAction(() -> {
-            ProjectJdkTable.getInstance().removeJdk(sdk);
-          });
+          ApplicationManager.getApplication().runWriteAction(() -> ProjectJdkTable.getInstance().removeJdk(sdk));
         }
       }
 
@@ -166,9 +164,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
       FlexProjectConfigurationEditor.createEditor(myProject, Collections.singletonMap(myModule, rootModel), null, null);
     new FlashBuilderModuleImporter(myProject, flexEditor, allFBProjects, sdkFinder).setupModule(rootModel, flashBuilderProject);
     flexEditor.commit();
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      ModifiableModelCommitter.multiCommit(new ModifiableRootModel[]{rootModel}, moduleModel);
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> ModifiableModelCommitter.multiCommit(new ModifiableRootModel[]{rootModel}, moduleModel));
   }
 
   protected static String getSomeAbsoluteFolderPath() {

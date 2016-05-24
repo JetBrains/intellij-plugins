@@ -51,9 +51,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
       myFixture.openFileInEditor(fileUpdatedByFix);
     }
 
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      quickFix.invoke(getProject(), getEditor(), getFile());
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> quickFix.invoke(getProject(), getEditor(), getFile()));
 
     final String updatedFileName = fileUpdatedByFix == null ? getTestName(false) : fileUpdatedByFix.getNameWithoutExtension();
     myFixture.checkResultByFile(updatedFileName + ".after.dart");
@@ -76,9 +74,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     final IntentionAction quickFix = myFixture.findSingleIntention("Create file 'CreatePartFile_part.dart'");
     assertEquals(true, quickFix.isAvailable(getProject(), getEditor(), getFile()));
 
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      quickFix.invoke(getProject(), getEditor(), getFile());
-    });
+    ApplicationManager.getApplication().runWriteAction(() -> quickFix.invoke(getProject(), getEditor(), getFile()));
 
     final VirtualFile newFile = myFixture.findFileInTempDir("CreatePartFile_part.dart");
     assertNotNull(newFile);

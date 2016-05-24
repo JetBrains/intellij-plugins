@@ -139,9 +139,7 @@ public class CfmlTypedHandlerTest extends CfmlCodeInsightFixtureTestCase {
     try {
       EditorHighlighter highlighter = HighlighterFactory.createHighlighter(getProject(), CfmlFileType.INSTANCE);
       editor.setHighlighter(highlighter);
-      CommandProcessor.getInstance().executeCommand(getProject(), () -> ApplicationManager.getApplication().runWriteAction(() -> {
-        doc.insertString(s1.length(), "#");
-      }), "", null);
+      CommandProcessor.getInstance().executeCommand(getProject(), () -> ApplicationManager.getApplication().runWriteAction(() -> doc.insertString(s1.length(), "#")), "", null);
       List tokensAfterUpdate = getAllTokens(highlighter);
       highlighter = HighlighterFactory.createHighlighter(getProject(), CfmlFileType.INSTANCE);
       editor.setHighlighter(highlighter);

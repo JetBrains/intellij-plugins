@@ -115,6 +115,9 @@ public class DartMultiHostInjector implements MultiHostInjector {
 
   private static boolean looksLikeHtml(@NotNull final String text) {
     // similar to com.intellij.lang.javascript.JSInjectionController.willInjectHtml(), but strings like 'List<int>', '<foo> and <bar>' are not treated as HTML
+    // also, unlike JavaScript, HTML is injected in Dart only if '<' is the first non-space symbol in string
+    if (!text.trim().startsWith("<")) return false;
+
     final int tagStart = text.indexOf('<');
     final int length = text.length();
     final boolean hasTag = tagStart >= 0

@@ -118,9 +118,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     }
 
     void setFlexCompilerClasspath(final Collection<String> classpathEntries) {
-      myClasspathTextArea.setText(StringUtil.join(classpathEntries, s -> {
-        return FileUtil.toSystemDependentName(s);
-      }, "\n"));
+      myClasspathTextArea.setText(StringUtil.join(classpathEntries, s -> FileUtil.toSystemDependentName(s), "\n"));
     }
 
     void setAdlPath(final String adlPath) {

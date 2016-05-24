@@ -19,7 +19,6 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.NamedUserCommand;
@@ -68,7 +67,7 @@ public class BaseAction<T extends UserCommand> extends AnAction {
 
   @Nullable
   public static Project getProject(AnActionEvent e) {
-    return (CommonDataKeys.PROJECT.getData(e.getDataContext()));
+    return (e.getProject());
   }
 
   @Nullable
