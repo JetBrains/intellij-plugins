@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public class AngularJSTemplatesProvider implements DefaultLiveTemplatesProvider {
   @Override
   public String[] getDefaultLiveTemplateFiles() {
-    return new String[]{"liveTemplates/AngularJS"};
+    return new String[]{"liveTemplates/AngularJS", "liveTemplates/Angular2"};
   }
 
   @Nullable
