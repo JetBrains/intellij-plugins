@@ -13,5 +13,6 @@ public class AngularJSIcons {
     return IconLoader.getIcon(path, AngularJSIcons.class);
   }
 
+  public static final Icon Angular2 = load("/icons/angular2.png"); // 16x16
   public static final Icon AngularJS = load("/icons/AngularJS.png"); // 16x16
 }

@@ -58,7 +58,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
 
   @Override
   public Icon getIcon() {
-    return AngularJSIcons.AngularJS;
+    return AngularJSIcons.Angular2;
   }
 
   @Override
