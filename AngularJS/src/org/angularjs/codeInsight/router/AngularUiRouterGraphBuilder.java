@@ -8,10 +8,10 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.angularjs.codeInsight.router.Type.state;
+import static org.angularjs.codeInsight.router.Type.template;
 
 /**
  * @author Irina.Chernushina on 3/9/2016.
@@ -81,6 +81,7 @@ public class AngularUiRouterGraphBuilder {
       final DiagramObject rootDiagramObject;
       if (myRootTemplate != null) {
         myRootNode = getOrCreateTemplateNode(provider, normalizeTemplateUrl(myRootTemplate.getRelativeUrl()), myRootTemplate.getTemplate());
+        myRootNode.getIdentifyingElement().setType(Type.topLevelTemplate);
       } else {
         // todo remove from diagram if not used
         final PsiFile psiFile = PsiManager.getInstance(project).findFile(myKey);
@@ -93,6 +94,9 @@ public class AngularUiRouterGraphBuilder {
       for (Map.Entry<String, UiRouterState> entry : myStatesMap.entrySet()) {
         final UiRouterState state = entry.getValue();
         final DiagramObject stateObject = new DiagramObject(Type.state, state.getName(), state.getPointer());
+        if (state.getParentName() != null) {
+          stateObject.setParent(state.getParentName());
+        }
         if (state.getPointer() == null) {
           stateObject.addError("Can not find the state definition");
         }
@@ -102,7 +106,7 @@ public class AngularUiRouterGraphBuilder {
 
         if (templateUrl != null) {
           final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, templateUrl, null);
-          edges.add(new AngularUiRouterEdge(templateNode, node, "provides"));
+          edges.add(new AngularUiRouterEdge(templateNode, node, "provides", AngularUiRouterEdge.Type.providesTemplate));
 
           if (state.hasViews()) {
             if (state.isAbstract()) {
@@ -130,7 +134,7 @@ public class AngularUiRouterGraphBuilder {
             final String template = view.getTemplate();
             if (!StringUtil.isEmptyOrSpaces(template)) {
               final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, template, null);
-              edges.add(new AngularUiRouterEdge(templateNode, node, name + " provides "));
+              edges.add(new AngularUiRouterEdge(templateNode, node, name + " provides ", AngularUiRouterEdge.Type.providesTemplate));
             }
             node.getIdentifyingElement().addChild(viewObject, node);
           }
@@ -180,7 +184,7 @@ public class AngularUiRouterGraphBuilder {
       final Type nodeType = pair.getFirst().getIdentifyingElement().getType();
       if (Type.template.equals(nodeType) || Type.topLevelTemplate.equals(nodeType)) {
         usedTemplateUrl = pair.getFirst().getIdentifyingElement().getTooltip();
-      } else if (Type.state.equals(nodeType)) {
+      } else if (state.equals(nodeType)) {
         final String parentState = pair.getFirst().getIdentifyingElement().getName();
         final UiRouterState parentStateObject = myStatesMap.get(parentState);
         if (parentStateObject != null) {
@@ -200,8 +204,9 @@ public class AngularUiRouterGraphBuilder {
 
       usedTemplateUrl = normalizeTemplateUrl(usedTemplateUrl);
       final DiagramObject placeholder = templatePlaceHoldersNodes.get(Pair.create(usedTemplateUrl, placeholderName));
-      if (placeholder != null && placeholder.getParent() != null) {
-        final AngularUiRouterEdge edge = new AngularUiRouterEdge(placeholder.getParent(), stateNode, viewName + " fills " + placeholderName);
+      if (placeholder != null && placeholder.getContainer() != null) {
+        final AngularUiRouterEdge edge = new AngularUiRouterEdge(placeholder.getContainer(), stateNode, viewName + " fills " + placeholderName,
+                                                                 AngularUiRouterEdge.Type.fillsTemplate);
         edge.setTargetAnchor(placeholder);
         edges.add(edge);
       }
@@ -214,7 +219,7 @@ public class AngularUiRouterGraphBuilder {
         if (state != null && state.getParentName() != null) {
           final AngularUiRouterNode parentState = stateNodes.get(state.getParentName());
           if (parentState != null) {
-            edges.add(new AngularUiRouterEdge(parentState, entry.getValue(), "parent"));
+            edges.add(new AngularUiRouterEdge(parentState, entry.getValue(), "parent", AngularUiRouterEdge.Type.parent));
           }
         }
       }
@@ -230,6 +235,43 @@ public class AngularUiRouterGraphBuilder {
           entry.getValue().setParentName(parentKey);
         }
       }
+    }
+
+    public List<AngularUiRouterNode> getStateTemplates(@NotNull final AngularUiRouterNode state) {
+      final List<AngularUiRouterNode> list = new ArrayList<>();
+      if (!Type.state.equals(state.getIdentifyingElement().getType())) return Collections.emptyList();
+      for (AngularUiRouterEdge edge : edges) {
+        if (AngularUiRouterEdge.Type.providesTemplate.equals(edge.getType()) && edge.getTarget().equals(state) &&
+            template.equals(edge.getSource().getIdentifyingElement().getType())) {
+          list.add((AngularUiRouterNode)edge.getSource());
+        }
+      }
+      return list;
+    }
+
+    public List<AngularUiRouterNode> getZeroLevelStates() {
+      final List<AngularUiRouterNode> list = new ArrayList<>();
+      for (AngularUiRouterNode current : allNodes) {
+        if (state.equals(current.getIdentifyingElement().getType()) && current.getIdentifyingElement().getParent() == null) {
+          list.add(current);
+        }
+      }
+      return list;
+    }
+
+    public List<AngularUiRouterNode> getImmediateChildrenStates(@NotNull AngularUiRouterNode node) {
+      if (myRootNode.equals(node)) return getZeroLevelStates();
+
+      final String name = node.getIdentifyingElement().getName();
+      final List<AngularUiRouterNode> list = new ArrayList<>();
+      final DiagramObject diagramObject = node.getIdentifyingElement();
+      if (!state.equals(diagramObject.getType())) return Collections.emptyList();
+      for (AngularUiRouterNode current : allNodes) {
+        if (state.equals(current.getIdentifyingElement().getType()) && name.equals(current.getIdentifyingElement().getParent())) {
+          list.add(current);
+        }
+      }
+      return list;
     }
 
     public List<AngularUiRouterEdge> getEdges() {

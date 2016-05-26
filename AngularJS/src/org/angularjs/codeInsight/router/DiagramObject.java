@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Irina.Chernushina on 3/23/2016.
  */
 public class DiagramObject {
-  @NotNull private final Type myType;
+  @NotNull private Type myType;
   @NotNull private final String myName;
   @Nullable private String myTooltip;
   @Nullable private final SmartPsiElementPointer myNavigationTarget;
@@ -21,7 +21,8 @@ public class DiagramObject {
   @NotNull private final List<String> myWarnings;
   @NotNull private final List<String> myErrors;
   private final Map<String, DiagramObject> myChildren;
-  private AngularUiRouterNode myParent;
+  private AngularUiRouterNode myContainer;
+  private String myParentName;
 
   public DiagramObject(@NotNull Type type, @NotNull String name, @Nullable SmartPsiElementPointer navigationTarget) {
     myType = type;
@@ -34,15 +35,15 @@ public class DiagramObject {
 
   public void addChild(@NotNull final DiagramObject child, AngularUiRouterNode parent) {
     myChildren.put(child.getName(), child);
-    child.myParent = parent;
+    child.myContainer = parent;
   }
 
   public Map<String, DiagramObject> getChildren() {
     return myChildren;
   }
 
-  public AngularUiRouterNode getParent() {
-    return myParent;
+  public AngularUiRouterNode getContainer() {
+    return myContainer;
   }
 
   @NotNull
@@ -91,5 +92,17 @@ public class DiagramObject {
 
   public void setTooltip(@Nullable String tooltip) {
     myTooltip = tooltip;
+  }
+
+  public void setType(Type type) {
+    myType = type;
+  }
+
+  public String getParent() {
+    return myParentName;
+  }
+
+  public void setParent(String parentName) {
+    myParentName = parentName;
   }
 }

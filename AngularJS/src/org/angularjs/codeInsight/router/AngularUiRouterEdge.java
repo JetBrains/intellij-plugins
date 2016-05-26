@@ -24,11 +24,17 @@ public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
     }
   };
 
-  public AngularUiRouterEdge(DiagramNode<DiagramObject> source, DiagramNode<DiagramObject> target) {
+  private final Type myType;
+
+  public AngularUiRouterEdge(DiagramNode<DiagramObject> source, DiagramNode<DiagramObject> target, Type type) {
     super(source, target, DEPENDS);
+    myType = type;
   }
 
-  public AngularUiRouterEdge(DiagramNode<DiagramObject> source, DiagramNode<DiagramObject> target, final String label) {
+  public AngularUiRouterEdge(DiagramNode<DiagramObject> source,
+                             DiagramNode<DiagramObject> target,
+                             final String label,
+                             Type type) {
     super(source, target, new DiagramRelationshipInfoAdapter("BUILTIN", DiagramLineType.SOLID) {
       @Override
       public String getLabel() {
@@ -45,5 +51,14 @@ public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
         return STANDARD;
       }
     });
+    myType = type;
+  }
+
+  public Type getType() {
+    return myType;
+  }
+
+  public static enum Type {
+    providesTemplate, fillsTemplate, parent
   }
 }

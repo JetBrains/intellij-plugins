@@ -4,11 +4,15 @@ import com.intellij.diagram.DiagramProvider;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.components.JBList;
 import com.intellij.uml.core.actions.ShowDiagram;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
 import icons.AngularJSIcons;
 import org.angularjs.index.AngularIndexUtil;
 
@@ -22,6 +26,7 @@ import java.util.Map;
  */
 public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   public static final String USAGE_KEY = "angular.js.ui.router.show.diagram";
+  private VirtualFile myCurrentRootFile;
 
   @Override
   public void actionPerformed(AnActionEvent e) {
@@ -32,7 +37,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     // todo read action?
     final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(project);
     builder.build();
-    final List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
+    List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
     final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();
 
     for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getDefiningFiles2States().entrySet()) {
@@ -50,17 +55,45 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     final AngularUiRouterDiagramProvider diagramProvider =
       (AngularUiRouterDiagramProvider)DiagramProvider.findByID(AngularUiRouterDiagramProvider.ANGULAR_UI_ROUTER);
     if (diagramProvider == null) return;
-    diagramProvider.reset();
-    for (Pair<String, AngularUiRouterGraphBuilder> pair : graphBuilders) {
-      final AngularUiRouterGraphBuilder graphBuilder = pair.getSecond();
 
-      final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = graphBuilder.createDataModel(diagramProvider);
-      diagramProvider.registerNodesBuilder(nodesBuilder);
-      final Runnable callback = show(nodesBuilder.getRootNode().getIdentifyingElement(), diagramProvider, project, null, Collections.emptyList());
-      if (callback != null) {
-        callback.run();
+    diagramProvider.reset();
+    final Consumer<AngularUiRouterGraphBuilder> consumer = new Consumer<AngularUiRouterGraphBuilder>() {
+      @Override
+      public void consume(AngularUiRouterGraphBuilder graphBuilder) {
+        myCurrentRootFile = graphBuilder.getKey();
+        final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = graphBuilder.createDataModel(diagramProvider);
+        diagramProvider.registerNodesBuilder(nodesBuilder);
+        final Runnable callback =
+          show(nodesBuilder.getRootNode().getIdentifyingElement(), diagramProvider, project, null, Collections.emptyList());
+        if (callback != null) {
+          callback.run();
+        }
       }
+    };
+    if (graphBuilders.size() == 1) consumer.consume(graphBuilders.get(0).getSecond());
+    else filterGraphBuilders(project, graphBuilders, consumer);
+  }
+
+  private static void filterGraphBuilders(Project project, List<Pair<String, AngularUiRouterGraphBuilder>> builders,
+                                                                                     Consumer<AngularUiRouterGraphBuilder> consumer) {
+    final JBList list = new JBList();
+    final List<Object> data = new ArrayList<>();
+    for (Pair<String, AngularUiRouterGraphBuilder> builder : builders) {
+      data.add(builder.getSecond().getKey().getPath());
     }
+    list.setListData(ArrayUtil.toObjectArray(data));
+    JBPopupFactory.getInstance().createListPopupBuilder(list)
+      .setTitle("Select Main Template File")
+      .setItemChoosenCallback(new Runnable() {
+        @Override
+        public void run() {
+          final int index = list.getSelectedIndex();
+          if (index >= 0) {
+            consumer.consume(builders.get(index).getSecond());
+          }
+        }
+      })
+      .createPopup().showCenteredInCurrentWindow(project);
   }
 
   @Override
