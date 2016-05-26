@@ -1,5 +1,6 @@
 package org.angularjs.index;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSElementTypes;
@@ -15,14 +16,17 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.html.HtmlTag;
+import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
 import org.angularjs.html.Angular2HTMLLanguage;
+import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -241,6 +245,21 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         return JSQualifiedNameImpl.buildProvidedNamespace(clazz);
       }
     }
+    if (file.getLanguage().is(AngularJSLanguage.INSTANCE)) { // template file with the same name
+      final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
+      PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
+      final String name = hostFile != null ? hostFile.getVirtualFile().getNameWithoutExtension() : null;
+      final PsiDirectory dir = hostFile != null ? hostFile.getParent() : null;
+      final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
+      if (directiveFile != null) {
+        for (PsiElement element : directiveFile.getChildren()) {
+          if (element instanceof JSClass) {
+            return JSQualifiedNameImpl.buildProvidedNamespace((JSClass)element);
+          }
+        }
+      }
+    }
+
     return null;
   }
 
