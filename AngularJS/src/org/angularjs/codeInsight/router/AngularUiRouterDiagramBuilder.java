@@ -61,33 +61,37 @@ public class AngularUiRouterDiagramBuilder {
         public boolean process(JSImplicitElement element) {
           final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
           if (!element.getContainingFile().getLanguage().isKindOf(JavascriptLanguage.INSTANCE)
-            && PsiTreeUtil.getParentOfType(element, JSEmbeddedContent.class) != null) {
+              && PsiTreeUtil.getParentOfType(element, JSEmbeddedContent.class) != null) {
             createRootTemplatesForEmbedded(element.getContainingFile());
           }
 
-        JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
-        if (call == null) {
-          final PsiElement elementAt = element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
-          if (elementAt != null) {
-            call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
+          JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
+          if (call == null) {
+            final PsiElement elementAt =
+              element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
+            if (elementAt != null) {
+              call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
+            }
           }
-        }
-        if (call != null) {
-          final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
-          if (methodExpression != null && methodExpression.getQualifier() != null && "state".equals(methodExpression.getReferenceName())) {
-            final JSExpression[] arguments = call.getArguments();
-            if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
-              state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
+          if (call != null) {
+            final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
+            if (methodExpression != null &&
+                methodExpression.getQualifier() != null &&
+                "state".equals(methodExpression.getReferenceName())) {
+              final JSExpression[] arguments = call.getArguments();
+              if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
+                state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
 
-              if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
-                final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
-                fillStateParameters(state, object);
+                if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
+                  final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
+                  fillStateParameters(state, object);
+                }
               }
             }
           }
+          myStates.add(state);
+          return true;
         }
-        myStates.add(state);
-        return true;
       });
     }
     getRootPages();
