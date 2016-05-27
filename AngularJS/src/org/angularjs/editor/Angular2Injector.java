@@ -39,6 +39,7 @@ public class Angular2Injector implements MultiHostInjector {
     final PsiElement parent = context.getParent();
     if (context instanceof JSLiteralExpressionImpl && ((JSLiteralExpressionImpl)context).isQuotedLiteral()) {
       if (injectIntoDirectiveProperty(registrar, context, parent, "template", Angular2HTMLLanguage.INSTANCE)) return;
+      if (injectIntoEmbeddedLiteral(registrar, context, parent)) return;
       if (!(parent instanceof JSArrayLiteralExpression)) return;
 
       final JSProperty property = ObjectUtils.tryCast(parent.getParent(), JSProperty.class);
@@ -47,15 +48,31 @@ public class Angular2Injector implements MultiHostInjector {
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
       final int length = context.getTextLength();
       final String name = ((XmlAttribute)parent).getName();
-      if ((AngularAttributesRegistry.isEventAttribute(name, project) ||
-           AngularAttributesRegistry.isBindingAttribute(name, project) ||
-           AngularAttributesRegistry.isTemplateAttribute(name, project)) &&
-          length > 0) {
+      if (isInjectableAttribute(project, length, name)) {
         registrar.startInjecting(AngularJSLanguage.INSTANCE).
           addPlace(null, null, (PsiLanguageInjectionHost)context, ElementManipulators.getValueTextRange(context)).
           doneInjecting();
       }
     }
+  }
+
+  private boolean injectIntoEmbeddedLiteral(MultiHostRegistrar registrar, PsiElement context, PsiElement parent) {
+    if (parent instanceof JSEmbeddedContent) {
+      final XmlAttribute attribute = PsiTreeUtil.getParentOfType(parent, XmlAttribute.class);
+      if (attribute != null && isInjectableAttribute(context.getProject(), context.getTextLength(), attribute.getName())) {
+        final TextRange range = ElementManipulators.getValueTextRange(context);
+        registrar.startInjecting(AngularJSLanguage.INSTANCE).addPlace(null, null, (PsiLanguageInjectionHost)context, range).doneInjecting();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected boolean isInjectableAttribute(Project project, int valueLength, String name) {
+    return (AngularAttributesRegistry.isEventAttribute(name, project) ||
+            AngularAttributesRegistry.isBindingAttribute(name, project) ||
+            AngularAttributesRegistry.isTemplateAttribute(name, project)) &&
+        valueLength > 0;
   }
 
   protected boolean injectIntoDirectiveProperty(@NotNull MultiHostRegistrar registrar,
