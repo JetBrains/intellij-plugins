@@ -39,25 +39,28 @@ class _AngularJSLexer implements FlexLexer {
 
   /** 
    * Translates characters to character classes
+   * Chosen bits are [8, 6, 7]
+   * Total runtime size is 1296 bytes
    */
-  private static final String ZZ_CMAP_PACKED = 
-    "\11\0\1\1\1\3\1\1\1\0\1\61\22\0\1\31\1\42\1\12"+
-    "\1\0\1\10\1\37\1\45\1\11\1\47\1\50\1\35\1\34\1\56"+
-    "\1\7\1\5\1\36\12\4\1\60\1\57\1\43\1\41\1\44\1\55"+
-    "\1\0\4\62\1\6\1\62\24\10\1\53\1\2\1\54\1\40\1\10"+
-    "\1\0\1\20\1\32\1\27\1\24\1\16\1\17\2\10\1\25\1\10"+
-    "\1\30\1\21\1\10\1\23\1\26\2\10\1\14\1\22\1\13\1\15"+
-    "\3\10\1\33\1\10\1\51\1\46\1\52\42\0\1\1\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff6f\0";
+  public static int ZZ_CMAP(int ch) {
+    return ZZ_CMAP_A[(ZZ_CMAP_Y[ZZ_CMAP_Z[ch>>13]|((ch>>7)&0x3f)]<<7)|(ch&0x7f)];
+  }
 
-  /** 
-   * Translates characters to character classes
-   */
-  private static final int ZZ_SX = 0x0700;
-  private static final int ZZ_MX = 0x10000;
-  private static final int ZZ_LX = 0x110000;
-  private static char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_SX);
-  private static class M { static final char [] MAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_MX); }
-  private static class L { static final char [] MAP = zzUnpackCMap(ZZ_CMAP_PACKED, ZZ_LX); }
+  /* The ZZ_CMAP_Z table has 136 entries */
+  static final char ZZ_CMAP_Z[] = zzUnpackCMap(
+    "\1\0\207\100");
+
+  /* The ZZ_CMAP_Y table has 128 entries */
+  static final char ZZ_CMAP_Y[] = zzUnpackCMap(
+    "\1\0\1\1\176\2");
+
+  /* The ZZ_CMAP_A table has 384 entries */
+  static final char ZZ_CMAP_A[] = zzUnpackCMap(
+    "\11\0\1\1\1\3\1\1\1\0\1\61\22\0\1\31\1\42\1\12\1\0\1\10\1\37\1\45\1\11\1\47"+
+    "\1\50\1\35\1\34\1\56\1\7\1\5\1\36\12\4\1\60\1\57\1\43\1\41\1\44\1\55\1\0\4"+
+    "\62\1\6\1\62\24\10\1\53\1\2\1\54\1\40\1\10\1\0\1\20\1\32\1\27\1\24\1\16\1"+
+    "\17\2\10\1\25\1\10\1\30\1\21\1\10\1\23\1\26\2\10\1\14\1\22\1\13\1\15\3\10"+
+    "\1\33\1\10\1\51\1\46\1\52\42\0\1\1\337\0");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -332,14 +335,18 @@ class _AngularJSLexer implements FlexLexer {
    * @param packed   the packed character translation table
    * @return         the unpacked character translation table
    */
-  private static char [] zzUnpackCMap(String packed, int limit) {
-    char [] map = new char[limit];
+  private static char [] zzUnpackCMap(String packed) {
+    int size = 0;
+    for (int i = 0, length = packed.length(); i < length; i += 2) {
+      size += packed.charAt(i);
+    }
+    char[] map = new char[size];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 170 && j < limit) {
+    while (i < packed.length()) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
-      do map[j++] = value; while (--count > 0 && j < limit);
+      do map[j++] = value; while (--count > 0);
     }
     return map;
   }
@@ -482,7 +489,6 @@ class _AngularJSLexer implements FlexLexer {
     int zzMarkedPosL;
     int zzEndReadL = zzEndRead;
     CharSequence zzBufferL = zzBuffer;
-    char [] zzCMapL = ZZ_CMAP;
 
     int [] zzTransL = ZZ_TRANS;
     int [] zzRowMapL = ZZ_ROWMAP;
@@ -534,8 +540,7 @@ class _AngularJSLexer implements FlexLexer {
               zzCurrentPosL += Character.charCount(zzInput);
             }
           }
-          if (zzInput >= zzCMapL.length) ZZ_CMAP = zzCMapL = zzInput >= ZZ_MX ? L.MAP : M.MAP;
-          int zzNext = zzTransL[ zzRowMapL[zzState] + zzCMapL[zzInput] ];
+          int zzNext = zzTransL[ zzRowMapL[zzState] + ZZ_CMAP(zzInput) ];
           if (zzNext == -1) break zzForAction;
           zzState = zzNext;
 
