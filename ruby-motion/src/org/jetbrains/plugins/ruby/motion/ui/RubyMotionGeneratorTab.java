@@ -15,7 +15,6 @@ import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.RBundle;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl;
 import org.jetbrains.plugins.ruby.rails.facet.ui.wizard.ui.TabbedSettingsEditorTab;
@@ -72,7 +71,7 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   @Override
   public JComponent createComponent() {
     myRubyLabel.setDisplayedMnemonic('S');
-    myRubyInterpreterComboBox.setRenderer(new RubySdkRenderer(myRubyInterpreterComboBox.getRenderer(), true, true));
+    myRubyInterpreterComboBox.setRenderer(new RubySdkRenderer(true, true));
     refreshSdkList();
     if (mySettingsHolder.getSdk() != null) {
       myRubyInterpreterComboBox.setSelectedItem(mySettingsHolder.getSdk());
