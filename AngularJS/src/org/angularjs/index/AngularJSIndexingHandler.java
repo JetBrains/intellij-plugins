@@ -359,6 +359,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static void generateNamespace(@NotNull JSLiteralExpression argument,
                                         @NotNull JSElementIndexingData outData) {
     final String namespace = unquote(argument);
+    if (namespace == null) return;
     JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(namespace);
     JSImplicitElementImpl.Builder elementBuilder =
       new JSImplicitElementImpl.Builder(qName, argument)
@@ -376,9 +377,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static void addImplicitElements(@NotNull final JSImplicitElementProvider elementProvider,
                                           @Nullable final String command,
                                           @NotNull final StubIndexKey<String, JSImplicitElementProvider> index,
-                                          @NotNull String defaultName,
+                                          @Nullable String defaultName,
                                           @Nullable final String value,
                                           @NotNull final JSElementIndexingData outData) {
+    if (defaultName == null) return;
     final List<String> keys = INDEXES.getKeysByValue(index);
     assert keys != null && keys.size() == 1;
     final Consumer<JSImplicitElementImpl.Builder> adder = builder -> {
@@ -426,7 +428,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           final JSExpression value = node.getValue();
           if ("restrict".equals(name)) {
             if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
-              restrict.set(unquote(value));
+              final String unquoted = unquote(value);
+              if (unquoted != null) restrict.set(unquoted);
             }
           } else if ("scope".equals(name)) {
             if (value instanceof JSObjectLiteralExpression) {
@@ -579,7 +582,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
           if (!value.isQuotedLiteral()) return false;
           final String unquotedValue = unquote(value);
-          final int idx = unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES);
+          final int idx = unquotedValue != null ? unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES) : 0;
           if (idx > 0 && (idx + AS_CONNECTOR_WITH_SPACES.length()) < (unquotedValue.length() - 1)) {
             return recordControllerAs(property, outData, value, unquotedValue.substring(idx + AS_CONNECTOR_WITH_SPACES.length(), unquotedValue.length()));
           }
@@ -607,6 +610,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     };
   }
 
+  @Nullable
   static String unquote(PsiElement value) {
     return (String)((JSLiteralExpression)value).getValue();
   }
