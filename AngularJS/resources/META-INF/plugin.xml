@@ -74,6 +74,7 @@
     <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher" />
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
+    <directoryProjectGenerator implementation="org.angularjs.cli.AngularCLIProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
 
     <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"

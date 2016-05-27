@@ -56,32 +56,42 @@ public class AngularUiRouterDiagramBuilder {
 
     for (String id : stateIds) {
       if (id.startsWith(".")) continue;
-      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, element -> {
-        final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
-
-        JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
-        if (call == null) {
-          final PsiElement elementAt = element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
-          if (elementAt != null) {
-            call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
+      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, new Processor<JSImplicitElement>() {
+        @Override
+        public boolean process(JSImplicitElement element) {
+          final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
+          if (!element.getContainingFile().getLanguage().isKindOf(JavascriptLanguage.INSTANCE)
+              && PsiTreeUtil.getParentOfType(element, JSEmbeddedContent.class) != null) {
+            createRootTemplatesForEmbedded(element.getContainingFile());
           }
-        }
-        if (call != null) {
-          final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
-          if (methodExpression != null && methodExpression.getQualifier() != null && "state".equals(methodExpression.getReferenceName())) {
-            final JSExpression[] arguments = call.getArguments();
-            if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
-              state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
 
-              if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
-                final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
-                fillStateParameters(state, object);
+          JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
+          if (call == null) {
+            final PsiElement elementAt =
+              element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
+            if (elementAt != null) {
+              call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
+            }
+          }
+          if (call != null) {
+            final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
+            if (methodExpression != null &&
+                methodExpression.getQualifier() != null &&
+                "state".equals(methodExpression.getReferenceName())) {
+              final JSExpression[] arguments = call.getArguments();
+              if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
+                state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
+
+                if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
+                  final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
+                  fillStateParameters(state, object);
+                }
               }
             }
           }
+          myStates.add(state);
+          return true;
         }
-        myStates.add(state);
-        return true;
       });
     }
     getRootPages();
@@ -96,7 +106,8 @@ public class AngularUiRouterDiagramBuilder {
     for (Map.Entry<VirtualFile, RootTemplate> entry : myRootTemplates.entrySet()) {
       final Set<VirtualFile> modulesFiles = entry.getValue().getModulesFiles();
       for (UiRouterState state : myStates) {
-        if (modulesFiles.contains(state.getFile())) {
+        final PsiElement element = entry.getValue().getPointer().getElement();
+        if (modulesFiles.contains(state.getFile()) || element != null && element.getContainingFile().getVirtualFile().equals(state.getFile())) {
           putState2map(entry.getKey(), state, myRootTemplates2States);
           statesUsedInRoots.add(state);
         }
@@ -164,6 +175,13 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
+  private void createRootTemplatesForEmbedded(@NotNull PsiFile containingFile) {
+    final Template template = readTemplateFromFile(myProject, "/", containingFile);
+    final RootTemplate rootTemplate = new RootTemplate(mySmartPointerManager.createSmartPsiElementPointer(containingFile),
+                                                       "/", template, Collections.singleton(containingFile.getVirtualFile()));
+    myRootTemplates.put(containingFile.getVirtualFile(), rootTemplate);
+  }
+
   private static class NonCyclicQueue<T> {
     private final Set<T> processed = new HashSet<>();
     private final ArrayDeque<T> toProcess = new ArrayDeque<>();
@@ -229,7 +247,7 @@ public class AngularUiRouterDiagramBuilder {
     Set<VirtualFile> processed = filesQueue.getProcessed();
     // todo more effective filtering for being in the project, not libs. but?
     final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(myProject);
-    processed = new HashSet<>(ContainerUtil.filter(processed, new Condition<VirtualFile>() {
+    processed = new HashSet<VirtualFile>(ContainerUtil.filter(processed, new Condition<VirtualFile>() {
       @Override
       public boolean value(VirtualFile file) {
         return file.getFileType() instanceof LanguageFileType && ((LanguageFileType)file.getFileType()).getLanguage().isKindOf(

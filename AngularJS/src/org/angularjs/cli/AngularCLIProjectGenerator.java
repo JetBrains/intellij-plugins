@@ -16,11 +16,19 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
+import com.intellij.javascript.nodejs.CompletionModuleInfo;
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
+import com.intellij.javascript.nodejs.NodeSettings;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
+import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.lang.javascript.buildTools.npm.NpmScriptsService;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -29,18 +37,21 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.ProjectTemplate;
 import com.intellij.ui.content.Content;
+import com.intellij.util.containers.ContainerUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> implements ProjectTemplate {
+public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpreter> implements ProjectTemplate {
   private static final String ID = "none";
   private static final Logger LOG = Logger.getInstance(AngularCLIProjectGenerator.class);
 
@@ -58,18 +69,26 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
 
   @Override
   public Icon getIcon() {
-    return AngularJSIcons.AngularJS;
+    return AngularJSIcons.Angular2;
   }
 
   @Override
   public void generateProject(@NotNull Project project,
                               @NotNull VirtualFile baseDir,
-                              @NotNull Object settings,
+                              @NotNull NodeJsInterpreter interpreter,
                               @NotNull Module module) {
-    final String ng = "/usr/local/bin/ng";
+    final NodeJsLocalInterpreter local = NodeJsLocalInterpreter.tryCast(interpreter);
+    assert local != null;
+    List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
+    NodeModuleSearchUtil.findModulesWithName(modules,
+                                             "angular-cli",
+                                             null,
+                                             NodeSettings.create(local),
+                                             true);
+
     StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
       try {
-        generateApp(ng, baseDir, project);
+        generateApp(local, ContainerUtil.getFirstItem(modules), baseDir, project);
         final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
         final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
         if (entry != null) {
@@ -90,9 +109,13 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
     });
   }
 
-  protected void generateApp(String ng, @NotNull final VirtualFile baseDir, @NotNull Project project)
+  protected void generateApp(@NotNull NodeJsLocalInterpreter node, CompletionModuleInfo module,
+                             @NotNull final VirtualFile baseDir, @NotNull Project project)
     throws IOException, ExecutionException {
-    final GeneralCommandLine commandLine = new GeneralCommandLine(ng, "init", "--name=" + baseDir.getName());
+    final String moduleExe = module.getVirtualFile().getPath() + File.separator + "bin" + File.separator + "ng";
+    final GeneralCommandLine commandLine = new GeneralCommandLine(node.getInterpreterSystemDependentPath(),
+                                                                  moduleExe,
+                                                                  "init", "--name=" + baseDir.getName());
     commandLine.setWorkDirectory(baseDir.getPath());
     final KillableColoredProcessHandler handler = new KillableColoredProcessHandler(commandLine);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project);
@@ -111,6 +134,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
         for (VirtualFile file : instance.detectAllBuildfiles(project)) {
           instance.getFileManager(project).addBuildfile(file);
         }
+        NodeJsInterpreterManager.getInstance(project).setDefault(node);
         ApplicationManager.getApplication().invokeLater(() -> instance.getToolWindowManager(project).setAvailable());
       }
     });
@@ -131,12 +155,23 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
 
   @NotNull
   @Override
-  public GeneratorPeer<Object> createPeer() {
-    return new GeneratorPeer<Object>() {
+  public GeneratorPeer<NodeJsInterpreter> createPeer() {
+    return new GeneratorPeer<NodeJsInterpreter>() {
+
+      private NodeJsInterpreterField myInterpreter;
+
       @NotNull
       @Override
       public JComponent getComponent() {
-        return new JPanel();
+        final Project project = ProjectManager.getInstance().getDefaultProject();
+        myInterpreter = new NodeJsInterpreterField(project, false) {
+          @Override
+          public boolean isDefaultProjectInterpreterField() {
+            return true;
+          }
+        };
+        myInterpreter.setInterpreter(NodeJsInterpreterManager.getInstance(project).getDefault());
+        return myInterpreter;
       }
 
       @Override
@@ -146,13 +181,28 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
 
       @NotNull
       @Override
-      public Object getSettings() {
-        return new Object();
+      public NodeJsInterpreter getSettings() {
+        return myInterpreter.getInterpreter();
       }
 
       @Nullable
       @Override
       public ValidationInfo validate() {
+        final NodeJsInterpreter interpreter = myInterpreter.getInterpreter();
+        final String error = NodeJsLocalInterpreter.getErrorMessage(interpreter);
+        if (error != null) {
+          return new ValidationInfo(error);
+        }
+        final NodeJsLocalInterpreter local = NodeJsLocalInterpreter.tryCast(interpreter);
+        List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
+        NodeModuleSearchUtil.findModulesWithName(modules,
+                                                 "angular-cli",
+                                                 null,
+                                                 NodeSettings.create(local),
+                                                 true);
+        if (ContainerUtil.getFirstItem(modules) == null) {
+          return new ValidationInfo("AngularCLI package not found in the selected interpreter");
+        }
         return null;
       }
 
@@ -163,6 +213,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Object> imple
 
       @Override
       public void addSettingsStateListener(@NotNull SettingsStateListener listener) {
+        myInterpreter.addChangeListener((newInterpreter) -> listener.stateChanged(validate() == null));
       }
     };
   }

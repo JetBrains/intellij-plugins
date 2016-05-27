@@ -21,6 +21,7 @@ import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.Collections;
 import java.util.HashMap;
@@ -102,6 +103,11 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       @Override
       public String getNodeTooltip(DiagramObject element) {
         return element.getTooltip();
+      }
+
+      @Override
+      public Icon getItemIcon(Object element, DiagramState presentation) {
+        return null; //do not show icons
       }
     };
     myColorManager = new DiagramColorManagerBase() {
@@ -231,6 +237,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         layouter.setNodeEdgeOverlapAvoided(true);
         layouter.setParallelEdgeLayouterEnabled(true);
         return layouter;
+        //uncomment when ready
+        //return new AngularJSDiagramLayouter(project, graph, layouter, myData);
       }
     };
   }
