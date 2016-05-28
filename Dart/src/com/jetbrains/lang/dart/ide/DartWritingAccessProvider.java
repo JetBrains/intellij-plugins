@@ -1,22 +1,18 @@
 package com.jetbrains.lang.dart.ide;
 
+import com.intellij.openapi.fileEditor.impl.NonProjectFileWritingAccessExtension;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.WritingAccessProvider;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-public class DartWritingAccessProvider extends WritingAccessProvider {
+public class DartWritingAccessProvider implements NonProjectFileWritingAccessExtension {
 
   private final Project myProject;
 
@@ -24,16 +20,9 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
     myProject = project;
   }
 
-  @NotNull
   @Override
-  public Collection<VirtualFile> requestWriting(VirtualFile... files) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public boolean isPotentiallyWritable(@NotNull VirtualFile file) {
-    if (DartFileType.INSTANCE != file.getFileType()) return true;
-    return !isInDartSdkOrDartPackagesFolder(myProject, file);
+  public boolean isNotWritable(@NotNull VirtualFile file) {
+    return isInDartSdkOrDartPackagesFolder(myProject, file);
   }
 
   public static boolean isInDartSdkOrDartPackagesFolder(final @NotNull PsiFile psiFile) {
