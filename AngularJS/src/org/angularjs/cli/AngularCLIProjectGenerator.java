@@ -33,6 +33,7 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.ProjectTemplate;
@@ -44,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -171,7 +173,9 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
           }
         };
         myInterpreter.setInterpreter(NodeJsInterpreterManager.getInstance(project).getDefault());
-        return myInterpreter;
+        final LabeledComponent<NodeJsInterpreterField> component = LabeledComponent.create(myInterpreter, "Node &interpreter:");
+        component.setLabelLocation(BorderLayout.WEST);
+        return component;
       }
 
       @Override
