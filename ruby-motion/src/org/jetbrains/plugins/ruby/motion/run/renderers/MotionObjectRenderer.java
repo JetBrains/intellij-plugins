@@ -4,7 +4,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XFullValueEvaluator;
-import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
+import com.jetbrains.cidr.execution.debugger.backend.DebuggerCommandException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValue;
 import com.jetbrains.cidr.execution.debugger.backend.LLValueData;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrPhysicalValue;
@@ -31,7 +31,7 @@ public class MotionObjectRenderer extends ValueRenderer {
   @NotNull
   @Override
   protected Pair<String, XFullValueEvaluator> doComputeValueAndEvaluator(@NotNull EvaluationContext context) throws ExecutionException,
-                                                                                                                    DBUserException {
+                                                                                                                    DebuggerCommandException {
     LLValue value =
       context.evaluate("(char *)[[(id)rb_inspect(" + myValue.getVarData(context).getPointer() + ") description] UTF8String]");
     LLValueData data = context.getData(value);
@@ -45,21 +45,21 @@ public class MotionObjectRenderer extends ValueRenderer {
 
   @Override
   @Nullable
-  protected Integer doComputeChildrenCount(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
+  protected Integer doComputeChildrenCount(@NotNull EvaluationContext context) throws ExecutionException, DebuggerCommandException {
     return count(context, getInstanceVariablesNames(context));
   }
 
-  private static int count(EvaluationContext context, LLValue instanceVariablesNames) throws ExecutionException, DBUserException {
+  private static int count(EvaluationContext context, LLValue instanceVariablesNames) throws ExecutionException, DebuggerCommandException {
     return (int)context.evaluateData(context.castIDToNumber("[" + getSelf(instanceVariablesNames, context) + " count]", "unsigned int")).intValue();
   }
 
-  private LLValue getInstanceVariablesNames(EvaluationContext context) throws ExecutionException, DBUserException {
+  private LLValue getInstanceVariablesNames(EvaluationContext context) throws ExecutionException, DebuggerCommandException {
     return context.evaluate(EvaluationContext.cast("rb_obj_instance_variables(" + getSelf(context) + ")", "id"));
   }
 
   @Override
   protected void doComputeChildren(@NotNull EvaluationContext context,
-                                   @NotNull XCompositeNode container) throws ExecutionException, DBUserException {
+                                   @NotNull XCompositeNode container) throws ExecutionException, DebuggerCommandException {
 
     final Collection<CidrValue> children = new ArrayList<CidrValue>();
     final LLValue names = getInstanceVariablesNames(context);
@@ -81,16 +81,16 @@ public class MotionObjectRenderer extends ValueRenderer {
   }
 
   private String getChildEvaluationExpression(@NotNull EvaluationContext context, String ivarName)
-    throws ExecutionException, DBUserException {
+    throws ExecutionException, DebuggerCommandException {
     final String ivarNameExpr = EvaluationContext.cast("rb_intern(\"" + ivarName + "\")", "char *");
     return EvaluationContext.cast("rb_ivar_get(" + getSelf(context) + ", " + ivarNameExpr + ")", "id");
   }
 
-  private String getSelf(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
+  private String getSelf(@NotNull EvaluationContext context) throws ExecutionException, DebuggerCommandException {
     return EvaluationContext.cast(myValue.getVarData(context).getPointer(), "id");
   }
 
-  private static String getSelf(LLValue value, @NotNull EvaluationContext context) throws DBUserException, ExecutionException {
+  private static String getSelf(LLValue value, @NotNull EvaluationContext context) throws DebuggerCommandException, ExecutionException {
     return EvaluationContext.cast(context.getData(value).getPointer(), "id");
   }
 }

@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.ruby.motion.run.renderers;
 
 import com.intellij.execution.ExecutionException;
-import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
+import com.jetbrains.cidr.execution.debugger.backend.DebuggerCommandException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValueData;
 import com.jetbrains.cidr.execution.debugger.evaluation.EvaluationContext;
 import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory;
@@ -17,7 +17,7 @@ public class MotionValueRendererFactory implements ValueRendererFactory {
   @Nullable
   @Override
   public ValueRenderer createRenderer(@NotNull FactoryContext context) throws ExecutionException,
-                                                                              DBUserException {
+                                                                              DebuggerCommandException {
     try {
       LLValueData data = context.getLLValueData();
       if (data.isValidPointer()) {
@@ -27,7 +27,7 @@ public class MotionValueRendererFactory implements ValueRendererFactory {
         final ValueRenderer collectionRenderer = new NSCollectionValueRenderer.Factory().createRenderer(context);
         return collectionRenderer != null ? collectionRenderer : new MotionObjectRenderer(context.getPhysicalValue());
       }
-    } catch (DBUserException ignored) {}
+    } catch (DebuggerCommandException ignored) {}
     return null;
   }
 }
