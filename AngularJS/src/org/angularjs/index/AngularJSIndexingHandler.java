@@ -24,6 +24,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.stubs.IndexSink;
@@ -78,7 +79,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     Collections.addAll(INJECTABLE_METHODS, CONTROLLER, DIRECTIVE, COMPONENT, MODULE, "config", "run");
 
     INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.KEY);
-    NAME_CONVERTERS.put(DIRECTIVE, s -> DirectiveUtil.getAttributeName(s));
+    NAME_CONVERTERS.put(DIRECTIVE, DirectiveUtil::getAttributeName);
     DATA_CALCULATORS.put(DIRECTIVE, element -> calculateRestrictions(element, DEFAULT_RESTRICTIONS));
 
     INDEXERS.put(COMPONENT, AngularDirectivesIndex.KEY);
@@ -129,7 +130,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       return result;
     });
     // do NOT split module names by dot
-    POLY_NAME_CONVERTERS.put(MODULE, s -> Collections.singletonList(s));
+    POLY_NAME_CONVERTERS.put(MODULE, Collections::singletonList);
     ARGUMENT_LIST_CHECKERS.put(MODULE, list -> list.getArguments().length > 1);
   }
 
@@ -181,7 +182,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           }
         } else if (INJECTABLE_METHODS.contains(command)) { // INTERESTING_METHODS are contained in INJECTABLE_METHODS
           if (argument.isQuotedLiteral()) {
-            generateNamespace(argument, command, outIndexingData);
+            generateNamespace(argument, outIndexingData);
           }
         }
 
@@ -224,7 +225,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     }
     final String command = ((JSReferenceExpression)methodExpression).getReferenceName();
     final PairProcessor<JSProperty, JSElementIndexingData> customProcessor = CUSTOM_PROPERTY_PROCESSORS.get(command);
-    JSElementIndexingData localOutData = null;
+    JSElementIndexingData localOutData;
     if (customProcessor != null && customProcessor.process(property,
                                                            (localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData)))) {
       return localOutData;
@@ -243,7 +244,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
-  private Pair<JSCallExpression, Integer> findImmediatelyWrappingCall(@NotNull JSProperty property) {
+  private static Pair<JSCallExpression, Integer> findImmediatelyWrappingCall(@NotNull JSProperty property) {
     PsiElement current = property.getParent();
     int level = 0;
     while (current != null && current instanceof JSElement) {
@@ -356,9 +357,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
 
   private static void generateNamespace(@NotNull JSLiteralExpression argument,
-                                        @NotNull String calledMethodName,
                                         @NotNull JSElementIndexingData outData) {
     final String namespace = unquote(argument);
+    if (namespace == null) return;
     JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(namespace);
     JSImplicitElementImpl.Builder elementBuilder =
       new JSImplicitElementImpl.Builder(qName, argument)
@@ -376,9 +377,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static void addImplicitElements(@NotNull final JSImplicitElementProvider elementProvider,
                                           @Nullable final String command,
                                           @NotNull final StubIndexKey<String, JSImplicitElementProvider> index,
-                                          @NotNull String defaultName,
+                                          @Nullable String defaultName,
                                           @Nullable final String value,
                                           @NotNull final JSElementIndexingData outData) {
+    if (defaultName == null) return;
     final List<String> keys = INDEXES.getKeysByValue(index);
     assert keys != null && keys.size() == 1;
     final Consumer<JSImplicitElementImpl.Builder> adder = builder -> {
@@ -426,11 +428,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           final JSExpression value = node.getValue();
           if ("restrict".equals(name)) {
             if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
-              restrict.set(unquote(value));
+              final String unquoted = unquote(value);
+              if (unquoted != null) restrict.set(unquoted);
             }
           } else if ("scope".equals(name)) {
             if (value instanceof JSObjectLiteralExpression) {
-              scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), property -> property.getName(), ","));
+              scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), PsiNamedElement::getName, ","));
             }
           }
         }
@@ -579,7 +582,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
           if (!value.isQuotedLiteral()) return false;
           final String unquotedValue = unquote(value);
-          final int idx = unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES);
+          final int idx = unquotedValue != null ? unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES) : 0;
           if (idx > 0 && (idx + AS_CONNECTOR_WITH_SPACES.length()) < (unquotedValue.length() - 1)) {
             return recordControllerAs(property, outData, value, unquotedValue.substring(idx + AS_CONNECTOR_WITH_SPACES.length(), unquotedValue.length()));
           }
@@ -607,6 +610,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     };
   }
 
+  @Nullable
   static String unquote(PsiElement value) {
     return (String)((JSLiteralExpression)value).getValue();
   }

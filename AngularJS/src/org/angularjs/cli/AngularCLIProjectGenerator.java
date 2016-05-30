@@ -214,6 +214,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
       @Override
       public void addSettingsStateListener(@NotNull SettingsStateListener listener) {
         myInterpreter.addChangeListener((newInterpreter) -> listener.stateChanged(validate() == null));
+        listener.stateChanged(validate() == null);
       }
     };
   }
