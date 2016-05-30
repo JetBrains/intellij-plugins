@@ -1,6 +1,8 @@
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.*;
+import com.intellij.diagram.components.DiagramNodeBodyComponent;
+import com.intellij.diagram.components.DiagramNodeContainer;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.openapi.actionSystem.*;
@@ -38,6 +40,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   private DiagramColorManagerBase myColorManager;
 
   private final Map<VirtualFile, AngularUiRouterGraphBuilder.GraphNodesBuilder> myData;
+  private Map<AngularUiRouterNode, DiagramNodeBodyComponent> myNodeBodiesMap = new HashMap<>();
 
   public AngularUiRouterDiagramProvider() {
     myData = new HashMap<>();
@@ -70,7 +73,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     myElementManager = new AbstractDiagramElementManager<DiagramObject>() {
       @Override
       public Object[] getNodeItems(DiagramObject parent) {
-        return ArrayUtil.toObjectArray(parent.getChildren().values());
+        return ArrayUtil.toObjectArray(parent.getChildrenList());
       }
 
       @Nullable
@@ -238,7 +241,15 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         layouter.setParallelEdgeLayouterEnabled(true);
         return layouter;
         //uncomment when ready
-        //return new AngularJSDiagramLayouter(project, graph, layouter, myData);
+        //return new AngularJSDiagramLayouter(project, graph, layouter, myData, myNodeBodiesMap);
+      }
+
+      @NotNull
+      @Override
+      public JComponent createNodeComponent(DiagramNode<DiagramObject> node, DiagramBuilder builder, Point basePoint, JPanel wrapper) {
+        final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, basePoint);
+        myNodeBodiesMap.put((AngularUiRouterNode)node, container.getNodeBodyComponent());
+        return container;
       }
     };
   }

@@ -1,12 +1,18 @@
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.DiagramDataKeys;
+import com.intellij.diagram.components.DiagramNodeBodyComponent;
+import com.intellij.openapi.graph.GraphManager;
+import com.intellij.openapi.graph.base.Edge;
 import com.intellij.openapi.graph.base.Node;
 import com.intellij.openapi.graph.layout.LayoutGraph;
 import com.intellij.openapi.graph.layout.Layouter;
 import com.intellij.openapi.graph.view.Graph2D;
+import com.intellij.openapi.graph.view.LineType;
+import com.intellij.openapi.graph.view.QuadCurveEdgeRealizer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.Gray;
 import com.intellij.uml.UmlGraphBuilder;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -23,15 +29,18 @@ public class AngularJSDiagramLayouter implements Layouter {
   @NotNull private final Graph2D myGraph;
   @NotNull private final Layouter myDefaultLayouter;
   @NotNull private final Map<VirtualFile, AngularUiRouterGraphBuilder.GraphNodesBuilder> myData;
+  @NotNull private final Map<AngularUiRouterNode, DiagramNodeBodyComponent> myNodeBodiesMap;
 
   public AngularJSDiagramLayouter(@NotNull Project project,
                                   @NotNull Graph2D graph,
                                   @NotNull Layouter layouter,
-                                  @NotNull final Map<VirtualFile, AngularUiRouterGraphBuilder.GraphNodesBuilder> data) {
+                                  @NotNull final Map<VirtualFile, AngularUiRouterGraphBuilder.GraphNodesBuilder> data,
+                                  @NotNull Map<AngularUiRouterNode, DiagramNodeBodyComponent> nodeBodiesMap) {
     myProject = project;
     myGraph = graph;
     myDefaultLayouter = layouter;
     myData = data;
+    myNodeBodiesMap = nodeBodiesMap;
   }
 
   @Override
@@ -58,12 +67,6 @@ public class AngularJSDiagramLayouter implements Layouter {
       nodesMap.put(object, node);
       maxWidth = Math.max(maxWidth, myGraph.getWidth(node));
     }
-    /*final Edge[] edgeArray = myGraph.getEdgeArray();
-    final EdgeRealizer realizer = myGraph.getDefaultEdgeRealizer();
-    for (Edge edge : edgeArray) {
-      myGraph.setRealizer(edge, GraphManager.getGraphManager().createQuadCurveEdgeRealizer());
-    }*/
-    //myGraph.getNodeLayout()
 
     final AngularUiRouterGraphBuilder.GraphNodesBuilder dataObject = findDataObject(model);
     if (dataObject == null) return false;
@@ -74,8 +77,6 @@ public class AngularJSDiagramLayouter implements Layouter {
     final List<Ring> ringsList = fillRings(dataObject, rootNode);
 
     final Rectangle box = myGraph.getBoundingBox();
-    final double centerX = box.getWidth() / 2;
-    final double centerY = box.getHeight() / 2;
 
     final int inset = JBUI.scale(5);
 
@@ -107,7 +108,93 @@ public class AngularJSDiagramLayouter implements Layouter {
       if (hadTemplateLevel) curX += maxWidth + inset * 2;
     }
 
+    layoutEdges(umlGraphBuilder, box);
+
     return true;
+  }
+
+  private void layoutEdges(UmlGraphBuilder umlGraphBuilder, Rectangle initialBox) {
+    final Edge[] edgeArray = myGraph.getEdgeArray();
+    for (Edge edge : edgeArray) {
+      final DiagramNodeBodyComponent sourceComponent = myNodeBodiesMap.get(umlGraphBuilder.getNodeObject(edge.source()));
+      final DiagramNodeBodyComponent targetComponent = myNodeBodiesMap.get(umlGraphBuilder.getNodeObject(edge.target()));
+      if (sourceComponent == null || targetComponent == null) continue;
+      final AngularUiRouterEdge edgeObject = (AngularUiRouterEdge)umlGraphBuilder.getEdgeObject(edge);
+      if (edgeObject == null) continue;
+
+      final double sourceXcenter = myGraph.getCenterX(edge.source());
+      final double targetXcenter = myGraph.getCenterX(edge.target());
+      boolean sourceOnTheLeft = sourceXcenter < targetXcenter;
+      double sourceX;
+      double targetX;
+      double sourceY;
+      double targetY;
+
+      final QuadCurveEdgeRealizer realizer = GraphManager.getGraphManager().createQuadCurveEdgeRealizer();
+      realizer.setLineColor(Gray._70);
+      //top
+      sourceY = myGraph.getCenterY(edge.source()) - myGraph.getHeight(edge.source())/2;
+      targetY = myGraph.getCenterY(edge.target()) - myGraph.getHeight(edge.target())/2;
+      if (AngularUiRouterEdge.Type.parent.equals(edgeObject.getType())) {
+        sourceX = sourceXcenter;
+        targetX = targetXcenter;
+        //realizer.setLineColor(new Color(255, 224, 69));
+        realizer.setLineType(LineType.DOTTED_1);
+      } else {
+        //if (AngularUiRouterEdge.Type.providesTemplate.equals(edgeObject.getType())) realizer.setLineColor(new Color(113, 136, 255));
+        if (AngularUiRouterEdge.Type.fillsTemplate.equals(edgeObject.getType())) {
+          //realizer.setLineColor(new Color(110, 255, 192));
+          realizer.setLineType(LineType.DASHED_1);
+        }
+
+        final double sourceWidth = myGraph.getWidth(edge.source());
+        final double targetWidth = myGraph.getWidth(edge.target());
+        sourceX = sourceOnTheLeft ? (sourceXcenter + sourceWidth / 2) : (sourceXcenter - sourceWidth / 2);
+        targetX = sourceOnTheLeft ? (targetXcenter - targetWidth / 2) : (targetXcenter + targetWidth / 2);
+
+        final AngularUiRouterNode source = (AngularUiRouterNode)edgeObject.getSource();
+        int idxSource = getOffsetInElements(source, edgeObject.getSourceName());
+        final AngularUiRouterNode target = (AngularUiRouterNode)edgeObject.getTarget();
+        int idxTarget = getOffsetInElements(target, edgeObject.getTargetName());
+
+        final double sourceHeight = myGraph.getHeight(edge.source());
+        final double targetHeight = myGraph.getHeight(edge.target());
+
+        final int sourceSize = source.getIdentifyingElement().getChildrenList().size();
+        final double step = sourceHeight / (sourceSize + 1);
+        sourceY += sourceSize == 0 || idxSource < 0 ? (step * 0.5) : (idxSource * step + step * 1.5);
+
+        final int targetSize = target.getIdentifyingElement().getChildrenList().size();
+        final double targetStep = targetHeight / (targetSize + 1);
+        targetY += targetSize == 0 || idxTarget < 0 ? (targetStep * 0.5) : (idxTarget * targetStep + targetStep * 1.5);
+      }
+
+      /*final Rectangle currentBox = myGraph.getBoundingBox();
+      int deltaX = currentBox.getX()*/
+      //realizer.getSourcePort().setOffsets(sourceX, sourceY);
+      //realizer.getTargetPort().setOffsets(targetX, targetY);
+      //realizer.setSourcePoint(GraphManager.getGraphManager().createYPoint(sourceX, sourceY));
+      //realizer.setTargetPoint(GraphManager.getGraphManager().createYPoint(targetX, targetY));
+
+      myGraph.setRealizer(edge, realizer);
+      final GraphManager gm = GraphManager.getGraphManager();
+      myGraph.setEndPointsAbs(edge, gm.createYPoint(sourceX, sourceY), gm.createYPoint(targetX, targetY));
+    }
+  }
+
+  private static int getOffsetInElements(final AngularUiRouterNode node, final String name) {
+    final List<DiagramObject> list = node.getIdentifyingElement().getChildrenList();
+    int idx = -1;
+    if (name != null && list != null) {
+      for (int i = 0; i < list.size(); i++) {
+        DiagramObject object = list.get(i);
+        if (object.getName().equals(name)) {
+          idx = i;
+          break;
+        }
+      }
+    }
+    return idx;
   }
 
   private double layoutNode(double maxWidth, Map<AngularUiRouterNode, Node> nodesMap, double curX, double curY, AngularUiRouterNode node) {

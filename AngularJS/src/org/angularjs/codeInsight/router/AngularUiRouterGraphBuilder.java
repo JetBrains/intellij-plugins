@@ -134,7 +134,7 @@ public class AngularUiRouterGraphBuilder {
             final String template = view.getTemplate();
             if (!StringUtil.isEmptyOrSpaces(template)) {
               final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, template, null);
-              edges.add(new AngularUiRouterEdge(templateNode, node, name + " provides ", AngularUiRouterEdge.Type.providesTemplate));
+              edges.add(new AngularUiRouterEdge(templateNode, node, name + " provides ", AngularUiRouterEdge.Type.providesTemplate).setTargetName(name));
             }
             node.getIdentifyingElement().addChild(viewObject, node);
           }
@@ -206,7 +206,8 @@ public class AngularUiRouterGraphBuilder {
       final DiagramObject placeholder = templatePlaceHoldersNodes.get(Pair.create(usedTemplateUrl, placeholderName));
       if (placeholder != null && placeholder.getContainer() != null) {
         final AngularUiRouterEdge edge = new AngularUiRouterEdge(placeholder.getContainer(), stateNode, viewName + " fills " + placeholderName,
-                                                                 AngularUiRouterEdge.Type.fillsTemplate);
+                                                                 AngularUiRouterEdge.Type.fillsTemplate).setSourceName(placeholderName)
+          .setTargetName(viewName);
         edge.setTargetAnchor(placeholder);
         edges.add(edge);
       }
