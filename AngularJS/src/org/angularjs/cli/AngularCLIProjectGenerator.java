@@ -59,7 +59,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
   @NotNull
   @Override
   public String getName() {
-    return "AngularCLI";
+    return "Angular CLI";
   }
 
   @Override
