@@ -201,7 +201,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
                                                  NodeSettings.create(local),
                                                  true);
         if (ContainerUtil.getFirstItem(modules) == null) {
-          return new ValidationInfo("AngularCLI package not found in the selected interpreter");
+          return new ValidationInfo("Cannot find angular-cli package");
         }
         return null;
       }
