@@ -53,7 +53,7 @@ public class ConstantValueConverterSpringClassContributor implements ConstantVal
       return null;
     }
 
-    return springBeanPointer.getSpringBean().getBeanClass();
+    return springBeanPointer.getBeanClass();
   }
 
 }
