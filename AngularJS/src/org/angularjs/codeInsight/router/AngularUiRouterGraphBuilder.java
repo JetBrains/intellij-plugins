@@ -220,7 +220,7 @@ public class AngularUiRouterGraphBuilder {
         if (state != null && state.getParentName() != null) {
           final AngularUiRouterNode parentState = stateNodes.get(state.getParentName());
           if (parentState != null) {
-            edges.add(new AngularUiRouterEdge(parentState, entry.getValue(), "parent", AngularUiRouterEdge.Type.parent));
+            edges.add(new AngularUiRouterEdge(parentState, entry.getValue(), "", AngularUiRouterEdge.Type.parent));
           }
         }
       }

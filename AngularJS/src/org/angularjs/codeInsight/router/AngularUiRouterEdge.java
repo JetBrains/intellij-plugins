@@ -25,16 +25,12 @@ public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
     }
   };
 
+  private final String myLabel;
   private final Type myType;
   @Nullable
   private String mySourceName;
   @Nullable
   private String myTargetName;
-
-  public AngularUiRouterEdge(DiagramNode<DiagramObject> source, DiagramNode<DiagramObject> target, Type type) {
-    super(source, target, DEPENDS);
-    myType = type;
-  }
 
   public AngularUiRouterEdge(DiagramNode<DiagramObject> source,
                              DiagramNode<DiagramObject> target,
@@ -43,7 +39,7 @@ public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
     super(source, target, new DiagramRelationshipInfoAdapter("BUILTIN", DiagramLineType.SOLID) {
       @Override
       public String getLabel() {
-        return label;
+        return "";
       }
 
       @Override
@@ -56,6 +52,7 @@ public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
         return STANDARD;
       }
     });
+    myLabel = label;
     myType = type;
   }
 
@@ -72,6 +69,10 @@ public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
   @Nullable
   public String getTargetName() {
     return myTargetName;
+  }
+
+  public String getLabel() {
+    return myLabel;
   }
 
   public AngularUiRouterEdge setTargetName(@Nullable String targetName) {

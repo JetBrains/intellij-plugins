@@ -7,6 +7,7 @@ import com.intellij.openapi.graph.base.Edge;
 import com.intellij.openapi.graph.base.Node;
 import com.intellij.openapi.graph.layout.LayoutGraph;
 import com.intellij.openapi.graph.layout.Layouter;
+import com.intellij.openapi.graph.view.Arrow;
 import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.graph.view.LineType;
 import com.intellij.openapi.graph.view.QuadCurveEdgeRealizer;
@@ -132,6 +133,7 @@ public class AngularJSDiagramLayouter implements Layouter {
 
       final QuadCurveEdgeRealizer realizer = GraphManager.getGraphManager().createQuadCurveEdgeRealizer();
       realizer.setLineColor(Gray._70);
+      realizer.setSourceArrow(Arrow.SHORT);
       //top
       sourceY = myGraph.getCenterY(edge.source()) - myGraph.getHeight(edge.source())/2;
       targetY = myGraph.getCenterY(edge.target()) - myGraph.getHeight(edge.target())/2;
@@ -149,6 +151,9 @@ public class AngularJSDiagramLayouter implements Layouter {
 
         final double sourceWidth = myGraph.getWidth(edge.source());
         final double targetWidth = myGraph.getWidth(edge.target());
+        final double sourceHeight = myGraph.getHeight(edge.source());
+        final double targetHeight = myGraph.getHeight(edge.target());
+
         sourceX = sourceOnTheLeft ? (sourceXcenter + sourceWidth / 2) : (sourceXcenter - sourceWidth / 2);
         targetX = sourceOnTheLeft ? (targetXcenter - targetWidth / 2) : (targetXcenter + targetWidth / 2);
 
@@ -157,8 +162,6 @@ public class AngularJSDiagramLayouter implements Layouter {
         final AngularUiRouterNode target = (AngularUiRouterNode)edgeObject.getTarget();
         int idxTarget = getOffsetInElements(target, edgeObject.getTargetName());
 
-        final double sourceHeight = myGraph.getHeight(edge.source());
-        final double targetHeight = myGraph.getHeight(edge.target());
 
         final int sourceSize = source.getIdentifyingElement().getChildrenList().size();
         final double step = sourceHeight / (sourceSize + 1);
