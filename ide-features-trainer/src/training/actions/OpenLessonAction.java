@@ -54,19 +54,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
         final Lesson lesson = e.getData(LESSON_DATA_KEY);
         try {
             openLesson(e.getProject(), lesson);
-        } catch (BadModuleException e1) {
-            e1.printStackTrace();
-        } catch (BadLessonException e1) {
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (FontFormatException e1) {
-            e1.printStackTrace();
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        } catch (ExecutionException e1) {
-            e1.printStackTrace();
-        } catch (LessonIsOpenedException e1) {
+        } catch (Exception e1) {
             e1.printStackTrace();
         }
     }
@@ -87,78 +75,33 @@ public class OpenLessonAction extends AnAction implements DumbAware {
             final Project myProject = project;
             final String scratchFileName = "Learning";
             VirtualFile vf = null;
-//            final VirtualFile vf = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>) () -> {
+            final Project learnProject = CourseManager.getInstance().getLearnProject();
             if (lesson.getModule().moduleType == Module.ModuleType.SCRATCH) {
                 vf = getScratchFile(myProject, lesson, scratchFileName);
             } else {
                 //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
-                if (CourseManager.getInstance().getLearnProject() == null && getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
+                if (learnProject == null && getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
                     CourseManager.getInstance().setLearnProject(getCurrentProject());
-                    vf = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>) () -> {
-                        try {
-                           return getFileInLearnProject(lesson);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    });
+                    vf = getFileInLearnProject(lesson);
 
-                    //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
-                } else if (CourseManager.getInstance().getLearnProject() == null && !getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
+                //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
+                } else if (learnProject == null && !getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
                     Project myLearnProject = initLearnProject(myProject);
                     assert myLearnProject != null;
-                    StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
-                        final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
-                        final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-                        if (learnToolWindow != null) {
-                            learnToolWindow.show(null);
-                            try {
-                                CourseManager.getInstance().setLessonView(myLearnProject);
-                                CourseManager.getInstance().openLesson(myLearnProject, lesson);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                    openLessonWhenLearnProjectStart(lesson, myLearnProject);
                     return;
                     //2. learnProject != null and learnProject is disposed then reinitProject and getFileInLearnProject
-                } else if (CourseManager.getInstance().getLearnProject().isDisposed()) {
+                } else if (learnProject.isDisposed()) {
                     Project myLearnProject = initLearnProject(myProject);
                     assert myLearnProject != null;
-                    StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
-                        final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
-                        final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-                        if (learnToolWindow != null) {
-                            learnToolWindow.show(null);
-                            try {
-                                CourseManager.getInstance().setLessonView(myLearnProject);
-                                CourseManager.getInstance().openLesson(myLearnProject, lesson);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                    openLessonWhenLearnProjectStart(lesson, myLearnProject);
                     return;
                     //3. learnProject != null and learnProject is opened but not focused then focus Project and getFileInLearnProject
-                } else if (CourseManager.getInstance().getLearnProject().isOpen() && !getCurrentProject().equals(CourseManager.getInstance().getLearnProject())) {
-                    vf = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>) () -> {
-                        try {
-                            return getFileInLearnProject(lesson);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    });
+                } else if (learnProject.isOpen() && !getCurrentProject().equals(learnProject)) {
+                    vf = getFileInLearnProject(lesson);
                     //4. learnProject != null and learnProject is opened and focused getFileInLearnProject
-                } else if (CourseManager.getInstance().getLearnProject().isOpen() && getCurrentProject().equals(CourseManager.getInstance().getLearnProject())) {
-                    vf = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>) () -> {
-                        try {
-                            return getFileInLearnProject(lesson);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    });
+                } else if (learnProject.isOpen() && getCurrentProject().equals(learnProject)) {
+                    vf = getFileInLearnProject(lesson);
                 } else {
                     throw new Exception("Unable to start Learn project");
                 }
@@ -198,19 +141,10 @@ public class OpenLessonAction extends AnAction implements DumbAware {
 
 
             //Dispose balloon while scratch file is closing. InfoPanel still exists.
-            project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
-                @Override
-                public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-                }
-
+            project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerAdapter() {
                 @Override
                 public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
                     lesson.close();
-                }
-
-                @Override
-                public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-
                 }
             });
 
@@ -224,8 +158,6 @@ public class OpenLessonAction extends AnAction implements DumbAware {
                         textEditor = (TextEditor) fileEditor;
                     }
                 }
-            }
-            if (textEditor != null) {
             }
             if (textEditor == null) {
                 final java.util.List<FileEditor> editors = FileEditorManager.getInstance(project).openEditor(new OpenFileDescriptor(project, vf), true);
@@ -257,6 +189,22 @@ public class OpenLessonAction extends AnAction implements DumbAware {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void openLessonWhenLearnProjectStart(@Nullable Lesson lesson, Project myLearnProject) {
+        StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
+            final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
+            final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
+            if (learnToolWindow != null) {
+                learnToolWindow.show(null);
+                try {
+                    CourseManager.getInstance().setLessonView(myLearnProject);
+                    CourseManager.getInstance().openLesson(myLearnProject, lesson);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @NotNull
@@ -303,21 +251,30 @@ public class OpenLessonAction extends AnAction implements DumbAware {
 
     private VirtualFile getFileInLearnProject(Lesson lesson) throws IOException {
 
-        final VirtualFile sourceRootFile = ProjectRootManager.getInstance(CourseManager.getInstance().getLearnProject()).getContentSourceRoots()[0];
-        String fileName = "Test.java";
-        if (lesson.getModule() != null) {
-            String extensionFile = ".java";
-            if (lesson.getLang() != null) extensionFile = "." + lesson.getLang().toLowerCase();
-            fileName = lesson.getModule().getName() + extensionFile;
-        }
+        return ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>) () -> {
+            final Project learnProject = CourseManager.getInstance().getLearnProject();
+            assert learnProject != null;
+            final VirtualFile sourceRootFile = ProjectRootManager.getInstance(learnProject).getContentSourceRoots()[0];
+            String fileName = "Test.java";
+            if (lesson.getModule() != null) {
+                String extensionFile = ".java";
+                if (lesson.getLang() != null) extensionFile = "." + lesson.getLang().toLowerCase();
+                fileName = lesson.getModule().getName() + extensionFile;
+            }
 
-        VirtualFile lessonVirtualFile = sourceRootFile.findChild(fileName);
-        if (lessonVirtualFile == null) {
-            lessonVirtualFile = sourceRootFile.createChildData(this, fileName);
-        }
+            VirtualFile lessonVirtualFile = sourceRootFile.findChild(fileName);
+            if (lessonVirtualFile == null) {
 
-        CourseManager.getInstance().registerVirtualFile(lesson.getModule(), lessonVirtualFile);
-        return lessonVirtualFile;
+                try {
+                    lessonVirtualFile = sourceRootFile.createChildData(this, fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            CourseManager.getInstance().registerVirtualFile(lesson.getModule(), lessonVirtualFile);
+            return lessonVirtualFile;
+        });
     }
 
     private Project initLearnProject(Project projectToClose) {
