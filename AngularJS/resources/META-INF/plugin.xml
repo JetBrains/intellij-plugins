@@ -76,6 +76,8 @@
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
     <directoryProjectGenerator implementation="org.angularjs.cli.AngularCLIProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
+    <directoryProjectConfigurator implementation="org.angularjs.cli.AngularJSProjectConfigurator"
+                                  order="after PlatformProjectConfigurator"/>
 
     <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
                      groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
