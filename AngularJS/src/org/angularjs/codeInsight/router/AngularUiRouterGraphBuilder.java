@@ -172,8 +172,20 @@ public class AngularUiRouterGraphBuilder {
       allNodes.add(myRootNode);
       allNodes.addAll(stateNodes.values());
       allNodes.addAll(templateNodes.values());
+
+      mergeParallelEdges();
       //allNodes.addAll(templatePlaceHoldersNodes.values());
       //allNodes.addAll(viewNodes.values());
+    }
+
+    private void mergeParallelEdges() {
+      /*final Map<AngularUiRouterNode, Integer> nodes = new HashMap<>();
+      int i = 0;
+      for (AngularUiRouterNode node : allNodes) {
+        nodes.put(node, i++);
+      }
+      final Map<Pair<Integer, Integer>, AngularUiRouterEdge> newEdges = new HashMap<>();*/
+
     }
 
     private void connectViewOrStateWithPlaceholder(AngularUiRouterNode stateNode, String viewName, Pair<AngularUiRouterNode, String> pair) {

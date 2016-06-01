@@ -9,7 +9,9 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.GraphUtil;
 import com.intellij.openapi.graph.base.Edge;
+import com.intellij.openapi.graph.geom.YPoint;
 import com.intellij.openapi.graph.layout.Layouter;
+import com.intellij.openapi.graph.layout.ParallelEdgeLayouter;
 import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
 import com.intellij.openapi.graph.settings.GraphSettings;
 import com.intellij.openapi.graph.settings.GraphSettingsProvider;
@@ -263,34 +265,56 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         }
         UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
         final Edge edge = builder.getEdge(umlEdge);
-        final List<Integer> edges = getParallelEdges(edge);
+        final Integer position = calculatePosition(edge, builder);
         EdgeLabel edgeLabel = GraphManager.getGraphManager().createEdgeLabel();
         final SmartEdgeLabelModel model = GraphManager.getGraphManager().createSmartEdgeLabelModel();
-        if (!edges.isEmpty()) {
-          if (edges.size() == 1) {
-            edgeLabel.setLabelModel(model, model.createDiscreteModelParameter(SmartEdgeLabelModel.POSITION_TARGET_RIGHT));
-          } else {
-            edgeLabel.setLabelModel(model, model.createDiscreteModelParameter(SmartEdgeLabelModel.POSITION_LEFT));
-          }
-        } else {
-          edgeLabel.setLabelModel(model, model.createDiscreteModelParameter(SmartEdgeLabelModel.POSITION_SOURCE_LEFT));
-        }
-        model.setDefaultDistance(10);
+        edgeLabel.setLabelModel(model, model.createDiscreteModelParameter(position));
+        edgeLabel.setFontSize(9);
+        edgeLabel.setDistance(5);
         edgeLabel.setTextColor(JBColor.foreground());
         myEdgesPositions.put(edge.index(), 1);
         return new EdgeLabel[]{edgeLabel};
       }
 
-      private List<Integer> getParallelEdges(final Edge edge) {
-        final List<Integer> list = new ArrayList<>();
+      private Integer calculatePosition(final Edge edge, UmlGraphBuilder builder) {
+        final Integer existing = myEdgesPositions.get(edge.index());
+        if (existing != null) return existing;
+
+        final List<Edge> list = new ArrayList<>();
         for (Edge current : edge.getGraph().getEdgeArray()) {
-          if (current == edge) continue;
           if (current.source().index() == edge.source().index() && current.target().index() == edge.target().index() ||
               current.target().index() == edge.source().index() && current.source().index() == edge.target().index()) {
-            list.add(current.index());
+            list.add(current);
           }
         }
-        return list;
+        boolean isSourceNearSelected = false;
+        final List<DiagramNode> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(builder));
+        for (DiagramNode node : nodes) {
+          final int index = builder.getNode(node).index();
+          if (index == edge.source().index()) {
+            isSourceNearSelected = true;
+            break;
+          }
+          if (index == edge.target().index()) {
+            break;
+          }
+        }
+        Collections.sort(list, (o1, o2) -> {
+          final YPoint s1 = ((Graph2D)o1.getGraph()).getSourcePointAbs(o1);
+          final YPoint s2 = ((Graph2D)o1.getGraph()).getSourcePointAbs(o2);
+          if (Math.abs(s1.getX() - s2.getX()) > 5) return Double.compare(s1.getX(), s2.getX());
+          return Double.compare(s1.getY(), s2.getY());
+        });
+        final int[] variants = isSourceNearSelected ? new int[]{SmartEdgeLabelModel.POSITION_TARGET_RIGHT,
+          SmartEdgeLabelModel.POSITION_RIGHT, SmartEdgeLabelModel.POSITION_SOURCE_RIGHT} :
+                               new int[]{SmartEdgeLabelModel.POSITION_SOURCE_RIGHT,
+                                 SmartEdgeLabelModel.POSITION_RIGHT, SmartEdgeLabelModel.POSITION_TARGET_RIGHT};
+        int variantIdx = 0;
+        for (Edge current : list) {
+          myEdgesPositions.put(current.index(), variants[variantIdx++]);
+          if (variantIdx >= variants.length) variantIdx = 0;
+        }
+        return myEdgesPositions.get(edge.index());
       }
 
       @Override
@@ -352,14 +376,18 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
         final SmartOrganicLayouter layouter = settings.getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
-        //layouter.setParallelEdgeLayouterEnabled(true);
 
         layouter.setNodeSizeAware(true);
         layouter.setMinimalNodeDistance(60);
         layouter.setNodeOverlapsAllowed(false);
         layouter.setSmartComponentLayoutEnabled(true);
-
         layouter.setConsiderNodeLabelsEnabled(true);
+
+        final ParallelEdgeLayouter parallelEdgeLayouter = GraphManager.getGraphManager().createParallelEdgeLayouter();
+        parallelEdgeLayouter.setLineDistance(40);
+        parallelEdgeLayouter.setUsingAdaptiveLineDistances(false);
+        layouter.appendStage(parallelEdgeLayouter);
+        layouter.setParallelEdgeLayouterEnabled(false);
         //final SplitEdgeLayoutStage splitEdgeLayoutStage = GraphManager.getGraphManager().createSplitEdgeLayoutStage();
         //((CanonicMultiStageLayouter) layouter).appendStage(splitEdgeLayoutStage);
 

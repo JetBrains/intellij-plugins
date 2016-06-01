@@ -63,7 +63,7 @@ public class AngularEdgeLayouter {
       if (edgeObject == null) return;
 
       myRealizer = GraphManager.getGraphManager().createQuadCurveEdgeRealizer();
-      myRealizer.setLineColor(Gray._70);
+      myRealizer.setLineColor(Gray._170);
       myRealizer.setSourceArrow(Arrow.SHORT);
 
       final AngularUiRouterNode source = (AngularUiRouterNode)edgeObject.getSource();
