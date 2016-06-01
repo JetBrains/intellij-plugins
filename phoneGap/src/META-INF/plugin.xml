@@ -40,9 +40,6 @@
 
   <project-components>
     <component>
-      <implementation-class>com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.ExternalToolsDetector</implementation-class>
-    </component>
-    <component>
       <implementation-class>com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectComponent</implementation-class>
     </component>
   </project-components>

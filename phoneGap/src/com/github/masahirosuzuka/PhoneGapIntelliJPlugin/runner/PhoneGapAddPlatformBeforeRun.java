@@ -3,7 +3,6 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.execution.BeforeRunTask;
 import com.intellij.execution.BeforeRunTaskProvider;
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.process.ProcessOutput;
@@ -18,6 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.containers.ContainerUtil;
 import icons.PhoneGapIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGapAddPlatformBeforeRun.PhoneGapAddPlatformTask> {
 
@@ -109,22 +110,24 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
             if (output.getExitCode() != 0) {
               ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, true);
               result.set(false);
-              targetDone.up();
-              return;
             }
-
-            targetDone.up();
           }
-          catch (final ExecutionException e) {
+          catch (final Exception e) {
             exceptions.add(e);
             result.set(false);
+          }
+          finally {
             targetDone.up();
           }
         }
       }.queue();
     }, ModalityState.NON_MODAL);
-    targetDone.waitFor();
-    if (!exceptions.isEmpty()) {
+
+    if (!targetDone.waitFor(TimeUnit.MINUTES.toMillis(2))) {
+      ExecutionHelper
+        .showErrors(project, ContainerUtil.createMaybeSingletonList(new RuntimeException("Timeout")), "Cannot Init Platform", null);
+    }
+    else if (!exceptions.isEmpty()) {
       ExecutionHelper.showErrors(project, exceptions, "Cannot Init Platform", null);
     }
 
