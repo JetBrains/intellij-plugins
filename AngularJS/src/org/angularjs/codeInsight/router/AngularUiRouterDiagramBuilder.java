@@ -56,42 +56,39 @@ public class AngularUiRouterDiagramBuilder {
 
     for (String id : stateIds) {
       if (id.startsWith(".")) continue;
-      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, new Processor<JSImplicitElement>() {
-        @Override
-        public boolean process(JSImplicitElement element) {
-          final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
-          if (!element.getContainingFile().getLanguage().isKindOf(JavascriptLanguage.INSTANCE)
-              && PsiTreeUtil.getParentOfType(element, JSEmbeddedContent.class) != null) {
-            createRootTemplatesForEmbedded(element.getContainingFile());
-          }
+      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, element -> {
+        final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
+        if (!element.getContainingFile().getLanguage().isKindOf(JavascriptLanguage.INSTANCE)
+            && PsiTreeUtil.getParentOfType(element, JSEmbeddedContent.class) != null) {
+          createRootTemplatesForEmbedded(element.getContainingFile());
+        }
 
-          JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
-          if (call == null) {
-            final PsiElement elementAt =
-              element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
-            if (elementAt != null) {
-              call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
-            }
+        JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
+        if (call == null) {
+          final PsiElement elementAt =
+            element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
+          if (elementAt != null) {
+            call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
           }
-          if (call != null) {
-            final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
-            if (methodExpression != null &&
-                methodExpression.getQualifier() != null &&
-                "state".equals(methodExpression.getReferenceName())) {
-              final JSExpression[] arguments = call.getArguments();
-              if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
-                state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
+        }
+        if (call != null) {
+          final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
+          if (methodExpression != null &&
+              methodExpression.getQualifier() != null &&
+              "state".equals(methodExpression.getReferenceName())) {
+            final JSExpression[] arguments = call.getArguments();
+            if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
+              state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
 
-                if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
-                  final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
-                  fillStateParameters(state, object);
-                }
+              if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
+                final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
+                fillStateParameters(state, object);
               }
             }
           }
-          myStates.add(state);
-          return true;
         }
+        myStates.add(state);
+        return true;
       });
     }
     getRootPages();
@@ -247,13 +244,9 @@ public class AngularUiRouterDiagramBuilder {
     Set<VirtualFile> processed = filesQueue.getProcessed();
     // todo more effective filtering for being in the project, not libs. but?
     final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(myProject);
-    processed = new HashSet<VirtualFile>(ContainerUtil.filter(processed, new Condition<VirtualFile>() {
-      @Override
-      public boolean value(VirtualFile file) {
-        return file.getFileType() instanceof LanguageFileType && ((LanguageFileType)file.getFileType()).getLanguage().isKindOf(
-          JavascriptLanguage.INSTANCE) && projectScope.contains(file);
-      }
-    }));
+    processed = new HashSet<VirtualFile>(ContainerUtil.filter(processed, file1 -> file1.getFileType() instanceof LanguageFileType && ((LanguageFileType)file1
+      .getFileType()).getLanguage().isKindOf(
+      JavascriptLanguage.INSTANCE) && projectScope.contains(file1)));
     myModuleRecursiveDependencies.put(file, processed);
     return processed;
   }

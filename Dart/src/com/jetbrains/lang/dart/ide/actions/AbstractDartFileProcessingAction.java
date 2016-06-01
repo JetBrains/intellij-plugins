@@ -138,12 +138,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
       HintManagerImpl.getInstanceImpl().showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY |
                                                                                         HintManager.HIDE_BY_TEXT_CHANGE |
                                                                                         HintManager.HIDE_BY_SCROLLING, 0, false);
-    }, ModalityState.NON_MODAL, new Condition() {
-      @Override
-      public boolean value(Object o) {
-        return editor.isDisposed() || !editor.getComponent().isShowing();
-      }
-    });
+    }, ModalityState.NON_MODAL, o -> editor.isDisposed() || !editor.getComponent().isShowing());
   }
 
   @NotNull

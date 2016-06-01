@@ -83,11 +83,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
       }
 
       final Collection<IProperty> properties = getStrutsProperties(context);
-      return ContainerUtil.find(properties, new Condition<IProperty>() {
-        public boolean value(final IProperty property) {
-          return Comparing.equal(property.getName(), s);
-        }
-      });
+      return ContainerUtil.find(properties, property -> Comparing.equal(property.getName(), s));
     }
 
     @Override

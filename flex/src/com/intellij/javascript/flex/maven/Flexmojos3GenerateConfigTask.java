@@ -202,11 +202,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
         .createEditor(module.getProject(), Collections.singletonMap(module, modifiableModel), librariesModel, null);
 
       final ModifiableFlexBuildConfiguration[] bcs = flexEditor.getConfigurations(module);
-      final ModifiableFlexBuildConfiguration mainBC = ContainerUtil.find(bcs, new Condition<ModifiableFlexBuildConfiguration>() {
-        public boolean value(final ModifiableFlexBuildConfiguration bc) {
-          return bc.getOutputType() == OutputType.Application && module.getName().equals(bc.getName());
-        }
-      });
+      final ModifiableFlexBuildConfiguration mainBC = ContainerUtil.find(bcs, bc -> bc.getOutputType() == OutputType.Application && module.getName().equals(bc.getName()));
 
       if (mainBC != null) {
         mainBC.setMainClass(mainClass);

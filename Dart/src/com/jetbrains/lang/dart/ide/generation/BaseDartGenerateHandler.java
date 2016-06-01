@@ -101,19 +101,10 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
 
   protected abstract void collectCandidates(final DartClass dartClass, final List<DartComponent> candidates);
 
-  private final static Condition<DartComponent> NOT_CONSTRUCTOR_CONDITION = new Condition<DartComponent>() {
-    @Override
-    public boolean value(DartComponent component) {
-      return DartComponentType.typeOf(component) != DartComponentType.CONSTRUCTOR;
-    }
-  };
+  private final static Condition<DartComponent> NOT_CONSTRUCTOR_CONDITION =
+    component -> DartComponentType.typeOf(component) != DartComponentType.CONSTRUCTOR;
 
-  private final static Condition<DartComponent> NOT_STATIC_CONDITION = new Condition<DartComponent>() {
-    @Override
-    public boolean value(DartComponent component) {
-      return !component.isStatic();
-    }
-  };
+  private final static Condition<DartComponent> NOT_STATIC_CONDITION = component -> !component.isStatic();
 
   @NotNull
   protected final Map<Pair<String, Boolean>, DartComponent> computeClassMembersMap(@NotNull final DartClass dartClass,

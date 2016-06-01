@@ -53,11 +53,8 @@ class InterceptorJamReferenceConverter extends JamSimpleReferenceConverter<Inter
       return null;
     }
 
-    return ContainerUtil.find(strutsModel.getAllInterceptorsAndStacks(), new Condition<InterceptorOrStackBase>() {
-      public boolean value(final InterceptorOrStackBase interceptorOrStackBase) {
-        return Comparing.strEqual(s, interceptorOrStackBase.getName().getStringValue());
-      }
-    });
+    return ContainerUtil.find(strutsModel.getAllInterceptorsAndStacks(),
+                              interceptorOrStackBase -> Comparing.strEqual(s, interceptorOrStackBase.getName().getStringValue()));
   }
 
   @Override

@@ -104,12 +104,7 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
     @Override
     public VirtualFile[] getRootFiles(final OrderRootType type) {
       List<VirtualFile> directories =
-        ContainerUtil.filter(mySdk.getRootProvider().getFiles(type), new Condition<VirtualFile>() {
-          @Override
-          public boolean value(final VirtualFile virtualFile) {
-            return virtualFile.isDirectory();
-          }
-        });
+        ContainerUtil.filter(mySdk.getRootProvider().getFiles(type), virtualFile -> virtualFile.isDirectory());
       return VfsUtil.toVirtualFileArray(directories);
     }
 

@@ -37,13 +37,7 @@ public class RippleInfo {
   public static String getIndexPath(Project project, final String platform) {
     Collection<VirtualFile> name = FilenameIndex.getVirtualFilesByName(project, "index.html", GlobalSearchScope.projectScope(project));
 
-    VirtualFile item = ContainerUtil.find(name, new Condition<VirtualFile>() {
-      @Override
-      public boolean value(VirtualFile file) {
-
-        return file.getPath().contains("platforms") && file.getPath().contains(platform);
-      }
-    });
+    VirtualFile item = ContainerUtil.find(name, file -> file.getPath().contains("platforms") && file.getPath().contains(platform));
     return item != null ? item.getParent().getPath() : null;
   }
 }

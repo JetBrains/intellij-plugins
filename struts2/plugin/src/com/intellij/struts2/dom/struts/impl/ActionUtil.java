@@ -131,12 +131,7 @@ final class ActionUtil {
         }
 
         // do not add methods with same name from super-class
-        final Condition<PsiMethod> nameCondition = new Condition<PsiMethod>() {
-          @Override
-          public boolean value(PsiMethod method) {
-            return psiMethodName.equals(method.getName());
-          }
-        };
+        final Condition<PsiMethod> nameCondition = method -> psiMethodName.equals(method.getName());
         if (!ContainerUtil.exists(actionMethods, nameCondition)) {
           actionMethods.add(psiMethod);
         }

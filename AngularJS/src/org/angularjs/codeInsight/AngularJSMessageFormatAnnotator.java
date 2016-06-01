@@ -96,13 +96,10 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
 
   private void checkForDuplicateSelectionKeywords(List<String> keywords, List<PsiElement> elements) {
     final Set<String> passedSet = new HashSet<String>();
-    final Set<String> duplicate = new HashSet<String>(ContainerUtil.filter(keywords, new Condition<String>() {
-      @Override
-      public boolean value(String s) {
-        final boolean contains = passedSet.contains(s);
-        if (!contains) passedSet.add(s);
-        return contains;
-      }
+    final Set<String> duplicate = new HashSet<String>(ContainerUtil.filter(keywords, s -> {
+      final boolean contains = passedSet.contains(s);
+      if (!contains) passedSet.add(s);
+      return contains;
     }));
     if (!duplicate.isEmpty()) {
       for (PsiElement element : elements) {

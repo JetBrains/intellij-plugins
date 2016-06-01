@@ -133,11 +133,7 @@ TODO not needed so far ?!
     }
 
     public PsiElement resolve() {
-      final String ourActionExtension = ContainerUtil.find(actionExtensions, new Condition<String>() {
-        public boolean value(final String s) {
-          return StringUtil.endsWith(fullActionPath, s);
-        }
-      });
+      final String ourActionExtension = ContainerUtil.find(actionExtensions, s -> StringUtil.endsWith(fullActionPath, s));
       if (ourActionExtension == null) {
         return null;
       }

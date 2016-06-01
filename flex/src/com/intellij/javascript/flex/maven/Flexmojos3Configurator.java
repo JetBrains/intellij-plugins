@@ -97,22 +97,14 @@ public class Flexmojos3Configurator {
     }
 
     final String mainBCName = myModule.getName();
-    final ModifiableFlexBuildConfiguration existingBC = ContainerUtil.find(oldBCs, new Condition<ModifiableFlexBuildConfiguration>() {
-      public boolean value(final ModifiableFlexBuildConfiguration bc) {
-        return mainBCName.equals(bc.getName());
-      }
-    });
+    final ModifiableFlexBuildConfiguration existingBC = ContainerUtil.find(oldBCs, bc -> mainBCName.equals(bc.getName()));
 
     final ModifiableFlexBuildConfiguration mainBC = setupMainBuildConfiguration(existingBC);
 
     final Collection<RLMInfo> rlmInfos = FlexmojosImporter.isFlexApp(myMavenProject) ? getRLMInfos() : Collections.<RLMInfo>emptyList();
     for (final RLMInfo info : rlmInfos) {
       final ModifiableFlexBuildConfiguration existingRlmBC =
-        ContainerUtil.find(oldBCs, new Condition<ModifiableFlexBuildConfiguration>() {
-          public boolean value(final ModifiableFlexBuildConfiguration bc) {
-            return bc.getName().equals(info.myRLMName);
-          }
-        });
+        ContainerUtil.find(oldBCs, bc -> bc.getName().equals(info.myRLMName));
 
       configureRuntimeLoadedModule(mainBC, info, existingRlmBC);
     }
@@ -276,13 +268,9 @@ public class Flexmojos3Configurator {
 
         final ModifiableDependencyEntry existingEntry = ContainerUtil
           .find(bc.getDependencies().getModifiableEntries(),
-                new Condition<ModifiableDependencyEntry>() {
-                  public boolean value(final ModifiableDependencyEntry entry) {
-                    return (entry instanceof BuildConfigurationEntry) &&
-                           ((BuildConfigurationEntry)entry).getModuleName().equals(dependencyModuleName) &&
-                           ((BuildConfigurationEntry)entry).getBcName().equals(dependencyModuleName);
-                  }
-                });
+                entry1 -> (entry1 instanceof BuildConfigurationEntry) &&
+                          ((BuildConfigurationEntry)entry1).getModuleName().equals(dependencyModuleName) &&
+                          ((BuildConfigurationEntry)entry1).getBcName().equals(dependencyModuleName));
 
         final LinkageType linkageType = "swc".equals(dependencyMavenProject.getPackaging())
                                         ? FlexUtils.convertLinkageType(scope, isExported)

@@ -378,12 +378,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     topToolbar.addSeparator();
 
     if (myObservatoryPort > 0) {
-      topToolbar.addAction(new OpenDartObservatoryUrlAction(getObservatoryUrl("http", null), new Computable<Boolean>() {
-        @Override
-        public Boolean compute() {
-          return myVmConnected && !getSession().isStopped();
-        }
-      }));
+      topToolbar.addAction(new OpenDartObservatoryUrlAction(getObservatoryUrl("http", null),
+                                                            () -> myVmConnected && !getSession().isStopped()));
     }
   }
 

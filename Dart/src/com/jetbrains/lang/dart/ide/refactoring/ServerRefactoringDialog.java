@@ -58,12 +58,7 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
 
         final ModalityState modalityState = ModalityState.stateForComponent(getWindow());
 
-        final Condition expired = new Condition() {
-          @Override
-          public boolean value(Object o) {
-            return !isShowing();
-          }
-        };
+        final Condition expired = o -> !isShowing();
 
         ApplicationManager.getApplication().invokeLater(runnable, modalityState, expired);
       }

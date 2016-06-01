@@ -64,17 +64,14 @@ public class FileReferenceSetHelper {
 
       @Override
       protected Condition<PsiFileSystemItem> getReferenceCompletionFilter() {
-        return new Condition<PsiFileSystemItem>() {
-          @Override
-          public boolean value(final PsiFileSystemItem psiFileSystemItem) {
-            if (psiFileSystemItem instanceof PsiDirectory ||
-                psiFileSystemItem instanceof WebDirectoryElement) {
-              return true;
-            }
-
-            final VirtualFile virtualFile = psiFileSystemItem.getVirtualFile();
-            return virtualFile != null && virtualFile.getFileType().equals(allowedFileType);
+        return psiFileSystemItem -> {
+          if (psiFileSystemItem instanceof PsiDirectory ||
+              psiFileSystemItem instanceof WebDirectoryElement) {
+            return true;
           }
+
+          final VirtualFile virtualFile = psiFileSystemItem.getVirtualFile();
+          return virtualFile != null && virtualFile.getFileType().equals(allowedFileType);
         };
       }
     };

@@ -108,54 +108,50 @@ public class BundleManifestCache {
     CachedValue<BundleManifest> value = myCache.get(facet);
 
     if (value == null) {
-      value = myManager.createCachedValue(new CachedValueProvider<BundleManifest>() {
-        @Nullable
-        @Override
-        public Result<BundleManifest> compute() {
-          OsmorcFacetConfiguration configuration = facet.getConfiguration();
-          BundleManifest manifest = null;
-          List<Object> dependencies = ContainerUtil.<Object>newSmartList(configuration);
+      value = myManager.createCachedValue(() -> {
+        OsmorcFacetConfiguration configuration = facet.getConfiguration();
+        BundleManifest manifest = null;
+        List<Object> dependencies = ContainerUtil.<Object>newSmartList(configuration);
 
-          switch (configuration.getManifestGenerationMode()) {
-            case Manually: {
-              PsiFile manifestFile = findInModuleRoots(facet.getModule(), configuration.getManifestLocation());
-              if (manifestFile != null) {
-                manifest = readManifest(manifestFile);
-                dependencies.add(manifestFile);
-              }
-              else {
-                dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
-              }
-              break;
+        switch (configuration.getManifestGenerationMode()) {
+          case Manually: {
+            PsiFile manifestFile = findInModuleRoots(facet.getModule(), configuration.getManifestLocation());
+            if (manifestFile != null) {
+              manifest = readManifest(manifestFile);
+              dependencies.add(manifestFile);
             }
-
-            case OsmorcControlled: {
-              Map<String, String> map = ContainerUtil.newHashMap(configuration.getAdditionalPropertiesAsMap());
-              map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
-              map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
-              map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
-              manifest = new BundleManifest(map);
-              break;
+            else {
+              dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
             }
-
-            case Bnd: {
-              PsiFile bndFile = findInModuleRoots(facet.getModule(), configuration.getBndFileLocation());
-              if (bndFile != null) {
-                manifest = readProperties(bndFile);
-                dependencies.add(bndFile);
-              }
-              else {
-                dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
-              }
-              break;
-            }
-
-            case Bundlor:
-              break; // not supported
+            break;
           }
 
-          return Result.create(manifest, dependencies);
+          case OsmorcControlled: {
+            Map<String, String> map = ContainerUtil.newHashMap(configuration.getAdditionalPropertiesAsMap());
+            map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
+            map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
+            map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
+            manifest = new BundleManifest(map);
+            break;
+          }
+
+          case Bnd: {
+            PsiFile bndFile = findInModuleRoots(facet.getModule(), configuration.getBndFileLocation());
+            if (bndFile != null) {
+              manifest = readProperties(bndFile);
+              dependencies.add(bndFile);
+            }
+            else {
+              dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
+            }
+            break;
+          }
+
+          case Bundlor:
+            break; // not supported
         }
+
+        return CachedValueProvider.Result.create(manifest, dependencies);
       }, false);
 
       myCache.put(facet, value);
@@ -169,15 +165,11 @@ public class BundleManifestCache {
     CachedValue<BundleManifest> value = myCache.get(libRoot);
 
     if (value == null) {
-      value = myManager.createCachedValue(new CachedValueProvider<BundleManifest>() {
-        @Nullable
-        @Override
-        public Result<BundleManifest> compute() {
-          VirtualFile manifestFile = libRoot.findFileByRelativePath(JarFile.MANIFEST_NAME);
-          PsiFile psiFile = manifestFile != null ? PsiManager.getInstance(myProject).findFile(manifestFile) : null;
-          BundleManifest manifest = manifestFile != null ? readManifest(psiFile) : null;
-          return Result.createSingleDependency(manifest, libRoot);
-        }
+      value = myManager.createCachedValue(() -> {
+        VirtualFile manifestFile = libRoot.findFileByRelativePath(JarFile.MANIFEST_NAME);
+        PsiFile psiFile = manifestFile != null ? PsiManager.getInstance(myProject).findFile(manifestFile) : null;
+        BundleManifest manifest = manifestFile != null ? readManifest(psiFile) : null;
+        return CachedValueProvider.Result.createSingleDependency(manifest, libRoot);
       }, false);
 
       myCache.put(libRoot, value);

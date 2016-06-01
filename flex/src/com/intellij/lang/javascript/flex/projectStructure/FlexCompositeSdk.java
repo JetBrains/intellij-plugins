@@ -183,12 +183,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       cache = false;
     }
 
-    List<Sdk> result = ContainerUtil.findAll(allSdks, new Condition<Sdk>() {
-      @Override
-      public boolean value(final Sdk sdk) {
-        return ArrayUtil.contains(sdk.getName(), myNames);
-      }
-    });
+    List<Sdk> result = ContainerUtil.findAll(allSdks, sdk -> ArrayUtil.contains(sdk.getName(), myNames));
 
     Sdk[] resultArray = result.toArray(new Sdk[result.size()]);
     if (cache) {

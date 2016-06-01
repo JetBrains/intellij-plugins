@@ -65,18 +65,16 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
 
   protected Collection<PsiDirectory> getAllDirectories(boolean includeLibrarySources) {
     if (myDirectories == null) {
-      CachedValueProvider<Collection<PsiDirectory>> provider = new CachedValueProvider<Collection<PsiDirectory>>() {
-        public Result<Collection<PsiDirectory>> compute() {
-          final PsiManager manager = PsiManager.getInstance(getProject());
-          Collection<PsiDirectory> directories = ContainerUtil.map(DirectoryIndex.getInstance(getProject())
-                                                                     .getDirectoriesByPackageName(getQualifiedName(), true).findAll(),
-                                                                   virtualFile -> manager.findDirectory(virtualFile));
+      CachedValueProvider<Collection<PsiDirectory>> provider = () -> {
+        final PsiManager manager = PsiManager.getInstance(getProject());
+        Collection<PsiDirectory> directories = ContainerUtil.map(DirectoryIndex.getInstance(getProject())
+                                                                   .getDirectoriesByPackageName(getQualifiedName(), true).findAll(),
+                                                                 virtualFile -> manager.findDirectory(virtualFile));
 
-          return Result.create(directories,
-                               PsiModificationTracker.MODIFICATION_COUNT,
-                               ProjectRootManager
-                                 .getInstance(getProject()));
-        }
+        return CachedValueProvider.Result.create(directories,
+                                                 PsiModificationTracker.MODIFICATION_COUNT,
+                                                 ProjectRootManager
+                               .getInstance(getProject()));
       };
       myDirectories =
         CachedValuesManager.getManager(getProject()).createCachedValue(provider, false);

@@ -117,12 +117,7 @@ public class PhoneGapUtil {
     for (String folder : POSSIBLE_FOLDERS_IN_PHONEGAP_ROOT) {
       Collection<VirtualFile> files =
         ContainerUtil.filter(FilenameIndex.getVirtualFilesByName(project, folder, GlobalSearchScope.projectScope(project)),
-                             new Condition<VirtualFile>() {
-                               @Override
-                               public boolean value(VirtualFile file) {
-                                 return file.isDirectory();
-                               }
-                             });
+                             file -> file.isDirectory());
       if (!files.isEmpty()) {
         return files;
       }
@@ -145,26 +140,19 @@ public class PhoneGapUtil {
 
   public static boolean isPhoneGapProject(@NotNull final Project project) {
 
-    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Boolean>() {
-      @Nullable
-      @Override
-      public Result<Boolean> compute() {
-        PsiFile[] files = FilenameIndex.getFilesByName(project, "config.xml", GlobalSearchScope.projectScope(project));
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      PsiFile[] files = FilenameIndex.getFilesByName(project, "config.xml", GlobalSearchScope.projectScope(project));
 
-        PsiFile file = ContainerUtil.find(files, new Condition<PsiFile>() {
-          @Override
-          public boolean value(PsiFile file) {
-            if (!(file instanceof XmlFile)) return false;
+      PsiFile file = ContainerUtil.find(files, file1 -> {
+        if (!(file1 instanceof XmlFile)) return false;
 
-            XmlTag root = ((XmlFile)file).getRootTag();
-            if (root == null) return false;
+        XmlTag root = ((XmlFile)file1).getRootTag();
+        if (root == null) return false;
 
-            return root.getName().equals("widget");
-          }
-        });
+        return root.getName().equals("widget");
+      });
 
-        return Result.create(file != null, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
-      }
+      return CachedValueProvider.Result.create(file != null, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
     });
   }
 }

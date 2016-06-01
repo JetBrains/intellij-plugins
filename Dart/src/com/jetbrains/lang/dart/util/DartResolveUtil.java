@@ -158,12 +158,7 @@ public class DartResolveUtil {
     if (classesInFile == null) {
       return Collections.emptyList();
     }
-    return ContainerUtil.filter(classesInFile, new Condition<DartClass>() {
-      @Override
-      public boolean value(DartClass dartClass) {
-        return checkInheritanceBySuperAndImplementationList(dartClass, superClass);
-      }
-    });
+    return ContainerUtil.filter(classesInFile, dartClass -> checkInheritanceBySuperAndImplementationList(dartClass, superClass));
   }
 
   private static boolean checkInheritanceBySuperAndImplementationList(DartClass dartClass, DartClass superCandidate) {
@@ -381,12 +376,7 @@ public class DartResolveUtil {
     final List<VirtualFile> librariesForContext2 = findLibrary(context2.getContainingFile());
     if (librariesForContext2.isEmpty()) return false;
     final THashSet<VirtualFile> librariesSetForContext1 = new THashSet<VirtualFile>(librariesForContext1);
-    return ContainerUtil.find(librariesForContext2, new Condition<VirtualFile>() {
-      @Override
-      public boolean value(VirtualFile file) {
-        return librariesSetForContext1.contains(file);
-      }
-    }) != null;
+    return ContainerUtil.find(librariesForContext2, file -> librariesSetForContext1.contains(file)) != null;
   }
 
   @NotNull
@@ -394,39 +384,32 @@ public class DartResolveUtil {
     final VirtualFile contextVirtualFile = getRealVirtualFile(context);
     if (contextVirtualFile == null) return Collections.emptyList();
 
-    return CachedValuesManager.getCachedValue(context, new CachedValueProvider<List<VirtualFile>>() {
-      @Nullable
-      @Override
-      public Result<List<VirtualFile>> compute() {
-        for (PsiElement root : findDartRoots(context)) {
-          final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
-          if (partOfStatement != null) {
-            final String libraryName = partOfStatement.getLibraryName();
-            final List<VirtualFile> files = findLibraryByName(context, libraryName);
-            if (!files.isEmpty()) {
-              return new Result<List<VirtualFile>>(files, PsiModificationTracker.MODIFICATION_COUNT);
-            }
+    return CachedValuesManager.getCachedValue(context, () -> {
+      for (PsiElement root : findDartRoots(context)) {
+        final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
+        if (partOfStatement != null) {
+          final String libraryName = partOfStatement.getLibraryName();
+          final List<VirtualFile> files = findLibraryByName(context, libraryName);
+          if (!files.isEmpty()) {
+            return new CachedValueProvider.Result<List<VirtualFile>>(files, PsiModificationTracker.MODIFICATION_COUNT);
           }
         }
-
-        // no 'part of' statement in file -> this file itself is a library
-        return new Result<List<VirtualFile>>(Collections.singletonList(contextVirtualFile), PsiModificationTracker.MODIFICATION_COUNT);
       }
+
+      // no 'part of' statement in file -> this file itself is a library
+      return new CachedValueProvider.Result<List<VirtualFile>>(Collections.singletonList(contextVirtualFile), PsiModificationTracker.MODIFICATION_COUNT);
     });
   }
 
   @NotNull
   public static List<VirtualFile> findLibraryByName(@NotNull final PsiElement context, @NotNull final String libraryName) {
-    return ContainerUtil.filter(DartLibraryIndex.getFilesByLibName(context.getResolveScope(), libraryName), new Condition<VirtualFile>() {
-      @Override
-      public boolean value(VirtualFile mainLibFile) {
-        for (String partUrl : DartPartUriIndex.getPartUris(context.getProject(), mainLibFile)) {
-          final VirtualFile partFile = getImportedFile(context.getProject(), mainLibFile, partUrl);
-          if (Comparing.equal(getRealVirtualFile(context.getContainingFile()), partFile)) return true;
-        }
-
-        return false;
+    return ContainerUtil.filter(DartLibraryIndex.getFilesByLibName(context.getResolveScope(), libraryName), mainLibFile -> {
+      for (String partUrl : DartPartUriIndex.getPartUris(context.getProject(), mainLibFile)) {
+        final VirtualFile partFile = getImportedFile(context.getProject(), mainLibFile, partUrl);
+        if (Comparing.equal(getRealVirtualFile(context.getContainingFile()), partFile)) return true;
       }
+
+      return false;
     });
   }
 
@@ -707,12 +690,7 @@ public class DartResolveUtil {
   }
 
   public static List<DartComponent> filterComponentsByType(List<DartComponent> components, final DartComponentType type) {
-    return ContainerUtil.filter(components, new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return type == DartComponentType.typeOf(component);
-      }
-    });
+    return ContainerUtil.filter(components, component -> type == DartComponentType.typeOf(component));
   }
 
   public static List<DartType> getTypes(@Nullable DartTypeList typeList) {

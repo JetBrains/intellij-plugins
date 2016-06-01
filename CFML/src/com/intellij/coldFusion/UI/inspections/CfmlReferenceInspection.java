@@ -41,12 +41,9 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
   private static final Map<String, Condition<PsiElement>> myDictionary = new HashMap<String, Condition<PsiElement>>();
 
   static {
-    myDictionary.put("arguments", new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement psiElement) {
-        CfmlFunction parentOfType = PsiTreeUtil.getParentOfType(psiElement, CfmlFunction.class);
-        return parentOfType != null;
-      }
+    myDictionary.put("arguments", psiElement -> {
+      CfmlFunction parentOfType = PsiTreeUtil.getParentOfType(psiElement, CfmlFunction.class);
+      return parentOfType != null;
     });
   }
 

@@ -178,12 +178,7 @@ public class ConversionParams {
   @Nullable
   public static Sdk findNewSdk(@NotNull final String homePath) {
     final List<Sdk> sdks = ProjectJdkTable.getInstance().getSdksOfType(FlexSdkType2.getInstance());
-    return ContainerUtil.find(sdks, new Condition<Sdk>() {
-      @Override
-      public boolean value(final Sdk sdk) {
-        return homePath.equals(sdk.getHomePath());
-      }
-    });
+    return ContainerUtil.find(sdks, sdk -> homePath.equals(sdk.getHomePath()));
   }
 
   /**

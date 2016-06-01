@@ -54,22 +54,18 @@ public class DartSdk {
     CachedValue<DartSdk> cachedValue = project.getUserData(CACHED_DART_SDK_KEY);
 
     if (cachedValue == null) {
-      cachedValue = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<DartSdk>() {
-        @NotNull
-        @Override
-        public Result<DartSdk> compute() {
-          final DartSdk sdk = getGlobalDartSdk();
-          if (sdk == null) {
-            return new Result<DartSdk>(null, DartProjectComponent.getProjectRootsModificationTracker(project));
-          }
-
-          List<Object> dependencies = new ArrayList<Object>(3);
-          dependencies.add(DartProjectComponent.getProjectRootsModificationTracker(project));
-          ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
-          ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
-
-          return new Result<DartSdk>(sdk, ArrayUtil.toObjectArray(dependencies));
+      cachedValue = CachedValuesManager.getManager(project).createCachedValue(() -> {
+        final DartSdk sdk = getGlobalDartSdk();
+        if (sdk == null) {
+          return new CachedValueProvider.Result<DartSdk>(null, DartProjectComponent.getProjectRootsModificationTracker(project));
         }
+
+        List<Object> dependencies = new ArrayList<Object>(3);
+        dependencies.add(DartProjectComponent.getProjectRootsModificationTracker(project));
+        ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
+        ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
+
+        return new CachedValueProvider.Result<DartSdk>(sdk, ArrayUtil.toObjectArray(dependencies));
       }, false);
 
       project.putUserData(CACHED_DART_SDK_KEY, cachedValue);

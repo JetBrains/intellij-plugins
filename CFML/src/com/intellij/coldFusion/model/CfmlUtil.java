@@ -81,12 +81,7 @@ public class CfmlUtil {
     if (cfmlImports == null) {
       return null;
     }
-    return ContainerUtil.find(cfmlImports, new Condition<CfmlImport>() {
-      @Override
-      public boolean value(CfmlImport anImport) {
-        return prefix.equalsIgnoreCase(anImport.getPrefix());
-      }
-    });
+    return ContainerUtil.find(cfmlImports, anImport -> prefix.equalsIgnoreCase(anImport.getPrefix()));
   }
 
   public static boolean isSearchedScope(String scopeText) {

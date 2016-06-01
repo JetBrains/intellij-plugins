@@ -131,12 +131,7 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
         variants.addAll(DartResolveUtil.getComponentNames(
           ContainerUtil.filter(
             dartClass.getConstructors(),
-            new Condition<DartComponent>() {
-              @Override
-              public boolean value(DartComponent component) {
-                return component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration;
-              }
-            }
+            component -> component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration
           ),
           needFilterPrivateMembers
         ));
@@ -152,14 +147,11 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
         if (!(parent instanceof DartClass)) continue;
         constructors.addAll(DartResolveUtil.getComponentNames(ContainerUtil.filter(
                                                                 ((DartClass)parent).getConstructors(),
-                                                                new Condition<DartComponent>() {
-                                                                  @Override
-                                                                  public boolean value(DartComponent component) {
-                                                                    boolean namedOrFactory =
-                                                                      component instanceof DartNamedConstructorDeclaration ||
-                                                                      component instanceof DartFactoryConstructorDeclaration;
-                                                                    return namedOrFactory && component.isPublic();
-                                                                  }
+                                                                component -> {
+                                                                  boolean namedOrFactory =
+                                                                    component instanceof DartNamedConstructorDeclaration ||
+                                                                    component instanceof DartFactoryConstructorDeclaration;
+                                                                  return namedOrFactory && component.isPublic();
                                                                 }
                                                               )
         ));

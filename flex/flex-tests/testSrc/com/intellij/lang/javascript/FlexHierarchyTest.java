@@ -60,23 +60,20 @@ public class FlexHierarchyTest extends HierarchyViewTestBase {
   }
 
   private void doJSTypeHierarchyTest(final String hierarchyType, final String classFqn, final String... fileNames) throws Exception {
-    doHierarchyTest(new Computable<HierarchyTreeStructure>() {
-      @Override
-      public HierarchyTreeStructure compute() {
-        final JSClass jsClass = (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
-        assert jsClass != null;
-        if (TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE.equals(hierarchyType)) {
-          return new JSTypeHierarchyTreeStructure(myProject, jsClass);
-        }
-        else if (TypeHierarchyBrowserBase.SUBTYPES_HIERARCHY_TYPE.equals(hierarchyType)) {
-          return new JSSubtypesHierarchyTreeStructure(myProject, jsClass);
-        }
-        else if (TypeHierarchyBrowserBase.SUPERTYPES_HIERARCHY_TYPE.equals(hierarchyType)) {
-          return new JSSupertypesHierarchyTreeStructure(myProject, jsClass);
-        }
-        throw new IllegalArgumentException("Wrong hierarchy type: " + hierarchyType);
+    doHierarchyTest(() -> {
+      final JSClass jsClass = (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+        .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
+      assert jsClass != null;
+      if (TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE.equals(hierarchyType)) {
+        return new JSTypeHierarchyTreeStructure(myProject, jsClass);
       }
+      else if (TypeHierarchyBrowserBase.SUBTYPES_HIERARCHY_TYPE.equals(hierarchyType)) {
+        return new JSSubtypesHierarchyTreeStructure(myProject, jsClass);
+      }
+      else if (TypeHierarchyBrowserBase.SUPERTYPES_HIERARCHY_TYPE.equals(hierarchyType)) {
+        return new JSSupertypesHierarchyTreeStructure(myProject, jsClass);
+      }
+      throw new IllegalArgumentException("Wrong hierarchy type: " + hierarchyType);
     }, fileNames);
   }
 
@@ -88,16 +85,13 @@ public class FlexHierarchyTest extends HierarchyViewTestBase {
     final boolean oldState = state.HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED;
     state.HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED = hideClassesWhereMethodNotImplemented;
 
-    doHierarchyTest(new Computable<HierarchyTreeStructure>() {
-      @Override
-      public HierarchyTreeStructure compute() {
-        final JSClass jsClass = (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
-        assert jsClass != null;
-        final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
-        assert jsFunction != null;
-        return new JSMethodHierarchyTreeStructure(myProject, jsFunction);
-      }
+    doHierarchyTest(() -> {
+      final JSClass jsClass = (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+        .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
+      assert jsClass != null;
+      final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
+      assert jsFunction != null;
+      return new JSMethodHierarchyTreeStructure(myProject, jsFunction);
     }, fileNames);
 
     state.HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED = oldState;
@@ -108,22 +102,19 @@ public class FlexHierarchyTest extends HierarchyViewTestBase {
                                      final String methodName,
                                      final String scope,
                                      final String... fileNames) throws Exception {
-    doHierarchyTest(new Computable<HierarchyTreeStructure>() {
-      @Override
-      public HierarchyTreeStructure compute() {
-        final JSClass jsClass = (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
-        assert jsClass != null;
-        final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
-        assert jsFunction != null;
-        if (CallHierarchyBrowserBase.CALLEE_TYPE.equals(hierarchyType)) {
-          return new JSCalleeMethodsTreeStructure(myProject, jsFunction, scope);
-        }
-        else if (CallHierarchyBrowserBase.CALLER_TYPE.equals(hierarchyType)) {
-          return new JSCallerMethodsTreeStructure(myProject, jsFunction, scope);
-        }
-        throw new IllegalArgumentException("Wrong hierarchy type: " + hierarchyType);
+    doHierarchyTest(() -> {
+      final JSClass jsClass = (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+        .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
+      assert jsClass != null;
+      final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
+      assert jsFunction != null;
+      if (CallHierarchyBrowserBase.CALLEE_TYPE.equals(hierarchyType)) {
+        return new JSCalleeMethodsTreeStructure(myProject, jsFunction, scope);
       }
+      else if (CallHierarchyBrowserBase.CALLER_TYPE.equals(hierarchyType)) {
+        return new JSCallerMethodsTreeStructure(myProject, jsFunction, scope);
+      }
+      throw new IllegalArgumentException("Wrong hierarchy type: " + hierarchyType);
     }, fileNames);
   }
 

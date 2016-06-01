@@ -237,12 +237,7 @@ public class JstdTestLocationProvider implements SMTestLocator {
     if (ok) {
       return files;
     }
-    return ContainerUtil.filter(files, new Condition<VirtualFile>() {
-      @Override
-      public boolean value(VirtualFile file) {
-        return file.isValid();
-      }
-    });
+    return ContainerUtil.filter(files, file -> file.isValid());
   }
 
   @Nullable

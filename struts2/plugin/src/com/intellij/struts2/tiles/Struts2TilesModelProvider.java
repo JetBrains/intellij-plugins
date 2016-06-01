@@ -67,11 +67,8 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
   @NonNls
   private static final String STRUTS2_TILES_MODEL = "struts2TilesModel";
 
-  private static final Condition<ParamValue> TILES_CONTEXT_PARAM_CONDITION = new Condition<ParamValue>() {
-    public boolean value(final ParamValue paramValue) {
-      return Comparing.equal(TilesConstants.DEFINITIONS_CONFIG_PARAMETER, paramValue.getParamName().getStringValue());
-    }
-  };
+  private static final Condition<ParamValue> TILES_CONTEXT_PARAM_CONDITION =
+    paramValue -> Comparing.equal(TilesConstants.DEFINITIONS_CONFIG_PARAMETER, paramValue.getParamName().getStringValue());
 
   @NotNull
   public Collection<TilesModel> computeModels(@NotNull final Module module) {

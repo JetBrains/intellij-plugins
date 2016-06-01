@@ -134,11 +134,9 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
                                                       null, getTestClassPackageScope(module),
                                                       RefactoringBundle.message("choose.destination.package"));
 
-    final Condition<JSClass> filter = new Condition<JSClass>() {
-      public boolean value(final JSClass jsClass) {
-        final JSAttributeList attributeList = jsClass.getAttributeList();
-        return !jsClass.isInterface() && attributeList != null && !attributeList.hasModifier(JSAttributeList.ModifierType.FINAL);
-      }
+    final Condition<JSClass> filter = jsClass -> {
+      final JSAttributeList attributeList = jsClass.getAttributeList();
+      return !jsClass.isInterface() && attributeList != null && !attributeList.hasModifier(JSAttributeList.ModifierType.FINAL);
     };
 
     mySuperClassField = JSReferenceEditor.forClassName("", module.getProject(), null, getSuperClassScope(module), null, filter,

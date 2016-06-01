@@ -315,11 +315,8 @@ public class FlashBuilderModuleImporter {
 
   @Nullable
   private static String findThemeFilePath(final File themeDir) {
-    final String fileName = ContainerUtil.find(themeDir.list(), new Condition<String>() {
-      public boolean value(final String path) {
-        return FileUtilRt.extensionEquals(path, "css") || FileUtilRt.extensionEquals(path, "swc");
-      }
-    });
+    final String fileName = ContainerUtil.find(themeDir.list(),
+                                               path -> FileUtilRt.extensionEquals(path, "css") || FileUtilRt.extensionEquals(path, "swc"));
     return fileName == null ? null : FileUtil.toSystemIndependentName(themeDir + "/" + fileName);
   }
 

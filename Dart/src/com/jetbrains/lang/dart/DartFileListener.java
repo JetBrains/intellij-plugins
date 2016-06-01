@@ -124,12 +124,7 @@ public class DartFileListener extends VirtualFileAdapter {
           removeDartPackagesLibraryAndDependencies(project);
         }
         else {
-          final Condition<Module> moduleFilter = new Condition<Module>() {
-            @Override
-            public boolean value(final Module module) {
-              return DartSdkGlobalLibUtil.isDartSdkEnabled(module);
-            }
-          };
+          final Condition<Module> moduleFilter = module -> DartSdkGlobalLibUtil.isDartSdkEnabled(module);
 
           updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
         }

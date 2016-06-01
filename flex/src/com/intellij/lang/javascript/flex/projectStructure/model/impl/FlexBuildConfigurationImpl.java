@@ -345,11 +345,8 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
   @Nullable
   public Sdk getSdk() {
     final SdkEntry sdkEntry = myDependencies.getSdkEntry();
-    return sdkEntry == null ? null : ContainerUtil.find(FlexSdkUtils.getFlexAndFlexmojosSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdkEntry.getName().equals(sdk.getName());
-      }
-    });
+    return sdkEntry == null ? null : ContainerUtil.find(FlexSdkUtils.getFlexAndFlexmojosSdks(),
+                                                        sdk -> sdkEntry.getName().equals(sdk.getName()));
   }
 
   public boolean isTempBCForCompilation() {

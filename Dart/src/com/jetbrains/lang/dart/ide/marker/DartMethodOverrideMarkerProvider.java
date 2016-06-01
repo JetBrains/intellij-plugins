@@ -59,12 +59,7 @@ public class DartMethodOverrideMarkerProvider implements LineMarkerProvider {
     if (methodName == null || !methodDeclaration.isPublic()) {
       return null;
     }
-    final List<DartComponent> filteredSuperItems = ContainerUtil.filter(superItems, new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return methodName.equals(component.getName());
-      }
-    });
+    final List<DartComponent> filteredSuperItems = ContainerUtil.filter(superItems, component -> methodName.equals(component.getName()));
     if (filteredSuperItems.isEmpty()) {
       return null;
     }

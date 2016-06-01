@@ -83,11 +83,7 @@ public class AngularJSMessageFormatExpression extends JSExpressionImpl {
     if (!(getNode() instanceof CompositeElement)) return Collections.emptyList();
     final PsiElement[] selectionsKeywords = ((CompositeElement)getNode()).getChildrenAsPsiElements(
       AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD, PsiElement.ARRAY_FACTORY);
-    return ContainerUtil.filter(selectionsKeywords, new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement element) {
-        return element.getNode().getElementType() == AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD;
-      }
-    });
+    return ContainerUtil.filter(selectionsKeywords,
+                                element -> element.getNode().getElementType() == AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD);
   }
 }

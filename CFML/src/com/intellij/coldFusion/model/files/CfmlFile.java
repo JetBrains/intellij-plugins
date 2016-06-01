@@ -61,27 +61,25 @@ public class CfmlFile extends PsiFileBase {
     "<!---[\\s]*" + CFMLVARIABLE_MARKER + "[\\s]*name=\"([^\"]+)\"[\\s]*type=\"([^\"]*)\"[\\s]*--->[\\s]*");
 
   CachedValueProvider<Map<String, CfmlImplicitVariable>> createImplicitVarsProvider() {
-    return new CachedValueProvider<Map<String, CfmlImplicitVariable>>() {
-      public CachedValueProvider.Result<Map<String, CfmlImplicitVariable>> compute() {
-        final Map<String, CfmlImplicitVariable> result = new THashMap<String, CfmlImplicitVariable>();
-        CfmlFile.this.accept(new PsiRecursiveElementVisitor() {
-          @Override
-          public void visitComment(final PsiComment comment) {
-            final String text = comment.getText();
-            final String[] nameAndType = findVariableNameAndType(text);
-            if (nameAndType == null) {
-              return;
-            }
-            CfmlImplicitVariable var = ContainerUtil.getOrCreate(result, nameAndType[0], new Factory<CfmlImplicitVariable>() {
-              public CfmlImplicitVariable create() {
-                return new CfmlImplicitVariable(CfmlFile.this, comment, nameAndType[0]);
-              }
-            });
-            var.setType(nameAndType[1]);
+    return () -> {
+      final Map<String, CfmlImplicitVariable> result = new THashMap<String, CfmlImplicitVariable>();
+      CfmlFile.this.accept(new PsiRecursiveElementVisitor() {
+        @Override
+        public void visitComment(final PsiComment comment) {
+          final String text = comment.getText();
+          final String[] nameAndType = findVariableNameAndType(text);
+          if (nameAndType == null) {
+            return;
           }
-        });
-        return CachedValueProvider.Result.create(result, CfmlFile.this);
-      }
+          CfmlImplicitVariable var = ContainerUtil.getOrCreate(result, nameAndType[0], new Factory<CfmlImplicitVariable>() {
+            public CfmlImplicitVariable create() {
+              return new CfmlImplicitVariable(CfmlFile.this, comment, nameAndType[0]);
+            }
+          });
+          var.setType(nameAndType[1]);
+        }
+      });
+      return CachedValueProvider.Result.create(result, CfmlFile.this);
     };
   }
 

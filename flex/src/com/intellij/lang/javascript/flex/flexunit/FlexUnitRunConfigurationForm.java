@@ -59,12 +59,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     initLaunchWithTextWithBrowse();
 
     FlashRunConfigurationForm.initAppDescriptorForEmulatorCombo(myAppDescriptorForEmulatorCombo,
-                                                                new NullableComputable<FlexBuildConfiguration>() {
-                                                                  @Nullable
-                                                                  public FlexBuildConfiguration compute() {
-                                                                    return myBCCombo.getBC();
-                                                                  }
-                                                                });
+                                                                () -> myBCCombo.getBC());
   }
 
   private void initLogLevelControls() {
@@ -170,23 +165,19 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
   private void createUIComponents() {
     myBCCombo = new BCCombo(myProject);
     myWhatToTestForm = new WhatToTestForm(myProject,
-                                          new ThrowableComputable<Module, RuntimeConfigurationError>() {
-                                            public Module compute() throws RuntimeConfigurationError {
-                                              final Module module = myBCCombo.getModule();
-                                              if (module != null) return module;
-                                              throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
-                                            }
+                                          () -> {
+                                            final Module module = myBCCombo.getModule();
+                                            if (module != null) return module;
+                                            throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
                                           },
-                                          new ThrowableComputable<FlexUnitSupport, RuntimeConfigurationError>() {
-                                            public FlexUnitSupport compute() throws RuntimeConfigurationError {
-                                              final FlexBuildConfiguration bc = myBCCombo.getBC();
-                                              if (bc == null) throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
-                                              final FlexUnitSupport support = FlexUnitSupport.getSupport(bc, myBCCombo.getModule());
-                                              if (support != null) return support;
+                                          () -> {
+                                            final FlexBuildConfiguration bc = myBCCombo.getBC();
+                                            if (bc == null) throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
+                                            final FlexUnitSupport support = FlexUnitSupport.getSupport(bc, myBCCombo.getModule());
+                                            if (support != null) return support;
 
-                                              throw new RuntimeConfigurationError(
-                                                FlexBundle.message("flexunit.not.found.for.bc", bc.getName()));
-                                            }
+                                            throw new RuntimeConfigurationError(
+                                              FlexBundle.message("flexunit.not.found.for.bc", bc.getName()));
                                           }
     );
   }

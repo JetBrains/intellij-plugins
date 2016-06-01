@@ -111,11 +111,7 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
   }
 
   private static Collection<String> getOldExcludedFolders(Module module, final VirtualFile root) {
-    return ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<String>() {
-      public boolean value(final String url) {
-        return url.startsWith(root.getUrl());
-      }
-    });
+    return ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), url -> url.startsWith(root.getUrl()));
   }
 
   private static VirtualFile getContentRoot(Module module, VirtualFile root) {

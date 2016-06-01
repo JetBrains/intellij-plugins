@@ -140,12 +140,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   private void updateActiveConfiguration(@Nullable final String activeName) {
     if (myConfigurations.length > 0) {
       myActiveConfiguration =
-        activeName != null ? ContainerUtil.find(myConfigurations, new Condition<FlexBuildConfigurationImpl>() {
-          @Override
-          public boolean value(FlexBuildConfigurationImpl bc) {
-            return bc.getName().equals(activeName);
-          }
-        }) : null;
+        activeName != null ? ContainerUtil.find(myConfigurations, bc -> bc.getName().equals(activeName)) : null;
       if (myActiveConfiguration == null) {
         myActiveConfiguration = myConfigurations[0];
       }

@@ -128,12 +128,9 @@ public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
     Module module = ModuleUtilCore.findModuleForPsiElement(context);
     final String[] allowedBuiltin = getAllowedBuiltInTemplates(module);
     return ContainerUtil
-      .filter(CreateClassOrInterfaceFix.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS, context.getProject()), new Condition<FileTemplate>() {
-        @Override
-        public boolean value(final FileTemplate fileTemplate) {
-          String name = fileTemplate.getName();
-          return ArrayUtil.contains(name, allowedBuiltin) || !NewFlexComponentAction.isClassifierTemplate(name);
-        }
+      .filter(CreateClassOrInterfaceFix.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS, context.getProject()), fileTemplate -> {
+        String name = fileTemplate.getName();
+        return ArrayUtil.contains(name, allowedBuiltin) || !NewFlexComponentAction.isClassifierTemplate(name);
       });
   }
 

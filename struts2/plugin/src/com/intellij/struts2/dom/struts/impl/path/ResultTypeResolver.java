@@ -79,12 +79,7 @@ public class ResultTypeResolver {
 
     // find extensions
     final StrutsResultContributor[] contributors = Extensions.getExtensions(StrutsResultContributor.EP_NAME);
-    return ContainerUtil.find(contributors, new Condition<StrutsResultContributor>() {
-      @Override
-      public boolean value(final StrutsResultContributor strutsResultContributor) {
-        return strutsResultContributor.matchesResultType(resultType);
-      }
-    }) != null;
+    return ContainerUtil.find(contributors, strutsResultContributor -> strutsResultContributor.matchesResultType(resultType)) != null;
   }
 
 }

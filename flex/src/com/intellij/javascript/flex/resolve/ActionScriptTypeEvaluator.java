@@ -176,13 +176,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         (source == null || source == EXPLICIT_TYPE_MARKER_ELEMENT)
       ) {
       // TODO [ksafonov] enforced scope (and context) should internal part of JSType.resolve()
-      JSClass jsClass = JSInheritanceUtil.withEnforcedScope(new Computable<JSClass>() {
-        @Nullable
-        @Override
-        public JSClass compute() {
-          return _type.resolveClass();
-        }
-      }, JSResolveUtil.getResolveScope(myContext.targetFile));
+      JSClass jsClass = JSInheritanceUtil.withEnforcedScope(() -> _type.resolveClass(), JSResolveUtil.getResolveScope(myContext.targetFile));
       if (jsClass != null) {
         source = jsClass;
       }

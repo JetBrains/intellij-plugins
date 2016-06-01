@@ -43,12 +43,9 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
   public static void openUrlInChromeFamilyBrowser(@NotNull final String url) {
     try {
       final BrowserConnectionManager connectionManager = BrowserConnectionManager.getInstance();
-      final Client chromeClient = connectionManager.findClient(new Condition<Client>() {
-        @Override
-        public boolean value(final Client client) {
-          final WebBrowser browser = connectionManager.getBrowser(client);
-          return browser != null && browser.getFamily() == BrowserFamily.CHROME;
-        }
+      final Client chromeClient = connectionManager.findClient(client -> {
+        final WebBrowser browser = connectionManager.getBrowser(client);
+        return browser != null && browser.getFamily() == BrowserFamily.CHROME;
       });
 
       if (chromeClient != null) {
@@ -65,12 +62,8 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
   }
 
   private static void openInAnyChromeFamilyBrowser(@NotNull final String url) {
-    final List<WebBrowser> chromeBrowsers = WebBrowserManager.getInstance().getBrowsers(new Condition<WebBrowser>() {
-      @Override
-      public boolean value(final WebBrowser browser) {
-        return browser.getFamily() == BrowserFamily.CHROME;
-      }
-    }, true);
+    final List<WebBrowser> chromeBrowsers = WebBrowserManager.getInstance().getBrowsers(
+      browser -> browser.getFamily() == BrowserFamily.CHROME, true);
 
 
     BrowserLauncher.getInstance().browse(url, chromeBrowsers.isEmpty() ? null : chromeBrowsers.get(0));

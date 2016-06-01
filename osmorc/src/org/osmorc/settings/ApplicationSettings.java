@@ -104,12 +104,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
   public List<FrameworkInstanceDefinition> getActiveFrameworkInstanceDefinitions() {
     if (myActiveInstances == null) {
       final FrameworkIntegratorRegistry registry = FrameworkIntegratorRegistry.getInstance();
-      myActiveInstances = ContainerUtil.filter(myInstances, new Condition<FrameworkInstanceDefinition>() {
-        @Override
-        public boolean value(FrameworkInstanceDefinition definition) {
-          return registry.findIntegratorByInstanceDefinition(definition) != null;
-        }
-      });
+      myActiveInstances = ContainerUtil.filter(myInstances, definition -> registry.findIntegratorByInstanceDefinition(definition) != null);
     }
     return myActiveInstances;
   }

@@ -64,12 +64,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       DartConsoleProperties properties = (DartConsoleProperties)((SMTRunnerConsoleView)consoleView).getProperties();
       AbstractRerunFailedTestsAction rerunFailedTestsAction = properties.createRerunFailedTestsAction(consoleView);
       assert rerunFailedTestsAction != null;
-      rerunFailedTestsAction.setModelProvider(new Getter<TestFrameworkRunningModel>() {
-        @Override
-        public TestFrameworkRunningModel get() {
-          return ((SMTRunnerConsoleView)consoleView).getResultsViewer();
-        }
-      });
+      rerunFailedTestsAction.setModelProvider(() -> ((SMTRunnerConsoleView)consoleView).getResultsViewer());
       executionResult.setRestartActions(rerunFailedTestsAction, new ToggleAutoTestAction());
     }
     else {

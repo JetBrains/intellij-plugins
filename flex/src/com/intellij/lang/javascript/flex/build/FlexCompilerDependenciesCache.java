@@ -150,11 +150,7 @@ public class FlexCompilerDependenciesCache {
 
   @Nullable
   private static BCInfo findCacheForBC(final @NotNull Collection<BCInfo> bcInfos, @NotNull final FlexBuildConfiguration bc) {
-    return ContainerUtil.find(bcInfos, new Condition<BCInfo>() {
-      public boolean value(final BCInfo info) {
-        return info.myBC.isEqual(bc);
-      }
-    });
+    return ContainerUtil.find(bcInfos, info -> info.myBC.isEqual(bc));
   }
 
   private static void addFileDependencies(final BCInfo bcInfo, final VirtualFile configFile, final String workDirPath) {

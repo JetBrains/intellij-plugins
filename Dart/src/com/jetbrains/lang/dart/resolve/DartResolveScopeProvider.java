@@ -84,37 +84,31 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
 
   @Nullable
   private static GlobalSearchScope getDartSdkResolveScope(@NotNull final Project project) {
-    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<GlobalSearchScope>() {
-      @Override
-      public Result<GlobalSearchScope> compute() {
-        final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
-        final LibraryScope scope = library == null ? null : new LibraryScope(project, library);
-        return new Result<GlobalSearchScope>(scope, ProjectRootManager.getInstance(project));
-      }
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
+      final LibraryScope scope = library == null ? null : new LibraryScope(project, library);
+      return new CachedValueProvider.Result<GlobalSearchScope>(scope, ProjectRootManager.getInstance(project));
     });
   }
 
   private static GlobalSearchScope getLibraryAndSdkScope(@NotNull final Project project,
                                                          @NotNull final VirtualFile file,
                                                          @Nullable final DartSdk sdk) {
-    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<GlobalSearchScope>() {
-      @Override
-      public Result<GlobalSearchScope> compute() {
-        final GlobalSearchScope sdkScope = sdk == null ? null : getDartSdkResolveScope(project);
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      final GlobalSearchScope sdkScope = sdk == null ? null : getDartSdkResolveScope(project);
 
-        final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-        final Set<VirtualFile> roots = new THashSet<VirtualFile>();
+      final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+      final Set<VirtualFile> roots = new THashSet<VirtualFile>();
 
-        for (OrderEntry orderEntry : fileIndex.getOrderEntriesForFile(file)) {
-          Collections.addAll(roots, orderEntry.getFiles(OrderRootType.CLASSES));
-        }
-
-        final LibraryScopeBase libraryScope = new DartLibraryScope(project, roots);
-        final GlobalSearchScope scope = sdkScope != null ? sdkScope.union(libraryScope)
-                                                         : libraryScope;
-
-        return new Result<GlobalSearchScope>(scope, ProjectRootManager.getInstance(project));
+      for (OrderEntry orderEntry : fileIndex.getOrderEntriesForFile(file)) {
+        Collections.addAll(roots, orderEntry.getFiles(OrderRootType.CLASSES));
       }
+
+      final LibraryScopeBase libraryScope = new DartLibraryScope(project, roots);
+      final GlobalSearchScope scope = sdkScope != null ? sdkScope.union(libraryScope)
+                                                       : libraryScope;
+
+      return new CachedValueProvider.Result<GlobalSearchScope>(scope, ProjectRootManager.getInstance(project));
     });
   }
 
@@ -129,32 +123,29 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
       return null; // unlikely as contextSubdir and pubspecFile are checked to be in project
     }
 
-    return CachedValuesManager.getManager(project).getCachedValue(dataHolder, new CachedValueProvider<GlobalSearchScope>() {
-      @Override
-      public Result<GlobalSearchScope> compute() {
-        final Collection<VirtualFile> pathPackageRoots = getPathPackageRoots(module.getProject(), pubspecFile);
+    return CachedValuesManager.getManager(project).getCachedValue(dataHolder, () -> {
+      final Collection<VirtualFile> pathPackageRoots = getPathPackageRoots(module.getProject(), pubspecFile);
 
-        final VirtualFile dartRoot = pubspecFile.getParent();
+      final VirtualFile dartRoot = pubspecFile.getParent();
 
-        final GlobalSearchScope scope;
+      final GlobalSearchScope scope;
 
-        if (contextSubdir == null || "test".equals(contextSubdir.getName())) {
-          // the biggest scope
-          scope = createDirectoriesScope(project, pathPackageRoots, dartRoot);
-        }
-        else if ("lib".equals(contextSubdir.getName()) || PACKAGES_FOLDER_NAME.equals(contextSubdir.getName())) {
-          // the smallest scope
-          scope = createDirectoriesScope(project, pathPackageRoots, dartRoot.findChild("lib"), dartRoot.findChild(PACKAGES_FOLDER_NAME));
-        }
-        else {
-          scope = createDirectoriesScope(project, pathPackageRoots, contextSubdir, dartRoot.findChild("lib"),
-                                         dartRoot.findChild(PACKAGES_FOLDER_NAME));
-        }
-
-        final GlobalSearchScope scopeWithLibs =
-          scope.intersectWith(GlobalSearchScope.projectScope(project)).union(getModuleLibrariesClassesScope(module));
-        return new Result<GlobalSearchScope>(scopeWithLibs, PsiModificationTracker.MODIFICATION_COUNT);
+      if (contextSubdir == null || "test".equals(contextSubdir.getName())) {
+        // the biggest scope
+        scope = createDirectoriesScope(project, pathPackageRoots, dartRoot);
       }
+      else if ("lib".equals(contextSubdir.getName()) || PACKAGES_FOLDER_NAME.equals(contextSubdir.getName())) {
+        // the smallest scope
+        scope = createDirectoriesScope(project, pathPackageRoots, dartRoot.findChild("lib"), dartRoot.findChild(PACKAGES_FOLDER_NAME));
+      }
+      else {
+        scope = createDirectoriesScope(project, pathPackageRoots, contextSubdir, dartRoot.findChild("lib"),
+                                       dartRoot.findChild(PACKAGES_FOLDER_NAME));
+      }
+
+      final GlobalSearchScope scopeWithLibs =
+        scope.intersectWith(GlobalSearchScope.projectScope(project)).union(getModuleLibrariesClassesScope(module));
+      return new CachedValueProvider.Result<GlobalSearchScope>(scopeWithLibs, PsiModificationTracker.MODIFICATION_COUNT);
     });
   }
 
@@ -192,20 +183,17 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
   }
 
   private static GlobalSearchScope getModuleLibrariesClassesScope(@NotNull final Module module) {
-    return CachedValuesManager.getManager(module.getProject()).getCachedValue(module, new CachedValueProvider<GlobalSearchScope>() {
-      @Override
-      public Result<GlobalSearchScope> compute() {
-        final Set<VirtualFile> roots = new THashSet<VirtualFile>();
+    return CachedValuesManager.getManager(module.getProject()).getCachedValue(module, () -> {
+      final Set<VirtualFile> roots = new THashSet<VirtualFile>();
 
-        for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-          if (orderEntry instanceof LibraryOrderEntry) {
-            ContainerUtil.addAll(roots, ((LibraryOrderEntry)orderEntry).getRootFiles(OrderRootType.CLASSES));
-          }
+      for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+        if (orderEntry instanceof LibraryOrderEntry) {
+          ContainerUtil.addAll(roots, ((LibraryOrderEntry)orderEntry).getRootFiles(OrderRootType.CLASSES));
         }
-
-        return new Result<GlobalSearchScope>(new DartLibraryScope(module.getProject(), roots),
-                                             ProjectRootManager.getInstance(module.getProject()));
       }
+
+      return new CachedValueProvider.Result<GlobalSearchScope>(new DartLibraryScope(module.getProject(), roots),
+                                                               ProjectRootManager.getInstance(module.getProject()));
     });
   }
 

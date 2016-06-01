@@ -159,13 +159,9 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     else {
       CreateClassParameters p = CreateClassOrInterfaceFix
         .createAndShow(defaultTemplateName, jsClass, suggestSubclassName(jsClass.getName()), true, jsPackageStatement.getQualifiedName(),
-                       jsClass, JSBundle.message("new.actionscript.class.dialog.title"), new Computable<List<FileTemplate>>() {
-          @Override
-          public List<FileTemplate> compute() {
-            return CreateClassOrInterfaceFix.getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS,
-                                                                    project);
-          }
-        });
+                       jsClass, JSBundle.message("new.actionscript.class.dialog.title"),
+                       () -> CreateClassOrInterfaceFix.getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS,
+                                                                                         project));
 
       if (p == null) return;
 

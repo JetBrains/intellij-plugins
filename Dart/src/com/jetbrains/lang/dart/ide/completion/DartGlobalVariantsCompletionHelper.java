@@ -36,12 +36,7 @@ public class DartGlobalVariantsCompletionHelper {
     final GlobalSearchScope scope = vFile == null ? null : DartResolveScopeProvider.getDartScope(context.getProject(), vFile, true);
     if (scope == null) return;
 
-    final Condition<String> nameFilter = new Condition<String>() {
-      @Override
-      public boolean value(String componentName) {
-        return !namesToSkip.contains(componentName);
-      }
-    };
+    final Condition<String> nameFilter = componentName -> !namesToSkip.contains(componentName);
 
     DartComponentIndex.processAllComponents(scope, nameFilter,
                                             (componentName, info) -> {

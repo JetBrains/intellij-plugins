@@ -232,12 +232,9 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
     final List<String> themePaths = BCUtils.getThemes(forModule, bc);
-    final List<String> allAccessibleUrls = ContainerUtil.filter(allUrls, new Condition<String>() {
-      @Override
-      public boolean value(String s) {
-        s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
-        return BCUtils.getSdkEntryLinkageType(s, bc) != null || themePaths.contains(s);
-      }
+    final List<String> allAccessibleUrls = ContainerUtil.filter(allUrls, s -> {
+      s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
+      return BCUtils.getSdkEntryLinkageType(s, bc) != null || themePaths.contains(s);
     });
     urls.addAll(new HashSet<String>(allAccessibleUrls));
     return true;

@@ -98,12 +98,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
     if (methodName == null || !componentWithDeclarationList.isPublic()) {
       return null;
     }
-    final List<DartComponent> filteredSubItems = ContainerUtil.filter(subItems, new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return methodName.equals(component.getName());
-      }
-    });
+    final List<DartComponent> filteredSubItems = ContainerUtil.filter(subItems, component -> methodName.equals(component.getName()));
     if (filteredSubItems.isEmpty() || componentName == null) {
       return null;
     }

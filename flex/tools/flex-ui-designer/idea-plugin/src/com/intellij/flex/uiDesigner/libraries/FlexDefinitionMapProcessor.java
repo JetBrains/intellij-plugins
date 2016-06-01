@@ -62,17 +62,7 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
 
     Pair<CharArrayReader, ByteArrayInputStream> data = getInjection();
     final Set<CharSequence> ownDefinitions = LibraryUtil.getDefinitions(data.first);
-    NanoXmlUtil.parse(data.first, new CatalogXmlBuilder(definitionMap, new Condition<String>() {
-      @Override
-      public boolean value(String name) {
-        return globalContains.value(name) || (name.startsWith("com.intellij.") && !ownDefinitions.contains(name));
-      }
-    }, new Condition<String>() {
-      @Override
-      public boolean value(String name) {
-        return globalContains.value(name) || overloadedMasked.contains(name);
-      }
-    }
+    NanoXmlUtil.parse(data.first, new CatalogXmlBuilder(definitionMap, name -> globalContains.value(name) || (name.startsWith("com.intellij.") && !ownDefinitions.contains(name)), name -> globalContains.value(name) || overloadedMasked.contains(name)
     ));
     abcMerger.process(data.second);
   }

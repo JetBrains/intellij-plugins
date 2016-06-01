@@ -60,15 +60,11 @@ public class AngularJSProcessor {
 
     final XmlFile file = (XmlFile)hostFile;
 
-    final Collection<JSPsiElementBase> cache = CachedValuesManager.getCachedValue(file, new CachedValueProvider<Collection<JSPsiElementBase>>() {
-      @Nullable
-      @Override
-      public Result<Collection<JSPsiElementBase>> compute() {
-        final Collection<JSPsiElementBase> result = new ArrayList<JSPsiElementBase>();
-        processDocument(file.getDocument(), result);
+    final Collection<JSPsiElementBase> cache = CachedValuesManager.getCachedValue(file, () -> {
+      final Collection<JSPsiElementBase> result = new ArrayList<JSPsiElementBase>();
+      processDocument(file.getDocument(), result);
 
-        return Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
-      }
+      return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
     });
     for (JSPsiElementBase namedElement : cache) {
       if (scopeMatches(original, namedElement)){

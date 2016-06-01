@@ -38,12 +38,8 @@ public class DartImplementMethodHandler extends BaseDartGenerateHandler {
       }
     }
     result.keySet().removeAll(computeClassMembersMap(dartClass, false).keySet());
-    candidates.addAll(ContainerUtil.findAll(result.values(), new Condition<DartComponent>() {
-      @Override
-      public boolean value(final DartComponent component) {
-        return component.isPublic() || DartResolveUtil.sameLibrary(dartClass, component);
-      }
-    }));
+    candidates.addAll(ContainerUtil.findAll(result.values(),
+                                            component -> component.isPublic() || DartResolveUtil.sameLibrary(dartClass, component)));
   }
 
 }

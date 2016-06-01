@@ -59,12 +59,7 @@ public class DartMethodLineMarkerProvider implements LineMarkerProvider {
     if (isMarkableElement(element)) {
 
       // the method line markers are not nestable, aka, methods inside of methods, are not marked
-      if (PsiTreeUtil.findFirstParent(element, true, new Condition<PsiElement>() {
-        @Override
-        public boolean value(final PsiElement e) {
-          return isMarkableElement(e);
-        }
-      }) != null) {
+      if (PsiTreeUtil.findFirstParent(element, true, e -> isMarkableElement(e)) != null) {
         return null;
       }
 

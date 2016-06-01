@@ -100,12 +100,7 @@ public class ActionMethodReferenceProvider extends PsiReferenceProvider {
         return null;
       }
 
-      return ContainerUtil.find(action.getActionMethods(), new Condition<PsiMethod>() {
-        @Override
-        public boolean value(final PsiMethod psiMethod) {
-          return Comparing.equal(psiMethod.getName(), methodName);
-        }
-      });
+      return ContainerUtil.find(action.getActionMethods(), psiMethod -> Comparing.equal(psiMethod.getName(), methodName));
     }
 
     @NotNull
