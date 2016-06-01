@@ -78,7 +78,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
     final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
     if (parentParent instanceof DartUriElement) {
-      final int uriStringOffset = ((DartUriElement)parentParent).getUriStringAndItsRange().second.getEndOffset();
+      final int uriStringOffset = ((DartUriElement)parentParent).getUriStringAndItsRange().second.getStartOffset();
       if (parameters.getOffset() >= parentParent.getTextRange().getStartOffset() + uriStringOffset) {
         return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextRange().getStartOffset());
       }
