@@ -89,12 +89,8 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
-    final XmlAttributeDescriptor descriptor = ContainerUtil.find(getAttributesDescriptors(context), new Condition<XmlAttributeDescriptor>() {
-        @Override
-        public boolean value(XmlAttributeDescriptor descriptor) {
-          return attributeName.equals(descriptor.getName());
-        }
-      });
+    final XmlAttributeDescriptor descriptor = ContainerUtil.find(getAttributesDescriptors(context),
+                                                                 descriptor1 -> attributeName.equals(descriptor1.getName()));
     if (descriptor != null) return descriptor;
     return context != null ? AngularJSAttributeDescriptorsProvider.getAngular2Descriptor(attributeName, context.getProject()) : null;
   }

@@ -247,12 +247,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
 
     initAppDescriptorForEmulatorCombo(myAppDescriptorForEmulatorCombo,
-                                      new NullableComputable<FlexBuildConfiguration>() {
-                                        @Nullable
-                                        public FlexBuildConfiguration compute() {
-                                          return myBCCombo.getBC();
-                                        }
-                                      });
+                                      () -> myBCCombo.getBC());
   }
 
   public static void initAppDescriptorForEmulatorCombo(final JComboBox appDescriptorForEmulatorCombo,

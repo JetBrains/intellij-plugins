@@ -174,19 +174,16 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
   @Nullable
   private static OrderEntry findLibraryEntry(Module module, final String libraryId) {
-    return ContainerUtil.find(ModuleRootManager.getInstance(module).getOrderEntries(), new Condition<OrderEntry>() {
-      @Override
-      public boolean value(OrderEntry orderEntry) {
-        if (!(orderEntry instanceof LibraryOrderEntry)) {
-          return false;
-        }
-        Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
-        if (!(library instanceof LibraryEx)) {
-          return false;
-        }
-
-        return libraryId == ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
+    return ContainerUtil.find(ModuleRootManager.getInstance(module).getOrderEntries(), orderEntry -> {
+      if (!(orderEntry instanceof LibraryOrderEntry)) {
+        return false;
       }
+      Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
+      if (!(library instanceof LibraryEx)) {
+        return false;
+      }
+
+      return libraryId == ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
     });
   }
 

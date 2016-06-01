@@ -106,12 +106,7 @@ public class DartExecutionStack extends XExecutionStack {
 
   @Nullable
   public DartStackFrame getFrameToStopAt() {
-    return ContainerUtil.find(myStackFrames, new Condition<DartStackFrame>() {
-      @Override
-      public boolean value(final DartStackFrame frame) {
-        return !frame.isInDartSdkPatchFile();
-      }
-    });
+    return ContainerUtil.find(myStackFrames, frame -> !frame.isInDartSdkPatchFile());
   }
 
   @NotNull

@@ -91,12 +91,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   private void doTest(String file) throws Exception {
-    doTest(new String[]{file}, ArrayUtil.EMPTY_STRING_ARRAY, new Computable<GlobalSearchScope>() {
-      @Override
-      public GlobalSearchScope compute() {
-        return GlobalSearchScope.allScope(myProject);
-      }
-    }, null, null);
+    doTest(new String[]{file}, ArrayUtil.EMPTY_STRING_ARRAY, () -> GlobalSearchScope.allScope(myProject), null, null);
   }
 
 
@@ -244,30 +239,15 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   private Computable<GlobalSearchScope> projectScopeProvider() {
-    return new Computable<GlobalSearchScope>() {
-      @Override
-      public GlobalSearchScope compute() {
-        return GlobalSearchScope.projectScope(myProject);
-      }
-    };
+    return () -> GlobalSearchScope.projectScope(myProject);
   }
 
   private Computable<GlobalSearchScope> allScopeProvider() {
-    return new Computable<GlobalSearchScope>() {
-      @Override
-      public GlobalSearchScope compute() {
-        return GlobalSearchScope.allScope(myProject);
-      }
-    };
+    return () -> GlobalSearchScope.allScope(myProject);
   }
 
   private Computable<GlobalSearchScope> moduleScopeProvider() {
-    return new Computable<GlobalSearchScope>() {
-      @Override
-      public GlobalSearchScope compute() {
-        return GlobalSearchScope.moduleScope(myModule);
-      }
-    };
+    return () -> GlobalSearchScope.moduleScope(myModule);
   }
 
   public void testMxmlDependencies() throws Exception {

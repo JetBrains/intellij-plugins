@@ -1,21 +1,31 @@
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.*;
+import com.intellij.diagram.components.DiagramNodeBodyComponent;
+import com.intellij.diagram.components.DiagramNodeContainer;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.graph.GraphManager;
+import com.intellij.openapi.graph.GraphUtil;
+import com.intellij.openapi.graph.base.Edge;
 import com.intellij.openapi.graph.layout.Layouter;
 import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
+import com.intellij.openapi.graph.settings.GraphSettings;
 import com.intellij.openapi.graph.settings.GraphSettingsProvider;
-import com.intellij.openapi.graph.view.Graph2D;
+import com.intellij.openapi.graph.view.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.LightColors;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.uml.UmlGraphBuilder;
+import com.intellij.uml.presentation.DiagramPresentationModelImpl;
 import com.intellij.util.ArrayUtil;
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
@@ -23,10 +33,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
@@ -38,6 +46,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   private DiagramColorManagerBase myColorManager;
 
   private final Map<VirtualFile, AngularUiRouterGraphBuilder.GraphNodesBuilder> myData;
+  private Map<AngularUiRouterNode, DiagramNodeBodyComponent> myNodeBodiesMap = new HashMap<>();
 
   public AngularUiRouterDiagramProvider() {
     myData = new HashMap<>();
@@ -70,7 +79,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     myElementManager = new AbstractDiagramElementManager<DiagramObject>() {
       @Override
       public Object[] getNodeItems(DiagramObject parent) {
-        return ArrayUtil.toObjectArray(parent.getChildren().values());
+        return ArrayUtil.toObjectArray(parent.getChildrenList());
       }
 
       @Nullable
@@ -177,12 +186,13 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return "Angular ui-router states and views";
   }
 
+  private static final DiagramCategory[] CATEGORIES =
+    new DiagramCategory[]{Type.Categories.STATE, Type.Categories.VIEW, Type.Categories.TEMPLATE, Type.Categories.TEMPLATE_PLACEHOLDER,
+      Type.Categories.TOP_LEVEL_TEMPLATE};
+
   @Override
   public DiagramNodeContentManager getNodeContentManager() {
     return new DiagramNodeContentManager() {
-      private final DiagramCategory[] CATEGORIES =
-        new DiagramCategory[]{Type.Categories.STATE, Type.Categories.VIEW, Type.Categories.TEMPLATE, Type.Categories.TEMPLATE_PLACEHOLDER,
-        Type.Categories.TOP_LEVEL_TEMPLATE};
 
       @Override
       public boolean isInCategory(Object element, DiagramCategory category, DiagramState presentation) {
@@ -190,6 +200,22 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           return ((DiagramObject)element).getType().getCategory().equals(category);
         }
         return false;
+      }
+
+      @Override
+      public DiagramCategory[] getContentCategories() {
+        return CATEGORIES;
+      }
+    };
+  }
+
+  @Override
+  public DiagramRelationshipManager<DiagramObject> getRelationshipManager() {
+    return new DiagramRelationshipManager<DiagramObject>() {
+      @Nullable
+      @Override
+      public DiagramRelationshipInfo getDependencyInfo(DiagramObject e1, DiagramObject e2, DiagramCategory category) {
+        return null;
       }
 
       @Override
@@ -209,6 +235,94 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = myData.get(virtualFile);
     if (nodesBuilder == null) return null;
     return new AngularUiRouterDiagramModel(project, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
+  }
+
+  @Nullable
+  @Override
+  public DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
+    return new DiagramPresentationModelImpl(graph, project, this) {
+      @NotNull
+      @Override
+      public EdgeRealizer getEdgeRealizer(DiagramEdge edge) {
+        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+        final Edge graphEdge = builder.getEdge(edge);
+        final AngularEdgeLayouter.OneEdgeLayouter layouter =
+          new AngularEdgeLayouter.OneEdgeLayouter(graphEdge, (AngularUiRouterEdge)edge, graph);
+        layouter.calculateEdgeLayout();
+
+        return layouter.getRealizer();
+      }
+
+      private Map<Integer, Integer> myEdgesPositions = new HashMap<>();
+
+      @Override
+      public EdgeLabel[] getEdgeLabels(DiagramEdge umlEdge, String label) {
+        AngularUiRouterEdge angularEdge = (AngularUiRouterEdge)umlEdge;
+        if ( !isShowEdgeLabels() || umlEdge == null || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
+          return EMPTY_LABELS;
+        }
+        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+        final Edge edge = builder.getEdge(umlEdge);
+        final List<Integer> edges = getParallelEdges(edge);
+        EdgeLabel edgeLabel = GraphManager.getGraphManager().createEdgeLabel();
+        final SmartEdgeLabelModel model = GraphManager.getGraphManager().createSmartEdgeLabelModel();
+        if (!edges.isEmpty()) {
+          if (edges.size() == 1) {
+            edgeLabel.setLabelModel(model, model.createDiscreteModelParameter(SmartEdgeLabelModel.POSITION_TARGET_RIGHT));
+          } else {
+            edgeLabel.setLabelModel(model, model.createDiscreteModelParameter(SmartEdgeLabelModel.POSITION_LEFT));
+          }
+        } else {
+          edgeLabel.setLabelModel(model, model.createDiscreteModelParameter(SmartEdgeLabelModel.POSITION_SOURCE_LEFT));
+        }
+        model.setDefaultDistance(10);
+        edgeLabel.setTextColor(JBColor.foreground());
+        myEdgesPositions.put(edge.index(), 1);
+        return new EdgeLabel[]{edgeLabel};
+      }
+
+      private List<Integer> getParallelEdges(final Edge edge) {
+        final List<Integer> list = new ArrayList<>();
+        for (Edge current : edge.getGraph().getEdgeArray()) {
+          if (current == edge) continue;
+          if (current.source().index() == edge.source().index() && current.target().index() == edge.target().index() ||
+              current.target().index() == edge.source().index() && current.source().index() == edge.target().index()) {
+            list.add(current.index());
+          }
+        }
+        return list;
+      }
+
+      @Override
+      public void customizeSettings(Graph2DView view, EditMode editMode) {
+        super.customizeSettings(view, editMode);
+        view.getGraph2D().addGraph2DSelectionListener(new Graph2DSelectionListener() {
+          @Override
+          public void onGraph2DSelectionEvent(Graph2DSelectionEvent _e) {
+            updateBySelection(null);
+            myEdgesPositions.clear();
+            view.updateView();
+          }
+        });
+        /*UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+        final AngularUiRouterDiagramModel model = (AngularUiRouterDiagramModel)builder.getDataModel();
+        final AngularUiRouterNode rootNode = findDataObject(model).getRootNode();
+        updateBySelection(rootNode);*/
+      }
+
+      private void updateBySelection(DiagramNode node) {
+        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+        final List<DiagramNode> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(builder));
+        if (node != null) nodes.add(node);
+        for (DiagramEdge edge : builder.getEdgeObjects()) {
+          if (nodes.contains(edge.getSource()) || nodes.contains(edge.getTarget())) {
+            graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge) edge).getLabel());
+          } else {
+            graph.setLabelText(builder.getEdge(edge), "");
+          }
+        }
+      }
+    };
   }
 
   @NotNull
@@ -233,13 +347,46 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       @Nullable
       @Override
       public Layouter getCustomLayouter(Graph2D graph, Project project) {
-        final SmartOrganicLayouter layouter = GraphSettingsProvider.getInstance(project).getSettings(graph).getOrganicLayouter();
+        final GraphSettingsProvider settingsProvider = GraphSettingsProvider.getInstance(project);
+        final GraphSettings settings = settingsProvider.getSettings(graph);
+
+        final SmartOrganicLayouter layouter = settings.getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
-        layouter.setParallelEdgeLayouterEnabled(true);
+        //layouter.setParallelEdgeLayouterEnabled(true);
+
+        layouter.setNodeSizeAware(true);
+        layouter.setMinimalNodeDistance(60);
+        layouter.setNodeOverlapsAllowed(false);
+        layouter.setSmartComponentLayoutEnabled(true);
+
+        layouter.setConsiderNodeLabelsEnabled(true);
+        //final SplitEdgeLayoutStage splitEdgeLayoutStage = GraphManager.getGraphManager().createSplitEdgeLayoutStage();
+        //((CanonicMultiStageLayouter) layouter).appendStage(splitEdgeLayoutStage);
+
+        // todo try hierarchical group
         return layouter;
         //uncomment when ready
-        //return new AngularJSDiagramLayouter(project, graph, layouter, myData);
+        //return new AngularJSDiagramLayouter(project, graph, layouter, myData, myNodeBodiesMap);
+      }
+
+      @NotNull
+      @Override
+      public JComponent createNodeComponent(DiagramNode<DiagramObject> node, DiagramBuilder builder, Point basePoint, JPanel wrapper) {
+        final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, basePoint);
+        myNodeBodiesMap.put((AngularUiRouterNode)node, container.getNodeBodyComponent());
+        return container;
       }
     };
+  }
+
+  private AngularUiRouterGraphBuilder.GraphNodesBuilder findDataObject(final AngularUiRouterDiagramModel model) {
+    final Collection<AngularUiRouterNode> nodes = model.getNodes();
+    for (AngularUiRouterNode node : nodes) {
+      if (Type.topLevelTemplate.equals(node.getIdentifyingElement().getType())) {
+        final VirtualFile rootFile = node.getIdentifyingElement().getNavigationTarget().getContainingFile().getVirtualFile();
+        return myData.get(rootFile);
+      }
+    }
+    return null;
   }
 }

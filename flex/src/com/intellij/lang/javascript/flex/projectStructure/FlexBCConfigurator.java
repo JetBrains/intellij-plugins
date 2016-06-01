@@ -99,11 +99,7 @@ public class FlexBCConfigurator {
         public Library findSourceLibraryForLiveName(final String name, final String level) {
           final LibrariesModifiableModel model =
             ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
-          return ContainerUtil.find(model.getLibraries(), new Condition<Library>() {
-            public boolean value(final Library library) {
-              return name.equals(model.getLibraryEditor(library).getModel().getName());
-            }
-          });
+          return ContainerUtil.find(model.getLibraries(), library -> name.equals(model.getLibraryEditor(library).getModel().getName()));
         }
 
         public Library findSourceLibrary(final String name, final String level) {
@@ -243,12 +239,7 @@ public class FlexBCConfigurator {
 
     // config editor will handle event and update modifiable model on its own, we just need to update configurables
     Collection<ModifiableFlexBuildConfiguration> configsToRemove =
-      ContainerUtil.findAll(myConfigurablesMap.keySet(), new Condition<ModifiableFlexBuildConfiguration>() {
-        @Override
-        public boolean value(ModifiableFlexBuildConfiguration bc) {
-          return myConfigEditor.getModule(bc) == module;
-        }
-      });
+      ContainerUtil.findAll(myConfigurablesMap.keySet(), bc -> myConfigEditor.getModule(bc) == module);
 
     final ProjectStructureDaemonAnalyzer daemonAnalyzer =
       ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getContext().getDaemonAnalyzer();

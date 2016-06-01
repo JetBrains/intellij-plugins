@@ -127,12 +127,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         if (module == null) {
           errorMessage = FlexBundle.message("bc.problem.dependency.module.not.found", moduleName);
         }
-        else if (ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexBuildConfiguration>() {
-          @Override
-          public boolean value(final ModifiableFlexBuildConfiguration configuration) {
-            return bcName.equals(configuration.getName());
-          }
-        }) == null) {
+        else if (ContainerUtil.find(editor.getConfigurations(module), configuration -> bcName.equals(configuration.getName())) == null) {
           errorMessage = FlexBundle.message("bc.problem.dependency.bc.not.found", bcName, moduleName);
         }
 
@@ -277,12 +272,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         Module module = modulesConfigurator.getModule(bcEntry.getModuleName());
         if (module != null) {
           final ModifiableFlexBuildConfiguration bc =
-            ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexBuildConfiguration>() {
-              @Override
-              public boolean value(final ModifiableFlexBuildConfiguration configuration) {
-                return bcEntry.getBcName().equals(configuration.getName());
-              }
-            });
+            ContainerUtil.find(editor.getConfigurations(module), configuration -> bcEntry.getBcName().equals(configuration.getName()));
           if (bc != null) {
             usages.add(new UsageInBcDependencies(this, new BuildConfigurationProjectStructureElement(bc, module, myContext)) {
               @Override

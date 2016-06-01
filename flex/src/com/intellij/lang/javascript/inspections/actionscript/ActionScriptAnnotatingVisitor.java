@@ -1046,16 +1046,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       final JSExpression[] params = callExpression.getArguments();
 
       if (params.length >= 2 && PsiTreeUtil.isAncestor(params[1], nameIdentifier, true)) {
-        return new CreateJSEventMethod(nameIdentifier.getText(), new Computable<String>() {
-          @Override
-          public String compute() {
-            PsiElement responsibleElement = null;
-            if (params[0] instanceof JSReferenceExpression) {
-              responsibleElement = ((JSReferenceExpression)params[0]).getQualifier();
-            }
-
-            return responsibleElement == null ? FlexCommonTypeNames.FLASH_EVENT_FQN : responsibleElement.getText();
+        return new CreateJSEventMethod(nameIdentifier.getText(), () -> {
+          PsiElement responsibleElement = null;
+          if (params[0] instanceof JSReferenceExpression) {
+            responsibleElement = ((JSReferenceExpression)params[0]).getQualifier();
           }
+
+          return responsibleElement == null ? FlexCommonTypeNames.FLASH_EVENT_FQN : responsibleElement.getText();
         });
       }
     }

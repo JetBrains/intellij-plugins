@@ -33,12 +33,8 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
     myFixture.checkHighlighting(true, false, false);
 
     final String fixName = createAll ? "Create All" : "Create step";
-    final IntentionAction quickFix = ContainerUtil.find(myFixture.getAvailableIntentions(), new Condition<IntentionAction>() {
-      @Override
-      public boolean value(final IntentionAction intentionAction) {
-        return intentionAction instanceof QuickFixWrapper && intentionAction.getText().contains(fixName);
-      }
-    });
+    final IntentionAction quickFix = ContainerUtil.find(myFixture.getAvailableIntentions(),
+                                                        intentionAction -> intentionAction instanceof QuickFixWrapper && intentionAction.getText().contains(fixName));
 
     if (quickFix != null) {
       myFixture.launchAction(quickFix);

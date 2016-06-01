@@ -21,12 +21,7 @@ public class ManifestPackageReferenceSet extends PackageReferenceSet {
   public Collection<PsiPackage> resolvePackageName(@Nullable final PsiPackage context, final String packageName) {
     final String unwrappedPackageName = StringUtil.replace(packageName, "\n ", "").trim();
     if (context != null) {
-      return ContainerUtil.filter(context.getSubPackages(), new Condition<PsiPackage>() {
-        @Override
-        public boolean value(PsiPackage aPackage) {
-          return Comparing.equal(aPackage.getName(), unwrappedPackageName);
-        }
-      });
+      return ContainerUtil.filter(context.getSubPackages(), aPackage -> Comparing.equal(aPackage.getName(), unwrappedPackageName));
     }
     return Collections.emptyList();
   }

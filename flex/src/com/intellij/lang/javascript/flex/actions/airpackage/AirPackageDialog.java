@@ -133,11 +133,9 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   private void createUIComponents() {
-    myTree = new FlexBCTree(myProject, new Condition<FlexBuildConfiguration>() {
-      public boolean value(final FlexBuildConfiguration bc) {
-        final BuildConfigurationNature nature = bc.getNature();
-        return nature.isApp() && !nature.isWebPlatform();
-      }
+    myTree = new FlexBCTree(myProject, bc -> {
+      final BuildConfigurationNature nature = bc.getNature();
+      return nature.isApp() && !nature.isWebPlatform();
     });
 
     myTree.addToggleCheckBoxListener(new ChangeListener() {

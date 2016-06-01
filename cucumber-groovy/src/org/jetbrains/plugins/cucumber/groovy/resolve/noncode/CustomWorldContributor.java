@@ -79,18 +79,14 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
 
   @Nullable
   private static PsiType getWorldType(@NotNull final GroovyFile stepFile) {
-    return CachedValuesManager.getCachedValue(stepFile, new CachedValueProvider<PsiType>() {
-      @Nullable
-      @Override
-      public Result<PsiType> compute() {
-        for (GrStatement statement : stepFile.getStatements()) {
-          if (statement instanceof GrMethodCall && isWorldDeclaration((GrMethodCall)statement)) {
-            final GrClosableBlock closure = getClosureArg((GrMethodCall)statement);
-            return Result.create(closure == null ? null : closure.getReturnType(), stepFile);
-          }
+    return CachedValuesManager.getCachedValue(stepFile, () -> {
+      for (GrStatement statement : stepFile.getStatements()) {
+        if (statement instanceof GrMethodCall && isWorldDeclaration((GrMethodCall)statement)) {
+          final GrClosableBlock closure = getClosureArg((GrMethodCall)statement);
+          return CachedValueProvider.Result.create(closure == null ? null : closure.getReturnType(), stepFile);
         }
-        return Result.create(null, stepFile);
       }
+      return CachedValueProvider.Result.create(null, stepFile);
     });
   }
 

@@ -407,12 +407,8 @@ public class FlexTestUtils {
       }
       else {
         final OrderEntry
-          entry = ContainerUtil.find(ModuleRootManager.getInstance(module).getOrderEntries(), new Condition<OrderEntry>() {
-          @Override
-          public boolean value(final OrderEntry orderEntry) {
-            return orderEntry instanceof LibraryOrderEntry && ((LibraryOrderEntry)orderEntry).getLibraryName().equals(libraryName);
-          }
-        });
+          entry = ContainerUtil.find(ModuleRootManager.getInstance(module).getOrderEntries(),
+                                     orderEntry -> orderEntry instanceof LibraryOrderEntry && ((LibraryOrderEntry)orderEntry).getLibraryName().equals(libraryName));
         committedLibraryId = FlexProjectRootsUtil.getLibraryId(((LibraryOrderEntry)entry).getLibrary());
       }
 

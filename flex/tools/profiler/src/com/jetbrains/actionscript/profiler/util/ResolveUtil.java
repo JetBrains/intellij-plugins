@@ -24,15 +24,12 @@ public class ResolveUtil {
     if (scope == null || scope instanceof EverythingGlobalScope) {
       return new ArrayList<FrameInfo>(traces);
     }
-    return ContainerUtil.filter(traces, new Condition<FrameInfo>() {
-      @Override
-      public boolean value(FrameInfo frameInfo) {
-        final String qName = frameInfo.isAnonymous() ? frameInfo.getQNameByFile() : frameInfo.getQName();
-        if (qName == null) {
-          return false;
-        }
-        return findClassByQName(qName, scope) != null;
+    return ContainerUtil.filter(traces, frameInfo -> {
+      final String qName = frameInfo.isAnonymous() ? frameInfo.getQNameByFile() : frameInfo.getQName();
+      if (qName == null) {
+        return false;
       }
+      return findClassByQName(qName, scope) != null;
     });
   }
 

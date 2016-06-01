@@ -58,12 +58,7 @@ public class DefaultInterceptorRefResolveConverterImpl extends DefaultIntercepto
       return null;
     }
 
-    final Condition<InterceptorStack> nameCondition = new Condition<InterceptorStack>() {
-      @Override
-      public boolean value(final InterceptorStack interceptorStack) {
-        return name.equals(interceptorStack.getName().getStringValue());
-      }
-    };
+    final Condition<InterceptorStack> nameCondition = interceptorStack -> name.equals(interceptorStack.getName().getStringValue());
 
     final Ref<InterceptorStack> resolveResult = new Ref<InterceptorStack>();
     final Processor<StrutsPackage> processor = strutsPackage -> {

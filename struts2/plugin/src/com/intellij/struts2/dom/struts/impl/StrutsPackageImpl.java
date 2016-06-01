@@ -80,28 +80,24 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
       }
 
       myCachedDefaultResultType = CachedValuesManager.getManager(containingFile.getProject()).createCachedValue(
-        new CachedValueProvider<ResultType>() {
-          @Nullable
-          @Override
-          public Result<ResultType> compute() {
-            final Ref<ResultType> result = new Ref<ResultType>();
-            final StrutsPackageHierarchyWalker walker =
-              new StrutsPackageHierarchyWalker(StrutsPackageImpl.this, strutsPackage -> {
-                final List<ResultType> resultTypes = strutsPackage.getResultTypes();
-                for (final ResultType resultType : resultTypes) {
-                  final GenericAttributeValue<Boolean> defaultAttribute = resultType.getDefault();
-                  if (DomUtil.hasXml(defaultAttribute) &&
-                      defaultAttribute.getValue() == Boolean.TRUE) {
-                    result.set(resultType);
-                    return false;
-                  }
+        () -> {
+          final Ref<ResultType> result = new Ref<ResultType>();
+          final StrutsPackageHierarchyWalker walker =
+            new StrutsPackageHierarchyWalker(StrutsPackageImpl.this, strutsPackage -> {
+              final List<ResultType> resultTypes = strutsPackage.getResultTypes();
+              for (final ResultType resultType : resultTypes) {
+                final GenericAttributeValue<Boolean> defaultAttribute = resultType.getDefault();
+                if (DomUtil.hasXml(defaultAttribute) &&
+                    defaultAttribute.getValue() == Boolean.TRUE) {
+                  result.set(resultType);
+                  return false;
                 }
-                return true;
-              });
-            walker.walkUp();
+              }
+              return true;
+            });
+          walker.walkUp();
 
-            return Result.createSingleDependency(result.get(), PsiModificationTracker.MODIFICATION_COUNT);
-          }
+          return CachedValueProvider.Result.createSingleDependency(result.get(), PsiModificationTracker.MODIFICATION_COUNT);
         }, false);
     }
 

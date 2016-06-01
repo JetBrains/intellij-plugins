@@ -287,12 +287,8 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
     if (myObservatoryPort > 0) {
       topToolbar.addAction(
-        new OpenDartObservatoryUrlAction("http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort, new Computable<Boolean>() {
-          @Override
-          public Boolean compute() {
-            return myVmConnected && !getSession().isStopped();
-          }
-        }));
+        new OpenDartObservatoryUrlAction("http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort,
+                                         () -> myVmConnected && !getSession().isStopped()));
     }
   }
 

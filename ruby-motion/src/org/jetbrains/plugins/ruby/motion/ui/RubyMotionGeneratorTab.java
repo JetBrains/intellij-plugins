@@ -15,7 +15,6 @@ import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.RBundle;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl;
 import org.jetbrains.plugins.ruby.rails.facet.ui.wizard.ui.TabbedSettingsEditorTab;
@@ -43,12 +42,7 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   private static final String ADD_RUBY_SDK = "Add Ruby SDK...";
   private static final int COMBO_WIDTH = PlatformUtils.isRubyMine() ? 320 : 150;
 
-  public static final Condition<Sdk> IS_PURE_RBENV_SDK = new Condition<Sdk>() {
-    @Override
-    public boolean value(Sdk sdk) {
-      return !RbenvGemsetManager.getInstance().isGemsetSdk(sdk);
-    }
-  };
+  public static final Condition<Sdk> IS_PURE_RBENV_SDK = sdk -> !RbenvGemsetManager.getInstance().isGemsetSdk(sdk);
 
   private final RubyMotionSettingsHolder mySettingsHolder;
   private ComboBox myRubyInterpreterComboBox;
@@ -72,7 +66,7 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   @Override
   public JComponent createComponent() {
     myRubyLabel.setDisplayedMnemonic('S');
-    myRubyInterpreterComboBox.setRenderer(new RubySdkRenderer(myRubyInterpreterComboBox.getRenderer(), true, true));
+    myRubyInterpreterComboBox.setRenderer(new RubySdkRenderer(true, true));
     refreshSdkList();
     if (mySettingsHolder.getSdk() != null) {
       myRubyInterpreterComboBox.setSelectedItem(mySettingsHolder.getSdk());

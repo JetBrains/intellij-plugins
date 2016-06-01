@@ -187,12 +187,7 @@ public class LibraryManager implements Disposable {
     FlexLibrarySet flexLibrarySet = (FlexLibrarySet)librarySets.get(key);
     if (flexLibrarySet == null) {
       final Set<CharSequence> globalDefinitions = getGlobalDefinitions(libraryCollector.getGlobalLibrary());
-      final Condition<String> globalContains = new Condition<String>() {
-        @Override
-        public boolean value(String name) {
-          return globalDefinitions.contains(name);
-        }
-      };
+      final Condition<String> globalContains = name -> globalDefinitions.contains(name);
       final SortResult sortResult = sortLibraries(new LibrarySorter(new FlexDefinitionProcessor(libraryCollector.getFlexSdkVersion()),
                                                                     new FlexDefinitionMapProcessor(libraryCollector.getFlexSdkVersion(),
                                                                                                    globalContains)), libraryCollector,

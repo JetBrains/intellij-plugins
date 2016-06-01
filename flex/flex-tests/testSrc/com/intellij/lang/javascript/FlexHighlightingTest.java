@@ -2233,11 +2233,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
                 secondFilePath);
     findAndInvokeIntentionAction(infoCollection, "Make interface INonPublic public", myEditor, myFile);
     FileDocumentManager.getInstance().saveAllDocuments();
-    VirtualFile f = ContainerUtil.find(FileEditorManager.getInstance(myProject).getOpenFiles(), new Condition<VirtualFile>() {
-      public boolean value(final VirtualFile virtualFile) {
-        return virtualFile.getName().endsWith("as");
-      }
-    });
+    VirtualFile f = ContainerUtil.find(FileEditorManager.getInstance(myProject).getOpenFiles(),
+                                       virtualFile -> virtualFile.getName().endsWith("as"));
     VirtualFile expectedFile = getVirtualFile(BASE_PATH + "/" + testName + "_2_after.as");
     assertEquals(StringUtil.convertLineSeparators(VfsUtilCore.loadText(expectedFile)), StringUtil.convertLineSeparators(
       VfsUtilCore.loadText(f)));

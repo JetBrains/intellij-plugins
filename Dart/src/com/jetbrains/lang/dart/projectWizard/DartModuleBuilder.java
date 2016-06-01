@@ -165,12 +165,7 @@ public class DartModuleBuilder extends ModuleBuilder {
         runnable.run();
       }
       else {
-        ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, new Condition() {
-          @Override
-          public boolean value(final Object o) {
-            return module.isDisposed();
-          }
-        });
+        ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, o -> module.isDisposed());
       }
     });
   }

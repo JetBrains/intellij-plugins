@@ -48,12 +48,7 @@ public class DocumentationTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.completeBasic();
     LookupElement[] elements = myFixture.getLookupElements();
     assertNotNull(elements);
-    LookupElement lookupElement = ContainerUtil.find(elements, new Condition<LookupElement>() {
-      @Override
-      public boolean value(LookupElement element) {
-        return element.getAllLookupStrings().contains("ng-controller");
-      }
-    });
+    LookupElement lookupElement = ContainerUtil.find(elements, element -> element.getAllLookupStrings().contains("ng-controller"));
     assertNotNull(lookupElement);
 
     DocumentationProvider documentationProvider = DocumentationManager.getProviderFromElement(myFixture.getFile());

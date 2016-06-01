@@ -41,13 +41,9 @@ public class CucumberConfigUtil {
     final Module module = ModuleUtilCore.findModuleForPsiElement(place);
     if (module == null) return null;
 
-    return CachedValuesManager.getManager(module.getProject()).getCachedValue(module, new CachedValueProvider<String>() {
-      @Nullable
-      @Override
-      public Result<String> compute() {
-        return Result.create(getCucumberCoreVersionImpl(module), ProjectRootManager.getInstance(module.getProject()));
-      }
-    });
+    return CachedValuesManager.getManager(module.getProject()).getCachedValue(module,
+                                                                              () -> CachedValueProvider.Result
+                                                                                .create(getCucumberCoreVersionImpl(module), ProjectRootManager.getInstance(module.getProject())));
   }
 
   @Nullable

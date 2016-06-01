@@ -78,17 +78,14 @@ public class KarmaDebugBrowserSelector {
 
   @NotNull
   private List<DebuggableWebBrowser> filterCaptured(@NotNull List<DebuggableWebBrowser> debuggableBrowsers) {
-    List<DebuggableWebBrowser> captured = ContainerUtil.filter(debuggableBrowsers, new Condition<DebuggableWebBrowser>() {
-      @Override
-      public boolean value(DebuggableWebBrowser debuggableBrowser) {
-        String browserName = debuggableBrowser.getWebBrowser().getName();
-        for (CapturedBrowser capturedBrowser : myCapturedBrowsers) {
-          if (StringUtil.containsIgnoreCase(capturedBrowser.getName(), browserName)) {
-            return true;
-          }
+    List<DebuggableWebBrowser> captured = ContainerUtil.filter(debuggableBrowsers, debuggableBrowser -> {
+      String browserName = debuggableBrowser.getWebBrowser().getName();
+      for (CapturedBrowser capturedBrowser : myCapturedBrowsers) {
+        if (StringUtil.containsIgnoreCase(capturedBrowser.getName(), browserName)) {
+          return true;
         }
-        return false;
       }
+      return false;
     });
     return ImmutableList.copyOf(captured);
   }

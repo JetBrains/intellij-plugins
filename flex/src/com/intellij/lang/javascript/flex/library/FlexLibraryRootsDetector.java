@@ -34,12 +34,9 @@ public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
   public Collection<DetectedLibraryRoot> detectRoots(@NotNull final VirtualFile rootCandidate,
                                                      @NotNull final ProgressIndicator progressIndicator) {
     Collection<DetectedLibraryRoot> roots = super.detectRoots(rootCandidate, progressIndicator);
-    boolean swcsFoldersFound = ContainerUtil.find(roots, new Condition<DetectedLibraryRoot>() {
-      @Override
-      public boolean value(final DetectedLibraryRoot root) {
-        LibraryRootType libraryRootType = root.getTypes().get(0);
-        return libraryRootType.getType() == OrderRootType.CLASSES && libraryRootType.isJarDirectory();
-      }
+    boolean swcsFoldersFound = ContainerUtil.find(roots, root -> {
+      LibraryRootType libraryRootType = root.getTypes().get(0);
+      return libraryRootType.getType() == OrderRootType.CLASSES && libraryRootType.isJarDirectory();
     }) != null;
 
     final List<LibraryRootType> types = Arrays.asList(new LibraryRootType(OrderRootType.CLASSES, false),

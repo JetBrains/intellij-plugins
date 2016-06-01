@@ -135,13 +135,8 @@ public class DartPsiImplUtil {
     CachedValue<PsiElement> cachedValue = dartType.getUserData(DART_TYPE_CACHED_RESOLVE_RESULT_KEY);
 
     if (cachedValue == null) {
-      cachedValue = CachedValuesManager.getManager(dartType.getProject()).createCachedValue(new CachedValueProvider<PsiElement>() {
-        @NotNull
-        @Override
-        public Result<PsiElement> compute() {
-          return new Result<PsiElement>(doResolveTypeReference(dartType), PsiModificationTracker.MODIFICATION_COUNT);
-        }
-      }, false);
+      cachedValue = CachedValuesManager.getManager(dartType.getProject()).createCachedValue(
+        () -> new CachedValueProvider.Result<PsiElement>(doResolveTypeReference(dartType), PsiModificationTracker.MODIFICATION_COUNT), false);
 
       dartType.putUserData(DART_TYPE_CACHED_RESOLVE_RESULT_KEY, cachedValue);
     }

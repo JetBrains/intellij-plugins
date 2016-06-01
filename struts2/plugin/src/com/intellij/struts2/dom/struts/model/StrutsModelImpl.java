@@ -82,11 +82,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
   @NotNull
   public List<Action> findActionsByName(@NotNull @NonNls final String name,
                                         @Nullable @NonNls final String namespace) {
-    return ContainerUtil.findAll(getActionsForNamespace(namespace), new Condition<Action>() {
-      public boolean value(final Action action) {
-        return action.matchesPath(name);
-      }
-    });
+    return ContainerUtil.findAll(getActionsForNamespace(namespace), action -> action.matchesPath(name));
   }
 
   @NotNull

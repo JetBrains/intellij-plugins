@@ -758,12 +758,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     mySdkCombo.setSetupButton(myNewButton, myProject, sdksModel, new JdkComboBox.NoneJdkComboBoxItem(), null,
                               FlexBundle.message("set.up.sdk.title"));
-    mySdkCombo.setEditButton(myEditButton, myProject, new NullableComputable<Sdk>() {
-      @Nullable
-      public Sdk compute() {
-        return mySdkCombo.getSelectedJdk();
-      }
-    });
+    mySdkCombo.setEditButton(myEditButton, myProject, (NullableComputable<Sdk>)() -> mySdkCombo.getSelectedJdk());
 
     mySdkLabel.setLabelFor(mySdkCombo);
 
@@ -1248,12 +1243,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     List<MyTableItem> items = myTable.getItems();
-    items = ContainerUtil.filter(items, new Condition<MyTableItem>() {
-      @Override
-      public boolean value(MyTableItem item) {
-        return !(item instanceof SdkItem || item instanceof SdkEntryItem);
-      }
-    });
+    items = ContainerUtil.filter(items, item -> !(item instanceof SdkItem || item instanceof SdkEntryItem));
 
     DependencyEntry[] entries = myDependencies.getEntries();
     if (items.size() != entries.length) return true;
@@ -1384,12 +1374,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         Module module = bcEntry.findModule();
         CompositeConfigurable configurable =
-          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module), new Condition<CompositeConfigurable>() {
-            @Override
-            public boolean value(CompositeConfigurable configurable) {
-              return configurable.getDisplayName().equals(bcEntry.getBcName());
-            }
-          }) : null;
+          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module),
+                                              configurable1 -> configurable1.getDisplayName().equals(bcEntry.getBcName())) : null;
         if (configurable == null) {
           item = new BCItem(bcEntry.getModuleName(), bcEntry.getBcName());
         }
@@ -1536,18 +1522,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
       ChooseBuildConfigurationDialog d = ChooseBuildConfigurationDialog.createForApplicableBCs(
         FlexBundle.message("add.bc.dependency.dialog.title"), FlexBundle.message("add.dependency.bc.dialog.label"), myProject, false,
-        new Condition<FlexBCConfigurable>() {
-          @Override
-          public boolean value(final FlexBCConfigurable configurable) {
-            if (dependencies.contains(configurable) || configurable.isParentFor(DependenciesConfigurable.this)) {
-              return false;
-            }
-
-            if (!BCUtils.isApplicableForDependency(myNature, configurable.getOutputType())) {
-              return false;
-            }
-            return true;
+        configurable -> {
+          if (dependencies.contains(configurable) || configurable.isParentFor(DependenciesConfigurable.this)) {
+            return false;
           }
+
+          if (!BCUtils.isApplicableForDependency(myNature, configurable.getOutputType())) {
+            return false;
+          }
+          return true;
         });
 
       if (d == null) {
@@ -1589,12 +1572,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           }
         }
       }
-      Condition<Library> filter = new Condition<Library>() {
-        @Override
-        public boolean value(Library library) {
-          return usedLibraries.contains(library);
-        }
-      };
+      Condition<Library> filter = library -> usedLibraries.contains(library);
 
       LibraryTable.ModifiableModel modifiableModel = myConfigEditor.getLibraryModel(myDependencies);
       LibraryTable.ModifiableModel librariesModelWrapper = new LibraryTableModifiableModelWrapper(modifiableModel, filter);
@@ -1637,11 +1615,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }
 
-      ChooseLibrariesDialog d = new ChooseLibrariesDialog(new Condition<Library>() {
-        public boolean value(final Library library) {
-          return !usedLibraries.contains(library);
-        }
-      });
+      ChooseLibrariesDialog d = new ChooseLibrariesDialog(library -> !usedLibraries.contains(library));
       if (!d.showAndGet()) {
         return;
       }

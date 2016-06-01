@@ -204,17 +204,14 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
                                                     ModuleUtilCore.findModuleForPsiElement(actionClass));
 
     final List<XmlFile> files = ValidatorManager.getInstance(project).findValidationFilesFor(actionClass);
-    return ContainerUtil.filter(actions, new Condition<Action>() {
-      @Override
-      public boolean value(final Action action) {
-        final String path = action.getName().getStringValue();
-        for (final XmlFile file : files) {
-          if (file.getName().contains(path)) {
-            return false;
-          }
+    return ContainerUtil.filter(actions, action -> {
+      final String path = action.getName().getStringValue();
+      for (final XmlFile file : files) {
+        if (file.getName().contains(path)) {
+          return false;
         }
-        return true;
       }
+      return true;
     });
   }
 

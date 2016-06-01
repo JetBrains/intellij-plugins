@@ -45,17 +45,10 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     private Sdk mySdk;
   }
 
-  public static final Condition<Sdk> FLEX_SDK = new Condition<Sdk>() {
-    public boolean value(final Sdk sdk) {
-      return sdk != null && sdk.getSdkType() instanceof FlexSdkType2;
-    }
-  };
+  public static final Condition<Sdk> FLEX_SDK = sdk -> sdk != null && sdk.getSdkType() instanceof FlexSdkType2;
 
-  public static final Condition<Sdk> FLEX_OR_FLEXMOJOS_SDK = new Condition<Sdk>() {
-    public boolean value(final Sdk sdk) {
-      return sdk != null && (sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType);
-    }
-  };
+  public static final Condition<Sdk> FLEX_OR_FLEXMOJOS_SDK =
+    sdk -> sdk != null && (sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType);
 
   public static final String BC_SDK_KEY = "BC SDK";
 

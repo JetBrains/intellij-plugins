@@ -190,12 +190,8 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
 
   private List<IntentionAction> getIntentions(final String fileName, final String hint) throws Throwable {
 
-    List<IntentionAction> list = ContainerUtil.findAll(myFixture.getAvailableIntentions(fileName), new Condition<IntentionAction>() {
-      @Override
-      public boolean value(final IntentionAction intentionAction) {
-        return intentionAction.getText().startsWith(hint);
-      }
-    });
+    List<IntentionAction> list = ContainerUtil.findAll(myFixture.getAvailableIntentions(fileName),
+                                                       intentionAction -> intentionAction.getText().startsWith(hint));
 
     final AccessToken l = ReadAction.start();
     try {

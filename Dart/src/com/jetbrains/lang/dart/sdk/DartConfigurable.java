@@ -128,17 +128,9 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   private void initDartSdkAndDartiumControls() {
-    final Computable<ChromeSettings> currentDartiumSettingsRetriever = new Computable<ChromeSettings>() {
-      public ChromeSettings compute() {
-        return myDartiumSettingsCurrent;
-      }
-    };
+    final Computable<ChromeSettings> currentDartiumSettingsRetriever = () -> myDartiumSettingsCurrent;
 
-    final Computable<Boolean> isResettingControlsComputable = new Computable<Boolean>() {
-      public Boolean compute() {
-        return myInReset;
-      }
-    };
+    final Computable<Boolean> isResettingControlsComputable = () -> myInReset;
 
     DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
                                               currentDartiumSettingsRetriever, myDartiumSettingsButton, myCheckedModeCheckBox,

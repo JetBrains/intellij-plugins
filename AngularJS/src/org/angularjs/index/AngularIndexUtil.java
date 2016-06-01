@@ -157,21 +157,17 @@ public class AngularIndexUtil {
     }
 
     final NotNullLazyValue<ModificationTracker> finalTracker = tracker;
-    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Integer>() {
-      @Nullable
-      @Override
-      public Result<Integer> compute() {
-        int version = -1;
-        PsiElement resolve;
-        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ngFor]")) != null) {
-          version = 20;
-        } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
-          version = 13;
-        } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-model")) != null) {
-          version = 12;
-        }
-        return Result.create(version, resolve != null ? resolve.getContainingFile() : finalTracker.getValue());
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      int version = -1;
+      PsiElement resolve;
+      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ngFor]")) != null) {
+        version = 20;
+      } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
+        version = 13;
+      } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-model")) != null) {
+        version = 12;
       }
+      return CachedValueProvider.Result.create(version, resolve != null ? resolve.getContainingFile() : finalTracker.getValue());
     });
   }
 
@@ -195,20 +191,15 @@ public class AngularIndexUtil {
         id instanceof StubIndexKey ? stubIndex.getAllKeys((StubIndexKey<String, ?>)id, project) :
         fileIndex.getAllKeys(id, project);
 
-      return CachedValueProvider.Result.<Collection<String>>create(ContainerUtil.filter(allKeys, new Condition<String>() {
-        @Override
-        public boolean value(String key) {
-          return id instanceof StubIndexKey ?
-                 !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
-                                            element -> false) :
-                 !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
-                   @Override
-                   public boolean process(VirtualFile file, Object value) {
-                     return false;
-                   }
-                 }, scope);
-        }
-      }), PsiManager.getInstance(project).getModificationTracker());
+      return CachedValueProvider.Result.<Collection<String>>create(ContainerUtil.filter(allKeys, key -> id instanceof StubIndexKey ?
+                                                                                                    !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
+                                        element -> false) :
+                                                                                                    !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
+               @Override
+               public boolean process(VirtualFile file, Object value) {
+                 return false;
+               }
+             }, scope)), PsiManager.getInstance(project).getModificationTracker());
     }
   }
 

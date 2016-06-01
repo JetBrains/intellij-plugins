@@ -35,12 +35,7 @@ public class FlexMainStep extends MainStep {
                       final String packageName,
                       final String templateName) {
     super(model, context.getProject(), className, true, packageName, null, true, templateName, context,
-          JSBundle.message("choose.base.component.title"), new Computable<List<FileTemplate>>() {
-      @Override
-      public List<FileTemplate> compute() {
-        return CreateFlexComponentFix.computeApplicableTemplates(context);
-      }
-    });
+          JSBundle.message("choose.base.component.title"), () -> CreateFlexComponentFix.computeApplicableTemplates(context));
     myModel = model;
     setSuperclassLabelText(FlexBundle.message("parent.component.label.text"));
   }

@@ -35,6 +35,8 @@ public class PhoneGapCodeCompletion extends CompletionContributor {
         completionResultSet.addElement(LookupElementBuilder.create("deviceready"));
         completionResultSet.addElement(LookupElementBuilder.create("pause"));
         completionResultSet.addElement(LookupElementBuilder.create("resume"));
+        completionResultSet.addElement(LookupElementBuilder.create("online"));
+        completionResultSet.addElement(LookupElementBuilder.create("offline"));
         completionResultSet.addElement(LookupElementBuilder.create("backbutton"));
         completionResultSet.addElement(LookupElementBuilder.create("menubutton"));
         completionResultSet.addElement(LookupElementBuilder.create("searchbutton"));

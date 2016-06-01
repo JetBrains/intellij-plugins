@@ -48,12 +48,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
           return DumbService.getInstance(project).isDumb() ? null : findFileInAnyPackagesFolder(project, packageUri);
         }
 
-        return DumbService.getInstance(project).runReadActionInSmartMode(new Computable<VirtualFile>() {
-          @Override
-          public VirtualFile compute() {
-            return findFileInAnyPackagesFolder(project, packageUri);
-          }
-        });
+        return DumbService.getInstance(project).runReadActionInSmartMode(() -> findFileInAnyPackagesFolder(project, packageUri));
       }
     }
 

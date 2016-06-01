@@ -5,21 +5,21 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSetting
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
-import com.intellij.util.NotNullProducer;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
@@ -117,12 +117,7 @@ public class PhoneGapUtil {
     for (String folder : POSSIBLE_FOLDERS_IN_PHONEGAP_ROOT) {
       Collection<VirtualFile> files =
         ContainerUtil.filter(FilenameIndex.getVirtualFilesByName(project, folder, GlobalSearchScope.projectScope(project)),
-                             new Condition<VirtualFile>() {
-                               @Override
-                               public boolean value(VirtualFile file) {
-                                 return file.isDirectory();
-                               }
-                             });
+                             file -> file.isDirectory());
       if (!files.isEmpty()) {
         return files;
       }
@@ -145,26 +140,30 @@ public class PhoneGapUtil {
 
   public static boolean isPhoneGapProject(@NotNull final Project project) {
 
-    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Boolean>() {
-      @Nullable
-      @Override
-      public Result<Boolean> compute() {
-        PsiFile[] files = FilenameIndex.getFilesByName(project, "config.xml", GlobalSearchScope.projectScope(project));
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      PsiFile[] files = FilenameIndex.getFilesByName(project, "config.xml", GlobalSearchScope.projectScope(project));
 
-        PsiFile file = ContainerUtil.find(files, new Condition<PsiFile>() {
-          @Override
-          public boolean value(PsiFile file) {
-            if (!(file instanceof XmlFile)) return false;
+      PsiFile file = ContainerUtil.find(files, file1 -> {
+        if (!(file1 instanceof XmlFile)) return false;
 
-            XmlTag root = ((XmlFile)file).getRootTag();
-            if (root == null) return false;
+        XmlTag root = ((XmlFile)file1).getRootTag();
+        if (root == null) return false;
 
-            return root.getName().equals("widget");
-          }
-        });
+        return root.getName().equals("widget");
+      });
 
-        return Result.create(file != null, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+      if (file != null) {
+        return CachedValueProvider.Result.create(true, file);
       }
+
+      if (files.length > 0) {
+        Object[] append = ArrayUtil.append(files, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, Object.class);
+        return CachedValueProvider.Result.create(false, append);
+      }
+
+      return CachedValueProvider.Result.create(false,
+                                               VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+                                               ProjectRootModificationTracker.getInstance(project));
     });
   }
 }

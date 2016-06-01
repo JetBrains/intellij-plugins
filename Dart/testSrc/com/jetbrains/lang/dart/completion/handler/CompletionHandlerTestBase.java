@@ -29,12 +29,7 @@ public abstract class CompletionHandlerTestBase extends LightPlatformCodeInsight
     if (lookup != null && toComplete != null) {
       final LookupElement[] elements = myFixture.getLookupElements();
       assertNotNull("no lookups", elements);
-      final LookupElement element = ContainerUtil.find(elements, new Condition<LookupElement>() {
-        @Override
-        public boolean value(LookupElement element) {
-          return StringUtil.equals(element.getLookupString(), toComplete);
-        }
-      });
+      final LookupElement element = ContainerUtil.find(elements, element1 -> StringUtil.equals(element1.getLookupString(), toComplete));
       assertNotNull("Can't find '" + toComplete + "' variant", element);
       lookup.setCurrentItem(element);
     }

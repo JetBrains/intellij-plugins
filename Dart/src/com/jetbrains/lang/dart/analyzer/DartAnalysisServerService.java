@@ -375,14 +375,9 @@ public class DartAnalysisServerService {
 
     final Processor<? super PsiFileSystemItem> falseProcessor = (Processor<PsiFileSystemItem>)item -> false;
 
-    final Condition<Module> moduleFilter = new Condition<Module>() {
-      @Override
-      public boolean value(final Module module) {
-        return DartSdkGlobalLibUtil.isDartSdkEnabled(module) &&
-               !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
-                                                 falseProcessor, module.getModuleContentScope(), project, null);
-      }
-    };
+    final Condition<Module> moduleFilter = module -> DartSdkGlobalLibUtil.isDartSdkEnabled(module) &&
+                                                 !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
+                                             falseProcessor, module.getModuleContentScope(), project, null);
 
     final DartFileListener.DartLibInfo libInfo = new DartFileListener.DartLibInfo(true);
     libInfo.addRoots(rootsToAddToLib);

@@ -268,11 +268,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
   public static boolean isInsideTagThatAllowsAnyXmlContent(final XmlTag tag) {
-    return isInsideTag(tag, new Condition<XmlTag>() {
-      public boolean value(final XmlTag parentTag) {
-        return isTagThatAllowsAnyXmlContent(parentTag);
-      }
-    });
+    return isInsideTag(tag, parentTag -> isTagThatAllowsAnyXmlContent(parentTag));
   }
 
   public static boolean isTagThatAllowsAnyXmlContent(final XmlTag tag) {

@@ -35,25 +35,22 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
   }
 
   private void doDartTypeHierarchyTest(final String className, final boolean subtype, final String... fileNames) throws Exception {
-    doHierarchyTest(new Computable<HierarchyTreeStructure>() {
-      @Override
-      public HierarchyTreeStructure compute() {
-        final Project project = getProject();
-        final List<DartComponentName> dartComponentNames =
-          DartClassIndex.getItemsByName(className, project, GlobalSearchScope.projectScope(project));
-        for (DartComponentName name : dartComponentNames) {
-          DartClass dartClass = PsiTreeUtil.getParentOfType(name, DartClass.class);
-          if (dartClass != null && dartClass.getName().equals(className)) {
-            if (subtype) {
-              return new DartServerTypeHierarchyTreeStructure(project, dartClass, HierarchyBrowserBaseEx.SCOPE_PROJECT);
-            }
-            else {
-              return new DartServerSupertypesHierarchyTreeStructure(project, dartClass);
-            }
+    doHierarchyTest(() -> {
+      final Project project = getProject();
+      final List<DartComponentName> dartComponentNames =
+        DartClassIndex.getItemsByName(className, project, GlobalSearchScope.projectScope(project));
+      for (DartComponentName name : dartComponentNames) {
+        DartClass dartClass = PsiTreeUtil.getParentOfType(name, DartClass.class);
+        if (dartClass != null && dartClass.getName().equals(className)) {
+          if (subtype) {
+            return new DartServerTypeHierarchyTreeStructure(project, dartClass, HierarchyBrowserBaseEx.SCOPE_PROJECT);
+          }
+          else {
+            return new DartServerSupertypesHierarchyTreeStructure(project, dartClass);
           }
         }
-        return null;
       }
+      return null;
     }, fileNames);
   }
 

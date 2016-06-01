@@ -208,18 +208,15 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   @Nullable
   private static DartComponent filterAccess(PsiElement element, List<DartComponent> components) {
     final boolean lValue = DartResolveUtil.isLValue(element);
-    return ContainerUtil.find(components, new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        if (lValue && component.isSetter()) {
-          return true;
-        }
-        else if (!lValue && component.isGetter()) {
-          return true;
-        }
-        boolean isGetterOrSetter = component.isSetter() || component.isGetter();
-        return !isGetterOrSetter;
+    return ContainerUtil.find(components, component -> {
+      if (lValue && component.isSetter()) {
+        return true;
       }
+      else if (!lValue && component.isGetter()) {
+        return true;
+      }
+      boolean isGetterOrSetter = component.isSetter() || component.isGetter();
+      return !isGetterOrSetter;
     });
   }
 

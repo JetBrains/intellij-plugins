@@ -166,13 +166,8 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     final PsiFile psiFile = element == null ? null : element.getContainingFile();
     if (psiFile == null) return false;
     
-    return CachedValuesManager.getCachedValue(psiFile, new CachedValueProvider<Boolean>() {
-      @Nullable
-      @Override
-      public Result<Boolean> compute() {
-        return Result.create(hasMacRubySupport(psiFile), PsiModificationTracker.MODIFICATION_COUNT);
-      }
-    });
+    return CachedValuesManager.getCachedValue(psiFile, () -> CachedValueProvider.Result
+      .create(hasMacRubySupport(psiFile), PsiModificationTracker.MODIFICATION_COUNT));
   }
 
   private boolean hasMacRubySupport(PsiFile psiFile) {

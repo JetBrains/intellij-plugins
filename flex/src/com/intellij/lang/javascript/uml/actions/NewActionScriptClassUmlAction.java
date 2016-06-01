@@ -38,13 +38,8 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
   protected CreateClassParameters showDialog(final Project project, Pair<PsiDirectory, String> dirAndPackage) {
     return CreateClassOrInterfaceFix
       .createAndShow(null, dirAndPackage.first, null, true, dirAndPackage.second, null, JSBundle.message("new.actionscript.class.dialog.title"),
-                     new Computable<List<FileTemplate>>() {
-                       @Override
-                       public List<FileTemplate> compute() {
-                         return CreateClassOrInterfaceFix
-                           .getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS, project);
-                       }
-                     });
+                     () -> CreateClassOrInterfaceFix
+                       .getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS, project));
   }
 
   @Nullable

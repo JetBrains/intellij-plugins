@@ -57,17 +57,14 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     if (diagramProvider == null) return;
 
     diagramProvider.reset();
-    final Consumer<AngularUiRouterGraphBuilder> consumer = new Consumer<AngularUiRouterGraphBuilder>() {
-      @Override
-      public void consume(AngularUiRouterGraphBuilder graphBuilder) {
-        myCurrentRootFile = graphBuilder.getKey();
-        final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = graphBuilder.createDataModel(diagramProvider);
-        diagramProvider.registerNodesBuilder(nodesBuilder);
-        final Runnable callback =
-          show(nodesBuilder.getRootNode().getIdentifyingElement(), diagramProvider, project, null, Collections.emptyList());
-        if (callback != null) {
-          callback.run();
-        }
+    final Consumer<AngularUiRouterGraphBuilder> consumer = graphBuilder -> {
+      myCurrentRootFile = graphBuilder.getKey();
+      final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = graphBuilder.createDataModel(diagramProvider);
+      diagramProvider.registerNodesBuilder(nodesBuilder);
+      final Runnable callback =
+        show(nodesBuilder.getRootNode().getIdentifyingElement(), diagramProvider, project, null, Collections.emptyList());
+      if (callback != null) {
+        callback.run();
       }
     };
     if (graphBuilders.size() == 1) consumer.consume(graphBuilders.get(0).getSecond());
@@ -84,13 +81,10 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     list.setListData(ArrayUtil.toObjectArray(data));
     JBPopupFactory.getInstance().createListPopupBuilder(list)
       .setTitle("Select Main Template File")
-      .setItemChoosenCallback(new Runnable() {
-        @Override
-        public void run() {
-          final int index = list.getSelectedIndex();
-          if (index >= 0) {
-            consumer.consume(builders.get(index).getSecond());
-          }
+      .setItemChoosenCallback(() -> {
+        final int index = list.getSelectedIndex();
+        if (index >= 0) {
+          consumer.consume(builders.get(index).getSecond());
         }
       })
       .createPopup().showCenteredInCurrentWindow(project);

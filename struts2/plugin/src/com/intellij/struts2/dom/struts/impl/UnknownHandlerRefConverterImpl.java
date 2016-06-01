@@ -57,11 +57,7 @@ public class UnknownHandlerRefConverterImpl extends UnknownHandlerRefConverter {
       return null;
     }
 
-    return ContainerUtil.find(getBeansOfTypeUnknownHandler(strutsModel), new Condition<Bean>() {
-      public boolean value(final Bean bean) {
-        return Comparing.equal(bean.getName().getStringValue(), name);
-      }
-    });
+    return ContainerUtil.find(getBeansOfTypeUnknownHandler(strutsModel), bean -> Comparing.equal(bean.getName().getStringValue(), name));
   }
 
   private static final Function<StrutsRoot, Collection<? extends Bean>> BEANS_OF_TYPE_UNKNOWN_HANDLER_COLLECTOR =

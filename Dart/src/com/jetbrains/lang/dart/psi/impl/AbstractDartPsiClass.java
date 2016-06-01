@@ -112,12 +112,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     if (className == null) {
       return Collections.emptyList();
     }
-    return ContainerUtil.filter(components, new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return DartComponentType.typeOf(component) == DartComponentType.CONSTRUCTOR;
-      }
-    });
+    return ContainerUtil.filter(components, component -> DartComponentType.typeOf(component) == DartComponentType.CONSTRUCTOR);
   }
 
   @Override
@@ -148,22 +143,12 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
 
   @Override
   public DartComponent findFieldByName(@NotNull final String name) {
-    return ContainerUtil.find(getFields(), new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return name.equals(component.getName());
-      }
-    });
+    return ContainerUtil.find(getFields(), component -> name.equals(component.getName()));
   }
 
   @Override
   public DartComponent findMethodByName(@NotNull final String name) {
-    return ContainerUtil.find(getMethods(), new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return name.equals(component.getName());
-      }
-    });
+    return ContainerUtil.find(getMethods(), component -> name.equals(component.getName()));
   }
 
   @Override
@@ -183,42 +168,33 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   private void ensureMembersCacheInitialized() {
     if (myMembersCache == null) {
       myMembersCache = CachedValuesManager.getManager(getProject()).createCachedValue(
-        new CachedValueProvider<Map<String, List<DartComponent>>>() {
-          @NotNull
-          @Override
-          public Result<Map<String, List<DartComponent>>> compute() {
-            final Map<String, List<DartComponent>> nameToMembers = new THashMap<String, List<DartComponent>>();
+        () -> {
+          final Map<String, List<DartComponent>> nameToMembers = new THashMap<String, List<DartComponent>>();
 
-            for (DartComponent component : DartResolveUtil.findNamedSubComponents(false, AbstractDartPsiClass.this)) {
-              final String componentName = component.getName();
+          for (DartComponent component : DartResolveUtil.findNamedSubComponents(false, AbstractDartPsiClass.this)) {
+            final String componentName = component.getName();
 
-              final DartClass dartClass = PsiTreeUtil.getParentOfType(component, DartClass.class);
-              final String dartClassName = dartClass != null ? dartClass.getName() : null;
-              if (dartClassName != null && dartClassName.equals(componentName)) {
-                continue;
-              }
-
-              List<DartComponent> components = nameToMembers.get(componentName);
-              if (components == null) {
-                components = new SmartList<DartComponent>();
-                nameToMembers.put(componentName, components);
-              }
-              components.add(component);
+            final DartClass dartClass = PsiTreeUtil.getParentOfType(component, DartClass.class);
+            final String dartClassName = dartClass != null ? dartClass.getName() : null;
+            if (dartClassName != null && dartClassName.equals(componentName)) {
+              continue;
             }
 
-            return new Result<Map<String, List<DartComponent>>>(nameToMembers, PsiModificationTracker.MODIFICATION_COUNT);
+            List<DartComponent> components = nameToMembers.get(componentName);
+            if (components == null) {
+              components = new SmartList<DartComponent>();
+              nameToMembers.put(componentName, components);
+            }
+            components.add(component);
           }
+
+          return new CachedValueProvider.Result<Map<String, List<DartComponent>>>(nameToMembers, PsiModificationTracker.MODIFICATION_COUNT);
         }, false);
     }
   }
 
   @Override
   public DartComponent findNamedConstructor(final String name) {
-    return ContainerUtil.find(getConstructors(), new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return name.equals(component.getName());
-      }
-    });
+    return ContainerUtil.find(getConstructors(), component -> name.equals(component.getName()));
   }
 }

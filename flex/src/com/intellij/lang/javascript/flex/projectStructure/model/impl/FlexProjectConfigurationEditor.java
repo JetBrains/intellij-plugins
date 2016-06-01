@@ -489,12 +489,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
       }
 
-      List<OrderEntry> moduleOrderEntriesToRemove = ContainerUtil.filter(modifiableModel.getOrderEntries(), new Condition<OrderEntry>() {
-        @Override
-        public boolean value(OrderEntry orderEntry) {
-          return orderEntry instanceof ModuleOrderEntry && !modulesToAdd.remove(((ModuleOrderEntry)orderEntry).getModule());
-        }
-      });
+      List<OrderEntry> moduleOrderEntriesToRemove = ContainerUtil.filter(modifiableModel.getOrderEntries(),
+                                                                         orderEntry -> orderEntry instanceof ModuleOrderEntry && !modulesToAdd.remove(((ModuleOrderEntry)orderEntry).getModule()));
 
       for (OrderEntry orderEntry : moduleOrderEntriesToRemove) {
         modifiableModel.removeOrderEntry(orderEntry);
@@ -512,12 +508,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
     }
 
     // ---------------- do commit ----------------------
-    Collection<Module> modulesWithChangedModifiableModel = ContainerUtil.findAll(myModule2Editors.keySet(), new Condition<Module>() {
-      @Override
-      public boolean value(Module module) {
-        return myProvider.getModuleModifiableModel(module).isChanged();
-      }
-    });
+    Collection<Module> modulesWithChangedModifiableModel = ContainerUtil.findAll(myModule2Editors.keySet(),
+                                                                                 module -> myProvider.getModuleModifiableModel(module).isChanged());
 
     if (!modulesWithChangedModifiableModel.isEmpty()) {
       myProvider.commitModifiableModels();
@@ -720,23 +712,15 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   @Nullable
   protected Module findModuleWithBC(final BuildConfigurationEntry bcEntry) {
-    final Module dependencyModule = ContainerUtil.find(myModule2Editors.keySet(), new Condition<Module>() {
-      @Override
-      public boolean value(Module module) {
-        return bcEntry.getModuleName().equals(module.getName());
-      }
-    });
+    final Module dependencyModule = ContainerUtil.find(myModule2Editors.keySet(),
+                                                       module -> bcEntry.getModuleName().equals(module.getName()));
 
     if (dependencyModule == null) {
       return null;
     }
 
-    final Editor dependencyBC = ContainerUtil.find(myModule2Editors.get(dependencyModule), new Condition<Editor>() {
-      @Override
-      public boolean value(Editor editor) {
-        return editor.getName().equals(bcEntry.getBcName());
-      }
-    });
+    final Editor dependencyBC = ContainerUtil.find(myModule2Editors.get(dependencyModule),
+                                                   editor -> editor.getName().equals(bcEntry.getBcName()));
 
     return dependencyBC == null ? null : dependencyModule;
   }
@@ -790,12 +774,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   @Nullable
   public FlexBuildConfiguration findCurrentConfiguration(final Module module, final String originalBCName) {
-    return ContainerUtil.find(myModule2Editors.get(module), new Condition<Editor>() {
-      @Override
-      public boolean value(Editor editor) {
-        return editor.myOrigin.getName().equals(originalBCName);
-      }
-    });
+    return ContainerUtil.find(myModule2Editors.get(module), editor -> editor.myOrigin.getName().equals(originalBCName));
   }
 
   public static void makeNonStructuralModification(final FlexBuildConfiguration bc,

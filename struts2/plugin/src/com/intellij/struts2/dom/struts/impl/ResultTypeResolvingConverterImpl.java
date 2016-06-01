@@ -60,12 +60,7 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
       return null;
     }
 
-    final Condition<ResultType> nameCondition = new Condition<ResultType>() {
-      @Override
-      public boolean value(final ResultType resultType) {
-        return Comparing.equal(name, resultType.getName().getStringValue());
-      }
-    };
+    final Condition<ResultType> nameCondition = resultType -> Comparing.equal(name, resultType.getName().getStringValue());
 
     final Ref<ResultType> resolveResult = new Ref<ResultType>();
     final Processor<StrutsPackage> processor = strutsPackage -> {

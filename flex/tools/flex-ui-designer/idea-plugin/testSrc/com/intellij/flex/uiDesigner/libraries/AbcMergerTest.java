@@ -51,11 +51,6 @@ public class AbcMergerTest {
   private void doTest(Library... libraries) throws IOException {
     final Set<CharSequence> globalDefinitions = LibraryUtil.getDefinitions(LibraryUtil.getTestGlobalLibrary(false));
     LibrarySorter librarySorter = new LibrarySorter();
-    librarySorter.sort(Arrays.asList(libraries), out, new Condition<String>() {
-      @Override
-      public boolean value(String name) {
-        return globalDefinitions.contains(name);
-      }
-    }, false);
+    librarySorter.sort(Arrays.asList(libraries), out, name -> globalDefinitions.contains(name), false);
   }
 }

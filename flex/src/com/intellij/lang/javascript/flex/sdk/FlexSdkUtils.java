@@ -454,28 +454,17 @@ public class FlexSdkUtils {
   }
 
   public static List<Sdk> getFlexAndFlexmojosSdks() {
-    return ContainerUtil.filter(getAllSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType;
-      }
-    });
+    return ContainerUtil.filter(getAllSdks(),
+                                sdk -> sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType);
   }
 
   @Nullable
   public static Sdk findFlexOrFlexmojosSdk(final String name) {
-    return ContainerUtil.find(getFlexAndFlexmojosSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return name.equals(sdk.getName());
-      }
-    });
+    return ContainerUtil.find(getFlexAndFlexmojosSdks(), sdk -> name.equals(sdk.getName()));
   }
 
   public static List<Sdk> getFlexSdks() {
-    return ContainerUtil.filter(getAllSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdk.getSdkType() instanceof FlexSdkType2;
-      }
-    });
+    return ContainerUtil.filter(getAllSdks(), sdk -> sdk.getSdkType() instanceof FlexSdkType2);
   }
 
   public static boolean isAirSdkWithoutFlex(final @Nullable Sdk sdk) {
