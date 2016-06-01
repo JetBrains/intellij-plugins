@@ -19,12 +19,8 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
     private static final UserDataCache<CachedValue<Map<String, String[]>>,PsiAnnotation, Object> ourParametersMapCache = new UserDataCache<CachedValue<Map<String, String[]>>,PsiAnnotation, Object>() {
         @Override
         protected final CachedValue<Map<String, String[]>> compute(final PsiAnnotation owner, Object o) {
-            return CachedValuesManager.getManager(owner.getProject()).createCachedValue(new CachedValueProvider<Map<String, String[]>>() {
-              @Override
-              public Result<Map<String, String[]>> compute() {
-                return new Result<Map<String, String[]>>(doCalcParameters(owner),owner);
-              }
-            }, false);
+            return CachedValuesManager.getManager(owner.getProject()).createCachedValue(
+              () -> new CachedValueProvider.Result<Map<String, String[]>>(doCalcParameters(owner), owner), false);
         }
     };
 

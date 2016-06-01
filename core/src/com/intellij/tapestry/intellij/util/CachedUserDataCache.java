@@ -20,11 +20,8 @@ public abstract class CachedUserDataCache<T, Owner extends UserDataHolder> exten
   }
 
   protected final CachedValue<T> compute(final Owner owner, Object p) {
-    return CachedValuesManager.getManager(getProject(owner)).createCachedValue(new CachedValueProvider<T>() {
-      public Result<T> compute() {
-        return Result.create(computeValue(owner), getDependencies(owner));
-      }
-    }, false);
+    return CachedValuesManager.getManager(getProject(owner)).createCachedValue(
+      () -> CachedValueProvider.Result.create(computeValue(owner), getDependencies(owner)), false);
   }
 
   @Nullable

@@ -107,14 +107,10 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   @NotNull
   public PsiParameterList getParameterList() {
     if (myParameterList == null) {
-      myParameterList = new LightParameterList(getManager(), new Computable<LightParameter[]>() {
-        public LightParameter[] compute() {
-          return myGetterNotSetter
-                 ? EMPTY_PARAMETERS_ARRAY
-                 : new LightParameter[]{
-                   new LightParameter(getManager(), myProperty.getName(), null, myProperty.getType(), TapestryAccessorMethod.this)};
-        }
-      });
+      myParameterList = new LightParameterList(getManager(), () -> myGetterNotSetter
+             ? EMPTY_PARAMETERS_ARRAY
+             : new LightParameter[]{
+               new LightParameter(getManager(), myProperty.getName(), null, myProperty.getType(), TapestryAccessorMethod.this)});
     }
     return myParameterList;
   }
