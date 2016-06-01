@@ -287,28 +287,20 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             list.add(current);
           }
         }
-        boolean isSourceNearSelected = false;
-        final List<DiagramNode> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(builder));
-        for (DiagramNode node : nodes) {
-          final int index = builder.getNode(node).index();
-          if (index == edge.source().index()) {
-            isSourceNearSelected = true;
-            break;
-          }
-          if (index == edge.target().index()) {
-            break;
-          }
-        }
+        boolean sourceHeavier = edge.source().degree() > edge.target().degree();
         Collections.sort(list, (o1, o2) -> {
           final YPoint s1 = ((Graph2D)o1.getGraph()).getSourcePointAbs(o1);
           final YPoint s2 = ((Graph2D)o1.getGraph()).getSourcePointAbs(o2);
           if (Math.abs(s1.getX() - s2.getX()) > 5) return Double.compare(s1.getX(), s2.getX());
           return Double.compare(s1.getY(), s2.getY());
         });
-        final int[] variants = isSourceNearSelected ? new int[]{SmartEdgeLabelModel.POSITION_TARGET_RIGHT,
+        int[] variants = sourceHeavier ? new int[]{SmartEdgeLabelModel.POSITION_TARGET_RIGHT,
           SmartEdgeLabelModel.POSITION_RIGHT, SmartEdgeLabelModel.POSITION_SOURCE_RIGHT} :
                                new int[]{SmartEdgeLabelModel.POSITION_SOURCE_RIGHT,
                                  SmartEdgeLabelModel.POSITION_RIGHT, SmartEdgeLabelModel.POSITION_TARGET_RIGHT};
+        //if ((sourceHeavier ? edge.source().degree() : edge.target().degree()) > 8) {
+        //  variants = Arrays.copyOf(variants, 2);
+        //}
         int variantIdx = 0;
         for (Edge current : list) {
           myEdgesPositions.put(current.index(), variants[variantIdx++]);
