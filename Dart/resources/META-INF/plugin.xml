@@ -62,6 +62,7 @@
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <callHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyProvider"/>
+    <methodHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.method.DartMethodHierarchyProvider"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartUriElement"
                              implementationClass="com.jetbrains.lang.dart.psi.impl.DartUriElementBase$DartUriElementManipulator"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartStringLiteralExpression"
@@ -295,6 +296,20 @@
             use-shortcut-of="CallHierarchy"/>
     <group id="DartCallHierarchyPopupMenu">
       <reference ref="DartCallHierarchy.BaseOnThisFunction"/>
+      <separator/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+    </group>
+
+    <group id="DartMethodHierarchyPopupMenu">
+      <reference ref="DartTypeHierarchy.BaseOnThisType"/>
       <separator/>
       <reference ref="EditSource"/>
       <separator/>

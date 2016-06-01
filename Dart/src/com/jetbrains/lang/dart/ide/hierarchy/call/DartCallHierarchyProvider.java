@@ -27,6 +27,7 @@ public class DartCallHierarchyProvider implements HierarchyProvider {
   @Nullable
   @Override
   public PsiElement getTarget(@NotNull DataContext dataContext) {
+    if (true) return DartHierarchyUtil.getResolvedElementAtCursor(dataContext);
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     if (project == null || editor == null) return null;
