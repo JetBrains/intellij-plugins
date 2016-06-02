@@ -3,8 +3,8 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
 import com.intellij.webcore.packaging.InstalledPackage;
@@ -20,9 +20,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class PhoneGapPluginsList {
+
   public static final String PLUGINS_URL = "http://registry.cordova.io/-/all";
 
   public static volatile Map<String, PhoneGapRepoPackage> CACHED_REPO;
+
+  private static final Logger LOGGER = Logger.getInstance(PhoneGapPluginsList.class);
 
   private static boolean isExcludedProperty(String name) {
     return "_updated".equals(name);
@@ -100,7 +103,11 @@ public class PhoneGapPluginsList {
       });
     }
     catch (IOException e) {
-      throw new RuntimeException(e.getMessage(), e);
+      //throw new RuntimeException(e.getMessage(), e);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(e.getMessage(), e);
+      }
+      return ContainerUtil.newHashMap();
     }
   }
 
