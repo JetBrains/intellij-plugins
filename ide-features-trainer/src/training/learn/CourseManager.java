@@ -1,31 +1,20 @@
 package training.learn;
 
 import com.intellij.ide.DataManager;
-import com.intellij.ide.RecentProjectsManager;
-import com.intellij.ide.scratch.ScratchFileService;
-import com.intellij.ide.scratch.ScratchRootType;
-import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.*;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdom.Element;
@@ -33,26 +22,19 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.actions.OpenLessonAction;
-import training.learn.dialogs.SdkModuleProblemDialog;
-import training.learn.dialogs.SdkProjectProblemDialog;
 import training.learn.exceptons.*;
 import training.learn.log.GlobalLessonLog;
 import training.ui.LearnPanel;
 import training.ui.LearnToolWindow;
 import training.ui.LearnToolWindowFactory;
 import training.ui.MainLearnPanel;
-import training.util.MyClassLoader;
-import training.util.GenerateModuleXml;
+import training.util.GenModuleXml;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 11/03/15.
@@ -90,10 +72,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     private void initModules() throws JDOMException, IOException, URISyntaxException, BadModuleException, BadLessonException {
-        Element modulesRoot = Module.getRootFromPath(GenerateModuleXml.MODULE_ALLMODULE_FILENAME);
+        Element modulesRoot = Module.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME);
         for (Element element : modulesRoot.getChildren()) {
-            if (element.getName().equals(GenerateModuleXml.MODULE_TYPE_ATTR)) {
-                String moduleFilename = element.getAttribute(GenerateModuleXml.MODULE_NAME_ATTR).getValue();
+            if (element.getName().equals(GenModuleXml.MODULE_TYPE_ATTR)) {
+                String moduleFilename = element.getAttribute(GenModuleXml.MODULE_NAME_ATTR).getValue();
                 final Module module = Module.initModule(moduleFilename);
                 addModule(module);
             }
