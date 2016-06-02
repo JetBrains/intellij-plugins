@@ -57,4 +57,6 @@ public interface DartClass extends DartComponent {
 
   @Nullable
   DartComponent findNamedConstructor(String name);
+
+  boolean isInheritor(@NotNull DartClass dartClass);
 }
