@@ -19,6 +19,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
@@ -33,6 +34,7 @@ import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TIntObjectHashMap;
@@ -42,6 +44,7 @@ import org.dartlang.vm.service.logging.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -68,6 +71,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Nullable private final String myDASExecutionContextId;
   private final boolean myRemoteDebug;
+  private final boolean myEntryPointInLibFolder;
+
   @Nullable String myRemoteProjectRootUri;
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
@@ -76,13 +81,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                    @Nullable final ExecutionResult executionResult,
                                    @NotNull final DartUrlResolver dartUrlResolver,
                                    @Nullable final String dasExecutionContextId,
-                                   final boolean remoteDebug) {
+                                   final boolean remoteDebug,
+                                   final boolean entryPointInLibFolder) {
     super(session);
     myDebuggingHost = debuggingHost;
     myObservatoryPort = observatoryPort;
     myExecutionResult = executionResult;
     myDartUrlResolver = dartUrlResolver;
     myRemoteDebug = remoteDebug;
+    myEntryPointInLibFolder = entryPointInLibFolder;
 
     myIsolatesInfo = new IsolatesInfo();
     final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
@@ -90,7 +97,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     setLogger();
 
-    session.addSessionListener(new XDebugSessionAdapter() {
+    session.addSessionListener(new XDebugSessionListener() {
       @Override
       public void sessionPaused() {
         stackFrameChanged();
@@ -129,6 +136,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       @Override
       public void logError(final String message) {
         if (message.contains("\"code\":102,")) { // Cannot add breakpoint, already logged in logInformation()
+          return;
+        }
+
+        if (myEntryPointInLibFolder && message.contains("\"code\":-32602,")) { // That's expected because we set one breakpoint twice
           return;
         }
 
@@ -384,7 +395,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @NotNull
-  public String getUriForFile(@NotNull final VirtualFile file) {
+  public Collection<String> getUrisForFile(@NotNull final VirtualFile file) {
     String uriByIde = myDartUrlResolver.getDartUrlForFile(file);
 
     if (myDartUrlResolver.mayNeedDynamicUpdate()) {
@@ -392,7 +403,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       if (myDASExecutionContextId != null && !uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
         final String uriByServer = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, file.getPath(), null);
         if (uriByServer != null) {
-          return uriByServer;
+          return mayBeAppendOneMoreUri(file, uriByServer);
         }
       }
     }
@@ -406,7 +417,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     // fallback
-    return threeslashize(uriByIde);
+    return mayBeAppendOneMoreUri(file, threeslashize(uriByIde));
+  }
+
+  @NotNull
+  private Collection<String> mayBeAppendOneMoreUri(@NotNull final VirtualFile file, @NotNull final String uri) {
+    final SmartList<String> result = new SmartList<>(uri);
+
+    final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
+    if (myEntryPointInLibFolder &&
+        pubspec != null &&
+        uri.startsWith(DartUrlResolver.PACKAGE_PREFIX + PubspecYamlUtil.getDartProjectName(pubspec))) {
+      result.add(threeslashize(new File(file.getPath()).toURI().toString()));
+    }
+
+    return result;
   }
 
   @Nullable

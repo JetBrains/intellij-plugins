@@ -12,6 +12,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -30,6 +31,7 @@ import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugPro
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,6 +98,7 @@ public class DartRunner extends DefaultProgramRunner {
 
     final RunProfile runConfiguration = env.getRunProfile();
     final VirtualFile contextFileOrDir;
+    final boolean entryPointInLibFolder;
     final ExecutionResult executionResult;
     final String debuggingHost;
     final int debuggingPort;
@@ -103,6 +106,9 @@ public class DartRunner extends DefaultProgramRunner {
 
     if (runConfiguration instanceof DartRunConfigurationBase) {
       contextFileOrDir = ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().getDartFile();
+
+      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(env.getProject(), contextFileOrDir);
+      entryPointInLibFolder = pubspec != null && contextFileOrDir.getPath().startsWith(pubspec.getParent().getPath() + "/lib/");
 
       executionResult = state.execute(env.getExecutor(), this);
       if (executionResult == null) {
@@ -114,6 +120,7 @@ public class DartRunner extends DefaultProgramRunner {
       observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
     }
     else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
+      entryPointInLibFolder = false;
       final String path = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getDartProjectPath();
       contextFileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
       if (contextFileOrDir == null) {
@@ -145,7 +152,7 @@ public class DartRunner extends DefaultProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        final DartUrlResolver dartUrlResolver = getDartUrlResolver(env, contextFileOrDir);
+        final DartUrlResolver dartUrlResolver = getDartUrlResolver(env.getProject(), contextFileOrDir);
         return StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0
                ? new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver)
                : new DartVmServiceDebugProcess(session,
@@ -154,14 +161,15 @@ public class DartRunner extends DefaultProgramRunner {
                                                executionResult,
                                                dartUrlResolver,
                                                dasExecutionContextId,
-                                               runConfiguration instanceof DartRemoteDebugConfiguration);
+                                               runConfiguration instanceof DartRemoteDebugConfiguration,
+                                               entryPointInLibFolder);
       }
     });
 
     return debugSession.getRunContentDescriptor();
   }
 
-  protected DartUrlResolver getDartUrlResolver(@NotNull ExecutionEnvironment env, @NotNull VirtualFile contextFileOrDir) {
-    return DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
+  protected DartUrlResolver getDartUrlResolver(@NotNull final Project project, @NotNull final VirtualFile contextFileOrDir) {
+    return DartUrlResolver.getInstance(project, contextFileOrDir);
   }
 }

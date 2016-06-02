@@ -131,13 +131,13 @@ public class VmServiceWrapper implements Disposable {
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (myIsolatesInfo.addIsolate(isolateRef)) {
       addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
-                                                     ExceptionPauseMode.Unhandled,
-                                                     new VmServiceConsumers.SuccessConsumerWrapper() {
-                                          @Override
-                                          public void received(Success response) {
-                                            setInitialBreakpointsAndResume(isolateRef.getId());
-                                          }
-                                        }));
+                                                         ExceptionPauseMode.Unhandled,
+                                                         new VmServiceConsumers.SuccessConsumerWrapper() {
+                                                           @Override
+                                                           public void received(Success response) {
+                                                             setInitialBreakpointsAndResume(isolateRef.getId());
+                                                           }
+                                                         }));
     }
   }
 
@@ -204,9 +204,10 @@ public class VmServiceWrapper implements Disposable {
     }
 
     addRequest(() -> {
-      final String uri = myDebugProcess.getUriForFile(position.getFile());
       final int line = position.getLine() + 1;
-      myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
+      for (String uri : myDebugProcess.getUrisForFile(position.getFile())) {
+        myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
+      }
     });
   }
 
