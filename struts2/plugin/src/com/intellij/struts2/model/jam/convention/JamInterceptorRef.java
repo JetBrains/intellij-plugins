@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2016 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,17 +21,16 @@ import com.intellij.jam.JamPomTarget;
 import com.intellij.jam.JamStringAttributeElement;
 import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.annotations.JamPsiValidity;
-import com.intellij.jam.reflect.*;
 import com.intellij.jam.model.common.CommonModelElement;
+import com.intellij.jam.reflect.*;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMember;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
-import com.intellij.util.Consumer;
-import com.intellij.util.PairConsumer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * {@code org.apache.struts2.convention.annotation.InterceptorRef(s)}.
@@ -61,7 +60,10 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
 
   private static final JamAnnotationAttributeMeta.Collection<JamInterceptorRef> INTERCEPTOR_REFS_VALUE_ATTRIBUTE =
     JamAttributeMeta.annoCollection(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME, INTERCEPTOR_REF_META, JamInterceptorRef.class)
-      .addPomTargetProducer((named, pomTargetConsumer) -> pomTargetConsumer.consume(named.getPomTarget()));
+      .addPomTargetProducer((named, pomTargetConsumer) -> {
+        final PomTarget target = named.getPomTarget();
+        if (target != null) pomTargetConsumer.consume(target);
+      });
 
   private static final JamAnnotationMeta INTERCEPTOR_REFS_META =
     new JamAnnotationMeta(ANNOTATION_NAME_LIST).addAttribute(INTERCEPTOR_REFS_VALUE_ATTRIBUTE);
@@ -82,8 +84,13 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
     return getOwner();
   }
 
+  @Nullable
   private PomTarget getPomTarget() {
-    return new JamPomTarget(this, getValue());
+    final JamStringAttributeElement<InterceptorOrStackBase> valueAttribute = getValue();
+    if (valueAttribute.getPsiLiteral() == null) {
+      return null;
+    }
+    return new JamPomTarget(this, valueAttribute);
   }
 
   /**
