@@ -13,7 +13,7 @@ import java.net.URISyntaxException;
 /**
  * Created by karashevich on 11/08/15.
  */
-public class GenerateModuleXml {
+public class GenModuleXml {
 
     private final static String MODULE_ALLMODULE_ATTR = "modules";
     public final static String MODULE_ALLMODULE_FILENAME = "modules.xml";
@@ -45,7 +45,7 @@ public class GenerateModuleXml {
             Document doc = new Document(module);
             doc.setRootElement(module);
 
-            File dir = new File(GenerateModuleXml.class.getResource("/data/" + path).toURI());
+            File dir = new File(GenModuleXml.class.getResource("/data/" + path).toURI());
 
             if (dir.listFiles() == null) return;
             for (File file : dir.listFiles()) {
@@ -57,7 +57,7 @@ public class GenerateModuleXml {
             }
             XMLOutputter xmlOutput = new XMLOutputter();
             xmlOutput.setFormat(Format.getPrettyFormat());
-            String dataPath = GenerateModuleXml.class.getResource("/data/").getPath();
+            String dataPath = GenModuleXml.class.getResource("/data/").getPath();
             File outputFile = new File(dataPath + moduleName + ".xml");
             outputFile.createNewFile();
             xmlOutput.output(doc, new FileWriter(outputFile));
@@ -76,7 +76,7 @@ public class GenerateModuleXml {
 
 
 
-        File dir = new File(GenerateModuleXml.class.getResource("/data/").toURI());
+        File dir = new File(GenModuleXml.class.getResource("/data/").toURI());
         if (dir.listFiles() == null) return;
 
         for (File file : dir.listFiles()) {
@@ -90,7 +90,7 @@ public class GenerateModuleXml {
 
         XMLOutputter xmlOutput = new XMLOutputter();
         xmlOutput.setFormat(Format.getPrettyFormat());
-        String dataPath = GenerateModuleXml.class.getResource("/data/").getPath();
+        String dataPath = GenModuleXml.class.getResource("/data/").getPath();
         File outputFile = new File(dataPath + MODULE_ALLMODULE_FILENAME);
         outputFile.createNewFile();
         xmlOutput.output(doc, new FileWriter(outputFile));

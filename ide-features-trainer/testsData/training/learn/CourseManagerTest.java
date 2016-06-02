@@ -7,7 +7,7 @@ import org.jetbrains.annotations.TestOnly;
 import training.learn.exceptons.*;
 import training.solutions.BaseSolutionClass;
 import training.testFramework.LessonSolution;
-import training.util.GenerateModuleXml;
+import training.util.GenModuleXml;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -42,10 +42,10 @@ public class CourseManagerTest {
 
 
     public void initCourses() throws JDOMException, IOException, URISyntaxException, BadModuleException, BadLessonException {
-        Element coursesRoot = Module.getRootFromPath(GenerateModuleXml.MODULE_ALLMODULE_FILENAME);
+        Element coursesRoot = Module.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME);
         for (Element element : coursesRoot.getChildren()) {
-            if (element.getName().equals(GenerateModuleXml.MODULE_TYPE_ATTR)) {
-                String courseFilename = element.getAttribute(GenerateModuleXml.MODULE_NAME_ATTR).getValue();
+            if (element.getName().equals(GenModuleXml.MODULE_TYPE_ATTR)) {
+                String courseFilename = element.getAttribute(GenModuleXml.MODULE_NAME_ATTR).getValue();
                 final Module module = Module.initModule(courseFilename);
                 addCourse(module);
             }
@@ -99,17 +99,17 @@ public class CourseManagerTest {
         final Element courseRoot = lesson.getModule().getModuleRoot();
         if (courseRoot == null) return null;
 
-        String lessonsPath = (courseRoot.getAttribute(GenerateModuleXml.MODULE_LESSONS_PATH_ATTR) != null) ? lesson.getModule().getModulePath() + courseRoot.getAttribute(GenerateModuleXml.MODULE_LESSONS_PATH_ATTR).getValue() : "";
+        String lessonsPath = (courseRoot.getAttribute(GenModuleXml.MODULE_LESSONS_PATH_ATTR) != null) ? lesson.getModule().getModulePath() + courseRoot.getAttribute(GenModuleXml.MODULE_LESSONS_PATH_ATTR).getValue() : "";
         String lessonSolutionName = null;
 
         for (Element lessonElement : courseRoot.getChildren()) {
-            if (!lessonElement.getName().equals(GenerateModuleXml.MODULE_LESSON_ELEMENT))
+            if (!lessonElement.getName().equals(GenModuleXml.MODULE_LESSON_ELEMENT))
                 throw new BadModuleException("Module file is corrupted or cannot be read properly");
 
-            String lessonFilename = lessonElement.getAttributeValue(GenerateModuleXml.MODULE_LESSON_FILENAME_ATTR);
+            String lessonFilename = lessonElement.getAttributeValue(GenModuleXml.MODULE_LESSON_FILENAME_ATTR);
             String lessonPath = lessonsPath + lessonFilename;
             if (lessonPath.equals(lesson.getScn().getPath())){
-                lessonSolutionName = lessonElement.getAttributeValue(GenerateModuleXml.MODULE_LESSON_SOLUTION);
+                lessonSolutionName = lessonElement.getAttributeValue(GenModuleXml.MODULE_LESSON_SOLUTION);
                 break;
             }
 
