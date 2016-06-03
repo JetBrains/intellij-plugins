@@ -27,49 +27,7 @@ public class DartCallHierarchyProvider implements HierarchyProvider {
   @Nullable
   @Override
   public PsiElement getTarget(@NotNull DataContext dataContext) {
-    if (true) return DartHierarchyUtil.getResolvedElementAtCursor(dataContext);
-    final Project project = CommonDataKeys.PROJECT.getData(dataContext);
-    final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
-    if (project == null || editor == null) return null;
-
-    final PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    final PsiElement psiElement = file == null ? null : file.findElementAt(editor.getCaretModel().getOffset());
-    DartReference dartReference = PsiTreeUtil.getParentOfType(psiElement, DartReference.class);
-    if (dartReference != null) {
-      if (dartReference.getTokenType() == NEW_EXPRESSION) {
-        DartComponent cons = DartResolveUtil.findConstructorDeclaration((DartNewExpression)dartReference);
-        if (cons != null && cons.getTokenType() == METHOD_DECLARATION) {
-          return cons;
-        }
-        else {
-          return null; // Class with no constructor.
-        }
-      }
-      if (dartReference.getTokenType() == CALL_EXPRESSION) {
-        dartReference = getRightmostReference(dartReference.getFirstChild());
-      }
-      DartComponent comp = DartResolveUtil.findReferenceAndComponentTarget(dartReference);
-      return comp != null && DartHierarchyUtil.isExecutable(comp) ? comp : null;
-    }
-    else {
-      if (psiElement == null) return null;
-      if (DartHierarchyUtil.isExecutable(psiElement)) return psiElement;
-      DartComponentName name = PsiTreeUtil.getParentOfType(psiElement, DartComponentName.class);
-      if (name == null) {
-        // Cursor may be between identifier and left paren of function definition.
-        if (psiElement instanceof PsiWhiteSpace) {
-          name = PsiTreeUtil.getPrevSiblingOfType(psiElement, DartComponentName.class);
-        }
-        else if ("(".equals(psiElement.getText())) {
-          name = PsiTreeUtil.getPrevSiblingOfType(psiElement.getParent(), DartComponentName.class);
-        }
-      }
-      if (name != null) {
-        PsiElement def = name.getParent();
-        return def != null && DartHierarchyUtil.isExecutable(def) ? def : null;
-      }
-      return null;
-    }
+    return DartHierarchyUtil.getResolvedElementAtCursor(dataContext);
   }
 
   @NotNull

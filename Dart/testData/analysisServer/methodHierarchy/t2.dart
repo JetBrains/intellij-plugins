@@ -10,3 +10,6 @@ abstract class C2 implements T1, T2 {
 class C2a extends C2 {
   int m() => 4;
 }
+
+class C2x implements T2 {
+}

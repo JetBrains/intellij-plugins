@@ -28,9 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.jetbrains.lang.dart.DartTokenTypes.CALL_EXPRESSION;
-import static com.jetbrains.lang.dart.DartTokenTypes.METHOD_DECLARATION;
-import static com.jetbrains.lang.dart.DartTokenTypes.NEW_EXPRESSION;
+import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
 public class DartHierarchyUtil {
   private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = (first, second) -> first.getIndex() - second.getIndex();
@@ -76,20 +74,6 @@ public class DartHierarchyUtil {
         return true;
       default:
         return false;
-    }
-  }
-
-  /// Find a method in a [aClass] that has the same name as the given [method]. Return null if not found.
-  /// Fails and returns null if [method] is private and [aClass] is in a different library.
-  public static DartMethodDeclaration findBaseMethodInClass(@NotNull DartMethodDeclaration method, @NotNull DartClass aClass, boolean checkBases) {
-    String name = method.getName();
-    if (name == null) return null;
-    if (checkBases) {
-      // TODO Implement
-      return null;
-    } else {
-      DartComponent found = aClass.findMethodByName(name);
-      return (DartMethodDeclaration)found;
     }
   }
 
@@ -142,5 +126,4 @@ public class DartHierarchyUtil {
     PsiElement last = PsiTreeUtil.getDeepestLast(element);
     return PsiTreeUtil.getParentOfType(last, DartReference.class);
   }
-
 }
