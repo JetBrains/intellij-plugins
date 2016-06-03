@@ -3,25 +3,13 @@ package com.jetbrains.lang.dart.ide.hierarchy.call;
 import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
 import com.intellij.ide.hierarchy.HierarchyBrowser;
 import com.intellij.ide.hierarchy.HierarchyProvider;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartNewExpression;
 import com.jetbrains.lang.dart.psi.DartReference;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
 public class DartCallHierarchyProvider implements HierarchyProvider {
   @Nullable

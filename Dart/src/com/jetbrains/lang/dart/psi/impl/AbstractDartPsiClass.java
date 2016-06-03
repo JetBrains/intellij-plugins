@@ -2,30 +2,21 @@ package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.*;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
-import org.dartlang.analysis.server.protocol.Element;
-import org.dartlang.analysis.server.protocol.Location;
-import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static com.intellij.util.ObjectUtils.assertNotNull;
-import static com.intellij.util.indexing.DebugAssertions.assertTrue;
 
 abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl implements DartClass {
 

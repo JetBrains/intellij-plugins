@@ -309,8 +309,6 @@
     </group>
 
     <group id="DartMethodHierarchyPopupMenu">
-      <reference ref="DartTypeHierarchy.BaseOnThisType"/>
-      <separator/>
       <reference ref="EditSource"/>
       <separator/>
       <reference ref="FindUsages"/>
