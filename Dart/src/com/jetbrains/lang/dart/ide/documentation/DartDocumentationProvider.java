@@ -96,8 +96,9 @@ public class DartDocumentationProvider implements DocumentationProvider {
   @NotNull
   public static String buildHoverTextServer(@NotNull final HoverInformation hover) {
     final String elementDescription = hover.getElementDescription();
-    final String staticType = elementDescription.equals(hover.getStaticType()) ? null : hover.getStaticType();
-    final String propagatedType = elementDescription.equals(hover.getPropagatedType()) ? null : hover.getPropagatedType();
+    final String staticType = elementDescription == null || elementDescription.equals(hover.getStaticType()) ? null : hover.getStaticType();
+    final String propagatedType =
+      elementDescription == null || elementDescription.equals(hover.getPropagatedType()) ? null : hover.getPropagatedType();
     return DartDocUtil.generateDoc(elementDescription, false, null, null, null, staticType, propagatedType, true);
   }
 
