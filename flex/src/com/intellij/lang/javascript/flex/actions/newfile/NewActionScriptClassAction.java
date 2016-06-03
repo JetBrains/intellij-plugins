@@ -30,7 +30,7 @@ public class NewActionScriptClassAction extends AnAction {
   private boolean isAvailable(DataContext dataContext) {
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     final IdeView view = LangDataKeys.IDE_VIEW.getData(dataContext);
-    if (project == null || view == null) return false;
+    if (project == null || project.isDisposed() || view == null) return false;
 
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     for (PsiDirectory dir : view.getDirectories()) {
