@@ -11,6 +11,7 @@ import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.GraphUtil;
 import com.intellij.openapi.graph.base.Edge;
 import com.intellij.openapi.graph.geom.YPoint;
+import com.intellij.openapi.graph.layout.CanonicMultiStageLayouter;
 import com.intellij.openapi.graph.layout.Layouter;
 import com.intellij.openapi.graph.layout.ParallelEdgeLayouter;
 import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
@@ -378,18 +379,23 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         layouter.setSmartComponentLayoutEnabled(true);
         layouter.setConsiderNodeLabelsEnabled(true);
 
-        final ParallelEdgeLayouter parallelEdgeLayouter = GraphManager.getGraphManager().createParallelEdgeLayouter();
-        parallelEdgeLayouter.setLineDistance(40);
-        parallelEdgeLayouter.setUsingAdaptiveLineDistances(false);
-        layouter.appendStage(parallelEdgeLayouter);
-        layouter.setParallelEdgeLayouterEnabled(false);
-        //final SplitEdgeLayoutStage splitEdgeLayoutStage = GraphManager.getGraphManager().createSplitEdgeLayoutStage();
-        //((CanonicMultiStageLayouter) layouter).appendStage(splitEdgeLayoutStage);
+        final List<CanonicMultiStageLayouter> list = new ArrayList<>();
+        list.add(layouter);
+        list.add(settings.getBalloonLayouter());
+        list.add(settings.getCircularLayouter());
+        list.add(settings.getDirectedOrthogonalLayouter());
+        list.add(settings.getGroupLayouter());
+        list.add(settings.getHVTreeLayouter());
+        list.add(settings.getOrthogonalLayouter());
+        for (CanonicMultiStageLayouter current : list) {
+          final ParallelEdgeLayouter parallelEdgeLayouter = GraphManager.getGraphManager().createParallelEdgeLayouter();
+          parallelEdgeLayouter.setLineDistance(40);
+          parallelEdgeLayouter.setUsingAdaptiveLineDistances(false);
+          current.appendStage(parallelEdgeLayouter);
+          current.setParallelEdgeLayouterEnabled(false);
+        }
 
-        // todo try hierarchical group
         return layouter;
-        //uncomment when ready
-        //return new AngularJSDiagramLayouter(project, graph, layouter, myData, myNodeBodiesMap);
       }
 
       @NotNull
