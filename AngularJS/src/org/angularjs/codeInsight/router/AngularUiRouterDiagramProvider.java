@@ -6,6 +6,7 @@ import com.intellij.diagram.components.DiagramNodeContainer;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.GraphUtil;
 import com.intellij.openapi.graph.base.Edge;
@@ -320,10 +321,12 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             view.updateView();
           }
         });
-        /*UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
-        final AngularUiRouterDiagramModel model = (AngularUiRouterDiagramModel)builder.getDataModel();
-        final AngularUiRouterNode rootNode = findDataObject(model).getRootNode();
-        updateBySelection(rootNode);*/
+        ApplicationManager.getApplication().invokeLater(() -> {
+          UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+          final AngularUiRouterDiagramModel model = (AngularUiRouterDiagramModel)builder.getDataModel();
+          final AngularUiRouterNode rootNode = findDataObject(model).getRootNode();
+          updateBySelection(rootNode);
+        });
       }
 
       private void updateBySelection(DiagramNode node) {
