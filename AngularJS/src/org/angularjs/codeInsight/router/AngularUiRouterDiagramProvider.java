@@ -5,8 +5,11 @@ import com.intellij.diagram.components.DiagramNodeBodyComponent;
 import com.intellij.diagram.components.DiagramNodeContainer;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.presentation.DiagramState;
+import com.intellij.icons.AllIcons;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.GraphUtil;
 import com.intellij.openapi.graph.base.Edge;
@@ -18,16 +21,20 @@ import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
 import com.intellij.openapi.graph.settings.GraphSettings;
 import com.intellij.openapi.graph.settings.GraphSettingsProvider;
 import com.intellij.openapi.graph.view.*;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.LightColors;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.components.JBList;
 import com.intellij.uml.UmlGraphBuilder;
 import com.intellij.uml.presentation.DiagramPresentationModelImpl;
 import com.intellij.util.ArrayUtil;
@@ -46,6 +53,7 @@ import java.util.List;
 public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
   public static final String ANGULAR_UI_ROUTER = "Angular-ui-router";
   public static final JBColor VIEW_COLOR = new JBColor(new Color(0xE1FFFC), new Color(0x589df6));
+  private static final DataKey<DiagramBuilder> DIAGRAM_BUILDER = DataKey.create("Angular.JS.Diagram.Builder");
   private DiagramVfsResolver<DiagramObject> myResolver;
   private AbstractDiagramElementManager<DiagramObject> myElementManager;
   private DiagramColorManagerBase myColorManager;
@@ -352,7 +360,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return new DiagramExtras<DiagramObject>() {
       @Override
       public List<AnAction> getExtraActions() {
-        return Collections.singletonList(ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE));
+        return Collections.singletonList(new MyEditSourceAction());
       }
 
       @Nullable
@@ -361,6 +369,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
           final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
+        } else if (DIAGRAM_BUILDER.is(dataId)) {
+          return builder;
         }
         return null;
       }
@@ -418,5 +428,57 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       }
     }
     return null;
+  }
+
+  private static class MyEditSourceAction extends DumbAwareAction {
+    private final AnAction myAction;
+
+    public MyEditSourceAction() {
+      super("Jump To...", "Jump To...", AllIcons.Actions.EditSource);
+      myAction = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE);
+    }
+
+    @Override
+    public void update(AnActionEvent e) {
+      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
+      e.getPresentation().setEnabled(builder != null && !builder.getGraph().isSelectionEmpty());
+    }
+
+    @Override
+    public void actionPerformed(AnActionEvent e) {
+      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
+      if (builder == null || builder.getGraph().isSelectionEmpty()) return;
+      UmlGraphBuilder umlBuilder = (UmlGraphBuilder)builder.getGraph().getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+      final List<DiagramNode> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(umlBuilder));
+      final AngularUiRouterNode node = (AngularUiRouterNode)nodes.get(0);
+      final DiagramObject main = node.getIdentifyingElement();
+      final List<DiagramObject> childrenList = main.getChildrenList();
+      if (childrenList.isEmpty()) myAction.actionPerformed(e);
+      else {
+        final JBList list = new JBList();
+        final List<Object> data = new ArrayList<>();
+        data.add(main.getType().name() + ": " + main.getName());
+        for (DiagramObject object : childrenList) {
+          data.add(object.getType().name() + ": " + object.getName());
+        }
+        list.setListData(ArrayUtil.toObjectArray(data));
+        JBPopupFactory.getInstance().createListPopupBuilder(list)
+          .setTitle("Select Navigation Target")
+          .setItemChoosenCallback(() -> {
+            final int index = list.getSelectedIndex();
+            if (index >= 0) {
+              final SmartPsiElementPointer target = index == 0 ? main.getNavigationTarget() : childrenList.get(index - 1).getNavigationTarget();
+              if (target != null) {
+                final PsiElement element = target.getElement();
+                final int offset = element == null ? 0 :
+                                   (element instanceof JSImplicitElement ? element.getTextOffset() : element.getTextRange().getStartOffset());
+                new OpenFileDescriptor(builder.getProject(), target.getVirtualFile(), offset)
+                  .navigate(true);
+              }
+            }
+          })
+          .createPopup().showInBestPositionFor(e.getDataContext());
+      }
+    }
   }
 }
