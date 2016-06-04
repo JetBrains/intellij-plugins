@@ -45,6 +45,7 @@ import java.util.List;
  */
 public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
   public static final String ANGULAR_UI_ROUTER = "Angular-ui-router";
+  public static final JBColor VIEW_COLOR = new JBColor(new Color(0xE1FFFC), new Color(0x589df6));
   private DiagramVfsResolver<DiagramObject> myResolver;
   private AbstractDiagramElementManager<DiagramObject> myElementManager;
   private DiagramColorManagerBase myColorManager;
@@ -142,7 +143,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             return LightColors.YELLOW;
           }
           else if (Type.view.equals(element.getType())) {
-            return LightColors.BLUE;
+            return VIEW_COLOR;
           }
           else if (Type.template.equals(element.getType())) {
             return LightColors.GREEN;
