@@ -28,11 +28,6 @@ public class FlexCSSDialect extends CssDialect {
     return ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
-  @Override
-  public String getDefaultDescription() {
-    return "Flex CSS is used for all CSS files in a Flash module";
-  }
-
   public static CssDialect getInstance() {
     return CssDialect.EP_NAME.findExtension(FlexCSSDialect.class);
   }
