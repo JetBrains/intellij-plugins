@@ -100,7 +100,7 @@ public class DartCallHierarchyTest extends HierarchyViewTestBase {
     }, fileNames);
   }
 
-  PsiElement findReference(PsiElement dartClass, String referenceName) {
+  public static PsiElement findReference(PsiElement dartClass, String referenceName) {
     // Find any reference to the named function or method in the test code.
     PsiElement[] result = new PsiElement[1];
     try {
