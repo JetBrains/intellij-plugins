@@ -10,7 +10,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.WriteExternalException;
-import com.jetbrains.cidr.execution.FileOutputReaders;
+import com.jetbrains.cidr.execution.ProcessOutputReaders;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class MotionSimulatorRunExtension extends RubyRunConfigurationExtension {
   private static final Logger LOG = Logger.getInstance(MotionSimulatorRunExtension.class);
-  public static final Key<MotionFileOutputReaders> FILE_OUTPUT_READERS = Key.create("RubyMotion.FileOutputReaders");
+  public static final Key<MotionProcessOutputReaders> FILE_OUTPUT_READERS = Key.create("RubyMotion.FileOutputReaders");
 
   @NotNull
   @Override
@@ -91,7 +91,7 @@ public class MotionSimulatorRunExtension extends RubyRunConfigurationExtension {
         env.put("no_start", "1");
       }
     }
-    final MotionFileOutputReaders readers = new MotionFileOutputReaders(cmdLine);
+    final MotionProcessOutputReaders readers = new MotionProcessOutputReaders(cmdLine);
     env.put("SIM_STDOUT_PATH", readers.getOutFileAbsolutePath());
     env.put("SIM_STDERR_PATH", readers.getErrFileAbsolutePath());
     env.put("output", "rubymine");
@@ -115,10 +115,10 @@ public class MotionSimulatorRunExtension extends RubyRunConfigurationExtension {
 
   }
 
-  static class MotionFileOutputReaders extends FileOutputReaders {
+  static class MotionProcessOutputReaders extends ProcessOutputReaders {
     private RubyProcessHandler myHandler;
 
-    public MotionFileOutputReaders(@NotNull GeneralCommandLine commandLine) throws ExecutionException {
+    public MotionProcessOutputReaders(@NotNull GeneralCommandLine commandLine) throws ExecutionException {
       init(commandLine, true);
     }
 
