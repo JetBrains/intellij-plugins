@@ -55,6 +55,7 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
       @Override
       public void childRemoved(@NotNull PsiTreeChangeEvent event) {
         Module module = getModuleFromEvent(event);
+        if (module == null || module.isDisposed()) return;
         TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
 
         if (tapestryProject == null || !TapestryUtils.isTapestryModule(module)) {
