@@ -107,14 +107,13 @@ public class AngularUiRouterGraphBuilder {
         if (templateUrl != null) {
           final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, templateUrl, null);
           edges.add(new AngularUiRouterEdge(templateNode, node, "provides", AngularUiRouterEdge.Type.providesTemplate));
-
-          if (state.hasViews()) {
-            if (state.isAbstract()) {
-              stateObject.addWarning("Abstract state can not be instantiated so it makes no sense to define views for it.");
-            }
-            else {
-              stateObject.addWarning("Since 'views' are defined for state, template information would be ignored.");
-            }
+        }
+        if (state.hasViews()) {
+          if (state.isAbstract()) {
+            stateObject.addWarning("Abstract state can not be instantiated so it makes no sense to define views for it.");
+          }
+          else {
+            stateObject.addWarning("Since 'views' are defined for state, template information would be ignored.");
           }
         }
       }
