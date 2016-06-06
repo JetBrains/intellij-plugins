@@ -29,7 +29,8 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
 
   public IntellijJavaClassType(Module module, PsiFile psiFile) {
     _module = module;
-    final VirtualFile virtualFile = psiFile.getVirtualFile();
+    VirtualFile virtualFile = psiFile.getVirtualFile();
+    if (virtualFile == null) virtualFile = psiFile.getViewProvider().getVirtualFile();
     _classFilePath = virtualFile.getUrl();
   }
 
