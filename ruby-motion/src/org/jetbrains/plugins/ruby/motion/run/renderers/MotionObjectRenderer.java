@@ -1,15 +1,18 @@
 package org.jetbrains.plugins.ruby.motion.run.renderers;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.openapi.util.Pair;
 import com.intellij.xdebugger.frame.XCompositeNode;
-import com.jetbrains.cidr.execution.debugger.backend.DBCannotEvaluateException;
-import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
+import com.intellij.xdebugger.frame.XFullValueEvaluator;
+import com.jetbrains.cidr.execution.debugger.backend.DebuggerCommandException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValue;
+import com.jetbrains.cidr.execution.debugger.backend.LLValueData;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrPhysicalValue;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrValue;
 import com.jetbrains.cidr.execution.debugger.evaluation.EvaluationContext;
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.motion.run.MotionMemberValue;
 import org.jetbrains.plugins.ruby.ruby.lang.TextUtil;
 
@@ -27,39 +30,47 @@ public class MotionObjectRenderer extends ValueRenderer {
 
   @NotNull
   @Override
-  protected String doComputeValue(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
-    return TextUtil.removeQuoting(
-      context.evaluate("(char *)[[(id)rb_inspect(" + myValue.getVar().getPointer() + ") description] UTF8String]").getReadableValue());
+  protected Pair<String, XFullValueEvaluator> doComputeValueAndEvaluator(@NotNull EvaluationContext context) throws ExecutionException,
+                                                                                                                    DebuggerCommandException {
+    LLValue value =
+      context.evaluate("(char *)[[(id)rb_inspect(" + myValue.getVarData(context).getPointer() + ") description] UTF8String]");
+    LLValueData data = context.getData(value);
+    return doComputeValueAndEvaluator(context, value, data);
   }
 
   @Override
-  protected int doComputeChildrenCount(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
-    final LLValue instanceVariablesNames = getInstanceVariablesNames(context);
-    return count(context, instanceVariablesNames);
+  protected boolean mayHaveChildrenViaChildrenCount() {
+    return true;
   }
 
-  private static int count(EvaluationContext context, LLValue instanceVariablesNames) throws ExecutionException, DBUserException {
-    return (int)context.evaluate(context.castIDToNumber("[" + getSelf(instanceVariablesNames) + " count]", "unsigned int")).intValue();
+  @Override
+  @Nullable
+  protected Integer doComputeChildrenCount(@NotNull EvaluationContext context) throws ExecutionException, DebuggerCommandException {
+    return count(context, getInstanceVariablesNames(context));
   }
 
-  private LLValue getInstanceVariablesNames(EvaluationContext context) throws ExecutionException, DBCannotEvaluateException {
-    return context.evaluate(EvaluationContext.cast("rb_obj_instance_variables(" + getSelf() + ")", "id"));
+  private static int count(EvaluationContext context, LLValue instanceVariablesNames) throws ExecutionException, DebuggerCommandException {
+    return (int)context.evaluateData(context.castIDToNumber("[" + getSelf(instanceVariablesNames, context) + " count]", "unsigned int")).intValue();
+  }
+
+  private LLValue getInstanceVariablesNames(EvaluationContext context) throws ExecutionException, DebuggerCommandException {
+    return context.evaluate(EvaluationContext.cast("rb_obj_instance_variables(" + getSelf(context) + ")", "id"));
   }
 
   @Override
   protected void doComputeChildren(@NotNull EvaluationContext context,
-                                   @NotNull XCompositeNode container) throws ExecutionException, DBUserException{
+                                   @NotNull XCompositeNode container) throws ExecutionException, DebuggerCommandException {
 
     final Collection<CidrValue> children = new ArrayList<CidrValue>();
     final LLValue names = getInstanceVariablesNames(context);
     final int count = count(context, names);
     for (int i = 0; i < count; i++) {
       final String selName = EvaluationContext.cast("sel_registerName(\"objectAtIndex:\")", "id");
-      final String nameExpr = EvaluationContext.cast("objc_msgSend(" + getSelf(names) + ", " + selName + ", " + i + ")", "id");
-      final LLValue name = context.evaluate(nameExpr);
+      final String nameExpr = EvaluationContext.cast("objc_msgSend(" + getSelf(names, context) + ", " + selName + ", " + i + ")", "id");
+      final LLValueData name = context.evaluateData(nameExpr);
       final String namePointer = "(char *)[[" + name.getPointer() + " description] UTF8String]";
-      final String ivarName = TextUtil.removeQuoting(context.evaluate(namePointer).getReadableValue());
-      final String ivarExpr = getChildEvaluationExpression(ivarName);
+      final String ivarName = TextUtil.removeQuoting(context.evaluateData(namePointer).getPresentableValue());
+      final String ivarExpr = getChildEvaluationExpression(context, ivarName);
       final LLValue ivar = context.evaluate(ivarExpr);
       children.add(new MotionMemberValue(ivar, 
                                          ivarName, 
@@ -69,21 +80,17 @@ public class MotionObjectRenderer extends ValueRenderer {
     CidrValue.addAllTo(children, container);
   }
 
-  private String getChildEvaluationExpression(String ivarName) {
+  private String getChildEvaluationExpression(@NotNull EvaluationContext context, String ivarName)
+    throws ExecutionException, DebuggerCommandException {
     final String ivarNameExpr = EvaluationContext.cast("rb_intern(\"" + ivarName + "\")", "char *");
-    return EvaluationContext.cast("rb_ivar_get(" + getSelf() + ", " + ivarNameExpr + ")", "id");
+    return EvaluationContext.cast("rb_ivar_get(" + getSelf(context) + ", " + ivarNameExpr + ")", "id");
   }
 
-  @Override
-  protected boolean shouldPrintChildrenConsoleDescription() {
-    return true;
+  private String getSelf(@NotNull EvaluationContext context) throws ExecutionException, DebuggerCommandException {
+    return EvaluationContext.cast(myValue.getVarData(context).getPointer(), "id");
   }
 
-  private String getSelf() {
-    return EvaluationContext.cast(myValue.getVar().getPointerSafely(), "id");
-  }
-
-  private static String getSelf(LLValue value) throws DBCannotEvaluateException {
-    return EvaluationContext.cast(value.getPointer(), "id");
+  private static String getSelf(LLValue value, @NotNull EvaluationContext context) throws DebuggerCommandException, ExecutionException {
+    return EvaluationContext.cast(context.getData(value).getPointer(), "id");
   }
 }
