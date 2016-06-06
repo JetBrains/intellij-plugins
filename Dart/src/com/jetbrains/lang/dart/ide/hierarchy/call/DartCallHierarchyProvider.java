@@ -5,9 +5,7 @@ import com.intellij.ide.hierarchy.HierarchyBrowser;
 import com.intellij.ide.hierarchy.HierarchyProvider;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
-import com.jetbrains.lang.dart.psi.DartReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,10 +25,5 @@ public class DartCallHierarchyProvider implements HierarchyProvider {
   @Override
   public void browserActivated(@NotNull HierarchyBrowser hierarchyBrowser) {
     ((DartCallHierarchyBrowser)hierarchyBrowser).changeView(CallHierarchyBrowserBase.CALLER_TYPE);
-  }
-
-  private static DartReference getRightmostReference(PsiElement element) {
-    PsiElement last = PsiTreeUtil.getDeepestLast(element);
-    return PsiTreeUtil.getParentOfType(last, DartReference.class);
   }
 }
