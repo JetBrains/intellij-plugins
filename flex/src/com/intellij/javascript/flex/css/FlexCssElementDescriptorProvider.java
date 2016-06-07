@@ -151,8 +151,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     if (vFile != null) {
-      final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
-      return dialect != CssDialect.CLASSIC;
+      CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
+      return dialect == null || dialect == FlexCSSDialect.getInstance();
     }
 
     return true;
