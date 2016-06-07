@@ -62,7 +62,6 @@ import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.Function;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
@@ -1488,7 +1487,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private void createUIComponents() {
     mySdkCombo = new JdkComboBox(mySkdsModel,
                                  Conditions.<SdkTypeId>oneOf(FlexSdkType2.getInstance(), FlexmojosSdkType.getInstance()),
-                                 Conditions.<SdkTypeId>is(FlexSdkType2.getInstance()));
+                                 Conditions.<SdkTypeId>is(FlexSdkType2.getInstance()), false);
   }
 
   private void initPopupActions() {
