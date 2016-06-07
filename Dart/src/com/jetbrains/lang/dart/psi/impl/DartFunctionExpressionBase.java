@@ -1,21 +1,33 @@
 package com.jetbrains.lang.dart.psi.impl;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.DartComponentType;
+import com.intellij.ui.RowIcon;
+import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBodyOrNative;
 import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DartFunctionExpressionBase extends DartExpressionImpl {
+abstract public class DartFunctionExpressionBase extends DartExpressionImpl {
 
   public DartFunctionExpressionBase(ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public Icon getIcon(int flags) {
+    Icon icon = AllIcons.Nodes.Function;
+    RowIcon baseIcon = new RowIcon(2);
+    baseIcon.setIcon(icon, 0);
+    Icon visibility = PlatformIcons.PRIVATE_ICON;
+    baseIcon.setIcon(visibility, 1);
+    return baseIcon;
   }
 
   @Override
@@ -41,9 +53,7 @@ public class DartFunctionExpressionBase extends DartExpressionImpl {
         @Nullable
         @Override
         public Icon getIcon(boolean unused) {
-          DartComponentType type = DartComponentType.typeOf(DartFunctionExpressionBase.this);
-          assert type != null;
-          return type.getIcon();
+          return DartFunctionExpressionBase.this.getIcon(0);
         }
       };
     }

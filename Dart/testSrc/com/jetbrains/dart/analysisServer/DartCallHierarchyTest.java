@@ -181,6 +181,14 @@ public class DartCallHierarchyTest extends HierarchyViewTestBase {
     doCallHierarchyTest("A", "a", false, "A.dart", "B.dart", "C.dart");
   }
 
+  public void testLocalFnInMethod() throws Exception {
+    doCallHierarchyTest(null, "baz", true, "C.dart");
+  }
+
+  public void testLocalFnInFunction() throws Exception {
+    doCallHierarchyTest(null, "baz", true, "C.dart");
+  }
+
   private static class ExitVisitor extends Error {
   }
 }
