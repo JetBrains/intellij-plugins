@@ -299,7 +299,7 @@ public class AngularUiRouterGraphBuilder {
       final int idx = view.indexOf("@");
       if (idx < 0) {
         // parent or top level template
-        if (state.contains(".")) {
+        if (state.contains(".") || myStatesMap.get(state).getParentName() != null) {
           final UiRouterState routerState = myStatesMap.get(state);
           if (routerState == null) {
             return null;
