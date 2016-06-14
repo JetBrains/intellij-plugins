@@ -1,0 +1,25 @@
+GherkinFile:simple.feature
+  GherkinFeature:Do stuff
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Do stuff')
+    PsiWhiteSpace('\n  ')
+    GherkinFeatureHeader
+      PsiElement(TEXT)('As someone')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:My scenario
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('My scenario')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:something
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('something')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:something else
+        PsiElement(STEP_KEYWORD)('And')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('something else')        

@@ -1,0 +1,29 @@
+GherkinFile:step_param.feature
+  GherkinFeature:Do stuff
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Do stuff')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:My scenario
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('My scenario')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:test step   <par01>  <par01> test
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('test step')
+        PsiWhiteSpace('   ')
+        PsiElement(STEP_PARAMETER_BRACE)('<')
+        GherkinStepParameter:par01
+          PsiElement(STEP_PARAMETER_TEXT)('par01')
+        PsiElement(STEP_PARAMETER_BRACE)('>')
+        PsiWhiteSpace('  ')
+        PsiElement(STEP_PARAMETER_BRACE)('<')
+        GherkinStepParameter:par01
+          PsiElement(STEP_PARAMETER_TEXT)('par01')
+        PsiElement(STEP_PARAMETER_BRACE)('>')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('test')
