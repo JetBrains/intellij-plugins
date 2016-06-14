@@ -51,7 +51,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
 
   @Override
   protected void processArgumentList(MethodInfo methodInfo, String parentName) {
-    parents.add(new JSParameterListStubImpl(parents.getLast()));
+    parents.add(new JSParameterListStubImpl(parents.getLast(), JSStubElementTypes.PARAMETER_LIST));
     super.processArgumentList(methodInfo, parentName);
     parents.removeLast();
   }
