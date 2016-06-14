@@ -94,6 +94,10 @@ public class GherkinParserTest extends ParsingTestCase {
   public void testFeatures() {
     doTest(true);
   }
+
+  public void testScenario_outline_param() {
+    doTest(true);
+  }
 }
 
 

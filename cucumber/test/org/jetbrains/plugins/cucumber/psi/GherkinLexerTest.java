@@ -123,6 +123,16 @@ public class GherkinLexerTest extends TestCase {
     doTest("\"\"\"<>|\"\"\"", "PYSTRING_QUOTES:0-3", "STEP_PARAMETER_BRACE:3-4", "STEP_PARAMETER_BRACE:4-5", "PYSTRING_TEXT:5-6", "PYSTRING_QUOTES:6-9");
   }
 
+  public void testScenarioWithParameter() {
+    doTest(
+      "Feature: test\n" +
+      "  Scenario Outline: Opening <scan> Scan Settings",
+      "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-9", "TEXT:9-13", "WHITE_SPACE:13-16", "SCENARIO_OUTLINE_KEYWORD:16-32",
+      "COLON:32-33", "WHITE_SPACE:33-34", "TEXT:34-41", "WHITE_SPACE:41-42", "STEP_PARAMETER_BRACE:42-43", "STEP_PARAMETER_TEXT:43-47",
+      "STEP_PARAMETER_BRACE:47-48", "WHITE_SPACE:48-49", "TEXT:49-62"
+    );
+  }
+
   public void testUnicodeWhitespace() {
     doTest("|\u3000\n", "PIPE:0-1", "WHITE_SPACE:1-3");
   }

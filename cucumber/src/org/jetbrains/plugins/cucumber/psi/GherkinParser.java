@@ -113,6 +113,10 @@ public class GherkinParser implements PsiParser {
         }
       }
 
+      if (parseStepParameter(builder)) {
+        continue;
+      }
+
       if (builder.getTokenType() == GherkinTokenTypes.STEP_KEYWORD) {
         parseStep(builder);
       }
@@ -138,6 +142,16 @@ public class GherkinParser implements PsiParser {
            tokenType == GherkinTokenTypes.FEATURE_KEYWORD;
   }
 
+  private static boolean parseStepParameter(PsiBuilder builder) {
+    if (builder.getTokenType() == GherkinTokenTypes.STEP_PARAMETER_TEXT) {
+      final PsiBuilder.Marker stepParameterMarker = builder.mark();
+      builder.advanceLexer();
+      stepParameterMarker.done(GherkinElementTypes.STEP_PARAMETER);
+      return true;
+    }
+    return false;
+  }
+
   private static void parseStep(PsiBuilder builder) {
     final PsiBuilder.Marker marker = builder.mark();
     builder.advanceLexer();
@@ -149,12 +163,7 @@ public class GherkinParser implements PsiParser {
         break;
       }
       prevTokenEnd = builder.getCurrentOffset() + getTokenLength(tokenText);
-      if (builder.getTokenType() == GherkinTokenTypes.STEP_PARAMETER_TEXT) {
-        final PsiBuilder.Marker stepParameterMarker = builder.mark();
-        builder.advanceLexer();
-        stepParameterMarker.done(GherkinElementTypes.STEP_PARAMETER);
-      } else {
-
+      if (!parseStepParameter(builder)) {
         builder.advanceLexer();
       }
     }
@@ -172,11 +181,7 @@ public class GherkinParser implements PsiParser {
       final PsiBuilder.Marker marker = builder.mark();
       builder.advanceLexer();
       while (!builder.eof() && builder.getTokenType() != GherkinTokenTypes.PYSTRING) {
-        if (builder.getTokenType() == GherkinTokenTypes.STEP_PARAMETER_TEXT) {
-          final PsiBuilder.Marker stepParameterMarker = builder.mark();
-          builder.advanceLexer();
-          stepParameterMarker.done(GherkinElementTypes.STEP_PARAMETER);
-        } else {
+        if (!parseStepParameter(builder)) {
           builder.advanceLexer();
         }
       }
