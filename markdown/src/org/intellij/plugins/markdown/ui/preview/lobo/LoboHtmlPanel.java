@@ -4,7 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.ui.JBColor;
 import com.intellij.util.Range;
@@ -25,9 +25,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 
 final class LoboHtmlPanel extends MarkdownHtmlPanel {
   private static final int FOCUS_ELEMENT_DY = 100;
@@ -70,9 +70,11 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
   @Override
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
     myCssInlineText = inlineCss;
-    if (fileUris.length > 0) {
+    if (fileUris.length > 0 && fileUris[0] != null) {
       try {
-        myCssInlineText += "\n" + FileUtilRt.loadFile(new File(URI.create(fileUris[0])), CharsetToolkit.UTF8);
+        final URL url = URI.create(fileUris[0]).toURL();
+        final String cssText = StreamUtil.readText(url.openStream(), CharsetToolkit.UTF8);
+        myCssInlineText += "\n" + cssText;
       }
       catch (IOException ignore) {
       }
