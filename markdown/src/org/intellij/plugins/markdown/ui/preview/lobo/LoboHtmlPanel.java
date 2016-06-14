@@ -4,6 +4,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.ui.JBColor;
 import com.intellij.util.Range;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
@@ -23,6 +25,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 
 final class LoboHtmlPanel extends MarkdownHtmlPanel {
   private static final int FOCUS_ELEMENT_DY = 100;
@@ -66,7 +71,11 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
     myCssInlineText = inlineCss;
     if (fileUris.length > 0) {
-      myCssFileUri = fileUris[0];
+      try {
+        myCssInlineText += "\n" + FileUtilRt.loadFile(new File(URI.create(fileUris[0])), CharsetToolkit.UTF8);
+      }
+      catch (IOException ignore) {
+      }
     }
   }
 
