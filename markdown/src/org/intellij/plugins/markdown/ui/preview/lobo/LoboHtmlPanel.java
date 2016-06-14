@@ -39,8 +39,6 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
   @NotNull
   private String myLastRenderedHtml = "";
   @Nullable
-  private String myCssFileUri = null;
-  @Nullable
   private String myCssInlineText = null;
 
 
@@ -84,7 +82,7 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
   @Override
   public void setHtml(@NotNull String html) {
     myLastRenderedHtml = html;
-    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myCssInlineText, myCssFileUri));
+    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myCssInlineText));
     myPanel.setHtml(htmlToRender, "file://a.html", myHtmlRendererContext);
   }
 
