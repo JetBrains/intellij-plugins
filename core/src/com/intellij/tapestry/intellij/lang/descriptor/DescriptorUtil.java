@@ -272,7 +272,8 @@ class DescriptorUtil {
              : new TapestryTagDescriptor(component, mixins, prefix, tapestryNamespaceDescriptor);
     }
     else if (TapestryConstants.PARAMETERS_NAMESPACE.equals(tagNamespace)) {
-      final Component component = TapestryUtils.getTypeOfTag(tag.getParentTag());
+      XmlTag parentTag = tag.getParentTag();
+      final Component component = parentTag != null ? TapestryUtils.getTypeOfTag(parentTag) : null;
       final String parameterName = tag.getLocalName();
       final TapestryParameter parameter = component == null ? null : component.getParameters().get(parameterName);
       final TapestryNamespaceDescriptor tapestryNamespaceDescriptor = TapestryXmlExtension.getTapestryTemplateDescriptor(tag);
