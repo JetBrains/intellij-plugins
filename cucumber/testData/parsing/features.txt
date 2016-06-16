@@ -19,7 +19,7 @@ GherkinFile:features.feature
   GherkinFeature:
     PsiElement(FEATURE_KEYWORD)('Feature')
     PsiWhiteSpace('\n  ')
-    GherkinScenario:then italic style is triggered on every character
+    GherkinScenario:
       PsiElement(SCENARIO_KEYWORD)('Scenario')
       PsiElement(COLON)(':')
       PsiWhiteSpace('\n    ')
