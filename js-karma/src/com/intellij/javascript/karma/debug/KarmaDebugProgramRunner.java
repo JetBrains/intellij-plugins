@@ -28,7 +28,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
-import com.intellij.util.Function;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.intellij.xdebugger.XDebugProcess;
@@ -37,7 +36,6 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import com.jetbrains.javascript.debugger.JavaScriptDebugProcess;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
@@ -92,7 +90,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
             new XDebugProcessStarter() {
               @Override
               @NotNull
-              public XDebugProcess start(@NotNull final XDebugSession session) {
+              public XDebugProcess start(@NotNull XDebugSession session) {
                 JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
                 WebBrowser browser = debuggableWebBrowser.getWebBrowser();
                 JavaScriptDebugProcess<? extends VmConnection> debugProcess = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
