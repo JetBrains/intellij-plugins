@@ -103,6 +103,9 @@
     <codeInsight.implementMethod language="Dart"
                                  implementationClass="com.jetbrains.lang.dart.ide.generation.DartImplementMethodHandler"/>
 
+    <statementUpDownMover implementation="com.jetbrains.lang.dart.ide.moveCode.DartStatementMover" id="statement" order="before component" />
+    <statementUpDownMover implementation="com.jetbrains.lang.dart.ide.moveCode.DartComponentMover" id="component" order="before xml" />
+
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartImportAndExportIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartPartUriIndex"/>
     <!--<fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSourceIndex"/>-->
