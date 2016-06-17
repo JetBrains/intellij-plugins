@@ -17,36 +17,23 @@ package org.intellij.plugins.markdown.editor;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.StripTrailingSpacesFilter;
+import com.intellij.openapi.editor.StripTrailingSpacesFilterFactory;
 import com.intellij.openapi.editor.impl.PsiBasedStripTrailingSpacesFilter;
-import com.intellij.psi.PsiFile;
+import com.intellij.openapi.project.Project;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class MarkdownStripTrailingSpacesFilterFactory extends PsiBasedStripTrailingSpacesFilter.Factory {
+public class MarkdownStripTrailingSpacesFilterFactory extends StripTrailingSpacesFilterFactory {
 
   @NotNull
   @Override
-  protected PsiBasedStripTrailingSpacesFilter createFilter(@NotNull Document document) {
-    return new MarkdownStripTrailingSpacesFilter(document);
-  }
-
-  @Override
-  protected boolean isApplicableTo(@NotNull Language language) {
-    return language.is(MarkdownLanguage.INSTANCE);
-  }
-
-  private static class MarkdownStripTrailingSpacesFilter extends PsiBasedStripTrailingSpacesFilter {
-
-    protected MarkdownStripTrailingSpacesFilter(@NotNull Document document) {
-      super(document);
+  public StripTrailingSpacesFilter createFilter(@Nullable Project project, @NotNull Document document) {
+    Language documentLanguage = PsiBasedStripTrailingSpacesFilter.getDocumentLanguage(document);
+    if (documentLanguage != null && documentLanguage.is(MarkdownLanguage.INSTANCE)) {
+      return StripTrailingSpacesFilter.NOT_ALLOWED;
     }
-
-    @Override
-    protected void process(@NotNull PsiFile psiFile) {
-      //
-      // For now disable spaces stripping in the entire file. Later can be extended to allow specific ranges.
-      //
-      disableRange(psiFile.getTextRange());
-    }
+    return StripTrailingSpacesFilter.ALL_LINES;
   }
 }
