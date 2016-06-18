@@ -4,27 +4,22 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.filters.TextConsoleBuilder;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.util.ArrayUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerLog;
-import com.jetbrains.cidr.execution.debugger.IPhoneSimulatorDebugProcessBase;
-import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver;
+import com.jetbrains.cidr.execution.debugger.IPhoneDebugProcess;
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrBreakpointHandler;
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrExceptionBreakpointHandler;
-import com.jetbrains.cidr.execution.deviceSupport.AMDevice;
-import com.jetbrains.cidr.execution.deviceSupport.AMDeviceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.ruby.run.configuration.RubyAbstractCommandLineState;
 
 /**
  * @author Dennis.Ushakov
  */
-public abstract class RubyMotionDeviceDebugProcess extends IPhoneSimulatorDebugProcessBase {
+public class RubyMotionDeviceDebugProcess extends IPhoneDebugProcess {
   @NotNull private final RunProfileState myState;
   @NotNull private final Executor myExecutor;
   @NotNull private final ProcessHandler myProcessHandler;
@@ -34,7 +29,7 @@ public abstract class RubyMotionDeviceDebugProcess extends IPhoneSimulatorDebugP
                                       @NotNull Executor executor,
                                       @NotNull TextConsoleBuilder consoleBuilder,
                                       @NotNull ProcessHandler processHandler) throws ExecutionException {
-    super(new MotionAppRunParameters(true, processHandler), session, consoleBuilder);
+    super(new MotionAppRunParameters(true, processHandler), MotionAppRunParameters.getDevice(processHandler), session, consoleBuilder);
     myState = state;
     myExecutor = executor;
     myProcessHandler = processHandler;
@@ -50,12 +45,6 @@ public abstract class RubyMotionDeviceDebugProcess extends IPhoneSimulatorDebugP
   @Override
   protected CidrExceptionBreakpointHandler createExceptionHandler() {
     return new CidrExceptionBreakpointHandler(this, MotionExceptionBreakpointType.class);
-  }
-
-  @Override
-  protected void doLaunchTarget(@NotNull DebuggerDriver driver) throws ExecutionException {
-    driver.setRedirectOutputToFiles(!isRemote());
-    driver.launch();
   }
 
   @NotNull
@@ -77,33 +66,5 @@ public abstract class RubyMotionDeviceDebugProcess extends IPhoneSimulatorDebugP
       CidrDebuggerLog.LOG.info("Error while creating console: " + e);
     }
     return myConsole;
-  }
-
-  @Override
-  protected boolean isRemote() {
-    return true;
-  }
-
-  @Override
-  public boolean supportsWatchpoints() {
-    return false;
-  }
-
-  @Override
-  protected void doStart(@NotNull DebuggerDriver driver) throws ExecutionException {
-    final AMDevice device = getDevice();
-    myProcessHandler.addProcessListener(new ProcessAdapter() {
-      @Override
-      public void processTerminated(ProcessEvent event) {
-        getDevice().stopDebugserver();
-        getDevice().unlock();
-      }
-    });
-
-    driver.loadForRemote(AMDeviceManager.findDeviceSupportDirectory(device));
-  }
-
-  private AMDevice getDevice() {
-    return ((MotionAppRunParameters)myRunParameters).getDevice();
   }
 }
