@@ -45,8 +45,13 @@ class MotionAppRunParameters extends RunParameters {
   }
 
   public AMDevice getDevice() {
+    return getDevice(myServerProcessHandler);
+  }
+
+  @NotNull
+  public static AMDevice getDevice(ProcessHandler serverProcessHandler) {
     try {
-      return ((DeviceProcessHandler)myServerProcessHandler).getDevice();
+      return ((DeviceProcessHandler)serverProcessHandler).getDevice();
     }
     catch (ExecutionException e) {
       CidrDebuggerLog.LOG.error(e);
