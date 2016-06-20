@@ -194,3 +194,24 @@ JSFile:Generics.js2
             PsiElement(JS:RBRACE)('}')
         PsiElement(JS:RPAR)(')')
     PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('m_someVariable')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:COLON)(':')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Vector')
+        JSGenericSignature
+          PsiElement(JS:GENERIC_SIGNATURE_START)('.<')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('Function')
+          PsiComment(JS:C_STYLE_COMMENT)('/* Some desecription */')
+          PsiElement(JS:GT)('>')
+    PsiElement(JS:SEMICOLON)(';')

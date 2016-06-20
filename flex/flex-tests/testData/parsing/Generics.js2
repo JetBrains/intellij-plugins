@@ -10,3 +10,4 @@ var c2:Vector.<Vector.<int>>
 new<String>["a","b","c"].filter(function(item:String,index:int,vector:Vector.<String>):Boolean {
     return true;
 });
+var m_someVariable : Vector.<Function/* Some desecription */>;
