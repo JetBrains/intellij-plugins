@@ -1,0 +1,13 @@
+<idea-plugin version="2">
+  <name>PostCSS support</name>
+  <id>org.intellij.plugins.postcss</id>
+  <category>HTML/JavaScript Development</category>
+  <vendor>JetBrains</vendor>
+  <description>PostCSS language support</description>
+  <depends>com.intellij.css</depends>
+  <depends>com.intellij.modules.lang</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <css.dialect implementation="org.intellij.plugins.postcss.PostCssDialect"/>
+  </extensions>
+</idea-plugin>
