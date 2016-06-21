@@ -131,12 +131,19 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
         baseDir.refresh(false, true);
         baseDir.getChildren();
         handler.notifyTextAvailable("Done\n", ProcessOutputTypes.SYSTEM);
-        final NpmScriptsService instance = NpmScriptsService.getInstance();
-        for (VirtualFile file : instance.detectAllBuildfiles(project)) {
-          instance.getFileManager(project).addBuildfile(file);
-        }
-        NodeJsInterpreterManager.getInstance(project).setDefault(node);
-        ApplicationManager.getApplication().invokeLater(() -> instance.getToolWindowManager(project).setAvailable());
+        ApplicationManager.getApplication().runReadAction(() -> {
+          if (!project.isDisposed()) {
+            NpmScriptsService instance = NpmScriptsService.getInstance();
+            List<VirtualFile> buildfiles = instance.detectAllBuildfiles(project);
+            ApplicationManager.getApplication().invokeLater(() -> {
+              for (VirtualFile buildfile : buildfiles) {
+                instance.getFileManager(project).addBuildfile(buildfile);
+              }
+              NodeJsInterpreterManager.getInstance(project).setDefault(node);
+              instance.getToolWindowManager(project).setAvailable();
+            });
+          }
+        });
       }
     });
     final Executor defaultExecutor = DefaultRunExecutor.getRunExecutorInstance();
