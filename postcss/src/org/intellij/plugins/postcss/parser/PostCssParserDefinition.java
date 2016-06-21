@@ -9,10 +9,6 @@ import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.psi.PostCssFileImpl;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Parser definition for PostCss
- * Created by Ilya Bochkarev on 6/21/16.
- */
 public class PostCssParserDefinition extends CSSParserDefinition {
 
   @Override

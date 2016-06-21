@@ -11,5 +11,6 @@
     <css.dialect implementation="org.intellij.plugins.postcss.PostCssDialect"/>
     <fileTypeFactory implementation="org.intellij.plugins.postcss.PostCssFileTypeFactory"/>
     <lang.parserDefinition language="POST_CSS" implementationClass="org.intellij.plugins.postcss.parser.PostCssParserDefinition"/>
+    <internalFileTemplate name="PostCSS File"/>
   </extensions>
 </idea-plugin>

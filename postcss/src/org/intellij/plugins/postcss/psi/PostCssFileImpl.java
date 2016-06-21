@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.psi;
 
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.css.impl.StylesheetFileBase;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
@@ -20,7 +21,7 @@ public class PostCssFileImpl extends StylesheetFileBase implements PostCssFile {
   }
 
   public String toString() {
-    return "PostCss File:" + getName();
+    return "PostCSS File:" + getName();
   }
 
   @Override
