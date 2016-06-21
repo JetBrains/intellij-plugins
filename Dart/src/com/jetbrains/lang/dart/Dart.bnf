@@ -606,6 +606,7 @@ mapLiteralEntry ::= expression ':' expression {recoverWhile="map_literal_entry_r
 private map_literal_entry_recover ::= !(',' | '}')
 
 functionExpression ::= formalParameterList functionExpressionBody
+{mixin="com.jetbrains.lang.dart.psi.impl.DartFunctionExpressionBase"}
 functionSignature ::= metadata* functionDeclarationPrivate
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionDeclarationPrivate ::= returnType componentName formalParameterList | componentName formalParameterList // todo remove, use functionSignature as in spec
