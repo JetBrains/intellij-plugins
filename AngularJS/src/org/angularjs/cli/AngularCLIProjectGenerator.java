@@ -24,6 +24,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.lang.javascript.buildTools.npm.NpmScriptsService;
+import com.intellij.lang.javascript.modules.ConsoleProgress;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -125,6 +126,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
 
     final ConsoleView console = builder.getConsole();
     console.attachToProcess(handler);
+    ConsoleProgress.install(console, handler);
     handler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(ProcessEvent event) {
