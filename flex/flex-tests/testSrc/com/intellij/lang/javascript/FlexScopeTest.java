@@ -10,7 +10,6 @@ import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
@@ -448,6 +447,23 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     doHighlightingTest("_1", "mxml", false);
     doHighlightingTest("_2", "as", true);
     doHighlightingTest("_2", "mxml", true);
+  }
+
+  public void testLibraryScope() throws Exception {
+    final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
+    FlexTestUtils.addFlexLibrary(false, myModule, "Flex Lib", true, FlexTestUtils.getTestDataPath("flexlib"), "flexlib.swc", null, null);
+
+    FlexTestUtils.modifyConfigs(myProject, editor -> {
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      bc1.setOutputType(OutputType.Library);
+
+      ModifiableFlexBuildConfiguration bc2 = editor.getConfigurations(module2)[0];
+
+      ModifiableBuildConfigurationEntry entry1 = editor.createBcEntry(bc2.getDependencies(), bc1, null);
+      bc2.getDependencies().getModifiableEntries().add(entry1);
+    });
+
+    doHighlightingTest("");
   }
 
   private void doHighlightingTest(String suffix, String extension, boolean testFolder) throws Exception {
