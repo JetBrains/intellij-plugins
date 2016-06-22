@@ -7,7 +7,7 @@ public class PostCssLanguage extends CSSLanguage {
   public static final PostCssLanguage INSTANCE = new PostCssLanguage();
 
   private PostCssLanguage(){
-    super(CSSLanguage.INSTANCE, "POST_CSS", "text/css");
+    super(CSSLanguage.INSTANCE, "PostCSS", "text/css");
   }
 
   @NotNull

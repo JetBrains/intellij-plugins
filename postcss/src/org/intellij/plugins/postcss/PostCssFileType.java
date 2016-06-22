@@ -11,10 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.nio.charset.Charset;
 
-/**
- * PostCss file type
- * Created by Ilya Bochkarev on 6/21/16.
- */
 public class PostCssFileType extends LanguageFileType {
   public static final PostCssFileType POST_CSS = new PostCssFileType();
   @NonNls public static final String DEFAULT_EXTENSION = "pcss";
