@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.psi;
 
-import com.intellij.psi.css.CssFile;
+import com.intellij.psi.css.StylesheetFile;
 
-public interface PostCssFile extends CssFile {
+public interface PostCssFile extends StylesheetFile {
+  PostCssFile[] EMPTY_ARRAY = new PostCssFile[0];
 }
