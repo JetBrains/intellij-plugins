@@ -16,18 +16,15 @@ import javax.swing.*;
 
 abstract public class DartFunctionExpressionBase extends DartExpressionImpl {
 
+  private static final RowIcon ICON = new RowIcon(AllIcons.Nodes.Function, PlatformIcons.PRIVATE_ICON);
+
   public DartFunctionExpressionBase(ASTNode node) {
     super(node);
   }
 
   @Override
   public Icon getIcon(int flags) {
-    Icon icon = AllIcons.Nodes.Function;
-    RowIcon baseIcon = new RowIcon(2);
-    baseIcon.setIcon(icon, 0);
-    Icon visibility = PlatformIcons.PRIVATE_ICON;
-    baseIcon.setIcon(visibility, 1);
-    return baseIcon;
+    return ICON;
   }
 
   @Override
