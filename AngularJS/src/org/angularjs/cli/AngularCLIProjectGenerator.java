@@ -24,6 +24,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.lang.javascript.buildTools.npm.NpmScriptsService;
+import com.intellij.lang.javascript.modules.ConsoleProgress;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -125,18 +126,26 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
 
     final ConsoleView console = builder.getConsole();
     console.attachToProcess(handler);
+    ConsoleProgress.install(console, handler);
     handler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(ProcessEvent event) {
         baseDir.refresh(false, true);
         baseDir.getChildren();
         handler.notifyTextAvailable("Done\n", ProcessOutputTypes.SYSTEM);
-        final NpmScriptsService instance = NpmScriptsService.getInstance();
-        for (VirtualFile file : instance.detectAllBuildfiles(project)) {
-          instance.getFileManager(project).addBuildfile(file);
-        }
-        NodeJsInterpreterManager.getInstance(project).setDefault(node);
-        ApplicationManager.getApplication().invokeLater(() -> instance.getToolWindowManager(project).setAvailable());
+        ApplicationManager.getApplication().runReadAction(() -> {
+          if (!project.isDisposed()) {
+            NpmScriptsService instance = NpmScriptsService.getInstance();
+            List<VirtualFile> buildfiles = instance.detectAllBuildfiles(project);
+            ApplicationManager.getApplication().invokeLater(() -> {
+              for (VirtualFile buildfile : buildfiles) {
+                instance.getFileManager(project).addBuildfile(buildfile);
+              }
+              NodeJsInterpreterManager.getInstance(project).setDefault(node);
+              instance.getToolWindowManager(project).setAvailable();
+            });
+          }
+        });
       }
     });
     final Executor defaultExecutor = DefaultRunExecutor.getRunExecutorInstance();
