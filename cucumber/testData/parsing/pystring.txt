@@ -1,0 +1,22 @@
+GherkinFile:pystring.feature
+  GherkinFeature:Pystring
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Pystring')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:Pystring
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('Pystring')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:text with
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('text with')
+        PsiWhiteSpace('\n    ')
+        GherkinPystring
+          PsiElement(PYSTRING_QUOTES)('"""')
+          PsiElement(PYSTRING_TEXT)('\n    pystring\n    ')
+          PsiElement(PYSTRING_QUOTES)('"""')

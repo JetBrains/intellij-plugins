@@ -15,6 +15,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.options.Configurable.NoScroll;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -66,7 +67,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.*;
 
-public class DartConfigurable implements SearchableConfigurable {
+public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
   private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");

@@ -232,42 +232,42 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
     element.setAttribute(DO_NOT_SYNCHRONIZE_WITH_MAVEN, String.valueOf(myDoNotSynchronizeWithMaven));
 
     Element props = new Element(ADDITIONAL_PROPERTIES);
+    Map<String, String> map = getAdditionalPropertiesAsMap();
+    for (String key : map.keySet()) {
+      String value = map.get(key);
 
-    PathMacroManager macroManager = PathMacroManager.getInstance(myFacet.getModule());
-
-
-    Map<String, String> additionalPropertiesAsMap = getAdditionalPropertiesAsMap();
-    for (String key : additionalPropertiesAsMap.keySet()) {
-      Element prop = new Element(PROPERTY);
-      prop.setAttribute(KEY, key);
-
-      String value = additionalPropertiesAsMap.get(key);
       if (key.equals(INCLUDE_RESOURCE)) {
         // there are paths in there, collapse these so the IML files don't get mixed up on every machine. The built in macro manager
         // does not recognize these, so we have to do this manually here.
         Parameters parameters = OSGiHeader.parseHeader(value);
+        PathMacroManager macroManager = PathMacroManager.getInstance(myFacet.getModule());
+        StringBuilder result = new StringBuilder(value.length());
 
-        for (String name : parameters.keySet()) {
-          if (StringUtil.startsWithChar(name, '{') && name.endsWith("}")) {
-            name = name.substring(1, name.length() - 1).trim();
+        int last = 0;
+        for (String pair : parameters.keySet()) {
+          if (StringUtil.startsWithChar(pair, '{') && StringUtil.endsWithChar(pair, '}')) {
+            pair = pair.substring(1, pair.length() - 1).trim();
           }
 
-          String[] parts = name.split("\\s*=\\s*");
-          String source = parts[0];
-          if (parts.length == 2) {
-            source = parts[1];
-          }
-
+          int p = pair.indexOf('=');
+          String source = (p < 0 ? pair : pair.substring(p + 1)).trim();
           if (StringUtil.startsWithChar(source, '@')) {
             source = source.substring(1);
           }
 
-          // so we now got the source path and can replace it
-
           String collapsedSource = macroManager.collapsePath(source);
-          value = StringUtil.replace(value, source, collapsedSource);
+
+          int sourceStart = value.indexOf(source, last);
+          result.append(value, last, sourceStart).append(collapsedSource);
+          last = sourceStart + source.length();
         }
+        result.append(value, last, value.length());
+
+        value = result.toString();
       }
+
+      Element prop = new Element(PROPERTY);
+      prop.setAttribute(KEY, key);
       prop.setAttribute(VALUE, value);
       props.addContent(prop);
     }

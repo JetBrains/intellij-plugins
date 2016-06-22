@@ -9,7 +9,6 @@ import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex
  * @author Max Medvedev
  */
 class GrCucumberFindUsagesTest extends GrCucumberLightTestCase {
-  final String basePath = null
 
   protected void doTest(Map args) {
     CucumberStepsIndex.getInstance(project).reset()

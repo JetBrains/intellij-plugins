@@ -1,0 +1,45 @@
+GherkinFile:tags.feature
+  GherkinTag:@wip
+    PsiElement(TAG)('@wip')
+  PsiWhiteSpace('\n')
+  GherkinFeature:Do stuff
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Do stuff')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:My scenario
+      GherkinTag:@foo
+        PsiElement(TAG)('@foo')
+      PsiWhiteSpace(' ')
+      GherkinTag:@bar
+        PsiElement(TAG)('@bar')
+      PsiWhiteSpace('\n  ')
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('My scenario')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:something
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('something')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:something else
+        PsiElement(STEP_KEYWORD)('And')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('something else')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:Second scenario
+      GherkinTag:@baz
+        PsiElement(TAG)('@baz')
+      PsiWhiteSpace('\n  ')
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('Second scenario')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:something
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('something')

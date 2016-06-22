@@ -272,6 +272,11 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   @Override
   public DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
     return new DiagramPresentationModelImpl(graph, project, this) {
+      @Override
+      public boolean allowChangeVisibleCategories() {
+        return false;
+      }
+
       @NotNull
       @Override
       public EdgeRealizer getEdgeRealizer(DiagramEdge edge) {

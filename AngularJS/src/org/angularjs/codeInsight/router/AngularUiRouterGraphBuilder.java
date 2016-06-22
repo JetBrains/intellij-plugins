@@ -299,7 +299,7 @@ public class AngularUiRouterGraphBuilder {
       final int idx = view.indexOf("@");
       if (idx < 0) {
         // parent or top level template
-        if (state.contains(".")) {
+        if (state.contains(".") || myStatesMap.get(state).getParentName() != null) {
           final UiRouterState routerState = myStatesMap.get(state);
           if (routerState == null) {
             return null;
@@ -326,7 +326,7 @@ public class AngularUiRouterGraphBuilder {
       final int idx = fullUrl.lastIndexOf('/');
       templateUrl = idx >= 0 ? templateUrl.substring(idx + 1) : templateUrl;
       template = template == null ? myTemplatesMap.get(fullUrl) : template;
-      if (template == null) {
+      if (template == null || template.getPointer() == null) {
         // file not found
         final DiagramObject templateObject = new DiagramObject(Type.template, templateUrl, null);
         templateObject.addError("Can not find template file");

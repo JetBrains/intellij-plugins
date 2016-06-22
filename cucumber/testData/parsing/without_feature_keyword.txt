@@ -1,0 +1,10 @@
+GherkinFile:without_feature_keyword.feature
+  PsiComment(COMMENT)('# No Feature in file')
+  PsiWhiteSpace('\n')
+  GherkinTag:@tag
+    PsiElement(TAG)('@tag')
+  PsiWhiteSpace('\n')
+  PsiElement(TEXT)('text')
+  PsiWhiteSpace('\n')
+  GherkinTag:@tag
+    PsiElement(TAG)('@tag')
