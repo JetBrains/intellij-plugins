@@ -6,12 +6,12 @@ import com.intellij.psi.css.impl.StylesheetFileBase;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.PostCssFileType;
-import org.intellij.plugins.postcss.PostCSSLanguage;
+import org.intellij.plugins.postcss.PostCssLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssFileImpl extends StylesheetFileBase implements PostCssFile {
   public PostCssFileImpl(FileViewProvider viewProvider) {
-    super(viewProvider, PostCSSLanguage.INSTANCE);
+    super(viewProvider, PostCssLanguage.INSTANCE);
   }
 
   @NotNull

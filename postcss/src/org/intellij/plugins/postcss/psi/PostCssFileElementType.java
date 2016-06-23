@@ -2,12 +2,12 @@ package org.intellij.plugins.postcss.psi;
 
 import com.intellij.psi.css.CssFileElementType;
 import com.intellij.psi.tree.IStubFileElementType;
-import org.intellij.plugins.postcss.PostCSSLanguage;
+import org.intellij.plugins.postcss.PostCssLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssFileElementType extends IStubFileElementType {
   public PostCssFileElementType() {
-    super("POST_CSS_FILE", PostCSSLanguage.INSTANCE);
+    super("POST_CSS_FILE", PostCssLanguage.INSTANCE);
   }
 
   @Override

@@ -18,7 +18,7 @@ public class PostCssFileType extends LanguageFileType {
   @NonNls private static final String DESCRIPTION = PostCSSBundle.message("filetype.description.postcss");
 
   private PostCssFileType() {
-    super(PostCSSLanguage.INSTANCE);
+    super(PostCssLanguage.INSTANCE);
     //TODO highlighter
     /*FileTypeEditorHighlighterProviders.INSTANCE.addExplicitExtension(this, new EditorHighlighterProvider() {
       @Override
