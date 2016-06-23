@@ -33,11 +33,6 @@ class MotionAppRunParameters extends RunParameters {
            new TrivialInstaller(new GeneralCommandLine(""));
   }
 
-  @Override
-  public boolean isWaitFor() {
-    return false;
-  }
-
   @Nullable
   @Override
   public String getArchitectureId() {
