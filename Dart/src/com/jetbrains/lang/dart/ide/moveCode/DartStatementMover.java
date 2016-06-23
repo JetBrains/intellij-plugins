@@ -372,7 +372,7 @@ public class DartStatementMover extends LineMover {
   private static PsiElement expressionStatementTeminator(PsiElement element) {
     if (element instanceof DartExpression || element instanceof DartVarDeclarationList) {
       PsiElement token = PsiTreeUtil.skipSiblingsForward(element, PsiComment.class, PsiWhiteSpace.class);
-      if (token.getNode().getElementType() == DartTokenTypes.SEMICOLON) {
+      if (token != null && token.getNode().getElementType() == DartTokenTypes.SEMICOLON) {
         return token;
       }
     }
