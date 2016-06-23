@@ -19,15 +19,6 @@ public class PostCssFileType extends LanguageFileType {
 
   private PostCssFileType() {
     super(PostCssLanguage.INSTANCE);
-    //TODO highlighter
-    /*FileTypeEditorHighlighterProviders.INSTANCE.addExplicitExtension(this, new EditorHighlighterProvider() {
-      @Override
-      public EditorHighlighter getEditorHighlighter(@Nullable Project project,
-                                                    @NotNull FileType fileType, @Nullable VirtualFile virtualFile,
-                                                    @NotNull EditorColorsScheme colors) {
-        return new LESSEditorHighlighter(colors, project, virtualFile);
-      }
-    });*/
   }
 
   @NotNull
