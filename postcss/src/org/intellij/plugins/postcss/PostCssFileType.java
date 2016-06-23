@@ -15,7 +15,7 @@ public class PostCssFileType extends LanguageFileType {
   public static final PostCssFileType POST_CSS = new PostCssFileType();
   @NonNls public static final String DEFAULT_EXTENSION = "pcss";
   @NonNls private static final String NAME = "PostCSS";
-  @NonNls private static final String DESCRIPTION = PostCSSBundle.message("filetype.description.postcss");
+  @NonNls private static final String DESCRIPTION = PostCssBundle.message("filetype.description.postcss");
 
   private PostCssFileType() {
     super(PostCssLanguage.INSTANCE);
