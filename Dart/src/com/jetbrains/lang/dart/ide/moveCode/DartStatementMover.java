@@ -16,6 +16,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 import com.jetbrains.lang.dart.util.DartRefactoringUtil;
@@ -162,7 +163,7 @@ public class DartStatementMover extends LineMover {
               elementToSurround = element;
             }
           }
-          else if (DartPsiImplUtil.isRightBrace(element)
+          else if (element.getNode().getElementType() == DartTokenTypes.RBRACE
                    && element.getParent() instanceof DartBlock && !isStatement(element.getParent().getParent())) {
             // Before code block closing brace.
             found = true;
@@ -371,7 +372,7 @@ public class DartStatementMover extends LineMover {
   private static PsiElement expressionStatementTeminator(PsiElement element) {
     if (element instanceof DartExpression || element instanceof DartVarDeclarationList) {
       PsiElement token = PsiTreeUtil.skipSiblingsForward(element, PsiComment.class, PsiWhiteSpace.class);
-      if (DartPsiImplUtil.isSemicolon(token)) {
+      if (token.getNode().getElementType() == DartTokenTypes.SEMICOLON) {
         return token;
       }
     }

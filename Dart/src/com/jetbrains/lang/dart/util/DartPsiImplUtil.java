@@ -251,17 +251,4 @@ public class DartPsiImplUtil {
   public static PsiElement getWhileBody(@NotNull DartWhileStatement whileStatement) {
     return getBranchAfter(getCondition(whileStatement));
   }
-
-  public static boolean isRightBrace(PsiElement element) {
-    return isToken(element, "}");
-  }
-
-  public static boolean isSemicolon(PsiElement element) {
-    return isToken(element, ";");
-  }
-
-  private static boolean isToken(PsiElement element, String text) {
-    return element instanceof LeafPsiElement
-           && element.getText().trim().equals(text);
-  }
 }

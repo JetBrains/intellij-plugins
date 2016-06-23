@@ -7,10 +7,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartLibraryStatement;
@@ -115,7 +116,8 @@ public class DartComponentMover extends LineMover {
     return PsiTreeUtil.getNonStrictParentOfType(element, DartUriBasedDirective.class, DartLibraryStatement.class);
   }
 
-  private static boolean isComment(PsiElement element) {
-    return null != PsiTreeUtil.getNonStrictParentOfType(element, PsiComment.class);
+  private static boolean isComment(@NotNull final PsiElement element) {
+    final IElementType type = element.getNode().getElementType();
+    return DartTokenTypesSets.COMMENTS.contains(type) || DartTokenTypesSets.DOC_COMMENT_CONTENTS.contains(type);
   }
 }
