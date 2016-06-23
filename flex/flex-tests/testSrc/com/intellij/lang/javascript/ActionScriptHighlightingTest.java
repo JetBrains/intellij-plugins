@@ -2424,7 +2424,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest(); // IDEA-153275
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithSemanticKeywords})
   public void testSemanticHighlighting() throws Exception {
     defaultTest(); // IDEA-110040
   }

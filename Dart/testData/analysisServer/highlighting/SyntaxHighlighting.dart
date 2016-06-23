@@ -4,10 +4,10 @@
 <info textAttributesKey="DART_KEYWORD">import</info> "dart:html"
 <info textAttributesKey="DART_KEYWORD">as</info> <info textAttributesKey="DART_IMPORT_PREFIX">html</info>
     <info textAttributesKey="DART_KEYWORD">show</info> <info textAttributesKey="DART_CLASS">HtmlElement</info>,
-    <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info>,
-    <info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info>,
-    <warning descr="'convertNativeObjectToDartMap' is deprecated" textAttributesKey="DEPRECATED_ATTRIBUTES"><info descr="null" textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">convertNativeObjectToDartMap</info></warning>,
-    <info textAttributesKey="DART_IDENTIFIER">incorrect</info>;
+    <weak_warning descr="The name document is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info></weak_warning>,
+    <weak_warning descr="The name EventListener is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info></weak_warning>,
+    <warning descr="'convertNativeObjectToDartMap' is deprecated" textAttributesKey="DEPRECATED_ATTRIBUTES"><weak_warning descr="The name convertNativeObjectToDartMap is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">convertNativeObjectToDartMap</info></weak_warning></warning>,
+    <weak_warning descr="The library 'dart:html' doesn't export a member with the shown name 'incorrect'" textAttributesKey="DART_HINT"><weak_warning descr="The name incorrect is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_IDENTIFIER">incorrect</info></weak_warning></weak_warning>;
 
 <info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_DECLARATION">topLevelGetter</info> {
   return <info textAttributesKey="DART_TOP_LEVEL_GETTER_REFERENCE">topLevelGetter</info>;
@@ -51,7 +51,7 @@ class <info textAttributesKey="DART_CLASS">Foo</info> {
   <info textAttributesKey="DART_CLASS">Foo</info>(){}
   <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">from</info>(){}
   <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">redirect</info>() : this.<info textAttributesKey="DART_CONSTRUCTOR">from</info>();
-  <info textAttributesKey="DART_KEYWORD">factory</info> <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">factory</info>() {}
+  <weak_warning descr="This function declares a return type of 'Foo', but does not end with a return statement" textAttributesKey="DART_HINT"><info textAttributesKey="DART_KEYWORD">factory</info> <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">factory</info>() {}</weak_warning>
 }
 
 /// [<info textAttributesKey="DART_CLASS">Foo1</info>] is good []
