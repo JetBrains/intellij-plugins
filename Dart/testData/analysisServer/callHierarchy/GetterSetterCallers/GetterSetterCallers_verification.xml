@@ -1,0 +1,4 @@
+<node text="it (A.dart)" base="true">
+  <node text="X.s() (A.dart)"/>
+  <node text="() in s() (A.dart)"/>
+</node>

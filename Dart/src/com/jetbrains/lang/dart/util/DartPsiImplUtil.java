@@ -4,8 +4,11 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveState;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.*;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
@@ -217,5 +220,48 @@ public class DartPsiImplUtil {
   @Nullable
   public static DartArguments getArguments(@NotNull final DartCallExpression callExpression) {
     return PsiTreeUtil.findChildOfType(callExpression, DartArguments.class);
+  }
+
+  @Nullable
+  public static DartExpression getCondition(@NotNull DartPsiCompositeElement ifStatement) {
+    return PsiTreeUtil.findChildOfType(ifStatement, DartExpression.class);
+  }
+
+  @Nullable
+  public static PsiElement getThenBranch(@NotNull DartIfStatement ifStatement) {
+    return getBranchAfter(getCondition(ifStatement));
+  }
+
+  @Nullable
+  public static PsiElement getElseBranch(@NotNull DartIfStatement ifStatement) {
+    return getBranchAfter(getThenBranch(ifStatement));
+  }
+
+  @Nullable
+  private static PsiElement getBranchAfter(@Nullable PsiElement child) {
+    return PsiTreeUtil.skipSiblingsForward(child, LeafPsiElement.class, PsiWhiteSpace.class, PsiComment.class);
+  }
+
+  @Nullable
+  public static PsiElement getDoBody(@NotNull DartDoWhileStatement doStatement) {
+    return getBranchAfter(doStatement);
+  }
+
+  @Nullable
+  public static PsiElement getWhileBody(@NotNull DartWhileStatement whileStatement) {
+    return getBranchAfter(getCondition(whileStatement));
+  }
+
+  public static boolean isRightBrace(PsiElement element) {
+    return isToken(element, "}");
+  }
+
+  public static boolean isSemicolon(PsiElement element) {
+    return isToken(element, ";");
+  }
+
+  private static boolean isToken(PsiElement element, String text) {
+    return element instanceof LeafPsiElement
+           && element.getText().trim().equals(text);
   }
 }
