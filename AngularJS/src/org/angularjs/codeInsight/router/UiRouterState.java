@@ -17,6 +17,7 @@ public class UiRouterState {
   private final String myName;
   private String myUrl;
   private String myTemplateUrl;
+  private boolean myHasTemplateDefined;
   private String myParentName;
   private List<UiView> myViews;
   @Nullable private SmartPsiElementPointer<PsiElement> myPointer;
@@ -49,6 +50,14 @@ public class UiRouterState {
 
   public void setUrl(String url) {
     myUrl = url;
+  }
+
+  public boolean isHasTemplateDefined() {
+    return myHasTemplateDefined;
+  }
+
+  public void setHasTemplateDefined(boolean hasTemplateDefined) {
+    myHasTemplateDefined = hasTemplateDefined;
   }
 
   public void setTemplateUrl(String templateUrl) {

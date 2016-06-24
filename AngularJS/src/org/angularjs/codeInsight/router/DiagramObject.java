@@ -19,6 +19,7 @@ public class DiagramObject {
   @Nullable private String myTooltip;
   @Nullable private final SmartPsiElementPointer myNavigationTarget;
   private boolean myIsValid = true;  //invalid = created by reference from other place, but not defined
+  @NotNull private final List<String> myNotes;
   @NotNull private final List<String> myWarnings;
   @NotNull private final List<String> myErrors;
   private final Map<String, DiagramObject> myChildren;
@@ -32,6 +33,7 @@ public class DiagramObject {
     myNavigationTarget = navigationTarget;
     myWarnings = new SmartList<>();
     myErrors = new SmartList<>();
+    myNotes = new SmartList<>();
     myChildren = new HashMap<>();
     myChildOrder = new ArrayList<>();
   }
@@ -79,6 +81,10 @@ public class DiagramObject {
     myIsValid = false;
   }
 
+  public void addNote(@NotNull final String note) {
+    myNotes.add(note);
+  }
+
   public boolean isValid() {
     return myIsValid;
   }
@@ -91,6 +97,11 @@ public class DiagramObject {
   @NotNull
   public List<String> getWarnings() {
     return myWarnings;
+  }
+
+  @NotNull
+  public List<String> getNotes() {
+    return myNotes;
   }
 
   @Nullable
