@@ -87,4 +87,30 @@ public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
   public static enum Type {
     providesTemplate, fillsTemplate, parent
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+
+    AngularUiRouterEdge edge = (AngularUiRouterEdge)o;
+
+    if (myLabel != null ? !myLabel.equals(edge.myLabel) : edge.myLabel != null) return false;
+    if (myType != edge.myType) return false;
+    if (mySourceName != null ? !mySourceName.equals(edge.mySourceName) : edge.mySourceName != null) return false;
+    if (myTargetName != null ? !myTargetName.equals(edge.myTargetName) : edge.myTargetName != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (myLabel != null ? myLabel.hashCode() : 0);
+    result = 31 * result + (myType != null ? myType.hashCode() : 0);
+    result = 31 * result + (mySourceName != null ? mySourceName.hashCode() : 0);
+    result = 31 * result + (myTargetName != null ? myTargetName.hashCode() : 0);
+    return result;
+  }
 }
