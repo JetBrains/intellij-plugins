@@ -30,8 +30,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-// Instantiated by reflection
-@SuppressWarnings("unused")
 public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
@@ -211,6 +209,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       return MY_SCRIPTING_LINES.getValue();
   }
 
+  @SuppressWarnings("unused")
   public static class JavaPanelBridge {
     public void openInExternalBrowser(@NotNull String link) {
       if (!BrowserUtil.isAbsoluteURL(link)) {
