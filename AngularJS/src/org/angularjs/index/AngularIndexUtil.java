@@ -12,7 +12,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
@@ -44,7 +47,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 43;
+  public static final int BASE_VERSION = 44;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
