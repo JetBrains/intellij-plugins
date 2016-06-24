@@ -322,7 +322,8 @@ public class AngularUiRouterDiagramBuilder {
       final JSProperty urlProperty = object.findProperty("templateUrl");
       parseTemplate(templateUrl, urlProperty);
     }
-    if (object.findProperty("template") != null || object.findProperty("templateProvider") != null) {
+    if (templateUrl == null && object.findProperty("templateUrl") != null ||
+        object.findProperty("template") != null || object.findProperty("templateProvider") != null) {
       state.setHasTemplateDefined(true);
     }
     final JSProperty views = object.findProperty("views");
