@@ -4,8 +4,10 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.messages.MessageBusConnection;
+import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,7 +25,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 // Instantiated by reflection
 @SuppressWarnings("unused")
@@ -43,7 +48,11 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   };
   
   @NotNull
-  private final JFXPanel myPanel;
+  private final JPanel myPanelWrapper;
+  @NotNull
+  private final List<Runnable> myInitActions = new ArrayList<>();
+  @Nullable
+  private JFXPanel myPanel;
   @Nullable
   private WebView myWebView;
   @Nullable
@@ -60,25 +69,48 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   public JavaFxHtmlPanel() {
     //System.setProperty("prism.lcdtext", "false");
     //System.setProperty("prism.text", "t2k");
-    myPanel = new JFXPanelWrapper();
+    myPanelWrapper = new JPanel(new BorderLayout());
+    myPanelWrapper.setBackground(JBColor.background());
 
-    Platform.runLater(() -> {
+    ApplicationManager.getApplication().invokeLater(() -> PlatformImpl.startup(() -> {
       myWebView = new WebView();
 
-      updateFontSmoothingType(myWebView, MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
+      updateFontSmoothingType(myWebView,
+                              MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
       myWebView.setContextMenuEnabled(false);
 
       final WebEngine engine = myWebView.getEngine();
       engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
       engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
 
-      engine.loadContent("<html><body>" + getScriptingLines() + "</body></html>");
-
       final Scene scene = new Scene(myWebView);
-      myPanel.setScene(scene);
-    });
+
+      ApplicationManager.getApplication().invokeLater(() -> {
+        myPanel = new JFXPanelWrapper();
+        myPanel.setScene(scene);
+
+        setHtml("");
+        for (Runnable action : myInitActions) {
+          Platform.runLater(action);
+        }
+        myInitActions.clear();
+
+        myPanelWrapper.add(myPanel, BorderLayout.CENTER);
+        myPanelWrapper.repaint();
+      });
+    }));
 
     subscribeForGrayscaleSetting();
+  }
+  
+  private void runInPlatformWhenAvailable(@NotNull Runnable runnable) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    if (myPanel == null) {
+      myInitActions.add(runnable);
+    }
+    else {
+      Platform.runLater(runnable);
+    }
   }
 
   private void subscribeForGrayscaleSetting() {
@@ -87,7 +119,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       new MarkdownApplicationSettings.SettingsChangedListener() {
         @Override
         public void onSettingsChange(@NotNull final MarkdownApplicationSettings settings) {
-          Platform.runLater(() -> {
+          runInPlatformWhenAvailable(() -> {
             if (myWebView != null) {
               updateFontSmoothingType(myWebView, settings.getMarkdownPreviewSettings().isUseGrayscaleRendering());
             }
@@ -111,7 +143,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @NotNull
   @Override
   public JComponent getComponent() {
-    return myPanel;
+    return myPanelWrapper;
   }
 
   @Override
@@ -119,7 +151,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     myLastRawHtml = html;
     final String htmlToRender = prepareHtml(html);
 
-    Platform.runLater(() -> getWebViewGuaranteed().getEngine().loadContent(htmlToRender));
+    runInPlatformWhenAvailable(() -> getWebViewGuaranteed().getEngine().loadContent(htmlToRender));
   }
 
   private String prepareHtml(@NotNull String html) {
@@ -137,15 +169,15 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @Override
   public void render() {
-    Platform.runLater(() -> {
+    runInPlatformWhenAvailable(() -> {
       getWebViewGuaranteed().getEngine().reload();
-      myPanel.repaint();
+      ApplicationManager.getApplication().invokeLater(myPanelWrapper::repaint);
     });
   }
 
   @Override
   public void scrollToMarkdownSrcOffset(final int offset) {
-    Platform.runLater(() -> {
+    runInPlatformWhenAvailable(() -> {
       getWebViewGuaranteed().getEngine().executeScript(
         "if ('__IntelliJTools' in window) " +
         "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');"
@@ -160,7 +192,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @Override
   public void dispose() {
-    Platform.runLater(() -> {
+    runInPlatformWhenAvailable(() -> {
       getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myScrollPreservingListener);
       getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myBridgeSettingListener);
     });
