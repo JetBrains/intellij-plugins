@@ -2,5 +2,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <css.elementDescriptorProvider implementation="org.angularjs.codeInsight.AngularJSCssElementDescriptionProvider"/>
     <css.embeddedCssProvider implementation="org.angularjs.codeInsight.AngularJSEmbeddedCssProvider"/>
+    <css.inclusionContext implementation="org.angularjs.codeInsight.AngularJSCssInclusionContext"/>
   </extensions>
 </idea-plugin>
