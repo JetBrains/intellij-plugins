@@ -11,9 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AngularAppIndex extends FileBasedIndexExtension<String, AngularNamedItemDefinition> {
   public static final ID<String, AngularNamedItemDefinition> ANGULAR_APP_INDEX = ID.create("angularjs.app.index");
-  private final AngularAttributeIndexer myIndexer = new AngularAttributeIndexer("ng-app", "x-ng-app", "data-ng-app",
-                                                                                "ng:app", "data:ng:app", "x:ng:app",
-                                                                                "ng_app", "data_ng_app", "x_ng_app");
+  private final AngularAttributeIndexer myIndexer = new AngularAttributeIndexer("ng-app");
 
   @NotNull
   @Override
