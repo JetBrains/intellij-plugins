@@ -7,8 +7,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.CssFile;
-import com.intellij.psi.css.CssStylesheet;
-import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.css.resolve.CssInclusionContext;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
@@ -47,11 +45,5 @@ public class AngularJSCssInclusionContext extends CssInclusionContext {
       }
     }
     return PsiFile.EMPTY_ARRAY;
-  }
-
-  @Nullable
-  @Override
-  public CssStylesheet getStylesheet(@NotNull PsiFile candidate) {
-    return candidate instanceof StylesheetFile ? ((StylesheetFile)candidate).getStylesheet() : null;
   }
 }
