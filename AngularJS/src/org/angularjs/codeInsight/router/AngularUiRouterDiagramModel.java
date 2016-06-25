@@ -12,18 +12,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
  */
 public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject> {
   private final VirtualFile myRootFile;
-  @NotNull private final List<AngularUiRouterNode> myNodes;
+  @NotNull private final Set<AngularUiRouterNode> myNodes;
   @NotNull private final List<AngularUiRouterEdge> myEdges;
 
   public AngularUiRouterDiagramModel(@NotNull final Project project,
                                      VirtualFile rootFile, @NotNull final AngularUiRouterDiagramProvider provider,
-                                     @NotNull final List<AngularUiRouterNode> nodes,
+                                     @NotNull final Set<AngularUiRouterNode> nodes,
                                      @NotNull final List<AngularUiRouterEdge> edges) {
     super(project, provider);
     myRootFile = rootFile;

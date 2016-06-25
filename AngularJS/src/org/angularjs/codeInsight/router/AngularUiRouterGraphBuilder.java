@@ -59,7 +59,7 @@ public class AngularUiRouterGraphBuilder {
     private final Map<Pair<String, String>, DiagramObject> viewNodes = new HashMap<>();
     private final List<AngularUiRouterEdge> edges = new ArrayList<>();
 
-    private final List<AngularUiRouterNode> allNodes = new ArrayList<>();
+    private final Set<AngularUiRouterNode> allNodes = new HashSet<>();
 
     public GraphNodesBuilder(@NotNull Map<String, UiRouterState> statesMap,
                              @NotNull Map<VirtualFile, Template> templatesMap, @Nullable RootTemplate rootTemplate, VirtualFile key) {
@@ -293,7 +293,7 @@ public class AngularUiRouterGraphBuilder {
       return edges;
     }
 
-    public List<AngularUiRouterNode> getAllNodes() {
+    public Set<AngularUiRouterNode> getAllNodes() {
       return allNodes;
     }
 
