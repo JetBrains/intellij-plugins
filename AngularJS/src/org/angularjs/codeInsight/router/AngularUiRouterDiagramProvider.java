@@ -271,7 +271,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     final VirtualFile virtualFile = element.getNavigationTarget().getContainingFile().getVirtualFile();
     final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = myData.get(virtualFile);
     if (nodesBuilder == null) return null;
-    return new AngularUiRouterDiagramModel(project, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
+    return new AngularUiRouterDiagramModel(project, virtualFile, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
   }
 
   @Nullable
@@ -418,6 +418,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         layouter.setNodeOverlapsAllowed(false);
         layouter.setSmartComponentLayoutEnabled(true);
         layouter.setConsiderNodeLabelsEnabled(true);
+        layouter.setDeterministic(true);
 
         final List<CanonicMultiStageLayouter> list = new ArrayList<>();
         list.add(layouter);
