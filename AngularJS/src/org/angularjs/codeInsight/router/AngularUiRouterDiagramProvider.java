@@ -126,8 +126,14 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       public String getNodeTooltip(DiagramObject element) {
         final List<String> errors = element.getErrors();
         final List<String> warnings = element.getWarnings();
-        if (errors.isEmpty() && warnings.isEmpty()) return element.getTooltip();
+        final List<String> notes = element.getNotes();
+        if (errors.isEmpty() && warnings.isEmpty() && notes.isEmpty()) return element.getTooltip();
         final StringBuilder sb = new StringBuilder(element.getTooltip());
+        if (!notes.isEmpty()) {
+          for (String note : notes) {
+            sb.append('\n').append(note);
+          }
+        }
         sb.append("<font style=\"color:#ff0000;\">");
         if (!errors.isEmpty()) {
           sb.append('\n').append(StringUtil.pluralize("Error", errors.size())).append(":\n");

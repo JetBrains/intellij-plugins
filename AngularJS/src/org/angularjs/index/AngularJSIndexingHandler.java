@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
@@ -267,7 +268,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean indexImplicitElement(@NotNull JSImplicitElement element, @Nullable IndexSink sink) {
+  public boolean indexImplicitElement(@NotNull JSImplicitElementStructure element, @Nullable IndexSink sink) {
     final String userID = element.getUserString();
     final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEXES.get(userID) : null;
     if (index != null) {

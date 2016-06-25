@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -19,7 +18,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.angularjs.index.*;
@@ -271,9 +269,9 @@ public class AngularUiRouterDiagramBuilder {
 
   private void addContainingFile(@NotNull final NonCyclicQueue<VirtualFile> filesQueue, @NotNull final String module) {
     final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();
-    // todo this was used to fix angular example app, may be inappropriate for other apps, decision should be revised
+
     AngularIndexUtil.multiResolve(myProject, AngularModuleIndex.KEY, module, collectProcessor);
-    if (collectProcessor.getResults().isEmpty()) return;
+    if (collectProcessor.getResults().size() != 1) return;
     for (JSImplicitElement element : collectProcessor.getResults()) {
       if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
         final VirtualFile file = element.getNavigationElement().getContainingFile().getVirtualFile();
@@ -281,7 +279,7 @@ public class AngularUiRouterDiagramBuilder {
         if (NodeModuleUtil.isFromNodeModules(myProject, file)) return;
       }
     }
-    //final JSImplicitElement element = AngularIndexUtil.resolve(myProject, AngularModuleIndex.KEY, module);
+
     final JSImplicitElement element = collectProcessor.getResults().iterator().next();
     if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
       filesQueue.add(element.getNavigationElement().getContainingFile().getVirtualFile());
@@ -323,6 +321,10 @@ public class AngularUiRouterDiagramBuilder {
       state.setTemplateUrl(templateUrl);
       final JSProperty urlProperty = object.findProperty("templateUrl");
       parseTemplate(templateUrl, urlProperty);
+    }
+    if (templateUrl == null && object.findProperty("templateUrl") != null ||
+        object.findProperty("template") != null || object.findProperty("templateProvider") != null) {
+      state.setHasTemplateDefined(true);
     }
     final JSProperty views = object.findProperty("views");
     if (views != null) {

@@ -1,0 +1,57 @@
+package org.angularjs.codeInsight;
+
+import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.css.CssFile;
+import com.intellij.psi.css.CssStylesheet;
+import com.intellij.psi.css.StylesheetFile;
+import com.intellij.psi.css.resolve.CssInclusionContext;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+/**
+ * @author Dennis.Ushakov
+ */
+public class AngularJSCssInclusionContext extends CssInclusionContext {
+  @Nullable
+  @Override
+  public PsiFile[] getContextFiles(@NotNull PsiFile current) {
+    final PsiElement context = current.getContext();
+    final JSProperty property = PsiTreeUtil.getParentOfType(context, JSProperty.class);
+    if (property != null && "template".equals(property.getName())) {
+      final JSObjectLiteralExpression object = (JSObjectLiteralExpression)property.getParent();
+      final JSProperty styles = object.findProperty("styles");
+      if (styles != null && styles.getValue() instanceof JSArrayLiteralExpression) {
+        final List<PsiFile> result = new SmartList<>();
+        for (JSExpression expression : ((JSArrayLiteralExpression)styles.getValue()).getExpressions()) {
+          if (expression instanceof JSLiteralExpression && ((JSLiteralExpression)expression).isQuotedLiteral()) {
+            final List<Pair<PsiElement, TextRange>> injected = InjectedLanguageManager.getInstance(context.getProject()).getInjectedPsiFiles(expression);
+            if (injected != null) {
+              for (Pair<PsiElement, TextRange> pair : injected) {
+                if (pair.first instanceof CssFile) {
+                  result.add((PsiFile)pair.first);
+                }
+              }
+            }
+          }
+        }
+        return result.toArray(PsiFile.EMPTY_ARRAY);
+      }
+    }
+    return PsiFile.EMPTY_ARRAY;
+  }
+
+  @Nullable
+  @Override
+  public CssStylesheet getStylesheet(@NotNull PsiFile candidate) {
+    return candidate instanceof StylesheetFile ? ((StylesheetFile)candidate).getStylesheet() : null;
+  }
+}

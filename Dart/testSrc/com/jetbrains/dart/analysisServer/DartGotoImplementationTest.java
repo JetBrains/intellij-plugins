@@ -4,14 +4,19 @@ import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartTestUtils;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
   @Override
@@ -68,17 +73,26 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     myFixture.doHighlighting();
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/iterable.dart");
-    assertNotNull(file);
-    myFixture.openFileInEditor(file);
+    final VirtualFile iterableFile = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/iterable.dart");
+    assertNotNull(iterableFile);
+    myFixture.openFileInEditor(iterableFile);
+
+    // let's keep updateVisibleFiles() method package-local, but here we need to invoke it because FileEditorManagerListener is not notified in test environment
+    final Method method = DartAnalysisServerService.class.getDeclaredMethod("updateVisibleFiles");
+    method.setAccessible(true);
+    method.invoke(DartAnalysisServerService.getInstance());
+
     final DartClass iterableClass = PsiTreeUtil.findChildOfType(getFile(), DartClass.class);
     assertNotNull(iterableClass);
     assertEquals("Iterable", iterableClass.getName());
-    final PsiElement nameIdentifier = iterableClass.getNameIdentifier();
-    assertNotNull(nameIdentifier);
-    getEditor().getCaretModel().moveToOffset(nameIdentifier.getTextRange().getStartOffset());
+    getEditor().getCaretModel().moveToOffset(iterableClass.getTextOffset());
+
     final GotoTargetHandler.GotoData data = CodeInsightTestUtil.gotoImplementation(myFixture.getEditor(), myFixture.getFile());
-    assertNotNull(data);
-    assertTrue(String.valueOf(data.targets.length), data.targets.length > 50);
+    final List<String> actual = ContainerUtil.map(data.targets,
+                                                  psiElement -> psiElement instanceof PsiNamedElement
+                                                                ? ((PsiNamedElement)psiElement).getName()
+                                                                : psiElement.toString());
+
+    assertSameElements(actual, "List", "Set", "Runes"); // only subclasses from dart:core are known to analyzer at this point
   }
 }
