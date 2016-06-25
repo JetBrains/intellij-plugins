@@ -220,7 +220,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
   @Override
   public String getPresentableName() {
-    return "Angular ui-router states and views";
+    return "AngularJS ui-router states and views";
   }
 
   private static final DiagramCategory[] CATEGORIES =
