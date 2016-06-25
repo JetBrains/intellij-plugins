@@ -124,4 +124,31 @@ public class DiagramObject {
   public void setParent(String parentName) {
     myParentName = parentName;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    DiagramObject object = (DiagramObject)o;
+
+    if (myType != object.myType) return false;
+    if (!myName.equals(object.myName)) return false;
+    if (myTooltip != null ? !myTooltip.equals(object.myTooltip) : object.myTooltip != null) return false;
+    if (myNavigationTarget != null ? !myNavigationTarget.equals(object.myNavigationTarget) : object.myNavigationTarget != null)
+      return false;
+    if (myContainer != null ? !myContainer.equals(object.myContainer) : object.myContainer != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myType.hashCode();
+    result = 31 * result + myName.hashCode();
+    result = 31 * result + (myTooltip != null ? myTooltip.hashCode() : 0);
+    result = 31 * result + (myNavigationTarget != null ? myNavigationTarget.hashCode() : 0);
+    result = 31 * result + (myContainer != null ? myContainer.hashCode() : 0);
+    return result;
+  }
 }
