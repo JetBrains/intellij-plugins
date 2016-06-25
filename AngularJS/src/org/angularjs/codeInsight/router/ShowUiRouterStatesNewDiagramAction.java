@@ -3,13 +3,18 @@ package org.angularjs.codeInsight.router;
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.components.JBList;
+import com.intellij.uml.UmlVirtualFileSystem;
 import com.intellij.uml.core.actions.ShowDiagram;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
@@ -26,7 +31,6 @@ import java.util.Map;
  */
 public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   public static final String USAGE_KEY = "angular.js.ui.router.show.diagram";
-  private VirtualFile myCurrentRootFile;
 
   @Override
   public void actionPerformed(AnActionEvent e) {
@@ -34,41 +38,52 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     final Project project = e.getProject();
     if (project == null) return;
 
-    // todo read action?
-    final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(project);
-    builder.build();
-    List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
-    final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();
-
-    for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getDefiningFiles2States().entrySet()) {
-      final AngularUiRouterGraphBuilder graphBuilder =
-        new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), null, entry.getKey());
-      graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
-    }
-    for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getRootTemplates2States().entrySet()) {
-      final AngularUiRouterGraphBuilder graphBuilder =
-        new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), rootTemplates.get(entry.getKey()),
-                                        entry.getKey());
-      graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
-    }
-    // todo look on mac
     final AngularUiRouterDiagramProvider diagramProvider =
       (AngularUiRouterDiagramProvider)DiagramProvider.findByID(AngularUiRouterDiagramProvider.ANGULAR_UI_ROUTER);
     if (diagramProvider == null) return;
+    List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      () -> {
+        ApplicationManager.getApplication().runReadAction(() -> {
+          final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(project);
+          builder.build();
+          final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();
+
+          for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getDefiningFiles2States().entrySet()) {
+            final AngularUiRouterGraphBuilder graphBuilder =
+              new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), null, entry.getKey());
+            graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
+          }
+          for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getRootTemplates2States().entrySet()) {
+            final AngularUiRouterGraphBuilder graphBuilder =
+              new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), rootTemplates.get(entry.getKey()),
+                                              entry.getKey());
+            graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
+          }
+        });
+      }, "Building " + diagramProvider.getPresentableName() + " diagram", false, project);
 
     diagramProvider.reset();
     final Consumer<AngularUiRouterGraphBuilder> consumer = graphBuilder -> {
-      myCurrentRootFile = graphBuilder.getKey();
       final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = graphBuilder.createDataModel(diagramProvider);
       diagramProvider.registerNodesBuilder(nodesBuilder);
-      final Runnable callback =
-        show(nodesBuilder.getRootNode().getIdentifyingElement(), diagramProvider, project, null, Collections.emptyList());
+      final DiagramObject element = nodesBuilder.getRootNode().getIdentifyingElement();
+
+      closeFile(project, diagramProvider, element);
+
+      final Runnable callback = show(element, diagramProvider, project, null, Collections.emptyList());
       if (callback != null) {
         callback.run();
       }
     };
     if (graphBuilders.size() == 1) consumer.consume(graphBuilders.get(0).getSecond());
     else filterGraphBuilders(project, graphBuilders, consumer);
+  }
+
+  private static void closeFile(Project project, AngularUiRouterDiagramProvider diagramProvider, DiagramObject element) {
+    final String url = UmlVirtualFileSystem.PROTOCOL_PREFIX + diagramProvider.getID() + "/" + diagramProvider.getVfsResolver().getQualifiedName(element);
+    final VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(url);
+    if (virtualFile != null) FileEditorManager.getInstance(project).closeFile(virtualFile);
   }
 
   private static void filterGraphBuilders(Project project, List<Pair<String, AngularUiRouterGraphBuilder>> builders,
@@ -96,8 +111,8 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     final RegistryValue value = Registry.get("angular.js.ui.router.diagram");
     e.getPresentation().setEnabled(value.isBoolean() && value.asBoolean() && project != null && AngularIndexUtil.hasAngularJS(project));
 
-    e.getPresentation().setText("Show ui-router State Diagram");
-    e.getPresentation().setDescription("Show ui-router State Diagram");
+    e.getPresentation().setText("Show AngularJS ui-router State Diagram");
+    e.getPresentation().setDescription("Show AngularJS ui-router State Diagram");
     e.getPresentation().setIcon(AngularJSIcons.AngularJS);
   }
 }
