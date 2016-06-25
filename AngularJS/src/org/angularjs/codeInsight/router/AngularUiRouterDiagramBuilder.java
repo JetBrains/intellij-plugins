@@ -31,7 +31,7 @@ import java.util.*;
  */
 public class AngularUiRouterDiagramBuilder {
   private final List<UiRouterState> myStates;
-  private final Map<String, Template> myTemplatesMap;
+  private final Map<VirtualFile, Template> myTemplatesMap;
   private final Map<VirtualFile, RootTemplate> myRootTemplates;
   @NotNull private final Project myProject;
   private SmartPointerManager mySmartPointerManager;
@@ -317,10 +317,11 @@ public class AngularUiRouterDiagramBuilder {
       state.setParentName(parentKey);
     }
     final String templateUrl = getPropertyValueIfExists(object, "templateUrl");
+    VirtualFile templateFile = null;
     if (templateUrl != null) {
       state.setTemplateUrl(templateUrl);
       final JSProperty urlProperty = object.findProperty("templateUrl");
-      parseTemplate(templateUrl, urlProperty);
+      state.setTemplateFile(parseTemplate(templateUrl, urlProperty));
     }
     if (templateUrl == null && object.findProperty("templateUrl") != null ||
         object.findProperty("template") != null || object.findProperty("templateProvider") != null) {
@@ -350,9 +351,8 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
-  private void parseTemplate(@NotNull final String url, @Nullable JSProperty urlProperty) {
-    final String normalizedUrl = AngularUiRouterGraphBuilder.normalizeTemplateUrl(url);
-
+  @Nullable
+  private VirtualFile parseTemplate(@NotNull final String url, @Nullable JSProperty urlProperty) {
     PsiFile templateFile = null;
     Template template = null;
     if (urlProperty != null && urlProperty.getValue() != null) {
@@ -362,11 +362,14 @@ public class AngularUiRouterDiagramBuilder {
         final PsiElement templateFileElement = reference.resolve();
         if (templateFileElement != null && templateFileElement.isValid()) {
           templateFile = templateFileElement.getContainingFile();
+          if (myTemplatesMap.containsKey(templateFile.getVirtualFile())) return templateFile.getVirtualFile();
           template = readTemplateFromFile(urlProperty.getProject(), url, templateFile);
+          myTemplatesMap.put(templateFile.getVirtualFile(), template);
+          return templateFile.getVirtualFile();
         }
       }
     }
-    myTemplatesMap.put(normalizedUrl, template == null ? new Template(normalizedUrl, null) : template);
+    return null;
   }
 
   @NotNull
@@ -404,14 +407,15 @@ public class AngularUiRouterDiagramBuilder {
     final JSExpression value = property.getValue();
     final JSObjectLiteralExpression expression = ObjectUtils.tryCast(value, JSObjectLiteralExpression.class);
     String templateUrl = null;
+    VirtualFile templateFile = null;
     if (expression != null) {
       templateUrl = getPropertyValueIfExists(expression, "templateUrl");
       if (templateUrl != null) {
         final JSProperty urlProperty = expression.findProperty("templateUrl");
-        parseTemplate(templateUrl, urlProperty);
+        templateFile = parseTemplate(templateUrl, urlProperty);
       }
     }
-    return new UiView(name, templateUrl,
+    return new UiView(name, templateUrl, templateFile,
                       property.getNameIdentifier() == null ? null : mySmartPointerManager.createSmartPsiElementPointer(property.getNameIdentifier()));
   }
 
@@ -425,7 +429,7 @@ public class AngularUiRouterDiagramBuilder {
     return null;
   }
 
-  public Map<String, Template> getTemplatesMap() {
+  public Map<VirtualFile, Template> getTemplatesMap() {
     return myTemplatesMap;
   }
 

@@ -25,6 +25,7 @@ public class UiRouterState {
   @NotNull
   private final VirtualFile myFile;
   @Nullable private List<SmartPsiElementPointer<PsiElement>> myDuplicateDefinitions;
+  private VirtualFile myTemplateFile;
 
   public UiRouterState(@NotNull String name, @NotNull VirtualFile file) {
     myName = name;
@@ -125,5 +126,13 @@ public class UiRouterState {
     int result = myName.hashCode();
     result = 31 * result + myFile.hashCode();
     return result;
+  }
+
+  public void setTemplateFile(VirtualFile templateFile) {
+    myTemplateFile = templateFile;
+  }
+
+  public VirtualFile getTemplateFile() {
+    return myTemplateFile;
   }
 }
