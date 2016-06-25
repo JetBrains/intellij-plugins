@@ -425,7 +425,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         list.add(settings.getBalloonLayouter());
         list.add(settings.getCircularLayouter());
         list.add(settings.getDirectedOrthogonalLayouter());
-        list.add(settings.getGroupLayouter());
+        //list.add(settings.getGroupLayouter());
         list.add(settings.getHVTreeLayouter());
         list.add(settings.getOrthogonalLayouter());
         for (CanonicMultiStageLayouter current : list) {
