@@ -5,11 +5,13 @@ import com.intellij.diagram.DiagramNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
@@ -55,7 +57,7 @@ public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject>
 
   @Override
   public void refreshDataModel() {
-    /*final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(getProject());
+    final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(getProject());
     builder.build();
     final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();
     final RootTemplate template = rootTemplates.get(myRootFile);
@@ -79,13 +81,13 @@ public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject>
       diagramProvider.registerNodesBuilder(model);
       myNodes.addAll(model.getAllNodes());
       myEdges.addAll(model.getEdges());
-    }*/
+    }
   }
 
   @NotNull
   @Override
   public ModificationTracker getModificationTracker() {
-    return ModificationTracker.NEVER_CHANGED;
+    return PsiManager.getInstance(getProject()).getModificationTracker();
   }
 
   @Override
