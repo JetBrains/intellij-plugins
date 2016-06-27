@@ -20,6 +20,11 @@ public class PostCssParser extends CssParser2 {
   }
 
   @Override
+  protected boolean isSemicolonRequired() {
+    return !rulesetSeen && super.isSemicolonRequired();
+  }
+
+  @Override
   protected boolean parseSingleDeclarationInBlock(boolean withPageMarginRules, boolean inlineCss,
                                                   boolean requirePropertyValue, @NotNull IElementType elementType) {
     if (!myIsMediaFeature) {
