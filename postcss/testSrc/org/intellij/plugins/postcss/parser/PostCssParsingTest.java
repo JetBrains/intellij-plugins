@@ -36,6 +36,14 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testSemicolonsCorrect() {
+    doTest();
+  }
+
+  public void testSemicolonsIncorrect() {
+    doTest();
+  }
+
   private void doTest() {
     super.doTest(true);
   }
