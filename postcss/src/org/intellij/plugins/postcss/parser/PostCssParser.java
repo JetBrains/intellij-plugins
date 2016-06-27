@@ -3,7 +3,9 @@ package org.intellij.plugins.postcss.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
+import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import com.intellij.psi.tree.IElementType;
+import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +14,11 @@ public class PostCssParser extends CssParser2 {
 
   public PostCssParser(PsiBuilder builder) {
     super(builder);
+  }
+
+  @Override
+  protected CssStyleSheetElementType getStyleSheetElementType() {
+    return PostCssElementTypes.POST_CSS_STYLESHEET;
   }
 
   @Override
