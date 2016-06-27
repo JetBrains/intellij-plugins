@@ -7,8 +7,10 @@ import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsC
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.TIntLongHashMap;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +67,9 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String JSON_IS_FAILURE = "isFailure";
   private static final String JSON_PATH = "path";
   private static final String JSON_PLATFORM = "platform";
+  private static final String JSON_LINE = "line";
+  private static final String JSON_COLUMN = "column";
+  private static final String JSON_URL = "url";
 
   private static final String RESULT_SUCCESS = "success";
   private static final String RESULT_FAILURE = "failure";
@@ -80,6 +85,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
   private static final Gson GSON = new Gson();
 
+  @NotNull private final DartUrlResolver myUrlResolver;
+
   private String myLocation;
   private Key myCurrentOutputType;
   private ServiceMessageVisitor myCurrentVisitor;
@@ -89,8 +96,11 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private Map<Integer, Suite> mySuiteData;
   private int mySuitCount;
 
-  public DartTestEventsConverter(@NotNull final String testFrameworkName, @NotNull final TestConsoleProperties consoleProperties) {
+  public DartTestEventsConverter(@NotNull final String testFrameworkName,
+                                 @NotNull final TestConsoleProperties consoleProperties,
+                                 @NotNull final DartUrlResolver urlResolver) {
     super(testFrameworkName, consoleProperties);
+    myUrlResolver = urlResolver;
     myTestIdToTimestamp = new TIntLongHashMap();
     myTestData = new HashMap<Integer, Test>();
     myGroupData = new HashMap<Integer, Group>();
@@ -415,16 +425,23 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private void addLocationHint(ServiceMessageBuilder messageBuilder, Item item) {
     String location = "unknown";
     String loc;
-    if (item.hasSuite()) {
+
+    final VirtualFile file = item.getUrl() == null ? null : myUrlResolver.findFileByDartUrl(item.getUrl());
+    if (file != null) {
+      loc = FILE_URL_PREFIX + file.getPath();
+    }
+    else if (item.hasSuite()) {
       loc = FILE_URL_PREFIX + item.getSuite().getPath();
     }
     else {
       loc = myLocation;
     }
+
     if (loc != null) {
       String nameList = GSON.toJson(item.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
-      location = loc + "," + nameList;
+      location = loc + "," + item.getLine() + "," + item.getColumn() + "," + nameList;
     }
+
     messageBuilder.addAttribute("locationHint", location);
   }
 
@@ -526,22 +543,25 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private static class Item {
-    private static final String NO_NAME = "<no name>";
+    protected static final String NO_NAME = "<no name>";
     private final int myId;
     private final String myName;
     private final Group myParent;
     private final Suite mySuite;
     private final Metadata myMetadata;
+    private final int myLine;
+    private final int myColumn;
+    private final String myUrl;
 
-    static int extractId(JsonObject obj) {
-      JsonElement elem = obj.get(JSON_ID);
+    static int extractInt(JsonObject obj, String memberName) {
+      JsonElement elem = obj.get(memberName);
       if (elem == null || !elem.isJsonPrimitive()) return -1;
       return elem.getAsInt();
     }
 
-    static String extractName(JsonObject obj) {
-      JsonElement elem = obj.get(JSON_NAME);
-      if (elem == null || elem.isJsonNull()) return NO_NAME;
+    static String extractString(JsonObject obj, String memberName, String defaultResult) {
+      JsonElement elem = obj.get(memberName);
+      if (elem == null || elem.isJsonNull()) return defaultResult;
       return elem.getAsString();
     }
 
@@ -559,12 +579,15 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       return suite;
     }
 
-    Item(int id, String name, Group parent, Suite suite, Metadata metadata) {
+    Item(int id, String name, Group parent, Suite suite, Metadata metadata, int line, int column, String url) {
       myId = id;
       myName = name;
       myParent = parent;
       mySuite = suite;
       myMetadata = metadata;
+      myLine = line;
+      myColumn = column;
+      myUrl = url;
     }
 
     int getId() {
@@ -658,6 +681,18 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       names.add(StringUtil.escapeStringCharacters(getBaseName()));
     }
 
+    public int getLine() {
+      return myLine;
+    }
+
+    public int getColumn() {
+      return myColumn;
+    }
+
+    public String getUrl() {
+      return myUrl;
+    }
+
     public String toString() {
       return getClass().getSimpleName() + "(" + String.valueOf(myId) + "," + String.valueOf(myName) + ")";
     }
@@ -674,11 +709,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
         parent = groups.get(groupIds[groupIds.length - 1]);
       }
       Suite suite = lookupSuite(obj, suites);
-      return new Test(extractId(obj), extractName(obj), parent, suite, extractMetadata(obj));
+      final int line = extractInt(obj, JSON_LINE);
+      final int column = extractInt(obj, JSON_COLUMN);
+      return new Test(extractInt(obj, JSON_ID), extractString(obj, JSON_NAME, NO_NAME), parent, suite, extractMetadata(obj),
+                      line < 0 ? -1 : line - 1, column < 0 ? -1 : column - 1, extractString(obj, JSON_URL, null));
     }
 
-    Test(int id, String name, Group parent, Suite suite, Metadata metadata) {
-      super(id, name, parent, suite, metadata);
+    Test(int id, String name, Group parent, Suite suite, Metadata metadata, int line, int column, String url) {
+      super(id, name, parent, suite, metadata, line, column, url);
     }
 
     public void testDone() {
@@ -692,12 +730,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     private int myTestCount = 0;
     private int myDoneTestsCount = 0;
 
-    static int extractTestCount(JsonObject obj) {
-      JsonElement elem = obj.get(JSON_TEST_COUNT);
-      if (elem == null || !elem.isJsonPrimitive()) return -1;
-      return elem.getAsInt();
-    }
-
     static Group from(JsonObject obj, Map<Integer, Group> groups, Map<Integer, Suite> suites) {
       JsonElement parentObj = obj.get(JSON_PARENT_ID);
       Group parent = null;
@@ -706,11 +738,15 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
         parent = groups.get(parentId);
       }
       Suite suite = lookupSuite(obj, suites);
-      return new Group(extractId(obj), extractName(obj), parent, suite, extractMetadata(obj), extractTestCount(obj));
+      final int line = extractInt(obj, JSON_LINE);
+      final int column = extractInt(obj, JSON_COLUMN);
+      return new Group(extractInt(obj, JSON_ID), extractString(obj, JSON_NAME, NO_NAME), parent, suite, extractMetadata(obj),
+                       extractInt(obj, JSON_TEST_COUNT), line < 0 ? -1 : line - 1, column < 0 ? -1 : column - 1,
+                       extractString(obj, JSON_URL, null));
     }
 
-    Group(int id, String name, Group parent, Suite suite, Metadata metadata, int count) {
-      super(id, name, parent, suite, metadata);
+    Group(int id, String name, Group parent, Suite suite, Metadata metadata, int count, int line, int column, String url) {
+      super(id, name, parent, suite, metadata, line, column, url);
       myTestCount = count;
     }
 
@@ -736,25 +772,13 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     static String NONE = "<none>";
 
     static Suite from(JsonObject obj) {
-      return new Suite(extractId(obj), extractPath(obj), extractPlatform(obj));
-    }
-
-    static String extractPath(JsonObject obj) {
-      JsonElement elem = obj.get(JSON_PATH);
-      if (elem == null || elem.isJsonNull()) return NONE;
-      return elem.getAsString();
-    }
-
-    static String extractPlatform(JsonObject obj) {
-      JsonElement elem = obj.get(JSON_PLATFORM);
-      if (elem == null || elem.isJsonNull()) return NONE;
-      return elem.getAsString();
+      return new Suite(extractInt(obj, JSON_ID), extractString(obj, JSON_PATH, NONE), extractString(obj, JSON_PLATFORM, NONE));
     }
 
     private final String myPlatform;
 
     Suite(int id, String path, String platform) {
-      super(id, path, null, null, NoMetadata);
+      super(id, path, null, null, NoMetadata, -1, -1, "file://" + path);
       myPlatform = platform;
     }
 
