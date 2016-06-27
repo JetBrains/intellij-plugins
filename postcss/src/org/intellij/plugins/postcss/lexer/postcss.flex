@@ -5,6 +5,7 @@ import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.openapi.util.text.StringUtil;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
+import org.intellij.plugins.postcss.PostCssElementTypes;
 
 %%
 
@@ -147,6 +148,9 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <YYINITIAL> @{N}{A}{M}{E}{S}{P}{A}{C}{E} { return CssElementTypes.CSS_NAMESPACE_SYM; }
 <YYINITIAL> @{S}{C}{O}{P}{E} { return CssElementTypes.CSS_SCOPE_SYM; }
 <YYINITIAL> @{C}{O}{U}{N}{T}{E}{R}-{S}{T}{Y}{L}{E} { return CssElementTypes.CSS_COUNTER_STYLE_SYM; }
+// PostCSS specific
+<YYINITIAL> @{N}{E}{S}{T} { return PostCssElementTypes.POST_CSS_NEST_SYM; }
+
 <YYINITIAL> "~=" { return CssElementTypes.CSS_INCLUDES; }
 <YYINITIAL> "|=" { return CssElementTypes.CSS_DASHMATCH; }
 <YYINITIAL> "|" { return CssElementTypes.CSS_PIPE; }
@@ -176,7 +180,6 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
   return CssElementTypes.CSS_KEYFRAMES_SYM; 
 }
 <YYINITIAL> {MARGIN_SYM} { return CssElementTypes.CSS_PAGE_MARGIN_SYM; }
-
 <YYINITIAL> @{CSS_IDENT} { return CssElementTypes.CSS_ATKEYWORD; }
 <YYINITIAL> {EL_EMBEDDMENT} { return CssElementTypes.CSS_IDENT; }
 <YYINITIAL> [^] { return CssElementTypes.CSS_BAD_CHARACTER; }

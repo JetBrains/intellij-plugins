@@ -37,7 +37,7 @@ public class PostCssParser extends CssParser2 {
     if (!myIsMediaFeature) {
       rulesetSeen = false;
       // Nesting
-      if (parseRulesetMedia() /*|| //TODO @nest rules: parseStylesheetItemStartingWithNest()*/ ||
+      if (parseRulesetMedia() || parseNestedRule() ||
           parseKeyframes() ||
           parseAllSimpleAtRules() ||
           parseImport() ||
@@ -54,6 +54,17 @@ public class PostCssParser extends CssParser2 {
     }
 
     return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+  }
+
+  private boolean parseNestedRule() {
+    if (getTokenType() != PostCssElementTypes.POST_CSS_NEST_SYM) {
+      return false;
+    }
+    PsiBuilder.Marker ruleset = createCompositeElement();
+    parseSelectorList();
+    parseDeclarationBlock();
+    ruleset.done(CssElementTypes.CSS_RULESET);
+    return true;
   }
 
   private boolean parseRulesetMedia() {
@@ -74,8 +85,7 @@ public class PostCssParser extends CssParser2 {
     return super.isRulesetStart()
            || SELECTORS_HIERARCHY_TOKENS.contains(getTokenType())
            || getTokenType() == PostCssTokenTypes.AMPERSAND
-           //TODO @nest rules
-           ;
+           || getTokenType() == PostCssElementTypes.POST_CSS_NEST_SYM;
   }
 
   private boolean tryToParseRuleset() {
@@ -175,7 +185,7 @@ public class PostCssParser extends CssParser2 {
       addRParenOrError();
       simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
     }
-    else if (getTokenType() == PostCssTokenTypes.AMPERSAND) {
+    else if (getTokenType() == PostCssTokenTypes.AMPERSAND || getTokenType() == PostCssElementTypes.POST_CSS_NEST_SYM) {
       PsiBuilder.Marker simpleSelector = createCompositeElement();
       addSingleToken();
       if (!hasWhitespaceBefore()) {
