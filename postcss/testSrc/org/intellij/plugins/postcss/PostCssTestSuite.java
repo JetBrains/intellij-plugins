@@ -4,6 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
+import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerTest;
 import org.intellij.plugins.postcss.parser.PostCssParsingTest;
 
 @SuppressWarnings({"JUnitTestClassNamingConvention", "JUnitTestCaseWithNoTests"})
@@ -27,6 +28,7 @@ public class PostCssTestSuite extends TestCase {
       TestSuite suite = new TestSuite("Fast PostCss");
       suite.addTestSuite(PostCssLexerTest.class);
       suite.addTestSuite(PostCssParsingTest.class);
+      suite.addTestSuite(PostCssHighlightingLexerTest.class);
       return suite;
     }
   }

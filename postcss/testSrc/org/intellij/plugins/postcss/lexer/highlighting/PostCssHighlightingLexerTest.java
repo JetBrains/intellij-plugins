@@ -1,0 +1,30 @@
+package org.intellij.plugins.postcss.lexer.highlighting;
+
+import com.intellij.lexer.Lexer;
+import com.intellij.psi.css.impl.util.CssHighlighterLexer;
+import com.intellij.testFramework.LexerTestCase;
+import com.intellij.testFramework.TestDataPath;
+import org.intellij.plugins.postcss.PostCssTestUtils;
+import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
+
+@TestDataPath("$CONTENT_ROOT/testData/lexer/highlighting/")
+public class PostCssHighlightingLexerTest extends LexerTestCase {
+
+  public void testNestedRules() {
+    doTest();
+  }
+
+  private void doTest() {
+    doFileTest("pcss");
+  }
+
+  @Override
+  protected Lexer createLexer() {
+    return new PostCssHighlightingLexer(CssHighlighterLexer.Lazy.DEFAULT_PROPERTY_VALUES);
+  }
+
+  @Override
+  protected String getDirPath() {
+    return PostCssTestUtils.getTestDataBasePath(getClass());
+  }
+}
