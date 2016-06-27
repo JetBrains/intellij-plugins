@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.css.CSSParserDefinition;
+import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
@@ -11,10 +12,16 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.intellij.plugins.postcss.PostCssElementTypes;
+import org.intellij.plugins.postcss.lexer.PostCssLexer;
 import org.intellij.plugins.postcss.psi.PostCssFileImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssParserDefinition extends CSSParserDefinition {
+
+  @NotNull
+  public Lexer createLexer(Project project) {
+    return new PostCssLexer();
+  }
 
   @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
