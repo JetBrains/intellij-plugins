@@ -4,15 +4,12 @@ import com.intellij.diagram.DiagramProvider;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.components.JBList;
-import com.intellij.uml.UmlVirtualFileSystem;
 import com.intellij.uml.core.actions.ShowDiagram;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
@@ -67,8 +64,6 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
       diagramProvider.registerNodesBuilder(nodesBuilder);
       final DiagramObject element = nodesBuilder.getRootNode().getIdentifyingElement();
 
-      closeFile(project, diagramProvider, element);
-
       final Runnable callback = show(element, diagramProvider, project, null, Collections.emptyList());
       if (callback != null) {
         callback.run();
@@ -76,12 +71,6 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     };
     if (graphBuilders.size() == 1) consumer.consume(graphBuilders.get(0).getSecond());
     else filterGraphBuilders(project, graphBuilders, consumer);
-  }
-
-  private static void closeFile(Project project, AngularUiRouterDiagramProvider diagramProvider, DiagramObject element) {
-    final String url = UmlVirtualFileSystem.PROTOCOL_PREFIX + diagramProvider.getID() + "/" + diagramProvider.getVfsResolver().getQualifiedName(element);
-    final VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(url);
-    if (virtualFile != null) FileEditorManager.getInstance(project).closeFile(virtualFile);
   }
 
   private static void filterGraphBuilders(Project project, List<Pair<String, AngularUiRouterGraphBuilder>> builders,
