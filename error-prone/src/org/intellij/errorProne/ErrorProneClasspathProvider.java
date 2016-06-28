@@ -41,8 +41,7 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
   @NotNull
   @Override
   public List<String> getLauncherClassPath() {
-    BackendCompiler compiler = ((CompilerConfigurationImpl)CompilerConfiguration.getInstance(myProject)).getDefaultCompiler();
-    if (compiler instanceof ErrorProneJavaBackendCompiler) {
+    if (isErrorProneCompilerSelected(myProject)) {
       File libDir = getCompilerFilesDir();
       File[] jars = getJarFiles(libDir);
       LOG.assertTrue(jars.length > 0, "error-prone compiler jars not found in directory: " + libDir.getAbsolutePath());
@@ -54,5 +53,10 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
       return classpath;
     }
     return Collections.emptyList();
+  }
+
+  static boolean isErrorProneCompilerSelected(@NotNull Project project) {
+    BackendCompiler compiler = ((CompilerConfigurationImpl)CompilerConfiguration.getInstance(project)).getDefaultCompiler();
+    return compiler instanceof ErrorProneJavaBackendCompiler;
   }
 }
