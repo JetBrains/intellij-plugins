@@ -147,7 +147,6 @@ public class DiagramObject {
     int result = myType.hashCode();
     result = 31 * result + myName.hashCode();
     result = 31 * result + (myTooltip != null ? myTooltip.hashCode() : 0);
-    result = 31 * result + (myNavigationTarget != null ? myNavigationTarget.hashCode() : 0);
     result = 31 * result + (myContainer != null ? myContainer.hashCode() : 0);
     return result;
   }

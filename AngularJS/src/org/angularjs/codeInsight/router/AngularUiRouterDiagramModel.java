@@ -2,6 +2,7 @@ package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.DiagramDataModel;
 import com.intellij.diagram.DiagramNode;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -9,26 +10,26 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
  */
 public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject> {
   private final VirtualFile myRootFile;
-  @NotNull private final Set<AngularUiRouterNode> myNodes;
+  @NotNull private final List<AngularUiRouterNode> myNodes;
   @NotNull private final List<AngularUiRouterEdge> myEdges;
 
   public AngularUiRouterDiagramModel(@NotNull final Project project,
                                      VirtualFile rootFile, @NotNull final AngularUiRouterDiagramProvider provider,
-                                     @NotNull final Set<AngularUiRouterNode> nodes,
+                                     @NotNull final List<AngularUiRouterNode> nodes,
                                      @NotNull final List<AngularUiRouterEdge> edges) {
     super(project, provider);
     myRootFile = rootFile;
-    myNodes = nodes;
+    myNodes = new ArrayList<>(nodes);
     myEdges = edges;
   }
 
@@ -74,14 +75,14 @@ public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject>
           graphBuilder = new AngularUiRouterGraphBuilder(getProject(), map, builder.getTemplatesMap(), null, myRootFile);
         }
       final AngularUiRouterDiagramProvider diagramProvider = (AngularUiRouterDiagramProvider)getProvider();
-      final AngularUiRouterGraphBuilder.GraphNodesBuilder model =
-        graphBuilder.createDataModel(diagramProvider);
+      final AngularUiRouterGraphBuilder.GraphNodesBuilder model = graphBuilder.createDataModel(diagramProvider);
       myNodes.clear();
       myEdges.clear();
       diagramProvider.reset();
       diagramProvider.registerNodesBuilder(model);
       myNodes.addAll(model.getAllNodes());
       myEdges.addAll(model.getEdges());
+      ApplicationManager.getApplication().invokeLater(() -> getBuilder().update(true, true));
     }
   }
 
