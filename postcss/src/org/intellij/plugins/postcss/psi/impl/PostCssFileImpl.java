@@ -1,4 +1,4 @@
-package org.intellij.plugins.postcss.psi;
+package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
@@ -7,6 +7,7 @@ import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.PostCssFileType;
 import org.intellij.plugins.postcss.PostCssLanguage;
+import org.intellij.plugins.postcss.psi.PostCssFile;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssFileImpl extends StylesheetFileBase implements PostCssFile {

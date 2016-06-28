@@ -9,7 +9,9 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
 import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.testFramework.TestDataPath;
+import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.PostCssTestUtils;
+import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory;
 
 @TestDataPath("$CONTENT_ROOT/testData/parser/")
 public class PostCssParsingTest extends ParsingTestCase {
@@ -25,6 +27,7 @@ public class PostCssParsingTest extends ParsingTestCase {
 
     registerApplicationService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2("css-parsing-tests.xml"));
 
+    addExplicitExtension(LanguageASTFactory.INSTANCE, PostCssLanguage.INSTANCE, new PostCssTreeElementFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
   }
 
@@ -41,6 +44,10 @@ public class PostCssParsingTest extends ParsingTestCase {
   }
 
   public void testSemicolonsIncorrect() {
+    doTest();
+  }
+
+  public void testDirectNestingIncorrect() {
     doTest();
   }
 

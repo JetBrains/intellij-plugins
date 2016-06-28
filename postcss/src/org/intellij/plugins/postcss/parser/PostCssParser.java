@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.parser;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
@@ -10,7 +11,10 @@ import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssParser extends CssParser2 {
-  private boolean rulesetSeen;
+  private boolean myRulesetSeen;
+  private boolean myInsideParentRuleset;
+  private int mySimpleSelectorIndex;
+  private boolean myInsideAtRuleNest;
 
   public PostCssParser(PsiBuilder builder) {
     super(builder);
@@ -28,63 +32,74 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected boolean isSemicolonRequired() {
-    return !rulesetSeen && super.isSemicolonRequired();
+    return !myRulesetSeen && super.isSemicolonRequired();
+  }
+
+  @Override
+  protected boolean isSimpleSelectorStart() {
+    return getTokenType() == PostCssTokenTypes.AMPERSAND || super.isSimpleSelectorStart();
+  }
+
+  private boolean parseDirectNest() {
+    if (getTokenType() != PostCssTokenTypes.AMPERSAND) {
+      return false;
+    }
+    PsiBuilder.Marker directNest = createCompositeElement();
+    addSingleToken();
+    directNest.done(PostCssElementTypes.POST_CSS_DIRECT_NEST);
+    return true;
+  }
+
+  private boolean parseAtRuleNest() {
+    if (getTokenType() != PostCssElementTypes.POST_CSS_NEST_SYM) {
+      return false;
+    }
+    PsiBuilder.Marker atRuleNest = createCompositeElement();
+    addSingleToken();
+    atRuleNest.done(PostCssElementTypes.POST_CSS_NEST_SYM);
+    return true;
   }
 
   @Override
   protected boolean parseSingleDeclarationInBlock(boolean withPageMarginRules, boolean inlineCss,
                                                   boolean requirePropertyValue, @NotNull IElementType elementType) {
-    if (!myIsMediaFeature) {
-      rulesetSeen = false;
-      // Nesting
-      if (parseRulesetMedia() || parseNestedRule() ||
-          parseKeyframes() ||
-          parseAllSimpleAtRules() ||
-          parseImport() ||
-          parseSupports() ||
-          parsePage() ||
-          parseDocument() ||
-          parseRegion() ||
-          parseScope() ||
-          parseCounterStyle() ||
-          parseKeyframesRuleset() || tryToParseRuleset()) {
-        rulesetSeen = true;
-        return true;
-      }
+    myRulesetSeen = false;
+    // Nesting
+    if (parseMedia() ||
+        parseKeyframes() ||
+        parseAllSimpleAtRules() ||
+        parseImport() ||
+        parseSupports() ||
+        parsePage() ||
+        parseDocument() ||
+        parseRegion() ||
+        parseScope() ||
+        parseCounterStyle() ||
+        parseKeyframesRuleset() ||
+        parseAtRuleNesting() ||
+        tryToParseRuleset()) {
+      myRulesetSeen = true;
+      return true;
     }
-
     return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
   }
 
-  private boolean parseNestedRule() {
+  private boolean parseAtRuleNesting() {
     if (getTokenType() != PostCssElementTypes.POST_CSS_NEST_SYM) {
       return false;
     }
-    PsiBuilder.Marker ruleset = createCompositeElement();
-    parseSelectorList();
-    parseDeclarationBlock();
-    ruleset.done(CssElementTypes.CSS_RULESET);
-    return true;
+    return parseNestedRuleset();
   }
 
-  private boolean parseRulesetMedia() {
-    if (getTokenType() != CssElementTypes.CSS_MEDIA_SYM) {
-      return false;
-    }
-    PsiBuilder.Marker media = createCompositeElement();
-    addTokenAndSkipWhitespace();
-    parseMediumList();
-
-    expect(CssElementTypes.CSS_LBRACE, "'{'");
-    parseDeclarationBlock();
-    media.done(CssElementTypes.CSS_MEDIA);
-    return true;
-  }
-
+  @Override
   protected boolean isRulesetStart() {
     return super.isRulesetStart()
            || SELECTORS_HIERARCHY_TOKENS.contains(getTokenType())
-           || getTokenType() == PostCssTokenTypes.AMPERSAND
+           || isNestSign();
+  }
+
+  private boolean isNestSign() {
+    return getTokenType() == PostCssTokenTypes.AMPERSAND
            || getTokenType() == PostCssElementTypes.POST_CSS_NEST_SYM;
   }
 
@@ -92,7 +107,10 @@ public class PostCssParser extends CssParser2 {
     if (!isRulesetStart()) {
       return false;
     }
-    // Lookahead
+    if (isNestSign()) {
+      return parseNestedRuleset();
+    }
+    //// Lookahead
     final PsiBuilder.Marker position = myBuilder.mark();
     IElementType prevTokenType = null;
     boolean first = true;
@@ -122,7 +140,7 @@ public class PostCssParser extends CssParser2 {
             && parsePseudo()) {
           if (first) {
             position.rollbackTo();
-            return parseRuleset();
+            return parseNestedRuleset();
           }
           first = false;
           continue;
@@ -135,17 +153,17 @@ public class PostCssParser extends CssParser2 {
 
       if (first && getTokenType() == CssElementTypes.CSS_HASH) {
         position.rollbackTo();
-        return parseRuleset();
+        return parseNestedRuleset();
       }
       first = false;
       if (getTokenType() == CssElementTypes.CSS_GT || getTokenType() == PostCssTokenTypes.AMPERSAND
           || (getTokenType() == CssElementTypes.CSS_PERIOD && !filterProperty)) {
         position.rollbackTo();
-        return parseRuleset();
+        return parseNestedRuleset();
       }
       if (getTokenType() == CssElementTypes.CSS_TILDA && prevTokenType == CssElementTypes.CSS_LPAREN) {
         position.rollbackTo();
-        return parseRuleset();
+        return parseNestedRuleset();
       }
       prevTokenType = getTokenType();
       addSingleToken();
@@ -154,14 +172,21 @@ public class PostCssParser extends CssParser2 {
     if ((getTokenType() == CssElementTypes.CSS_LBRACE || getTokenType() == CssElementTypes.CSS_LBRACKET)
         && prevTokenType != CssElementTypes.CSS_COLON) {
       position.rollbackTo();
-      return parseRuleset();
+      return parseNestedRuleset();
     }
     if (prevTokenType == CssElementTypes.CSS_LPAREN && getTokenType() == CssElementTypes.CSS_TILDA) {
       position.rollbackTo();
-      return parseRuleset();
+      return parseNestedRuleset();
     }
     position.rollbackTo();
     return false;
+  }
+
+  private boolean parseNestedRuleset() {
+    myInsideParentRuleset = true;
+    boolean rulesetParsed = parseRuleset();
+    myInsideParentRuleset = false;
+    return rulesetParsed;
   }
 
   @Override
@@ -178,66 +203,73 @@ public class PostCssParser extends CssParser2 {
     return true;
   }
 
-  protected void parseSimpleSelector() {
-    if (getTokenType() == CssElementTypes.CSS_LPAREN) {
-      PsiBuilder.Marker simpleSelector = createCompositeElement();
-      addTokenAndSkipWhitespace();
-      addRParenOrError();
-      simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
-    }
-    else if (getTokenType() == PostCssTokenTypes.AMPERSAND || getTokenType() == PostCssElementTypes.POST_CSS_NEST_SYM) {
-      PsiBuilder.Marker simpleSelector = createCompositeElement();
-      addSingleToken();
-      if (!hasWhitespaceBefore()) {
-        innerParseSimpleSelector();
-      }
-      else {
-        parseSelectorSuffixList(true);
-      }
-      simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
+  @Override
+  protected void parseSelectorList() {
+    if (getTokenType() == PostCssElementTypes.POST_CSS_NEST_SYM) {
+      PsiBuilder.Marker atRuleNest = createCompositeElement();
+      parseAtRuleNest();
+      myInsideAtRuleNest = true;
+      super.parseSelectorList();
+      myInsideAtRuleNest = false;
+      atRuleNest.done(PostCssElementTypes.POST_CSS_AT_RULE_NEST);
     }
     else {
-      PsiBuilder.Marker simpleSelector = createCompositeElement();
-      innerParseSimpleSelector();
-      simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
+      super.parseSelectorList();
     }
-  }
-
-  private void innerParseSimpleSelector() {
-    boolean hasPrefix = false;
-    if (isSimpleSelectorStart()) {
-      addToken();
-      hasPrefix = true;
-      addAllAmpersandSelectorTokens();
-    }
-    if (getTokenType() == CssElementTypes.CSS_PIPE) {
-      addSingleToken();
-      if (getTokenType() == CssElementTypes.CSS_ASTERISK) {
-        addSingleToken();
-      }
-      else {
-        addIdentOrError();
-      }
-    }
-    parseSelectorSuffixList(hasPrefix);
   }
 
   @Override
-  protected boolean isSimpleSelectorStart() {
-    return getTokenType() == PostCssTokenTypes.AMPERSAND || super.isSimpleSelectorStart();
+  protected void parseSelector() {
+    mySimpleSelectorIndex = 0;
+    PsiBuilder.Marker selector = createCompositeElement();
+    while (!isDone()) {
+      parseSimpleSelector();
+      mySimpleSelectorIndex++;
+      if (SELECTORS_HIERARCHY_TOKENS.contains(getTokenType())) {
+        addTokenAndSkipWhitespace();
+      }
+      else if (!isRulesetStart()) {
+        break;
+      }
+      if (getTokenType() == CssElementTypes.CSS_LBRACE) {
+        break;
+      }
+    }
+    selector.done(CssElementTypes.CSS_SELECTOR);
   }
 
-  private void addAllAmpersandSelectorTokens() {
-    while (!hasWhitespaceBefore() &&
-           (getTokenType() == PostCssTokenTypes.AMPERSAND || isIdent() || CssElementTypes.CSS_NUMBER == getTokenType())) {
-      if (getTokenType() == PostCssTokenTypes.AMPERSAND) {
-        addSingleToken();
+  @Override
+  protected void parseSimpleSelector() {
+    if (!myInsideParentRuleset) {
+      super.parseSimpleSelector();
+    }
+    else {
+      if (mySimpleSelectorIndex != 0 || myInsideAtRuleNest) {
+        super.parseSimpleSelector();
       }
-      else if (!hasWhitespaceBefore()) {
-        if (CssElementTypes.CSS_NUMBER == getTokenType()) {
-          addSingleToken();
+      else {
+        if (getTokenType() == PostCssTokenTypes.AMPERSAND) {
+          PsiBuilder.Marker simpleSelector = createCompositeElement();
+          parseDirectNest();
+          parseSelectorSuffixList(true);
+          simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
+        }
+        else {
+          addTokenOrError(PostCssTokenTypes.AMPERSAND, "&");
         }
       }
     }
+  }
+
+  @Override
+  protected boolean parseClass() {
+    if (getTokenType() != CssElementTypes.CSS_PERIOD) {
+      return false;
+    }
+    PsiBuilder.Marker cssClass = createCompositeElement();
+    addToken();
+    addIdentOrError();
+    cssClass.done(CssElementTypes.CSS_CLASS);
+    return true;
   }
 }

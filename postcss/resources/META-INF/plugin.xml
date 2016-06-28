@@ -11,8 +11,10 @@
     <css.dialect implementation="org.intellij.plugins.postcss.PostCssDialect"/>
     <fileTypeFactory implementation="org.intellij.plugins.postcss.PostCssFileTypeFactory"/>
     <lang.parserDefinition language="PostCSS" implementationClass="org.intellij.plugins.postcss.parser.PostCssParserDefinition"/>
+    <lang.ast.factory language="PostCSS" implementationClass="org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory"/>
     <internalFileTemplate name="PostCSS File"/>
     <lang.syntaxHighlighterFactory language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighterFactory"/>
     <colorSettingsPage implementation="org.intellij.plugins.postcss.highlighting.PostCssColorsPage"/>
+    <lang.formatter language="PostCSS" implementationClass="org.intellij.plugins.postcss.formatter.PostCssFormattingModelBuilder"/>
   </extensions>
 </idea-plugin>
