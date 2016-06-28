@@ -9,8 +9,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.components.JBList;
@@ -108,8 +106,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   @Override
   public void update(AnActionEvent e) {
     final Project project = e.getProject();
-    final RegistryValue value = Registry.get("angular.js.ui.router.diagram");
-    e.getPresentation().setEnabled(value.isBoolean() && value.asBoolean() && project != null && AngularIndexUtil.hasAngularJS(project));
+    e.getPresentation().setEnabled(project != null && AngularIndexUtil.hasAngularJS(project));
 
     e.getPresentation().setText("Show AngularJS ui-router State Diagram");
     e.getPresentation().setDescription("Show AngularJS ui-router State Diagram");
