@@ -98,10 +98,13 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           query = JSClassSearch.searchInterfaceImplementations(clazz, true, location.getResolveScope());
         }
         else {
-          LookupElement lookupItem = JSLookupUtilImpl
-            .createPrioritizedLookupItem(clazz, clazz.getName(), JSLookupPriority.SMART_PRIORITY + 1, false, true);
+          final String name = clazz.getName();
+          if (name != null) {
+            LookupElement lookupItem = JSLookupUtilImpl
+              .createPrioritizedLookupItem(clazz, name, JSLookupPriority.MATCHED_TYPE_PRIORITY, false, true);
 
-          variants.add(lookupItem);
+            variants.add(lookupItem);
+          }
           processedCandidateNames.add(clazz.getQualifiedName());
           query = JSClassSearch.searchClassInheritors(clazz, true, location.getResolveScope());
         }
