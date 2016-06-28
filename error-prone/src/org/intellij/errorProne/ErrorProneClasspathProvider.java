@@ -9,6 +9,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileFilters;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 public class ErrorProneClasspathProvider extends BuildProcessParametersProvider {
   private static final Logger LOG = Logger.getInstance(ErrorProneClasspathProvider.class);
+  public static final String ERROR_PRONE_VERSION = "2.0.9";//must be consistent with library/error-prone.xml
   private final Project myProject;
 
   public ErrorProneClasspathProvider(Project project) {
@@ -31,7 +33,7 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
   }
 
   public static File getCompilerFilesDir() {
-    return new File(PathManager.getSystemPath(), "download-cache/error-prone/1.1.3-snapshot");
+    return new File(PathManager.getSystemPath(), "download-cache/error-prone/" + ERROR_PRONE_VERSION);
   }
 
   public static File[] getJarFiles(File dir) {
@@ -40,7 +42,7 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
 
   @NotNull
   @Override
-  public List<String> getLauncherClassPath() {
+  public List<String> getVMArguments() {
     if (isErrorProneCompilerSelected(myProject)) {
       File libDir = getCompilerFilesDir();
       File[] jars = getJarFiles(libDir);
@@ -49,8 +51,7 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
       for (File file : jars) {
         classpath.add(file.getAbsolutePath());
       }
-      classpath.add(PathUtil.getJarPathForClass(Supplier.class));
-      return classpath;
+      return Collections.singletonList("-Xbootclasspath/a:" + StringUtil.join(classpath, File.pathSeparator));
     }
     return Collections.emptyList();
   }
