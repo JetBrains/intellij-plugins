@@ -14,6 +14,42 @@ public class PostCssHighlightingLexerTest extends LexerTestCase {
     doTest();
   }
 
+  public void testMultiNested() {
+    doTest();
+  }
+
+  public void testAttributeSelectorInNestedRuleset() {
+    doTest();
+  }
+
+  public void testKeyframes() {
+    doTest();
+  }
+
+  public void testPropertyAfterKeyframes() {
+    doTest();
+  }
+
+  public void testPropertyNames() {
+    doTest();
+  }
+
+  public void testPseudoSelectors() {
+    doTest();
+  }
+
+  public void testSelectorSuffix() {
+    doTest();
+  }
+
+  public void testTagName() {
+    doTest();
+  }
+
+  public void testViewport() {
+    doTest();
+  }
+
   private void doTest() {
     doFileTest("pcss");
   }
