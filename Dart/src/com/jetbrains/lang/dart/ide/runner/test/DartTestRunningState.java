@@ -10,7 +10,6 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.TestConsoleProperties;
-import com.intellij.execution.testframework.TestFrameworkRunningModel;
 import com.intellij.execution.testframework.actions.AbstractRerunFailedTestsAction;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMCustomMessagesParsing;
@@ -23,7 +22,6 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,6 +33,7 @@ import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -173,7 +172,14 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     @Override
     public OutputToGeneralTestEventsConverter createTestEventsConverter(@NotNull String testFrameworkName,
                                                                         @NotNull TestConsoleProperties consoleProperties) {
-      return new DartTestEventsConverter(testFrameworkName, consoleProperties);
+      final DartRunConfiguration runConfiguration = (DartRunConfiguration)getConfiguration();
+      try {
+        final VirtualFile file = runConfiguration.getRunnerParameters().getDartFile();
+        return new DartTestEventsConverter(testFrameworkName, consoleProperties, DartUrlResolver.getInstance(getProject(), file));
+      }
+      catch (RuntimeConfigurationError error) {
+        throw new RuntimeException(error); // can't happen, already checked
+      }
     }
 
     @Nullable

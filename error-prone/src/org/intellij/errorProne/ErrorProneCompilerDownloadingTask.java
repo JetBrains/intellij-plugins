@@ -1,5 +1,6 @@
 package org.intellij.errorProne;
 
+import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -22,6 +23,10 @@ public class ErrorProneCompilerDownloadingTask implements CompileTask {
 
   @Override
   public boolean execute(CompileContext context) {
+    if (!ErrorProneClasspathProvider.isErrorProneCompilerSelected(context.getProject())) {
+      return true;
+    }
+
     File cacheDir = ErrorProneClasspathProvider.getCompilerFilesDir();
     if (ErrorProneClasspathProvider.getJarFiles(cacheDir).length > 0) {
       return true;

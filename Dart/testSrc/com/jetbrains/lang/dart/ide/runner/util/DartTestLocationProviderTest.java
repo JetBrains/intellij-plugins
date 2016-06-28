@@ -22,7 +22,7 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
     final PsiElement elementAtOffset = file.findElementAt(caretOffset);
     final PsiElement targetId = elementAtOffset == null ? null : elementAtOffset.getParent();
 
-    final List<Location> locations = DartTestLocationProvider.INSTANCE.getLocation(locationHint, file);
+    final List<Location> locations = DartTestLocationProvider.INSTANCE.getLocationForTest(file, locationHint);
     assertEquals(1, locations.size());
 
     final Location location = locations.get(0);
@@ -33,83 +33,80 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
     assertEquals(targetId, foundId);
   }
 
-
   public void testSingleTest() throws Exception {
     doTest("[foo]", "main() {\n" +
-                  "  <caret>test('foo', () => expect(true, true));\n" +
-                  "}");
+                    "  <caret>test('foo', () => expect(true, true));\n" +
+                    "}");
   }
 
   public void testMultipleTests() throws Exception {
     doTest("[bar]", "main() {\n" +
-                  "  test('foo', () => expect(true, true));\n" +
-                  "  <caret>test('bar', () => expect(true, true));\n" +
-                  "}");
+                    "  test('foo', () => expect(true, true));\n" +
+                    "  <caret>test('bar', () => expect(true, true));\n" +
+                    "}");
   }
 
   public void testMultipleTests2() throws Exception {
     doTest("[foo]", "main() {\n" +
-                  "  <caret>test('foo', () => expect(true, true));\n" +
-                  "  test('bar', () => expect(true, true));\n" +
-                  "}");
+                    "  <caret>test('foo', () => expect(true, true));\n" +
+                    "  test('bar', () => expect(true, true));\n" +
+                    "}");
   }
 
   public void testGroupedTest() throws Exception {
     doTest("[foo,bar]", "main() {\n" +
-                  "  group('foo', () {\n" +
-                  "    <caret>test('bar', () => expect(true, true));\n" +
-                  "  });\n" +
-                  "}");
+                        "  group('foo', () {\n" +
+                        "    <caret>test('bar', () => expect(true, true));\n" +
+                        "  });\n" +
+                        "}");
   }
 
   public void testGroupedTest2() throws Exception {
     doTest("[foo,bar]", "main() {\n" +
-                  "  group('foo', () {\n" +
-                  "    <caret>test('bar', () => expect(true, true));\n" +
-                  "  });\n" +
-                  "  group('bar', () {\n" +
-                  "    test('baz', () => expect(true, true));\n" +
-                  "  });\n" +
-                  "}");
+                        "  group('foo', () {\n" +
+                        "    <caret>test('bar', () => expect(true, true));\n" +
+                        "  });\n" +
+                        "  group('bar', () {\n" +
+                        "    test('baz', () => expect(true, true));\n" +
+                        "  });\n" +
+                        "}");
   }
 
   public void testGroupedTest3() throws Exception {
     doTest("[baz,bar]", "main() {\n" +
-                  "  group('foo', () {\n" +
-                  "    test('bar', () => expect(true, true));\n" +
-                  "  });\n" +
-                  "  group('baz', () {\n" +
-                  "    <caret>test('bar', () => expect(true, true));\n" +
-                  "  });\n" +
-                  "}");
+                        "  group('foo', () {\n" +
+                        "    test('bar', () => expect(true, true));\n" +
+                        "  });\n" +
+                        "  group('baz', () {\n" +
+                        "    <caret>test('bar', () => expect(true, true));\n" +
+                        "  });\n" +
+                        "}");
   }
 
   public void testGroupedTest4() throws Exception {
     doTest("[foo,bar]", "main() {\n" +
-                      "  group('foo', () {\n" +
-                      "    <caret>test('bar', () => expect(true, true));\n" +
-                      "  });\n" +
-                      "  test('bar', () => expect(true, true));\n" +
-                      "}");
+                        "  group('foo', () {\n" +
+                        "    <caret>test('bar', () => expect(true, true));\n" +
+                        "  });\n" +
+                        "  test('bar', () => expect(true, true));\n" +
+                        "}");
   }
 
   public void testGroupedTest5() throws Exception {
     doTest("[foo,bar,baz]", "main() {\n" +
-                      "  group('foo', () {\n" +
-                      "    group('bar', () {\n" +
-                      "      <caret>test('baz', () => expect(true, true));\n" +
-                      "    });\n" +
-                      "  });\n" +
-                      "}");
+                            "  group('foo', () {\n" +
+                            "    group('bar', () {\n" +
+                            "      <caret>test('baz', () => expect(true, true));\n" +
+                            "    });\n" +
+                            "  });\n" +
+                            "}");
   }
-
 
   public void testGroup() throws Exception {
     doTest("[foo]", "main() {\n" +
-                      "  <caret>group('foo', () {\n" +
-                      "    test('bar', () => expect(true, true));\n" +
-                      "  });\n" +
-                      "}");
+                    "  <caret>group('foo', () {\n" +
+                    "    test('bar', () => expect(true, true));\n" +
+                    "  });\n" +
+                    "}");
   }
-
 }

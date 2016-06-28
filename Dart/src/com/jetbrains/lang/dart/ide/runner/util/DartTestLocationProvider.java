@@ -6,12 +6,13 @@ import com.google.gson.reflect.TypeToken;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -40,27 +41,54 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
                                     @NotNull String path,
                                     @NotNull Project project,
                                     @NotNull GlobalSearchScope scope) {
-    // path is like /Users/x/projects/foo/test/foo_test.dart,["main tests","calculate_fail"]
+    // see DartTestEventsConverter.addLocationHint()
+    // path is like /Users/x/projects/foo/test/foo_test.dart,35,12,["main tests","calculate_fail"]
 
-    int commaIdx = path.indexOf(',');
-    if (commaIdx < 0) return NONE;
-    String filePath = path.substring(0, commaIdx);
-    String names = path.substring(commaIdx + 1);
+    int commaIdx1 = path.indexOf(',');
+    int commaIdx2 = path.indexOf(',', commaIdx1 + 1);
+    int commaIdx3 = path.indexOf(',', commaIdx2 + 1);
+    if (commaIdx3 < 0) return NONE;
+
+    final String filePath = path.substring(0, commaIdx1);
+    final int line = Integer.parseInt(path.substring(commaIdx1 + 1, commaIdx2));
+    final int column = Integer.parseInt(path.substring(commaIdx2 + 1, commaIdx3));
+    final String names = path.substring(commaIdx3 + 1);
 
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
-    if (file == null) {
-      return NONE;
-    }
+    final PsiFile psiFile = file == null ? null : PsiManager.getInstance(project).findFile(file);
+    if (!(psiFile instanceof DartFile)) return NONE;
 
-    final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+    if (line >= 0 && column >= 0) {
+      final Location<PsiElement> location = getLocationByLineAndColumn(psiFile, line, column);
+      if (location != null) {
+        return Collections.singletonList(location);
+      }
+    }
 
     final List<String> nodes = pathToNodes(names);
-
-    if (psiFile instanceof DartFile && nodes.isEmpty()) {
-      return Collections.<Location>singletonList(new PsiLocation<PsiElement>(psiFile));
+    if (nodes.isEmpty()) {
+      return Collections.singletonList(new PsiLocation<PsiElement>(psiFile));
     }
 
-    return getLocation(project, nodes, psiFile);
+    return getLocationByGroupAndTestNames(psiFile, nodes);
+  }
+
+  @Nullable
+  private static Location<PsiElement> getLocationByLineAndColumn(@NotNull final PsiFile file, final int line, final int column) {
+    final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+    if (document == null) return null;
+
+    final int offset = document.getLineStartOffset(line) + column;
+    final PsiElement element = file.findElementAt(offset);
+    final PsiElement parent1 = element == null ? null : element.getParent();
+    final PsiElement parent2 = parent1 instanceof DartId ? parent1.getParent() : null;
+    final PsiElement parent3 = parent2 instanceof DartReferenceExpression ? parent2.getParent() : null;
+    if (parent3 instanceof DartCallExpression) {
+      if (TestUtil.isTest((DartCallExpression)parent3) || TestUtil.isGroup((DartCallExpression)parent3)) {
+        return new PsiLocation<PsiElement>(parent3);
+      }
+    }
+    return null;
   }
 
   private static List<String> pathToNodes(final String element) {
@@ -68,11 +96,11 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
   }
 
   @VisibleForTesting
-  public List<Location> getLocation(@NotNull String testPath, final PsiFile psiFile) {
-    return getLocation(psiFile.getProject(), pathToNodes(testPath), psiFile);
+  public List<Location> getLocationForTest(@NotNull final PsiFile psiFile, @NotNull final String testPath) {
+    return getLocationByGroupAndTestNames(psiFile, pathToNodes(testPath));
   }
 
-  protected List<Location> getLocation(@NotNull final Project project, final List<String> nodes, final PsiFile psiFile) {
+  protected List<Location> getLocationByGroupAndTestNames(final PsiFile psiFile, final List<String> nodes) {
     final List<Location> locations = new ArrayList<Location>();
 
     if (psiFile instanceof DartFile && !nodes.isEmpty()) {
@@ -91,7 +119,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
                   }
                 }
                 if (matches) {
-                  locations.add(new PsiLocation<PsiElement>(project, element));
+                  locations.add(new PsiLocation<PsiElement>(element));
                   return false;
                 }
               }
@@ -103,7 +131,9 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
 
         @Nullable
         private DartCallExpression getGroup(final DartCallExpression expression) {
-          return (DartCallExpression)PsiTreeUtil.findFirstParent(expression, true, element -> element instanceof DartCallExpression && TestUtil.isGroup((DartCallExpression)element));
+          return (DartCallExpression)PsiTreeUtil.findFirstParent(expression, true,
+                                                                 element -> element instanceof DartCallExpression &&
+                                                                            TestUtil.isGroup((DartCallExpression)element));
         }
       };
 

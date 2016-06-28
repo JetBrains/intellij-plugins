@@ -15,7 +15,7 @@ import java.util.List;
  * @author nik
  */
 public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
-  public static final String COMPILER_ID = "error-prone";
+  public static final String COMPILER_ID = "error-prone";//duplicates ErrorProneJavaBackendCompiler.COMPILER_ID from IDE part
 
   @NotNull
   @Override

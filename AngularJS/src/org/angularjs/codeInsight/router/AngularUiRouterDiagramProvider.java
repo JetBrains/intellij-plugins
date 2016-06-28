@@ -126,8 +126,14 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       public String getNodeTooltip(DiagramObject element) {
         final List<String> errors = element.getErrors();
         final List<String> warnings = element.getWarnings();
-        if (errors.isEmpty() && warnings.isEmpty()) return element.getTooltip();
+        final List<String> notes = element.getNotes();
+        if (errors.isEmpty() && warnings.isEmpty() && notes.isEmpty()) return element.getTooltip();
         final StringBuilder sb = new StringBuilder(element.getTooltip());
+        if (!notes.isEmpty()) {
+          for (String note : notes) {
+            sb.append('\n').append(note);
+          }
+        }
         sb.append("<font style=\"color:#ff0000;\">");
         if (!errors.isEmpty()) {
           sb.append('\n').append(StringUtil.pluralize("Error", errors.size())).append(":\n");
@@ -214,7 +220,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
   @Override
   public String getPresentableName() {
-    return "Angular ui-router states and views";
+    return "AngularJS ui-router states and views";
   }
 
   private static final DiagramCategory[] CATEGORIES =
@@ -265,7 +271,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     final VirtualFile virtualFile = element.getNavigationTarget().getContainingFile().getVirtualFile();
     final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = myData.get(virtualFile);
     if (nodesBuilder == null) return null;
-    return new AngularUiRouterDiagramModel(project, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
+    return new AngularUiRouterDiagramModel(project, virtualFile, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
   }
 
   @Nullable
@@ -412,13 +418,14 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         layouter.setNodeOverlapsAllowed(false);
         layouter.setSmartComponentLayoutEnabled(true);
         layouter.setConsiderNodeLabelsEnabled(true);
+        layouter.setDeterministic(true);
 
         final List<CanonicMultiStageLayouter> list = new ArrayList<>();
         list.add(layouter);
         list.add(settings.getBalloonLayouter());
         list.add(settings.getCircularLayouter());
         list.add(settings.getDirectedOrthogonalLayouter());
-        list.add(settings.getGroupLayouter());
+        //list.add(settings.getGroupLayouter());
         list.add(settings.getHVTreeLayouter());
         list.add(settings.getOrthogonalLayouter());
         for (CanonicMultiStageLayouter current : list) {

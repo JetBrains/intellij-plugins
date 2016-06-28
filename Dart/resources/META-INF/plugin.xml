@@ -202,6 +202,7 @@
     <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="outdated.dependencies.inspection.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING" language="Dart"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
+    <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

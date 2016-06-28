@@ -6,24 +6,22 @@ import com.intellij.psi.XmlRecursiveElementWalkingVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.DataIndexer;
 import com.intellij.util.indexing.FileContent;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Irina.Chernushina on 3/17/2016.
  */
 public class AngularAttributeIndexer implements DataIndexer<String, AngularNamedItemDefinition, FileContent> {
-  private final Set<String> myAttributeNames;
+  private final String myAttributeName;
 
-  public AngularAttributeIndexer(@NotNull final String... attributeNames) {
-    myAttributeNames = new HashSet<>(Arrays.asList(attributeNames));
+  public AngularAttributeIndexer(@NotNull final String attributeName) {
+    myAttributeName = attributeName;
   }
 
   @NotNull
@@ -36,7 +34,7 @@ public class AngularAttributeIndexer implements DataIndexer<String, AngularNamed
         new XmlRecursiveElementWalkingVisitor() {
           @Override
           public void visitXmlAttribute(XmlAttribute attribute) {
-            if (myAttributeNames.contains(attribute.getName())) {
+            if (myAttributeName.equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
               final XmlAttributeValue element = attribute.getValueElement();
               if (element == null) {
                 map.put("", new AngularNamedItemDefinition("", attribute.getTextRange().getStartOffset()));
