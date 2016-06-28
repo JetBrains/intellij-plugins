@@ -5,9 +5,10 @@ import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.signature.SignatureReader;
+import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.impl.RNameUtilCore;
-import org.objectweb.asm.signature.SignatureReader;
-import org.objectweb.asm.signature.SignatureVisitor;
 
 import java.io.InputStream;
 import java.util.List;
@@ -151,12 +152,13 @@ public class BridgeSupportReader {
     return declaredType.intern();
   }
 
-  private static class AndroidSignatureVisitor implements SignatureVisitor {
+  private static class AndroidSignatureVisitor extends SignatureVisitor {
     private final Function myFunction;
     private StringBuilder typeBuilder;
     private int arrayLevel;
 
     public AndroidSignatureVisitor(Function function) {
+      super(Opcodes.ASM5);
       myFunction = function;
       typeBuilder = new StringBuilder();
     }
