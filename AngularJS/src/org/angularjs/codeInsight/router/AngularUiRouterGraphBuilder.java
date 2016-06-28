@@ -46,7 +46,7 @@ public class AngularUiRouterGraphBuilder {
   }
 
   public static class GraphNodesBuilder {
-    public static final String DEFAULT = "<default>";
+    public static final String DEFAULT = "$default";
     @NotNull private final Map<String, UiRouterState> myStatesMap;
     @NotNull private final Map<VirtualFile, Template> myTemplatesMap;
     @Nullable private final RootTemplate myRootTemplate;
