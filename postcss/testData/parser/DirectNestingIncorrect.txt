@@ -15,8 +15,6 @@ PostCSS File:DirectNestingIncorrect.pcss
           PsiElement(CSS_RULESET)
             PsiElement(CSS_SELECTOR_LIST)
               PsiElement(CSS_SELECTOR)
-                PsiErrorElement:& expected
-                  <empty list>
                 PsiElement(CSS_SIMPLE_SELECTOR)
                   XmlToken:CSS_IDENT('span')
                   PsiElement(CSS_SELECTOR_SUFFIX_LIST)

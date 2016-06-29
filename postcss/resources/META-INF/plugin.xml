@@ -15,6 +15,7 @@
     <internalFileTemplate name="PostCSS File"/>
     <lang.syntaxHighlighterFactory language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighterFactory"/>
     <colorSettingsPage implementation="org.intellij.plugins.postcss.highlighting.PostCssColorsPage"/>
-    <lang.formatter language="PostCSS" implementationClass="org.intellij.plugins.postcss.formatter.PostCssFormattingModelBuilder"/>
+    <annotator language="CSS" implementationClass="org.intellij.plugins.postcss.annotator.PostCssNestingErrorsAnnotator"/>
+    <annotator language="PostCSS" implementationClass="org.intellij.plugins.postcss.annotator.PostCssNestingErrorsAnnotator"/>
   </extensions>
 </idea-plugin>

@@ -1,0 +1,9 @@
+h1 {
+    <error descr="Nested ruleset selector should start with '&'">h2</error> {
+        color: white;
+    }
+
+    h2 &, <error descr="Nested ruleset selector should start with '&'">h1</error> {
+        color: white;
+    }
+}
