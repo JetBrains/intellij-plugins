@@ -10,13 +10,11 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
-import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,29 +88,12 @@ public class JstdSettingsUtil {
 
   @Nullable
   private static Boolean areJstdConfigFilesInScope(GlobalSearchScope scope) {
-    final Ref<Boolean> jstdConfigFound = Ref.create(false);
     try {
-      FileBasedIndex.getInstance().processValues(
-        FileTypeIndex.NAME,
-        JstdConfigFileType.INSTANCE,
-        null,
-        new FileBasedIndex.ValueProcessor<Void>() {
-          @Override
-          public boolean process(final VirtualFile file, final Void value) {
-            if (JSLibraryUtil.isProbableLibraryFile(file)) {
-              return true;
-            }
-            jstdConfigFound.set(true);
-            return false;
-          }
-        },
-        scope
-      );
+      return FileTypeIndex.processFiles(JstdConfigFileType.INSTANCE, file -> JSLibraryUtil.isProbableLibraryFile(file), scope);
     }
     catch (IndexNotReadyException e) {
       return null;
     }
-    return jstdConfigFound.get();
   }
 
   @Nullable
