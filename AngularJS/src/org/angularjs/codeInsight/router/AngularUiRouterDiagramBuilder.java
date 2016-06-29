@@ -81,6 +81,12 @@ public class AngularUiRouterDiagramBuilder {
               if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
                 final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
                 fillStateParameters(state, object);
+              } else if (arguments[0] instanceof JSObjectLiteralExpression) {
+                final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[0];
+                final JSProperty name = object.findProperty("name");
+                if (name != null && PsiTreeUtil.isAncestor(name, element.getNavigationElement(), false)) {
+                  fillStateParameters(state, object);
+                }
               }
             }
           }
