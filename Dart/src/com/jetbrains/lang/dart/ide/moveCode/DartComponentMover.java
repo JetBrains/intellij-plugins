@@ -9,13 +9,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartFile;
-import com.jetbrains.lang.dart.psi.DartLibraryStatement;
-import com.jetbrains.lang.dart.psi.DartUriBasedDirective;
+import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,13 +30,16 @@ public class DartComponentMover extends LineMover {
     info.indentTarget = false;
     Pair<PsiElement, PsiElement> psiRange = getElementRange(editor, file, info.toMove);
     if (psiRange == null) return false;
-    final PsiElement firstMember = getDeclarationParent(psiRange.getFirst());
+    PsiElement firstMember = getDeclarationParent(psiRange.getFirst());
     PsiElement endElement = psiRange.getSecond();
-    final PsiElement lastMember = getDeclarationParent(endElement);
+    PsiElement lastMember = getDeclarationParent(endElement);
     if (firstMember == null || lastMember == null) return false;
 
     LineRange range;
     if (firstMember == lastMember) {
+      if (firstMember instanceof LeafPsiElement && firstMember.getText().equals("/**")) {
+        firstMember = firstMember.getParent();
+      }
       range = memberRange(firstMember, editor, info.toMove);
       if (range == null) return false;
       range.firstElement = range.lastElement = firstMember;
@@ -46,21 +48,30 @@ public class DartComponentMover extends LineMover {
       final PsiElement parent = PsiTreeUtil.findCommonParent(firstMember, lastMember);
       if (parent == null) return false;
 
-      final Pair<PsiElement, PsiElement> combinedRange = getElementRange(parent, firstMember, lastMember);
-      if (combinedRange == null) return false;
-      final LineRange lineRange1 = memberRange(combinedRange.getFirst(), editor, info.toMove);
-      if (lineRange1 == null) return false;
-      final LineRange lineRange2 = memberRange(combinedRange.getSecond(), editor, info.toMove);
-      if (lineRange2 == null) return false;
-      range = new LineRange(lineRange1.startLine, lineRange2.endLine);
-      range.firstElement = combinedRange.getFirst();
-      range.lastElement = combinedRange.getSecond();
+      final Pair<PsiElement, PsiElement> combinedRange;
+      if (parent instanceof DartDocComment) {
+        range = memberRange(parent, editor, info.toMove);
+        if (range == null) return false;
+        range.firstElement = parent;
+        range.lastElement = parent;
+      }
+      else {
+        combinedRange = getElementRange(parent, firstMember, lastMember);
+        if (combinedRange == null) return false;
+        final LineRange lineRange1 = memberRange(combinedRange.getFirst(), editor, info.toMove);
+        if (lineRange1 == null) return false;
+        final LineRange lineRange2 = memberRange(combinedRange.getSecond(), editor, info.toMove);
+        if (lineRange2 == null) return false;
+        range = new LineRange(lineRange1.startLine, lineRange2.endLine);
+        range.firstElement = combinedRange.getFirst();
+        range.lastElement = combinedRange.getSecond();
+      }
     }
     Document document = editor.getDocument();
     PsiElement ref;
     PsiElement sibling = down ? (ref = range.lastElement.getNextSibling()) : (ref = range.firstElement).getPrevSibling();
-    sibling = firstNonWhiteElement(sibling, down);
-    ref = firstNonWhiteElement(ref, !down);
+    sibling = firstNonWhiteElement(skipSemicolon(sibling, down), down);
+    ref = firstNonWhiteElement(skipSemicolon(ref, !down), !down);
     info.toMove = range;
     if (sibling != null) {
       if (crossesHeaderBoundary(ref, sibling)) {
@@ -76,6 +87,18 @@ public class DartComponentMover extends LineMover {
     if (isComment(element)) return element;
     PsiElement parent = getHeaderParent(element);
     if (parent != null) return parent;
+    parent = PsiTreeUtil.getParentOfType(element, DartVarDeclarationList.class, false);
+    if (parent != null && (parent.getParent() instanceof DartFile || parent.getParent() instanceof DartClassMembers)) {
+      return parent;
+    }
+    if (element instanceof LeafPsiElement && element.getParent() instanceof DartFile) {
+      return element;
+    }
+    if (element instanceof DartClassMembers) {
+      PsiElement last = element.getLastChild();
+      last = PsiTreeUtil.skipSiblingsBackward(last, LeafPsiElement.class, PsiWhiteSpace.class);
+      if (last != null) return last;
+    }
     return PsiTreeUtil.getParentOfType(element, DartComponent.class, false);
   }
 
@@ -93,6 +116,9 @@ public class DartComponentMover extends LineMover {
     // Easy case: selection is on first or last line of component.
     if (startLine == lineRange.startLine || startLine == lineRange.endLine || endLine == lineRange.startLine ||
         endLine == lineRange.endLine) {
+      return true;
+    }
+    if (startLine <= lineRange.startLine && endLine >= lineRange.endLine) {
       return true;
     }
     return false;
@@ -119,5 +145,12 @@ public class DartComponentMover extends LineMover {
   private static boolean isComment(@NotNull final PsiElement element) {
     final IElementType type = element.getNode().getElementType();
     return DartTokenTypesSets.COMMENTS.contains(type) || DartTokenTypesSets.DOC_COMMENT_CONTENTS.contains(type);
+  }
+
+  private static PsiElement skipSemicolon(PsiElement element, boolean lookRight) {
+    if (element instanceof LeafPsiElement) {
+      element = lookRight ? element.getNextSibling() : element.getPrevSibling();
+    }
+    return element;
   }
 }
