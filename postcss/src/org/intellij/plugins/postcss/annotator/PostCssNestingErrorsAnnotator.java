@@ -12,10 +12,10 @@ import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssLanguage;
-import org.intellij.plugins.postcss.actions.AddAmpersandToSelectorQuickFix;
-import org.intellij.plugins.postcss.actions.AddAtRuleNestToSelectorQuickFix;
-import org.intellij.plugins.postcss.actions.DeleteAmpersandQuickFix;
-import org.intellij.plugins.postcss.actions.DeleteAtRuleNestQuickFix;
+import org.intellij.plugins.postcss.actions.PostCssAddAmpersandToSelectorQuickFix;
+import org.intellij.plugins.postcss.actions.PostCssAddAtRuleNestToSelectorQuickFix;
+import org.intellij.plugins.postcss.actions.PostCssDeleteAmpersandQuickFix;
+import org.intellij.plugins.postcss.actions.PostCssDeleteAtRuleNestQuickFix;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +55,7 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
     else if (!PostCssPsiUtil.containsAmpersand(selector)) {
       Annotation annotation =
         holder.createErrorAnnotation(selector, PostCssBundle.message("annotator.nested.selector.doesnt.starts.with.ampersand.error"));
-      annotation.registerUniversalFix(new AddAmpersandToSelectorQuickFix(selector), null, null);
+      annotation.registerUniversalFix(new PostCssAddAmpersandToSelectorQuickFix(selector), null, null);
     }
   }
 
@@ -66,7 +66,7 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
     if (everySelectorHasAmpersand && !everySelectorStartsWithAmpersand) {
       Annotation annotation =
         holder.createErrorAnnotation(list, PostCssBundle.message("annotator.nested.selector.list.doesnt.have.nest.at.rule.error"));
-      annotation.registerUniversalFix(new AddAtRuleNestToSelectorQuickFix(list), null, null);
+      annotation.registerUniversalFix(new PostCssAddAtRuleNestToSelectorQuickFix(list), null, null);
     }
   }
 
@@ -77,7 +77,7 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
       for (CssSimpleSelector directNest : directNests) {
         Annotation annotation = holder.createErrorAnnotation(directNest, PostCssBundle
           .message("annotator.normal.selector.contains.direct.nesting.selector"));
-        annotation.registerUniversalFix(new DeleteAmpersandQuickFix(directNest), null, null);
+        annotation.registerUniversalFix(new PostCssDeleteAmpersandQuickFix(directNest), null, null);
       }
     }
     CssSimpleSelector[] nests =
@@ -86,7 +86,7 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
       for (CssSimpleSelector nest : nests) {
         Annotation annotation = holder.createErrorAnnotation(nest, PostCssBundle
           .message("annotator.normal.selector.contains.nest"));
-        annotation.registerUniversalFix(new DeleteAtRuleNestQuickFix(nest), null, null);
+        annotation.registerUniversalFix(new PostCssDeleteAtRuleNestQuickFix(nest), null, null);
       }
     }
   }

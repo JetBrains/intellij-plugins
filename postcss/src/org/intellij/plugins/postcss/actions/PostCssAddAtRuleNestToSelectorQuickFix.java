@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AddAtRuleNestToSelectorQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
-  public AddAtRuleNestToSelectorQuickFix(@NotNull CssSelectorList list) {
+public class PostCssAddAtRuleNestToSelectorQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
+  public PostCssAddAtRuleNestToSelectorQuickFix(@NotNull CssSelectorList list) {
     super(list);
   }
 

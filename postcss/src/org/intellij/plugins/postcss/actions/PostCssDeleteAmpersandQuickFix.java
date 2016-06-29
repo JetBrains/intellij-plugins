@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DeleteAmpersandQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
-  public DeleteAmpersandQuickFix(CssSimpleSelector selector) {
+public class PostCssDeleteAmpersandQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
+  public PostCssDeleteAmpersandQuickFix(CssSimpleSelector selector) {
     super(selector);
   }
 

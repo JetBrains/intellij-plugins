@@ -5,21 +5,23 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.css.CssSimpleSelector;
+import com.intellij.psi.css.CssSelector;
 import org.intellij.plugins.postcss.PostCssBundle;
+import org.intellij.plugins.postcss.psi.PostCssElementGenerator;
+import org.intellij.plugins.postcss.psi.impl.PostCssDirectNestImpl;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DeleteAtRuleNestQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
-  public DeleteAtRuleNestQuickFix(CssSimpleSelector selector) {
+public class PostCssAddAmpersandToSelectorQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
+  public PostCssAddAmpersandToSelectorQuickFix(@NotNull CssSelector selector) {
     super(selector);
   }
 
   @NotNull
   @Override
   public String getText() {
-    return PostCssBundle.message("annotator.delete.at.rule.nest.quickfix.name");
+    return PostCssBundle.message("annotator.add.ampersand.quickfix.name");
   }
 
   @Nls
@@ -35,6 +37,12 @@ public class DeleteAtRuleNestQuickFix extends LocalQuickFixAndIntentionActionOnP
                      @Nullable("is null when called from inspection") Editor editor,
                      @NotNull PsiElement startElement,
                      @NotNull PsiElement endElement) {
-    startElement.delete();
+    PostCssDirectNestImpl ampersand = PostCssElementGenerator.createAmpersand(project);
+    if (ampersand == null) return;
+    if (startElement instanceof CssSelector) {
+      CssSelector selector = (CssSelector)startElement;
+      if (selector.getSimpleSelectors().length == 0) return;
+      selector.addBefore(ampersand, selector.getSimpleSelectors()[0]);
+    }
   }
 }
