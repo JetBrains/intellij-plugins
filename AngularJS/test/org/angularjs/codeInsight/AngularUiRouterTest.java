@@ -149,13 +149,22 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
   public void testStatesNavigation() throws Exception {
     final PsiFile[] files = myFixture.configureByFiles("stateReferences.navigation.html", "appStates.js", "angular.js");
     myFixture.doHighlighting();
-    checkNavigation(files[0], "one", null);
-    checkNavigation(files[0], "two", null);
-    checkNavigation(files[0], "two.words", null);
-    checkNavigation(files[0], ".words", "two.words");
+    checkNavigation(files[0], "one", null, "appStates.js");
+    checkNavigation(files[0], "two", null, "appStates.js");
+    checkNavigation(files[0], "two.words", null, "appStates.js");
+    checkNavigation(files[0], ".words", "two.words", "appStates.js");
   }
 
-  private void checkNavigation(PsiFile file, String state, String referencedTextExpected) {
+  public void testStatesNavigationForStatesWithNameInObject() throws Exception {
+    final PsiFile[] files = myFixture.configureByFiles("stateReferences.navigation.html", "appStateWithNameInObject.js", "angular.js");
+    myFixture.doHighlighting();
+    checkNavigation(files[0], "one", null, "appStateWithNameInObject.js");
+    checkNavigation(files[0], "two", null, "appStateWithNameInObject.js");
+    checkNavigation(files[0], "two.words", null, "appStateWithNameInObject.js");
+    checkNavigation(files[0], ".words", "two.words", "appStateWithNameInObject.js");
+  }
+
+  private void checkNavigation(PsiFile file, String state, String referencedTextExpected, String appStatesFileName) {
     referencedTextExpected = referencedTextExpected == null ? state : referencedTextExpected;
     final PsiElement inObj = getElement(file, "ui-sref=\"" + state + "\"");
     Assert.assertEquals("ui-sref", inObj.getText());
@@ -170,7 +179,7 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     if (results.length > 1) {
       for (ResolveResult result : results) {
         final PsiElement resolvedElement = result.getElement();
-        Assert.assertEquals("appStates.js", resolvedElement.getContainingFile().getName());
+        Assert.assertEquals(appStatesFileName, resolvedElement.getContainingFile().getName());
         if (StringUtil.equals(referencedTextExpected, StringUtil.unquoteString(resolvedElement.getNavigationElement().getText()))) {
           return;
         }
@@ -179,7 +188,7 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     } else {
       final PsiElement resolve = reference.resolve();
       Assert.assertNotNull(state, resolve);
-      Assert.assertEquals("appStates.js", resolve.getContainingFile().getName());
+      Assert.assertEquals(appStatesFileName, resolve.getContainingFile().getName());
       Assert.assertEquals(referencedTextExpected, StringUtil.unquoteString(resolve.getNavigationElement().getText()));
     }
   }
