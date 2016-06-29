@@ -46,7 +46,7 @@ public class AngularUiRouterGraphBuilder {
   }
 
   public static class GraphNodesBuilder {
-    public static final String DEFAULT = "<default>";
+    public static final String DEFAULT = "$default";
     @NotNull private final Map<String, UiRouterState> myStatesMap;
     @NotNull private final Map<VirtualFile, Template> myTemplatesMap;
     @Nullable private final RootTemplate myRootTemplate;
@@ -59,7 +59,7 @@ public class AngularUiRouterGraphBuilder {
     private final Map<Pair<String, String>, DiagramObject> viewNodes = new HashMap<>();
     private final List<AngularUiRouterEdge> edges = new ArrayList<>();
 
-    private final Set<AngularUiRouterNode> allNodes = new HashSet<>();
+    private final List<AngularUiRouterNode> allNodes = new ArrayList<>();
 
     public GraphNodesBuilder(@NotNull Map<String, UiRouterState> statesMap,
                              @NotNull Map<VirtualFile, Template> templatesMap, @Nullable RootTemplate rootTemplate, VirtualFile key) {
@@ -171,23 +171,13 @@ public class AngularUiRouterGraphBuilder {
       }
       createStateParentEdges();
 
-      allNodes.add(myRootNode);
-      allNodes.addAll(stateNodes.values());
-      allNodes.addAll(templateNodes.values());
-
-      mergeParallelEdges();
-      //allNodes.addAll(templatePlaceHoldersNodes.values());
-      //allNodes.addAll(viewNodes.values());
-    }
-
-    private void mergeParallelEdges() {
-      /*final Map<AngularUiRouterNode, Integer> nodes = new HashMap<>();
-      int i = 0;
-      for (AngularUiRouterNode node : allNodes) {
-        nodes.put(node, i++);
+      final List<AngularUiRouterNode> list = new ArrayList<>();
+      list.add(myRootNode);
+      list.addAll(stateNodes.values());
+      list.addAll(templateNodes.values());
+      for (AngularUiRouterNode node : list) {
+        if (!allNodes.contains(node)) allNodes.add(node);
       }
-      final Map<Pair<Integer, Integer>, AngularUiRouterEdge> newEdges = new HashMap<>();*/
-
     }
 
     private void connectViewOrStateWithPlaceholder(AngularUiRouterNode stateNode, String viewName, Pair<AngularUiRouterNode, String> pair) {
@@ -293,7 +283,7 @@ public class AngularUiRouterGraphBuilder {
       return edges;
     }
 
-    public Set<AngularUiRouterNode> getAllNodes() {
+    public List<AngularUiRouterNode> getAllNodes() {
       return allNodes;
     }
 
