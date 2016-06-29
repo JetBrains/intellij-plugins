@@ -573,19 +573,20 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return new PairProcessor<JSProperty, JSElementIndexingData>() {
       @Override
       public boolean process(JSProperty property, JSElementIndexingData outData) {
-        if (AngularJSUiRouterConstants.controllerAs.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
-          final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
-          if (!value.isQuotedLiteral()) return false;
-          final String unquotedValue = unquote(value);
+        if (!(property.getValue() instanceof JSLiteralExpression)) return false;
+        final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
+        if (!value.isQuotedLiteral()) return false;
+        final String unquotedValue = unquote(value);
+        if (AngularJSUiRouterConstants.controllerAs.equals(property.getName())) {
           return recordControllerAs(property, outData, value, unquotedValue);
-        } else if (CONTROLLER.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
-          final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
-          if (!value.isQuotedLiteral()) return false;
-          final String unquotedValue = unquote(value);
+        } else if (CONTROLLER.equals(property.getName())) {
           final int idx = unquotedValue != null ? unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES) : 0;
           if (idx > 0 && (idx + AS_CONNECTOR_WITH_SPACES.length()) < (unquotedValue.length() - 1)) {
             return recordControllerAs(property, outData, value, unquotedValue.substring(idx + AS_CONNECTOR_WITH_SPACES.length(), unquotedValue.length()));
           }
+        } else if ("name".equals(property.getName())) {
+          addImplicitElements(value, STATE, INDEXERS.get(STATE), unquotedValue, null, outData);
+          return true;
         }
         return false;
       }
