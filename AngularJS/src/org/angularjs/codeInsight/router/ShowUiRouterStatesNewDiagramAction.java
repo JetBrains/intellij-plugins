@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
@@ -28,6 +29,7 @@ import java.util.Map;
  */
 public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   public static final String USAGE_KEY = "angular.js.ui.router.show.diagram";
+  public static final String DESCRIPTION = "Show AngularJS ui-router State Diagram";
 
   @Override
   public void actionPerformed(AnActionEvent e) {
@@ -71,6 +73,10 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
         callback.run();
       }
     };
+    if (graphBuilders.isEmpty()) {
+      Messages.showInfoMessage(project, "No router states found.", DESCRIPTION);
+      return;
+    }
     if (graphBuilders.size() == 1) consumer.consume(graphBuilders.get(0).getSecond());
     else filterGraphBuilders(project, graphBuilders, consumer);
   }
@@ -100,8 +106,8 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     final RegistryValue value = Registry.get("angular.js.ui.router.diagram");
     e.getPresentation().setEnabled(value.isBoolean() && value.asBoolean() && project != null && AngularIndexUtil.hasAngularJS(project));
 
-    e.getPresentation().setText("Show AngularJS ui-router State Diagram");
-    e.getPresentation().setDescription("Show AngularJS ui-router State Diagram");
+    e.getPresentation().setText(DESCRIPTION);
+    e.getPresentation().setDescription(DESCRIPTION);
     e.getPresentation().setIcon(AngularJSIcons.AngularJS);
   }
 }
