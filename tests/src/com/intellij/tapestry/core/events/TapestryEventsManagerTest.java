@@ -4,9 +4,10 @@ import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.resource.TestableResource;
-import static org.easymock.EasyMock.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.easymock.EasyMock.*;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
@@ -19,14 +20,14 @@ public class TapestryEventsManagerTest {
 
     @BeforeMethod
     public void initMocks() throws NotFoundException {
-        Library applicationLibraryMock = org.easymock.classextension.EasyMock.createMock(Library.class);
-        org.easymock.classextension.EasyMock.expect(applicationLibraryMock.getBasePackage()).andReturn("com.app").anyTimes();
-        org.easymock.classextension.EasyMock.replay(applicationLibraryMock);
+        Library applicationLibraryMock = org.easymock.EasyMock.createMock(Library.class);
+        org.easymock.EasyMock.expect(applicationLibraryMock.getBasePackage()).andReturn("com.app").anyTimes();
+        org.easymock.EasyMock.replay(applicationLibraryMock);
 
-        TapestryProject tapestryProjectMock = org.easymock.classextension.EasyMock.createMock(TapestryProject.class);
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getApplicationLibrary()).andReturn(applicationLibraryMock).anyTimes();
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getPagesRootPackage()).andReturn("com.app.pages").anyTimes();
-        org.easymock.classextension.EasyMock.replay(tapestryProjectMock);
+        TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
+        org.easymock.EasyMock.expect(tapestryProjectMock.getApplicationLibrary()).andReturn(applicationLibraryMock).anyTimes();
+        org.easymock.EasyMock.expect(tapestryProjectMock.getPagesRootPackage()).andReturn("com.app.pages").anyTimes();
+        org.easymock.EasyMock.replay(tapestryProjectMock);
 
         _fileEventListenerMock = createMock(FileSystemListener.class);
 

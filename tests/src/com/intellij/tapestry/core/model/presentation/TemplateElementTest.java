@@ -22,7 +22,7 @@ public class TemplateElementTest {
     @Test
     public void constructor_with_some_null_values() {
         String templateMock = "template1";
-        InjectedElement injectedElement = org.easymock.classextension.EasyMock.createMock(InjectedElement.class);
+        InjectedElement injectedElement = org.easymock.EasyMock.createMock(InjectedElement.class);
 
         TemplateElement templateElement = new TemplateElement(null, templateMock);
 
@@ -42,7 +42,7 @@ public class TemplateElementTest {
     public void compareTo() {
         String templateMock = "template1";
         String templateMock2 = "template2";
-        InjectedElement injectedElement = org.easymock.classextension.EasyMock.createMock(InjectedElement.class);
+        InjectedElement injectedElement = org.easymock.EasyMock.createMock(InjectedElement.class);
 
 
         assert new TemplateElement(injectedElement, templateMock).compareTo(new TemplateElement(injectedElement, templateMock)) == 0;

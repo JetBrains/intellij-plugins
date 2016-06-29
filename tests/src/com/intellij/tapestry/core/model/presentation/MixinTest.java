@@ -1,13 +1,14 @@
 package com.intellij.tapestry.core.model.presentation;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
+import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.resource.IResourceFinder;
-import static org.easymock.EasyMock.createMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.easymock.EasyMock.createMock;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
@@ -23,15 +24,15 @@ public class MixinTest {
         _classInRootPagesPackageMock = new JavaClassTypeMock("com.app.pages.SomeClass").setPublic(true).setDefaultConstructor(true);
 
         IResourceFinder resourceFinderMock = createMock(IResourceFinder.class);
-        _tapestryProjectMock = org.easymock.classextension.EasyMock.createMock(TapestryProject.class);
-        org.easymock.classextension.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
-        org.easymock.classextension.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(resourceFinderMock).anyTimes();
+        _tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
+        org.easymock.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
+        org.easymock.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(resourceFinderMock).anyTimes();
 
-        _libraryMock = org.easymock.classextension.EasyMock.createMock(Library.class);
-        org.easymock.classextension.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
-        org.easymock.classextension.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
+        _libraryMock = org.easymock.EasyMock.createMock(Library.class);
+        org.easymock.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
+        org.easymock.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
 
-        org.easymock.classextension.EasyMock.replay(_tapestryProjectMock, _libraryMock);
+        org.easymock.EasyMock.replay(_tapestryProjectMock, _libraryMock);
     }
 
     @Test

@@ -37,7 +37,7 @@ public class InjectedElementTest {
     public void getElementId_component_without_id_and_tag_null() {
         JavaFieldMock fieldMock = new JavaFieldMock("field1", true).addAnnotation(new JavaAnnotationMock(TapestryConstants.COMPONENT_ANNOTATION));
 
-        Component componentMock = org.easymock.classextension.EasyMock.createMock(Component.class);
+        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
 
         assert injectedElement.getElementId().equals("field1");
@@ -48,7 +48,7 @@ public class InjectedElementTest {
         XmlTagMock tagMock = new XmlTagMock("tag1");
 
         JavaClassTypeMock componentClassMock = new JavaClassTypeMock("com.app.components.SomeComponent").setPublic(true).setDefaultConstructor(true);
-        TapestryProject tapestryProjectMock = org.easymock.classextension.EasyMock.createMock(TapestryProject.class);
+        TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
         Library libraryMock = new Library("id", "com.app", tapestryProjectMock);
 
         Component componentMock = new Component(libraryMock, componentClassMock, tapestryProjectMock);
@@ -68,7 +68,7 @@ public class InjectedElementTest {
     public void getElementId_component_with_id_and_field_null() {
         XmlTagMock tagMock = new XmlTagMock("tag1").addAttribute(new XmlAttributeMock("id", "tag2"));
 
-        Component componentMock = org.easymock.classextension.EasyMock.createMock(Component.class);
+        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
         InjectedElement injectedElement = new InjectedElement(tagMock, componentMock);
 
         assert injectedElement.getElementId().equals("tag2");
@@ -78,7 +78,7 @@ public class InjectedElementTest {
     public void getElementId_component_with_id_and_tag_null() {
         JavaFieldMock fieldMock = new JavaFieldMock("field1", true).addAnnotation(new JavaAnnotationMock(TapestryConstants.COMPONENT_ANNOTATION).addParameter("id", new String[]{"field2"}));
 
-        Component componentMock = org.easymock.classextension.EasyMock.createMock(Component.class);
+        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
 
         assert injectedElement.getElementId().equals("field2");
@@ -103,7 +103,7 @@ public class InjectedElementTest {
     public void getParameters_with_null_values() {
         JavaFieldMock fieldMock = null;
         XmlTagMock tagMock = null;
-        Component componentMock = org.easymock.classextension.EasyMock.createMock(Component.class);
+        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
 
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
         assert injectedElement.getParameters().size() == 0;
@@ -118,7 +118,7 @@ public class InjectedElementTest {
         JavaFieldMock fieldMock = new JavaFieldMock("field1", true).addAnnotation(new JavaAnnotationMock(TapestryConstants.COMPONENT_ANNOTATION).addParameter("parameters", values));
 
         XmlTagMock tagMock = new XmlTagMock("tag1").addAttribute(new XmlAttributeMock("id", "tag2"));
-        Component componentMock = org.easymock.classextension.EasyMock.createMock(Component.class);
+        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
 
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
         assert injectedElement.getParameters().size() == 1;
@@ -131,7 +131,7 @@ public class InjectedElementTest {
     public void compareTo() {
         JavaFieldMock fieldMock = new JavaFieldMock("field1", true);
         JavaFieldMock fieldMock2 = new JavaFieldMock("field2", true);
-        Component componentMock = org.easymock.classextension.EasyMock.createMock(Component.class);
+        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
 
         assert new InjectedElement(fieldMock, componentMock).compareTo(new InjectedElement(fieldMock, componentMock)) == 0;
 

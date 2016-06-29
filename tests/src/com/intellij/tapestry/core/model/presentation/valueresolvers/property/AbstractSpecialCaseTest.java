@@ -16,22 +16,22 @@ public class AbstractSpecialCaseTest {
 
     @BeforeMethod
     public void initAbstractSpecialCaseTest() {
-        _tapestryProjectMock = org.easymock.classextension.EasyMock.createMock(TapestryProject.class);
+        _tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
         _javaTypeFinderMock = org.easymock.EasyMock.createMock(IJavaTypeFinder.class);
 
-        org.easymock.classextension.EasyMock.expect(_tapestryProjectMock.getJavaTypeFinder()).andReturn(_javaTypeFinderMock).anyTimes();
+        org.easymock.EasyMock.expect(_tapestryProjectMock.getJavaTypeFinder()).andReturn(_javaTypeFinderMock).anyTimes();
     }
 
     protected void replay() {
-        org.easymock.classextension.EasyMock.replay(_tapestryProjectMock);
+        org.easymock.EasyMock.replay(_tapestryProjectMock);
         org.easymock.EasyMock.replay(_javaTypeFinderMock);
     }
 
     protected void reset() {
-        org.easymock.classextension.EasyMock.reset(_tapestryProjectMock);
+        org.easymock.EasyMock.reset(_tapestryProjectMock);
         org.easymock.EasyMock.reset(_javaTypeFinderMock);
 
-        org.easymock.classextension.EasyMock.expect(_tapestryProjectMock.getJavaTypeFinder()).andReturn(_javaTypeFinderMock).anyTimes();
+        org.easymock.EasyMock.expect(_tapestryProjectMock.getJavaTypeFinder()).andReturn(_javaTypeFinderMock).anyTimes();
     }
 
     protected void expectToFindJavaType(String type, IJavaClassType returnValue) {

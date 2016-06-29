@@ -13,8 +13,9 @@ import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
 import com.intellij.tapestry.tests.actions.ActionMockHelper;
 import com.intellij.tapestry.tests.core.BaseTestCase;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import static org.easymock.EasyMock.*;
 import org.testng.annotations.Test;
+
+import static org.easymock.EasyMock.*;
 
 public class AddNewComponentActionTest extends BaseTestCase {
 
@@ -25,9 +26,9 @@ public class AddNewComponentActionTest extends BaseTestCase {
         Project projectMock = actionMockHelper.getProjectMock();
 
         TapestryProjectViewPane tapestryProjectViewPaneMock = getTapestryProjectViewPaneMock();
-        org.easymock.classextension.EasyMock.expect(tapestryProjectViewPaneMock.getSelectedNode()).andReturn(null);
+        org.easymock.EasyMock.expect(tapestryProjectViewPaneMock.getSelectedNode()).andReturn(null);
         expect(projectMock.getComponent(TapestryProjectViewPane.class)).andReturn(tapestryProjectViewPaneMock);
-        org.easymock.classextension.EasyMock.replay(tapestryProjectViewPaneMock);
+        org.easymock.EasyMock.replay(tapestryProjectViewPaneMock);
 
         actionMockHelper.replayAll();
         new AddNewComponentAction().update(actionMockHelper.getEventMock());
@@ -44,9 +45,9 @@ public class AddNewComponentActionTest extends BaseTestCase {
         expect(projectMock.isInitialized()).andReturn(false);
 
         TapestryProjectViewPane tapestryProjectViewPaneMock = getTapestryProjectViewPaneMock();
-        org.easymock.classextension.EasyMock.expect(tapestryProjectViewPaneMock.getSelectedNode()).andReturn(null);
+        org.easymock.EasyMock.expect(tapestryProjectViewPaneMock.getSelectedNode()).andReturn(null);
         expect(projectMock.getComponent(TapestryProjectViewPane.class)).andReturn(tapestryProjectViewPaneMock);
-        org.easymock.classextension.EasyMock.replay(tapestryProjectViewPaneMock);
+        org.easymock.EasyMock.replay(tapestryProjectViewPaneMock);
 
         PsiPackage psiPackageMock = createMock(PsiPackage.class);
         expect(psiPackageMock.getQualifiedName()).andReturn("com.app").anyTimes();
@@ -57,13 +58,13 @@ public class AddNewComponentActionTest extends BaseTestCase {
         actionMockHelper.addDataContext(DataKeys.PSI_ELEMENT.getName(), psiDirectoryMock);
 
         TapestryProject tapestryProjectMock = actionMockHelper.getTapestryProjectMock();
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getComponentsRootPackage()).andReturn("com.app.components").anyTimes();
+        org.easymock.EasyMock.expect(tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
+        org.easymock.EasyMock.expect(tapestryProjectMock.getComponentsRootPackage()).andReturn("com.app.components").anyTimes();
 
         PsiPackage psiComponentsPackageMock = createMock(PsiPackage.class);
         expect(psiComponentsPackageMock.getQualifiedName()).andReturn("com.app.components").anyTimes();
         PsiManager psiManagerMock = actionMockHelper.getPsiManagerMock();
-        //org.easymock.classextension.EasyMock.expect(psiManagerMock.findPackage("com.app.components")).andReturn(psiComponentsPackageMock).anyTimes();
+        //org.easymock.EasyMock.expect(psiManagerMock.findPackage("com.app.components")).andReturn(psiComponentsPackageMock).anyTimes();
         replay(psiComponentsPackageMock);
 
         actionMockHelper.replayAll();
@@ -81,9 +82,9 @@ public class AddNewComponentActionTest extends BaseTestCase {
         expect(projectMock.isInitialized()).andReturn(false).anyTimes();
 
         TapestryProjectViewPane tapestryProjectViewPaneMock = getTapestryProjectViewPaneMock();
-        org.easymock.classextension.EasyMock.expect(tapestryProjectViewPaneMock.getSelectedNode()).andReturn(null);
+        org.easymock.EasyMock.expect(tapestryProjectViewPaneMock.getSelectedNode()).andReturn(null);
         expect(projectMock.getComponent(TapestryProjectViewPane.class)).andReturn(tapestryProjectViewPaneMock);
-        org.easymock.classextension.EasyMock.replay(tapestryProjectViewPaneMock);
+        org.easymock.EasyMock.replay(tapestryProjectViewPaneMock);
 
         PsiPackage psiPackageMock = createMock(PsiPackage.class);
         expect(psiPackageMock.getQualifiedName()).andReturn("com.app.components.test").anyTimes();
@@ -94,13 +95,13 @@ public class AddNewComponentActionTest extends BaseTestCase {
         actionMockHelper.addDataContext(DataKeys.PSI_ELEMENT.getName(), psiDirectoryMock);
 
         TapestryProject tapestryProjectMock = actionMockHelper.getTapestryProjectMock();
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getComponentsRootPackage()).andReturn("com.app.components").anyTimes();
+        org.easymock.EasyMock.expect(tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
+        org.easymock.EasyMock.expect(tapestryProjectMock.getComponentsRootPackage()).andReturn("com.app.components").anyTimes();
 
         PsiPackage psiComponentsPackageMock = createMock(PsiPackage.class);
         expect(psiComponentsPackageMock.getQualifiedName()).andReturn("com.app.components").anyTimes();
         PsiManager psiManagerMock = actionMockHelper.getPsiManagerMock();
-        //org.easymock.classextension.EasyMock.expect(psiManagerMock.findPackage("com.app.components")).andReturn(psiComponentsPackageMock).anyTimes();
+        //org.easymock.EasyMock.expect(psiManagerMock.findPackage("com.app.components")).andReturn(psiComponentsPackageMock).anyTimes();
         replay(psiComponentsPackageMock);
 
         actionMockHelper.replayAll();
@@ -111,6 +112,6 @@ public class AddNewComponentActionTest extends BaseTestCase {
     }
 
     private TapestryProjectViewPane getTapestryProjectViewPaneMock() {
-        return org.easymock.classextension.EasyMock.createMock(TapestryProjectViewPane.class);
+        return org.easymock.EasyMock.createMock(TapestryProjectViewPane.class);
     }
 }

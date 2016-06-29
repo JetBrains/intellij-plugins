@@ -5,13 +5,14 @@ import com.intellij.tapestry.core.java.IMethodParameter;
 import com.intellij.tapestry.core.mocks.JavaAnnotationMock;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.resource.IResource;
-import static org.easymock.EasyMock.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.easymock.EasyMock.*;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
@@ -25,9 +26,9 @@ public class ModuleBuilderTest {
 
     @BeforeMethod
     public void initMocks() {
-        File builderClassFileMock = org.easymock.classextension.EasyMock.createMock(File.class);
-        org.easymock.classextension.EasyMock.expect(builderClassFileMock.lastModified()).andReturn(Long.MAX_VALUE);
-        org.easymock.classextension.EasyMock.replay(builderClassFileMock);
+        File builderClassFileMock = org.easymock.EasyMock.createMock(File.class);
+        org.easymock.EasyMock.expect(builderClassFileMock.lastModified()).andReturn(Long.MAX_VALUE);
+        org.easymock.EasyMock.replay(builderClassFileMock);
 
         IResource builderClassResourceMock = createMock(IResource.class);
         expect(builderClassResourceMock.getFile()).andReturn(builderClassFileMock);

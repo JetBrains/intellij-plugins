@@ -12,10 +12,11 @@ import com.intellij.tapestry.tests.core.BaseTestCase;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.util.IncorrectOperationException;
 import org.testng.annotations.Test;
-import static org.easymock.classextension.EasyMock.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.easymock.EasyMock.*;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>

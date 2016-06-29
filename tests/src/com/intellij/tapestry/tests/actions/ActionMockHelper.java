@@ -31,14 +31,14 @@ public class ActionMockHelper {
     private FacetManager _facetManagerMock = EasyMock.createMock(FacetManager.class);
 
     public ActionMockHelper() {
-        _inputEventMock = org.easymock.classextension.EasyMock.createMock(InputEvent.class);
+        _inputEventMock = org.easymock.EasyMock.createMock(InputEvent.class);
 
-        _psiManagerMock = org.easymock.classextension.EasyMock.createMock(PsiManager.class);
+        _psiManagerMock = org.easymock.EasyMock.createMock(PsiManager.class);
 
-        _tapestryProjectMock = org.easymock.classextension.EasyMock.createMock(TapestryProject.class);
+        _tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
 
-        _TapestryModuleSupportLoaderMock = org.easymock.classextension.EasyMock.createMock(TapestryModuleSupportLoader.class);
-        org.easymock.classextension.EasyMock.expect(_TapestryModuleSupportLoaderMock.getTapestryProject()).andReturn(_tapestryProjectMock);
+        _TapestryModuleSupportLoaderMock = org.easymock.EasyMock.createMock(TapestryModuleSupportLoader.class);
+        org.easymock.EasyMock.expect(_TapestryModuleSupportLoaderMock.getTapestryProject()).andReturn(_tapestryProjectMock);
 
         _projectMock = createMock(Project.class);
         expect(_projectMock.getComponent(PsiManager.class)).andReturn(_psiManagerMock).anyTimes();
@@ -47,7 +47,7 @@ public class ActionMockHelper {
         expect(_moduleMock.getProject()).andReturn(_projectMock).anyTimes();
         expect(_moduleMock.getComponent(TapestryModuleSupportLoader.class)).andReturn(_TapestryModuleSupportLoaderMock).anyTimes();
 
-        _facetManagerMock = org.easymock.classextension.EasyMock.createMock(FacetManager.class);
+        _facetManagerMock = org.easymock.EasyMock.createMock(FacetManager.class);
 
         expect(_moduleMock.getComponent(FacetManager.class)).andReturn(_facetManagerMock).anyTimes();
 
@@ -85,13 +85,13 @@ public class ActionMockHelper {
     public void replayAll() {
         replay(_dataContextMock, _moduleMock, _projectMock);
 
-        org.easymock.classextension.EasyMock.replay(_inputEventMock, _psiManagerMock, _TapestryModuleSupportLoaderMock, _tapestryProjectMock, _facetManagerMock);
+        org.easymock.EasyMock.replay(_inputEventMock, _psiManagerMock, _TapestryModuleSupportLoaderMock, _tapestryProjectMock, _facetManagerMock);
     }
 
     public void resetAll() {
         reset(_dataContextMock, _moduleMock, _projectMock);
 
-        org.easymock.classextension.EasyMock.reset(_inputEventMock, _psiManagerMock, _TapestryModuleSupportLoaderMock, _tapestryProjectMock, _facetManagerMock);
+        org.easymock.EasyMock.reset(_inputEventMock, _psiManagerMock, _TapestryModuleSupportLoaderMock, _tapestryProjectMock, _facetManagerMock);
     }
 
     public void addDataContext(String key, Object value) {
@@ -102,11 +102,11 @@ public class ActionMockHelper {
         Collection<TapestryFacet> facet = new ArrayList<TapestryFacet>();
         facet.add(new TapestryFacet(TapestryFacetType.getInstance(), _moduleMock, null, new TapestryFacetConfiguration(), null));
 
-        org.easymock.classextension.EasyMock.expect(_facetManagerMock.getFacetsByType(TapestryFacetType.ID)).andReturn(facet).anyTimes();
+        org.easymock.EasyMock.expect(_facetManagerMock.getFacetsByType(TapestryFacetType.ID)).andReturn(facet).anyTimes();
     }
 
     public void setModuleAsNotTapestryModule() {
-        org.easymock.classextension.EasyMock.expect(_facetManagerMock.getFacetsByType(TapestryFacetType.ID)).andReturn(new ArrayList<TapestryFacet>());
+        org.easymock.EasyMock.expect(_facetManagerMock.getFacetsByType(TapestryFacetType.ID)).andReturn(new ArrayList<TapestryFacet>());
     }
 
     private DataContext createDataContext() {

@@ -1,14 +1,15 @@
 package com.intellij.tapestry.core.model;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaTypeFinder;
-import static org.easymock.EasyMock.*;
+import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static org.easymock.EasyMock.*;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
@@ -43,9 +44,9 @@ public class LibraryTest {
 
         replay(javaTypeFinderMock);
 
-        TapestryProject tapestryProjectMock = org.easymock.classextension.EasyMock.createMock(TapestryProject.class);
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
-        org.easymock.classextension.EasyMock.replay(tapestryProjectMock);
+        TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
+        org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
+        org.easymock.EasyMock.replay(tapestryProjectMock);
 
         Library library = new Library(null, "com.app", tapestryProjectMock);
         assert library.getComponents().size() == 1;
@@ -60,9 +61,9 @@ public class LibraryTest {
 
         replay(javaTypeFinderMock);
 
-        TapestryProject tapestryProjectMock = org.easymock.classextension.EasyMock.createMock(TapestryProject.class);
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
-        org.easymock.classextension.EasyMock.replay(tapestryProjectMock);
+        TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
+        org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
+        org.easymock.EasyMock.replay(tapestryProjectMock);
 
         Library library = new Library(null, "com.app", tapestryProjectMock);
         assert library.getPages().size() == 1;
@@ -77,9 +78,9 @@ public class LibraryTest {
 
         replay(javaTypeFinderMock);
 
-        TapestryProject tapestryProjectMock = org.easymock.classextension.EasyMock.createMock(TapestryProject.class);
-        org.easymock.classextension.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
-        org.easymock.classextension.EasyMock.replay(tapestryProjectMock);
+        TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
+        org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
+        org.easymock.EasyMock.replay(tapestryProjectMock);
 
         Library library = new Library(null, "com.app", tapestryProjectMock);
         assert library.getMixins().size() == 1;
