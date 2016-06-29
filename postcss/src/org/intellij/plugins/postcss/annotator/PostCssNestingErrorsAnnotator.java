@@ -6,7 +6,9 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.css.*;
+import com.intellij.psi.css.CssSelector;
+import com.intellij.psi.css.CssSelectorList;
+import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssLanguage;
@@ -53,7 +55,7 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
     else if (!PostCssPsiUtil.containsAmpersand(selector)) {
       Annotation annotation =
         holder.createErrorAnnotation(selector, PostCssBundle.message("annotator.nested.selector.doesnt.starts.with.ampersand.error"));
-      annotation.registerFix(new AddAmpersandToSelectorQuickFix(selector));
+      annotation.registerUniversalFix(new AddAmpersandToSelectorQuickFix(selector), null, null);
     }
   }
 
@@ -64,7 +66,7 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
     if (everySelectorHasAmpersand && !everySelectorStartsWithAmpersand) {
       Annotation annotation =
         holder.createErrorAnnotation(list, PostCssBundle.message("annotator.nested.selector.list.doesnt.have.nest.at.rule.error"));
-      annotation.registerFix(new AddAtRuleNestToSelectorQuickFix(list));
+      annotation.registerUniversalFix(new AddAtRuleNestToSelectorQuickFix(list), null, null);
     }
   }
 
@@ -75,15 +77,16 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
       for (CssSimpleSelector directNest : directNests) {
         Annotation annotation = holder.createErrorAnnotation(directNest, PostCssBundle
           .message("annotator.normal.selector.contains.direct.nesting.selector"));
-        annotation.registerFix(new DeleteAmpersandQuickFix(directNest));
+        annotation.registerUniversalFix(new DeleteAmpersandQuickFix(directNest), null, null);
       }
     }
-    CssSimpleSelector[] nests = Arrays.stream(selector.getSimpleSelectors()).filter(PostCssPsiUtil::isNest).toArray(CssSimpleSelector[]::new);
+    CssSimpleSelector[] nests =
+      Arrays.stream(selector.getSimpleSelectors()).filter(PostCssPsiUtil::isNest).toArray(CssSimpleSelector[]::new);
     if (nests != null) {
       for (CssSimpleSelector nest : nests) {
         Annotation annotation = holder.createErrorAnnotation(nest, PostCssBundle
           .message("annotator.normal.selector.contains.nest"));
-        annotation.registerFix(new DeleteAtRuleNestQuickFix(nest));
+        annotation.registerUniversalFix(new DeleteAtRuleNestQuickFix(nest), null, null);
       }
     }
   }

@@ -204,7 +204,8 @@ public class PostCssParser extends CssParser2 {
       PsiBuilder.Marker simpleSelector = createCompositeElement();
       parseAtRuleNest();
       simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
-    } else {
+    }
+    else {
       super.parseSimpleSelector();
     }
   }
