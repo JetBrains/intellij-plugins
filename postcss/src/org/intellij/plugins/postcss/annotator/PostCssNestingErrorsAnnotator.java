@@ -2,6 +2,7 @@ package org.intellij.plugins.postcss.annotator;
 
 import com.intellij.css.util.CssPsiUtil;
 import com.intellij.lang.Language;
+import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
@@ -9,6 +10,10 @@ import com.intellij.psi.css.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssLanguage;
+import org.intellij.plugins.postcss.actions.AddAmpersandToSelectorQuickFix;
+import org.intellij.plugins.postcss.actions.AddAtRuleNestToSelectorQuickFix;
+import org.intellij.plugins.postcss.actions.DeleteAmpersandQuickFix;
+import org.intellij.plugins.postcss.actions.DeleteAtRuleNestQuickFix;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +51,9 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
       }
     }
     else if (!PostCssPsiUtil.containsAmpersand(selector)) {
-      holder.createErrorAnnotation(selector, PostCssBundle.message("annotator.nested.selector.doesnt.starts.with.ampersand.error"));
+      Annotation annotation =
+        holder.createErrorAnnotation(selector, PostCssBundle.message("annotator.nested.selector.doesnt.starts.with.ampersand.error"));
+      annotation.registerFix(new AddAmpersandToSelectorQuickFix(selector));
     }
   }
 
@@ -55,7 +62,9 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
     boolean everySelectorHasAmpersand = Arrays.stream(list.getSelectors()).allMatch(PostCssPsiUtil::containsAmpersand);
     boolean everySelectorStartsWithAmpersand = Arrays.stream(list.getSelectors()).allMatch(PostCssPsiUtil::startsWithAmpersand);
     if (everySelectorHasAmpersand && !everySelectorStartsWithAmpersand) {
-      holder.createErrorAnnotation(list, PostCssBundle.message("annotator.nested.selector.list.doesnt.have.nest.at.rule.error"));
+      Annotation annotation =
+        holder.createErrorAnnotation(list, PostCssBundle.message("annotator.nested.selector.list.doesnt.have.nest.at.rule.error"));
+      annotation.registerFix(new AddAtRuleNestToSelectorQuickFix(list));
     }
   }
 
@@ -63,15 +72,19 @@ public class PostCssNestingErrorsAnnotator implements Annotator {
     CssSimpleSelector[] directNests =
       Arrays.stream(selector.getSimpleSelectors()).filter(PostCssPsiUtil::isAmpersand).toArray(CssSimpleSelector[]::new);
     if (directNests != null) {
-      Arrays.stream(directNests).forEach(d ->
-                                           holder.createErrorAnnotation(d, PostCssBundle
-                                             .message("annotator.normal.selector.contains.direct.nesting.selector")));
+      for (CssSimpleSelector directNest : directNests) {
+        Annotation annotation = holder.createErrorAnnotation(directNest, PostCssBundle
+          .message("annotator.normal.selector.contains.direct.nesting.selector"));
+        annotation.registerFix(new DeleteAmpersandQuickFix(directNest));
+      }
     }
     CssSimpleSelector[] nests = Arrays.stream(selector.getSimpleSelectors()).filter(PostCssPsiUtil::isNest).toArray(CssSimpleSelector[]::new);
     if (nests != null) {
-      Arrays.stream(nests).forEach(d ->
-                                     holder.createErrorAnnotation(d, PostCssBundle
-                                       .message("annotator.normal.selector.contains.nest")));
+      for (CssSimpleSelector nest : nests) {
+        Annotation annotation = holder.createErrorAnnotation(nest, PostCssBundle
+          .message("annotator.normal.selector.contains.nest"));
+        annotation.registerFix(new DeleteAtRuleNestQuickFix(nest));
+      }
     }
   }
 }
