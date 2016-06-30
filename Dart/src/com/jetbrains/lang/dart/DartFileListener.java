@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
@@ -88,10 +89,16 @@ public class DartFileListener extends VirtualFileAdapter {
     if (!DotPackagesFileUtil.DOT_PACKAGES.equals(file.getName())) return;
     if (LocalFileSystem.getInstance() != file.getFileSystem()) return;
     final VirtualFile parent = file.getParent();
-    if (parent == null || parent.findChild(PUBSPEC_YAML) == null) return;
+    final VirtualFile pubspec = parent == null ? null : parent.findChild(PUBSPEC_YAML);
 
+    if (pubspec != null) {
+      scheduleDartPackageRootsUpdate(project);
 
-    scheduleDartPackageRootsUpdate(project);
+      final Module module = ModuleUtilCore.findModuleForFile(pubspec, project);
+      if (module != null) {
+        DartProjectComponent.excludeBuildAndPackagesFolders(module, pubspec);
+      }
+    }
   }
 
   /**
