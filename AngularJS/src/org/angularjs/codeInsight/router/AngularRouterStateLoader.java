@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.Processor;
@@ -19,6 +20,7 @@ import java.util.*;
 public class AngularRouterStateLoader {
   public static final String STATE_PROVIDER = "$stateProvider";
   @NotNull private final Project myProject;
+  private String myStateName;
   private final static Set<String> STATE_FIELDS = new HashSet<>();
   private final static Set<String> ARRAY_ITERATE_METHODS = new HashSet<>();
   static {
@@ -28,6 +30,11 @@ public class AngularRouterStateLoader {
 
   public AngularRouterStateLoader(final @NotNull Project project) {
     myProject = project;
+  }
+
+  public AngularRouterStateLoader setStateName(String stateName) {
+    myStateName = stateName;
+    return this;
   }
 
   public List<JSObjectLiteralExpression> loadFreelyDefinedStates() {
@@ -41,9 +48,9 @@ public class AngularRouterStateLoader {
         if (callExpression != null) {
           findPossibleReferences(callExpression, object -> {
             final JSProperty name = object.findProperty("name");
-            if (name != null) {
+            if (name != null && name.getValue() instanceof JSLiteralExpression && ((JSLiteralExpression)name.getValue()).isQuotedLiteral()) {
               for (String field : STATE_FIELDS) {
-                if (object.findProperty(field) != null) {
+                if (object.findProperty(field) != null && (myStateName == null || myStateName.endsWith(StringUtil.unquoteString(name.getValue().getText())))) {
                   states.add(object);
                   return true;
                 }
@@ -51,6 +58,7 @@ public class AngularRouterStateLoader {
             }
             return false;
           });
+          if (myStateName != null && !states.isEmpty()) return states;
         }
       }
     }
