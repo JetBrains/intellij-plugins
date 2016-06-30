@@ -1,7 +1,7 @@
 main() {
   var arr = new Foo();
   for (i in [0, 1, 2, 3]) {
-    itar<caret>
+    for<caret>
   }
 }
 

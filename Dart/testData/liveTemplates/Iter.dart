@@ -1,6 +1,6 @@
 main() {
   var arr = new Foo();
-  iter<caret>
+  forin<caret>
 }
 
 class Foo {
