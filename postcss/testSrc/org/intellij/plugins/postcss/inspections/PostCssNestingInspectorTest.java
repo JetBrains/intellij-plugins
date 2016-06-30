@@ -4,8 +4,15 @@ import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/inspections/annotator/")
-public class PostCssNestingErrorsAnnotatorTest extends PostCssFixtureTestCase {
+@TestDataPath("$CONTENT_ROOT/testData/inspections/nesting/")
+public class PostCssNestingInspectorTest extends PostCssFixtureTestCase {
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    myFixture.enableInspections(PostCssNestingInspection.class);
+  }
+
   public void testNormalRulesetWithNestingSelectors() {
     doTest();
   }
@@ -38,6 +45,6 @@ public class PostCssNestingErrorsAnnotatorTest extends PostCssFixtureTestCase {
   @NotNull
   @Override
   protected String getTestDataSubdir() {
-    return "annotator";
+    return "nesting";
   }
 }

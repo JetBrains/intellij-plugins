@@ -2,6 +2,7 @@ package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.css.util.CssPsiUtil;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.*;
 import com.intellij.psi.css.descriptor.CssContextType;
 import com.intellij.psi.css.impl.AtRulePresentation;
@@ -13,7 +14,7 @@ import org.intellij.plugins.postcss.psi.PostCssNest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest {
+final public class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest {
   PostCssNestImpl() {
     super(CssContextType.ANY, PostCssElementTypes.POST_CSS_NEST);
   }
@@ -21,7 +22,7 @@ final class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest {
   @NotNull
   @Override
   public ItemPresentation getPresentation() {
-    return new AtRulePresentation(this, ("nest " + CssPsiUtil.getTokenText(getSelectorList())).trim());
+    return new AtRulePresentation(this, getPresentableText());
   }
 
   @NotNull
@@ -45,6 +46,12 @@ final class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest {
 
   @NotNull
   @Override
+  public String getPresentableText() {
+    return ("nest " + CssPsiUtil.getTokenText(getSelectorList())).trim();
+  }
+
+  @NotNull
+  @Override
   public CssRuleset[] getNestedRulesets() {
     final CssRuleset[] rulesets = PsiTreeUtil.getChildrenOfType(getBlock(), CssRuleset.class);
     return ObjectUtils.notNull(rulesets, CssRuleset.EMPTY_ARRAY);
@@ -64,4 +71,13 @@ final class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest {
     return ObjectUtils.notNull(nests, PostCssNest.EMPTY_ARRAY);
   }
 
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof PostCssElementVisitor) {
+      ((PostCssElementVisitor)visitor).visitPostCssNest(this);
+    }
+    else {
+      visitor.visitElement(this);
+    }
+  }
 }
