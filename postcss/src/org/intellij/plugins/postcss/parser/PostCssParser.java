@@ -40,19 +40,15 @@ public class PostCssParser extends CssParser2 {
     if (getTokenType() != PostCssTokenTypes.AMPERSAND) {
       return false;
     }
-    PsiBuilder.Marker directNest = createCompositeElement();
     addSingleToken();
-    directNest.done(PostCssElementTypes.POST_CSS_DIRECT_NEST);
     return true;
   }
 
   private boolean parseAtRuleNest() {
-    if (getTokenType() != PostCssElementTypes.POST_CSS_NEST_SYM) {
+    if (getTokenType() != PostCssTokenTypes.POST_CSS_NEST_SYM) {
       return false;
     }
-    PsiBuilder.Marker atRuleNest = createCompositeElement();
     addSingleToken();
-    atRuleNest.done(PostCssElementTypes.POST_CSS_NEST_SYM);
     return true;
   }
 
@@ -81,7 +77,7 @@ public class PostCssParser extends CssParser2 {
   }
 
   private boolean parseAtRuleNesting() {
-    if (getTokenType() != PostCssElementTypes.POST_CSS_NEST_SYM) {
+    if (getTokenType() != PostCssTokenTypes.POST_CSS_NEST_SYM) {
       return false;
     }
     PsiBuilder.Marker nest = createCompositeElement();
@@ -104,7 +100,7 @@ public class PostCssParser extends CssParser2 {
 
   private boolean isNestingSelector() {
     return getTokenType() == PostCssTokenTypes.AMPERSAND
-           || getTokenType() == PostCssElementTypes.POST_CSS_NEST_SYM;
+           || getTokenType() == PostCssTokenTypes.POST_CSS_NEST_SYM;
   }
 
   private boolean tryToParseRuleset() {
@@ -210,7 +206,7 @@ public class PostCssParser extends CssParser2 {
     }
     // @nest could be selector if this is top level ruleset
     // it will be annotated as error by inspector or annotator
-    else if (getTokenType() == PostCssElementTypes.POST_CSS_NEST_SYM) {
+    else if (getTokenType() == PostCssTokenTypes.POST_CSS_NEST_SYM) {
       PsiBuilder.Marker simpleSelector = createCompositeElement();
       parseAtRuleNest();
       simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);

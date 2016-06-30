@@ -7,7 +7,6 @@ import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.openapi.util.text.StringUtil;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
-import org.intellij.plugins.postcss.PostCssElementTypes;
 
 
 /**
@@ -1370,7 +1369,7 @@ public class _PostCssLexer implements FlexLexer {
             }
           case 122: break;
           case 53: 
-            { return PostCssElementTypes.POST_CSS_NEST_SYM;
+            { return PostCssTokenTypes.POST_CSS_NEST_SYM;
             }
           case 123: break;
           case 54: 

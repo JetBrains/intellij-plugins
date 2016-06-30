@@ -5,8 +5,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 public class PostCssPsiUtil {
   private PostCssPsiUtil() {
@@ -26,6 +28,12 @@ public class PostCssPsiUtil {
     if (ruleset == null) return false;
     CssRuleset parentRuleset = PsiTreeUtil.getParentOfType(ruleset, CssRuleset.class);
     return parentRuleset != null;
+  }
+
+  @Nullable
+  public static CssRuleset getParentRuleset(CssElement element) {
+    if (element == null) return null;
+    return PsiTreeUtil.getParentOfType(element, CssRuleset.class);
   }
 
   public static boolean containsAmpersand(CssSelector selector) {
@@ -48,11 +56,11 @@ public class PostCssPsiUtil {
 
   public static boolean isAmpersand(CssSimpleSelector selector) {
     PsiElement firstChild = selector.getFirstChild();
-    return firstChild != null && firstChild instanceof PostCssDirectNest;
+    return firstChild != null && firstChild.getText().equals("&");
   }
 
   public static boolean isNestSym(CssSimpleSelector selector) {
     PsiElement firstChild = selector.getFirstChild();
-    return firstChild != null && firstChild instanceof PostCssNestSym;
+    return firstChild != null && firstChild.getText().toLowerCase(Locale.US).equals("@nest");
   }
 }

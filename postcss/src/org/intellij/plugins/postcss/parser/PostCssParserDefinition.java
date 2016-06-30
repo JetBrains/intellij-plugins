@@ -13,6 +13,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssLexer;
+import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.intellij.plugins.postcss.psi.impl.PostCssFileImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,7 @@ public class PostCssParserDefinition extends CSSParserDefinition {
   @NotNull
   @Override
   public TokenSet getCommentTokens() {
-    return PostCssElementTypes.POST_CSS_COMMENTS;
+    return PostCssTokenTypes.POST_CSS_COMMENTS;
   }
 
   @NotNull

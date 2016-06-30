@@ -2,9 +2,9 @@ package org.intellij.plugins.postcss.psi;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.css.impl.CssSimpleSelectorImpl;
 import org.intellij.plugins.postcss.PostCssFileType;
-import org.intellij.plugins.postcss.psi.impl.PostCssDirectNestImpl;
-import org.intellij.plugins.postcss.psi.impl.PostCssNestSymImpl;
+import org.intellij.plugins.postcss.psi.impl.PostCssNestImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,13 +12,13 @@ import static com.intellij.psi.util.PsiTreeUtil.findChildOfType;
 
 public class PostCssElementGenerator {
   @Nullable
-  public static PostCssDirectNestImpl createAmpersand(@NotNull final Project project) {
-    return findChildOfType(createFileFromText(project, "& h1 {\n foo: bar;\n}"), PostCssDirectNestImpl.class);
+  public static CssSimpleSelectorImpl createAmpersand(@NotNull final Project project) {
+    return findChildOfType(createFileFromText(project, "& {\n foo: bar;\n}"), CssSimpleSelectorImpl.class);
   }
 
   @Nullable
-  public static PostCssNestSymImpl createAtRuleNest(@NotNull final Project project) {
-    return findChildOfType(createFileFromText(project, "@nest & h1 {\n foo: bar;\n}"), PostCssNestSymImpl.class);
+  public static PostCssNestImpl createAtRuleNest(@NotNull final Project project, @NotNull final String text) {
+    return findChildOfType(createFileFromText(project, "h1 {\n" + text + "\n}"), PostCssNestImpl.class);
   }
 
   @NotNull

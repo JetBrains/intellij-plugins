@@ -5,7 +5,6 @@ import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.openapi.util.text.StringUtil;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
-import org.intellij.plugins.postcss.PostCssElementTypes;
 
 %%
 
@@ -149,7 +148,7 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <YYINITIAL> @{S}{C}{O}{P}{E} { return CssElementTypes.CSS_SCOPE_SYM; }
 <YYINITIAL> @{C}{O}{U}{N}{T}{E}{R}-{S}{T}{Y}{L}{E} { return CssElementTypes.CSS_COUNTER_STYLE_SYM; }
 // PostCSS specific
-<YYINITIAL> @{N}{E}{S}{T} { return PostCssElementTypes.POST_CSS_NEST_SYM; }
+<YYINITIAL> @{N}{E}{S}{T} { return PostCssTokenTypes.POST_CSS_NEST_SYM; }
 
 <YYINITIAL> "~=" { return CssElementTypes.CSS_INCLUDES; }
 <YYINITIAL> "|=" { return CssElementTypes.CSS_DASHMATCH; }

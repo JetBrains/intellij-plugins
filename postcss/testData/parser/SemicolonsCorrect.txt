@@ -25,8 +25,7 @@ PostCSS File:SemicolonsCorrect.pcss
             PsiElement(CSS_SELECTOR_LIST)
               PsiElement(CSS_SELECTOR)
                 PsiElement(CSS_SIMPLE_SELECTOR)
-                  PsiElement(POST_CSS_DIRECT_NEST)
-                    XmlToken:POST_CSS_AMPERSAND('&')
+                  XmlToken:POST_CSS_AMPERSAND('&')
                   PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                     <empty list>
                 PsiWhiteSpace(' ')
@@ -53,8 +52,7 @@ PostCSS File:SemicolonsCorrect.pcss
             PsiElement(CSS_SELECTOR_LIST)
               PsiElement(CSS_SELECTOR)
                 PsiElement(CSS_SIMPLE_SELECTOR)
-                  PsiElement(POST_CSS_DIRECT_NEST)
-                    XmlToken:POST_CSS_AMPERSAND('&')
+                  XmlToken:POST_CSS_AMPERSAND('&')
                   PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                     <empty list>
                 PsiWhiteSpace(' ')

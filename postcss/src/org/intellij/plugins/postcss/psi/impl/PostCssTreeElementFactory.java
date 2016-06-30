@@ -12,12 +12,6 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
 
   @NotNull
   public CompositeElement createComposite(final IElementType type) {
-    if (type == PostCssElementTypes.POST_CSS_DIRECT_NEST) {
-      return new PostCssDirectNestImpl();
-    }
-    if (type == PostCssElementTypes.POST_CSS_NEST_SYM) {
-      return new PostCssNestSymImpl();
-    }
     if (type == PostCssElementTypes.POST_CSS_NEST) {
       return new PostCssNestImpl();
     }

@@ -77,7 +77,7 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     mapping.put(CssElementTypes.CSS_SEMICOLON, SEMICOLON);
     mapping.put(PostCssTokenTypes.AMPERSAND, IDENTIFIER);
     mapping.put(CssElementTypes.CSS_KEYWORD, KEYWORD);
-    mapping.put(PostCssElementTypes.POST_CSS_NEST_SYM, KEYWORD);
+    mapping.put(PostCssTokenTypes.POST_CSS_NEST_SYM, KEYWORD);
     mapping.put(CssElementTypes.CSS_BAD_CHARACTER, BAD_CHARACTER);
   }
 
