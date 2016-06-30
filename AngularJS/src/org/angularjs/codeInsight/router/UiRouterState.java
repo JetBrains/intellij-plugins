@@ -26,6 +26,7 @@ public class UiRouterState {
   private final VirtualFile myFile;
   @Nullable private List<SmartPsiElementPointer<PsiElement>> myDuplicateDefinitions;
   private VirtualFile myTemplateFile;
+  private boolean myGeneric;
 
   public UiRouterState(@NotNull String name, @NotNull VirtualFile file) {
     myName = name;
@@ -116,6 +117,7 @@ public class UiRouterState {
     UiRouterState state = (UiRouterState)o;
 
     if (!myName.equals(state.myName)) return false;
+    if (myPointer != null ? !myPointer.equals(state.myPointer) : state.myPointer != null) return false;
     if (!myFile.equals(state.myFile)) return false;
 
     return true;
@@ -124,6 +126,7 @@ public class UiRouterState {
   @Override
   public int hashCode() {
     int result = myName.hashCode();
+    result = 31 * result + (myPointer != null ? myPointer.hashCode() : 0);
     result = 31 * result + myFile.hashCode();
     return result;
   }
@@ -134,5 +137,13 @@ public class UiRouterState {
 
   public VirtualFile getTemplateFile() {
     return myTemplateFile;
+  }
+
+  public boolean isGeneric() {
+    return myGeneric;
+  }
+
+  public void setGeneric(boolean generic) {
+    myGeneric = generic;
   }
 }
