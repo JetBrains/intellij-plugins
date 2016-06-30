@@ -1,6 +1,6 @@
 main() {
   var arr = new Foo();
-  for (o in arr) {
+  for (var o in arr) {
 
   }
 }
