@@ -60,7 +60,9 @@ public class AngularUiRouterDiagramBuilder {
     final Collection<String> stateIds = AngularIndexUtil.getAllKeys(AngularUiRouterStatesIndex.KEY, myProject);
     for (String id : stateIds) {
       if (id.startsWith(".")) continue;
-      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, element -> {
+      final CommonProcessors.CollectProcessor<JSImplicitElement> processor = new CommonProcessors.CollectProcessor<>();
+      AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, processor);
+      for (JSImplicitElement element : processor.getResults()) {
         final UiRouterState state = new UiRouterState(id, element.getContainingFile().getVirtualFile());
         if (!element.getContainingFile().getLanguage().isKindOf(JavascriptLanguage.INSTANCE)
             && PsiTreeUtil.getParentOfType(element, JSEmbeddedContent.class) != null) {
@@ -91,8 +93,7 @@ public class AngularUiRouterDiagramBuilder {
           }
         }
         myStates.add(state);
-        return true;
-      });
+      }
     }
   }
 
