@@ -13,6 +13,7 @@ public interface PostCssElementTypes {
   IFileElementType POST_CSS_FILE = new PostCssFileElementType();
 
   IElementType POST_CSS_NEST_SYM = new PostCssElementType("POST_CSS_NEST_SYM");
+  IElementType POST_CSS_NEST = new PostCssElementType("POST_CSS_NEST");
   IElementType POST_CSS_DIRECT_NEST = new PostCssElementType("POST_CSS_DIRECT_NEST");
 
   CssStyleSheetElementType POST_CSS_STYLESHEET = new PostCssStyleSheetElementType();

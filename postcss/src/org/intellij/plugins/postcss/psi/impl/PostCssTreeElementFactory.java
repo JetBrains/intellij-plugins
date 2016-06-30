@@ -18,6 +18,9 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
     if (type == PostCssElementTypes.POST_CSS_NEST_SYM) {
       return new PostCssNestSymImpl();
     }
+    if (type == PostCssElementTypes.POST_CSS_NEST) {
+      return new PostCssNestImpl();
+    }
     return super.createComposite(type);
   }
 

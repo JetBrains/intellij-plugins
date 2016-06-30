@@ -51,6 +51,10 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testTopLevelRulesetNesting() {
+    doTest();
+  }
+
   private void doTest() {
     super.doTest(true);
   }
