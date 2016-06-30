@@ -57,6 +57,7 @@ public class PostCssColorsPage implements ColorSettingsPage {
     new AttributesDescriptor(CssBundle.message("css.identifier"), PostCssSyntaxHighlighter.IDENTIFIER),
     new AttributesDescriptor(CssBundle.message("css.id.selector"), PostCssSyntaxHighlighter.ID_SELECTOR),
     new AttributesDescriptor(CssBundle.message("css.important"), PostCssSyntaxHighlighter.IMPORTANT),
+    new AttributesDescriptor(CssBundle.message("css.keyword"), PostCssSyntaxHighlighter.KEYWORD),
     new AttributesDescriptor(CssBundle.message("css.number"), PostCssSyntaxHighlighter.NUMBER),
     new AttributesDescriptor(CssBundle.message("css.parenthesis"), PostCssSyntaxHighlighter.PARENTHESES),
     new AttributesDescriptor(CssBundle.message("css.property.name"), PostCssSyntaxHighlighter.PROPERTY_NAME),
@@ -67,7 +68,6 @@ public class PostCssColorsPage implements ColorSettingsPage {
     new AttributesDescriptor(CssBundle.message("css.tag.name"), PostCssSyntaxHighlighter.TAG_NAME),
     new AttributesDescriptor(CssBundle.message("css.unicode.range"), PostCssSyntaxHighlighter.UNICODE_RANGE),
     new AttributesDescriptor(CssBundle.message("css.url"), PostCssSyntaxHighlighter.URL),
-    new AttributesDescriptor(PostCssBundle.message("color.settings.postcss.nesting"), PostCssSyntaxHighlighter.NESTING),
   };
 
   private static final ColorDescriptor[] COLORS = new ColorDescriptor[0];

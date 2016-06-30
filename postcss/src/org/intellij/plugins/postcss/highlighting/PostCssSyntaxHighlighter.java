@@ -1,8 +1,7 @@
 package org.intellij.plugins.postcss.highlighting;
 
-import com.intellij.ide.highlighter.HtmlFileHighlighter;
-import com.intellij.ide.highlighter.XmlFileHighlighter;
 import com.intellij.lexer.Lexer;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.CssHighlighter;
@@ -11,6 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -21,6 +21,10 @@ import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAtt
 public class PostCssSyntaxHighlighter extends CssHighlighter {
   private static final Map<IElementType, TextAttributesKey> mapping;
 
+  @NonNls
+  private static final String KEYWORD_ID = "POST_CSS_KEYWORD";
+
+  public static final TextAttributesKey KEYWORD = createTextAttributesKey(KEYWORD_ID, DefaultLanguageHighlighterColors.KEYWORD);
   public static final TextAttributesKey IDENTIFIER = createTextAttributesKey("POST_CSS_IDENT", CssHighlighter.CSS_IDENT);
   public static final TextAttributesKey STRING = createTextAttributesKey("POST_CSS_STRING", CssHighlighter.CSS_STRING);
   public static final TextAttributesKey IMPORTANT = createTextAttributesKey("POST_CSS_IMPORTANT", CssHighlighter.CSS_IMPORTANT);
@@ -42,7 +46,6 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   public static final TextAttributesKey SEMICOLON = createTextAttributesKey("POST_CSS_SEMICOLON", CssHighlighter.CSS_SEMICOLON);
   public static final TextAttributesKey COLON = createTextAttributesKey("POST_CSS_COLON", CssHighlighter.CSS_COLON);
   public static final TextAttributesKey COMMA = createTextAttributesKey("POST_CSS_COMMA", CssHighlighter.CSS_COMMA);
-  public static final TextAttributesKey NESTING = createTextAttributesKey("POST_CSS_NESTING", CssHighlighter.CSS_IDENT);
   public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("POST_CSS_BAD_CHARACTER", CssHighlighter.CSS_BAD_CHARACTER);
 
   static {
@@ -72,8 +75,9 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     mapping.put(CssElementTypes.CSS_COLON, COLON);
     mapping.put(CssElementTypes.CSS_COMMA, COMMA);
     mapping.put(CssElementTypes.CSS_SEMICOLON, SEMICOLON);
-    mapping.put(PostCssTokenTypes.AMPERSAND, NESTING);
-    mapping.put(PostCssElementTypes.POST_CSS_NEST_SYM, NESTING);
+    mapping.put(PostCssTokenTypes.AMPERSAND, IDENTIFIER);
+    mapping.put(CssElementTypes.CSS_KEYWORD, KEYWORD);
+    mapping.put(PostCssElementTypes.POST_CSS_NEST_SYM, KEYWORD);
     mapping.put(CssElementTypes.CSS_BAD_CHARACTER, BAD_CHARACTER);
   }
 
