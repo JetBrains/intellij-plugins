@@ -50,8 +50,14 @@ public class AngularUiRouterDiagramBuilder {
   }
 
   public void build() {
-    final Collection<String> stateIds = AngularIndexUtil.getAllKeys(AngularUiRouterStatesIndex.KEY, myProject);
+    addStatesFromIndex();
+    addGenericStates();
+    getRootPages();
+    groupStates();
+  }
 
+  private void addStatesFromIndex() {
+    final Collection<String> stateIds = AngularIndexUtil.getAllKeys(AngularUiRouterStatesIndex.KEY, myProject);
     for (String id : stateIds) {
       if (id.startsWith(".")) continue;
       AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, element -> {
@@ -61,14 +67,7 @@ public class AngularUiRouterDiagramBuilder {
           createRootTemplatesForEmbedded(element.getContainingFile());
         }
 
-        JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
-        if (call == null) {
-          final PsiElement elementAt =
-            element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
-          if (elementAt != null) {
-            call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
-          }
-        }
+        final JSCallExpression call = findWrappingCallExpression(element);
         if (call != null) {
           final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
           if (methodExpression != null &&
@@ -95,8 +94,35 @@ public class AngularUiRouterDiagramBuilder {
         return true;
       });
     }
-    getRootPages();
-    groupStates();
+  }
+
+  private void addGenericStates() {
+    final List<JSObjectLiteralExpression> freeStates = new AngularRouterStateLoader(myProject).loadFreelyDefinedStates();
+    for (JSObjectLiteralExpression state : freeStates) {
+      final JSProperty name = state.findProperty("name");
+      if (name != null && name.getValue() instanceof JSLiteralExpression && ((JSLiteralExpression)name.getValue()).isQuotedLiteral()) {
+        final UiRouterState uiState = new UiRouterState(StringUtil.unquoteString(name.getValue().getText()),
+                                                        name.getContainingFile().getVirtualFile());
+        uiState.setGeneric(true);
+        uiState.setPointer(mySmartPointerManager.createSmartPsiElementPointer(name));
+        fillStateParameters(uiState, state);
+        if (!myStates.contains(uiState)) myStates.add(uiState);
+      }
+    }
+  }
+
+  @Nullable
+  public static JSCallExpression findWrappingCallExpression(JSImplicitElement element) {
+    if (element.getNavigationElement() instanceof JSCallExpression) return (JSCallExpression)element.getNavigationElement();
+    JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
+    if (call == null) {
+      final PsiElement elementAt =
+        element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
+      if (elementAt != null) {
+        call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
+      }
+    }
+    return call;
   }
 
   private void groupStates() {
@@ -117,9 +143,10 @@ public class AngularUiRouterDiagramBuilder {
 
     myDefiningFiles2States = new HashMap<VirtualFile, Map<String, UiRouterState>>();
     for (UiRouterState state : myStates) {
-      if (!statesUsedInRoots.contains(state)) {
-        putState2map(state.getFile(), state, myDefiningFiles2States);
-      }
+      if (statesUsedInRoots.contains(state)) continue;
+      if (state.isGeneric()) {
+        putState2map(myRootTemplates.keySet().iterator().next(), state, myRootTemplates2States);
+      } else putState2map(state.getFile(), state, myDefiningFiles2States);
     }
   }
 
@@ -166,10 +193,10 @@ public class AngularUiRouterDiagramBuilder {
       // not clear how then it can be part of application
       if (relativeUrl == null) continue;
       final Template template = readTemplateFromFile(myProject, relativeUrl, file);
-      //todo determine all files states from where relates to this template
+
       final String mainModule = entry.getValue().getName();
       final Set<VirtualFile> moduleFiles = getModuleFiles(file, mainModule);
-      // todo additionally pointer could point to ui-view place in file
+
       final RootTemplate rootTemplate = new RootTemplate(mySmartPointerManager.createSmartPsiElementPointer(file),
                                                          relativeUrl, template, moduleFiles);
       myRootTemplates.put(file.getVirtualFile(), rootTemplate);
@@ -236,7 +263,6 @@ public class AngularUiRouterDiagramBuilder {
     }
     filesQueue.add(file.getVirtualFile());
 
-    // todo would be nice to use intermediate results, but the objects do not coincide totally
     while (!modulesQueue.isEmpty()) {
       final String moduleName = modulesQueue.removeNext();
       moduleDependenciesStep(moduleName, filesQueue, modulesQueue);
@@ -246,7 +272,7 @@ public class AngularUiRouterDiagramBuilder {
       filesDependenciesStep(moduleFile, filesQueue);
     }
     Set<VirtualFile> processed = filesQueue.getProcessed();
-    // todo more effective filtering for being in the project, not libs. but?
+
     final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(myProject);
     processed = new HashSet<VirtualFile>(ContainerUtil.filter(processed, file1 -> file1.getFileType() instanceof LanguageFileType && ((LanguageFileType)file1
       .getFileType()).getLanguage().isKindOf(
