@@ -356,9 +356,14 @@ public class AngularUiRouterDiagramBuilder {
       final JSProperty urlProperty = object.findProperty("templateUrl");
       state.setTemplateFile(parseTemplate(templateUrl, urlProperty));
     }
+    final JSProperty template = object.findProperty("template");
     if (templateUrl == null && object.findProperty("templateUrl") != null ||
-        object.findProperty("template") != null || object.findProperty("templateProvider") != null) {
+        template != null || object.findProperty("templateProvider") != null) {
       state.setHasTemplateDefined(true);
+    }
+    if (template != null) {
+      final PsiElement templateDefinition = findTemplateDefinitionObject(template);
+      if (templateDefinition != null) state.setTemplatePointer(mySmartPointerManager.createSmartPsiElementPointer(templateDefinition));
     }
     final JSProperty views = object.findProperty("views");
     if (views != null) {
@@ -385,6 +390,19 @@ public class AngularUiRouterDiagramBuilder {
   }
 
   @Nullable
+  private static PsiElement findTemplateDefinitionObject(@NotNull final JSProperty template) {
+    final JSExpression value = template.getValue();
+    if (value instanceof JSLiteralExpression) return value;
+    if (value instanceof JSReferenceExpression) {
+      final PsiElement resolve = ((JSReferenceExpression)value).resolve();
+      if (resolve != null && resolve.isValid() && resolve instanceof JSVariable) {
+        if (((JSVariable)resolve).getInitializer() instanceof JSLiteralExpression) return ((JSVariable)resolve).getInitializer();
+      }
+    }
+    return null;
+  }
+
+  @Nullable
   private VirtualFile parseTemplate(@NotNull final String url, @Nullable JSProperty urlProperty) {
     PsiFile templateFile = null;
     Template template = null;
@@ -406,7 +424,8 @@ public class AngularUiRouterDiagramBuilder {
   }
 
   @NotNull
-  private Template readTemplateFromFile(@NotNull Project project, @NotNull String url, PsiFile templateFile) {
+  static Template readTemplateFromFile(@NotNull Project project, @NotNull String url, PsiElement templateElement) {
+    final PsiFile templateFile = templateElement.getContainingFile();
     final Map<String, SmartPsiElementPointer<PsiElement>> placeholders = new HashMap<>();
     final Set<String> placeholdersSet = new HashSet<>();
     final FileBasedIndex instance = FileBasedIndex.getInstance();
@@ -415,7 +434,7 @@ public class AngularUiRouterDiagramBuilder {
       placeholdersSet.add(view);
       return true;
     }, scope, null);
-    final PsiFile finalTemplateFile = templateFile;
+    final SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(project);
     for (String key : placeholdersSet) {
       instance.processValues(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, key, null,
                              new FileBasedIndex.ValueProcessor<AngularNamedItemDefinition>() {
@@ -424,13 +443,16 @@ public class AngularUiRouterDiagramBuilder {
                                  final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(
                                    JSQualifiedNameImpl.fromQualifiedName(key), null);
                                  final JSOffsetBasedImplicitElement implicitElement =
-                                   new JSOffsetBasedImplicitElement(builder, (int)value.getStartOffset(), finalTemplateFile);
-                                 placeholders.put(key, mySmartPointerManager.createSmartPsiElementPointer(implicitElement));
+                                   new JSOffsetBasedImplicitElement(builder, (int)value.getStartOffset(), templateFile);
+                                 if (templateElement instanceof PsiFile ||
+                                        PsiTreeUtil.isAncestor(templateElement, implicitElement, false)) {
+                                   placeholders.put(key, smartPointerManager.createSmartPsiElementPointer(implicitElement));
+                                 }
                                  return true;
                                }
                              }, scope);
     }
-    final Template template = new Template(url, mySmartPointerManager.createSmartPsiElementPointer(templateFile));
+    final Template template = new Template(url, smartPointerManager.createSmartPsiElementPointer(templateElement));
     template.setViewPlaceholders(placeholders);
     return template;
   }
@@ -448,8 +470,18 @@ public class AngularUiRouterDiagramBuilder {
         templateFile = parseTemplate(templateUrl, urlProperty);
       }
     }
-    return new UiView(name, templateUrl, templateFile,
-                      property.getNameIdentifier() == null ? null : mySmartPointerManager.createSmartPsiElementPointer(property.getNameIdentifier()));
+    final UiView view = new UiView(name, templateUrl, templateFile,
+                                   property.getNameIdentifier() == null
+                                   ? null
+                                   : mySmartPointerManager.createSmartPsiElementPointer(property.getNameIdentifier()));
+    if (expression != null) {
+      final JSProperty template = expression.findProperty("template");
+      if (template != null) {
+        final PsiElement templateDefinition = findTemplateDefinitionObject(template);
+        if (templateDefinition != null) view.setTemplatePointer(mySmartPointerManager.createSmartPsiElementPointer(templateDefinition));
+      }
+    }
+    return view;
   }
 
   @Nullable
