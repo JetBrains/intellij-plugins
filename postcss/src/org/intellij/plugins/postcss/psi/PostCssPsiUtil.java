@@ -4,11 +4,12 @@ import com.intellij.css.util.CssPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlToken;
 import org.intellij.plugins.postcss.PostCssLanguage;
+import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 public class PostCssPsiUtil {
   private PostCssPsiUtil() {
@@ -56,11 +57,19 @@ public class PostCssPsiUtil {
 
   public static boolean isAmpersand(CssSimpleSelector selector) {
     PsiElement firstChild = selector.getFirstChild();
-    return firstChild != null && firstChild.getText().equals("&");
+    if (firstChild instanceof XmlToken) {
+      XmlToken xmlToken = (XmlToken)firstChild;
+      return xmlToken.getTokenType() == PostCssTokenTypes.AMPERSAND;
+    }
+    return false;
   }
 
   public static boolean isNestSym(CssSimpleSelector selector) {
     PsiElement firstChild = selector.getFirstChild();
-    return firstChild != null && firstChild.getText().toLowerCase(Locale.US).equals("@nest");
+    if (firstChild instanceof XmlToken) {
+      XmlToken xmlToken = (XmlToken)firstChild;
+      return xmlToken.getTokenType() == PostCssTokenTypes.POST_CSS_NEST_SYM;
+    }
+    return false;
   }
 }
