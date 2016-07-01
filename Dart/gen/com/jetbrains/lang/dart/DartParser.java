@@ -4270,13 +4270,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // block // Guard to break tie with map literal.  todo why ';'?
-  //                                | functionDeclarationWithBody ';'?
-  //                                | forStatement ';'?
-  //                                | whileStatement ';'?
-  //                                | doWhileStatement ';'?
-  //                                | switchStatement ';'?
-  //                                | ifStatement ';'?
+  // block // Guard to break tie with map literal.
+  //                                | functionDeclarationWithBody
+  //                                | forStatement
+  //                                | whileStatement
+  //                                | doWhileStatement
+  //                                | switchStatement
+  //                                | ifStatement
   //                                | rethrowStatement
   //                                | tryStatement
   //                                | breakStatement
@@ -4292,12 +4292,12 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = block(b, l + 1);
-    if (!r) r = nonLabelledStatement_1(b, l + 1);
-    if (!r) r = nonLabelledStatement_2(b, l + 1);
-    if (!r) r = nonLabelledStatement_3(b, l + 1);
-    if (!r) r = nonLabelledStatement_4(b, l + 1);
-    if (!r) r = nonLabelledStatement_5(b, l + 1);
-    if (!r) r = nonLabelledStatement_6(b, l + 1);
+    if (!r) r = functionDeclarationWithBody(b, l + 1);
+    if (!r) r = forStatement(b, l + 1);
+    if (!r) r = whileStatement(b, l + 1);
+    if (!r) r = doWhileStatement(b, l + 1);
+    if (!r) r = switchStatement(b, l + 1);
+    if (!r) r = ifStatement(b, l + 1);
     if (!r) r = rethrowStatement(b, l + 1);
     if (!r) r = tryStatement(b, l + 1);
     if (!r) r = breakStatement(b, l + 1);
@@ -4310,114 +4310,6 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, SEMICOLON);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  // functionDeclarationWithBody ';'?
-  private static boolean nonLabelledStatement_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = functionDeclarationWithBody(b, l + 1);
-    r = r && nonLabelledStatement_1_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ';'?
-  private static boolean nonLabelledStatement_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_1_1")) return false;
-    consumeToken(b, SEMICOLON);
-    return true;
-  }
-
-  // forStatement ';'?
-  private static boolean nonLabelledStatement_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = forStatement(b, l + 1);
-    r = r && nonLabelledStatement_2_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ';'?
-  private static boolean nonLabelledStatement_2_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_2_1")) return false;
-    consumeToken(b, SEMICOLON);
-    return true;
-  }
-
-  // whileStatement ';'?
-  private static boolean nonLabelledStatement_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_3")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = whileStatement(b, l + 1);
-    r = r && nonLabelledStatement_3_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ';'?
-  private static boolean nonLabelledStatement_3_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_3_1")) return false;
-    consumeToken(b, SEMICOLON);
-    return true;
-  }
-
-  // doWhileStatement ';'?
-  private static boolean nonLabelledStatement_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_4")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = doWhileStatement(b, l + 1);
-    r = r && nonLabelledStatement_4_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ';'?
-  private static boolean nonLabelledStatement_4_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_4_1")) return false;
-    consumeToken(b, SEMICOLON);
-    return true;
-  }
-
-  // switchStatement ';'?
-  private static boolean nonLabelledStatement_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_5")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = switchStatement(b, l + 1);
-    r = r && nonLabelledStatement_5_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ';'?
-  private static boolean nonLabelledStatement_5_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_5_1")) return false;
-    consumeToken(b, SEMICOLON);
-    return true;
-  }
-
-  // ifStatement ';'?
-  private static boolean nonLabelledStatement_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_6")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = ifStatement(b, l + 1);
-    r = r && nonLabelledStatement_6_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ';'?
-  private static boolean nonLabelledStatement_6_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonLabelledStatement_6_1")) return false;
-    consumeToken(b, SEMICOLON);
-    return true;
   }
 
   /* ********************************************************** */

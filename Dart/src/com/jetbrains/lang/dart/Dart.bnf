@@ -386,13 +386,13 @@ block ::= '{' statements '}' {pin=1}
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private statement ::= label* nonLabelledStatement
 
-private nonLabelledStatement ::= block // Guard to break tie with map literal.  todo why ';'?
-                               | functionDeclarationWithBody ';'?
-                               | forStatement ';'?
-                               | whileStatement ';'?
-                               | doWhileStatement ';'?
-                               | switchStatement ';'?
-                               | ifStatement ';'?
+private nonLabelledStatement ::= block // Guard to break tie with map literal.
+                               | functionDeclarationWithBody
+                               | forStatement
+                               | whileStatement
+                               | doWhileStatement
+                               | switchStatement
+                               | ifStatement
                                | rethrowStatement
                                | tryStatement
                                | breakStatement
