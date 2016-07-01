@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2016 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Helper methods for {@link ActionImpl}.
@@ -61,7 +62,12 @@ final class ActionUtil {
       return Comparing.equal(strippedCheckPath, actionPath);
     }
 
-    return Pattern.matches(StringUtil.replace(actionPath, "*", "[^/]*"), strippedCheckPath);
+    try {
+      return Pattern.matches(StringUtil.replace(actionPath, "*", "[^/]*"), strippedCheckPath);
+    }
+    catch (PatternSyntaxException e) {
+      return false;
+    }
   }
 
   /**
