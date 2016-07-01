@@ -287,6 +287,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       @NotNull
       @Override
       public EdgeRealizer getEdgeRealizer(DiagramEdge edge) {
+        if (!(edge instanceof AngularUiRouterEdge)) return super.getEdgeRealizer(edge);
         if (myEdgeRealizers.containsKey(edge)) return myEdgeRealizers.get(edge);
         UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
         final Edge graphEdge = builder.getEdge(edge);
@@ -313,6 +314,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
       @Override
       public EdgeLabel[] getEdgeLabels(DiagramEdge umlEdge, String label) {
+        if (!(umlEdge instanceof AngularUiRouterEdge)) return super.getEdgeLabels(umlEdge, label);
         AngularUiRouterEdge angularEdge = (AngularUiRouterEdge)umlEdge;
         if ( !isShowEdgeLabels() || umlEdge == null || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
           return EMPTY_LABELS;
