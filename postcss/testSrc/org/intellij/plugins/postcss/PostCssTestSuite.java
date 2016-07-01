@@ -4,7 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
-import org.intellij.plugins.postcss.inspections.PostCssNestingInspectorTest;
+import org.intellij.plugins.postcss.inspections.PostCssNestingInspectionTest;
 import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
 import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerTest;
 import org.intellij.plugins.postcss.parser.PostCssParsingTest;
@@ -40,7 +40,7 @@ public class PostCssTestSuite extends TestCase {
   public static class Inspections extends TestCase {
     public static Test suite() {
       TestSuite suite = new TestSuite("Inspections PostCss");
-      suite.addTestSuite(PostCssNestingInspectorTest.class);
+      suite.addTestSuite(PostCssNestingInspectionTest.class);
       return suite;
     }
   }

@@ -42,7 +42,7 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
     };
   }
 
-  public static void annotateNestedSelectorsWithoutAmpersand(CssSelector selector, ProblemsHolder holder) {
+  private static void annotateNestedSelectorsWithoutAmpersand(CssSelector selector, ProblemsHolder holder) {
     if (PostCssPsiUtil.isInsideNest(selector)) {
       if (!PostCssPsiUtil.containsAmpersand(selector)) {
         holder.registerProblem(selector, PostCssBundle.message("annotator.nested.selector.doesnt.have.ampersand.error"));
@@ -53,7 +53,7 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
     }
   }
 
-  public static void annotateTopLevelSelectorsWithNestingSigns(CssSelector selector, ProblemsHolder holder) {
+  private static void annotateTopLevelSelectorsWithNestingSigns(CssSelector selector, ProblemsHolder holder) {
     CssSimpleSelector[] directNests =
       Arrays.stream(selector.getSimpleSelectors()).filter(PostCssPsiUtil::isAmpersand).toArray(CssSimpleSelector[]::new);
     if (directNests != null) {
@@ -72,7 +72,7 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
     }
   }
 
-  public static void annotateNestedSelectorsWithoutNest(CssSelectorList list, ProblemsHolder holder) {
+  private static void annotateNestedSelectorsWithoutNest(CssSelectorList list, ProblemsHolder holder) {
     if (PostCssPsiUtil.isInsideNest(list)) return;
     boolean everySelectorHasAmpersand = Arrays.stream(list.getSelectors()).allMatch(PostCssPsiUtil::containsAmpersand);
     boolean everySelectorStartsWithAmpersand = Arrays.stream(list.getSelectors()).allMatch(PostCssPsiUtil::startsWithAmpersand);

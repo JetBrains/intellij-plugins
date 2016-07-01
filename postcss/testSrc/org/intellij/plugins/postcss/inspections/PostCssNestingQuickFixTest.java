@@ -32,7 +32,6 @@ public class PostCssNestingQuickFixTest extends PostCssFixtureTestCase {
                                   final String quickFixName) {
     myFixture.configureByFile(testFile);
     final IntentionAction intentionAction = myFixture.findSingleIntention(quickFixName);
-    assertNotNull(intentionAction);
     myFixture.launchAction(intentionAction);
     myFixture.checkResultByFile(resultFile);
   }

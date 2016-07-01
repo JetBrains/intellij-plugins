@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssElement;
 import com.intellij.psi.css.CssRuleset;
 import com.intellij.psi.css.CssSelector;
-import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.ArrayUtil;
@@ -42,16 +41,16 @@ public class PostCssPsiUtil {
   }
 
   @Contract("null -> false")
-  public static boolean isAmpersand(@Nullable CssSimpleSelector selector) {
-    if (selector == null) return false;
-    PsiElement firstChild = selector.getFirstChild();
+  public static boolean isAmpersand(@Nullable PsiElement element) {
+    if (element == null) return false;
+    PsiElement firstChild = element.getFirstChild();
     return firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == PostCssTokenTypes.AMPERSAND;
   }
 
   @Contract("null -> false")
-  public static boolean isNestSym(@Nullable CssSimpleSelector selector) {
-    if (selector == null) return false;
-    PsiElement firstChild = selector.getFirstChild();
+  public static boolean isNestSym(@Nullable PsiElement element) {
+    if (element == null) return false;
+    PsiElement firstChild = element.getFirstChild();
     return firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == PostCssTokenTypes.POST_CSS_NEST_SYM;
   }
 }
