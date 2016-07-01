@@ -36,7 +36,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.io.IdPool;
 
@@ -428,21 +428,17 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     try {
       final PsiManager psiManager = PsiManager.getInstance(module.getProject());
       final List<VirtualFile> result = new ArrayList<VirtualFile>();
-      FileBasedIndex.getInstance().processValues(FileTypeIndex.NAME, PropertiesFileType.INSTANCE, null,
-                                                 new FileBasedIndex.ValueProcessor<Void>() {
-                                                   @Override
-                                                   public boolean process(VirtualFile file, Void value) {
-                                                     if (file.getNameWithoutExtension().equals(bundleName)) {
-                                                       result.add(file);
-                                                       // todo IDEA-74868
-                                                       if (file.getParent().getName().equals("en_US")) {
-                                                         return false;
-                                                       }
-                                                     }
+      FileTypeIndex.processFiles(PropertiesFileType.INSTANCE, file -> {
+        if (file.getNameWithoutExtension().equals(bundleName)) {
+          result.add(file);
+          // todo IDEA-74868
+          if (file.getParent().getName().equals("en_US")) {
+            return false;
+          }
+        }
 
-                                                     return true;
-                                                   }
-                                                 }, module.getModuleScope(false));
+        return true;
+      }, module.getModuleScope(false));
 
       PropertiesFile defaultResourceBundle = null;
       for (VirtualFile file : result) {
