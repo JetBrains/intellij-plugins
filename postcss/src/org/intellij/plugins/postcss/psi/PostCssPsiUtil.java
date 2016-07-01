@@ -2,11 +2,17 @@ package org.intellij.plugins.postcss.psi;
 
 import com.intellij.css.util.CssPsiUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.css.*;
+import com.intellij.psi.css.CssElement;
+import com.intellij.psi.css.CssRuleset;
+import com.intellij.psi.css.CssSelector;
+import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlToken;
+import com.intellij.util.ArrayUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -15,61 +21,37 @@ public class PostCssPsiUtil {
   private PostCssPsiUtil() {
   }
 
-  public static boolean isInsidePostCss(CssElement element) {
+  public static boolean isInsidePostCss(@Nullable CssElement element) {
     return CssPsiUtil.getStylesheetLanguage(element) == PostCssLanguage.INSTANCE;
   }
 
-  public static boolean isInsideNestedRuleset(CssElement element) {
-    if (element == null) return false;
-    CssRuleset ruleset = PsiTreeUtil.getParentOfType(element, CssRuleset.class);
-    return isNestedRuleset(ruleset);
+  public static boolean isInsideNestedRuleset(@Nullable CssElement element) {
+    return PsiTreeUtil.getParentOfType(PsiTreeUtil.getParentOfType(element, CssRuleset.class), CssRuleset.class) != null;
   }
 
-  public static boolean isNestedRuleset(CssRuleset ruleset) {
-    if (ruleset == null) return false;
-    CssRuleset parentRuleset = PsiTreeUtil.getParentOfType(ruleset, CssRuleset.class);
-    return parentRuleset != null;
+  public static boolean containsAmpersand(@Nullable CssSelector selector) {
+    return selector != null && Arrays.stream(selector.getSimpleSelectors()).anyMatch(PostCssPsiUtil::isAmpersand);
   }
 
-  @Nullable
-  public static CssRuleset getParentRuleset(CssElement element) {
-    if (element == null) return null;
-    return PsiTreeUtil.getParentOfType(element, CssRuleset.class);
+  public static boolean startsWithAmpersand(@NotNull CssSelector selector) {
+    return isAmpersand(ArrayUtil.getFirstElement(selector.getSimpleSelectors()));
   }
 
-  public static boolean containsAmpersand(CssSelector selector) {
-    return Arrays.stream(selector.getSimpleSelectors()).anyMatch(PostCssPsiUtil::isAmpersand);
+  public static boolean isInsideNest(@Nullable PsiElement element) {
+    return PsiTreeUtil.getParentOfType(element, PostCssNest.class) != null;
   }
 
-  public static boolean startsWithAmpersand(CssSelector selector) {
-    if (selector.getSimpleSelectors().length == 0) return false;
-    return isAmpersand(selector.getSimpleSelectors()[0]);
-  }
-
-  public static boolean isInsideNest(CssSelector selector) {
-    CssSelectorList selectorList = PsiTreeUtil.getParentOfType(selector, CssSelectorList.class);
-    return isInsideNest(selectorList);
-  }
-
-  public static boolean isInsideNest(CssSelectorList list) {
-    return PsiTreeUtil.getParentOfType(list, PostCssNest.class, true) != null;
-  }
-
-  public static boolean isAmpersand(CssSimpleSelector selector) {
+  @Contract("null -> false")
+  public static boolean isAmpersand(@Nullable CssSimpleSelector selector) {
+    if (selector == null) return false;
     PsiElement firstChild = selector.getFirstChild();
-    if (firstChild instanceof XmlToken) {
-      XmlToken xmlToken = (XmlToken)firstChild;
-      return xmlToken.getTokenType() == PostCssTokenTypes.AMPERSAND;
-    }
-    return false;
+    return firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == PostCssTokenTypes.AMPERSAND;
   }
 
-  public static boolean isNestSym(CssSimpleSelector selector) {
+  @Contract("null -> false")
+  public static boolean isNestSym(@Nullable CssSimpleSelector selector) {
+    if (selector == null) return false;
     PsiElement firstChild = selector.getFirstChild();
-    if (firstChild instanceof XmlToken) {
-      XmlToken xmlToken = (XmlToken)firstChild;
-      return xmlToken.getTokenType() == PostCssTokenTypes.POST_CSS_NEST_SYM;
-    }
-    return false;
+    return firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == PostCssTokenTypes.POST_CSS_NEST_SYM;
   }
 }
