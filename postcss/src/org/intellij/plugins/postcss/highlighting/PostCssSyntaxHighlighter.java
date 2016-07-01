@@ -7,7 +7,6 @@ import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.CssHighlighter;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.tree.IElementType;
-import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NonNls;

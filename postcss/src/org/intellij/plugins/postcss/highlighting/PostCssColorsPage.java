@@ -14,10 +14,6 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * @author oleg
- * @date Jul 5, 2010
- */
 public class PostCssColorsPage implements ColorSettingsPage {
 
   private static final String DEMO_TEXT = "@import \"manual.css\";\n\n" +
