@@ -3,6 +3,7 @@ package org.intellij.plugins.postcss;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
 import org.intellij.plugins.postcss.inspections.PostCssNestingInspectorTest;
 import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
 import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerTest;
@@ -21,6 +22,7 @@ public class PostCssTestSuite extends TestCase {
       TestSuite suite = new TestSuite("All PostCss without performance");
       suite.addTest(Fast.suite());
       suite.addTest(Inspections.suite());
+      suite.addTest(Other.suite());
       return suite;
     }
   }
@@ -39,6 +41,14 @@ public class PostCssTestSuite extends TestCase {
     public static Test suite() {
       TestSuite suite = new TestSuite("Inspections PostCss");
       suite.addTestSuite(PostCssNestingInspectorTest.class);
+      return suite;
+    }
+  }
+
+  public static class Other extends TestCase {
+    public static Test suite() {
+      TestSuite suite = new TestSuite("Other PostCss");
+      suite.addTestSuite(PostCssFileStructureTest.class);
       return suite;
     }
   }
