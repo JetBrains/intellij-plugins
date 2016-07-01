@@ -26,6 +26,7 @@ public class UiRouterState {
   private final VirtualFile myFile;
   @Nullable private List<SmartPsiElementPointer<PsiElement>> myDuplicateDefinitions;
   private VirtualFile myTemplateFile;
+  @Nullable private SmartPsiElementPointer<PsiElement> myTemplatePointer;
   private boolean myGeneric;
 
   public UiRouterState(@NotNull String name, @NotNull VirtualFile file) {
@@ -145,5 +146,14 @@ public class UiRouterState {
 
   public void setGeneric(boolean generic) {
     myGeneric = generic;
+  }
+
+  @Nullable
+  public SmartPsiElementPointer<PsiElement> getTemplatePointer() {
+    return myTemplatePointer;
+  }
+
+  public void setTemplatePointer(@Nullable SmartPsiElementPointer<PsiElement> templatePointer) {
+    myTemplatePointer = templatePointer;
   }
 }

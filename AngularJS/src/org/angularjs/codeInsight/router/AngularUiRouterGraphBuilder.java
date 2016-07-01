@@ -107,6 +107,12 @@ public class AngularUiRouterGraphBuilder {
         if (templateUrl != null && !state.hasViews()) {
           final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, state.getTemplateFile(), templateUrl, null);
           edges.add(new AngularUiRouterEdge(templateNode, node, "provides", AngularUiRouterEdge.Type.providesTemplate));
+        } else if (state.isHasTemplateDefined() && state.getTemplatePointer() != null) {
+          final PsiElement element = state.getTemplatePointer().getElement();
+          if (element != null && element.isValid()) {
+            final AngularUiRouterNode localTemplateNode = createLocalTemplate(element, provider);
+            edges.add(new AngularUiRouterEdge(localTemplateNode, node, "provides", AngularUiRouterEdge.Type.providesTemplate));
+          }
         }
         if (state.hasViews()) {
           if (state.isAbstract()) {
@@ -116,7 +122,7 @@ public class AngularUiRouterGraphBuilder {
             stateObject.addWarning("Since 'views' are defined for state, state template information would be ignored.");
           }
         }
-        if (state.isHasTemplateDefined()) {
+        if (state.isHasTemplateDefined() && state.getTemplatePointer() == null) {
           stateObject.addNote("Has embedded template definition.");
         }
       }
@@ -137,6 +143,12 @@ public class AngularUiRouterGraphBuilder {
             if (!StringUtil.isEmptyOrSpaces(template)) {
               final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, view.getTemplateFile(), template, null);
               edges.add(new AngularUiRouterEdge(templateNode, node, name + " provides ", AngularUiRouterEdge.Type.providesTemplate).setTargetName(name));
+            } else if (view.getTemplatePointer() != null) {
+              final PsiElement element = view.getTemplatePointer().getElement();
+              if (element != null && element.isValid()) {
+                final AngularUiRouterNode localTemplateNode = createLocalTemplate(element, provider);
+                edges.add(new AngularUiRouterEdge(localTemplateNode, node, name + " provides ", AngularUiRouterEdge.Type.providesTemplate).setTargetName(name));
+              }
             }
             node.getIdentifyingElement().addChild(viewObject, node);
           }
@@ -178,6 +190,23 @@ public class AngularUiRouterGraphBuilder {
       for (AngularUiRouterNode node : list) {
         if (!allNodes.contains(node)) allNodes.add(node);
       }
+    }
+
+    private AngularUiRouterNode createLocalTemplate(PsiElement element, AngularUiRouterDiagramProvider provider) {
+      final String name = element.getContainingFile().getName() + " (local)";
+      final String key = element.getContainingFile().getVirtualFile().getUrl() + ":" + element.getTextRange().getStartOffset();
+      final Template template = AngularUiRouterDiagramBuilder.readTemplateFromFile(element.getProject(), name, element);
+      if (!templateNodes.containsKey(key)) {
+        final DiagramObject templateObject = new DiagramObject(Type.template, name, template.getPointer());
+        final AngularUiRouterNode templateNode = new AngularUiRouterNode(templateObject, provider);
+        templateNodes.put(key, templateNode);
+
+        putPlaceholderNodes(key, template, templateNode);
+      }
+      final AngularUiRouterNode templateNode = templateNodes.get(key);
+      assert templateNode != null;
+      templateNode.getIdentifyingElement().setTooltip(key);
+      return templateNode;
     }
 
     private void connectViewOrStateWithPlaceholder(AngularUiRouterNode stateNode, String viewName, Pair<AngularUiRouterNode, String> pair) {
