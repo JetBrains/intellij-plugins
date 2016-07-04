@@ -238,7 +238,7 @@ public class AngularUiRouterGraphBuilder {
       usedTemplateUrl = normalizeTemplateUrl(usedTemplateUrl);
       final DiagramObject placeholder = templatePlaceHoldersNodes.get(Pair.create(usedTemplateUrl, placeholderName));
       if (placeholder != null && placeholder.getContainer() != null) {
-        final AngularUiRouterEdge edge = new AngularUiRouterEdge(placeholder.getContainer(), stateNode, viewName + " fills " + placeholderName,
+        final AngularUiRouterEdge edge = new AngularUiRouterEdge(placeholder.getContainer(), stateNode, viewName + " populates " + placeholderName,
                                                                  AngularUiRouterEdge.Type.fillsTemplate).setSourceName(placeholderName)
           .setTargetName(viewName);
         edge.setTargetAnchor(placeholder);
