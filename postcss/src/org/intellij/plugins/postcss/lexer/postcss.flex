@@ -1,5 +1,5 @@
  /* It's an automatically generated code. Do not modify it. */
-package com.intellij.plugins.postcss.lexer;
+package org.intellij.plugins.postcss.lexer;
 import com.intellij.psi.css.impl.*;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
