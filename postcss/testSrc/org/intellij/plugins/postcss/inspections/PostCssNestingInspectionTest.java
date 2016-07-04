@@ -24,12 +24,36 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
   public void testNestedRulesetWithNestWithoutAmpersand() {
     doTest();
   }
-  
+
   public void testNestedRulesetWithoutNest() {
     doTest();
   }
-  
+
   public void testCorrectNesting() {
+    doTest();
+  }
+
+  public void testRuleInsideMedia() {
+    doTest();
+  }
+
+  public void testRuleInsideDocument() {
+    doTest();
+  }
+
+  public void testRuleInsideSupports() {
+    doTest();
+  }
+
+  public void testNestedRuleInsideMedia() {
+    doTest();
+  }
+
+  public void testNestedRuleInsideDocument() {
+    doTest();
+  }
+
+  public void testNestedRuleInsideSupports() {
     doTest();
   }
 
@@ -41,7 +65,7 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
   protected boolean isWriteActionRequired() {
     return false;
   }
-  
+
   @NotNull
   @Override
   protected String getTestDataSubdir() {
