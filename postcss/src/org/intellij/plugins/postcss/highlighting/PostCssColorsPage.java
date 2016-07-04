@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.css.CssBundle;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.jetbrains.annotations.NotNull;
@@ -80,8 +81,7 @@ public class PostCssColorsPage implements ColorSettingsPage {
 
   @NotNull
   public Icon getIcon() {
-    //TODO after #DSGN-3130 will be done
-    return null;
+    return IconLoader.getIcon("/org/intellij/plugins/postcss/postcss.png");
   }
 
   @NotNull

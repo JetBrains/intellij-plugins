@@ -2,6 +2,7 @@ package org.intellij.plugins.postcss;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.css.CssFileType;
 import org.jetbrains.annotations.NonNls;
@@ -42,8 +43,7 @@ public class PostCssFileType extends LanguageFileType {
   @Nullable
   @Override
   public Icon getIcon() {
-    //TODO after #DSGN-3130 will be done
-    return null;
+    return IconLoader.findIcon("/org/intellij/plugins/postcss/postcss.png");
   }
 
   @Override
