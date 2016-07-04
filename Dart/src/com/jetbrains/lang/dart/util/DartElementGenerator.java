@@ -47,7 +47,7 @@ public class DartElementGenerator {
     final PsiElement child = file.getFirstChild();
     if (child instanceof DartFunctionDeclarationWithBodyOrNative) {
       final DartFunctionBody functionBody = ((DartFunctionDeclarationWithBodyOrNative)child).getFunctionBody();
-      final DartBlock block = PsiTreeUtil.getChildOfType(functionBody, DartBlock.class);
+      final IDartBlock block = PsiTreeUtil.getChildOfType(functionBody, IDartBlock.class);
       final DartStatements statements = block == null ? null : block.getStatements();
       return statements == null ? null : statements.getFirstChild();
     }

@@ -62,7 +62,7 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitBlock(@NotNull DartBlock o) {
-    visitPsiCompositeElement(o);
+    visitIDartBlock(o);
   }
 
   public void visitBreakStatement(@NotNull DartBreakStatement o) {
@@ -576,6 +576,10 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitUriBasedDirective(@NotNull DartUriBasedDirective o) {
     visitPsiCompositeElement(o);
+  }
+
+  public void visitIDartBlock(@NotNull IDartBlock o) {
+    visitElement(o);
   }
 
   public void visitPsiCompositeElement(@NotNull DartPsiCompositeElement o) {

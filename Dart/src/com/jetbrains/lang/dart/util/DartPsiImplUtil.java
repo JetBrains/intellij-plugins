@@ -203,8 +203,8 @@ public class DartPsiImplUtil {
   }
 
   @Nullable
-  public static DartBlock getBlock(DartFunctionBody functionBody) {
-    return PsiTreeUtil.getChildOfType(functionBody, DartBlock.class);
+  public static IDartBlock getBlock(DartFunctionBody functionBody) {
+    return PsiTreeUtil.getChildOfType(functionBody, IDartBlock.class);
   }
 
   public static boolean isConstantObjectExpression(@NotNull final DartNewExpression newExpression) {

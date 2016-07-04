@@ -256,7 +256,7 @@ setterDeclaration ::= setterDeclarationWithReturnType | setterDeclarationWithout
 private setterDeclarationWithReturnType    ::= metadata* ('external' | 'static')* returnType 'set' componentName formalParameterList (';' | functionBodyOrNative) {pin=5}
 private setterDeclarationWithoutReturnType ::= metadata* ('external' | 'static')*            'set' componentName formalParameterList (';' | functionBodyOrNative) {pin=4}
 
-typeParameters ::= '<' typeParameter (',' typeParameter)* '>' {pin=1}
+typeParameters ::= '<' typeParameter? (',' typeParameter)* '>' {pin=1}
 typeParameter ::= metadata* componentName ('extends' type)?
 {recoverWhile="type_parameter_recover" mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
@@ -379,9 +379,9 @@ type ::= simpleQualifiedReferenceExpression typeArguments? {
 }
 
 typeArguments ::= '<' typeList '>'
-typeList ::= type (',' type)*
+typeList ::= type? (',' type)*
 
-block ::= '{' statements '}' {pin=1}
+block ::= '{' statements '}' {pin=1 implements="com.jetbrains.lang.dart.psi.IDartBlock"}
 
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private statement ::= label* nonLabelledStatement
@@ -624,5 +624,6 @@ functionExpressionBody ::= <<arrowBodyWrapper>> | <<blockBodyWrapper>>
 //functionExpressionBody ::= arrowBody | blockBody
 
 private arrowBody ::= ('async' '*'? | 'sync' '*'?)? '=>' expression {pin=2}
-private blockBody ::= ('async' '*'? | 'sync' '*'?)? block
+private blockBody ::= ('async' '*'? | 'sync' '*'?)? lazyParseableBlock
+private lazyParseableBlock ::= <<lazyParseableBlockImpl>>
 

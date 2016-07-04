@@ -16,7 +16,7 @@ Dart File
             PsiElement(()('(')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 CALL_EXPRESSION
@@ -374,7 +374,7 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('field')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 REFERENCE_EXPRESSION

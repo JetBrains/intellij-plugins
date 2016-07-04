@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.BLOCKS;
 
 public class DartBlock extends AbstractBlock implements BlockWithParent {
   public static final List<DartBlock> DART_EMPTY = Collections.emptyList();
@@ -84,7 +85,8 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
 
   @Nullable
   protected Alignment createChildAlignment(ASTNode child) {
-    if (child.getElementType() != LPAREN && child.getElementType() != BLOCK) {
+    final IElementType type = child.getElementType();
+    if (type != LPAREN && !BLOCKS.contains(type)) {
       return myAlignmentProcessor.createChildAlignment();
     }
     return null;

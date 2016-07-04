@@ -58,7 +58,7 @@ public class DartSpacingProcessor {
     if (type2 == SINGLE_LINE_COMMENT && !isDirectlyPrecededByNewline(node2)) {
       // line comment after code on the same line: do not add line break here, it may be used to ignore warning
       // but after '{' in class or function definition Dart Style inserts line break, so let's do the same
-      if (type1 != LBRACE || (elementType != CLASS_BODY && (elementType != BLOCK || parentType != FUNCTION_BODY))) {
+      if (type1 != LBRACE || (elementType != CLASS_BODY && (!BLOCKS.contains(elementType) || parentType != FUNCTION_BODY))) {
         return Spacing.createSpacing(1, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE, 0);
       }
     }
@@ -176,7 +176,7 @@ public class DartSpacingProcessor {
     if (DOC_COMMENT_CONTENTS.contains(type2)) {
       return Spacing.createSpacing(0, Integer.MAX_VALUE, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (BLOCKS.contains(elementType)) {
+    if (BLOCKS_EXT.contains(elementType)) {
       boolean topLevel = elementType == DART_FILE || elementType == EMBEDDED_CONTENT;
       int lineFeeds = 1;
       int spaces = 0;
@@ -271,7 +271,7 @@ public class DartSpacingProcessor {
     if (elementType == STATEMENTS && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
       return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (!COMMENTS.contains(type2) && parentType == BLOCK) {
+    if (!COMMENTS.contains(type2) && BLOCKS.contains(parentType)) {
       return addLineBreak();
     }
 
@@ -320,10 +320,10 @@ public class DartSpacingProcessor {
         // Always have a single space following the closing paren of an if-condition.
         int nsp = mySettings.SPACE_BEFORE_IF_LBRACE ? 1 : 0;
         int lf = 0;
-        if (type2 != BLOCK && mySettings.SPECIAL_ELSE_IF_TREATMENT) {
+        if (!BLOCKS.contains(type2) && mySettings.SPECIAL_ELSE_IF_TREATMENT) {
           if (FormatterUtil.isFollowedBy(node2, ELSE, SEMICOLON)) lf = 1;
         }
-        return Spacing.createSpacing(nsp, nsp, lf, type2 == BLOCK ? false : mySettings.KEEP_LINE_BREAKS, 0);
+        return Spacing.createSpacing(nsp, nsp, lf, !BLOCKS.contains(type2) && mySettings.KEEP_LINE_BREAKS, 0);
       }
       if (type1 == SEMICOLON && type2 == ELSE) {
         // If the then-part is on the line with the condition put the else-part on the next line.
@@ -350,7 +350,7 @@ public class DartSpacingProcessor {
     //
     //Spacing before left braces
     //
-    if (type2 == BLOCK) {
+    if (BLOCKS.contains(type2)) {
       if (elementType == IF_STATEMENT && type1 != ELSE) {
         return setBraceSpace(mySettings.SPACE_BEFORE_IF_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
       }
@@ -577,7 +577,7 @@ public class DartSpacingProcessor {
       if (type2 != LBRACE) {
         // Keep single-statement else-part on same line?
         int lf = mySettings.SPECIAL_ELSE_IF_TREATMENT ? 1 : 0;
-        return Spacing.createSpacing(1, 1, lf, type2 == BLOCK ? false : mySettings.KEEP_LINE_BREAKS, 0);
+        return Spacing.createSpacing(1, 1, lf, !BLOCKS.contains(type2) && mySettings.KEEP_LINE_BREAKS, 0);
       }
     }
 
@@ -589,7 +589,7 @@ public class DartSpacingProcessor {
     }
     boolean isBraces = type1 == LBRACE || type2 == RBRACE;
     if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS && elementType != MAP_LITERAL_EXPRESSION) ||
-        BLOCKS.contains(type1) ||
+        BLOCKS_EXT.contains(type1) ||
         FUNCTION_DEFINITION.contains(type1)) {
       return addLineBreak();
     }
@@ -657,7 +657,7 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(true);
     }
 
-    if (type1 == FOR_LOOP_PARTS_IN_BRACES && !BLOCKS.contains(type2)) {
+    if (type1 == FOR_LOOP_PARTS_IN_BRACES && !BLOCKS_EXT.contains(type2)) {
       return addLineBreak();
     }
 
@@ -1139,7 +1139,7 @@ public class DartSpacingProcessor {
         ASTNode prev = FormatterUtil.getPreviousNonWhitespaceSibling(child);
         return (prev != null && prev.getElementType() == INITIALIZERS);
       }
-      if (child.getElementType() != BLOCK) continue;
+      if (!BLOCKS.contains(child.getElementType())) continue;
       child = child.getLastChildNode();
       if (child == null) return false;
       if (child.getElementType() == WHITE_SPACE) child = FormatterUtil.getPreviousNonWhitespaceSibling(child);

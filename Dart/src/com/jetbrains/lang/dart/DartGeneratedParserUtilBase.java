@@ -7,10 +7,11 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.LAZY_PARSEABLE_BLOCK;
 
 public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
   private static final Key<Boolean> WITHOUT_CASCADE = Key.create("dart.without.cascade");
-  private static final Key<Boolean> INSIDE_SYNC_OR_ASYNC_FUNCTION = Key.create("dart.inside.sync.or.async.function");
+  static final Key<Boolean> INSIDE_SYNC_OR_ASYNC_FUNCTION = Key.create("dart.inside.sync.or.async.function");
 
   private static final TokenSet IDENTIFIERS_FORBIDDEN_INSIDE_ASYNC_FUNCTIONS = TokenSet.create(AWAIT, YIELD);
 
@@ -100,6 +101,36 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     }
     marker_.rollbackTo();
     return false;
+  }
+
+  public static boolean lazyParseableBlockImpl(PsiBuilder builder, int level) {
+    if (builder.getTokenType() != LBRACE) return false;
+
+    final PsiBuilder.Marker marker = builder.mark();
+    builder.advanceLexer();
+
+    int braceCount = 1;
+    while (true) {
+      final IElementType tokenType = builder.getTokenType();
+      if (tokenType == null) {
+        break;
+      }
+      if (tokenType == LBRACE) {
+        braceCount++;
+      }
+      else if (tokenType == RBRACE) {
+        braceCount--;
+      }
+
+      builder.advanceLexer();
+
+      if (braceCount == 0) {
+        break;
+      }
+    }
+
+    marker.collapse(LAZY_PARSEABLE_BLOCK);
+    return true;
   }
 
   public static boolean arrowBodyWrapper(PsiBuilder builder_, int level_) {

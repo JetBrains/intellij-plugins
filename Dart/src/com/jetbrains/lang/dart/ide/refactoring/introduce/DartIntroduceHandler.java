@@ -24,7 +24,6 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.util.Function;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
@@ -314,14 +313,28 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   }
 
   protected void performInplaceIntroduce(DartIntroduceOperation operation) {
+    final List<PsiElement> occurrences = operation.getOccurrences();
+    final List<SmartPsiElementPointer<PsiElement>> pointers = new ArrayList<>(occurrences.size());
+    for (PsiElement occurrence : occurrences) {
+      pointers.add(SmartPointerManager.getInstance(operation.getProject()).createSmartPsiElementPointer(occurrence));
+    }
+
     final PsiElement statement = performRefactoring(operation);
     final DartComponent target = PsiTreeUtil.findChildOfType(statement, DartComponent.class);
     final DartComponentName componentName = target != null ? target.getComponentName() : null;
     if (componentName == null) {
       return;
     }
-    final List<PsiElement> occurrences = operation.getOccurrences();
     operation.getEditor().getCaretModel().moveToOffset(componentName.getTextOffset());
+
+    occurrences.clear();
+    for (SmartPsiElementPointer<PsiElement> pointer : pointers) {
+      final PsiElement element = pointer.getElement();
+      if (element != null) {
+        occurrences.add(element);
+      }
+    }
+
     final InplaceVariableIntroducer<PsiElement> introducer =
       new DartInplaceVariableIntroducer(componentName, operation, occurrences);
     introducer.performInplaceRefactoring(new LinkedHashSet<String>(operation.getSuggestedNames()));
@@ -348,9 +361,10 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
       return null;
     }
 
-    declaration = performReplace(declaration, operation);
-    if (declaration != null) {
-      declaration = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(declaration);
+    final SmartPsiElementPointer<PsiElement> pointer = performReplace(declaration, operation);
+    final PsiElement element = pointer == null ? null : pointer.getElement();
+    if (element != null) {
+      declaration = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element);
     }
     return declaration;
   }
@@ -368,14 +382,14 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   abstract protected String getDeclarationString(DartIntroduceOperation operation, String initExpression);
 
   @Nullable
-  private PsiElement performReplace(@NotNull final PsiElement declaration, final DartIntroduceOperation operation) {
+  private SmartPsiElementPointer<PsiElement> performReplace(@NotNull final PsiElement declaration, final DartIntroduceOperation operation) {
     final DartExpression expression = operation.getInitializer();
     final Project project = operation.getProject();
-    return new WriteCommandAction<PsiElement>(project, expression.getContainingFile()) {
-      protected void run(@NotNull final Result<PsiElement> result) throws Throwable {
+    return new WriteCommandAction<SmartPsiElementPointer<PsiElement>>(project, expression.getContainingFile()) {
+      protected void run(@NotNull final Result<SmartPsiElementPointer<PsiElement>> result) throws Throwable {
         final PsiElement createdDeclaration = addDeclaration(operation, declaration);
-        result.setResult(createdDeclaration);
         if (createdDeclaration != null) {
+          result.setResult(SmartPointerManager.getInstance(project).createSmartPsiElementPointer(createdDeclaration));
           modifyDeclaration(createdDeclaration);
         }
 

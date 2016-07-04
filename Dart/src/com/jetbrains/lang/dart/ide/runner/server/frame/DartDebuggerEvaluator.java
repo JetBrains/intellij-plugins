@@ -135,7 +135,7 @@ public class DartDebuggerEvaluator extends XDebuggerEvaluator {
           // "${seeds} seeds" - we must return only "seeds"
           element instanceof DartLongTemplateEntry ||
           element instanceof DartCallExpression ||
-          element instanceof DartFunctionBody || element instanceof DartBlock) {
+          element instanceof DartFunctionBody || element instanceof IDartBlock) {
         break;
       }
     }
