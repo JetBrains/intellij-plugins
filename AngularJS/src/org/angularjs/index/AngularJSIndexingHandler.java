@@ -2,11 +2,13 @@ package org.angularjs.index;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSDocTokenTypes;
-import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
+import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
@@ -215,24 +217,21 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
     final JSReferenceExpression reference = ObjectUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
     if (reference == null) return;
-    if (reference.getQualifier() == null) return;
-    if (!"$stateProvider".equals(reference.getQualifier().getText())) return;
-
-    if (STATE.equals(reference.getReferenceName())) {
-      final JSExpression[] arguments = callExpression.getArguments();
-      if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
-        addImplicitElements(callExpression, null, AngularUiRouterGenericStatesIndex.KEY, STATE, null, outData);
-      }
+    if (!JSSymbolUtil.isAccurateReferenceExpressionName(reference, "$stateProvider", STATE)) return;
+    final JSExpression[] arguments = callExpression.getArguments();
+    if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
+      addImplicitElements(callExpression, null, AngularUiRouterGenericStatesIndex.KEY, STATE, null, outData);
     }
   }
 
   @Override
   public boolean shouldCreateStubForCallExpression(ASTNode node) {
-    final ASTNode methodExpression = node.getFirstChildNode();
-    if (methodExpression.getElementType() != JSElementTypes.REFERENCE_EXPRESSION) return false;
+    final ASTNode methodExpression = JSCallExpressionImpl.getMethodExpression(node);
+    if (methodExpression == null) return false;
 
     final ASTNode referencedNameElement = methodExpression.getLastChildNode();
-    final ASTNode qualifier = methodExpression.getFirstChildNode();
+    final ASTNode qualifier = JSReferenceExpressionImpl.getQualifierNode(methodExpression);
+    if (qualifier == null) return false;
     return "state".equals(referencedNameElement.getText()) && "$stateProvider".equalsIgnoreCase(qualifier.getText());
   }
 
