@@ -3,4 +3,8 @@
     <action class="org.angularjs.codeInsight.router.ShowUiRouterStatesNewDiagramAction" id="AngularJS.Show.Ui.Router.States.Diagram.Action"
             text="Show AngularJS ui-router State Diagram"/>
   </actions>
+  <application-components>
+    <component><headless-implementation-class/>
+    <implementation-class>org.angularjs.codeInsight.router.AngularUiRouterInitializer</implementation-class></component>
+  </application-components>
 </idea-plugin>
