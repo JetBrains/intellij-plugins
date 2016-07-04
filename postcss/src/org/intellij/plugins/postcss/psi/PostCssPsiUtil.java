@@ -27,28 +27,28 @@ public class PostCssPsiUtil {
     return CssPsiUtil.getStylesheetLanguage(element) == PostCssLanguage.INSTANCE;
   }
 
+  @Contract("null -> true")
+  public static boolean isEmptyElement(@Nullable PsiElement element) {
+    return element == null || element.getTextLength() == 0;
+  }
+
   public static boolean isInsideNestedRuleset(@Nullable CssElement element) {
-    CssRuleset possibleParentRuleset = PsiTreeUtil.getParentOfType(element, CssRuleset.class);
-    CssRuleset topRuleset = PsiTreeUtil.getParentOfType(possibleParentRuleset, CssRuleset.class);
-    CssAtRule possibleParentAtRule = PsiTreeUtil.getParentOfType(element, CssAtRule.class);
-    if (!isConditionalGroupAtRule(possibleParentAtRule)) {
-      return topRuleset != null;
+    CssElement parent = PsiTreeUtil.getParentOfType(element, CssRuleset.class, CssAtRule.class);
+    if (isConditionalGroupAtRule(parent)) {
+      return false;
     }
-    else {
-      CssAtRule topAtRule = PsiTreeUtil.getParentOfType(topRuleset, CssAtRule.class);
-      if (topRuleset != null && possibleParentAtRule.equals(topAtRule)) {
-        return true;
-      }
-      else {
-        return false;
-      }
+
+    parent = PsiTreeUtil.getParentOfType(parent, CssRuleset.class, CssAtRule.class);
+    if (parent == null || isConditionalGroupAtRule(parent)) {
+      return false;
     }
+    return true;
   }
 
   @Contract("null -> false")
-  public static boolean isConditionalGroupAtRule(@Nullable CssAtRule atRule) {
-    if (atRule == null) return false;
-    final ASTNode node = atRule.getNode();
+  private static boolean isConditionalGroupAtRule(@Nullable PsiElement element) {
+    if (element == null || !(element instanceof CssAtRule)) return false;
+    final ASTNode node = element.getNode();
     return CssElementTypes.CSS_MEDIA == node.getElementType() ||
            CssElementTypes.CSS_DOCUMENT_RULE == node.getElementType() ||
            CssElementTypes.CSS_SUPPORTS == node.getElementType();

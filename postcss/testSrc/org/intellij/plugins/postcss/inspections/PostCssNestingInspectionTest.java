@@ -29,6 +29,10 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
+  public void testEmptyNest() {
+    doTest();
+  }
+
   public void testCorrectNesting() {
     doTest();
   }

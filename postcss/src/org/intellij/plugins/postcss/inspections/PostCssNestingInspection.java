@@ -12,6 +12,7 @@ import org.intellij.plugins.postcss.actions.PostCssDeleteAmpersandQuickFix;
 import org.intellij.plugins.postcss.actions.PostCssDeleteAtRuleNestQuickFix;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
+import org.intellij.plugins.postcss.psi.impl.PostCssNestImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -23,7 +24,7 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
     return new PostCssElementVisitor() {
       @Override
       public void visitCssSelector(CssSelector selector) {
-        if (!PostCssPsiUtil.isInsidePostCss(selector)) return;
+        if (PostCssPsiUtil.isEmptyElement(selector) || !PostCssPsiUtil.isInsidePostCss(selector)) return;
         if (PostCssPsiUtil.isInsideNestedRuleset(selector)) {
           annotateNestedSelectorsWithoutAmpersand(selector, holder);
         }
@@ -34,9 +35,19 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
 
       @Override
       public void visitCssSelectorList(CssSelectorList selectorList) {
-        if (!PostCssPsiUtil.isInsidePostCss(selectorList)) return;
+        if (PostCssPsiUtil.isEmptyElement(selectorList) || !PostCssPsiUtil.isInsidePostCss(selectorList)) return;
         if (PostCssPsiUtil.isInsideNestedRuleset(selectorList)) {
           annotateNestedSelectorsWithoutNest(selectorList, holder);
+        }
+      }
+
+      @Override
+      public void visitPostCssNest(PostCssNestImpl postCssNest) {
+        if (PostCssPsiUtil.isEmptyElement(postCssNest) || !PostCssPsiUtil.isInsidePostCss(postCssNest)) return;
+        CssSelectorList selectorList = postCssNest.getSelectorList();
+        if (PostCssPsiUtil.isInsideNestedRuleset(selectorList) && PostCssPsiUtil.isEmptyElement(selectorList)) {
+          holder
+            .registerProblem(postCssNest.getFirstChild(), PostCssBundle.message("annotator.nested.selector.doesnt.have.ampersand.error"));
         }
       }
     };
@@ -49,7 +60,8 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
       }
     }
     else if (!PostCssPsiUtil.containsAmpersand(selector)) {
-      holder.registerProblem(selector, PostCssBundle.message("annotator.nested.selector.doesnt.starts.with.ampersand.error"), new PostCssAddAmpersandToSelectorQuickFix());
+      holder.registerProblem(selector, PostCssBundle.message("annotator.nested.selector.doesnt.starts.with.ampersand.error"),
+                             new PostCssAddAmpersandToSelectorQuickFix());
     }
   }
 
@@ -77,7 +89,8 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
     boolean everySelectorHasAmpersand = Arrays.stream(list.getSelectors()).allMatch(PostCssPsiUtil::containsAmpersand);
     boolean everySelectorStartsWithAmpersand = Arrays.stream(list.getSelectors()).allMatch(PostCssPsiUtil::startsWithAmpersand);
     if (everySelectorHasAmpersand && !everySelectorStartsWithAmpersand) {
-      holder.registerProblem(list, PostCssBundle.message("annotator.nested.selector.list.doesnt.have.nest.at.rule.error"), new PostCssAddAtRuleNestToSelectorQuickFix());
+      holder.registerProblem(list, PostCssBundle.message("annotator.nested.selector.list.doesnt.have.nest.at.rule.error"),
+                             new PostCssAddAtRuleNestToSelectorQuickFix());
     }
   }
 }
