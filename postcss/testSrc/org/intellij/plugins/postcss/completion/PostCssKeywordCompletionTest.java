@@ -33,6 +33,10 @@ public class PostCssKeywordCompletionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
+  public void testNestInsideRulesetInsideAtRule() {
+    doTest();
+  }
+
   @NotNull
   @Override
   protected String getTestDataSubdir() {
