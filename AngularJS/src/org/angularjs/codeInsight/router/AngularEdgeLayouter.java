@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight.router;
 
+import com.intellij.diagram.DiagramEdge;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.base.Edge;
 import com.intellij.openapi.graph.view.Arrow;
@@ -18,7 +19,9 @@ public class AngularEdgeLayouter {
   public void layoutEdges(UmlGraphBuilder umlGraphBuilder, Graph2D graph) {
     final Edge[] edgeArray = graph.getEdgeArray();
     for (Edge edge : edgeArray) {
-      final OneEdgeLayouter oneEdgeLayouter = new OneEdgeLayouter(edge, (AngularUiRouterEdge)umlGraphBuilder.getEdgeObject(edge), graph);
+      final DiagramEdge edgeObject = umlGraphBuilder.getEdgeObject(edge);
+      if (!(edgeObject instanceof AngularUiRouterEdge)) continue;
+      final OneEdgeLayouter oneEdgeLayouter = new OneEdgeLayouter(edge, (AngularUiRouterEdge)edgeObject, graph);
       oneEdgeLayouter.calculateEdgeLayout();
       graph.setRealizer(edge, oneEdgeLayouter.myRealizer);
       final GraphManager gm = GraphManager.getGraphManager();
