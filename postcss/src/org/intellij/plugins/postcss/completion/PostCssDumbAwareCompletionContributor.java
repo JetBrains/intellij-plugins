@@ -37,6 +37,9 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
       if (CssPsiUtil.getStylesheetLanguage(position) == PostCssLanguage.INSTANCE &&
           position.getNode().getElementType() == CssElementTypes.CSS_ATKEYWORD) {
         PsiElement parent = position.getParent();
+        if (parent instanceof PsiErrorElement) {
+          parent = parent.getParent();
+        }
         if (parent == null) return;
 
         PsiElement prev = position.getPrevSibling();
