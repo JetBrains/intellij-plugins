@@ -32,24 +32,20 @@ public class PostCssPsiUtil {
     return element == null || element.getTextLength() == 0;
   }
 
-  public static boolean isInsideNestedRuleset(@Nullable PsiElement element) {
+  @Contract("null -> null")
+  public static PsiElement getParentNonConditionalAtRuleOrRuleset(@Nullable PsiElement element) {
     CssElement parent = PsiTreeUtil.getParentOfType(element, CssRuleset.class, CssAtRule.class);
-    if (isConditionalGroupAtRule(parent)) {
-      return false;
-    }
-    return isChildOfRuleset(parent);
-  }
-
-  public static boolean isChildOfRuleset(PsiElement parent) {
-    parent = PsiTreeUtil.getParentOfType(parent, CssRuleset.class, CssAtRule.class);
-    if (parent == null || isConditionalGroupAtRule(parent)) {
-      return false;
-    }
-    return true;
+    return isConditionalGroupAtRule(parent) ? null : parent;
   }
 
   @Contract("null -> false")
-  private static boolean isConditionalGroupAtRule(@Nullable PsiElement element) {
+  public static boolean isInsideNestedRuleset(@Nullable PsiElement element) {
+    PsiElement atRuleOrRuleset = getParentNonConditionalAtRuleOrRuleset(element);
+    return getParentNonConditionalAtRuleOrRuleset(atRuleOrRuleset) != null;
+  }
+
+  @Contract("null -> false")
+  public static boolean isConditionalGroupAtRule(@Nullable PsiElement element) {
     if (element == null || !(element instanceof CssAtRule)) return false;
     final ASTNode node = element.getNode();
     return CssElementTypes.CSS_MEDIA == node.getElementType() ||
@@ -57,14 +53,17 @@ public class PostCssPsiUtil {
            CssElementTypes.CSS_SUPPORTS == node.getElementType();
   }
 
+  @Contract("null -> false")
   public static boolean containsAmpersand(@Nullable CssSelector selector) {
     return selector != null && Arrays.stream(selector.getSimpleSelectors()).anyMatch(PostCssPsiUtil::isAmpersand);
   }
 
+  @Contract("null -> false")
   public static boolean startsWithAmpersand(@NotNull CssSelector selector) {
     return isAmpersand(ArrayUtil.getFirstElement(selector.getSimpleSelectors()));
   }
 
+  @Contract("null -> false")
   public static boolean isInsideNest(@Nullable PsiElement element) {
     return PsiTreeUtil.getParentOfType(element, PostCssNest.class) != null;
   }

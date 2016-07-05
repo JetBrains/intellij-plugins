@@ -14,26 +14,16 @@ import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.PatternCondition;
-import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.css.CssAtRule;
-import com.intellij.psi.css.CssDeclaration;
-import com.intellij.psi.css.CssElement;
-import com.intellij.psi.css.CssSelectorList;
+import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.css.CssBlock;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.util.CssCompletionUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
-import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
-
-import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 public class PostCssDumbAwareCompletionContributor extends CompletionContributor implements DumbAware {
 
@@ -45,26 +35,19 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
     if (!result.isStopped()) {
       PsiElement position = parameters.getPosition();
       if (CssPsiUtil.getStylesheetLanguage(position) == PostCssLanguage.INSTANCE &&
-          nestKeyword().accepts(position)) {
-        result.addElement(CssCompletionUtil.lookupForKeyword("@nest", ADD_SPACE_WITH_BRACES_INSERT_HANDLER));
+          position.getNode().getElementType() == CssElementTypes.CSS_ATKEYWORD) {
+        PsiElement parent = position.getParent();
+        if (parent == null) return;
+
+        PsiElement prev = position.getPrevSibling();
+        boolean insideBlock = parent instanceof CssBlock && (prev == null || !(prev instanceof PsiErrorElement));
+        boolean insideNestedRule = parent.getNode().getElementType() == CssElementTypes.CSS_BAD_AT_RULE &&
+                                   PostCssPsiUtil.getParentNonConditionalAtRuleOrRuleset(parent) != null;
+        if (insideBlock || insideNestedRule) {
+          result.addElement(CssCompletionUtil.lookupForKeyword("@nest", ADD_SPACE_WITH_BRACES_INSERT_HANDLER));
+        }
       }
     }
-  }
-
-  private static ElementPattern<? extends PsiElement> nestKeyword() {
-    return inPostCssFile(CssElementTypes.CSS_ATKEYWORD).with(
-      new PatternCondition<PsiElement>("INSIDE_RULESET") {
-        @Override
-        public boolean accepts(@NotNull PsiElement element, ProcessingContext context) {
-          if (PsiTreeUtil.getParentOfType(element, CssSelectorList.class, CssDeclaration.class) != null) return false;
-          PsiElement parent = element.getParent();
-          return PostCssPsiUtil.isChildOfRuleset(parent instanceof CssAtRule ? parent : element);
-        }
-      });
-  }
-
-  private static PsiElementPattern.Capture<PsiElement> inPostCssFile(IElementType type) {
-    return psiElement(type).inside(psiElement(PostCssElementTypes.POST_CSS_STYLESHEET));
   }
 
   /*TODO use CssDumbAwareCompletionContributor#fixPrefixForVendorPrefixes instead when PostCSS module will be part of API*/
