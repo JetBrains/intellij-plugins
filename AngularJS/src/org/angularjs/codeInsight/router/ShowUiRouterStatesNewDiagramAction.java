@@ -60,10 +60,11 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
         });
       }, "Building " + diagramProvider.getPresentableName() + " diagram", false, project);
 
-    diagramProvider.reset();
+    final AngularUiRouterProviderContext routerProviderContext = AngularUiRouterProviderContext.getInstance(project);
+    routerProviderContext.reset();
     final Consumer<AngularUiRouterGraphBuilder> consumer = graphBuilder -> {
       final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = graphBuilder.createDataModel(diagramProvider);
-      diagramProvider.registerNodesBuilder(nodesBuilder);
+      routerProviderContext.registerNodesBuilder(nodesBuilder);
       final DiagramObject element = nodesBuilder.getRootNode().getIdentifyingElement();
 
       final Runnable callback = show(element, diagramProvider, project, null, Collections.emptyList());

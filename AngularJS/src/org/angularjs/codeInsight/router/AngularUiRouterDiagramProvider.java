@@ -59,10 +59,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   private AbstractDiagramElementManager<DiagramObject> myElementManager;
   private DiagramColorManagerBase myColorManager;
 
-  private final Map<VirtualFile, AngularUiRouterGraphBuilder.GraphNodesBuilder> myData;
-
   public AngularUiRouterDiagramProvider() {
-    myData = new HashMap<>();
     myResolver = new DiagramVfsResolver<DiagramObject>() {
       @Override
       public String getQualifiedName(DiagramObject element) {
@@ -84,7 +81,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           return null;
         }
         else {
-          final AngularUiRouterGraphBuilder.GraphNodesBuilder builder = myData.get(file);
+          final AngularUiRouterGraphBuilder.GraphNodesBuilder builder = AngularUiRouterProviderContext.getInstance(project).getBuilder(file);
           return builder == null ? null : builder.getRootNode().getIdentifyingElement();
         }
       }
@@ -189,14 +186,6 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     };
   }
 
-  public void reset() {
-    myData.clear();
-  }
-
-  public void registerNodesBuilder(AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder) {
-    myData.put(nodesBuilder.getKey(), nodesBuilder);
-  }
-
   @Override
   public DiagramColorManager getColorManager() {
     return myColorManager;
@@ -269,8 +258,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
                                                          DiagramPresentationModel presentationModel) {
     if (element == null || element.getNavigationTarget() == null) return null;
     final VirtualFile virtualFile = element.getNavigationTarget().getContainingFile().getVirtualFile();
-    final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = myData.get(virtualFile);
-    if (nodesBuilder == null) return null;
+    final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = AngularUiRouterProviderContext.getInstance(project).getBuilder(virtualFile);
+    if (nodesBuilder == null) return new AngularUiRouterDiagramModel(project, virtualFile, this, Collections.emptyList(), Collections.emptyList());
     return new AngularUiRouterDiagramModel(project, virtualFile, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
   }
 
@@ -419,7 +408,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         ApplicationManager.getApplication().invokeLater(() -> {
           UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
           final AngularUiRouterDiagramModel model = (AngularUiRouterDiagramModel)builder.getDataModel();
-          final AngularUiRouterNode rootNode = findDataObject(model).getRootNode();
+          final AngularUiRouterNode rootNode = findDataObject(project, model).getRootNode();
           updateBySelection(rootNode);
         });
       }
@@ -538,12 +527,12 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     };
   }
 
-  private AngularUiRouterGraphBuilder.GraphNodesBuilder findDataObject(final AngularUiRouterDiagramModel model) {
+  private static AngularUiRouterGraphBuilder.GraphNodesBuilder findDataObject(Project project, final AngularUiRouterDiagramModel model) {
     final Collection<AngularUiRouterNode> nodes = model.getNodes();
     for (AngularUiRouterNode node : nodes) {
       if (Type.topLevelTemplate.equals(node.getIdentifyingElement().getType())) {
         final VirtualFile rootFile = node.getIdentifyingElement().getNavigationTarget().getContainingFile().getVirtualFile();
-        return myData.get(rootFile);
+        return AngularUiRouterProviderContext.getInstance(project).getBuilder(rootFile);
       }
     }
     return null;
