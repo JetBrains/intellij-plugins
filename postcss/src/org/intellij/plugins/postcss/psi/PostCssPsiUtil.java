@@ -32,12 +32,15 @@ public class PostCssPsiUtil {
     return element == null || element.getTextLength() == 0;
   }
 
-  public static boolean isInsideNestedRuleset(@Nullable CssElement element) {
+  public static boolean isInsideNestedRuleset(@Nullable PsiElement element) {
     CssElement parent = PsiTreeUtil.getParentOfType(element, CssRuleset.class, CssAtRule.class);
     if (isConditionalGroupAtRule(parent)) {
       return false;
     }
+    return isChildOfRuleset(parent);
+  }
 
+  public static boolean isChildOfRuleset(PsiElement parent) {
     parent = PsiTreeUtil.getParentOfType(parent, CssRuleset.class, CssAtRule.class);
     if (parent == null || isConditionalGroupAtRule(parent)) {
       return false;

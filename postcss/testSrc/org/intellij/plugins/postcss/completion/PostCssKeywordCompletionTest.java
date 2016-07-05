@@ -13,6 +13,10 @@ public class PostCssKeywordCompletionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
+  public void testNestInsideSelector_2() {
+    doTest();
+  }
+
   public void testNestTopLevel() {
     doTest();
   }
