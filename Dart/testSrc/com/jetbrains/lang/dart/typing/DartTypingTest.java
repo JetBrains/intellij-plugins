@@ -114,6 +114,8 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\"', "var foo = \"\" <caret>", "var foo = \"\" \"<caret>\"");
     doTypingTest('"', "var foo = r<caret>", "var foo = r\"<caret>\"");
     doTypingTest('\'', "var foo = r<caret>", "var foo = r'<caret>'");
+    doTypingTest('"', "var foo = bar(r<caret>)", "var foo = bar(r\"<caret>\")");
+    doTypingTest('\'', "var foo = bar(r<caret>)", "var foo = bar(r'<caret>')");
     doTypingTest('"', "var foo = r'<caret>", "var foo = r'\"<caret>");
     doTypingTest('\'', "var foo = r'<caret>", "var foo = r''<caret>");
     doTypingTest('\'', "var foo = r'<caret>'", "var foo = r''<caret>");
