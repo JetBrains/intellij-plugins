@@ -18,6 +18,7 @@
     <codeStyleSettingsProvider implementation="org.intellij.plugins.postcss.settings.PostCssCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="org.intellij.plugins.postcss.settings.PostCssLanguageCodeStyleSettingsProvider"/>
     <css.structureViewChildrenProvider implementation="org.intellij.plugins.postcss.fileStructure.PostCssStructureViewElementsProvider"/>
+    <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssDumbAwareCompletionContributor"/>
 
     <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
                      key="inspections.nesting.problems.name"
