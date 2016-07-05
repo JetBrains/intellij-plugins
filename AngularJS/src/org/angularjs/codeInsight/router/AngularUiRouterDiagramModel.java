@@ -78,8 +78,9 @@ public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject>
       final AngularUiRouterGraphBuilder.GraphNodesBuilder model = graphBuilder.createDataModel(diagramProvider);
       myNodes.clear();
       myEdges.clear();
-      diagramProvider.reset();
-      diagramProvider.registerNodesBuilder(model);
+      final AngularUiRouterProviderContext context = AngularUiRouterProviderContext.getInstance(getProject());
+      context.reset();
+      context.registerNodesBuilder(model);
       myNodes.addAll(model.getAllNodes());
       myEdges.addAll(model.getEdges());
       ApplicationManager.getApplication().invokeLater(() -> getBuilder().update(true, true));

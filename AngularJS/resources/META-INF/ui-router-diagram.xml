@@ -7,4 +7,7 @@
     <component><headless-implementation-class/>
     <implementation-class>org.angularjs.codeInsight.router.AngularUiRouterInitializer</implementation-class></component>
   </application-components>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.angularjs.codeInsight.router.AngularUiRouterProviderContext"/>
+  </extensions>
 </idea-plugin>
