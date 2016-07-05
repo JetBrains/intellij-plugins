@@ -449,6 +449,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           }
         }
         for (DiagramEdge edge : builder.getEdgeObjects()) {
+          if (!(edge instanceof AngularUiRouterEdge)) continue;
           if (selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
             myVisibleEdges.add((AngularUiRouterEdge)edge);
             graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge) edge).getLabel());
@@ -462,6 +463,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
   private static boolean isInSelectedNodes(List<DiagramNode> nodes, DiagramNode node) {
     for (DiagramNode diagramNode : nodes) {
+      if (!(node instanceof AngularUiRouterNode && diagramNode instanceof AngularUiRouterNode)) continue;
       final DiagramObject selected = (DiagramObject)diagramNode.getIdentifyingElement();
       final DiagramObject object = (DiagramObject)node.getIdentifyingElement();
       if (selected.getType().equals(object.getType()) && selected.getName().equals(object.getName()) &&
