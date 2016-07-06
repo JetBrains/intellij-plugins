@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.io.URLUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -115,7 +116,8 @@ public class DartServerRootsHandler {
             newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntry.getUrl())));
 
             for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
-              if (!excludedPackageSymlinkUrls.contains(excludedUrl)) {
+              if (excludedUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR) &&
+                  !excludedPackageSymlinkUrls.contains(excludedUrl)) {
                 newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
               }
             }
