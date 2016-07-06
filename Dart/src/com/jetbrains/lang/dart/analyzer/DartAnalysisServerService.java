@@ -81,6 +81,8 @@ public class DartAnalysisServerService {
 
   public static final String MIN_SDK_VERSION = "1.12";
 
+  private static final long UPDATE_FILES_TIMEOUT = 300;
+
   private static final long CHECK_CANCELLED_PERIOD = 10;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
@@ -112,6 +114,7 @@ public class DartAnalysisServerService {
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myVisibleFiles = new ArrayList<String>();
   private final Set<Document> myChangedDocuments = new THashSet<Document>();
+  private final Alarm myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, ApplicationManager.getApplication());
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
   @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
@@ -270,6 +273,9 @@ public class DartAnalysisServerService {
           }
         }
       }
+
+      myUpdateFilesAlarm.cancelAllRequests();
+      myUpdateFilesAlarm.addRequest(DartAnalysisServerService.this::updateFilesContent, UPDATE_FILES_TIMEOUT);
     }
   };
 
@@ -376,8 +382,9 @@ public class DartAnalysisServerService {
     final Processor<? super PsiFileSystemItem> falseProcessor = (Processor<PsiFileSystemItem>)item -> false;
 
     final Condition<Module> moduleFilter = module -> DartSdkGlobalLibUtil.isDartSdkEnabled(module) &&
-                                                 !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
-                                             falseProcessor, module.getModuleContentScope(), project, null);
+                                                     !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
+                                                                                       falseProcessor, module.getModuleContentScope(),
+                                                                                       project, null);
 
     final DartFileListener.DartLibInfo libInfo = new DartFileListener.DartLibInfo(true);
     libInfo.addRoots(rootsToAddToLib);
@@ -536,7 +543,7 @@ public class DartAnalysisServerService {
 
   public void updateFilesContent() {
     if (myServer != null) {
-      ApplicationManager.getApplication().runReadAction(() -> doUpdateFilesContent());
+      ApplicationManager.getApplication().runReadAction(this::doUpdateFilesContent);
     }
   }
 
@@ -547,6 +554,8 @@ public class DartAnalysisServerService {
     if (server == null) {
       return;
     }
+
+    myUpdateFilesAlarm.cancelAllRequests();
 
     final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
     ApplicationManager.getApplication().assertReadAccessAllowed();
@@ -1345,6 +1354,7 @@ public class DartAnalysisServerService {
       }
 
       stopShowingServerProgress();
+      myUpdateFilesAlarm.cancelAllRequests();
 
       myServerSocket = null;
       myServer = null;
