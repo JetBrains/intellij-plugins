@@ -45,7 +45,7 @@ public class PostCssPsiUtil {
   }
 
   @Contract("null -> false")
-  public static boolean isConditionalGroupAtRule(@Nullable PsiElement element) {
+  private static boolean isConditionalGroupAtRule(@Nullable PsiElement element) {
     if (element == null || !(element instanceof CssAtRule)) return false;
     final ASTNode node = element.getNode();
     return CssElementTypes.CSS_MEDIA == node.getElementType() ||

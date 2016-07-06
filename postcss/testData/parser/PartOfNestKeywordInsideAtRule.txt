@@ -1,0 +1,22 @@
+PostCSS File:PartOfNestKeywordInsideAtRule.pcss
+  PsiElement(POST_CSS_STYLESHEET)
+    PsiElement(CSS_RULESET_LIST)
+      PsiElement(CSS_MEDIA)
+        XmlToken:CSS_MEDIA_SYM('@media')
+        PsiWhiteSpace(' ')
+        PsiElement(CSS_MEDIUM_LIST)
+          PsiElement(CSS_MEDIA_QUERY)
+            XmlToken:CSS_IDENT('all')
+        PsiWhiteSpace(' ')
+        XmlToken:CSS_LBRACE('{')
+        PsiWhiteSpace('\n  ')
+        PsiElement(CSS_BAD_AT_RULE)
+          XmlToken:CSS_ATKEYWORD('@n')
+          PsiWhiteSpace('\n')
+          XmlToken:CSS_RBRACE('}')
+          PsiErrorElement:'{' expected
+            <empty list>
+          PsiErrorElement:'}' expected
+            <empty list>
+        PsiErrorElement:'}' expected
+          <empty list>

@@ -1,0 +1,14 @@
+PostCSS File:PartOfNestKeywordInsidePageAtRule.pcss
+  PsiElement(POST_CSS_STYLESHEET)
+    PsiElement(CSS_RULESET_LIST)
+      PsiElement(CSS_PAGE)
+        XmlToken:CSS_PAGE_SYM('@page')
+        PsiWhiteSpace(' ')
+        PsiElement(CSS_PAGE_BLOCK)
+          XmlToken:CSS_LBRACE('{')
+          PsiWhiteSpace('\n  ')
+          PsiElement(CSS_BAD_AT_RULE)
+            PsiErrorElement:Unknown page margin keyword
+              XmlToken:CSS_ATKEYWORD('@n')
+          PsiWhiteSpace('\n')
+          XmlToken:CSS_RBRACE('}')
