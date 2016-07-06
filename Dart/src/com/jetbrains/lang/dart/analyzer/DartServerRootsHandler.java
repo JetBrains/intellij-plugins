@@ -113,12 +113,14 @@ public class DartServerRootsHandler {
           final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);
 
           for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
-            newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntry.getUrl())));
+            final String contentEntryUrl = contentEntry.getUrl();
+            if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
+              newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntryUrl)));
 
-            for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
-              if (excludedUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR) &&
-                  !excludedPackageSymlinkUrls.contains(excludedUrl)) {
-                newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
+              for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
+                if (excludedUrl.startsWith(contentEntryUrl) && !excludedPackageSymlinkUrls.contains(excludedUrl)) {
+                  newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
+                }
               }
             }
           }
