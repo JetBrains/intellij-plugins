@@ -10,7 +10,7 @@ public class PostCssLanguage extends Language implements CssLanguageProperties {
   public static final PostCssLanguage INSTANCE = new PostCssLanguage();
 
   private PostCssLanguage(){
-    super(CSSLanguage.INSTANCE, "PostCSS", "text/css");
+    super(CSSLanguage.INSTANCE, "PostCSS", "text/postcss");
   }
 
   @NotNull

@@ -1,5 +1,7 @@
 package org.intellij.plugins.postcss.highlighting;
 
+import com.intellij.ide.highlighter.HtmlFileHighlighter;
+import com.intellij.ide.highlighter.XmlFileHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -78,6 +80,9 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     mapping.put(CssElementTypes.CSS_KEYWORD, KEYWORD);
     mapping.put(PostCssTokenTypes.POST_CSS_NEST_SYM, KEYWORD);
     mapping.put(CssElementTypes.CSS_BAD_CHARACTER, BAD_CHARACTER);
+
+    HtmlFileHighlighter.registerEmbeddedTokenAttributes(mapping, null);
+    XmlFileHighlighter.registerEmbeddedTokenAttributes(mapping, null);
   }
 
   @NotNull
