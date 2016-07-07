@@ -1,25 +1,20 @@
 package com.intellij.lang.javascript;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateSettings;
-import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.Consumer;
 
@@ -28,8 +23,12 @@ import java.util.List;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-public class FlexLiveTemplatesTest extends CodeInsightTestCase {
-  private static final String BASE_PATH = "/flexLiveTemplates/";
+public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
+
+  @Override
+  protected String getBasePath() {
+    return "/flexLiveTemplates/";
+  }
 
   @Override
   protected String getTestDataPath() {
@@ -54,33 +53,17 @@ public class FlexLiveTemplatesTest extends CodeInsightTestCase {
     return FlexModuleType.getInstance();
   }
 
-  public void testMethodName() throws Exception {
-    runTemplateTest(getTestName(false), "js", "jsMethodName()");
-  }
-
   public void testClassName() throws Exception {
-    runTemplateTest(getTestName(false), "js", "jsClassName()");
     runTemplateTest(getTestName(false), "js2", "jsClassName()");
     runTemplateTest(getTestName(false), "mxml", "jsClassName()");
-    runTemplateTest(getTestName(false) + "2", "js", "jsClassName()");
     runTemplateTest(getTestName(false), "as", "jsClassName()");
     runTemplateTest(getTestName(false) + "2", "as", "jsQualifiedClassName()");
-    runTemplateTest(getTestName(false) + "3", "js", "jsClassName()");
-    runTemplateTest(getTestName(false) + "3_2", "js", "jsQualifiedClassName()");
-  }
-
-  private void runTemplateTest(final String testName, final String ext, final String templateText) throws Exception {
-    final TemplateManager templateManager = TemplateManager.getInstance(getProject());
-    final Template template = templateManager.createTemplate("", "", "$a$");
-    template.addVariable("a", templateText, "zzz", true);
-    //noinspection unchecked
-    doTest(template, Consumer.EMPTY_CONSUMER, BASE_PATH + testName + "." + ext);
   }
 
   protected void doTest(final String templateName, final String extension, final String group) throws Exception {
     final Template template = TemplateSettings.getInstance().getTemplate(templateName, group);
     //noinspection unchecked
-    doTest(template, Consumer.EMPTY_CONSUMER, BASE_PATH + getTestName(false) + "." + extension);
+    doTest(template, Consumer.EMPTY_CONSUMER, getBasePath() + getTestName(false) + "." + extension);
   }
 
   protected void doTest(final String templateName, final String extension) throws Exception {
@@ -89,27 +72,7 @@ public class FlexLiveTemplatesTest extends CodeInsightTestCase {
 
   protected void doTest(final String templateName, final String extension, final Consumer<Integer> segmentHandler) throws Exception {
     final Template template = TemplateSettings.getInstance().getTemplate(templateName, "ActionScript");
-    doTest(template, segmentHandler, BASE_PATH + getTestName(false) + "." + extension);
-  }
-
-  private void doTest(final Template template, final Consumer<Integer> segmentHandler, String... files) throws Exception {
-    configureByFiles(null, files);
-    TemplateManager.getInstance(getProject()).startTemplate(myEditor, template);
-    final TemplateState state = TemplateManagerImpl.getTemplateState(myEditor);
-    int segmentIndex = 0;
-
-    while (state != null && !state.isFinished()) {
-      final int finalSegmentIndex = segmentIndex;
-      WriteCommandAction.runWriteCommandAction(null, () -> {
-        segmentHandler.consume(finalSegmentIndex);
-        state.nextTab();
-      });
-      segmentIndex++;
-    }
-
-    final String name = FileUtil.getNameWithoutExtension(files[0]);
-    final String ext = files[0].substring(files[0].lastIndexOf('.') + 1);
-    checkResultByFile(name + "_after." + ext);
+    doTest(template, segmentHandler, getBasePath() + getTestName(false) + "." + extension);
   }
 
   private static Consumer<Integer> createLookupSelectingSegmentHandler(final Project project,
