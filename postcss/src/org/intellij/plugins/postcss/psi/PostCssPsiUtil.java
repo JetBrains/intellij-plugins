@@ -65,7 +65,7 @@ public class PostCssPsiUtil {
 
   @Contract("null -> false")
   public static boolean isInsideNest(@Nullable PsiElement element) {
-    return PsiTreeUtil.getParentOfType(element, PostCssNest.class) != null;
+    return PsiTreeUtil.getParentOfType(element, PostCssNest.class, CssRuleset.class, CssAtRule.class) instanceof PostCssNest;
   }
 
   @Contract("null -> false")

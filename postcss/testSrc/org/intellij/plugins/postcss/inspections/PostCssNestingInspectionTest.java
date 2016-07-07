@@ -61,6 +61,10 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
+  public void testNestedRulesetInsideNestAtRule() {
+    doTest();
+  }
+
   private long doTest() {
     return myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
   }
