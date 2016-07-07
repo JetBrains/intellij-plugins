@@ -41,7 +41,7 @@ public class DartTestRerunner implements RunProfileState {
 
   @NotNull
   Module[] getModulesToCompile() {
-    return new Module[0];
+    return Module.EMPTY_ARRAY;
   }
 
   private String computeTestNameRegexp() {

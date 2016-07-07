@@ -61,7 +61,7 @@ public class GherkinColorsPage implements ColorSettingsPage {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("regexp_param", GherkinHighlighter.REGEXP_PARAMETER);
   }
 
-  private static final ColorDescriptor[] COLORS = new ColorDescriptor[0];
+  private static final ColorDescriptor[] COLORS = ColorDescriptor.EMPTY_ARRAY;
 
   @Nullable
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {

@@ -208,7 +208,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
 
     DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)treeModel.getRoot();
     JTreeUtil.removeChildren(tracesRoot, treeModel);
-    fillTreeModelRoot(tracesRoot, filteredCallTree, countMap, selfCountMap, true, new FrameInfo[0]);
+    fillTreeModelRoot(tracesRoot, filteredCallTree, countMap, selfCountMap, true, FrameInfo.EMPTY_FRAME_INFO_ARRAY);
     treeModel.reload();
   }
 

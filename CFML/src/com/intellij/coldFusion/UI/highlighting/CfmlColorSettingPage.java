@@ -61,7 +61,7 @@ public class CfmlColorSettingPage implements ColorSettingsPage {
     };
   }
 
-  private static final ColorDescriptor[] COLORS = new ColorDescriptor[0];
+  private static final ColorDescriptor[] COLORS = ColorDescriptor.EMPTY_ARRAY;
 
   @NotNull
   public String getDisplayName() {

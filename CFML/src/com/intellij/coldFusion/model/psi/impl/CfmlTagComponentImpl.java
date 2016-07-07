@@ -138,7 +138,7 @@ public CfmlTagComponentImpl(ASTNode astNode) {
   }
 
   public CfmlComponent[] getImplementedInterfaces() {
-    return new CfmlComponent[0];  //To change body of implemented methods use File | Settings | File Templates.
+    return CfmlComponent.EMPTY_ARRAY;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Nullable
