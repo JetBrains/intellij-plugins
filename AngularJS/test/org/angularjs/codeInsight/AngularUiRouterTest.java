@@ -44,6 +44,19 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     testNavigationToMenuTip(files[0]);
   }
 
+  public void testNoNavigationFromViews() throws Exception {
+    //when there is not a views definition
+    final PsiFile[] files = myFixture.configureByFiles("noNavigationFromViews.js", "angular.js");
+    myFixture.doHighlighting();
+
+    final PsiElement another = getReferenceByTextAround(files[0], "another").resolve();
+    Assert.assertTrue(another instanceof JSProperty);
+    Assert.assertEquals("another", ((JSProperty) another).getName());
+    final PsiElement boring = getReferenceByTextAround(files[0], "boring").resolve();
+    Assert.assertTrue(boring instanceof JSProperty);
+    Assert.assertEquals("boring", ((JSProperty) boring).getName());
+  }
+
   private void testNavigationToMenuTip(PsiFile file) {
     final String str = "'menuTip'";
     final PsiReference reference = getReferenceByTextAround(file, str);

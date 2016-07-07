@@ -112,6 +112,15 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\"', "var foo = \"bar<caret>\"", "var foo = \"bar\"<caret>");
     doTypingTest('\'', "var foo = 'bar' <caret>", "var foo = 'bar' '<caret>'");
     doTypingTest('\"', "var foo = \"\" <caret>", "var foo = \"\" \"<caret>\"");
+    doTypingTest('"', "var foo = r<caret>", "var foo = r\"<caret>\"");
+    doTypingTest('\'', "var foo = r<caret>", "var foo = r'<caret>'");
+    doTypingTest('"', "var foo = bar(r<caret>)", "var foo = bar(r\"<caret>\")");
+    doTypingTest('\'', "var foo = bar(r<caret>)", "var foo = bar(r'<caret>')");
+    doTypingTest('"', "var foo = r'<caret>", "var foo = r'\"<caret>");
+    doTypingTest('\'', "var foo = r'<caret>", "var foo = r''<caret>");
+    doTypingTest('\'', "var foo = r'<caret>'", "var foo = r''<caret>");
+    doTypingTest('"', "var foo = r\"foo<caret>\"", "var foo = r\"foo\"<caret>");
+    doTypingTest('\'', "var foo = r'<caret>'\"", "var foo = r''<caret>\"");
   }
 
   public void testBackspace() throws Throwable {
@@ -620,5 +629,10 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n', "var a = '$a<caret>$b';", "var a = '$a'\n    '<caret>$b';");
     doTypingTest('\n', "var a = '$a i <caret> i $b';", "var a = '$a i '\n    '<caret> i $b';");
     doTypingTest('\n', "var a = '${a}<caret>${b}';", "var a = '${a}'\n    '<caret>${b}';");
+  }
+
+  public void testBracket() {
+    doTypingTest('[', "var a = new RegExp(<caret>)", "var a = new RegExp([<caret>])");
+    doTypingTest('[', "var a = new RegExp(r'<caret>)", "var a = new RegExp(r'[<caret>)");
   }
 }

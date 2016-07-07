@@ -115,7 +115,7 @@ public class DartIndentProcessor {
     if (elementType == CLASS_MEMBERS) {
       return Indent.getNormalIndent();
     }
-    if (parentType == BLOCK) {
+    if (BLOCKS.contains(parentType)) {
       final PsiElement psi = node.getPsi();
       if (psi.getParent() instanceof PsiFile) {
         return Indent.getNoneIndent();
@@ -129,7 +129,7 @@ public class DartIndentProcessor {
       if (prevSiblingType == ARGUMENT_LIST) {
         ASTNode[] childs = prevSibling.getChildren(null);
         int n = childs.length;
-        if (n > 2 && childs[n - 1] instanceof PsiErrorElement && childs[n-2].getElementType() == COMMA) {
+        if (n > 2 && childs[n - 1] instanceof PsiErrorElement && childs[n - 2].getElementType() == COMMA) {
           return Indent.getContinuationIndent();
         }
       }
@@ -150,7 +150,7 @@ public class DartIndentProcessor {
     if (parentType == FORMAL_PARAMETER_LIST) {
       return Indent.getContinuationIndent();
     }
-    if (parentType == FOR_STATEMENT && prevSiblingType == FOR_LOOP_PARTS_IN_BRACES && elementType != BLOCK) {
+    if (parentType == FOR_STATEMENT && prevSiblingType == FOR_LOOP_PARTS_IN_BRACES && !BLOCKS.contains(elementType)) {
       return Indent.getNormalIndent();
     }
     if (parentType == SWITCH_STATEMENT && (elementType == SWITCH_CASE || elementType == DEFAULT_CASE)) {
@@ -159,18 +159,18 @@ public class DartIndentProcessor {
     if ((parentType == SWITCH_CASE || parentType == DEFAULT_CASE) && elementType == STATEMENTS) {
       return Indent.getNormalIndent();
     }
-    if (parentType == WHILE_STATEMENT && prevSiblingType == RPAREN && elementType != BLOCK) {
+    if (parentType == WHILE_STATEMENT && prevSiblingType == RPAREN && !BLOCKS.contains(elementType)) {
       return Indent.getNormalIndent();
     }
-    if (parentType == DO_WHILE_STATEMENT && prevSiblingType == DO && elementType != BLOCK) {
+    if (parentType == DO_WHILE_STATEMENT && prevSiblingType == DO && !BLOCKS.contains(elementType)) {
       return Indent.getNormalIndent();
     }
     if ((parentType == RETURN_STATEMENT) &&
         prevSiblingType == RETURN &&
-        elementType != BLOCK) {
+        !BLOCKS.contains(elementType)) {
       return Indent.getNormalIndent();
     }
-    if (parentType == IF_STATEMENT && elementType != BLOCK &&
+    if (parentType == IF_STATEMENT && !BLOCKS.contains(elementType) &&
         (prevSiblingType == RPAREN || (prevSiblingType == ELSE && elementType != IF_STATEMENT))) {
       return Indent.getNormalIndent();
     }

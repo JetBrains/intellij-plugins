@@ -7,7 +7,7 @@ Dart File
       PsiElement(()('(')
       PsiElement())(')')
     FUNCTION_BODY
-      BLOCK
+      LAZY_PARSEABLE_BLOCK
         PsiElement({)('{')
         PsiComment(SINGLE_LINE_COMMENT)('// WI-14560')
         STATEMENTS
@@ -37,7 +37,7 @@ Dart File
       PsiElement(()('(')
       PsiElement())(')')
     FUNCTION_BODY
-      BLOCK
+      LAZY_PARSEABLE_BLOCK
         PsiElement({)('{')
         PsiComment(SINGLE_LINE_COMMENT)('// WI-14572')
         STATEMENTS

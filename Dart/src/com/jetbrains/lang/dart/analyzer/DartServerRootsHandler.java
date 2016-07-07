@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.io.URLUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -112,11 +113,14 @@ public class DartServerRootsHandler {
           final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);
 
           for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
-            newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntry.getUrl())));
+            final String contentEntryUrl = contentEntry.getUrl();
+            if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
+              newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntryUrl)));
 
-            for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
-              if (!excludedPackageSymlinkUrls.contains(excludedUrl)) {
-                newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
+              for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
+                if (excludedUrl.startsWith(contentEntryUrl) && !excludedPackageSymlinkUrls.contains(excludedUrl)) {
+                  newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
+                }
               }
             }
           }

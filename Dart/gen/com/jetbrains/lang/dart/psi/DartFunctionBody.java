@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartFunctionBody extends DartPsiCompositeElement {
 
   @Nullable
-  DartBlock getBlock();
+  IDartBlock getBlock();
 
 }

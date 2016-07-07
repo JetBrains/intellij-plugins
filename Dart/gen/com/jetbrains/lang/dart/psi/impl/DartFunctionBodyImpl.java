@@ -27,7 +27,7 @@ public class DartFunctionBodyImpl extends DartPsiCompositeElementImpl implements
   }
 
   @Nullable
-  public DartBlock getBlock() {
+  public IDartBlock getBlock() {
     return DartPsiImplUtil.getBlock(this);
   }
 

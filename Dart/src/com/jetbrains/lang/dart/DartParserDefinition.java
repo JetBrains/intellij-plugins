@@ -8,12 +8,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.lang.dart.lexer.DartLexer;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.impl.DartDocCommentImpl;
 import com.jetbrains.lang.dart.psi.impl.DartEmbeddedContentImpl;
+import com.jetbrains.lang.dart.psi.impl.DartLazyParseableBlockImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class DartParserDefinition implements ParserDefinition {
@@ -61,12 +63,12 @@ public class DartParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public PsiElement createElement(ASTNode node) {
-    if (node.getElementType() == DartTokenTypesSets.EMBEDDED_CONTENT) {
-      return new DartEmbeddedContentImpl(node);
-    }
-    else if (node.getElementType() == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT) {
-      return new DartDocCommentImpl(node);
-    }
+    final IElementType type = node.getElementType();
+
+    if (type == DartTokenTypesSets.EMBEDDED_CONTENT) return new DartEmbeddedContentImpl(node);
+    if (type == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT) return new DartDocCommentImpl(node);
+    if (type == DartTokenTypesSets.LAZY_PARSEABLE_BLOCK) return new DartLazyParseableBlockImpl(node);
+
     return DartTokenTypes.Factory.createElement(node);
   }
 

@@ -111,8 +111,8 @@ public class DartStatementMover extends LineMover {
       .getParentOfType(elementAtInsertOffset, DartMethodDeclaration.class, DartFunctionDeclarationWithBodyOrNative.class, DartClass.class,
                        PsiComment.class);
 
-    if (brace != null && PsiTreeUtil.getParentOfType(brace, DartBlock.class, false) !=
-                         PsiTreeUtil.getParentOfType(elementAtInsertOffset, DartBlock.class, false)) {
+    if (brace != null && PsiTreeUtil.getParentOfType(brace, IDartBlock.class, false) !=
+                         PsiTreeUtil.getParentOfType(elementAtInsertOffset, IDartBlock.class, false)) {
       info.indentSource = true;
     }
     if (newGuard == guard && isInside(insertOffset, newGuard) == isInside(offset, guard)) return true;
@@ -159,12 +159,12 @@ public class DartStatementMover extends LineMover {
           if ((isStatement(element) || element instanceof PsiComment)
               && statementCanBePlacedAlong(element)) {
             found = true;
-            if (!(element.getParent() instanceof DartBlock)) {
+            if (!(element.getParent() instanceof IDartBlock)) {
               elementToSurround = element;
             }
           }
           else if (element.getNode().getElementType() == DartTokenTypes.RBRACE
-                   && element.getParent() instanceof DartBlock && !isStatement(element.getParent().getParent())) {
+                   && element.getParent() instanceof IDartBlock && !isStatement(element.getParent().getParent())) {
             // Before code block closing brace.
             found = true;
           }
@@ -257,13 +257,13 @@ public class DartStatementMover extends LineMover {
   }
 
   private static boolean statementCanBePlacedAlong(final PsiElement element) {
-    if (element instanceof DartBlock) {
+    if (element instanceof IDartBlock) {
       return false;
     }
     PsiElement parent = element.getParent();
     if (parent instanceof DartStatements) {
       parent = parent.getParent();
-      if (parent instanceof DartBlock) {
+      if (parent instanceof IDartBlock) {
         if (!isStatement(parent.getParent())) {
           return true;
         }

@@ -3,6 +3,7 @@ package org.angularjs.codeInsight.refs;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.*;
@@ -194,20 +195,27 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     return PlatformPatterns.psiElement(PsiElement.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        if (element instanceof JSProperty) {
+        if (element instanceof JSProperty && acceptablePropertyValue((JSProperty)element)) {
           final JSProperty property = (JSProperty)element;
           if (checkParentViewsObject(property.getParent())) return AngularIndexUtil.hasAngularJS(property.getProject());
         } else if (element instanceof JSLiteralExpression ||
                    element instanceof LeafPsiElement && ((LeafPsiElement)element).getNode().getElementType() == JSTokenTypes.STRING_LITERAL) {
           // started typing property, variant
-          final PsiElement current = moveUpChain((PsiElement) element,
+          PsiElement current = moveUpChain((PsiElement) element,
                                                  JSLiteralExpression.class,
                                                  JSReferenceExpression.class,
-                                                 JSProperty.class,
-                                                 JSObjectLiteralExpression.class);
+                                                 JSProperty.class);
+          if (!(current instanceof JSProperty) || !acceptablePropertyValue((JSProperty)current)) return false;
+          current = current.getParent();
           if (current != null && checkParentViewsObject(current)) return AngularIndexUtil.hasAngularJS(current.getProject());
         }
         return false;
+      }
+
+      private boolean acceptablePropertyValue(JSProperty element) {
+        return element.getNameIdentifier() != null && StringUtil.isQuotedString(element.getNameIdentifier().getText()) &&
+               (element.getValue() instanceof JSObjectLiteralExpression ||
+                                             element.getValue() instanceof JSReferenceExpression || element.getValue() == null);
       }
 
       private PsiElement moveUpChain(@Nullable final PsiElement element, @NotNull final Class<? extends PsiElement>... clazz) {

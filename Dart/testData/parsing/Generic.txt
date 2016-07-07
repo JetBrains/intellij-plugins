@@ -33,7 +33,7 @@ Dart File
             PsiElement(()('(')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 RETURN_STATEMENT
@@ -60,7 +60,7 @@ Dart File
                     PsiElement(IDENTIFIER)('t')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 ASSIGN_EXPRESSION
@@ -159,7 +159,7 @@ Dart File
                     PsiElement(IDENTIFIER)('box')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 RETURN_STATEMENT
