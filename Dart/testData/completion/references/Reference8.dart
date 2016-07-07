@@ -1,5 +1,0 @@
-#import("foo");
-
-main(){
-  <caret>
-}

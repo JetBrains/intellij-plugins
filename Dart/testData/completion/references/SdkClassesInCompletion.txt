@@ -1,6 +1,0 @@
-BASIC 1 INCLUDES
-Object
-String
-StringBuffer
-int
-bool
