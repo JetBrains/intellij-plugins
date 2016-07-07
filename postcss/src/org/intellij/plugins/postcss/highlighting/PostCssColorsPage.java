@@ -67,7 +67,7 @@ public class PostCssColorsPage implements ColorSettingsPage {
     new AttributesDescriptor(CssBundle.message("css.url"), PostCssSyntaxHighlighter.URL),
   };
 
-  private static final ColorDescriptor[] COLORS = new ColorDescriptor[0];
+  private static final ColorDescriptor[] COLORS = ColorDescriptor.EMPTY_ARRAY;
 
   @Nullable
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
