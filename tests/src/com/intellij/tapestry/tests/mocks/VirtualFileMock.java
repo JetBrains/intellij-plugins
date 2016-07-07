@@ -71,7 +71,7 @@ public class VirtualFileMock extends VirtualFile {
 
     @Override
     public VirtualFile[] getChildren() {
-        return new VirtualFile[0];
+        return VirtualFile.EMPTY_ARRAY;
     }
 
     @Override

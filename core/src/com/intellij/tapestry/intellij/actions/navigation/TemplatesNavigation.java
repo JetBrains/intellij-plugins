@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TemplatesNavigation extends ActionGroup implements DumbAware {
 
-    private static final AnAction[] EMPTY_ACTION_ARRAY = new AnAction[0];
+    private static final AnAction[] EMPTY_ACTION_ARRAY = AnAction.EMPTY_ARRAY;
 
     private PresentationLibraryElement tapestryElement;
     private final ClassTemplateNavigation classTemplateNavigation = new ClassTemplateNavigation();

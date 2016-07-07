@@ -65,13 +65,13 @@ public class PsiClassMock implements PsiClass {
     @Override
     @NotNull
     public PsiClassType[] getExtendsListTypes() {
-        return new PsiClassType[0];
+        return PsiClassType.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiClassType[] getImplementsListTypes() {
-        return new PsiClassType[0];
+        return PsiClassType.EMPTY_ARRAY;
     }
 
     @Override
@@ -82,67 +82,67 @@ public class PsiClassMock implements PsiClass {
 
     @Override
     public PsiClass[] getInterfaces() {
-        return new PsiClass[0];
+        return PsiClass.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiClass[] getSupers() {
-        return new PsiClass[0];
+        return PsiClass.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiClassType[] getSuperTypes() {
-        return new PsiClassType[0];
+        return PsiClassType.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiField[] getFields() {
-        return new PsiField[0];
+        return PsiField.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiMethod[] getMethods() {
-        return new PsiMethod[0];
+        return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiMethod[] getConstructors() {
-        return new PsiMethod[0];
+        return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiClass[] getInnerClasses() {
-        return new PsiClass[0];
+        return PsiClass.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiClassInitializer[] getInitializers() {
-        return new PsiClassInitializer[0];
+        return PsiClassInitializer.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiField[] getAllFields() {
-        return new PsiField[0];
+        return PsiField.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiMethod[] getAllMethods() {
-        return new PsiMethod[0];
+        return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiClass[] getAllInnerClasses() {
-        return new PsiClass[0];
+        return PsiClass.EMPTY_ARRAY;
     }
 
     @Override
@@ -160,13 +160,13 @@ public class PsiClassMock implements PsiClass {
     @Override
     @NotNull
     public PsiMethod[] findMethodsBySignature(PsiMethod patternMethod, boolean checkBases) {
-        return new PsiMethod[0];
+        return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
     @NotNull
     public PsiMethod[] findMethodsByName(@NonNls String name, boolean checkBases) {
-        return new PsiMethod[0];
+        return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
@@ -257,7 +257,7 @@ public class PsiClassMock implements PsiClass {
     @Override
     @NotNull
     public PsiElement[] getChildren() {
-        return new PsiElement[0];
+        return PsiElement.EMPTY_ARRAY;
     }
 
     @Override
@@ -459,7 +459,7 @@ public class PsiClassMock implements PsiClass {
     @Override
     @NotNull
     public PsiReference[] getReferences() {
-        return new PsiReference[0];
+        return PsiReference.EMPTY_ARRAY;
     }
 
     @Override
@@ -602,6 +602,6 @@ public class PsiClassMock implements PsiClass {
     @Override
     @NotNull
     public PsiTypeParameter[] getTypeParameters() {
-        return new PsiTypeParameter[0];
+        return PsiTypeParameter.EMPTY_ARRAY;
     }
 }

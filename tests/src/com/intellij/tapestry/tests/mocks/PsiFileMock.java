@@ -124,7 +124,7 @@ public class PsiFileMock implements PsiFile {
     @Override
     @NotNull
     public PsiElement[] getChildren() {
-        return new PsiElement[0];
+        return PsiElement.EMPTY_ARRAY;
     }
 
     @Override
@@ -319,7 +319,7 @@ public class PsiFileMock implements PsiFile {
     @Override
     @NotNull
     public PsiReference[] getReferences() {
-        return new PsiReference[0];
+        return PsiReference.EMPTY_ARRAY;
     }
 
     @Override

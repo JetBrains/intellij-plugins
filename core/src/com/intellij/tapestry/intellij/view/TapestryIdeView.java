@@ -42,7 +42,7 @@ public class TapestryIdeView implements IdeView {
                     }
                 }
         );
-        return directories.toArray(new PsiDirectory[0]);
+        return directories.toArray(PsiDirectory.EMPTY_ARRAY);
     }
 
     @Nullable

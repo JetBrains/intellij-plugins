@@ -34,7 +34,7 @@ public class TapestryParameterDescriptor extends BasicTapestryTagDescriptor {
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    return new XmlAttributeDescriptor[0];
+    return XmlAttributeDescriptor.EMPTY;
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {

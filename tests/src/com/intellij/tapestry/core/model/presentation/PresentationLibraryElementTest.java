@@ -256,6 +256,6 @@ class TestableParameterReceiverElement extends ParameterReceiverElement {
 
     @Override
     public IResource[] getMessageCatalog() {
-        return new IResource[0];
+        return IResource.EMPTY_ARRAY;
     }
 }

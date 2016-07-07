@@ -48,7 +48,7 @@ public class TapestryFindUsagesTest extends TapestryBaseTestCase {
     Query<PsiReference> query = referenceTo instanceof PsiMethod
                                 ? MethodReferencesSearch.search((PsiMethod)referenceTo, scope, false)
                                 : ReferencesSearch.search(referenceTo, scope, true);
-    return query.toArray(new PsiReference[0]);
+    return query.toArray(PsiReference.EMPTY_ARRAY);
   }
 
 }
