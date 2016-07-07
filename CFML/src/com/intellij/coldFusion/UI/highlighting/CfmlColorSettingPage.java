@@ -61,8 +61,6 @@ public class CfmlColorSettingPage implements ColorSettingsPage {
     };
   }
 
-  private static final ColorDescriptor[] COLORS = ColorDescriptor.EMPTY_ARRAY;
-
   @NotNull
   public String getDisplayName() {
     //noinspection HardCodedStringLiteral
@@ -80,7 +78,7 @@ public class CfmlColorSettingPage implements ColorSettingsPage {
 
   @NotNull
   public ColorDescriptor[] getColorDescriptors() {
-    return COLORS;
+    return ColorDescriptor.EMPTY_ARRAY;
   }
 
   @NotNull
