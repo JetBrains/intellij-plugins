@@ -1,1 +1,0 @@
-class AClass extends Object <caret>

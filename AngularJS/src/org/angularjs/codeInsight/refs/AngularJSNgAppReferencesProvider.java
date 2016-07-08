@@ -65,7 +65,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
         results = ContainerUtil.filter(results, filter);
       }
       final List<ResolveResult> resolveResults = ContainerUtil.map(results, AngularIndexUtil.JS_IMPLICIT_TO_RESOLVE_RESULT);
-      return resolveResults.toArray(new ResolveResult[0]);
+      return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
     }
 
     @NotNull

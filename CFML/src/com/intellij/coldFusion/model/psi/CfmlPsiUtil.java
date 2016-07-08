@@ -270,7 +270,7 @@ public class CfmlPsiUtil {
        // TODO: to parse list of components
       }*/
     }
-    return new PsiReference[0];
+    return PsiReference.EMPTY_ARRAY;
   }
 
   @Nullable

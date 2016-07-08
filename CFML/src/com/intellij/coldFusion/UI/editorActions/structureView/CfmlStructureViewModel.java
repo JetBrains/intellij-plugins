@@ -55,7 +55,7 @@ public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
   @Override
   @NotNull
   public Grouper[] getGroupers() {
-    return new Grouper[0];  //To change body of implemented methods use File | Settings | File Templates.
+    return Grouper.EMPTY_ARRAY;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
@@ -67,7 +67,7 @@ public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
   @Override
   @NotNull
   public Filter[] getFilters() {
-    return new Filter[0];
+    return Filter.EMPTY_ARRAY;
   }
 
   @NotNull

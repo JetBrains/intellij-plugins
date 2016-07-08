@@ -82,13 +82,13 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     String formatterOptions = null;
     final Location location = context.getLocation();
     if (location != null) {
-      if (LocationUtil.isJarAttached(location, CUCUMBER_1_0_MAIN_CLASS, new PsiDirectory[0])) {
+      if (LocationUtil.isJarAttached(location, CUCUMBER_1_0_MAIN_CLASS, PsiDirectory.EMPTY_ARRAY)) {
         mainClassName = CUCUMBER_1_0_MAIN_CLASS;
-      } else if (LocationUtil.isJarAttached(location, CUCUMBER_1_1_MAIN_CLASS, new PsiDirectory[0])) {
+      } else if (LocationUtil.isJarAttached(location, CUCUMBER_1_1_MAIN_CLASS, PsiDirectory.EMPTY_ARRAY)) {
         mainClassName = CUCUMBER_1_1_MAIN_CLASS;
       }
 
-      if (LocationUtil.isJarAttached(location, CUCUMBER_1_2_PLUGIN_CLASS, new PsiDirectory[0]))  {
+      if (LocationUtil.isJarAttached(location, CUCUMBER_1_2_PLUGIN_CLASS, PsiDirectory.EMPTY_ARRAY))  {
         formatterOptions = FORMATTER_OPTIONS_1_2;
       } else {
         formatterOptions = FORMATTER_OPTIONS;
