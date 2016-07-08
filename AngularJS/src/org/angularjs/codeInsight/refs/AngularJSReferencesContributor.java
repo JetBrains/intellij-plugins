@@ -195,11 +195,10 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     return PlatformPatterns.psiElement(PsiElement.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        if (element instanceof JSProperty && acceptablePropertyValue((JSProperty)element)) {
-          final JSProperty property = (JSProperty)element;
-          if (checkParentViewsObject(property.getParent())) return AngularIndexUtil.hasAngularJS(property.getProject());
-        } else if (element instanceof JSLiteralExpression ||
+        if (!(element instanceof PsiElement)) return false;
+        if (element instanceof JSLiteralExpression ||
                    element instanceof LeafPsiElement && ((LeafPsiElement)element).getNode().getElementType() == JSTokenTypes.STRING_LITERAL) {
+          if (!(((PsiElement) element).getParent() instanceof JSProperty)) return false;
           // started typing property, variant
           PsiElement current = moveUpChain((PsiElement) element,
                                                  JSLiteralExpression.class,
