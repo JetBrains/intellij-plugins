@@ -1,8 +1,8 @@
 /*
  * doc<caret>
  */
-
-var a, b;
 typedef int
 fg();
+
+var a, b;
 var x;

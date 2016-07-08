@@ -59,7 +59,11 @@ public class DartComponentMoverTest extends DartCodeMoverTest {
   }
 
   public void testVarComment() {
-    // TODO: Fix "afterDown" case. The final block comment is a child of the class body, not the class members.
+    // TODO: Fix "afterDown" case. The comment needs to be indented properly.
+    doTest();
+  }
+
+  public void testFirstMemberVar() {
     doTest();
   }
 }

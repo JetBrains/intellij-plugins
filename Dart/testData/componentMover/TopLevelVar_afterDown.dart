@@ -1,5 +1,5 @@
+typedef int fg();
 /**
  * doc
  */
-typedef int fg();
 var x;

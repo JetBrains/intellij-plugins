@@ -2,10 +2,10 @@ class QQ {
 
   var y;
   /*
-   * doc
+   * doc1
    */
   var x;<caret>
   /*
-   * doc
+   * doc2
    */
 }

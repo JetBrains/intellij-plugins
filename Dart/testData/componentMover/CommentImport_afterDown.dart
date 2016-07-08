@@ -1,8 +1,8 @@
 import "t1.dart"
   as x;
-import "t2.dart";
 /*<caret>
 */
+import "t2.dart";
 
 class M1 {
   int m() => 1;

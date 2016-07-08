@@ -1,8 +1,8 @@
 var a, b;
 
-typedef int
-fg();
+var x;
 /*<caret>
  * doc
  */
-var x;
+typedef int
+fg();
