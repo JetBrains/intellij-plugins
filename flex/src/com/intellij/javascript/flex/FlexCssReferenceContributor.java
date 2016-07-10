@@ -17,11 +17,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.css.*;
+import com.intellij.psi.css.impl.CssTokenImpl;
 import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlToken;
-import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +88,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
 
     registrar.registerReferenceProvider(PlatformPatterns.psiElement().and(new FilterPattern(new ElementFilter() {
       public boolean isAcceptable(Object element, PsiElement context) {
-        if (element instanceof XmlToken || element instanceof CssString) {
+        if (element instanceof CssTokenImpl || element instanceof CssString) {
           CssTermList cssTermList = PsiTreeUtil.getParentOfType((PsiElement)element, CssTermList.class);
           if (cssTermList != null) {
             CssDeclaration cssDeclaration = PsiTreeUtil.getParentOfType(cssTermList, CssDeclaration.class);
