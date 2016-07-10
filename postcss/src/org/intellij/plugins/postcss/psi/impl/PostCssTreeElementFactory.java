@@ -2,9 +2,7 @@ package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.psi.css.impl.CssTreeElementFactory;
 import com.intellij.psi.impl.source.tree.CompositeElement;
-import com.intellij.psi.impl.source.tree.LazyParseableElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.ILazyParseableElementType;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,10 +14,5 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
       return new PostCssNestImpl();
     }
     return super.createComposite(type);
-  }
-
-  @Override
-  public LazyParseableElement createLazy(final ILazyParseableElementType type, final CharSequence text) {
-    return null;
   }
 }

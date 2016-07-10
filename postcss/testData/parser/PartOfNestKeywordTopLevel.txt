@@ -2,7 +2,7 @@ PostCSS File:PartOfNestKeywordTopLevel.pcss
   PsiElement(POST_CSS_STYLESHEET)
     PsiElement(CSS_RULESET_LIST)
       PsiElement(CSS_BAD_AT_RULE)
-        XmlToken:CSS_ATKEYWORD('@n')
+        PsiElement(CSS_ATKEYWORD)('@n')
         PsiErrorElement:'{' expected
           <empty list>
         PsiErrorElement:'}' expected
