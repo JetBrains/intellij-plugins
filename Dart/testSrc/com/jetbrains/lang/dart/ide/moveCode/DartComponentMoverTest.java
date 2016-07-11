@@ -29,4 +29,41 @@ public class DartComponentMoverTest extends DartCodeMoverTest {
   public void testFunctionTypedef() {
     doTest();
   }
+
+  public void testTopLevelVar() {
+    doTest();
+  }
+
+  public void testBlockComment1() {
+    doTest();
+  }
+
+  public void testBlockComment2() {
+    doTest();
+  }
+
+  public void testBlockComment3() {
+    doTest();
+  }
+
+  public void testBlockDocComment1() {
+    doTest();
+  }
+
+  public void testBlockDocComment2() {
+    doTest();
+  }
+
+  public void testBlockDocComment3() {
+    doTest();
+  }
+
+  public void testVarComment() {
+    // TODO: Fix "afterDown" case. The comment needs to be indented properly.
+    doTest();
+  }
+
+  public void testFirstMemberVar() {
+    doTest();
+  }
 }
