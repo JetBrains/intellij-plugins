@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,8 +63,7 @@ public class BndLaunchUtil {
   public static Boolean hasTestCases(@NotNull String path) {
     File file = new File(FileUtil.toSystemDependentName(path));
     if (file.isFile()) {
-      try {
-        Processor processor = new Processor();
+      try (Processor processor = new Processor()) {
         processor.setProperties(file);
 
         if (processor.get(Constants.RUNFW) != null) {
@@ -85,5 +85,10 @@ public class BndLaunchUtil {
     }
 
     return null;
+  }
+
+  public static String message(Throwable t) {
+    String message = t.getMessage();
+    return StringUtil.isEmptyOrSpaces(message) ? t.getClass().getSimpleName() : t.getClass().getSimpleName() + ": " + message;
   }
 }
