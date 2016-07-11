@@ -439,7 +439,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         }
         for (DiagramEdge edge : builder.getEdgeObjects()) {
           if (!(edge instanceof AngularUiRouterEdge)) continue;
-          if (selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
+          if (isShowEdgeLabels() && selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
             myVisibleEdges.add((AngularUiRouterEdge)edge);
             graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge) edge).getLabel());
           } else {
