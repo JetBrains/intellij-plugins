@@ -548,16 +548,22 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
     @Override
     public void update(AnActionEvent e) {
-      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
-      e.getPresentation().setEnabled(builder != null && !builder.getGraph().isSelectionEmpty());
+      final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+      if (project == null) {
+        e.getPresentation().setEnabled(false);
+        return;
+      }
+      final List<DiagramNode> nodes = getSelectedNodes(e);
+      e.getPresentation().setEnabled(nodes != null && nodes.size() == 1 && nodes.get(0) instanceof AngularUiRouterNode);
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
-      if (builder == null || builder.getGraph().isSelectionEmpty()) return;
-      UmlGraphBuilder umlBuilder = (UmlGraphBuilder)builder.getGraph().getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
-      final List<DiagramNode> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(umlBuilder));
+      final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+      if (project == null) return;
+      final List<DiagramNode> nodes = getSelectedNodes(e);
+      if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode)) return;
+
       final AngularUiRouterNode node = (AngularUiRouterNode)nodes.get(0);
       final DiagramObject main = node.getIdentifyingElement();
       final List<DiagramObject> childrenList = main.getChildrenList();
@@ -580,13 +586,20 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
                 final PsiElement element = target.getElement();
                 final int offset = element == null ? 0 :
                                    (element instanceof JSImplicitElement ? element.getTextOffset() : element.getTextRange().getStartOffset());
-                new OpenFileDescriptor(builder.getProject(), target.getVirtualFile(), offset)
-                  .navigate(true);
+                new OpenFileDescriptor(project, target.getVirtualFile(), offset).navigate(true);
               }
             }
           })
           .createPopup().showInBestPositionFor(e.getDataContext());
       }
+    }
+
+    @Nullable
+    private static List<DiagramNode> getSelectedNodes(AnActionEvent e) {
+      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
+      if (builder == null || builder.getGraph().isSelectionEmpty()) return null;
+      UmlGraphBuilder umlBuilder = (UmlGraphBuilder)builder.getGraph().getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+      return new ArrayList<>(GraphUtil.getSelectedNodes(umlBuilder));
     }
   }
 }
