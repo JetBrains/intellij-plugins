@@ -351,12 +351,15 @@ public class AngularUiRouterGraphBuilder {
       templateUrl = idx >= 0 ? templateUrl.substring(idx + 1) : templateUrl;
       template = template == null && templateFile != null ? myTemplatesMap.get(templateFile) : template;
       if (template == null || template.getPointer() == null || templateFile == null) {
+        final AngularUiRouterNode templateNode = templateNodes.get(fullUrl);
+        if (templateNode != null) return templateNode;
+
         // file not found
         final DiagramObject templateObject = new DiagramObject(Type.template, templateUrl, null);
         templateObject.addError("Can not find template file");
         final AngularUiRouterNode fictiveNode = new AngularUiRouterNode(templateObject, provider);
         fictiveNode.getIdentifyingElement().setTooltip(fullUrl);
-        templateNodes.put(templateUrl, fictiveNode);
+        templateNodes.put(fullUrl, fictiveNode);
         return fictiveNode;
       }
       else if (!templateNodes.containsKey(templateFile.getUrl())) {
