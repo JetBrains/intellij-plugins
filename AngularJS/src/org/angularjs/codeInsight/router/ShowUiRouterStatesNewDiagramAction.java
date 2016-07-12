@@ -102,7 +102,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   @Override
   public void update(AnActionEvent e) {
     final Project project = e.getProject();
-    e.getPresentation().setEnabled(project != null && AngularIndexUtil.hasAngularJS(project));
+    e.getPresentation().setEnabledAndVisible(project != null && AngularIndexUtil.hasAngularJS(project));
 
     e.getPresentation().setText(DESCRIPTION);
     e.getPresentation().setDescription(DESCRIPTION);
