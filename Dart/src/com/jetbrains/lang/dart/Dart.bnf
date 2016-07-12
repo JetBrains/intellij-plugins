@@ -332,13 +332,13 @@ bitwiseOperator ::= '&' | '^' | '|'
 assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|=' | '??='
 equalityOperator ::= '==' | '!='
 
-formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ')'
+formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ','? ')'
                       | '(' namedFormalParameters? ')'
 
 fieldFormalParameter ::= metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
 
-namedFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ']' |
-                          '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* '}'
+namedFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']' |
+                          '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? '}'
 
 defaultFormalNamedParameter ::= normalFormalParameter (('=' | ':') expression)? {recoverWhile="default_formal_parameter_recover"}
 private default_formal_parameter_recover ::= !(')' | ',' | ']' | '}')
@@ -453,7 +453,7 @@ varInit ::= '=' expression {pin=1}
 expressionList ::= expression (',' expression)*
 arguments ::= '(' argumentList? ')'
 
-argumentList ::= argumentListPart (',' argumentListPart)* {recoverWhile="argument_list_recover"}
+argumentList ::= argumentListPart (',' argumentListPart)* ','? {recoverWhile="argument_list_recover"}
 private argument_list_recover ::= !(')')
 private argumentListPart ::= namedArgument | expression {recoverWhile="argument_list_part_recover"}
 private argument_list_part_recover ::= !(')' | ',')
