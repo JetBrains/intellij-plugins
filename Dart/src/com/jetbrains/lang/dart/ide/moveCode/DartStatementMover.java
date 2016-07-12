@@ -8,10 +8,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -28,7 +25,25 @@ import org.jetbrains.annotations.Nullable;
  * TODO: What about moving statements from a local function to the surrounding method?
  */
 public class DartStatementMover extends LineMover {
-  private PsiElement statementToSurroundWithCodeBlock;
+  private SmartPsiElementPointer statementToSurroundWithCodeBlock;
+
+  @Override
+  public void afterMove(@NotNull final Editor editor, @NotNull final PsiFile file, @NotNull final MoveInfo info, final boolean down) {
+    super.afterMove(editor, file, info, down);
+    statementToSurroundWithCodeBlock = null;
+  }
+
+  @Override
+  public void beforeMove(@NotNull final Editor editor, @NotNull final MoveInfo info, final boolean down) {
+    super.beforeMove(editor, info, down);
+    if (statementToSurroundWithCodeBlock != null) {
+      surroundWithCodeBlock(info, down);
+    }
+  }
+
+  private void surroundWithCodeBlock(@NotNull final MoveInfo info, final boolean down) {
+    // TODO Implement surroundWithCodeBlock()
+  }
 
   @Override
   public boolean checkAvailable(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
@@ -169,7 +184,10 @@ public class DartStatementMover extends LineMover {
             found = true;
           }
           if (found) {
-            statementToSurroundWithCodeBlock = elementToSurround;
+            if (elementToSurround != null) {
+              final SmartPointerManager manager = SmartPointerManager.getInstance(elementToSurround.getProject());
+              statementToSurroundWithCodeBlock = manager.createSmartPsiElementPointer(elementToSurround);
+            }
             info.toMove = range;
             int endLine = destLine;
             if (startLine > endLine) {

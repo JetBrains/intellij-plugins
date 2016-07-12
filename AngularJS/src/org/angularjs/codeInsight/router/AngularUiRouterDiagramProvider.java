@@ -212,45 +212,6 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return "AngularJS ui-router states and views";
   }
 
-  private static final DiagramCategory[] CATEGORIES =
-    new DiagramCategory[]{Type.Categories.STATE, Type.Categories.VIEW, Type.Categories.TEMPLATE, Type.Categories.TEMPLATE_PLACEHOLDER,
-      Type.Categories.TOP_LEVEL_TEMPLATE};
-
-  @Override
-  public DiagramNodeContentManager getNodeContentManager() {
-    return new DiagramNodeContentManager() {
-
-      @Override
-      public boolean isInCategory(Object element, DiagramCategory category, DiagramState presentation) {
-        if (element instanceof DiagramObject) {
-          return ((DiagramObject)element).getType().getCategory().equals(category);
-        }
-        return false;
-      }
-
-      @Override
-      public DiagramCategory[] getContentCategories() {
-        return CATEGORIES;
-      }
-    };
-  }
-
-  @Override
-  public DiagramRelationshipManager<DiagramObject> getRelationshipManager() {
-    return new DiagramRelationshipManager<DiagramObject>() {
-      @Nullable
-      @Override
-      public DiagramRelationshipInfo getDependencyInfo(DiagramObject e1, DiagramObject e2, DiagramCategory category) {
-        return null;
-      }
-
-      @Override
-      public DiagramCategory[] getContentCategories() {
-        return CATEGORIES;
-      }
-    };
-  }
-
   @Override
   public DiagramDataModel<DiagramObject> createDataModel(@NotNull Project project,
                                                          @Nullable DiagramObject element,
@@ -439,7 +400,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         }
         for (DiagramEdge edge : builder.getEdgeObjects()) {
           if (!(edge instanceof AngularUiRouterEdge)) continue;
-          if (selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
+          if (isShowEdgeLabels() && selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
             myVisibleEdges.add((AngularUiRouterEdge)edge);
             graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge) edge).getLabel());
           } else {
@@ -548,16 +509,22 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
     @Override
     public void update(AnActionEvent e) {
-      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
-      e.getPresentation().setEnabled(builder != null && !builder.getGraph().isSelectionEmpty());
+      final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+      if (project == null) {
+        e.getPresentation().setEnabled(false);
+        return;
+      }
+      final List<DiagramNode> nodes = getSelectedNodes(e);
+      e.getPresentation().setEnabled(nodes != null && nodes.size() == 1 && nodes.get(0) instanceof AngularUiRouterNode);
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
-      if (builder == null || builder.getGraph().isSelectionEmpty()) return;
-      UmlGraphBuilder umlBuilder = (UmlGraphBuilder)builder.getGraph().getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
-      final List<DiagramNode> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(umlBuilder));
+      final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+      if (project == null) return;
+      final List<DiagramNode> nodes = getSelectedNodes(e);
+      if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode)) return;
+
       final AngularUiRouterNode node = (AngularUiRouterNode)nodes.get(0);
       final DiagramObject main = node.getIdentifyingElement();
       final List<DiagramObject> childrenList = main.getChildrenList();
@@ -580,13 +547,20 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
                 final PsiElement element = target.getElement();
                 final int offset = element == null ? 0 :
                                    (element instanceof JSImplicitElement ? element.getTextOffset() : element.getTextRange().getStartOffset());
-                new OpenFileDescriptor(builder.getProject(), target.getVirtualFile(), offset)
-                  .navigate(true);
+                new OpenFileDescriptor(project, target.getVirtualFile(), offset).navigate(true);
               }
             }
           })
           .createPopup().showInBestPositionFor(e.getDataContext());
       }
+    }
+
+    @Nullable
+    private static List<DiagramNode> getSelectedNodes(AnActionEvent e) {
+      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
+      if (builder == null || builder.getGraph().isSelectionEmpty()) return null;
+      UmlGraphBuilder umlBuilder = (UmlGraphBuilder)builder.getGraph().getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+      return new ArrayList<>(GraphUtil.getSelectedNodes(umlBuilder));
     }
   }
 }

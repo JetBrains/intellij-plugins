@@ -10,6 +10,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
@@ -89,7 +90,15 @@ public class JstdSettingsUtil {
   @Nullable
   private static Boolean areJstdConfigFilesInScope(GlobalSearchScope scope) {
     try {
-      return FileTypeIndex.processFiles(JstdConfigFileType.INSTANCE, file -> JSLibraryUtil.isProbableLibraryFile(file), scope);
+      Ref<Boolean> foundRef = Ref.create(false);
+      FileTypeIndex.processFiles(JstdConfigFileType.INSTANCE, file -> {
+        if (JSLibraryUtil.isProbableLibraryFile(file)) {
+          return true;
+        }
+        foundRef.set(true);
+        return false;
+      }, scope);
+      return foundRef.get();
     }
     catch (IndexNotReadyException e) {
       return null;

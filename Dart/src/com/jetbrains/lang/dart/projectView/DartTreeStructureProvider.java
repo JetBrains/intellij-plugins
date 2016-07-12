@@ -7,12 +7,11 @@ import com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode;
 import com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.util.Function;
-import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
@@ -29,7 +28,7 @@ import java.util.Collections;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-public class DartTreeStructureProvider implements TreeStructureProvider {
+public class DartTreeStructureProvider implements TreeStructureProvider, DumbAware {
 
   @NotNull
   public Collection<AbstractTreeNode> modify(final @NotNull AbstractTreeNode parentNode,

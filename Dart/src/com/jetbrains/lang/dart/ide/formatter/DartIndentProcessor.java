@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.ide.formatter;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
@@ -127,9 +126,7 @@ public class DartIndentProcessor {
     }
     if (elementType == RPAREN && parentType == ARGUMENTS) {
       if (prevSiblingType == ARGUMENT_LIST) {
-        ASTNode[] childs = prevSibling.getChildren(null);
-        int n = childs.length;
-        if (n > 2 && childs[n - 1] instanceof PsiErrorElement && childs[n - 2].getElementType() == COMMA) {
+        if (prevSibling.getLastChildNode().getElementType() == COMMA) {
           return Indent.getContinuationIndent();
         }
       }
