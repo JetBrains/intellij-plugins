@@ -76,6 +76,7 @@ public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject>
         }
       final AngularUiRouterDiagramProvider diagramProvider = (AngularUiRouterDiagramProvider)getProvider();
       final AngularUiRouterGraphBuilder.GraphNodesBuilder model = graphBuilder.createDataModel(diagramProvider);
+      if (myNodes.equals(model.getAllNodes()) && myEdges.equals(model.getEdges())) return;
       myNodes.clear();
       myEdges.clear();
       final AngularUiRouterProviderContext context = AngularUiRouterProviderContext.getInstance(getProject());
