@@ -212,45 +212,6 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return "AngularJS ui-router states and views";
   }
 
-  private static final DiagramCategory[] CATEGORIES =
-    new DiagramCategory[]{Type.Categories.STATE, Type.Categories.VIEW, Type.Categories.TEMPLATE, Type.Categories.TEMPLATE_PLACEHOLDER,
-      Type.Categories.TOP_LEVEL_TEMPLATE};
-
-  @Override
-  public DiagramNodeContentManager getNodeContentManager() {
-    return new DiagramNodeContentManager() {
-
-      @Override
-      public boolean isInCategory(Object element, DiagramCategory category, DiagramState presentation) {
-        if (element instanceof DiagramObject) {
-          return ((DiagramObject)element).getType().getCategory().equals(category);
-        }
-        return false;
-      }
-
-      @Override
-      public DiagramCategory[] getContentCategories() {
-        return CATEGORIES;
-      }
-    };
-  }
-
-  @Override
-  public DiagramRelationshipManager<DiagramObject> getRelationshipManager() {
-    return new DiagramRelationshipManager<DiagramObject>() {
-      @Nullable
-      @Override
-      public DiagramRelationshipInfo getDependencyInfo(DiagramObject e1, DiagramObject e2, DiagramCategory category) {
-        return null;
-      }
-
-      @Override
-      public DiagramCategory[] getContentCategories() {
-        return CATEGORIES;
-      }
-    };
-  }
-
   @Override
   public DiagramDataModel<DiagramObject> createDataModel(@NotNull Project project,
                                                          @Nullable DiagramObject element,
