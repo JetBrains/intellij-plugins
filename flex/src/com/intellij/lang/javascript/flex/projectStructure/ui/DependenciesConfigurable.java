@@ -29,7 +29,6 @@ import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -1488,7 +1487,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     Condition<Sdk> sdkCondition =
       JdkComboBox.getSdkFilter(Conditions.oneOf(FlexSdkType2.getInstance(), FlexmojosSdkType.getInstance()));
 
-    mySdkCombo = new JdkComboBox(mySkdsModel, sdkCondition, Conditions.is(FlexSdkType2.getInstance()));
+    mySdkCombo = new JdkComboBox(mySkdsModel, sdkCondition, Conditions.is(FlexSdkType2.getInstance()), false);
   }
 
   private void initPopupActions() {
