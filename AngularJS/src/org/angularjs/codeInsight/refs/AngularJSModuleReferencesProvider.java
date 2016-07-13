@@ -52,5 +52,10 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
     public Object[] getVariants() {
       return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
+
+    @Override
+    public boolean isSoft() {
+      return true;
+    }
   }
 }
