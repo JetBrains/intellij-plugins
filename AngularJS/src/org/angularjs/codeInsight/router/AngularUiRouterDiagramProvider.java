@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.GraphUtil;
 import com.intellij.openapi.graph.base.Edge;
+import com.intellij.openapi.graph.builder.util.GraphViewUtil;
 import com.intellij.openapi.graph.geom.YPoint;
 import com.intellij.openapi.graph.layout.CanonicMultiStageLayouter;
 import com.intellij.openapi.graph.layout.Layouter;
@@ -29,19 +30,20 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.LightColors;
-import com.intellij.ui.SimpleColoredText;
-import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.uml.UmlGraphBuilder;
+import com.intellij.uml.core.renderers.DefaultUmlRenderer;
 import com.intellij.uml.presentation.DiagramPresentationModelImpl;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ui.JBUI;
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.StrokeBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -54,7 +56,12 @@ import java.util.List;
 public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
   public static final String ANGULAR_UI_ROUTER = "Angular-ui-router";
   public static final JBColor VIEW_COLOR = new JBColor(new Color(0xE1FFFC), new Color(0x589df6));
+  public static final BasicStroke DOTTED_STROKE =
+    new BasicStroke(0.7f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{2, 2}, 0.0f);
+  public static final StrokeBorder WARNING_BORDER = new StrokeBorder(DOTTED_STROKE, JBColor.red);
   private static final DataKey<DiagramBuilder> DIAGRAM_BUILDER = DataKey.create("Angular.JS.Diagram.Builder");
+  public static final Border ERROR_BORDER = JBUI.Borders.customLine(JBColor.red);
+  public static final Border NORMAL_BORDER = JBUI.Borders.customLine(Gray._190);
   private DiagramVfsResolver<DiagramObject> myResolver;
   private AbstractDiagramElementManager<DiagramObject> myElementManager;
   private DiagramColorManagerBase myColorManager;
@@ -408,6 +415,21 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           }
         }
       }
+
+      @Override
+      public DefaultUmlRenderer getRenderer() {
+        if (myRenderer == null) {
+          myRenderer = new DefaultUmlRenderer(getBuilder(), createModificationTracker()) {
+            @Override
+            public void tuneNode(NodeRealizer realizer, JPanel wrapper) {
+              wrapper.setBorder(JBUI.Borders.empty());
+              if (wrapper.getParent() instanceof JComponent) ((JComponent)wrapper.getParent()).setBorder(JBUI.Borders.empty());
+              super.tuneNode(realizer, wrapper);
+            }
+          };
+        }
+        return myRenderer;
+      }
     };
   }
 
@@ -483,6 +505,15 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       @Override
       public JComponent createNodeComponent(DiagramNode<DiagramObject> node, DiagramBuilder builder, Point basePoint, JPanel wrapper) {
         final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, basePoint);
+        if (!GraphViewUtil.isPrintMode()) {
+          if (!node.getIdentifyingElement().getErrors().isEmpty()) {
+            container.setBorder(ERROR_BORDER);
+          } else if (!node.getIdentifyingElement().getWarnings().isEmpty()) {
+            container.setBorder(WARNING_BORDER);
+          } else {
+            container.setBorder(NORMAL_BORDER);
+          }
+        }
         return container;
       }
     };
