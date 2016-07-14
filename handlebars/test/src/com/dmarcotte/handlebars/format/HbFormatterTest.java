@@ -30,7 +30,7 @@ import java.io.File;
 public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTestCase implements HbFormattingModelBuilderTest {
   private static final String TEST_DATA_PATH = new File(HbTestUtils.BASE_TEST_DATA_PATH, "formatter").getAbsolutePath();
 
-  private FormatterTestSettings formatterTestSettings;
+  protected FormatterTestSettings formatterTestSettings;
 
   @Override
   protected void setUp()
@@ -44,9 +44,12 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
   @Override
   protected void tearDown()
     throws Exception {
-    formatterTestSettings.tearDown();
-
-    super.tearDown();
+    try {
+      formatterTestSettings.tearDown();
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   /**
@@ -171,11 +174,11 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
     assert file != null;
 
     CommandProcessor.getInstance().executeCommand(getProject(),
-                                                  () -> ApplicationManager.getApplication().runWriteAction(formatAction.createFormatRunnable(file)), "", "");
+                                                  () -> ApplicationManager.getApplication()
+                                                    .runWriteAction(formatAction.createFormatRunnable(file)), "", "");
 
     TemplateDataLanguageMappings.getInstance(getProject()).cleanupForNextTest();
 
-    assertEquals("Reformat Code failed", prepareText(textAfter), prepareText(file.getText()));
     assertEquals("Reformat Code failed", prepareText(textAfter), prepareText(file.getText()));
   }
 
