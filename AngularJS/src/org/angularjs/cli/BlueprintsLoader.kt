@@ -13,7 +13,7 @@ import java.io.File
 /**
  * @author Dennis.Ushakov
  */
-class BlueprintsLoader {
+object BlueprintsLoader {
   fun load(project: Project): Collection<Blueprint> {
     val interpreter = NodeJsInterpreterManager.getInstance(project).default
     val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return emptyList()
@@ -30,7 +30,7 @@ class BlueprintsLoader {
     val output = handler.runProcess()
 
     if (output.exitCode == 0) {
-      return BlueprintParser().parse(output.stdout)
+      return BlueprintParser().parse(output.stdout).sortedBy { it.name }
     }
 
     return emptyList()

@@ -117,13 +117,35 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Pair<NodeJsIn
     });
   }
 
-  protected void generateApp(@NotNull NodeJsLocalInterpreter node, String path,
-                             @NotNull final VirtualFile baseDir, @NotNull Project project)
+  private static void generateApp(@NotNull NodeJsLocalInterpreter node, String path,
+                                  @NotNull final VirtualFile baseDir, @NotNull Project project)
     throws IOException, ExecutionException {
-    final String moduleExe = path + File.separator + "bin" + File.separator + "ng";
-    final GeneralCommandLine commandLine = new GeneralCommandLine(node.getInterpreterSystemDependentPath(),
-                                                                  moduleExe,
-                                                                  "init", "--name=" + baseDir.getName());
+    generate(node, path, baseDir, project, () -> {
+      if (!project.isDisposed()) {
+        NpmScriptsService instance = NpmScriptsService.getInstance();
+        List<VirtualFile> buildfiles = instance.detectAllBuildfiles(project);
+        ApplicationManager.getApplication().invokeLater(() -> {
+          for (VirtualFile buildfile : buildfiles) {
+            instance.getFileManager(project).addBuildfile(buildfile);
+          }
+          NodeJsInterpreterManager.getInstance(project).setDefault(node);
+          instance.getToolWindowManager(project).setAvailable();
+        });
+      }
+    }, "init", "--name=" + baseDir.getName());
+  }
+
+  public static void generate(@NotNull final NodeJsLocalInterpreter node,
+                              @NotNull String path,
+                              @NotNull final VirtualFile baseDir,
+                              @NotNull final Project project,
+                              @Nullable final Runnable callback, String... args)
+    throws ExecutionException {
+    final List<String> arguments = new ArrayList<>();
+    arguments.add(node.getInterpreterSystemDependentPath());
+    arguments.add(path + File.separator + "bin" + File.separator + "ng");
+    ContainerUtil.addAll(arguments, args);
+    final GeneralCommandLine commandLine = new GeneralCommandLine(arguments);
     commandLine.setWorkDirectory(baseDir.getPath());
     final KillableColoredProcessHandler handler = new KillableColoredProcessHandler(commandLine);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project);
@@ -139,19 +161,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Pair<NodeJsIn
         baseDir.refresh(false, true);
         baseDir.getChildren();
         handler.notifyTextAvailable("Done\n", ProcessOutputTypes.SYSTEM);
-        ApplicationManager.getApplication().runReadAction(() -> {
-          if (!project.isDisposed()) {
-            NpmScriptsService instance = NpmScriptsService.getInstance();
-            List<VirtualFile> buildfiles = instance.detectAllBuildfiles(project);
-            ApplicationManager.getApplication().invokeLater(() -> {
-              for (VirtualFile buildfile : buildfiles) {
-                instance.getFileManager(project).addBuildfile(buildfile);
-              }
-              NodeJsInterpreterManager.getInstance(project).setDefault(node);
-              instance.getToolWindowManager(project).setAvailable();
-            });
-          }
-        });
+        if (callback != null) ApplicationManager.getApplication().runReadAction(callback);
       }
     });
     final Executor defaultExecutor = DefaultRunExecutor.getRunExecutorInstance();
