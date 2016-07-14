@@ -7,10 +7,9 @@ import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.NodeSettings
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.LabeledComponent
@@ -22,6 +21,7 @@ import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.ui.JBUI
+import icons.JavaScriptLanguageIcons
 import org.angularjs.cli.AngularCLIProjectGenerator
 import org.angularjs.cli.Blueprint
 import org.angularjs.cli.BlueprintsLoader
@@ -41,17 +41,29 @@ class AngularCliGenerateAction : AnAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
 
-    val current = ModalityState.current()
     val model = DefaultListModel<Blueprint>()
     val list = JBList(model)
-    list.setPaintBusy(true)
-    ApplicationManager.getApplication().executeOnPooledThread({
-      val blueprints = BlueprintsLoader.load(project)
-      ApplicationManager.getApplication().invokeLater({
-        blueprints.forEach { model.addElement(it) }
-        list.setPaintBusy(false)
-      })
-    })
+    updateList(list, model, project)
+
+    val actionGroup = DefaultActionGroup()
+    val refresh: AnAction = object : AnAction(JavaScriptLanguageIcons.BuildTools.Refresh) {
+      init {
+        shortcutSet = CustomShortcutSet(*KeymapManager.getInstance().activeKeymap.getShortcuts("Refresh"))
+      }
+
+      override fun actionPerformed(e: AnActionEvent?) {
+        BlueprintsLoader.CacheModificationTracker.count++
+        updateList(list, model, project)
+      }
+    }
+    refresh.registerCustomShortcutSet(refresh.shortcutSet, list)
+    actionGroup.addAction(refresh)
+
+    val actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, actionGroup, true)
+    actionToolbar.setReservePlaceAutoPopupIcon(false)
+    actionToolbar.setMinimumButtonSize(Dimension(22, 22))
+    val toolbarComponent = actionToolbar.component
+    toolbarComponent.isOpaque = false
 
     val scroll = ScrollPaneFactory.createScrollPane(list)
     scroll.border = IdeBorderFactory.createEmptyBorder()
@@ -66,9 +78,9 @@ class AngularCliGenerateAction : AnAction() {
         setCancelOnOtherWindowOpen(true).
         setMovable(true).
         setResizable(true).
+        setSettingButtons(toolbarComponent).
         setCancelOnWindowDeactivation(true).
         setCancelOnClickOutside(true).
-        setCancelCallback { current == ModalityState.current() }.
         setDimensionServiceKey(project, "org.angular.cli.generate", true).
         setMinSize(Dimension(JBUI.scale(200), JBUI.scale(200))).
         setCancelButton(IconButton("Close", AllIcons.Actions.Close, AllIcons.Actions.CloseHovered))
@@ -88,6 +100,21 @@ class AngularCliGenerateAction : AnAction() {
       }
     }.installOn(list)
     popup.showCenteredInCurrentWindow(project)
+  }
+
+  private fun updateList(list: JBList, model: DefaultListModel<Blueprint>, project: Project) {
+    list.setPaintBusy(true)
+    model.clear()
+    ApplicationManager.getApplication().executeOnPooledThread({
+
+      val blueprints = BlueprintsLoader.load(project)
+      ApplicationManager.getApplication().invokeLater({
+                                                        blueprints.forEach {
+                                                          model.addElement(it)
+                                                        }
+                                                        list.setPaintBusy(false)
+                                                      })
+    })
   }
 
   private fun askOptions(project: Project, popup: JBPopup, blueprint: Blueprint) {
