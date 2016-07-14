@@ -112,6 +112,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES.put("asi", AngularSymbolIndex.KEY);
     INDEXES.put("arsi", AngularUiRouterStatesIndex.KEY);
     INDEXES.put("arsgi", AngularUiRouterGenericStatesIndex.KEY);
+    INDEXES.put("agmi", AngularGenericModulesIndex.KEY);
 
     for (String key : INDEXES.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
@@ -217,10 +218,16 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
     final JSReferenceExpression reference = ObjectUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
     if (reference == null) return;
-    if (!JSSymbolUtil.isAccurateReferenceExpressionName(reference, "$stateProvider", STATE)) return;
-    final JSExpression[] arguments = callExpression.getArguments();
-    if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
-      addImplicitElements(callExpression, null, AngularUiRouterGenericStatesIndex.KEY, STATE, null, outData);
+    if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, "$stateProvider", STATE)) {
+      final JSExpression[] arguments = callExpression.getArguments();
+      if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
+        addImplicitElements(callExpression, null, AngularUiRouterGenericStatesIndex.KEY, STATE, null, outData);
+      }
+    } else if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, "angular", MODULE)) {
+      final JSExpression[] arguments = callExpression.getArguments();
+      if (arguments.length > 1 && arguments[0] instanceof JSReferenceExpression) {
+        addImplicitElements(callExpression, null, AngularGenericModulesIndex.KEY, MODULE, null, outData);
+      }
     }
   }
 
@@ -232,7 +239,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final ASTNode referencedNameElement = methodExpression.getLastChildNode();
     final ASTNode qualifier = JSReferenceExpressionImpl.getQualifierNode(methodExpression);
     if (qualifier == null) return false;
-    return "state".equals(referencedNameElement.getText()) && "$stateProvider".equalsIgnoreCase(qualifier.getText());
+    return STATE.equals(referencedNameElement.getText()) && "$stateProvider".equalsIgnoreCase(qualifier.getText()) ||
+           MODULE.equals(referencedNameElement.getText()) && "angular".equalsIgnoreCase(qualifier.getText());
   }
 
   @Nullable

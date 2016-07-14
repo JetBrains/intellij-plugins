@@ -1,7 +1,9 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.include.FileIncludeProvider;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -190,5 +192,32 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNotAModuleNoReference() throws Exception {
     myFixture.configureByFiles("notAModuleNoNavigation.js", "angular.js");
     isModuleReferenceUnderCaret(false);
+  }
+
+  public void testModuleDefinitionWrapperTopLevel() throws Exception {
+    final String pr = "wrapperTopLevel/";
+    checkModuleDefinitionWrapper(pr, "");
+  }
+
+  public void testModuleDefinitionWrapperGlobal() throws Exception {
+    final String pr = "wrapperGlobal/";
+    checkModuleDefinitionWrapper(pr, "ApplicationConfiguration.");
+  }
+
+  private void checkModuleDefinitionWrapper(String pr, String declarationQualifier) {
+    myFixture.configureByFiles(pr + "usage.es6", pr + "declaration.es6", pr + "wrapper.es6", "angular.js");
+    isModuleReferenceUnderCaret(true);
+    final PsiReference reference = myFixture.getReferenceAtCaretPosition(pr + "usage.es6");
+    assertNotNull(reference);
+
+    PsiElement resolve = reference.resolve();
+    assertNotNull(resolve);
+    assertEquals(declarationQualifier + "registerModule", resolve.getNavigationElement().getText());
+    assertTrue(resolve.getParent() instanceof JSCallExpression);
+    assertEquals("discoverability", StringUtil.unquoteString(((JSCallExpression)resolve.getParent()).getArguments()[0].getText()));
+    assertEquals("declaration.es6", resolve.getContainingFile().getName());
+
+    final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
+    assertEquals(1, results.length);
   }
 }

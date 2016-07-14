@@ -1,0 +1,1 @@
+ApplicationConfiguration.registerModule("discoverability");
