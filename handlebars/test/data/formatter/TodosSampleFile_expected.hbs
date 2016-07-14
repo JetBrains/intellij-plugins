@@ -27,8 +27,8 @@
             <!-- Insert this after the CreateTodoView and before the collection. -->
             {{#view Todos.StatsView id="stats"}}
                 {{#view Em.Button classBinding="isActive"
-                target="Todos.todosController"
-                action="clearCompletedTodos"}}
+                        target="Todos.todosController"
+                        action="clearCompletedTodos"}}
                     Clear Completed Todos
                 {{/view}}
                 {{remainingString}} remaining

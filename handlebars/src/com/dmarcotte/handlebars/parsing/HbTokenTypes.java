@@ -74,4 +74,6 @@ public class HbTokenTypes {
   public static final TokenSet WHITESPACES = TokenSet.create(WHITE_SPACE);
   public static final TokenSet COMMENTS = TokenSet.create(COMMENT, COMMENT_CONTENT);
   public static final TokenSet STRING_LITERALS = TokenSet.create(STRING);
+
+  public static final TokenSet TAGS = TokenSet.create(OPEN_PARTIAL_BLOCK_STACHE, MUSTACHE, OPEN_INVERSE_BLOCK_STACHE, OPEN_BLOCK_STACHE);
 }
