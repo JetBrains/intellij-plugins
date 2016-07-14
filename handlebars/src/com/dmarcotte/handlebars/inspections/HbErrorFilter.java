@@ -2,14 +2,12 @@ package com.dmarcotte.handlebars.inspections;
 
 
 import com.dmarcotte.handlebars.file.HbFileViewProvider;
-import com.intellij.codeInsight.highlighting.HighlightErrorFilter;
 import com.intellij.codeInsight.highlighting.TemplateLanguageErrorFilter;
-import com.intellij.lang.Language;
-import com.intellij.lang.html.HTMLLanguage;
-import com.intellij.psi.*;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.xml.XmlTokenType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
