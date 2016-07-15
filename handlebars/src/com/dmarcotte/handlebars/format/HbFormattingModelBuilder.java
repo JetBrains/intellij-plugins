@@ -110,7 +110,7 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
     public ChildAttributes getChildAttributes(int newChildIndex) {
       if (newChildIndex > 0) {
         List<Block> blocks = getSubBlocks();
-        if (blocks.size() >= newChildIndex - 1) {
+        if (blocks.size() > newChildIndex - 1) {
           Block prevBlock = blocks.get(newChildIndex - 1);
           if (prevBlock instanceof AbstractBlock) {
             ASTNode node = ((AbstractBlock)prevBlock).getNode();
