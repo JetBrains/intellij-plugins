@@ -402,8 +402,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
   public void generateApp(final VirtualFile dir,
                                  final Module module,
                                  Sdk sdk,
-                                 final ProjectType projectType,
-                                 final boolean useCalabash)  {
+                                 final ProjectType projectType)  {
     final Project project = module.getProject();
     final String applicationHomePath = dir.getPath();
     final File tempDirectory;
@@ -427,9 +426,6 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
         GeneratorsUtil.openFileInEditor(project, "app/app_delegate.rb", applicationHomePath);
         GeneratorsUtil.openFileInEditor(project, RakeUtilBase.RAKE_FILE, applicationHomePath);
         GeneratorsUtil.openFileInEditor(project, BundlerUtil.GEMFILE, applicationHomePath);
-        if (useCalabash && projectType == ProjectType.IOS) {
-          MotionCalabashUtil.addCalabashSupport(project, module, applicationHomePath);
-        }
       }
     };
     final MergingCommandLineArgumentsProvider resultProvider =
