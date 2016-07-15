@@ -34,6 +34,7 @@ public class SetSelectionCommand extends Command {
         super(CommandType.SETSELECTION);
     }
 
+    //always put the caret at the end of the selection
     @Override
     public void execute(ExecutionList executionList) throws InterruptedException, ExecutionException, BadCommandException {
 
@@ -42,7 +43,10 @@ public class SetSelectionCommand extends Command {
         int end_line = 0;
         int end_column = 0;
 
+        int park_caret = 0;
+
         Element element = executionList.getElements().poll();
+        final Editor editor = executionList.getEditor();
 
         if (element.getAttribute(START_SELECT_POSITION) != null) {
             String positionString = (element.getAttribute(START_SELECT_POSITION).getValue());
@@ -65,12 +69,18 @@ public class SetSelectionCommand extends Command {
                 end_line--;
                 end_column--;
 
-                selectInDocument(executionList, start_line, start_column, end_line, end_column);
+                final LogicalPosition blockStart = new LogicalPosition(start_line, start_column);
+                final LogicalPosition blockEnd = new LogicalPosition(end_line, end_column);
+
+                int start_position = editor.logicalPositionToOffset(blockStart);
+                int end_position = editor.logicalPositionToOffset(blockStart);
+
+                editor.getSelectionModel().setSelection(start_position, end_position);
+                park_caret = end_position;
             } else {
                 throw new BadCommandException(this);
             }
         } else if (element.getAttribute(START_SELECT_STRING) != null && element.getAttribute(END_SELECT_STRING) != null) {
-            final Editor editor = executionList.getEditor();
             final Document document = editor.getDocument();
             final Project project = executionList.getProject();
 
@@ -88,11 +98,13 @@ public class SetSelectionCommand extends Command {
             final FindResult end = FindManager.getInstance(project).findString(document.getCharsSequence(), 0, model);
 
             selectInDocument(executionList, start.getStartOffset(), end.getEndOffset());
-
+            park_caret = end.getEndOffset();
         } else {
             throw new BadCommandException(this);
         }
 
+        //move caret to the end of the selection
+        executionList.getEditor().getCaretModel().moveToOffset(park_caret);
         startNextCommand(executionList);
     }
 
@@ -101,11 +113,4 @@ public class SetSelectionCommand extends Command {
         editor.getSelectionModel().setSelection(startOffset, endOffset);
     }
 
-    private void selectInDocument(ExecutionList executionList, int start_line, int start_column, int end_line, int end_column) {
-        final Editor editor = executionList.getEditor();
-        final LogicalPosition blockStart = new LogicalPosition(start_line, start_column);
-        final LogicalPosition blockEnd = new LogicalPosition(end_line, end_column);
-
-        editor.getSelectionModel().setSelection(editor.logicalPositionToOffset(blockStart), editor.logicalPositionToOffset(blockEnd));
-    }
 }

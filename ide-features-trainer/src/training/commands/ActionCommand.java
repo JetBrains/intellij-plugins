@@ -1,16 +1,19 @@
 package training.commands;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 import org.jdom.Element;
 import training.keymap.KeymapUtil;
 import training.keymap.SubKeymapUtil;
+import training.util.PerformActionUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +37,8 @@ public class ActionCommand extends Command {
     public void execute(ExecutionList executionList) throws InterruptedException, ExecutionException, BadCommandException {
 
         final Element element = executionList.getElements().poll();
+        final Editor editor = executionList.getEditor();
+        final Project project = executionList.getProject();
 
 //        updateHTMLDescription(element.getText(), );
 
@@ -43,42 +48,40 @@ public class ActionCommand extends Command {
 
             final String balloonText = (element.getAttribute("balloon").getValue());
 
-//            ApplicationManager.getApplication().invokeLater(new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-//                        int delay = 0;
-//                        if (element.getAttribute("delay") != null) {
-//                            delay = Integer.parseInt(element.getAttribute("delay").getValue());
-//                        }
-//                        showBalloon(editor, balloonText, e, delay, actionType, new Runnable(){
-//                            @Override
-//                            public void run() {
-//                                startNextCommand(elements, lesson, editor, e, document, target ,infoPanel, mouseListenerHolder);
-//                            }
-//                        });
-//                    } catch (InterruptedException e1) {
-//                        e1.printStackTrace();
-//                    }
-//                }
-//            });
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        int delay = 0;
+                        if (element.getAttribute("delay") != null) {
+                            delay = Integer.parseInt(element.getAttribute("delay").getValue());
+                        }
+                        showBalloon(editor, balloonText, project, delay, actionType, new Runnable(){
+                            @Override
+                            public void run() {
+                                startNextCommand(executionList);
+                            }
+                        });
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            });
         } else {
-//            performAction(actionType, editor, e, new Runnable() {
-//                @Override
-//                public void run() {
-//                    startNextCommand(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
-//                }
-//            });
+            PerformActionUtil.performAction(actionType, editor, project, new Runnable() {
+                @Override
+                public void run() {
+                    startNextCommand(executionList);
+                }
+            });
         }
-
     }
 
     /**
-     * @param e
      * @param editor - editor where to show balloon, also uses for locking while balloon appearing
      */
-    private static void showBalloon(final Editor editor, String text, final AnActionEvent e, final int delay, final String actionType, final Runnable runnable) throws InterruptedException {
-        FileEditorManager instance = FileEditorManager.getInstance(e.getProject());
+    private static void showBalloon(final Editor editor, String text, final Project project, final int delay, final String actionType, final Runnable runnable) throws InterruptedException {
+        FileEditorManager instance = FileEditorManager.getInstance(project);
         if (instance == null) return;
         if (editor == null) return;
 
@@ -125,11 +128,12 @@ public class ActionCommand extends Command {
             @Override
             public void onClosed(LightweightWindowEvent lightweightWindowEvent) {
 //                performMyAction(elements, lesson, editor, e, document, target, infoPanel, actionType);
-                WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                WriteCommandAction.runWriteCommandAction(project, new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            performAction(actionType, editor, e, runnable);
+
+                            performAction(actionType, editor, project, runnable);
                         } catch (InterruptedException e1) {
                             e1.printStackTrace();
                         } catch (ExecutionException e1) {
