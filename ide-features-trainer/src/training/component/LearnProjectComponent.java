@@ -5,6 +5,8 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -109,30 +111,33 @@ public class LearnProjectComponent implements ProjectComponent {
                 if (currentTimeMillis - lastActivityTime > TWO_WEEKS) {
                     StringBuilder message = new StringBuilder();
                     final int unpassedLessons = CourseManager.getInstance().calcUnpassedLessons();
+
                     message.append(LearnBundle.message("learn.activity.message", unpassedLessons, unpassedLessons == 1 ? "" : LearnBundle.message("learn.activity.message.lessons"))).append("<br/>");
-                    message.append("<a href='learn'>").append(LearnBundle.message("learn.activity.learn")).append("</a>&nbsp;&nbsp;");
-                    message.append("<a href='later'>").append(LearnBundle.message("learn.activity.later")).append("</a>&nbsp;&nbsp;");
-                    message.append("<a href='never'>").append(LearnBundle.message("learn.activity.never"));
                     final Notification notification = new Notification(CourseManager.NOTIFICATION_ID,
                             LearnBundle.message("learn.activity.title"),
                             message.toString(),
-                            NotificationType.INFORMATION, new NotificationListener() {
+                            NotificationType.INFORMATION);
+                    AnAction learnAction = new AnAction(LearnBundle.message("learn.activity.learn")) {
                         @Override
-                        public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                            if (event.getDescription().equals("learn")) {
-                                //show learn tool window
-                                final ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-                                toolWindow.activate(null);
-                                notification.expire();
-                            } else if (event.getDescription().equals("later")) {
-                                notification.expire();
-                            } else if (event.getDescription().equals("never")) {
-                                CourseManager.getInstance().setLastActivityTime(-1);
-                                notification.expire();
-                            }
+                        public void actionPerformed(AnActionEvent e) {
+                            final ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
+                            toolWindow.activate(null);
+                            notification.expire();
                         }
-                    });
-                    notification.notify(project);
+                    };
+                    AnAction laterAction = new AnAction(LearnBundle.message("learn.activity.later")) {
+                        @Override
+                        public void actionPerformed(AnActionEvent e) {
+                            notification.expire();
+                        }
+                    };
+                    AnAction neverAction = new AnAction(LearnBundle.message("learn.activity.never")) {
+                        @Override
+                        public void actionPerformed(AnActionEvent e) {
+                            notification.expire();
+                        }
+                    };
+                    notification.addAction(learnAction).addAction(laterAction).addAction(neverAction).notify(project);
                 }
                 Disposer.dispose(alarm);
             }

@@ -48,8 +48,8 @@ public class CommandFactory {
             case COPYTEXT:
                 return new CopyTextCommand();
 
-//            case ACTION:
-//                return new ActionCommand();
+            case ACTION:
+                return new ActionCommand();
 //
 //            case REPLAY:
 //                return new ReplayCommand();
