@@ -14,7 +14,7 @@ import training.learn.CourseManager;
  * Created by jetbrains on 17/03/16.
  */
 public class LearnToolWindowFactory implements ToolWindowFactory, DumbAware {
-    public static final String LEARN_TOOL_WINDOW = "Learn IntelliJ IDEA";
+    public static final String LEARN_TOOL_WINDOW = "Learn";
 
     private static LearnToolWindow myLearnToolWindow = null;
 

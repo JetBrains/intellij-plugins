@@ -24,12 +24,13 @@ class Sorter {
 </MouseBlock>
         <MoveCaret position="9:74" />
         <SetSelection start-position="9:74" end-position="9:77" />
-        <Try description="Press &lt;action=&quot;IntroduceConstant&quot;&gt; to extract the selected expression to a constant" trigger="IntroduceConstant"/>
+        <Try description="Press &lt;action=&quot;IntroduceConstant&quot;&gt; to extract the selected expression to a constant" trigger="IntroduceConstant" check="training.check.CheckExtractConstant"/>
         <SetSelection start-string="BufferedReader reader" end-string="lines.size()]);" />
         <Try description="Press &lt;action=&quot;ExtractMethod&quot;&gt; to extract the selected code block into a method" trigger="ExtractMethod"/>
-        <SetSelection start-string="new String[lines.size()]" end-string="new String[lines.size()]"/>
+        <SetSelection start-string="new FileReader" end-string="new FileReader"/>
+        <Action action="EditorSelectWord"/>
         <Try description="Press &lt;action=&quot;IntroduceParameter&quot;&gt; to extract the selected expression to a parameter" trigger="IntroduceParameter" check="training.check.CheckRefactoringBasics"/>
-        <MoveCaret string="FileReader(&quot;input"/>
+        <MoveCaret string="new FileReader("/>
         <Try description="Press &lt;action=&quot;IntroduceVariable&quot;&gt; and select &lt;code&gt;new FileReader(...)&lt;/code&gt; from the suggested list to extract it to a variable" triggers="IntroduceVariable;NextTemplateVariable"/>
     <Win/>
 </xml>
