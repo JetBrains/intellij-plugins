@@ -66,7 +66,7 @@ public class NewLearnProjectUtil {
             if (!projectBuilder.validate(projectToClose, newProject)) {
                 return projectToClose;
             }
-            if (newProject != projectToClose && !ApplicationManager.getApplication().isUnitTestMode()) {
+            if (newProject != projectToClose && !ApplicationManager.getApplication().isUnitTestMode() && projectToClose != null) {
                 NewProjectUtil.closePreviousProject(projectToClose);
             }
             projectBuilder.commit(newProject, null, ModulesProvider.EMPTY_MODULES_PROVIDER);
