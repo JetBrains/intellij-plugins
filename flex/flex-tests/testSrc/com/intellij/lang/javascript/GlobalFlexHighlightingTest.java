@@ -11,6 +11,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.testFramework.InspectionTestCase;
+import com.intellij.testFramework.InspectionsKt;
 
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
 
   private void doAnnotatorTest() throws Exception {
     final InspectionProfileImpl profile = (InspectionProfileImpl)InspectionProjectProfileManager.getInstance(myProject).getCurrentProfile();
-    InspectionProfileImpl.initAndDo(() -> {
+    InspectionsKt.runInInitMode(() -> {
       profile.enableTool(JSUnresolvedVariableInspection.SHORT_NAME, myProject);
       return null;
     });
