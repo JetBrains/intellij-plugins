@@ -18,6 +18,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
+import com.sun.org.apache.xpath.internal.operations.String;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,10 +81,30 @@ public class DartComponentMover extends LineMover {
       } else {
         lastMember = firstMember;
         firstMember = findAttachedComment(firstMember);
+        if (firstMember == lastMember && !isMovingDown) {
+          if (lastMember.getParent() instanceof DartClassMembers) {
+            DartClassMembers members = (DartClassMembers)lastMember.getParent();
+            PsiElement next = nextSib(members, false);
+            if (next instanceof PsiWhiteSpace && !isCommentSeparator(next)) next = nextSib(next, false);
+            if (isComment(next)) firstMember = next;
+          }
+        }
       }
       if (lastMember == null) return;
-      PsiElement next = firstNonWhiteElement(lastMember.getNextSibling(), true);
-      if (isSemicolon(next)) lastMember = next;
+      PsiElement sibling = lastMember.getNextSibling();
+      if (!isCommentSeparator(sibling)) {
+        PsiElement next = firstNonWhiteElement(lastMember.getNextSibling(), true);
+        if (isSemicolon(next)) lastMember = next;
+        if (isMovingDown) {
+          next = lastMember.getNextSibling();
+          if (next == null && lastMember.getParent() instanceof DartClassMembers) {
+            DartClassMembers members = (DartClassMembers)lastMember.getParent();
+            next = nextSib(members, true);
+          }
+          if (next instanceof PsiWhiteSpace && !StringUtil.containsLineBreak(next.getText())) next = next.getNextSibling();
+          if (next != null && isLineComment(next)) lastMember = next;
+        }
+      }
       sourceComponents = Pair.create(firstMember, lastMember);
     }
 
@@ -101,6 +122,12 @@ public class DartComponentMover extends LineMover {
       else {
         final PsiElement parent = PsiTreeUtil.findCommonParent(sourceComponents.first, sourceComponents.second);
         if (parent == null) return;
+        if (parent instanceof DartClassBody) {
+          // This is an edge case that occurs when attempting to move a declaration out of a class body
+          // and the declaration to be moved ends with a line comment (down) or has a preceding comment (up).
+          // TODO Handle multi-line declarations. (This functions for single lines by defaulting to line mover.)
+          return;
+        }
 
         Pair<PsiElement, PsiElement> combinedRange;
         combinedRange = getElementRange(parent, sourceComponents.first, sourceComponents.second);
@@ -123,13 +150,27 @@ public class DartComponentMover extends LineMover {
     void findTargetComponents() {
       PsiElement ref = isMovingDown ? sourceRange.lastElement : sourceRange.firstElement;
       PsiElement sibling = nextSib(ref, isMovingDown);
+      if (sibling instanceof PsiWhiteSpace && StringUtil.countNewLines(sibling.getText()) == 0) {
+        PsiElement next = sibling.getNextSibling();
+        if (isLineComment(next)) sibling = next.getNextSibling();
+      }
       if (sibling == null && ref.getParent() instanceof DartClassMembers) {
         DartClassMembers members = (DartClassMembers) ref.getParent();
         sibling = nextSib(members, isMovingDown);
       }
       PsiElement firstElement = firstNonWhiteElement(sibling, isMovingDown);
       if (firstElement == null) firstElement = sibling == null ? ref : sibling;
-      PsiElement lastElement = isComment(firstElement) ? findAttachedDeclaration(firstElement) : findAttachedComment(firstElement);
+      PsiElement lastElement;
+      if (isComment(firstElement)) {
+        lastElement = isCommentSeparator(sibling) ? firstElement : findAttachedDeclaration(firstElement);
+      } else {
+        lastElement = isMovingDown ? firstElement : findAttachedComment(firstElement);
+      }
+      if (firstElement instanceof PsiWhiteSpace || lastElement instanceof PsiWhiteSpace) {
+        info.prohibitMove();
+        return;
+      }
+      //PsiElement lastElement = isComment(firstElement) ? findAttachedDeclaration(firstElement) : findAttachedComment(firstElement);
       targetComponents = isMovingDown ? Pair.create(firstElement, lastElement) : Pair.create(lastElement, firstElement);
     }
 
@@ -164,6 +205,9 @@ public class DartComponentMover extends LineMover {
     private static PsiElement findAttachedDeclaration(@NotNull PsiElement element) {
       // Skip to the end of the comment (element) then return the next declaration if any, else element.
       PsiElement commentEnd = findFinalComment(element, true);
+      if (isCommentSeparator(commentEnd.getNextSibling())) {
+        return commentEnd;
+      }
       PsiElement next = PsiTreeUtil.skipSiblingsForward(commentEnd, PsiWhiteSpace.class);
       return next == null ? element : (isComment(next) ? element : next);
     }
@@ -182,6 +226,10 @@ public class DartComponentMover extends LineMover {
       return isForward ? element.getNextSibling() : element.getPrevSibling();
     }
 
+    private static boolean isCommentSeparator(@Nullable PsiElement element) {
+      return element instanceof PsiWhiteSpace && StringUtil.countNewLines(element.getText()) > 1;
+    }
+
     @NotNull
     private static PsiElement findFinalComment(@NotNull PsiElement element, boolean isForward) {
       // The element argument may be either a comment or a whitespace node. Find the end of the comment
@@ -190,7 +238,7 @@ public class DartComponentMover extends LineMover {
       CommentType groupType = null;
       while (sib != null) {
         if (sib instanceof PsiWhiteSpace) {
-          if (StringUtil.countNewLines(sib.getText()) > 1) {
+          if (isCommentSeparator(sib)) {
             break; // A "block" of line comments may not contain an empty line.
           } else {
             sib = nextSib(sib, isForward);
@@ -225,6 +273,16 @@ public class DartComponentMover extends LineMover {
         }
       }
       return target;
+    }
+
+    private static boolean isLineComment(@NotNull PsiElement element) {
+      switch (commentTypeOf(element)) {
+        case SINGLE_LINE_DOC_COMMENT:
+        case SINGLE_LINE_COMMENT:
+          return true;
+        default:
+          return false;
+      }
     }
 
     @NotNull
@@ -320,7 +378,7 @@ public class DartComponentMover extends LineMover {
     }
     codeMover.findTargetComponents();
     if (!codeMover.hasTargetComponents()) {
-      return false;
+      return info.toMove2 == null; // Null if move is prohibited.
     }
     codeMover.findTargetLineRange();
     if (!codeMover.hasTargetLineRange()) {
