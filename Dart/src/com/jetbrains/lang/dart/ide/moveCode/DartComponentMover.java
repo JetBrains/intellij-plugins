@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.ide.moveCode;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineMover;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.util.Pair;
@@ -15,10 +14,8 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.text.CharArrayUtil;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
-import com.sun.org.apache.xpath.internal.operations.String;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +75,8 @@ public class DartComponentMover extends LineMover {
       if (isComment(firstMember)) {
         lastMember = findAttachedDeclaration(firstMember);
         if (lastMember == firstMember) lastMember = getDeclarationParent(psiRange.second);
-      } else {
+      }
+      else {
         lastMember = firstMember;
         firstMember = findAttachedComment(firstMember);
         if (firstMember == lastMember && !isMovingDown) {
@@ -155,7 +153,7 @@ public class DartComponentMover extends LineMover {
         if (isLineComment(next)) sibling = next.getNextSibling();
       }
       if (sibling == null && ref.getParent() instanceof DartClassMembers) {
-        DartClassMembers members = (DartClassMembers) ref.getParent();
+        DartClassMembers members = (DartClassMembers)ref.getParent();
         sibling = nextSib(members, isMovingDown);
       }
       PsiElement firstElement = firstNonWhiteElement(sibling, isMovingDown);
@@ -163,7 +161,8 @@ public class DartComponentMover extends LineMover {
       PsiElement lastElement;
       if (isComment(firstElement)) {
         lastElement = isCommentSeparator(sibling) ? firstElement : findAttachedDeclaration(firstElement);
-      } else {
+      }
+      else {
         lastElement = isMovingDown ? firstElement : findAttachedComment(firstElement);
       }
       if (firstElement instanceof PsiWhiteSpace || lastElement instanceof PsiWhiteSpace) {
@@ -181,11 +180,11 @@ public class DartComponentMover extends LineMover {
     void findTargetLineRange() {
       PsiElement source = isMovingDown ? sourceRange.lastElement : sourceRange.firstElement;
       PsiElement target = isMovingDown ? targetComponents.first : targetComponents.second;
-        if (crossesHeaderBoundary(source, target)) {
-          info.prohibitMove();
-          return;
-        }
-        targetRange = new LineRange(targetComponents.first, targetComponents.second, editor.getDocument());
+      if (crossesHeaderBoundary(source, target)) {
+        info.prohibitMove();
+        return;
+      }
+      targetRange = new LineRange(targetComponents.first, targetComponents.second, editor.getDocument());
     }
 
     boolean areTargetsAtSameLevel() {
@@ -240,7 +239,8 @@ public class DartComponentMover extends LineMover {
         if (sib instanceof PsiWhiteSpace) {
           if (isCommentSeparator(sib)) {
             break; // A "block" of line comments may not contain an empty line.
-          } else {
+          }
+          else {
             sib = nextSib(sib, isForward);
             continue;
           }
@@ -317,7 +317,8 @@ public class DartComponentMover extends LineMover {
       if (parent != null && (parent.getParent() instanceof DartFile || parent.getParent() instanceof DartClassMembers)) {
         return parent;
       }
-      if (element instanceof LeafPsiElement && (element.getParent() instanceof DartFile || element.getParent() instanceof DartClassMembers)) {
+      if (element instanceof LeafPsiElement &&
+          (element.getParent() instanceof DartFile || element.getParent() instanceof DartClassMembers)) {
         return element;
       }
       if (element instanceof DartClassMembers) {
