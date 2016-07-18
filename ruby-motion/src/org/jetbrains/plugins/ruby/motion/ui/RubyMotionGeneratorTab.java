@@ -30,8 +30,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +46,6 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   private ComboBox myRubyInterpreterComboBox;
   private JPanel myContentPane;
   private ComboBox myProjectType;
-  private JCheckBox myUseCalabash;
   private JLabel myRubyLabel;
   private JLabel myProjectTypeLabel;
 
@@ -87,13 +84,6 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
         }
       }
     });
-    myUseCalabash.setSelected(mySettingsHolder.isUseCalabash());
-    myUseCalabash.addPropertyChangeListener(new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent event) {
-        mySettingsHolder.setUseCalabash(myUseCalabash.isSelected());
-      }
-    });
 
     myProjectTypeLabel.setDisplayedMnemonic('T');
     myProjectType.setModel(new EnumComboBoxModel<RubyMotionUtilImpl.ProjectType>(RubyMotionUtilImpl.ProjectType.class));
@@ -102,8 +92,6 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
       public void actionPerformed(ActionEvent event) {
         final RubyMotionUtilImpl.ProjectType projectType = (RubyMotionUtilImpl.ProjectType)myProjectType.getSelectedItem();
         mySettingsHolder.setProjectType(projectType);
-        myUseCalabash.setSelected(projectType == RubyMotionUtilImpl.ProjectType.IOS);
-        myUseCalabash.setEnabled(projectType == RubyMotionUtilImpl.ProjectType.IOS);
       }
     });
     myProjectType.setSelectedIndex(0);

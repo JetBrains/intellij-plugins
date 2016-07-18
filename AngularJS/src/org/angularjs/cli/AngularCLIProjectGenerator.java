@@ -27,6 +27,7 @@ import com.intellij.lang.javascript.buildTools.npm.NpmScriptsService;
 import com.intellij.lang.javascript.modules.ConsoleProgress;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -36,10 +37,18 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.ValidationInfo;
+import com.intellij.openapi.ui.VerticalFlowLayout;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.ProjectTemplate;
+import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.content.Content;
+import com.intellij.util.NotNullProducer;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.SwingHelper;
+import com.intellij.util.ui.UIUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -49,12 +58,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpreter> implements ProjectTemplate {
+public class AngularCLIProjectGenerator extends WebProjectTemplate<Pair<NodeJsInterpreter,String>> implements ProjectTemplate {
   private static final String ID = "none";
   private static final Logger LOG = Logger.getInstance(AngularCLIProjectGenerator.class);
 
@@ -78,20 +89,15 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
   @Override
   public void generateProject(@NotNull Project project,
                               @NotNull VirtualFile baseDir,
-                              @NotNull NodeJsInterpreter interpreter,
+                              @NotNull Pair<NodeJsInterpreter,String> settings,
                               @NotNull Module module) {
+    final NodeJsInterpreter interpreter = settings.first;
     final NodeJsLocalInterpreter local = NodeJsLocalInterpreter.tryCast(interpreter);
     assert local != null;
-    List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
-    NodeModuleSearchUtil.findModulesWithName(modules,
-                                             "angular-cli",
-                                             null,
-                                             NodeSettings.create(local),
-                                             true);
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
       try {
-        generateApp(local, ContainerUtil.getFirstItem(modules), baseDir, project);
+        generateApp(local, settings.second, baseDir, project);
         final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
         final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
         if (entry != null) {
@@ -111,13 +117,35 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
     });
   }
 
-  protected void generateApp(@NotNull NodeJsLocalInterpreter node, CompletionModuleInfo module,
-                             @NotNull final VirtualFile baseDir, @NotNull Project project)
+  private static void generateApp(@NotNull NodeJsLocalInterpreter node, String path,
+                                  @NotNull final VirtualFile baseDir, @NotNull Project project)
     throws IOException, ExecutionException {
-    final String moduleExe = module.getVirtualFile().getPath() + File.separator + "bin" + File.separator + "ng";
-    final GeneralCommandLine commandLine = new GeneralCommandLine(node.getInterpreterSystemDependentPath(),
-                                                                  moduleExe,
-                                                                  "init", "--name=" + baseDir.getName());
+    generate(node, path, baseDir, project, () -> {
+      if (!project.isDisposed()) {
+        NpmScriptsService instance = NpmScriptsService.getInstance();
+        List<VirtualFile> buildfiles = instance.detectAllBuildfiles(project);
+        ApplicationManager.getApplication().invokeLater(() -> {
+          for (VirtualFile buildfile : buildfiles) {
+            instance.getFileManager(project).addBuildfile(buildfile);
+          }
+          NodeJsInterpreterManager.getInstance(project).setDefault(node);
+          instance.getToolWindowManager(project).setAvailable();
+        });
+      }
+    }, "init", "--name=" + baseDir.getName());
+  }
+
+  public static void generate(@NotNull final NodeJsLocalInterpreter node,
+                              @NotNull String path,
+                              @NotNull final VirtualFile baseDir,
+                              @NotNull final Project project,
+                              @Nullable final Runnable callback, String... args)
+    throws ExecutionException {
+    final List<String> arguments = new ArrayList<>();
+    arguments.add(node.getInterpreterSystemDependentPath());
+    arguments.add(path + File.separator + "bin" + File.separator + "ng");
+    ContainerUtil.addAll(arguments, args);
+    final GeneralCommandLine commandLine = new GeneralCommandLine(arguments);
     commandLine.setWorkDirectory(baseDir.getPath());
     final KillableColoredProcessHandler handler = new KillableColoredProcessHandler(commandLine);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project);
@@ -133,19 +161,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
         baseDir.refresh(false, true);
         baseDir.getChildren();
         handler.notifyTextAvailable("Done\n", ProcessOutputTypes.SYSTEM);
-        ApplicationManager.getApplication().runReadAction(() -> {
-          if (!project.isDisposed()) {
-            NpmScriptsService instance = NpmScriptsService.getInstance();
-            List<VirtualFile> buildfiles = instance.detectAllBuildfiles(project);
-            ApplicationManager.getApplication().invokeLater(() -> {
-              for (VirtualFile buildfile : buildfiles) {
-                instance.getFileManager(project).addBuildfile(buildfile);
-              }
-              NodeJsInterpreterManager.getInstance(project).setDefault(node);
-              instance.getToolWindowManager(project).setAvailable();
-            });
-          }
-        });
+        if (callback != null) ApplicationManager.getApplication().runReadAction(callback);
       }
     });
     final Executor defaultExecutor = DefaultRunExecutor.getRunExecutorInstance();
@@ -165,15 +181,17 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
 
   @NotNull
   @Override
-  public GeneratorPeer<NodeJsInterpreter> createPeer() {
-    return new GeneratorPeer<NodeJsInterpreter>() {
-
+  public GeneratorPeer<Pair<NodeJsInterpreter,String>> createPeer() {
+    return new GeneratorPeer<Pair<NodeJsInterpreter,String>>() {
       private NodeJsInterpreterField myInterpreter;
+      private TextFieldWithHistoryWithBrowseButton myModule;
 
       @NotNull
       @Override
       public JComponent getComponent() {
         final Project project = ProjectManager.getInstance().getDefaultProject();
+        final JPanel panel = new JPanel(new VerticalFlowLayout());
+
         myInterpreter = new NodeJsInterpreterField(project, false) {
           @Override
           public boolean isDefaultProjectInterpreterField() {
@@ -181,20 +199,51 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
           }
         };
         myInterpreter.setInterpreter(NodeJsInterpreterManager.getInstance(project).getDefault());
-        final LabeledComponent<NodeJsInterpreterField> component = LabeledComponent.create(myInterpreter, "Node &interpreter:");
+        LabeledComponent component = LabeledComponent.create(myInterpreter, "Node &interpreter:");
         component.setLabelLocation(BorderLayout.WEST);
-        return component;
+        panel.add(component);
+
+        final NotNullProducer<List<String>> producer = () -> {
+          List<String> dirs = new ArrayList<String>();
+          final NodeJsLocalInterpreter local = NodeJsLocalInterpreter.tryCast(myInterpreter.getInterpreter());
+          List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
+          NodeModuleSearchUtil.findModulesWithName(modules,
+                                                   "angular-cli",
+                                                   null,
+                                                   NodeSettings.create(local),
+                                                   true);
+          for (CompletionModuleInfo module : modules) {
+            VirtualFile dir = module.getVirtualFile();
+            if (dir != null && dir.isDirectory()) {
+              dirs.add(FileUtil.toSystemDependentName(dir.getPath()));
+            }
+          }
+          Collections.sort(dirs);
+          return dirs;
+        };
+        myModule = SwingHelper.createTextFieldWithHistoryWithBrowseButton(project, "Select angular-cli package",
+          FileChooserDescriptorFactory.createSingleFolderDescriptor(), producer);
+        final String item = ContainerUtil.getFirstItem(producer.produce());
+        if (item != null) myModule.setText(item);
+        component = LabeledComponent.create(myModule, "_Angular CLI:");
+        component.setAnchor((JComponent)panel.getComponent(0));
+        component.setLabelLocation(BorderLayout.WEST);
+        panel.add(component);
+
+        return panel;
       }
 
       @Override
       public void buildUI(@NotNull SettingsStep settingsStep) {
-        settingsStep.addSettingsComponent(getComponent());
+        getComponent();
+        settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand("Node &interpreter:"), myInterpreter);
+        settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand("Angular &CLI:"), myModule);
       }
 
       @NotNull
       @Override
-      public NodeJsInterpreter getSettings() {
-        return myInterpreter.getInterpreter();
+      public Pair<NodeJsInterpreter,String> getSettings() {
+        return Pair.create(myInterpreter.getInterpreter(), myModule.getText());
       }
 
       @Nullable
@@ -205,15 +254,13 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
         if (error != null) {
           return new ValidationInfo(error);
         }
-        final NodeJsLocalInterpreter local = NodeJsLocalInterpreter.tryCast(interpreter);
-        List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
-        NodeModuleSearchUtil.findModulesWithName(modules,
-                                                 "angular-cli",
-                                                 null,
-                                                 NodeSettings.create(local),
-                                                 true);
-        if (ContainerUtil.getFirstItem(modules) == null) {
-          return new ValidationInfo("Cannot find angular-cli package");
+        final String packageDir = myModule.getText();
+        if (StringUtil.isEmptyOrSpaces(packageDir)) {
+          return new ValidationInfo("Please specify angular-cli package");
+        }
+        File file = new File(packageDir);
+        if (!file.isAbsolute() || !file.isDirectory()) {
+          return new ValidationInfo("Please specify angular-cli package correctly");
         }
         return null;
       }
@@ -225,7 +272,8 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<NodeJsInterpr
 
       @Override
       public void addSettingsStateListener(@NotNull SettingsStateListener listener) {
-        myInterpreter.addChangeListener((newInterpreter) -> listener.stateChanged(validate() == null));
+        myInterpreter.addChangeListener((interpreter) -> listener.stateChanged(validate() == null));
+        myModule.getChildComponent().addItemListener((module) -> listener.stateChanged(validate() == null));
         listener.stateChanged(validate() == null);
       }
     };

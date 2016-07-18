@@ -44,6 +44,6 @@ class BlueprintParser {
 
 class Blueprint(val name:String, val description:String?, val args:List<String>) {
   override fun toString(): String{
-    return "Blueprint('$name')"
+    return name
   }
 }

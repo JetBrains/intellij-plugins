@@ -85,17 +85,11 @@
     <inlineActionHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler"/>
 
     <codeInsight.lineMarkerProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodLineMarkerProvider"/>
-    <!--<codeInsight.lineMarkerProvider language="Dart"-->
-                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>-->
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerImplementationsMarkerProvider"/>
-    <!--<codeInsight.lineMarkerProvider language="Dart"-->
-                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodOverrideMarkerProvider"/>-->
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>
 
-    <!--<codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>-->
-    <!--<definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>-->
     <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>
     <definitionsScopedSearch implementation="com.jetbrains.lang.dart.ide.actions.DartInheritorsSearcher"/>
 
@@ -109,12 +103,10 @@
 
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartImportAndExportIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartPartUriIndex"/>
-    <!--<fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSourceIndex"/>-->
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartClassIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartLibraryIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartComponentIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSymbolIndex"/>
-    <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex"/>
 
     <!-- moduleBuilder works in IntelliJ IDEA only -->
     <moduleBuilder builderClass="com.jetbrains.lang.dart.projectWizard.DartModuleBuilder"/>

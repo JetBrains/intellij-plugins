@@ -1,11 +1,16 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.include.FileIncludeProvider;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
+import org.angularjs.codeInsight.refs.AngularJSReferencesContributor;
 
 import java.util.List;
 
@@ -151,6 +156,7 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testModuleNavigation() throws Exception {
     myFixture.configureByFiles("moduleNavigation.js", "dependencyModuleDefinition.js", "myAppDefinition.js", "myAppUsage.js", "angular.js");
+    isModuleReferenceUnderCaret(true);
     final PsiReference reference = myFixture.getReferenceAtCaretPosition("moduleNavigation.js");
     assertNotNull(reference);
 
@@ -163,8 +169,16 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals(1, results.length);
   }
 
+  private void isModuleReferenceUnderCaret(boolean b) {
+    final JSLiteralExpression literal = PsiTreeUtil.getParentOfType(myFixture.getFile().findElementAt(myFixture.getCaretOffset()),
+                                                                    JSLiteralExpression.class);
+    assertNotNull(literal);
+    final boolean accepts = AngularJSReferencesContributor.MODULE_PATTERN.accepts(literal);
+    if (b) assertTrue(accepts);
+    else assertFalse(accepts);
+  }
+
   public void testModuleDependenciesCompletion() throws Exception {
-    //moduleDependenciesCompletion
     myFixture.configureByFiles("moduleDependenciesCompletion.js", "dependencyModuleDefinition.js", "myAppDefinition.js", "myAppUsage.js",
                                "otherMyAppDefinition.js", "angular.js");
     myFixture.completeBasic();
@@ -173,5 +187,37 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     assertTrue(strings.contains("myApp"));
     assertTrue(strings.contains("dependency"));
     assertTrue(strings.contains("new"));
+  }
+
+  public void testNotAModuleNoReference() throws Exception {
+    myFixture.configureByFiles("notAModuleNoNavigation.js", "angular.js");
+    isModuleReferenceUnderCaret(false);
+  }
+
+  public void testModuleDefinitionWrapperTopLevel() throws Exception {
+    final String pr = "wrapperTopLevel/";
+    checkModuleDefinitionWrapper(pr, "");
+  }
+
+  public void testModuleDefinitionWrapperGlobal() throws Exception {
+    final String pr = "wrapperGlobal/";
+    checkModuleDefinitionWrapper(pr, "ApplicationConfiguration.");
+  }
+
+  private void checkModuleDefinitionWrapper(String pr, String declarationQualifier) {
+    myFixture.configureByFiles(pr + "usage.es6", pr + "declaration.es6", pr + "wrapper.es6", "angular.js");
+    isModuleReferenceUnderCaret(true);
+    final PsiReference reference = myFixture.getReferenceAtCaretPosition(pr + "usage.es6");
+    assertNotNull(reference);
+
+    PsiElement resolve = reference.resolve();
+    assertNotNull(resolve);
+    assertEquals(declarationQualifier + "registerModule", resolve.getNavigationElement().getText());
+    assertTrue(resolve.getParent() instanceof JSCallExpression);
+    assertEquals("discoverability", StringUtil.unquoteString(((JSCallExpression)resolve.getParent()).getArguments()[0].getText()));
+    assertEquals("declaration.es6", resolve.getContainingFile().getName());
+
+    final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
+    assertEquals(1, results.length);
   }
 }
