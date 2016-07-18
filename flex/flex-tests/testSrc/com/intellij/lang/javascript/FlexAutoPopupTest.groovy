@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath
+import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait
 
 /**
  * @author Konstantin.Ulitin
@@ -36,7 +37,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
                                   urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp()
-    edt { FlexTestUtils.setupFlexSdk(myModule, getTestName(false), FlexAutoPopupTest.class) }
+    runInEdtAndWait { FlexTestUtils.setupFlexSdk(myModule, getTestName(false), FlexAutoPopupTest.class) }
     CodeInsightSettings.instance.SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS = true
   }
 
@@ -183,7 +184,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
         ]]></mx:Script>
       </mx:Application>
     """)
-    edt { myFixture.doHighlighting() } // to ensure injected documents are calculated
+    runInEdtAndWait { myFixture.doHighlighting() } // to ensure injected documents are calculated
     type 'n'
     assertEquals 'UIComponent', lookup.currentItem.lookupString
     type '\t'
