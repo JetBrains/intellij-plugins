@@ -60,12 +60,9 @@ public class OpenLessonAction extends AnAction implements DumbAware {
                 openLesson(project, lesson);
             } else {
                 //in case of starting from Welcome Screen
-                if (project == null) {
-                    //init LearnProject
-                    Project myLearnProject = initLearnProject(null);
-                    assert myLearnProject != null;
-                    openLearnToolWindowAndShowModules(myLearnProject);
-                }
+                Project myLearnProject = initLearnProject(null);
+                assert myLearnProject != null;
+                openLearnToolWindowAndShowModules(myLearnProject);
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -96,7 +93,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
                     CourseManager.getInstance().setLearnProject(getCurrentProject());
                     vf = getFileInLearnProject(lesson);
 
-                //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
+                    //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
                 } else if (learnProject == null && !getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
                     Project myLearnProject = initLearnProject(myProject);
                     assert myLearnProject != null;
@@ -120,7 +117,8 @@ public class OpenLessonAction extends AnAction implements DumbAware {
             }
 
             if (vf == null) return; //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
-            if (lesson.getModule().moduleType != Module.ModuleType.SCRATCH) project = CourseManager.getInstance().getLearnProject();
+            if (lesson.getModule().moduleType != Module.ModuleType.SCRATCH)
+                project = CourseManager.getInstance().getLearnProject();
 
             //open next lesson if current is passed
             final Project currentProject = project;
@@ -203,19 +201,25 @@ public class OpenLessonAction extends AnAction implements DumbAware {
         }
     }
 
-    private void openLearnToolWindowAndShowModules(@NotNull Project myLearnProject){
-        StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> {
-            final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myLearnProject);
-            final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
-            if (learnToolWindow != null) {
-                learnToolWindow.show(null);
-                try {
-                    CourseManager.getInstance().setModulesView(myLearnProject);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    private void openLearnToolWindowAndShowModules(@NotNull Project myLearnProject) {
+        if (myLearnProject.isOpen() && myLearnProject.isInitialized()) {
+            showModules(myLearnProject);
+        } else {
+            StartupManager.getInstance(myLearnProject).registerPostStartupActivity(() -> showModules(myLearnProject));
+        }
+    }
+
+    private void showModules(Project project){
+        final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+        final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
+        if (learnToolWindow != null) {
+            learnToolWindow.show(null);
+            try {
+                CourseManager.getInstance().setModulesView(project);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
+        }
     }
 
     private void openLessonWhenLearnProjectStart(@Nullable Lesson lesson, Project myLearnProject) {
