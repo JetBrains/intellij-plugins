@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -73,10 +74,13 @@ public class AngularJSInjector implements MultiHostInjector {
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS &&
            !(injectionCandidate instanceof OuterLanguageElement)) {
           if (afterStart > endIndex) {
-            LOG.error("Braces: " + start + "," + end + "\n" +
-                      "Text: \"" + text + "\"" + "\n" +
-                      "Interval: (" + afterStart + "," + endIndex + ")" + "\n" +
-                      "File: " + context.getContainingFile().getName() + ", language:" + context.getContainingFile().getLanguage());
+            if (ApplicationManager.getApplication().isInternal()) {
+              LOG.error("Braces: " + start + "," + end + "\n" +
+                        "Text: \"" + text + "\"" + "\n" +
+                        "Interval: (" + afterStart + "," + endIndex + ")" + "\n" +
+                        "File: " + context.getContainingFile().getName() + ", language:" + context.getContainingFile().getLanguage());
+            }
+            return;
           }
           registrar.startInjecting(AngularJSLanguage.INSTANCE).
                     addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(afterStart, endIndex)).
