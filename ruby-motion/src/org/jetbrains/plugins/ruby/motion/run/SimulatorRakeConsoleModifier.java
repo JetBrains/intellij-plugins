@@ -8,6 +8,7 @@ import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.jetbrains.cidr.execution.debugger.CidrDebuggerSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.console.config.IrbConsoleBuilder;
 import org.jetbrains.plugins.ruby.console.config.IrbRunConfiguration;
@@ -43,6 +44,7 @@ public class SimulatorRakeConsoleModifier implements RakeConsoleModifier {
   public ProcessHandler createProcessHandler(RakeRunConfiguration config, final GeneralCommandLine cmd, String runnerId) throws ExecutionException {
     final MotionSimulatorRunExtension.MotionProcessOutputReaders readers = cmd.getUserData(MotionSimulatorRunExtension.FILE_OUTPUT_READERS);
     cmd.putUserData(MotionSimulatorRunExtension.FILE_OUTPUT_READERS, null);
+    CidrDebuggerSettings.getInstance().VALUES_FILTER_ENABLED = false;
     assert readers != null;
     final Module module = config.getModule();
     assert module != null;
