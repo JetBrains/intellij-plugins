@@ -66,4 +66,25 @@ public class DartComponentMoverTest extends DartCodeMoverTest {
   public void testFirstMemberVar() {
     doTest();
   }
+
+  public void testMainComment() {
+    doTest();
+  }
+
+  public void testCommentMid() {
+    doTest();
+  }
+
+  public void testClassEnd() {
+    doTest(); // down: no change
+  }
+
+  public void testLineCommentVar() {
+    doTest();
+  }
+
+  public void testVarLine() {
+    // TODO: Fix "afterUp case. See TODO "Handle multi-line declarations" in DartComponentMover.
+    doTest();
+  }
 }

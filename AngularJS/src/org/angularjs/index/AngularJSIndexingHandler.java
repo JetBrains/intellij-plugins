@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
@@ -200,6 +201,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                   String interpolation = unquote(argument);
                   // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
                   if ("//".equals(interpolation)) return;
+                  if (JSLibraryUtil.isProbableLibraryFile(qualifier.getContainingFile().getVirtualFile())) return;
                   addImplicitElements(argument, null, AngularInjectionDelimiterIndex.KEY, command, interpolation, outIndexingData);
                 }
               }
