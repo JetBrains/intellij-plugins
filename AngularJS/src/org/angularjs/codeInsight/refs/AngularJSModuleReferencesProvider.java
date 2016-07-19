@@ -34,6 +34,8 @@ import java.util.*;
  * @author Irina.Chernushina on 3/22/2016.
  */
 public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
+  public static final String ANGULAR = "angular";
+
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
@@ -52,6 +54,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     protected ResolveResult[] resolveInner() {
+      if(! isAngularModuleReferenceAccurate()) return ResolveResult.EMPTY_ARRAY;
       final String moduleName = getModuleName();
       if (StringUtil.isEmptyOrSpaces(moduleName)) return ResolveResult.EMPTY_ARRAY;
       final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();
@@ -61,6 +64,32 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
       if (results.isEmpty()) return getGenericResolvedModules(moduleName);
       final List<ResolveResult> resolveResults = ContainerUtil.map(results, AngularIndexUtil.JS_IMPLICIT_TO_RESOLVE_RESULT);
       return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
+    }
+
+    private boolean isAngularModuleReferenceAccurate() {
+      final PsiElement parent = myElement.getParent();
+      if (parent instanceof JSArgumentList && parent.getParent() instanceof JSCallExpression
+          && ((JSArgumentList)parent).getArguments().length == 1) {
+        if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[0], myElement, false)) {
+          final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
+          if (methodExpression instanceof JSReferenceExpression &&
+              JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, ANGULAR, AngularJSIndexingHandler.MODULE)) {
+            return true;
+          }
+          if (AngularJSReferencesContributor.looksLikeAngularModuleReference(methodExpression)) {
+            //noinspection ConstantConditions
+            final JSExpression qualifier = ((JSReferenceExpression)methodExpression).getQualifier();
+            if (qualifier instanceof JSReferenceExpression) {
+              final PsiElement resolve = ((JSReferenceExpression)qualifier).resolve();
+              if (resolve instanceof JSVariable && ((JSVariable)resolve).getInitializer() instanceof JSReferenceExpression &&
+                  JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression) ((JSVariable)resolve).getInitializer(), ANGULAR)) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
     }
 
     private ResolveResult[] getGenericResolvedModules(String moduleName) {
@@ -144,7 +173,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
         if (callExpression == null) return null;
         final JSExpression methodExpression = callExpression.getMethodExpression();
         if (methodExpression instanceof JSReferenceExpression && JSSymbolUtil
-              .isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, "angular", AngularJSIndexingHandler.MODULE)) {
+              .isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, ANGULAR, AngularJSIndexingHandler.MODULE)) {
           if (callExpression.getArgumentList() == null || callExpression.getArgumentList().getArguments().length <= 1) {
             return null;
           }
