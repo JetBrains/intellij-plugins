@@ -19,6 +19,8 @@ import java.util.List;
  * @author Irina.Chernushina on 3/22/2016.
  */
 public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
+  public static final String ANGULAR = "angular";
+
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
@@ -37,6 +39,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     protected ResolveResult[] resolveInner() {
+      if(! isAngularModuleReferenceAccurate()) return ResolveResult.EMPTY_ARRAY;
       final String moduleName = getModuleName();
       if (StringUtil.isEmptyOrSpaces(moduleName)) return ResolveResult.EMPTY_ARRAY;
       final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();

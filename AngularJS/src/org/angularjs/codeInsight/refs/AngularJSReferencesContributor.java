@@ -2,7 +2,6 @@ package org.angularjs.codeInsight.refs;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
@@ -122,8 +121,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
             && ((JSArgumentList)parent).getArguments().length == 1) {
             if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[0], (PsiElement)element, false)) {
               final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
-              if (methodExpression instanceof JSReferenceExpression &&
-                  JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, "angular", AngularJSIndexingHandler.MODULE)) {
+              if (looksLikeAngularModuleReference(methodExpression)) {
                 return true;
               }
             }
@@ -152,10 +150,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
             if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[1], (PsiElement)element, false) &&
                 ((JSArgumentList)parent).getArguments()[1] instanceof JSArrayLiteralExpression) {
               final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
-              if (methodExpression instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpression).getQualifier() != null &&
-                  AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
-                return true;
-              }
+              if (looksLikeAngularModuleReference(methodExpression)) return true;
             }
           }
         }
@@ -167,6 +162,14 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         return true;
       }
     }));
+  }
+
+  static boolean looksLikeAngularModuleReference(JSExpression methodExpression) {
+    if (methodExpression instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpression).getQualifier() != null &&
+        AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
+      return true;
+    }
+    return false;
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> literalInProperty(final String propertyName) {
