@@ -190,7 +190,27 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNotAModuleNoReference() throws Exception {
     myFixture.configureByFiles("notAModuleNoNavigation.js", "angular.js");
-    assertModuleReferenceIsUnderCaret(false);
+    assertModuleReferenceIsUnderCaret(true);
+    final PsiReference reference = myFixture.getReferenceAtCaretPosition("notAModuleNoNavigation.js");
+    assertNotNull(reference);
+
+    final PsiElement resolve = reference.resolve();
+    assertNull(resolve);
+  }
+
+  public void testModuleNavigationWithAlias() throws Exception {
+    myFixture.configureByFiles("moduleNavigationWithAlias.js", "dependencyModuleDefinition.js", "myAppDefinition.js", "myAppUsage.js", "angular.js");
+    assertModuleReferenceIsUnderCaret(true);
+    final PsiReference reference = myFixture.getReferenceAtCaretPosition("moduleNavigationWithAlias.js");
+    assertNotNull(reference);
+
+    PsiElement resolve = reference.resolve();
+    assertNotNull(resolve);
+    assertEquals("'myApp'", resolve.getNavigationElement().getText());
+    assertEquals("myAppDefinition.js", resolve.getContainingFile().getName());
+
+    final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
+    assertEquals(1, results.length);
   }
 
   public void testModuleDefinitionWrapperTopLevel() throws Exception {
