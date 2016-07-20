@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.parser;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
@@ -53,6 +54,11 @@ public class PostCssParser extends CssParser2 {
   }
 
   @Override
+  protected boolean parseStylesheetItem() {
+    return super.parseStylesheetItem() || parseCustomSelectorAtRule();
+  }
+
+  @Override
   protected boolean parseSingleDeclarationInBlock(boolean withPageMarginRules, boolean inlineCss,
                                                   boolean requirePropertyValue, @NotNull IElementType elementType) {
     myRulesetSeen = false;
@@ -68,12 +74,49 @@ public class PostCssParser extends CssParser2 {
         parseScope() ||
         parseCounterStyle() ||
         parseKeyframesRuleset() ||
+        parseCustomSelectorAtRule() ||
         parseAtRuleNesting() ||
         tryToParseRuleset()) {
       myRulesetSeen = true;
       return true;
     }
     return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+  }
+
+  private boolean parseCustomSelectorAtRule() {
+    if (getTokenType() != PostCssTokenTypes.POST_CSS_CUSTOM_SELECTOR_SYM) {
+      return false;
+    }
+    PsiBuilder.Marker customSelectorRule = createCompositeElement();
+    addSingleToken();
+    parseCustomSelector();
+    parseSelectorList();
+    addSemicolonOrError();
+    customSelectorRule.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE);
+    return true;
+  }
+
+  private void parseCustomSelector() {
+    PsiBuilder.Marker customSelectorName = createCompositeElement();
+    addTokenOrError(CssElementTypes.CSS_COLON, "':'");
+    addIdentOrError();
+    customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
+  }
+
+  private boolean tryParseCustomSelector() {
+    PsiBuilder.Marker customSelectorName = createCompositeElement();
+    if (getTokenType() != CssElementTypes.CSS_COLON) {
+      customSelectorName.rollbackTo();
+      return false;
+    }
+    addSingleToken();
+    if (getTokenType() != CssElementTypes.CSS_IDENT || getTokenText() == null || !StringUtil.startsWith(getTokenText(), "--")) {
+      customSelectorName.rollbackTo();
+      return false;
+    }
+    addSingleToken();
+    customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
+    return true;
   }
 
   private boolean parseAtRuleNesting() {
@@ -211,9 +254,20 @@ public class PostCssParser extends CssParser2 {
       parseAtRuleNest();
       simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
     }
+    else if (tryParseCustomSelector()) {
+      parseSelectorSuffixList(true);
+    }
     else {
       super.parseSimpleSelector();
     }
+  }
+
+  @Override
+  protected boolean parsePseudo() {
+    if (tryParseCustomSelector()){
+      return true;
+    }
+    return super.parsePseudo();
   }
 
   @Override

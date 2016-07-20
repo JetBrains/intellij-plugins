@@ -71,6 +71,34 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testCustomSelector() {
+    doTest();
+  }
+
+  public void testCustomSelectorDefinitionWithoutSemicolon() {
+    doTest();
+  }
+
+  public void testCustomSelectorDefinitionWithoutColon() {
+    doTest();
+  }
+
+  public void testCustomSelectorDefinitionWithPseudoClasses() {
+    doTest();
+  }
+
+  public void testCustomSelectorUsageWithPseudoClasses() {
+    doTest();
+  }
+
+  public void testCustomSelectorInsideRuleset() {
+    doTest();
+  }
+
+  public void testCustomSelectorInsideAtRule() {
+    doTest();
+  }
+
   private void doTest() {
     super.doTest(true);
   }

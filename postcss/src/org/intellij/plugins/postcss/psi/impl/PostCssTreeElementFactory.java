@@ -13,6 +13,12 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
     if (type == PostCssElementTypes.POST_CSS_NEST) {
       return new PostCssNestImpl();
     }
+    else if (type == PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE) {
+      return new PostCssCustomSelectorAtRuleImpl();
+    }
+    else if (type == PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR) {
+      return new PostCssCustomSelectorImpl();
+    }
     return super.createComposite(type);
   }
 }

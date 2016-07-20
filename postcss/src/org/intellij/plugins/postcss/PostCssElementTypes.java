@@ -10,5 +10,7 @@ public interface PostCssElementTypes {
 
   IFileElementType POST_CSS_FILE = new PostCssFileElementType();
   IElementType POST_CSS_NEST = new PostCssElementType("POST_CSS_NEST");
+  IElementType POST_CSS_CUSTOM_SELECTOR_RULE = new PostCssElementType("POST_CSS_CUSTOM_SELECTOR_RULE");
+  IElementType POST_CSS_CUSTOM_SELECTOR = new PostCssElementType("POST_CSS_CUSTOM_SELECTOR");
   CssStyleSheetElementType POST_CSS_STYLESHEET = new PostCssStyleSheetElementType();
 }

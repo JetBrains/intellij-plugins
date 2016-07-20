@@ -19,6 +19,10 @@ public class PostCssLexerTest extends LexerTestCase {
     doTest();
   }
 
+  public void testCustomSelector() {
+    doTest();
+  }
+
   private void doTest() {
     doFileTest("pcss");
   }
