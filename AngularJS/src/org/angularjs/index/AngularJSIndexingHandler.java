@@ -28,7 +28,9 @@ import com.intellij.lang.javascript.psi.util.JSTreeUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.CompositeElement;
@@ -37,6 +39,7 @@ import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
+import com.intellij.util.indexing.IndexingDataKeys;
 import gnu.trove.THashSet;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
@@ -201,7 +204,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                   String interpolation = unquote(argument);
                   // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
                   if ("//".equals(interpolation)) return;
-                  if (JSLibraryUtil.isProbableLibraryFile(qualifier.getContainingFile().getVirtualFile())) return;
+                  PsiFile file = qualifier.getContainingFile();
+                  VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
+                  virtualFile = virtualFile == null ? IndexingDataKeys.VIRTUAL_FILE.get(file) : virtualFile;
+
+                  if (JSLibraryUtil.isProbableLibraryFile(virtualFile)) return;
                   addImplicitElements(argument, null, AngularInjectionDelimiterIndex.KEY, command, interpolation, outIndexingData);
                 }
               }

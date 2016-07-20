@@ -196,6 +196,7 @@
                      groupName="Dart" enabledByDefault="true" level="WARNING" language="Dart"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
     <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>
+    <testSourcesFilter implementation="com.jetbrains.lang.dart.test.DartTestSourcesFilter"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
