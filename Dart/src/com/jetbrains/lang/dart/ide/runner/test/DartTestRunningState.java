@@ -174,7 +174,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
                                                                         @NotNull TestConsoleProperties consoleProperties) {
       final DartRunConfiguration runConfiguration = (DartRunConfiguration)getConfiguration();
       try {
-        final VirtualFile file = runConfiguration.getRunnerParameters().getDartFile();
+        final VirtualFile file = runConfiguration.getRunnerParameters().getDartFileOrDirectory();
         return new DartTestEventsConverter(testFrameworkName, consoleProperties, DartUrlResolver.getInstance(getProject(), file));
       }
       catch (RuntimeConfigurationError error) {
