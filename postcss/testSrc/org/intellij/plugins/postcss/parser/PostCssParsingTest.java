@@ -99,6 +99,10 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testCustomSelectorWithWhitespace() {
+    doTest();
+  }
+
   private void doTest() {
     super.doTest(true);
   }

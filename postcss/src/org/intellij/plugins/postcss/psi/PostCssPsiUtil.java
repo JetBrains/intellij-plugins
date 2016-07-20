@@ -13,6 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
+import org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorAtRuleImpl;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,16 +34,16 @@ public class PostCssPsiUtil {
   }
 
   @Contract("null -> null")
-  public static PsiElement getParentRulesetOrNestingAvailableAtRule(@Nullable PsiElement element) {
+  public static PsiElement getParentRulesetOrAtRuleWhereNestingAllowed(@Nullable PsiElement element) {
     CssElement parent = PsiTreeUtil.getParentOfType(element, CssRuleset.class, CssAtRule.class);
-    if (parent instanceof PostCssCustomSelectorAtRule) return null;
+    if (parent instanceof PostCssCustomSelectorAtRuleImpl) return null;
     return isConditionalGroupAtRule(parent) ? null : parent;
   }
 
   @Contract("null -> false")
   public static boolean isInsideNestedRuleset(@Nullable PsiElement element) {
-    PsiElement atRuleOrRuleset = getParentRulesetOrNestingAvailableAtRule(element);
-    return getParentRulesetOrNestingAvailableAtRule(atRuleOrRuleset) != null;
+    PsiElement atRuleOrRuleset = getParentRulesetOrAtRuleWhereNestingAllowed(element);
+    return getParentRulesetOrAtRuleWhereNestingAllowed(atRuleOrRuleset) != null;
   }
 
   @Contract("null -> false")

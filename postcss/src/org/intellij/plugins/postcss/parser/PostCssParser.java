@@ -2,10 +2,12 @@ package org.intellij.plugins.postcss.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import com.intellij.psi.tree.IElementType;
+import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -89,34 +91,38 @@ public class PostCssParser extends CssParser2 {
     }
     PsiBuilder.Marker customSelectorRule = createCompositeElement();
     addSingleToken();
-    parseCustomSelector();
+    parseCustomSelector(true);
     parseSelectorList();
     addSemicolonOrError();
     customSelectorRule.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE);
     return true;
   }
 
-  private void parseCustomSelector() {
-    PsiBuilder.Marker customSelectorName = createCompositeElement();
-    addTokenOrError(CssElementTypes.CSS_COLON, "':'");
-    addIdentOrError();
-    customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
-  }
-
-  private boolean tryParseCustomSelector() {
-    PsiBuilder.Marker customSelectorName = createCompositeElement();
-    if (getTokenType() != CssElementTypes.CSS_COLON) {
-      customSelectorName.rollbackTo();
-      return false;
+  private boolean parseCustomSelector(boolean strict) {
+    if (strict){
+      PsiBuilder.Marker customSelectorName = createCompositeElement();
+      boolean hasColon = addTokenOrError(CssElementTypes.CSS_COLON, "':'");
+      if (hasColon && hasWhitespaceBefore()){
+        createErrorElement(PostCssBundle.message("no.whitespaces.between.colon.and.extension.name.allowed"));
+      }
+      addIdentOrError();
+      customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
+      return true;
+    } else {
+      if (getTokenType() != CssElementTypes.CSS_COLON && rawLookup(1) != CssElementTypes.CSS_IDENT) return false;
+      PsiBuilder.Marker customSelectorName = createCompositeElement();
+      addSingleToken();
+      if (getTokenText() == null || !StringUtil.startsWith(getTokenText(), "--")) {
+        customSelectorName.rollbackTo();
+        return false;
+      }
+      if (hasWhitespaceBefore()){
+        createErrorElement(PostCssBundle.message("no.whitespaces.between.colon.and.extension.name.allowed"));
+      }
+      addSingleToken();
+      customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
+      return true;
     }
-    addSingleToken();
-    if (getTokenType() != CssElementTypes.CSS_IDENT || getTokenText() == null || !StringUtil.startsWith(getTokenText(), "--")) {
-      customSelectorName.rollbackTo();
-      return false;
-    }
-    addSingleToken();
-    customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
-    return true;
   }
 
   private boolean parseAtRuleNesting() {
@@ -254,7 +260,7 @@ public class PostCssParser extends CssParser2 {
       parseAtRuleNest();
       simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
     }
-    else if (tryParseCustomSelector()) {
+    else if (parseCustomSelector(false)) {
       parseSelectorSuffixList(true);
     }
     else {
@@ -264,7 +270,7 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected boolean parsePseudo() {
-    if (tryParseCustomSelector()){
+    if (parseCustomSelector(false)){
       return true;
     }
     return super.parsePseudo();
