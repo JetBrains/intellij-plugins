@@ -32,7 +32,7 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
         PsiElement prev = position.getPrevSibling();
         boolean insideBlock = parent instanceof CssBlock && (prev == null || !(prev instanceof PsiErrorElement));
         boolean insideNestedRule = parent.getNode().getElementType() == CssElementTypes.CSS_BAD_AT_RULE &&
-                                   PostCssPsiUtil.getParentNonConditionalAtRuleOrRuleset(parent) != null;
+                                   PostCssPsiUtil.getParentRulesetOrNestingAvailableAtRule(parent) != null;
         if (insideBlock || insideNestedRule) {
           result.addElement(CssCompletionUtil.lookupForKeyword("@nest", new CssAddSpaceWithBracesInsertHandler(false)));
         }

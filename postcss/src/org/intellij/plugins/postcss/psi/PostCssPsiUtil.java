@@ -33,15 +33,16 @@ public class PostCssPsiUtil {
   }
 
   @Contract("null -> null")
-  public static PsiElement getParentNonConditionalAtRuleOrRuleset(@Nullable PsiElement element) {
+  public static PsiElement getParentRulesetOrNestingAvailableAtRule(@Nullable PsiElement element) {
     CssElement parent = PsiTreeUtil.getParentOfType(element, CssRuleset.class, CssAtRule.class);
+    if (parent instanceof PostCssCustomSelectorAtRule) return null;
     return isConditionalGroupAtRule(parent) ? null : parent;
   }
 
   @Contract("null -> false")
   public static boolean isInsideNestedRuleset(@Nullable PsiElement element) {
-    PsiElement atRuleOrRuleset = getParentNonConditionalAtRuleOrRuleset(element);
-    return getParentNonConditionalAtRuleOrRuleset(atRuleOrRuleset) != null;
+    PsiElement atRuleOrRuleset = getParentRulesetOrNestingAvailableAtRule(element);
+    return getParentRulesetOrNestingAvailableAtRule(atRuleOrRuleset) != null;
   }
 
   @Contract("null -> false")
