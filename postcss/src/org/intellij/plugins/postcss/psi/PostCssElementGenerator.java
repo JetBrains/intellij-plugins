@@ -22,6 +22,12 @@ public class PostCssElementGenerator {
   }
 
   @NotNull
+  public static PostCssCustomSelector createCustomSelector(@NotNull final Project project, String customSelectorName) {
+    //noinspection ConstantConditions
+    return findChildOfType(createFileFromText(project, "@custom-selector " + customSelectorName + " a;"), PostCssCustomSelector.class);
+  }
+
+  @NotNull
   private static PostCssFile createFileFromText(@NotNull final Project project, @NotNull final String text) {
     return (PostCssFile)PsiFileFactory.getInstance(project).createFileFromText("foo.pcss", PostCssFileType.POST_CSS, text);
   }

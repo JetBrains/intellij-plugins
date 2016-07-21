@@ -6,4 +6,12 @@ abstract public class PostCssElementVisitor extends CssElementVisitor {
   public void visitPostCssNest(final PostCssNestImpl postCssNest) {
     visitElement(postCssNest);
   }
+
+  public void visitPostCssCustomSelectorAtRule(final PostCssCustomSelectorAtRuleImpl postCssCustomSelectorAtRule) {
+    visitElement(postCssCustomSelectorAtRule);
+  }
+
+  public void visitPostCssCustomSelector(final PostCssCustomSelectorImpl postCssCustomSelector) {
+    visitElement(postCssCustomSelector);
+  }
 }

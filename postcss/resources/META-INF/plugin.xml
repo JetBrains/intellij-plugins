@@ -26,5 +26,9 @@
                      key="inspections.nesting.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssNestingInspection"/>
+    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+                     key="inspections.custom.selector.problems.name"
+                     groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomSelectorInspection"/>
   </extensions>
 </idea-plugin>

@@ -5,7 +5,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.intellij.plugins.postcss.completion.PostCssKeywordCompletionTest;
 import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
+import org.intellij.plugins.postcss.inspections.PostCssCustomSelectorInspectionTest;
+import org.intellij.plugins.postcss.inspections.PostCssCustomSelectorQuickFixTest;
 import org.intellij.plugins.postcss.inspections.PostCssNestingInspectionTest;
+import org.intellij.plugins.postcss.inspections.PostCssNestingQuickFixTest;
 import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
 import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerTest;
 import org.intellij.plugins.postcss.parser.PostCssParsingTest;
@@ -43,6 +46,10 @@ public class PostCssTestSuite extends TestCase {
     public static Test suite() {
       TestSuite suite = new TestSuite("Inspections PostCss");
       suite.addTestSuite(PostCssNestingInspectionTest.class);
+      suite.addTestSuite(PostCssCustomSelectorInspectionTest.class);
+
+      suite.addTestSuite(PostCssNestingQuickFixTest.class);
+      suite.addTestSuite(PostCssCustomSelectorQuickFixTest.class);
       return suite;
     }
   }
