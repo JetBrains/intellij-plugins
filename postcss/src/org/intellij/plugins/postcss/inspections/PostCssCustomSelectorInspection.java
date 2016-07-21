@@ -21,13 +21,11 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
       public void visitPostCssCustomSelector(PostCssCustomSelectorImpl postCssCustomSelector) {
         String text = postCssCustomSelector.getText();
         if (text.equals(":--")) {
-          holder
-            .registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.not.be.empty"));
+          holder.registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.not.be.empty"));
         }
         else if (!StringUtil.startsWith(text, ":--")) {
-          holder
-            .registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.start.with"),
-                             new PostCssAddPrefixToCustomSelectorQuickFix());
+          holder.registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.start.with"),
+                                 new PostCssAddPrefixToCustomSelectorQuickFix());
         }
       }
 
@@ -35,9 +33,8 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
       public void visitPostCssCustomSelectorAtRule(PostCssCustomSelectorAtRuleImpl postCssCustomSelectorAtRule) {
         CssSelectorList selectorList = postCssCustomSelectorAtRule.getSelectorList();
         if (selectorList == null || selectorList.getText().isEmpty()) {
-          holder
-            .registerProblem(postCssCustomSelectorAtRule,
-                             PostCssBundle.message("annotator.custom.selector.at.rule.should.contain.selector.list"));
+          holder.registerProblem(postCssCustomSelectorAtRule,
+                                 PostCssBundle.message("annotator.custom.selector.at.rule.should.contain.selector.list"));
         }
       }
     };

@@ -117,7 +117,7 @@ public class PostCssParser extends CssParser2 {
         return false;
       }
       addSingleToken();
-      customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
+      customSelectorName.drop();
       return true;
     }
   }
@@ -257,20 +257,28 @@ public class PostCssParser extends CssParser2 {
       parseAtRuleNest();
       simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
     }
-    else if (parseCustomSelector(false)) {
-      parseSelectorSuffixList(true);
-    }
     else {
-      super.parseSimpleSelector();
+      PsiBuilder.Marker simpleSelector = createCompositeElement();
+      if (parseCustomSelector(false)){
+        parseSelectorSuffixList(true);
+        simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
+      } else {
+        simpleSelector.drop();
+        super.parseSimpleSelector();
+      }
     }
   }
 
   @Override
   protected boolean parsePseudo() {
+    PsiBuilder.Marker pseudoClass = createCompositeElement();
     if (parseCustomSelector(false)){
+      pseudoClass.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
       return true;
+    } else {
+      pseudoClass.drop();
+      return super.parsePseudo();
     }
-    return super.parsePseudo();
   }
 
   @Override

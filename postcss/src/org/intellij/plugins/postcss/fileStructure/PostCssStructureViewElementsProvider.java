@@ -6,6 +6,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.structure.CssStructureViewElement;
 import com.intellij.psi.css.impl.structure.CssStructureViewElementsProvider;
 import org.intellij.plugins.postcss.PostCssLanguage;
+import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
+import org.intellij.plugins.postcss.psi.PostCssCustomSelectorAtRule;
 import org.intellij.plugins.postcss.psi.PostCssNest;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +17,7 @@ import java.util.Collections;
 import static com.intellij.util.containers.ContainerUtilRt.newArrayList;
 
 public class PostCssStructureViewElementsProvider extends CssStructureViewElementsProvider {
-  private static final Class[] POST_CSS_SUITABLE_CLASSES = new Class[]{PostCssNest.class};
+  private static final Class[] POST_CSS_SUITABLE_CLASSES = new Class[]{PostCssNest.class, PostCssCustomSelectorAtRule.class};
 
   @Override
   public boolean isMyContext(PsiElement element) {
@@ -42,6 +44,9 @@ public class PostCssStructureViewElementsProvider extends CssStructureViewElemen
 
     if (element instanceof PostCssNest) {
       return newArrayList(CssStructureViewElement.create(element, AllIcons.Css.Atrule, "@nest"));
+    }
+    else if (element instanceof PostCssCustomSelectorAtRule) {
+      return newArrayList(CssStructureViewElement.create(element, AllIcons.Css.Atrule, "@custom-selector"));
     }
     return Collections.emptyList();
   }
