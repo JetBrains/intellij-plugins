@@ -34,12 +34,15 @@ PostCSS File:CustomSelectorWithWhitespace.pcss
             PsiElement(CSS_SIMPLE_SELECTOR)
               PsiElement(CSS_IDENT)('a')
               PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                PsiElement(POST_CSS_CUSTOM_SELECTOR)
+                PsiElement(CSS_PSEUDO_CLASS)
                   PsiElement(CSS_COLON)(':')
-                  PsiErrorElement:no whitespaces between ':' and <extension-name> allowed
+                  PsiErrorElement:an identifier expected
                     <empty list>
-                  PsiWhiteSpace(' ')
-                  PsiElement(CSS_IDENT)('--any-link')
+            PsiWhiteSpace(' ')
+            PsiElement(CSS_SIMPLE_SELECTOR)
+              PsiElement(CSS_IDENT)('--any-link')
+              PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                <empty list>
         PsiWhiteSpace(' ')
         PsiElement(CSS_DECLARATION_BLOCK)
           PsiElement(CSS_LBRACE)('{')

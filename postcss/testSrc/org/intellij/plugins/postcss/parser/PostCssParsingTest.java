@@ -103,6 +103,10 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testCustomSelectorWithoutTwoDashes() {
+    doTest();
+  }
+
   private void doTest() {
     super.doTest(true);
   }

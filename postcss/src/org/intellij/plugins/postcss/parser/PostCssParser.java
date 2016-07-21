@@ -109,15 +109,12 @@ public class PostCssParser extends CssParser2 {
       customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
       return true;
     } else {
-      if (getTokenType() != CssElementTypes.CSS_COLON && rawLookup(1) != CssElementTypes.CSS_IDENT) return false;
+      if (getTokenType() != CssElementTypes.CSS_COLON || rawLookup(1) != CssElementTypes.CSS_IDENT) return false;
       PsiBuilder.Marker customSelectorName = createCompositeElement();
       addSingleToken();
       if (getTokenText() == null || !StringUtil.startsWith(getTokenText(), "--")) {
         customSelectorName.rollbackTo();
         return false;
-      }
-      if (hasWhitespaceBefore()){
-        createErrorElement(PostCssBundle.message("no.whitespaces.between.colon.and.extension.name.allowed"));
       }
       addSingleToken();
       customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
