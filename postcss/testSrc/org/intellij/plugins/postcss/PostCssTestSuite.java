@@ -3,7 +3,8 @@ package org.intellij.plugins.postcss;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.intellij.plugins.postcss.completion.PostCssKeywordCompletionTest;
+import org.intellij.plugins.postcss.completion.PostCssCustomSelectorCompletionTest;
+import org.intellij.plugins.postcss.completion.PostCssNestCompletionTest;
 import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
 import org.intellij.plugins.postcss.inspections.PostCssCustomSelectorInspectionTest;
 import org.intellij.plugins.postcss.inspections.PostCssCustomSelectorQuickFixTest;
@@ -57,7 +58,8 @@ public class PostCssTestSuite extends TestCase {
   public static class Completion extends TestCase {
     public static Test suite() {
       TestSuite suite = new TestSuite("Completion PostCss");
-      suite.addTestSuite(PostCssKeywordCompletionTest.class);
+      suite.addTestSuite(PostCssNestCompletionTest.class);
+      suite.addTestSuite(PostCssCustomSelectorCompletionTest.class);
       return suite;
     }
   }

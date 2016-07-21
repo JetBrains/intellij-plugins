@@ -3,7 +3,7 @@ package org.intellij.plugins.postcss.completion;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssKeywordCompletionTest extends PostCssFixtureTestCase {
+public class PostCssNestCompletionTest extends PostCssFixtureTestCase {
 
   public void testNestInsideRuleset() {
     doTest();
@@ -42,10 +42,6 @@ public class PostCssKeywordCompletionTest extends PostCssFixtureTestCase {
   }
 
   public void testNestInsidePageAtRule() {
-    doTest();
-  }
-
-  public void testNestInsideCustomSelectorAtRule() {
     doTest();
   }
 
