@@ -16,6 +16,7 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -96,13 +97,16 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
         if (place instanceof JSReferenceExpression) {
           JSExpression qualifier = ((JSReferenceExpression)place).getQualifier();
           if (qualifier instanceof JSReferenceExpression) {
-            JSElement expression = JSSymbolUtil.calcRefExprValue((JSReferenceExpression)qualifier);
-            if (expression instanceof JSReferenceExpression) {
-              for (ResolveResult r : ((JSReferenceExpression)expression).multiResolve(false)) {
-                PsiElement rElement = r.getElement();
-                if (rElement instanceof JSClass) {
-                  referencingClass = true;
-                  break;
+            List<JSElement> expressions = JSSymbolUtil.calcRefExprValues((JSReferenceExpression)qualifier);
+            expressions:
+            for (JSElement expression : expressions) {
+              if (expression instanceof JSReferenceExpression) {
+                for (ResolveResult r : ((JSReferenceExpression)expression).multiResolve(false)) {
+                  PsiElement rElement = r.getElement();
+                  if (rElement instanceof JSClass) {
+                    referencingClass = true;
+                    break expressions;
+                  }
                 }
               }
             }
