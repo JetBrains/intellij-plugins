@@ -2,14 +2,13 @@ package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.css.impl.CssPseudoSelectorBase;
 import com.intellij.psi.css.impl.stubs.CssPseudoSelectorStub;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElementType;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssCustomSelectorImpl extends CssPseudoSelectorBase implements PostCssCustomSelector, PsiNamedElement {
+public class PostCssCustomSelectorImpl extends CssPseudoSelectorBase implements PostCssCustomSelector {
 
   public PostCssCustomSelectorImpl(@NotNull CssPseudoSelectorStub<PostCssCustomSelector> stub, @NotNull CssNamedStubElementType nodeType) {
     super(stub, nodeType);

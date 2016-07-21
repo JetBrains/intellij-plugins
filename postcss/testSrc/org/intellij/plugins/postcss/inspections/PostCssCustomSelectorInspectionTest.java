@@ -29,11 +29,6 @@ public class PostCssCustomSelectorInspectionTest extends PostCssFixtureTestCase 
     return myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return false;
-  }
-
   @NotNull
   @Override
   protected String getTestDataSubdir() {

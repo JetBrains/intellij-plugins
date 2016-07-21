@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.CssSelectorList;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.actions.PostCssAddPrefixToCustomSelectorQuickFix;
+import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorAtRuleImpl;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorImpl;
 import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
@@ -19,6 +20,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
 
       @Override
       public void visitPostCssCustomSelector(PostCssCustomSelectorImpl postCssCustomSelector) {
+        if (PostCssPsiUtil.isEmptyElement(postCssCustomSelector) || !PostCssPsiUtil.isInsidePostCss(postCssCustomSelector)) return;
         String text = postCssCustomSelector.getText();
         if (text.equals(":--")) {
           holder.registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.not.be.empty"));
@@ -31,6 +33,10 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
 
       @Override
       public void visitPostCssCustomSelectorAtRule(PostCssCustomSelectorAtRuleImpl postCssCustomSelectorAtRule) {
+        if (PostCssPsiUtil.isEmptyElement(postCssCustomSelectorAtRule) ||
+            !PostCssPsiUtil.isInsidePostCss(postCssCustomSelectorAtRule)) {
+          return;
+        }
         CssSelectorList selectorList = postCssCustomSelectorAtRule.getSelectorList();
         if (selectorList == null || selectorList.getText().isEmpty()) {
           holder.registerProblem(postCssCustomSelectorAtRule,

@@ -7,11 +7,14 @@ import com.intellij.css.util.CssPsiUtil;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.css.CssBlock;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.completion.CssAddSpaceWithBracesInsertHandler;
 import com.intellij.psi.css.util.CssCompletionUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
+import org.intellij.plugins.postcss.psi.PostCssCustomSelectorAtRule;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +33,9 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
         if (parent == null) return;
 
         PsiElement prev = position.getPrevSibling();
-        boolean insideBlock = parent instanceof CssBlock && (prev == null || !(prev instanceof PsiErrorElement));
+        boolean insideBlock = parent instanceof CssBlock &&
+                              (prev == null || !(prev instanceof PsiErrorElement)) &&
+                              !isInsideCustomSelectorAtRule(position);
         boolean insideNestedRule = parent.getNode().getElementType() == CssElementTypes.CSS_BAD_AT_RULE &&
                                    PostCssPsiUtil.getParentRulesetOrAtRuleWhereNestingAllowed(parent) != null;
         if (insideBlock || insideNestedRule) {
@@ -38,5 +43,16 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
         }
       }
     }
+  }
+
+  private static boolean isInsideCustomSelectorAtRule(@NotNull final PsiElement position) {
+    PsiElement prev = position.getPrevSibling();
+    while (prev instanceof PsiWhiteSpace) {
+      prev = prev.getPrevSibling();
+    }
+    if (prev instanceof PostCssCustomSelectorAtRule) {
+      return PsiTreeUtil.getChildOfType(prev, PsiErrorElement.class) != null;
+    }
+    return false;
   }
 }
