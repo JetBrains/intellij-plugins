@@ -5,6 +5,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
@@ -16,7 +17,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.Function;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -117,7 +117,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
       final IntentionAction action =
         LightQuickFixTestCase
           .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), "Create Field 'myfield'");
-      action.invoke(myProject, myEditor, myFile);
+      CommandProcessor.getInstance().executeCommand(getProject(), () -> action.invoke(myProject, myEditor, myFile), "Create field", null);
       checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
     }, getTestName(false) + ".as", "restparam.swc");
   }
