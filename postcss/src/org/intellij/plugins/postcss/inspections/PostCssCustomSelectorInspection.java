@@ -33,10 +33,6 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
 
       @Override
       public void visitPostCssCustomSelectorAtRule(PostCssCustomSelectorAtRuleImpl postCssCustomSelectorAtRule) {
-        if (PostCssPsiUtil.isEmptyElement(postCssCustomSelectorAtRule) ||
-            !PostCssPsiUtil.isInsidePostCss(postCssCustomSelectorAtRule)) {
-          return;
-        }
         CssSelectorList selectorList = postCssCustomSelectorAtRule.getSelectorList();
         if (selectorList == null || selectorList.getText().isEmpty()) {
           holder.registerProblem(postCssCustomSelectorAtRule,

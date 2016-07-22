@@ -25,6 +25,10 @@ public class PostCssCustomSelectorInspectionTest extends PostCssFixtureTestCase 
     doTest();
   }
 
+  public void testEmptyCustomSelector() {
+    doTest();
+  }
+
   private long doTest() {
     return myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
   }
