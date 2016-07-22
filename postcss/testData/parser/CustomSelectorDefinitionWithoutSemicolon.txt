@@ -22,3 +22,5 @@ PostCSS File:CustomSelectorDefinitionWithoutSemicolon.pcss
                 PsiElement(CSS_CLASS)
                   PsiElement(CSS_PERIOD)('.')
                   PsiElement(CSS_IDENT)('button')
+        PsiErrorElement:';' expected
+          <empty list>

@@ -39,10 +39,6 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
           holder.registerProblem(postCssCustomSelectorAtRule,
                                  PostCssBundle.message("annotator.custom.selector.at.rule.should.contain.selector.list"));
         }
-        if (postCssCustomSelectorAtRule.getLastChild().getNode().getElementType() != CssElementTypes.CSS_SEMICOLON) {
-          holder.registerProblem(postCssCustomSelectorAtRule,
-                                 PostCssBundle.message("inspections.custom.selector.at.rule.should.ends.with.semicolon"));
-        }
       }
     };
   }

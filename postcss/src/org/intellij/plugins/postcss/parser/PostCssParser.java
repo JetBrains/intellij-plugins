@@ -90,9 +90,7 @@ public class PostCssParser extends CssParser2 {
     addSingleToken();
     parseCustomSelector();
     parseSelectorList();
-    if (getTokenType() == CssElementTypes.CSS_SEMICOLON){
-      addSingleToken();
-    }
+    addSemicolonOrError();
     customSelectorRule.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE);
     return true;
   }

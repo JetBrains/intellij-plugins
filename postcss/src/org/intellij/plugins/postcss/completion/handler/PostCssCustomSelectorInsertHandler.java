@@ -15,8 +15,7 @@ public class PostCssCustomSelectorInsertHandler implements InsertHandler<LookupE
     CssEditorUtil.typeOrMove(editor, ' ');
     int offset = CssEditorUtil.skipWhiteSpaces(editor, editor.getCaretModel().getOffset());
     if (editor.getDocument().getCharsSequence().charAt(offset) != ';') {
-      EditorModificationUtil.insertStringAtCaret(editor, ";");
-      EditorModificationUtil.moveCaretRelatively(editor, -1);
+      EditorModificationUtil.insertStringAtCaret(editor, ";", false, false);
     }
   }
 }
