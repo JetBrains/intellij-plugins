@@ -119,7 +119,7 @@ public class DartTestUtils {
   public static List<CaretPositionInfo> extractPositionMarkers(final @NotNull Project project, final @NotNull Document document) {
     final Pattern caretPattern = Pattern.compile(
       "<caret(?: expected=\'([^\']*)\')?(?: completionEquals=\'([^\']*)\')?(?: completionIncludes=\'([^\']*)\')?(?: completionExcludes=\'([^\']*)\')?>");
-    final List<CaretPositionInfo> result = new ArrayList<CaretPositionInfo>();
+    final List<CaretPositionInfo> result = new ArrayList<>();
 
     WriteCommandAction.runWriteCommandAction(null, new Runnable() {
       @Override
@@ -165,7 +165,7 @@ public class DartTestUtils {
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
 
       try {
-        final List<OrderEntry> entriesToRemove = new SmartList<OrderEntry>();
+        final List<OrderEntry> entriesToRemove = new SmartList<>();
 
         for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
           if (orderEntry instanceof LibraryOrderEntry) {

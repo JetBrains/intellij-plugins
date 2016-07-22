@@ -72,7 +72,7 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
     final int tableOffset = table.getTextOffset();
     final int caretOffsetInParent = editor.getCaretModel().getOffset() - tableOffset;
 
-    final List<GherkinTableRow> rowList = new ArrayList<GherkinTableRow>();
+    final List<GherkinTableRow> rowList = new ArrayList<>();
     if (table.getHeaderRow() != null) {
       rowList.add(table.getHeaderRow());
     }

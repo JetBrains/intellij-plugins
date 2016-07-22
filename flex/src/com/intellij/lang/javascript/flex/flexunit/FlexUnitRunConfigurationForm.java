@@ -72,7 +72,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
       }
     });
 
-    myLogLevelCombo.setModel(new EnumComboBoxModel<FlexUnitRunnerParameters.OutputLogLevel>(FlexUnitRunnerParameters.OutputLogLevel.class));
+    myLogLevelCombo.setModel(new EnumComboBoxModel<>(FlexUnitRunnerParameters.OutputLogLevel.class));
   }
 
   private void initLaunchWithTextWithBrowse() {

@@ -57,7 +57,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     });
 
     myScopeCombo.setModel(
-      new DefaultComboBoxModel<DartTestRunnerParameters.Scope>(new DartTestRunnerParameters.Scope[]{FOLDER, FILE, GROUP_OR_TEST_BY_NAME}));
+      new DefaultComboBoxModel<>(new DartTestRunnerParameters.Scope[]{FOLDER, FILE, GROUP_OR_TEST_BY_NAME}));
 
     myScopeCombo.setRenderer(new ListCellRendererWrapper<DartTestRunnerParameters.Scope>() {
       @Override

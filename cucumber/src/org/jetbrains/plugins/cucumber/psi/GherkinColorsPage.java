@@ -54,7 +54,7 @@ public class GherkinColorsPage implements ColorSettingsPage {
   };
 
   // Empty still
-  private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<String, TextAttributesKey>();
+  private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
   static {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("th", GherkinHighlighter.TABLE_HEADER_CELL);
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("outline_param", GherkinHighlighter.OUTLINE_PARAMETER_SUBSTITUTION);

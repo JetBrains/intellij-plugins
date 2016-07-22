@@ -86,7 +86,7 @@ public abstract class BaseLocalMessage implements LocalMessage {
 
   private static IDEtalkMessagesWindow[] getMessagesWindows() {
     Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
-    Collection<IDEtalkMessagesWindow> result = new HashSet<IDEtalkMessagesWindow>();
+    Collection<IDEtalkMessagesWindow> result = new HashSet<>();
     for (Project openProject : openProjects) {
       if (openProject.isOpen() && openProject.isInitialized()) {
         IDEtalkMessagesWindow messagesWindow = openProject.getComponent(IDEtalkMessagesWindow.class);

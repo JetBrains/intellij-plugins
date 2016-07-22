@@ -129,7 +129,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
                                                final Runnable treeNodeNameUpdater,
                                                final Project project,
                                                final MasterDetailsComponent.MyNode root) {
-    final Collection<AnAction> actions = new ArrayList<AnAction>(2);
+    final Collection<AnAction> actions = new ArrayList<>(2);
     actions.add(new DumbAwareAction(FlexBundle.message("create.bc.action.text"), FlexBundle.message("create.bc.action.description"),
                                     FlexIcons.Flash_run_config) {
       public void update(final AnActionEvent e) {

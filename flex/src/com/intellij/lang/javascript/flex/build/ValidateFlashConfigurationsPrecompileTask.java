@@ -65,7 +65,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
 
   static Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> getProblems(final CompileScope scope, final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile) {
     final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems =
-      new ArrayList<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>>();
+      new ArrayList<>();
 
     for (final Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       final Module module = moduleAndBC.first;
@@ -123,7 +123,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
                                                  final Consumer<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
 
     final Map<String, Pair<Module, FlexBuildConfiguration>> outputPathToModuleAndBC =
-      new THashMap<String, Pair<Module, FlexBuildConfiguration>>();
+      new THashMap<>();
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       final FlexBuildConfiguration bc = moduleAndBC.second;
       final String outputFilePath = bc.getActualOutputFilePath();
@@ -636,7 +636,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
   }
 
   private static boolean independentBCsExist(final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile) {
-    final Set<FlexBuildConfiguration> bcs = new THashSet<FlexBuildConfiguration>();
+    final Set<FlexBuildConfiguration> bcs = new THashSet<>();
 
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       bcs.add(moduleAndBC.second);

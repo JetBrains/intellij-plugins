@@ -114,7 +114,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
     }
 
     if (usages < 2) {
-      final Collection<String> toImport = new ArrayList<String>();
+      final Collection<String> toImport = new ArrayList<>();
       for (JSExpression argument : myNode.getArguments()) {
         String type = JSResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
         if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(myClass, StringUtil.getPackageName(type))) {
@@ -260,7 +260,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
         return true;
       });
 
-      Set<JSFunction> result = new java.util.HashSet<JSFunction>();
+      Set<JSFunction> result = new java.util.HashSet<>();
       for (PsiReference reference : refs) {
         addCallExpression((JSNewExpression)reference.getElement().getParent(), result);
       }
@@ -268,7 +268,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
       for (JSCallExpression superCall : JSInheritanceUtil.findSuperConstructorCalls(myClass)) {
         addCallExpression(superCall, result);
       }
-      return new ArrayList<JSFunction>(result);
+      return new ArrayList<>(result);
     }
   }
 
@@ -301,14 +301,14 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
       }
 
       findPropagationUsages(declarations, usages);
-      Collection<UsageInfo> result = new ArrayList<UsageInfo>(declarations);
+      Collection<UsageInfo> result = new ArrayList<>(declarations);
       result.addAll(usages);
       return result.toArray(new UsageInfo[result.size()]);
     }
 
     @Override
     protected void performRefactoring(@NotNull UsageInfo[] usageInfos) {
-      final Collection<String> toImport = new ArrayList<String>();
+      final Collection<String> toImport = new ArrayList<>();
       for (JSExpression argument : myNode.getArguments()) {
         String type = JSResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
         if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(myClass, StringUtil.getPackageName(type))) {

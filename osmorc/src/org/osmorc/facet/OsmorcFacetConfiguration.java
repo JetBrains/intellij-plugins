@@ -535,7 +535,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
   @NotNull
   public List<Pair<String, String>> getAdditionalJARContents() {
     if (myAdditionalJARContents == null) {
-      myAdditionalJARContents = new ArrayList<Pair<String, String>>();
+      myAdditionalJARContents = new ArrayList<>();
     }
     return myAdditionalJARContents;
   }

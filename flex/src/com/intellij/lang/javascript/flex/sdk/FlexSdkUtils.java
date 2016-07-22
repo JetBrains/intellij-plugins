@@ -133,7 +133,7 @@ public class FlexSdkUtils {
       return doCreateSdk(sdkType, sdkHomePath);
     }
     else {
-      final Ref<Sdk> sdkRef = new Ref<Sdk>();
+      final Ref<Sdk> sdkRef = new Ref<>();
       ApplicationManager.getApplication().invokeAndWait(() -> sdkRef.set(doCreateSdk(sdkType, sdkHomePath)), ModalityState.defaultModalityState());
       return sdkRef.get();
     }
@@ -255,7 +255,7 @@ public class FlexSdkUtils {
 
   @NotNull
   private static VirtualFile unzip(final String zipFilePath, final String outputDirPath) throws IOException {
-    final Ref<IOException> ioExceptionRef = new Ref<IOException>();
+    final Ref<IOException> ioExceptionRef = new Ref<>();
     final VirtualFile dir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
       public VirtualFile compute() {
         try {
@@ -367,7 +367,7 @@ public class FlexSdkUtils {
 
     final String d32 = FlexCommonUtils.getD32IfNeed(customJavaHomeSet, javaHome);
 
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
 
     result.add(javaExecutable);
     if (StringUtil.isNotEmpty(d32)) result.add(d32);

@@ -37,7 +37,7 @@ public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
   @NotNull
   @Override
   public Collection<? extends AbstractTreeNode> getChildren() {
-    return new ArrayList<AbstractTreeNode>();
+    return new ArrayList<>();
   }
 
   @Override

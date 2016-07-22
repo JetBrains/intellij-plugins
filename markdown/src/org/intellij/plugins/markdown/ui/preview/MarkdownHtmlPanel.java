@@ -36,7 +36,7 @@ public abstract class MarkdownHtmlPanel implements Disposable {
     if (startEnd.size() != 2) {
       return null;
     }
-    return new Range<Integer>(Integer.parseInt(startEnd.get(0)), Integer.parseInt(startEnd.get(1)));
+    return new Range<>(Integer.parseInt(startEnd.get(0)), Integer.parseInt(startEnd.get(1)));
   }
 
   @NotNull

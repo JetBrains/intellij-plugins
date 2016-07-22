@@ -25,7 +25,7 @@ public class CfmlFunctionDescription {
   private String myName;
   private String myReturnType;
   private String myDescription;
-  private List<CfmlParameterDescription> myParameters = new LinkedList<CfmlParameterDescription>();
+  private List<CfmlParameterDescription> myParameters = new LinkedList<>();
 
   public CfmlFunctionDescription(String name, String returnType) {
     myName = name;

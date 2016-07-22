@@ -129,7 +129,7 @@ public abstract class AdtTask extends ExternalTask {
   }
 
   private static void appendANEPaths(final List<String> command, final Module module, final FlexBuildConfiguration bc) {
-    final Set<VirtualFile> extDirPaths = new THashSet<VirtualFile>();
+    final Set<VirtualFile> extDirPaths = new THashSet<>();
     for (VirtualFile aneFile : FlexCompilationUtils.getANEFiles(ModuleRootManager.getInstance(module), bc.getDependencies())) {
       if (extDirPaths.add(aneFile.getParent())) {
         command.add("-extdir");

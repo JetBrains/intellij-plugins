@@ -61,7 +61,7 @@ public class StrutsFacetConfiguration extends SimpleModificationTracker implemen
   /**
    * Settings for {@link FileSetConfigurationTab}.
    */
-  private final Set<StrutsFileSet> myFileSets = new LinkedHashSet<StrutsFileSet>();
+  private final Set<StrutsFileSet> myFileSets = new LinkedHashSet<>();
 
 
   // Features - tab

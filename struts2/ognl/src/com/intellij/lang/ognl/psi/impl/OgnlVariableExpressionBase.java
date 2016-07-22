@@ -76,7 +76,7 @@ abstract class OgnlVariableExpressionBase extends OgnlExpressionImpl {
     @Override
     public Object[] getVariants() {
       final CommonProcessors.CollectProcessor<OgnlVariableReference> processor =
-        new CommonProcessors.CollectProcessor<OgnlVariableReference>();
+        new CommonProcessors.CollectProcessor<>();
       OgnlResolveUtil.processVariables(getElement(), processor);
 
       return ContainerUtil.map2Array(processor.getResults(), VARIANT_FUNCTION);

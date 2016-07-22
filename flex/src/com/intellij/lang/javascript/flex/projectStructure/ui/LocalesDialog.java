@@ -34,7 +34,7 @@ public class LocalesDialog extends DialogWrapper {
     setTitle(CompilerOptionInfo.getOptionInfo("compiler.locale").DISPLAY_NAME);
     myLabel.setText(FlexBundle.message("locales.dialog.label", sdk.getName()));
 
-    final Map<String, Boolean> map = new TreeMap<String, Boolean>();
+    final Map<String, Boolean> map = new TreeMap<>();
     for (String locale : mySdkLocales) {
       map.put(locale, false);
     }
@@ -47,7 +47,7 @@ public class LocalesDialog extends DialogWrapper {
   }
 
   private static Collection<String> getAvailableLocales(final Sdk sdk) {
-    final Collection<String> result = new THashSet<String>();
+    final Collection<String> result = new THashSet<>();
     final File localeDir = new File(sdk.getHomePath() + "/frameworks/locale");
     if (localeDir.isDirectory()) {
       //noinspection ConstantConditions
@@ -100,7 +100,7 @@ public class LocalesDialog extends DialogWrapper {
   }
 
   public List<String> getLocales() {
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
 
     final ListModel model = myCheckBoxList.getModel();
     for (int i = 0; i < model.getSize(); i++) {

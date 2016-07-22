@@ -135,7 +135,7 @@ public class FlashBuilderProjectLoadUtil {
   }
 
   public static List<FlashBuilderProject> loadProjects(final Collection<String> dotProjectFilePaths, final boolean isArchive) {
-    final List<FlashBuilderProject> flashBuilderProjects = new ArrayList<FlashBuilderProject>(dotProjectFilePaths.size());
+    final List<FlashBuilderProject> flashBuilderProjects = new ArrayList<>(dotProjectFilePaths.size());
     for (final String dotProjectFilePath : dotProjectFilePaths) {
       final VirtualFile dotProjectFile = LocalFileSystem.getInstance().findFileByPath(dotProjectFilePath);
       if (dotProjectFile != null) {
@@ -189,7 +189,7 @@ public class FlashBuilderProjectLoadUtil {
   }
 
   private static Map<String, String> loadMapFromDotFxpPropertiesFile(final VirtualFile dotProjectFile) {
-    final Map<String, String> result = new THashMap<String, String>();
+    final Map<String, String> result = new THashMap<>();
 
     final VirtualFile dir = dotProjectFile.getParent();
     assert dir != null;
@@ -531,7 +531,7 @@ public class FlashBuilderProjectLoadUtil {
           if (!StringUtil.isEmptyOrSpaces(libraryPath)) {
             if (SWC_FILE_KIND.equals(libraryKind) || SWC_FOLDER_KIND.equals(libraryKind) || ANE_KIND.equals(libraryKind)) {
               // TODO: parse sources
-              final Collection<String> librarySourcePaths = new ArrayList<String>();
+              final Collection<String> librarySourcePaths = new ArrayList<>();
 
               final String replacedPath = pathReplacementMap.get(libraryPath);
               String path = replacedPath != null ? replacedPath : libraryPath;

@@ -94,7 +94,7 @@ public class FileReferenceSetHelper {
     set.addCustomization(
         FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION,
         file -> {
-          final List<PsiFileSystemItem> basePathRoots = new ArrayList<PsiFileSystemItem>();
+          final List<PsiFileSystemItem> basePathRoots = new ArrayList<>();
 
           // 1. add all configured web root mappings
           final List<WebRoot> webRoots = webFacet.getWebRoots(true);

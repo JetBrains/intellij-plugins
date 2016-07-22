@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class MarkdownParserManager {
   public static final GFMFlavourDescriptor FLAVOUR = new GFMFlavourDescriptor();
 
-  private static final ThreadLocal<ParsingInfo> ourLastParsingResult = new ThreadLocal<ParsingInfo>();
+  private static final ThreadLocal<ParsingInfo> ourLastParsingResult = new ThreadLocal<>();
 
   public static ASTNode parseContent(@NotNull CharSequence buffer) {
     final ParsingInfo info = ourLastParsingResult.get();

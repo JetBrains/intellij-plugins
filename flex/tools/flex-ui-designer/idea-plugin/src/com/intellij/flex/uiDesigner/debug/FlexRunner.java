@@ -117,7 +117,7 @@ public class FlexRunner extends GenericProgramRunner {
 
     //@Override
     protected void processShowFilesResult(StringTokenizer tokenizer) {
-      final Map<String, String> libNameToSourceRoot = new THashMap<String, String>();
+      final Map<String, String> libNameToSourceRoot = new THashMap<>();
       while (tokenizer.hasMoreTokens()) {
         final String line = tokenizer.nextToken();
         final int spaceIndex = line.indexOf(' ');

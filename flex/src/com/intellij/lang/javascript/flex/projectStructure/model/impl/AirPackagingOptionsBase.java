@@ -14,7 +14,7 @@ class AirPackagingOptionsBase {
   private boolean myUseGeneratedDescriptor = true;
   @NotNull private String myCustomDescriptorPath = "";
   @NotNull private String myPackageFileName = "";
-  @NotNull private final List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<FilePathAndPathInPackage>();
+  @NotNull private final List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<>();
   @NotNull private AirSigningOptions mySigningOptions = new AirSigningOptions();
 
   public boolean isEnabled() {
@@ -93,7 +93,7 @@ class AirPackagingOptionsBase {
   }
 
   private static List<FilePathAndPathInPackage> cloneList(final List<FilePathAndPathInPackage> filesToPackage) {
-    final List<FilePathAndPathInPackage> clonedList = new ArrayList<FilePathAndPathInPackage>();
+    final List<FilePathAndPathInPackage> clonedList = new ArrayList<>();
     for (FilePathAndPathInPackage filePathAndPathInPackage : filesToPackage) {
       clonedList.add(filePathAndPathInPackage.clone());
     }

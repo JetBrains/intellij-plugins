@@ -59,7 +59,7 @@ public class CallTree {
   }
 
   private static Set<FrameInfo> getNamesOfNodes(Collection<CallTreeNode> nodes) {
-    THashSet<FrameInfo> names = new THashSet<FrameInfo>();
+    THashSet<FrameInfo> names = new THashSet<>();
     for (CallTreeNode node : nodes) {
       names.add(node.getFrameInfo());
     }

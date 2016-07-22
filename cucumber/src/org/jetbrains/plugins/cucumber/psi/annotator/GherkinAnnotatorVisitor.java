@@ -189,12 +189,12 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
 
         final List<GherkinTableCell> headerCells = header.getPsiCells();
         // fetch headers
-        final List<String> headers = new ArrayList<String>(headerCells.size() + 1);
+        final List<String> headers = new ArrayList<>(headerCells.size() + 1);
         for (PsiElement headerCell : headerCells) {
           headers.add(headerCell.getText().trim());
         }
         // filter used substitutions names
-        final List<String> realSubstitutions = new ArrayList<String>(possibleSubstitutions.size() + 1);
+        final List<String> realSubstitutions = new ArrayList<>(possibleSubstitutions.size() + 1);
         for (String substitution : possibleSubstitutions) {
           if (headers.contains(substitution)) {
             realSubstitutions.add(substitution);

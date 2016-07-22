@@ -168,14 +168,14 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
   private static void installActionMethods(final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
                                            final PsiClass clazz,
                                            final List<Action> actions) {
-    final Map<PsiMethod, Set<PathReference>> pathReferenceMap = new HashMap<PsiMethod, Set<PathReference>>();
+    final Map<PsiMethod, Set<PathReference>> pathReferenceMap = new HashMap<>();
     for (final Action action : actions) {
       final PsiMethod method = action.searchActionMethod();
       if (method == null || !clazz.equals(method.getContainingClass())) {
         continue;
       }
 
-      final Set<PathReference> pathReferences = new HashSet<PathReference>();
+      final Set<PathReference> pathReferences = new HashSet<>();
       final List<Result> results = action.getResults();
       for (final Result result : results) {
         final PathReference pathReference = result.getValue();
@@ -184,7 +184,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
       final Set<PathReference> toStore = ContainerUtil.getOrCreate(pathReferenceMap,
                                                                    method,
-                                                                   new HashSet<PathReference>());
+                                                                   new HashSet<>());
       toStore.addAll(pathReferences);
       pathReferenceMap.put(method, toStore);
     }

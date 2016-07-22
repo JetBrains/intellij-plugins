@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException;
  * @author Dennis.Ushakov
  */
 public class MotionProcessHandler extends RubyProcessHandler implements ProcessHandlerWithPID, ProcessHandlerWithDetachSemaphore {
-  private final ExecutionResult<Integer> myPIDResult = new ExecutionResult<Integer>();
+  private final ExecutionResult<Integer> myPIDResult = new ExecutionResult<>();
   private final MotionSimulatorRunExtension.MotionProcessOutputReaders myReaders;
   private boolean mySimulateStarted = false;
   private final boolean isOSX;

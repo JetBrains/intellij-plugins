@@ -63,7 +63,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     if (isLeaf()) {
       return EMPTY;
     }
-    final ArrayList<Block> tlChildren = new ArrayList<Block>();
+    final ArrayList<Block> tlChildren = new ArrayList<>();
     for (ASTNode childNode = getNode().getFirstChildNode(); childNode != null; childNode = childNode.getTreeNext()) {
       if (FormatterUtil.containsWhiteSpacesOnly(childNode)) continue;
       final DartBlock childBlock = new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings);
@@ -168,7 +168,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
 
   public List<DartBlock> getSubDartBlocks() {
     if (mySubDartBlocks == null) {
-      mySubDartBlocks = new ArrayList<DartBlock>();
+      mySubDartBlocks = new ArrayList<>();
       for (Block block : getSubBlocks()) {
         mySubDartBlocks.add((DartBlock)block);
       }

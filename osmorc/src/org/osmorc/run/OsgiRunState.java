@@ -98,7 +98,7 @@ public class OsgiRunState extends JavaCommandLineState {
 
         AccessToken token = ApplicationManager.getApplication().acquireReadActionLock();
         try {
-          Set<SelectedBundle> selectedBundles = new HashSet<SelectedBundle>();
+          Set<SelectedBundle> selectedBundles = new HashSet<>();
           // the bundles are module names, by now we try to find jar files in the output directory which we can then install
           ModuleManager moduleManager = ModuleManager.getInstance(myRunConfiguration.getProject());
           BundleCompiler bundleCompiler = new BundleCompiler(progressIndicator);
@@ -137,7 +137,7 @@ public class OsgiRunState extends JavaCommandLineState {
           }
 
           // filter out bundles which have the same symbolic name
-          Map<String, SelectedBundle> filteredBundles = new HashMap<String, SelectedBundle>();
+          Map<String, SelectedBundle> filteredBundles = new HashMap<>();
           for (SelectedBundle selectedBundle : selectedBundles) {
             String path = selectedBundle.getBundlePath();
             if (path != null) {

@@ -80,10 +80,10 @@ public class ImporterUtil {
   static Collection<MavenArtifact> collectDependencies(@NotNull Map<String, String> props, @NotNull MavenProject project) {
     Collection<MavenArtifact> dependencies;
     if (Boolean.parseBoolean(props.get(DependencyEmbedder.EMBED_TRANSITIVE))) {
-      Set<MavenArtifact> processed = new HashSet<MavenArtifact>();
+      Set<MavenArtifact> processed = new HashSet<>();
 
       // flatten the tree while taking care of endless recursions
-      LinkedList<MavenArtifactNode> nodes = new LinkedList<MavenArtifactNode>(project.getDependencyTree());
+      LinkedList<MavenArtifactNode> nodes = new LinkedList<>(project.getDependencyTree());
       while (!nodes.isEmpty()) {
         MavenArtifactNode node = nodes.pop();
         MavenArtifact artifact = node.getArtifact();

@@ -28,7 +28,7 @@ public class FlashBuildConfigurationsUsagesCollector extends AbstractApplication
   @NotNull
   @Override
   public Set<UsageDescriptor> getProjectUsages(@NotNull final Project project) throws CollectUsagesException {
-    Set<String> usedBcs = new HashSet<String>();
+    Set<String> usedBcs = new HashSet<>();
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       if (ModuleType.get(module) != FlexModuleType.getInstance()) {
         continue;

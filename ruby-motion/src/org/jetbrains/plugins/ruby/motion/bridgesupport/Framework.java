@@ -12,11 +12,11 @@ import java.util.Map;
  * @author Dennis.Ushakov
  */
 public class Framework extends FunctionHolder {
-  private final Map<String, Struct> myStructs = new HashMap<String, Struct>();
-  private Map<String, Class> myClasses = new HashMap<String, Class>();
-  private final Map<String, Class> myProtocols = new HashMap<String, Class>();
-  private final Map<String, Constant> myConstants = new HashMap<String, Constant>();
-  private final Map<String, String> myFunctionAliases = new HashMap<String, String>();
+  private final Map<String, Struct> myStructs = new HashMap<>();
+  private Map<String, Class> myClasses = new HashMap<>();
+  private final Map<String, Class> myProtocols = new HashMap<>();
+  private final Map<String, Constant> myConstants = new HashMap<>();
+  private final Map<String, String> myFunctionAliases = new HashMap<>();
   private final String myName;
   private final String myVersion;
   private final boolean myOSX;

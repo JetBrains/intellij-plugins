@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 class InjectedASWriter implements ValueReferenceResolver {
-  private final THashMap<String, MxmlObjectReference> idReferenceMap = new THashMap<String, MxmlObjectReference>();
-  private final THashMap<JSVariable, VariableReference> variableReferenceMap = new THashMap<JSVariable, VariableReference>();
+  private final THashMap<String, MxmlObjectReference> idReferenceMap = new THashMap<>();
+  private final THashMap<JSVariable, VariableReference> variableReferenceMap = new THashMap<>();
 
-  private final List<Binding> bindingItems = new ArrayList<Binding>();
+  private final List<Binding> bindingItems = new ArrayList<>();
   private final BaseWriter writer;
 
   private final ProblemsHolder problemsHolder;

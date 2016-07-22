@@ -39,7 +39,7 @@ public class Struts2UrlConverter extends DeployedFileUrlConverter {
 
     final String actionExtension = actionExtensions.get(0);
 
-    @NonNls final ArrayList<String> list = new ArrayList<String>();
+    @NonNls final ArrayList<String> list = new ArrayList<>();
     combinedModel.processActions(action -> {
       for (final Result result : action.getResults()) {
         final PathReference pathReference = result.getValue();

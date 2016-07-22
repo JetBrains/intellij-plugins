@@ -64,7 +64,7 @@ public class HardWrapUtil {
 
   private String hardWrapText(final String text) {
     int cols = myTextArea.getWidth() / getCharWidth();
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
     for (String line : Splitter.on('\n').split(text)) {
       if (line.length() > cols) {
         split(line, cols, result);

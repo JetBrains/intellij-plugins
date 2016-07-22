@@ -47,7 +47,7 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
       File libDir = getCompilerFilesDir();
       File[] jars = getJarFiles(libDir);
       LOG.assertTrue(jars.length > 0, "error-prone compiler jars not found in directory: " + libDir.getAbsolutePath());
-      List<String> classpath = new ArrayList<String>();
+      List<String> classpath = new ArrayList<>();
       for (File file : jars) {
         classpath.add(file.getAbsolutePath());
       }

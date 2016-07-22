@@ -29,7 +29,7 @@ public enum LanguageGuesser {
     @NotNull
     @Override
     protected Map<String, Language> compute() {
-      final HashMap<String, Language> result = new HashMap<String, Language>();
+      final HashMap<String, Language> result = new HashMap<>();
       for (Language language : Language.getRegisteredLanguages()) {
         result.put(language.getID().toLowerCase(Locale.US), language);
       }

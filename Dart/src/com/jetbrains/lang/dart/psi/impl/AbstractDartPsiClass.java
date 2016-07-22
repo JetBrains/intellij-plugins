@@ -169,7 +169,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     if (myMembersCache == null) {
       myMembersCache = CachedValuesManager.getManager(getProject()).createCachedValue(
         () -> {
-          final Map<String, List<DartComponent>> nameToMembers = new THashMap<String, List<DartComponent>>();
+          final Map<String, List<DartComponent>> nameToMembers = new THashMap<>();
 
           for (DartComponent component : DartResolveUtil.findNamedSubComponents(false, AbstractDartPsiClass.this)) {
             final String componentName = component.getName();
@@ -182,13 +182,13 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
 
             List<DartComponent> components = nameToMembers.get(componentName);
             if (components == null) {
-              components = new SmartList<DartComponent>();
+              components = new SmartList<>();
               nameToMembers.put(componentName, components);
             }
             components.add(component);
           }
 
-          return new CachedValueProvider.Result<Map<String, List<DartComponent>>>(nameToMembers, PsiModificationTracker.MODIFICATION_COUNT);
+          return new CachedValueProvider.Result<>(nameToMembers, PsiModificationTracker.MODIFICATION_COUNT);
         }, false);
     }
   }

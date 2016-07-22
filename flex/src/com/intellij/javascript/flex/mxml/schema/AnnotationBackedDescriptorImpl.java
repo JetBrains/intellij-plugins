@@ -269,7 +269,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     if (predefined) return element;
 
     if (myOriginatingElementType == OriginatingElementType.IdAttribute) {
-      return findDeclarationByIdAttributeValue(parentDescriptorDeclaration, new THashSet<JSClass>());
+      return findDeclarationByIdAttributeValue(parentDescriptorDeclaration, new THashSet<>());
     }
 
     while (element instanceof XmlFile) {
@@ -351,7 +351,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
   @Nullable
   private XmlAttributeValue findDeclarationByIdAttributeValue(final PsiElement descriptorDeclaration, final Set<JSClass> visited) {
-    final Ref<XmlAttributeValue> resultRef = new Ref<XmlAttributeValue>(null);
+    final Ref<XmlAttributeValue> resultRef = new Ref<>(null);
 
     if (descriptorDeclaration instanceof XmlFile) {
       final XmlDocument document = ((XmlFile)descriptorDeclaration).getDocument();
@@ -852,7 +852,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
         FlexStateElementNames.STATES.equals(((XmlTag)context).getLocalName()) &&
         FlexUtils.isMxmlNs(((XmlTag)context).getNamespace())) {
       XmlTag[] tags = ((XmlTag)context).findSubTags("State", ((XmlTag)context).getNamespace());
-      XmlUtil.doDuplicationCheckForElements(tags, new HashMap<String, XmlTag>(tags.length), new XmlUtil.DuplicationInfoProvider<XmlTag>() {
+      XmlUtil.doDuplicationCheckForElements(tags, new HashMap<>(tags.length), new XmlUtil.DuplicationInfoProvider<XmlTag>() {
         @Override
         public String getName(@NotNull XmlTag xmlTag) {
           return xmlTag.getAttributeValue(FlexStateElementNames.NAME);
@@ -992,7 +992,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private static String[] getTypeParts(final String type) {
     // HTTPService -> HTTPService, Service
     // ButtonBarButton -> ButtonBarButton, BarButton, Button
-    final List<String> result = new LinkedList<String>();
+    final List<String> result = new LinkedList<>();
 
     result.add(Character.toUpperCase(type.charAt(0)) + (type.length() > 1 ? type.substring(1) : ""));
 
@@ -1018,7 +1018,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   }
 
   private static Set<String> getNamedElementsVisibleAt(@NotNull final PsiElement context) {
-    final Set<String> names = new HashSet<String>();
+    final Set<String> names = new HashSet<>();
 
     ResolveProcessor processor = new ResolveProcessor(null) {
       @Override

@@ -78,7 +78,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
                                                   final Icon stepIcon) {
     FlexModuleInsight moduleInsight =
       new FlexModuleInsight(new DelegatingProgressIndicator(), builder.getExistingModuleNames(), builder.getExistingProjectLibraryNames());
-    final List<ModuleWizardStep> steps = new ArrayList<ModuleWizardStep>();
+    final List<ModuleWizardStep> steps = new ArrayList<>();
     steps.add(
       new LibrariesDetectionStep(builder, projectDescriptor, moduleInsight, stepIcon, "reference.dialogs.new.project.fromCode.page1"));
     steps.add(

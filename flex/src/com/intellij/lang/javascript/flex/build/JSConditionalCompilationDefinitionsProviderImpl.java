@@ -37,9 +37,9 @@ import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil
 public class JSConditionalCompilationDefinitionsProviderImpl implements JSConditionalCompilationDefinitionsProvider {
   private static final String[] CONDITIONAL_COMPILATION_DEFINITION_OPTION_ALIASES = {"define", "compiler.define"};
 
-  private final Map<VirtualFile, Long> configFileToTimestamp = new THashMap<VirtualFile, Long>();
+  private final Map<VirtualFile, Long> configFileToTimestamp = new THashMap<>();
   private final Map<VirtualFile, Collection<Pair<String, String>>> configFileToConditionalCompilerDefinitions =
-    new THashMap<VirtualFile, Collection<Pair<String, String>>>();
+    new THashMap<>();
 
   @Override
   public boolean containsConstant(final Module module, final String namespace, final String constantName) {
@@ -47,7 +47,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
         && !StringUtil.isEmpty(namespace) && !StringUtil.isEmpty(constantName)) {
       final boolean searchForPrefix = constantName.contains(CompletionUtil.DUMMY_IDENTIFIER_TRIMMED);
       final String searchedName = namespace + "::" + (searchForPrefix ? "" : constantName);
-      final Ref<Boolean> result = new Ref<Boolean>(false);
+      final Ref<Boolean> result = new Ref<>(false);
 
       processConditionalCompilationDefinitions(module, nameAndValue -> {
         if ((searchForPrefix && nameAndValue.first.startsWith(searchedName)) ||
@@ -65,7 +65,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
 
   @Override
   public Collection<String> getConstantNamesForNamespace(final Module module, final String namespace) {
-    final Collection<String> result = new ArrayList<String>();
+    final Collection<String> result = new ArrayList<>();
 
     if (module != null && ModuleType.get(module) instanceof FlexModuleType && !StringUtil.isEmpty(namespace)) {
       final String beginning = namespace + "::";
@@ -83,7 +83,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
 
   @Override
   public Collection<String> getAllConstants(final Module module) {
-    final Collection<String> result = new ArrayList<String>();
+    final Collection<String> result = new ArrayList<>();
 
     if (module != null && ModuleType.get(module) instanceof FlexModuleType) {
       processConditionalCompilationDefinitions(module, nameAndValue -> {
@@ -133,7 +133,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
         final Document document = cachedDocument == null
                                   ? JDOMUtil.loadDocument(configFile.getInputStream())
                                   : JDOMUtil.loadDocument(cachedDocument.getCharsSequence());
-        final Collection<Pair<String, String>> result = new ArrayList<Pair<String, String>>();
+        final Collection<Pair<String, String>> result = new ArrayList<>();
 
         final Element rootElement = document.getRootElement();
         if (rootElement.getName().equals(FlexCompilerConfigFileUtilBase.FLEX_CONFIG)) {

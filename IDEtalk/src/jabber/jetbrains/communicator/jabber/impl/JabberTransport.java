@@ -79,8 +79,8 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   private boolean myIgnoreUserEvents;
   private PresenceMode myPresenceMode;
 
-  private final Map<User, UserPresence> myUser2Presence = new HashMap<User, UserPresence>();
-  private final Set<String> myIDEtalkUsers = new HashSet<String>();
+  private final Map<User, UserPresence> myUser2Presence = new HashMap<>();
+  private final Set<String> myIDEtalkUsers = new HashSet<>();
   private final Map<String, String> myUser2Thread = Collections.synchronizedMap(new HashMap<String, String>());
 
   @NonNls
@@ -409,7 +409,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
   private void updateJabberUsers(boolean removeUsersNotInRoster) {
     LOG.debug("Roster changed - update user model");
-    Set<User> currentUsers = new HashSet<User>(Arrays.asList(myUserModel.getAllUsers()));
+    Set<User> currentUsers = new HashSet<>(Arrays.asList(myUserModel.getAllUsers()));
     for (RosterEntry rosterEntry : getRoster().getEntries()) {
       User user = addJabberUserToUserModelOrUpdateInfo(rosterEntry);
       currentUsers.remove(user);

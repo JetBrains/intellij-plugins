@@ -48,7 +48,7 @@ public class CucumberJavaUtil {
 
   @Nullable
   private static String getAnnotationName(@NotNull final PsiAnnotation annotation) {
-    final Ref<String> qualifiedAnnotationName = new Ref<String>();
+    final Ref<String> qualifiedAnnotationName = new Ref<>();
     ApplicationManager.getApplication().runReadAction(() -> {
       String qualifiedName = annotation.getQualifiedName();
       qualifiedAnnotationName.set(qualifiedName);

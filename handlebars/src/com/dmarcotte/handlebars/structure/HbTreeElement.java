@@ -30,7 +30,7 @@ class HbTreeElement extends PsiTreeElementBase<HbPsiElement> {
   }
 
   static List<StructureViewTreeElement> getStructureViewTreeElements(PsiElement psiElement) {
-    List<StructureViewTreeElement> children = new ArrayList<StructureViewTreeElement>();
+    List<StructureViewTreeElement> children = new ArrayList<>();
     for (PsiElement childElement : psiElement.getChildren()) {
       if (!(childElement instanceof HbPsiElement)) {
         continue;

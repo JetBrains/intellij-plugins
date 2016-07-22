@@ -13,7 +13,7 @@ public class Class extends FunctionHolder {
 
   public Class(final String name) {
     myName = name;
-    mySubClasses = new HashMap<String, Class>();
+    mySubClasses = new HashMap<>();
   }
 
   public String getName() {
@@ -29,7 +29,7 @@ public class Class extends FunctionHolder {
   }
 
   public static Map<String, Class> mergeClasses(Collection<Class> classes) {
-    final Map<String, Class> result = new HashMap<String, Class>();
+    final Map<String, Class> result = new HashMap<>();
     for (Class clazz : classes) {
       final String name = clazz.getName();
       final int i = name.indexOf(RNameUtilCore.SYMBOL_DELIMITER);

@@ -44,7 +44,7 @@ class Multiname {
     return ns.equals(Abc.PRIVATE_NS) || ns.equals(AS3_VEC) || ns.indexOf('$') != -1 || ns.indexOf(':') != -1;
   }
 
-  private static final Map<String, String> predefined = new THashMap<String, String>();
+  private static final Map<String, String> predefined = new THashMap<>();
   static {
     predefined.put("http://adobe.com/AS3/2006/builtin", "AS3");
     predefined.put("http://www.adobe.com/2006/flex/mx/internal", "mx_internal");
@@ -145,7 +145,7 @@ class Multiname {
     if (parentTraits.staticTrait != null) parentTraits = parentTraits.staticTrait;
 
     if (parentTraits.usedNamespacesToNamesMap == null) {
-      parentTraits.usedNamespacesToNamesMap = new BidirectionalMap<String, String>();
+      parentTraits.usedNamespacesToNamesMap = new BidirectionalMap<>();
     }
 
     String varName = parentTraits.usedNamespacesToNamesMap.get(ns);

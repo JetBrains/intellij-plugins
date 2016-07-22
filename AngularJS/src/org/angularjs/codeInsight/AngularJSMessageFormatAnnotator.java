@@ -67,7 +67,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
                                               List<String> keywords,
                                               List<PsiElement> elements) {
     if (AngularJSMessageFormatParser.ExtensionType.plural.equals(type)) {
-      final Map<String, String> errors = new HashMap<String, String>();
+      final Map<String, String> errors = new HashMap<>();
       for (String keyword : keywords) {
         if (keyword.startsWith("=")) {
           try {
@@ -95,8 +95,8 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
   }
 
   private void checkForDuplicateSelectionKeywords(List<String> keywords, List<PsiElement> elements) {
-    final Set<String> passedSet = new HashSet<String>();
-    final Set<String> duplicate = new HashSet<String>(ContainerUtil.filter(keywords, s -> {
+    final Set<String> passedSet = new HashSet<>();
+    final Set<String> duplicate = new HashSet<>(ContainerUtil.filter(keywords, s -> {
       final boolean contains = passedSet.contains(s);
       if (!contains) passedSet.add(s);
       return contains;

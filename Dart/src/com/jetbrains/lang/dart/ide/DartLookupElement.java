@@ -25,7 +25,7 @@ public class DartLookupElement extends LookupElement {
   public static Set<String> appendVariantsToCompletionSet(@NotNull final CompletionResultSet resultSet,
                                                           @NotNull final Collection<DartComponentName> variants,
                                                           boolean constructorCompletion) {
-    final Set<String> addedNames = new THashSet<String>();
+    final Set<String> addedNames = new THashSet<>();
     for (DartComponentName componentName : variants) {
       final DartLookupElement lookupElement = new DartLookupElement(componentName, constructorCompletion);
       if (addedNames.add(lookupElement.getLookupString())) {

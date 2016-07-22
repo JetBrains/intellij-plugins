@@ -948,7 +948,7 @@ public class DartSpacingProcessor {
     boolean isAllProperties = true;
     boolean mustSplit = false;
     boolean mustStopAtNextMethod = false;
-    List<TextRange> ranges = new ArrayList<TextRange>();
+    List<TextRange> ranges = new ArrayList<>();
     for (ASTNode node : calls.list) {
       if (doesMessageHaveArguments(node)) {
         if (mustStopAtNextMethod) {
@@ -1165,7 +1165,7 @@ public class DartSpacingProcessor {
   }
 
   private static class CallChain {
-    SortedList<ASTNode> list = new SortedList<ASTNode>(textRangeSorter());
+    SortedList<ASTNode> list = new SortedList<>(textRangeSorter());
     boolean isPrecededByHardNewline = false;
     boolean isFollowedByHardNewline = false;
 

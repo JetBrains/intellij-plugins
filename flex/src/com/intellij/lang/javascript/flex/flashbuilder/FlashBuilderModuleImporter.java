@@ -74,7 +74,7 @@ public class FlashBuilderModuleImporter {
     myAllFBProjects = allFBProjects;
     mySdkFinder = sdkFinder;
 
-    myPathVariables = new THashSet<String>();
+    myPathVariables = new THashSet<>();
     for (final FlashBuilderProject flashBuilderProject : allFBProjects) {
       myPathVariables.addAll(flashBuilderProject.getUsedPathVariables());
     }
@@ -100,7 +100,7 @@ public class FlashBuilderModuleImporter {
     mainBC.setPureAs(fbProject.isPureActionScript());
     mainBC.setOutputType(fbProject.getOutputType());
 
-    final Map<String, String> compilerOptions = new THashMap<String, String>();
+    final Map<String, String> compilerOptions = new THashMap<>();
 
     if (fbProject.getOutputType() == OutputType.Application) {
       mainBC.setMainClass(fbProject.getMainAppClassName());
@@ -196,7 +196,7 @@ public class FlashBuilderModuleImporter {
 
   private void setupRLMsAndCSSFilesToCompile(final ModifiableFlexBuildConfiguration mainBC, final FlashBuilderProject fbProject) {
     if (BCUtils.canHaveRLMsAndRuntimeStylesheets(mainBC) && !fbProject.getCssFilesToCompile().isEmpty()) {
-      final Collection<String> cssPaths = new ArrayList<String>();
+      final Collection<String> cssPaths = new ArrayList<>();
       for (final String path : fbProject.getCssFilesToCompile()) {
         final String cssPath = getAbsolutePathWithLinksHandled(fbProject, path);
         final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
@@ -351,7 +351,7 @@ public class FlashBuilderModuleImporter {
   private void setupOtherAppsAndModules(final ModuleRootModel rootModel,
                                         final ModifiableFlexBuildConfiguration mainBC,
                                         final FlashBuilderProject fbProject) {
-    final Collection<ModifiableFlexBuildConfiguration> allApps = new ArrayList<ModifiableFlexBuildConfiguration>();
+    final Collection<ModifiableFlexBuildConfiguration> allApps = new ArrayList<>();
     allApps.add(mainBC);
 
     for (String mainClass : fbProject.getApplicationClassNames()) {
@@ -398,7 +398,7 @@ public class FlashBuilderModuleImporter {
         }
       }
 
-      final Collection<FlexBuildConfiguration.RLMInfo> rlms = new ArrayList<FlexBuildConfiguration.RLMInfo>(hostApp.getRLMs());
+      final Collection<FlexBuildConfiguration.RLMInfo> rlms = new ArrayList<>(hostApp.getRLMs());
       final String rlmMainClass = getMainClassFqn(fbProject, rlm.MAIN_CLASS_PATH, rootModel.getSourceRootUrls());
       rlms.add(new FlexBuildConfiguration.RLMInfo(rlmMainClass, rlm.OUTPUT_PATH, rlm.OPTIMIZE));
       hostApp.setRLMs(rlms);
@@ -427,7 +427,7 @@ public class FlashBuilderModuleImporter {
   private void setupRoots(final ModifiableRootModel rootModel, final FlashBuilderProject fbProject) {
     final String mainContentEntryUrl = VfsUtilCore.pathToUrl(fbProject.getProjectRootPath());
     final ContentEntry mainContentEntry = rootModel.addContentEntry(mainContentEntryUrl);
-    final Collection<ContentEntry> otherContentEntries = new ArrayList<ContentEntry>();
+    final Collection<ContentEntry> otherContentEntries = new ArrayList<>();
 
     final Collection<String> sourcePaths = fbProject.getSourcePaths();
     if (sourcePaths.isEmpty()) {
@@ -669,7 +669,7 @@ public class FlashBuilderModuleImporter {
   }
 
   private static Map<String, String> loadEclipsePathVariables(final String workspacePath) {
-    final Map<String, String> eclipsePathVariables = new THashMap<String, String>();
+    final Map<String, String> eclipsePathVariables = new THashMap<>();
     final VirtualFile prefsFile = LocalFileSystem.getInstance().findFileByPath(workspacePath + CORE_RESOURCES_PREFS_REL_PATH);
     if (prefsFile == null) return eclipsePathVariables;
 

@@ -50,14 +50,14 @@ public class FlexBreakpointsHandler {
   private int lastBreakpointId;
   private final Collection<XBreakpointHandler<?>> myBreakpointHandlers;
   private final TObjectIntHashMap<XLineBreakpoint<XBreakpointProperties>> myBreakpointToIndexMap =
-    new TObjectIntHashMap<XLineBreakpoint<XBreakpointProperties>>();
+    new TObjectIntHashMap<>();
   private final TIntObjectHashMap<XLineBreakpoint<XBreakpointProperties>> myIndexToBreakpointMap =
-    new TIntObjectHashMap<XLineBreakpoint<XBreakpointProperties>>();
+    new TIntObjectHashMap<>();
 
   FlexBreakpointsHandler(FlexDebugProcess debugProcess) {
     myDebugProcess = debugProcess;
 
-    myBreakpointHandlers = new ArrayList<XBreakpointHandler<?>>();
+    myBreakpointHandlers = new ArrayList<>();
     myBreakpointHandlers.add(new MyBreakpointHandler(FlexBreakpointType.class));
     for (BreakpointTypeProvider provider : BREAKPOINT_TYPE_PROVIDER_EP.getExtensions()) {
       myBreakpointHandlers.add(new MyBreakpointHandler(provider.getBreakpointTypeClass()));

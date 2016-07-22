@@ -92,7 +92,7 @@ public class PhoneGapPluginsList {
       return HttpRequests.request(PLUGINS_URL).connect(new HttpRequests.RequestProcessor<Map<String, PhoneGapRepoPackage>>() {
         @Override
         public Map<String, PhoneGapRepoPackage> process(@NotNull HttpRequests.Request request) throws IOException {
-          Map<String, PhoneGapRepoPackage> result = new THashMap<String, PhoneGapRepoPackage>();
+          Map<String, PhoneGapRepoPackage> result = new THashMap<>();
           for (Map.Entry<String, JsonElement> entry : new JsonParser().parse(request.getReader()).getAsJsonObject().entrySet()) {
             if (!isExcludedProperty(entry.getKey())) {
               result.put(entry.getKey(), new PhoneGapRepoPackage(entry.getKey(), entry.getValue().getAsJsonObject()));

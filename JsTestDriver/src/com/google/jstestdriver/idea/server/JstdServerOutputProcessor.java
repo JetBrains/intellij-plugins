@@ -23,8 +23,8 @@ public class JstdServerOutputProcessor {
   private static final Logger LOG = Logger.getInstance(JstdServerOutputProcessor.class);
   private static final int LIMIT = 1000;
 
-  private final Queue<Pair<String, Key>> myTexts = new LinkedList<Pair<String, Key>>();
-  private final List<JstdServerOutputListener> myListeners = new CopyOnWriteArrayList<JstdServerOutputListener>();
+  private final Queue<Pair<String, Key>> myTexts = new LinkedList<>();
+  private final List<JstdServerOutputListener> myListeners = new CopyOnWriteArrayList<>();
 
   public JstdServerOutputProcessor(@NotNull ProcessHandler processHandler) {
     processHandler.addProcessListener(new ProcessAdapter() {

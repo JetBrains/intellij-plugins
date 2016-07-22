@@ -84,7 +84,7 @@ public class CfmlStackTraceFilterProvider implements Filter {
     if (lineNumber == 0) {
       return null;
     }
-    final Ref<VirtualFile> vFile = new Ref<VirtualFile>();
+    final Ref<VirtualFile> vFile = new Ref<>();
 
     if (!file.isFile()) {
       return null;

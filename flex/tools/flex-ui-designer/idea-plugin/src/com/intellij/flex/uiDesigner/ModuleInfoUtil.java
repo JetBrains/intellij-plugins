@@ -111,7 +111,7 @@ public final class ModuleInfoUtil {
                                                                      ProjectComponentReferenceCounter projectComponentReferenceCounter,
                                                                      final AssetCounter assetCounter) {
     GlobalSearchScope moduleWithDependenciesAndLibrariesScope = module.getModuleWithDependenciesAndLibrariesScope(false);
-    final List<JSClass> holders = new ArrayList<JSClass>(2);
+    final List<JSClass> holders = new ArrayList<>(2);
     if (flexSdkVersion.charAt(0) > '3') {
       JSClass clazz = ((JSClass)ActionScriptClassResolver
         .findClassByQNameStatic(FlexCommonTypeNames.SPARK_APPLICATION, moduleWithDependenciesAndLibrariesScope));
@@ -134,7 +134,7 @@ public final class ModuleInfoUtil {
 
     final StyleTagWriter styleTagWriter =
       new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter));
-    final List<LocalStyleHolder> result = new ArrayList<LocalStyleHolder>();
+    final List<LocalStyleHolder> result = new ArrayList<>();
     final Processor<JSClass> processor = jsClass -> {
       PsiFile psiFile = jsClass.getNavigationElement().getContainingFile();
       if (!(psiFile instanceof XmlFile)) {
@@ -180,7 +180,7 @@ public final class ModuleInfoUtil {
 
   private static class StyleTagWriter {
     private final LocalCssWriter cssWriter;
-    private final THashMap<VirtualFile, ExternalLocalStyleHolder> externalLocalStyleHolders = new THashMap<VirtualFile, ExternalLocalStyleHolder>();
+    private final THashMap<VirtualFile, ExternalLocalStyleHolder> externalLocalStyleHolders = new THashMap<>();
 
     StyleTagWriter(LocalCssWriter localCssWriter) {
       cssWriter = localCssWriter;

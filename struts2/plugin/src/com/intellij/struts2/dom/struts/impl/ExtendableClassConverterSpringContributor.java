@@ -137,7 +137,7 @@ public class ExtendableClassConverterSpringContributor
         list = springModel.getAllCommonBeans();
       }
 
-      final List<LookupElement> variants = new ArrayList<LookupElement>(list.size());
+      final List<LookupElement> variants = new ArrayList<>(list.size());
       for (final SpringBeanPointer bean : list) {
         if (bean.isAbstract()) {
           continue;

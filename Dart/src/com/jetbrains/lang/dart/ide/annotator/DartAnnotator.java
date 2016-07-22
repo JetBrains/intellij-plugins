@@ -49,7 +49,7 @@ public class DartAnnotator implements Annotator {
 
   private static final Key<Boolean> DART_SERVER_DATA_HANDLED = Key.create("DART_SERVER_DATA_HANDLED");
 
-  private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new THashMap<String, String>();
+  private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new THashMap<>();
 
   static {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ANNOTATION, DartSyntaxHighlighterColors.DART_ANNOTATION);
@@ -346,7 +346,7 @@ public class DartAnnotator implements Annotator {
 
     if (StringUtil.isEmpty(text)) return Collections.emptyList();
 
-    final List<Pair<TextRange, Boolean>> result = new ArrayList<Pair<TextRange, Boolean>>();
+    final List<Pair<TextRange, Boolean>> result = new ArrayList<>();
 
     int currentIndex = -1;
     while ((currentIndex = text.indexOf('\\', currentIndex)) != -1) {

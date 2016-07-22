@@ -60,15 +60,15 @@ public class AdditionalJARContentsWatcherManager {
   public AdditionalJARContentsWatcherManager(LocalFileSystem fileSystem, Module module) {
     myFileSystem = fileSystem;
     myModule = module;
-    myAdditionalBundleJARContents = new ArrayList<VirtualFile>();
-    myWatchRequests = new ArrayList<LocalFileSystem.WatchRequest>();
+    myAdditionalBundleJARContents = new ArrayList<>();
+    myWatchRequests = new ArrayList<>();
     updateWatcherSetup();
   }
 
   public void updateWatcherSetup() {
     OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(myModule);
     if (osmorcFacet != null) {
-      List<VirtualFile> newAdditionalJARContents = new ArrayList<VirtualFile>();
+      List<VirtualFile> newAdditionalJARContents = new ArrayList<>();
 
       OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
       List<Pair<String, String>> jarContents = osmorcFacetConfiguration.getAdditionalJARContents();
@@ -79,7 +79,7 @@ public class AdditionalJARContentsWatcherManager {
         }
       }
 
-      List<LocalFileSystem.WatchRequest> toRemove = new ArrayList<LocalFileSystem.WatchRequest>();
+      List<LocalFileSystem.WatchRequest> toRemove = new ArrayList<>();
       for (Iterator<VirtualFile> jarContentsIterator = myAdditionalBundleJARContents.iterator(); jarContentsIterator.hasNext(); ) {
         VirtualFile file = jarContentsIterator.next();
         if (!newAdditionalJARContents.contains(file)) {
@@ -94,7 +94,7 @@ public class AdditionalJARContentsWatcherManager {
         }
       }
 
-      List<String> toAdd = new ArrayList<String>();
+      List<String> toAdd = new ArrayList<>();
       for (VirtualFile newAdditionalJARContent : newAdditionalJARContents) {
         if (!myAdditionalBundleJARContents.contains(newAdditionalJARContent)) {
           toAdd.add(newAdditionalJARContent.getPath());

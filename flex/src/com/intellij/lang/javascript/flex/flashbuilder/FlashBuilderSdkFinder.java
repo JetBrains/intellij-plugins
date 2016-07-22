@@ -38,7 +38,7 @@ public class FlashBuilderSdkFinder {
   private final List<FlashBuilderProject> myAllProjects;
 
   private String myWorkspacePath;
-  private Map<String, String> mySdkNameToRootPath = new HashMap<String, String>();
+  private Map<String, String> mySdkNameToRootPath = new HashMap<>();
   private String myAirSdkHome;
   private Sdk mySdk;
   private boolean myDialogWasShown = false;
@@ -66,7 +66,7 @@ public class FlashBuilderSdkFinder {
 
   @Nullable
   private String findWorkspacePath() {
-    final Collection<VirtualFile> checked = new THashSet<VirtualFile>();
+    final Collection<VirtualFile> checked = new THashSet<>();
     String wsPath = guessWorkspacePath(myInitiallySelectedPath, checked);
     if (wsPath == null) {
       for (FlashBuilderProject fbProject : myAllProjects) {
@@ -199,7 +199,7 @@ public class FlashBuilderSdkFinder {
 
   @Nullable
   public static String findFBInstallationPath() {
-    final List<File> fbDirs = new ArrayList<File>();
+    final List<File> fbDirs = new ArrayList<>();
 
     final FileFilter filter = dir -> {
       final String name = dir.getName();

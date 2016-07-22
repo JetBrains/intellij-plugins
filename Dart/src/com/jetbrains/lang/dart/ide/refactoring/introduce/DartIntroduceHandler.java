@@ -179,7 +179,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     int offset = editor.getCaretModel().getOffset();
     PsiElement elementAtCaret = file.findElementAt(offset);
     if (!checkIntroduceContext(file, editor, elementAtCaret)) return true;
-    final List<DartExpression> expressions = new ArrayList<DartExpression>();
+    final List<DartExpression> expressions = new ArrayList<>();
     while (elementAtCaret != null) {
       if (elementAtCaret instanceof DartFile) {
         break;
@@ -337,7 +337,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
 
     final InplaceVariableIntroducer<PsiElement> introducer =
       new DartInplaceVariableIntroducer(componentName, operation, occurrences);
-    introducer.performInplaceRefactoring(new LinkedHashSet<String>(operation.getSuggestedNames()));
+    introducer.performInplaceRefactoring(new LinkedHashSet<>(operation.getSuggestedNames()));
   }
 
   @Nullable
@@ -396,7 +396,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
         PsiElement newExpression = createExpression(project, operation.getName());
 
         if (operation.isReplaceAll()) {
-          List<PsiElement> newOccurrences = new ArrayList<PsiElement>();
+          List<PsiElement> newOccurrences = new ArrayList<>();
           for (PsiElement occurrence : operation.getOccurrences()) {
             final PsiElement replaced = replaceExpression(occurrence, newExpression, operation);
             if (replaced != null) {

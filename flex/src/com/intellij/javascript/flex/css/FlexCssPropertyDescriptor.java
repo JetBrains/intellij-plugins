@@ -249,7 +249,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
    */
   @NotNull
   private static CssPropertyValueImpl createPropertyValue(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
-    List<CssPropertyValue> children = new ArrayList<CssPropertyValue>();
+    List<CssPropertyValue> children = new ArrayList<>();
     Set<String> formats = addValuesFromFormats(infos, children);
     addValuesFromEnumerations(infos, children);
     addValuesFromTypes(infos, formats, children);
@@ -284,7 +284,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   public String getDocumentationString(@Nullable PsiElement context) {
     if (context == null) return null;
     PsiElement[] declarations = getDeclarations(context);
-    List<DocumentationElement> docElements = new ArrayList<DocumentationElement>();
+    List<DocumentationElement> docElements = new ArrayList<>();
     for (PsiElement declaration : declarations) {
       PsiFile file = declaration.getContainingFile();
       if (file != null) {
@@ -391,7 +391,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   @NotNull
   @Override
   public PsiElement[] getDeclarations(@NotNull PsiElement context) {
-    Map<PsiElement, PairInfo> navElement2pairInfo = new HashMap<PsiElement, PairInfo>();
+    Map<PsiElement, PairInfo> navElement2pairInfo = new HashMap<>();
     final Project project = context.getProject();
 
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
@@ -425,7 +425,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
 
     Set<PsiElement> navPairs = navElement2pairInfo.keySet();
-    Map<String, PsiElement> qName2ResultElement = new HashMap<String, PsiElement>();
+    Map<String, PsiElement> qName2ResultElement = new HashMap<>();
     for (PsiElement navPair : navPairs) {
       PairInfo pairInfo = navElement2pairInfo.get(navPair);
       String jsClassQName = pairInfo.myJsClassQName;

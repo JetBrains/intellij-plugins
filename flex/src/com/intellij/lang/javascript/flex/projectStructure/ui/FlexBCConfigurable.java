@@ -289,7 +289,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myCssFilesTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
     myCssFilesTextWithBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        final List<StringBuilder> value = new ArrayList<StringBuilder>();
+        final List<StringBuilder> value = new ArrayList<>();
         for (String cssFilePath : myCssFilesToCompile) {
           value.add(new StringBuilder(cssFilePath));
         }
@@ -298,7 +298,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
                                     CompilerOptionInfo.CSS_FILES_INFO_FOR_UI);
         if (dialog.showAndGet()) {
           final List<StringBuilder> newValue = dialog.getCurrentList();
-          myCssFilesToCompile = new ArrayList<String>(newValue.size());
+          myCssFilesToCompile = new ArrayList<>(newValue.size());
           for (StringBuilder cssPath : newValue) {
             myCssFilesToCompile.add(cssPath.toString());
           }
@@ -628,8 +628,8 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
       myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
       myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.getWrapperTemplatePath()));
-      myRLMs = new ArrayList<FlexBuildConfiguration.RLMInfo>(myConfiguration.getRLMs());
-      myCssFilesToCompile = new ArrayList<String>(myConfiguration.getCssFilesToCompile());
+      myRLMs = new ArrayList<>(myConfiguration.getRLMs());
+      myCssFilesToCompile = new ArrayList<>(myConfiguration.getCssFilesToCompile());
       mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
 
       updateControls();
@@ -669,7 +669,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   //}
 
   private List<NamedConfigurable> getChildren() {
-    final List<NamedConfigurable> children = new ArrayList<NamedConfigurable>();
+    final List<NamedConfigurable> children = new ArrayList<>();
 
     children.add(myDependenciesConfigurable);
     children.add(myCompilerOptionsConfigurable);

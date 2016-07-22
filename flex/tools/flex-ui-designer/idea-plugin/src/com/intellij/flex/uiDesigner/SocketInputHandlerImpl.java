@@ -59,7 +59,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private File resultFile;
   private File appDir;
 
-  private final List<ActionCallback> callbacks = new ArrayList<ActionCallback>();
+  private final List<ActionCallback> callbacks = new ArrayList<>();
   private final IdPool callbackIdPool = new IdPool();
 
   @Override
@@ -427,7 +427,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final AccessToken token = ReadAction.start();
     try {
       final PsiManager psiManager = PsiManager.getInstance(module.getProject());
-      final List<VirtualFile> result = new ArrayList<VirtualFile>();
+      final List<VirtualFile> result = new ArrayList<>();
       FileTypeIndex.processFiles(PropertiesFileType.INSTANCE, file -> {
         if (file.getNameWithoutExtension().equals(bundleName)) {
           result.add(file);

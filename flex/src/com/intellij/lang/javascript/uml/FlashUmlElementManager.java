@@ -148,7 +148,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     if (parent instanceof JSClass) {
       final JSClass clazz = (JSClass)parent;
       if (!clazz.isValid()) { return PsiElement.EMPTY_ARRAY; }
-      final List<PsiElement> elements = new ArrayList<PsiElement>();
+      final List<PsiElement> elements = new ArrayList<>();
       ContainerUtil.addAll(elements, clazz.getFields());
       boolean isInterface = clazz.isInterface();
       for (JSFunction method : clazz.getFunctions()) {

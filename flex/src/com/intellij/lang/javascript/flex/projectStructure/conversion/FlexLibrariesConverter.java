@@ -58,7 +58,7 @@ class FlexLibrariesConverter extends ConversionProcessor<ProjectLibrariesSetting
   }
 
   private Collection<String> getProjectLibrariesNames(final ProjectLibrariesSettings projectLibrariesSettings) {
-    Set<String> librariesNames = new HashSet<String>();
+    Set<String> librariesNames = new HashSet<>();
     for (Element element : projectLibrariesSettings.getProjectLibraries()) {
       if (!FlexModuleConverter.isApplicableLibrary(element, s -> myParams.expandPath(s))) {
         // ignore non-flex project library

@@ -35,7 +35,7 @@ public class SimulatorConsoleProcessHandler extends RubyConsoleProcessHandler im
                                                                                          ProcessHandlerWithDetachSemaphore,
                                                                                          AnsiEscapeDecoder.ColoredChunksAcceptor {
   private static final Pattern PROMPT = Pattern.compile("(\\(\\S*\\)[>?]).*");
-  private final ExecutionResult<Integer> myPIDResult = new ExecutionResult<Integer>();
+  private final ExecutionResult<Integer> myPIDResult = new ExecutionResult<>();
   private final MotionSimulatorRunExtension.MotionProcessOutputReaders myReaders;
   private String myLastMatched;
   private boolean mySimulateStarted = false;

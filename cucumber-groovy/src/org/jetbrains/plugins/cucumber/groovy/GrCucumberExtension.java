@@ -97,7 +97,7 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
   @NotNull
   @Override
   public List<AbstractStepDefinition> getStepDefinitions(@NotNull PsiFile psiFile) {
-    final List<AbstractStepDefinition> newDefs = new ArrayList<AbstractStepDefinition>();
+    final List<AbstractStepDefinition> newDefs = new ArrayList<>();
     if (psiFile instanceof GroovyFile) {
       GrStatement[] statements = ((GroovyFile)psiFile).getStatements();
       for (GrStatement statement : statements) {

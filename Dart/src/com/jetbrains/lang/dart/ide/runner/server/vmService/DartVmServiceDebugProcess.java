@@ -65,9 +65,9 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @NotNull private final Set<String> mySuspendedIsolateIds = Collections.synchronizedSet(new THashSet<String>());
   private String myLatestCurrentIsolateId;
 
-  private final Map<String, LightVirtualFile> myScriptIdToContentMap = new THashMap<String, LightVirtualFile>();
+  private final Map<String, LightVirtualFile> myScriptIdToContentMap = new THashMap<>();
   private final Map<String, TIntObjectHashMap<Pair<Integer, Integer>>> myScriptIdToLinesAndColumnsMap =
-    new THashMap<String, TIntObjectHashMap<Pair<Integer, Integer>>>();
+    new THashMap<>();
 
   @Nullable private final String myDASExecutionContextId;
   private final boolean myRemoteDebug;
@@ -327,7 +327,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void resume(@Nullable XSuspendContext context) {
-    for (String isolateId : new ArrayList<String>(mySuspendedIsolateIds)) {
+    for (String isolateId : new ArrayList<>(mySuspendedIsolateIds)) {
       myVmServiceWrapper.resumeIsolate(isolateId, null);
     }
   }
@@ -498,7 +498,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private static TIntObjectHashMap<Pair<Integer, Integer>> createTokenPosToLineAndColumnMap(@NotNull final List<List<Integer>> tokenPosTable) {
     // Each subarray consists of a line number followed by (tokenPos, columnNumber) pairs
     // see https://github.com/dart-lang/vm_service_drivers/blob/master/dart/tool/service.md#script
-    final TIntObjectHashMap<Pair<Integer, Integer>> result = new TIntObjectHashMap<Pair<Integer, Integer>>();
+    final TIntObjectHashMap<Pair<Integer, Integer>> result = new TIntObjectHashMap<>();
 
     for (List<Integer> lineAndPairs : tokenPosTable) {
       final Iterator<Integer> iterator = lineAndPairs.iterator();

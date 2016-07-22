@@ -74,7 +74,7 @@ public class MergedCallNode<T extends Sample> extends LazyNode implements Naviga
     final Map<FrameInfo, Long> selfCountMap = countMaps.getSecond();
 
     List<FrameInfo> traces = ResolveUtil.filterByScope(countMap.keySet(), scope);
-    ArrayList<CallInfo> callInfos = new ArrayList<CallInfo>();
+    ArrayList<CallInfo> callInfos = new ArrayList<>();
     for (final FrameInfo t : traces) {
       callInfos.add(new CallInfo(t, countMap.get(t), selfCountMap.get(t)));
     }

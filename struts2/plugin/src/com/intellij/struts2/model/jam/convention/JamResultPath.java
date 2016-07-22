@@ -145,10 +145,10 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
           .addAttribute(PROPERTY_ATTRIBUTE);
 
   public static final JamClassMeta<JamResultPath> META_CLASS =
-      new JamClassMeta<JamResultPath>(JamResultPath.class).addAnnotation(RESULT_PATH_META);
+    new JamClassMeta<>(JamResultPath.class).addAnnotation(RESULT_PATH_META);
 
   public static final JamPackageMeta<JamResultPath> META_PACKAGE =
-      new JamPackageMeta<JamResultPath>(JamResultPath.class)
+    new JamPackageMeta<>(JamResultPath.class)
           .addAnnotation(RESULT_PATH_META);
 
   @JamPsiConnector

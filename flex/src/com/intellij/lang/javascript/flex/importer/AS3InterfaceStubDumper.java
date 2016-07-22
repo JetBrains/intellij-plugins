@@ -33,7 +33,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   private static final JSAttributeList.ModifierType[] ourModifierTypes = JSAttributeList.ModifierType.values();
 
   public AS3InterfaceStubDumper(StubElement parent) {
-    parents = new LinkedList<StubElement>();
+    parents = new LinkedList<>();
     parents.add(parent);
   }
 
@@ -142,7 +142,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   @Override
   protected void processModifierList(MemberInfo memberInfo, String attr, String indent) {
     StringTokenizer tokenizer = new StringTokenizer(attr, " ");
-    List<JSAttributeList.ModifierType> modifiers = new SmartList<JSAttributeList.ModifierType>();
+    List<JSAttributeList.ModifierType> modifiers = new SmartList<>();
     JSAttributeList.AccessType accessType = null;
     String ns = null;
 

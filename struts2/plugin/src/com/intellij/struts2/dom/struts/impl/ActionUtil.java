@@ -93,7 +93,7 @@ final class ActionUtil {
 
     final boolean searchForMethod = methodName != null;
 
-    final List<PsiMethod> actionMethods = new SmartList<PsiMethod>();
+    final List<PsiMethod> actionMethods = new SmartList<>();
     final PsiMethod[] methods = searchForMethod ? actionClass.findMethodsByName(methodName, true) : actionClass.getAllMethods();
     for (final PsiMethod psiMethod : methods) {
       if (psiMethod.isConstructor()) {

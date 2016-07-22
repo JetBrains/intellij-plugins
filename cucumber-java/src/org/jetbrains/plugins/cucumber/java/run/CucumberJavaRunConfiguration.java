@@ -48,10 +48,10 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-    SettingsEditorGroup<CucumberJavaRunConfiguration> group = new SettingsEditorGroup<CucumberJavaRunConfiguration>();
+    SettingsEditorGroup<CucumberJavaRunConfiguration> group = new SettingsEditorGroup<>();
     group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new CucumberJavaApplicationConfigurable(getProject()));
     JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
-    group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<CucumberJavaRunConfiguration>());
+    group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<>());
     return group;
   }
 

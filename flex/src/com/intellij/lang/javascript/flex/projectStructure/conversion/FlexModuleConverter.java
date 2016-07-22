@@ -100,16 +100,16 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   public static List<Element> getFlexFacets(ModuleSettings module) {
     if (!isJavaModule(module)) return Collections.emptyList();
-    return new ArrayList<Element>(module.getFacetElements(FLEX_FACET_TYPE_ID));
+    return new ArrayList<>(module.getFacetElements(FLEX_FACET_TYPE_ID));
   }
 
   @Override
   public void process(ModuleSettings moduleSettings) throws CannotConvertException {
     FlexBuildConfigurationManagerImpl configurationManager = ConversionHelper.createBuildConfigurationManager();
 
-    Collection<Element> orderEntriesToAdd = new ArrayList<Element>();
-    Set<String> usedSdksNames = new HashSet<String>();
-    final Set<Element> usedModuleLibrariesEntries = new HashSet<Element>();
+    Collection<Element> orderEntriesToAdd = new ArrayList<>();
+    Set<String> usedSdksNames = new HashSet<>();
+    final Set<Element> usedModuleLibrariesEntries = new HashSet<>();
     if (isFlexModule(moduleSettings)) {
       ModifiableFlexBuildConfiguration newConfiguration =
         (ModifiableFlexBuildConfiguration)configurationManager.getBuildConfigurations()[0];
@@ -160,7 +160,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       moduleSettings.getComponentElement(FacetManagerImpl.COMPONENT_NAME).getChildren(JpsFacetSerializer.FACET_TAG).removeAll(flexFacets);
     }
 
-    Collection<Element> allEntries = new ArrayList<Element>();
+    Collection<Element> allEntries = new ArrayList<>();
     allEntries.addAll(usedModuleLibrariesEntries);
     allEntries.addAll(orderEntriesToAdd);
     for (Element orderEntry : allEntries) {
@@ -240,7 +240,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     }
     newBuildConfiguration.setOutputFolder(outputFolder);
 
-    Collection<Element> orderEntriesToRemove = new ArrayList<Element>();
+    Collection<Element> orderEntriesToRemove = new ArrayList<>();
     // TODO filter out java libraries and remove their order entries
     for (Element orderEntry : module.getOrderEntries()) {
       String orderEntryType = orderEntry.getAttributeValue(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR);
@@ -331,7 +331,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
     if (BCUtils.canHaveRLMsAndRuntimeStylesheets(newBuildConfiguration) &&
         oldConfiguration != null && !oldConfiguration.CSS_FILES_LIST.isEmpty()) {
-      final Collection<String> cssFilesToCompile = new ArrayList<String>();
+      final Collection<String> cssFilesToCompile = new ArrayList<>();
       for (String cssPath : oldConfiguration.CSS_FILES_LIST) {
         cssFilesToCompile.add(PathUtil.getCanonicalPath(module.expandPath(cssPath)));
       }
@@ -354,7 +354,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     // todo may be parse options, replace "-a b" to "-a=b", may be move some options to dedicated fields
     newCompilerOptions.setAdditionalOptions(oldConfig.ADDITIONAL_COMPILER_OPTIONS);
 
-    final Map<String, String> options = new THashMap<String, String>(newCompilerOptions.getAllOptions());
+    final Map<String, String> options = new THashMap<>(newCompilerOptions.getAllOptions());
 
     if (oldConfig.USE_LOCALE_SETTINGS) {
       options.put("compiler.locale", oldConfig.LOCALE.replace(",", CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
@@ -580,7 +580,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
   private static void readNamespaceAndManifestInfoList(final Element element,
                                                        final FlexBuildConfiguration oldConfig) throws InvalidDataException {
     final List<FlexBuildConfiguration.NamespaceAndManifestFileInfo> namespaceAndManifestFileInfoList =
-      new ArrayList<FlexBuildConfiguration.NamespaceAndManifestFileInfo>();
+      new ArrayList<>();
 
     final Element namespaceAndManifestFileInfoListElement = element.getChild(NAMESPACE_AND_MANIFEST_FILE_INFO_LIST_ELEMENT_NAME);
     if (namespaceAndManifestFileInfoListElement != null) {
@@ -598,7 +598,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
   private static void readConditionalCompilerDefinitionList(final Element element,
                                                             final FlexBuildConfiguration oldConfig) throws InvalidDataException {
     final List<FlexBuildConfiguration.ConditionalCompilationDefinition> conditionalCompilationDefinitionList =
-      new ArrayList<FlexBuildConfiguration.ConditionalCompilationDefinition>();
+      new ArrayList<>();
 
     final Element conditionalCompilerDefinitionListElement = element.getChild(CONDITIONAL_COMPILER_DEFINITION_LIST_ELEMENT_NAME);
     if (conditionalCompilerDefinitionListElement != null) {
@@ -615,7 +615,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   private static void readCssFilesList(final Element element,
                                        final FlexBuildConfiguration oldConfig) throws InvalidDataException {
-    final List<String> cssFilesList = new ArrayList<String>();
+    final List<String> cssFilesList = new ArrayList<>();
 
     final Element cssFilesListElement = element.getChild(CSS_FILES_LIST_ELEMENT_NAME);
     if (cssFilesListElement != null) {

@@ -418,7 +418,7 @@ class FlexValue extends XValue {
         // skip first token; it contains $-prefix followed by myResult: $6 = [Object 30860193, class='__AS3__.vec::Vector.<String>']
         tokenizer.nextToken();
 
-        final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap = new LinkedHashMap<String, FlexValue>(tokenizer.countTokens());
+        final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap = new LinkedHashMap<>(tokenizer.countTokens());
 
         final NodeClassInfo nodeClassInfo = ApplicationManager.getApplication().runReadAction(new NullableComputable<NodeClassInfo>() {
           @Override
@@ -537,7 +537,7 @@ class FlexValue extends XValue {
       final JSFunction jsFunction = PsiTreeUtil.getParentOfType(contextElement, JSFunction.class);
 
       if (jsFunction != null) {
-        final Ref<JSVariable> varRef = new Ref<JSVariable>();
+        final Ref<JSVariable> varRef = new Ref<>();
         jsFunction.accept(new JSElementVisitor() {
           @Override
           public void visitJSElement(final JSElement node) {
@@ -578,7 +578,7 @@ class FlexValue extends XValue {
         findJSClass(project, ModuleUtilCore.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
 
       if (jsClass != null) {
-        final Ref<PsiElement> fieldRef = new Ref<PsiElement>();
+        final Ref<PsiElement> fieldRef = new Ref<>();
         fieldRef.set(JSInheritanceUtil.findMember(myName, jsClass, JSInheritanceUtil.SearchedMemberType.FieldsAndMethods,
                                                   JSFunction.FunctionKind.GETTER, true));
 
@@ -626,7 +626,7 @@ class FlexValue extends XValue {
   private static void addChildren(final XCompositeNode node,
                                   final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap,
                                   final @Nullable NodeClassInfo nodeClassInfo) {
-    final List<FlexValue> elementsOfCollection = new LinkedList<FlexValue>();
+    final List<FlexValue> elementsOfCollection = new LinkedList<>();
     final XValueChildrenList ownStaticFields = new XValueChildrenList();
     final XValueChildrenList ownStaticProperties = new XValueChildrenList();
     final XValueChildrenList ownFields = new XValueChildrenList();

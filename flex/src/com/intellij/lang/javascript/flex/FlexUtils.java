@@ -174,9 +174,9 @@ public class FlexUtils {
    *         values are all entries of respective element (may be empty list)
    */
   public static Map<String, List<String>> findXMLElements(@NotNull final InputStream xmlInputStream, final List<String> xmlElements) {
-    final Map<String, List<String>> resultMap = new HashMap<String, List<String>>();
+    final Map<String, List<String>> resultMap = new HashMap<>();
     for (final String element : xmlElements) {
-      resultMap.put(element, new ArrayList<String>());
+      resultMap.put(element, new ArrayList<>());
     }
 
     NanoXmlUtil.parse(xmlInputStream, new NanoXmlUtil.IXMLBuilderAdapter() {
@@ -228,7 +228,7 @@ public class FlexUtils {
 
   @Nullable
   public static String findXMLElement(@NotNull final InputStream xmlInputStream, final String xmlElement) {
-    final Ref<String> result = new Ref<String>();
+    final Ref<String> result = new Ref<>();
 
     NanoXmlUtil.parse(xmlInputStream, new NanoXmlUtil.IXMLBuilderAdapter() {
 

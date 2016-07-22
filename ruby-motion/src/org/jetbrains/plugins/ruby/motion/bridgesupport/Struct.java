@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Dennis.Ushakov
  */
 public class Struct extends Sealable {
-  private Map<String, String> myFields = new LinkedHashMap<String, String>();
+  private Map<String, String> myFields = new LinkedHashMap<>();
   private final String myName;
 
   public Struct(String name) {

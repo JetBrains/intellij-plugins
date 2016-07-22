@@ -35,7 +35,7 @@ public class GherkinPsiUtil {
   public static List<TextRange> buildParameterRanges(@NotNull GherkinStep step,
                                                      @NotNull AbstractStepDefinition definition,
                                                      final int shiftOffset) {
-    final List<TextRange> parameterRanges = new ArrayList<TextRange>();
+    final List<TextRange> parameterRanges = new ArrayList<>();
     final Pattern pattern = definition.getPattern();
     if (pattern == null) return null;
     final Perl5Matcher matcher = new Perl5Matcher();

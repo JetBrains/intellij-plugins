@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Optimized SWF (merged DoABC2) is not supported.
  */
 public class AbcFilter extends AbcTranscoder {
-  protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>();
+  protected final ArrayList<Decoder> decoders = new ArrayList<>();
 
   private final boolean onlyAbcAsTag;
 
@@ -123,7 +123,7 @@ public class AbcFilter extends AbcTranscoder {
   @Override
   protected void ensureExportAssetsStorageCreated(int numSymbols) {
     if (exportAssets == null) {
-      exportAssets = new TIntObjectHashMap<TagPositionInfo>(numSymbols);
+      exportAssets = new TIntObjectHashMap<>(numSymbols);
     }
     else {
       exportAssets.ensureCapacity(numSymbols);

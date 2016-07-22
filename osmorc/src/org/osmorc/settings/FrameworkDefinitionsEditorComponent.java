@@ -193,7 +193,7 @@ public class FrameworkDefinitionsEditorComponent {
 
   public void applyTo(@NotNull ApplicationSettings settings) {
     int instances = myModel.getSize();
-    List<FrameworkInstanceDefinition> definitions = new ArrayList<FrameworkInstanceDefinition>(instances);
+    List<FrameworkInstanceDefinition> definitions = new ArrayList<>(instances);
     for (int i = 0; i < instances; i++) {
       definitions.add((FrameworkInstanceDefinition)myModel.get(i));
     }

@@ -54,7 +54,7 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
   }
 
   private void inject(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) throws IOException {
-    final THashSet<String> overloadedMasked = new THashSet<String>(FlexDefinitionProcessor.OVERLOADED.length);
+    final THashSet<String> overloadedMasked = new THashSet<>(FlexDefinitionProcessor.OVERLOADED.length);
     for (String origin : FlexDefinitionProcessor.OVERLOADED) {
       int index = origin.indexOf(':') + 1;
       overloadedMasked.add(origin.substring(0, index) + FlexDefinitionProcessor.OVERLOADED_AND_BACKED_CLASS_MARK + origin.substring(index + 1));

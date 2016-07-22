@@ -101,7 +101,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     Library correctlyNamedSdkLib = null;
     boolean mainDartSdkLibIsCorrect = false;
     Library incorrectSdkLibWithCorrectRoots = null;
-    final List<Library> libsToDelete = new SmartList<Library>();
+    final List<Library> libsToDelete = new SmartList<>();
 
     for (final Library library : ApplicationLibraryTable.getApplicationTable().getLibraries()) {
       final String libraryName = library.getName();
@@ -169,12 +169,12 @@ public class DartProjectComponent extends AbstractProjectComponent {
     if (!haveIncorrectModuleDependencies()) return;
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      final Collection<ModifiableRootModel> modelsToCommit = new SmartList<ModifiableRootModel>();
+      final Collection<ModifiableRootModel> modelsToCommit = new SmartList<>();
 
       for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
         boolean hasCorrectDependency = false;
         boolean needsCorrectDependency = false;
-        final List<OrderEntry> orderEntriesToRemove = new SmartList<OrderEntry>();
+        final List<OrderEntry> orderEntriesToRemove = new SmartList<>();
 
         final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
 
@@ -300,7 +300,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
                                                        @NotNull final VirtualFile pubspecYamlFile,
                                                        final boolean withDotPubAndBuild,
                                                        final boolean withRootPackagesFolder) {
-    final THashSet<String> newExcludedPackagesUrls = new THashSet<String>();
+    final THashSet<String> newExcludedPackagesUrls = new THashSet<>();
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
     final VirtualFile root = pubspecYamlFile.getParent();
 

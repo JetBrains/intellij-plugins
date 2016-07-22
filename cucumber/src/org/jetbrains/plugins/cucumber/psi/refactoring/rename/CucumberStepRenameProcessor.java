@@ -48,7 +48,7 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
    */
   @NotNull
   public static List<String> prepareRegexAndGetStaticTexts(@NotNull final String source) {
-    final ArrayList<String> result = new ArrayList<String>();
+    final ArrayList<String> result = new ArrayList<>();
     final StringBuilder preparedRegexp = new StringBuilder();
 
     final RegExpLexer lexer = new RegExpLexer(EnumSet.noneOf(RegExpCapability.class));
@@ -59,7 +59,7 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
     StringBuilder currentStaticText = new StringBuilder();
 
     boolean insideAddedGroup = false;
-    final Stack<IElementType> elementsWaitingToClose = new Stack<IElementType>();
+    final Stack<IElementType> elementsWaitingToClose = new Stack<>();
 
     while (lexer.getTokenType() != null) {
       if (!toSkip.contains(lexer.getTokenType())) {
@@ -113,7 +113,7 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
   private static String getNewStepName(final String oldStepName, final Pattern oldStepDefPattern, final List<String> newStaticTexts) {
     final Matcher matcher = oldStepDefPattern.matcher(oldStepName);
     if (matcher.find()) {
-      final ArrayList<String> values = new ArrayList<String>();
+      final ArrayList<String> values = new ArrayList<>();
       for (int i = 0; i < matcher.groupCount(); i++) {
         values.add(matcher.group(i + 1));
       }

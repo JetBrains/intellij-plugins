@@ -40,6 +40,6 @@ public class IsolatesInfo {
   }
 
   public Collection<IsolateInfo> getIsolateInfos() {
-    return new ArrayList<IsolateInfo>(myIsolateIdToInfoMap.values());
+    return new ArrayList<>(myIsolateIdToInfoMap.values());
   }
 }

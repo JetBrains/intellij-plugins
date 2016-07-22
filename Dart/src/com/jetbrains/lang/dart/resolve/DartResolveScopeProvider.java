@@ -98,7 +98,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
       final GlobalSearchScope sdkScope = sdk == null ? null : getDartSdkResolveScope(project);
 
       final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-      final Set<VirtualFile> roots = new THashSet<VirtualFile>();
+      final Set<VirtualFile> roots = new THashSet<>();
 
       for (OrderEntry orderEntry : fileIndex.getOrderEntriesForFile(file)) {
         Collections.addAll(roots, orderEntry.getFiles(OrderRootType.CLASSES));
@@ -108,7 +108,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
       final GlobalSearchScope scope = sdkScope != null ? sdkScope.union(libraryScope)
                                                        : libraryScope;
 
-      return new CachedValueProvider.Result<GlobalSearchScope>(scope, ProjectRootManager.getInstance(project));
+      return new CachedValueProvider.Result<>(scope, ProjectRootManager.getInstance(project));
     });
   }
 
@@ -145,12 +145,12 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
 
       final GlobalSearchScope scopeWithLibs =
         scope.intersectWith(GlobalSearchScope.projectScope(project)).union(getModuleLibrariesClassesScope(module));
-      return new CachedValueProvider.Result<GlobalSearchScope>(scopeWithLibs, PsiModificationTracker.MODIFICATION_COUNT);
+      return new CachedValueProvider.Result<>(scopeWithLibs, PsiModificationTracker.MODIFICATION_COUNT);
     });
   }
 
   private static Collection<VirtualFile> getPathPackageRoots(@NotNull final Project project, @NotNull final VirtualFile pubspecFile) {
-    final Collection<VirtualFile> result = new SmartList<VirtualFile>();
+    final Collection<VirtualFile> result = new SmartList<>();
 
     PubspecYamlUtil.processInProjectPathPackagesRecursively(project, pubspecFile, (packageName, packageDir) -> result.add(packageDir));
 
@@ -184,7 +184,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
 
   private static GlobalSearchScope getModuleLibrariesClassesScope(@NotNull final Module module) {
     return CachedValuesManager.getManager(module.getProject()).getCachedValue(module, () -> {
-      final Set<VirtualFile> roots = new THashSet<VirtualFile>();
+      final Set<VirtualFile> roots = new THashSet<>();
 
       for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
         if (orderEntry instanceof LibraryOrderEntry) {

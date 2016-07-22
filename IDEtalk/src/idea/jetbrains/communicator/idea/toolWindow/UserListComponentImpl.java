@@ -191,7 +191,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     final TreePath[] selectionPaths = myTree.getSelectionPaths();
     if (selectionPaths == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
-    List<Object> result = new ArrayList<Object>();
+    List<Object> result = new ArrayList<>();
     for (TreePath selectionPath : selectionPaths) {
       result.add(TreeUtils.getUserObject(selectionPath));
     }

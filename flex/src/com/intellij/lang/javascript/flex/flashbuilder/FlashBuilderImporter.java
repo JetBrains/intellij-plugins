@@ -163,9 +163,9 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     final List<FlashBuilderProject> flashBuilderProjects = FlashBuilderProjectLoadUtil.loadProjects(dotProjectPaths, isArchive);
 
     final Map<FlashBuilderProject, ModifiableRootModel> flashBuilderProjectToModifiableModelMap =
-      new THashMap<FlashBuilderProject, ModifiableRootModel>();
-    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<Module, ModifiableRootModel>();
-    final Set<String> moduleNames = new THashSet<String>(flashBuilderProjects.size());
+      new THashMap<>();
+    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<>();
+    final Set<String> moduleNames = new THashSet<>(flashBuilderProjects.size());
 
     final FlexProjectConfigurationEditor currentFlexEditor =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
@@ -220,7 +220,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       });
     }
 
-    return new ArrayList<Module>(moduleToModifiableModelMap.keySet());
+    return new ArrayList<>(moduleToModifiableModelMap.keySet());
   }
 
   private List<String> getDotProjectPaths(final Project project) {
@@ -228,7 +228,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     final List<String> paths = getList();
 
     if (paths.size() == 1 && FlashBuilderProjectFinder.hasArchiveExtension(paths.get(0))) {
-      final List<String> dotProjectFiles = new ArrayList<String>();
+      final List<String> dotProjectFiles = new ArrayList<>();
       final boolean multipleProjects = FlashBuilderProjectFinder.isMultiProjectArchive(paths.get(0));
 
       final String basePath = creatingNewProject ? project.getBaseDir().getPath() : getExtractPath();

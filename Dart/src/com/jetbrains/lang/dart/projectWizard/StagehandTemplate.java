@@ -40,7 +40,7 @@ class StagehandTemplate extends DartProjectTemplate {
       throw new IOException(e);
     }
 
-    final List<VirtualFile> files = new ArrayList<VirtualFile>();
+    final List<VirtualFile> files = new ArrayList<>();
 
     final VirtualFile pubspec =
       LocalFileSystem.getInstance().refreshAndFindFileByPath(baseDir.getPath() + "/" + PubspecYamlUtil.PUBSPEC_YAML);

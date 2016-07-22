@@ -110,7 +110,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
 
   private static LineMarkerInfo createLineMarkerFromElement(@NotNull PsiElement testElement,
                                                             @NotNull final String displayName) {
-    return new LineMarkerInfo<PsiElement>(
+    return new LineMarkerInfo<>(
       testElement,
       testElement.getTextRange(),
       AllIcons.Vcs.Arrow_right,
@@ -193,7 +193,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       @Override
       public Object getData(@NonNls String dataId) {
         if (Location.DATA_KEY.is(dataId)) {
-          return new PsiLocation<PsiElement>(element.getProject(), element);
+          return new PsiLocation<>(element.getProject(), element);
         }
         return dataContext.getData(dataId);
       }

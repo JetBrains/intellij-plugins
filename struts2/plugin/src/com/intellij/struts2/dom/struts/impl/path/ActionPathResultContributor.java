@@ -155,7 +155,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       final String firstExtension = extensions.get(0);
 
       final List<Action> allActions = model.getActionsForNamespace(null);
-      final List<LookupElementBuilder> variants = new ArrayList<LookupElementBuilder>(allActions.size());
+      final List<LookupElementBuilder> variants = new ArrayList<>(allActions.size());
       for (final Action action : allActions) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {

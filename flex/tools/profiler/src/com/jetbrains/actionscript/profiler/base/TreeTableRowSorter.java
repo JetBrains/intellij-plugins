@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TreeTableRowSorter extends TableRowSorter {
   private final BaseSortableTreeTable table;
-  private List<? extends SortKey> sortKeys = new ArrayList<SortKey>();
+  private List<? extends SortKey> sortKeys = new ArrayList<>();
 
   public TreeTableRowSorter(BaseSortableTreeTable table) {
     super(table.getModel());
@@ -57,7 +57,7 @@ public class TreeTableRowSorter extends TableRowSorter {
     }
 
     final Comparator<TreeNode> comparator =
-      new ComparatorWrapper<TreeNode>(getComparator(modelIndex), key.getSortOrder() == SortOrder.ASCENDING);
+      new ComparatorWrapper<>(getComparator(modelIndex), key.getSortOrder() == SortOrder.ASCENDING);
 
     final List<TreePath> paths = TreeUtil.collectExpandedPaths(table.getTree());
     if (JTreeUtil.isSorted(paths, comparator, table.getTableModel())) {

@@ -136,7 +136,7 @@ public class CfmlMappingsForm {
   }
 
   public void setItems(Map<String, String> paths) {
-    List<Item> items = new ArrayList<Item>(paths.size());
+    List<Item> items = new ArrayList<>(paths.size());
     for (Map.Entry<String, String> entry : paths.entrySet()) {
       items.add(new Item(FileUtil.toSystemDependentName(entry.getValue()), entry.getKey()));
     }
@@ -145,7 +145,7 @@ public class CfmlMappingsForm {
 
   private Map<String, String> getPaths() {
     List<Item> items = myTableEditor.getItems();
-    Map<String, String> result = new HashMap<String, String>();
+    Map<String, String> result = new HashMap<>();
     for (Item item : items) {
       // TODO: to prettify logical path
       if (!item.isEmpty()) {

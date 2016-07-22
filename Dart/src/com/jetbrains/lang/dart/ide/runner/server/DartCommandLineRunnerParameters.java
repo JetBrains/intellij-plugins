@@ -24,7 +24,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   private boolean myCheckedMode = true;
   private @Nullable String myArguments = null;
   private @Nullable String myWorkingDirectory = null;
-  private @NotNull Map<String, String> myEnvs = new LinkedHashMap<String, String>();
+  private @NotNull Map<String, String> myEnvs = new LinkedHashMap<>();
   private boolean myIncludeParentEnvs = true;
 
   /**
@@ -176,7 +176,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   protected DartCommandLineRunnerParameters clone() {
     try {
       final DartCommandLineRunnerParameters clone = (DartCommandLineRunnerParameters)super.clone();
-      clone.myEnvs = new LinkedHashMap<String, String>();
+      clone.myEnvs = new LinkedHashMap<>();
       clone.myEnvs.putAll(myEnvs);
       return clone;
     }

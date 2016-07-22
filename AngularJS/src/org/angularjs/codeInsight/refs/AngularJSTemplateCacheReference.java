@@ -43,7 +43,7 @@ public class AngularJSTemplateCacheReference extends AngularJSReferenceBase<JSLi
     final String id = getCanonicalText();
     final Collection<VirtualFile> files = instance.getContainingFiles(AngularTemplateCacheIndex.TEMPLATE_CACHE_INDEX, id,
                                                                       GlobalSearchScope.allScope(project));
-    final Ref<PsiElement> result = new Ref<PsiElement>();
+    final Ref<PsiElement> result = new Ref<>();
     for (VirtualFile file : files) {
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
       AngularTemplateCacheIndex.processTemplates(psiFile, attribute -> {

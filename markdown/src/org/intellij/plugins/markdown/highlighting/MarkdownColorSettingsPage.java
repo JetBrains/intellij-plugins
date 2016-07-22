@@ -40,7 +40,7 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
 
   @NotNull
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-    final Map<String, TextAttributesKey> result = new HashMap<String, TextAttributesKey>();
+    final Map<String, TextAttributesKey> result = new HashMap<>();
 
     result.put("hh1", MarkdownHighlighterColors.HEADER_LEVEL_1_ATTR_KEY);
     result.put("hh2", MarkdownHighlighterColors.HEADER_LEVEL_2_ATTR_KEY);
@@ -118,7 +118,7 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
   private enum AttributeDescriptorsHolder {
     INSTANCE;
 
-    private Map<String, TextAttributesKey> myMap = new HashMap<String, TextAttributesKey>();
+    private Map<String, TextAttributesKey> myMap = new HashMap<>();
 
     AttributeDescriptorsHolder() {
       put("markdown.editor.colors.text", MarkdownHighlighterColors.TEXT_ATTR_KEY);

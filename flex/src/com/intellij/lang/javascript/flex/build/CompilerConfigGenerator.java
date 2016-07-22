@@ -297,7 +297,7 @@ public class CompilerConfigGenerator {
       addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, mySdk.getHomePath() + "/frameworks/locale/{locale}");
     }
 
-    final Map<String, String> libNameToRslInfo = new THashMap<String, String>();
+    final Map<String, String> libNameToRslInfo = new THashMap<>();
 
     for (final String swcUrl : mySdk.getRootProvider().getUrls(OrderRootType.CLASSES)) {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
@@ -495,8 +495,8 @@ public class CompilerConfigGenerator {
     locales.addAll(FlexCommonUtils.getOptionValues(myModuleLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
     locales.addAll(FlexCommonUtils.getOptionValues(myBC.getCompilerOptions().getAdditionalOptions(), "locale", "compiler.locale"));
 
-    final Set<String> sourcePathsWithLocaleToken = new THashSet<String>(); // Set - to avoid duplication of paths like "locale/{locale}"
-    final List<String> sourcePathsWithoutLocaleToken = new LinkedList<String>();
+    final Set<String> sourcePathsWithLocaleToken = new THashSet<>(); // Set - to avoid duplication of paths like "locale/{locale}"
+    final List<String> sourcePathsWithoutLocaleToken = new LinkedList<>();
 
     for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(includeTestRoots())) {
       if (locales.contains(sourceRoot.getName())) {
@@ -544,7 +544,7 @@ public class CompilerConfigGenerator {
   }
 
   private void addOtherOptions(final Element rootElement) {
-    final Map<String, String> options = new THashMap<String, String>(myProjectLevelCompilerOptions.getAllOptions());
+    final Map<String, String> options = new THashMap<>(myProjectLevelCompilerOptions.getAllOptions());
     options.putAll(myModuleLevelCompilerOptions.getAllOptions());
     options.putAll(myBC.getCompilerOptions().getAllOptions());
 
@@ -617,7 +617,7 @@ public class CompilerConfigGenerator {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
     final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
 
-    final Map<String, String> filePathToPathInSwc = new THashMap<String, String>();
+    final Map<String, String> filePathToPathInSwc = new THashMap<>();
 
     for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
       final VirtualFile fileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
@@ -665,7 +665,7 @@ public class CompilerConfigGenerator {
   private void addLibClasses(final Element rootElement) throws IOException {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
     final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
-    final Ref<Boolean> noClasses = new Ref<Boolean>(true);
+    final Ref<Boolean> noClasses = new Ref<>(true);
 
     for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(false)) {
       fileIndex.iterateContentUnderDirectory(sourceRoot, new ContentIterator() {
@@ -788,8 +788,8 @@ public class CompilerConfigGenerator {
       return existingConfigFile;
     }
 
-    final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
-    final Ref<IOException> error = new Ref<IOException>();
+    final Ref<VirtualFile> fileRef = new Ref<>();
+    final Ref<IOException> error = new Ref<>();
     final Runnable runnable = new Runnable() {
       @Override
       public void run() {

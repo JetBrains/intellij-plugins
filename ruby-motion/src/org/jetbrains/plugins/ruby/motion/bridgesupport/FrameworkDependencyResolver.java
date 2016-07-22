@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class FrameworkDependencyResolver {
   private static final Logger LOG = Logger.getInstance(InheritanceInfoHolder.class);
-  private Map<String, Map<String, List<String>>> myDependencyInfo = new HashMap<String, Map<String, List<String>>>();
+  private Map<String, Map<String, List<String>>> myDependencyInfo = new HashMap<>();
   private final BridgeSupportLoader myLoader;
 
   public static FrameworkDependencyResolver getInstance() {
@@ -36,10 +36,10 @@ public class FrameworkDependencyResolver {
             final FileInputStream is = new FileInputStream(child);
             try {
               final Map map = RubyUtil.loadYaml(is);
-              final Map<String, List<String>> result = new HashMap<String, List<String>>();
+              final Map<String, List<String>> result = new HashMap<>();
               for (Object key : map.keySet()) {
                 final ArrayList list = (ArrayList)map.get(key);
-                final List<String> stringList = new ArrayList<String>(list.size());
+                final List<String> stringList = new ArrayList<>(list.size());
                 for (Object o : list) {
                   stringList.add(o.toString());
                 }
@@ -68,9 +68,9 @@ public class FrameworkDependencyResolver {
       LOG.warn("Could not find dependency info for version: '" + sdkVersion + "'");
     }
 
-    final Set<Framework> result = new HashSet<Framework>();
-    final Queue<String> unsatisfied = new LinkedList<String>();
-    final Set<String> processed = new HashSet<String>();
+    final Set<Framework> result = new HashSet<>();
+    final Queue<String> unsatisfied = new LinkedList<>();
+    final Set<String> processed = new HashSet<>();
     Collections.addAll(unsatisfied, frameworks);
     while (!unsatisfied.isEmpty()) {
       final String name = unsatisfied.poll();

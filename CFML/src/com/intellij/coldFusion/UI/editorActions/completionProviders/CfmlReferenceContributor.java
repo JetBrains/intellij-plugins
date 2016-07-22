@@ -72,7 +72,7 @@ public class CfmlReferenceContributor extends PsiReferenceContributor {
             return EMPTY_ARRAY;
           }
         };
-      final List<PsiReference> result = new SmartList<PsiReference>();
+      final List<PsiReference> result = new SmartList<>();
       result.add(ref);
       return result.toArray(PsiReference.EMPTY_ARRAY);
     }

@@ -99,7 +99,7 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
   public static void storeLanguageVersionWithProgress(final Project project) {
     Task.Backgroundable task = new Task.Backgroundable(project, CfmlBundle.message("applying.new.language.version.task.name"), false) {
       public void run(@NotNull ProgressIndicator indicator) {
-        final Collection<VirtualFile> cfmlFiles = new ArrayList<VirtualFile>();
+        final Collection<VirtualFile> cfmlFiles = new ArrayList<>();
         final VirtualFile baseDir = project.getBaseDir();
         if (baseDir != null) {
           FileBasedIndex.getInstance().iterateIndexableFiles(new ContentIterator() {

@@ -22,8 +22,8 @@ public class JstdServerLifeCycleManager implements JstdServerOutputListener {
 
   private static final Logger LOG = Logger.getInstance(JstdServerLifeCycleManager.class);
 
-  private final List<JstdServerLifeCycleListener> myListeners = new CopyOnWriteArrayList<JstdServerLifeCycleListener>();
-  private final List<Disposable> myDisposables = new CopyOnWriteArrayList<Disposable>();
+  private final List<JstdServerLifeCycleListener> myListeners = new CopyOnWriteArrayList<>();
+  private final List<Disposable> myDisposables = new CopyOnWriteArrayList<>();
   private final Map<String, JstdBrowserInfo> myCapturedBrowsers = ContainerUtil.newHashMap();
   private boolean myServerStarted = false;
   private boolean myServerStopped = false;

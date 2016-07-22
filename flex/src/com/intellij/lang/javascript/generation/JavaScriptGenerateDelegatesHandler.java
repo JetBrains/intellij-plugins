@@ -109,7 +109,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
       }
     }
 
-    final Map<MemberDescriptor, JSNamedElement> memberCandidates = new HashMap<MemberDescriptor, JSNamedElement>();
+    final Map<MemberDescriptor, JSNamedElement> memberCandidates = new HashMap<>();
     ResolveProcessor p = new ResolveProcessor(null) {
       {
         setToProcessHierarchy(true);
@@ -235,7 +235,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
   }
 
   private static Collection<JSNamedElementNode> wrap(Collection<? extends JSNamedElement> items) {
-    final List<JSNamedElementNode> targetCandidates = new ArrayList<JSNamedElementNode>(items.size());
+    final List<JSNamedElementNode> targetCandidates = new ArrayList<>(items.size());
     for (JSNamedElement field : items) {
       targetCandidates.add(new JSNamedElementNode(field));
     }
@@ -264,7 +264,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
   }
 
   private static Collection<JSVariable> findCandidateFields(JSClass clazz) {
-    Collection<JSVariable> result = new ArrayList<JSVariable>();
+    Collection<JSVariable> result = new ArrayList<>();
     for (JSVariable field : clazz.getFields()) {
       JSType type = field.getType();
       JSClass fieldType = type != null ? type.resolveClass() : null;

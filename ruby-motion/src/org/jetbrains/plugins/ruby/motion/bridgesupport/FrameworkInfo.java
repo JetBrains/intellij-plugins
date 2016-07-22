@@ -77,9 +77,9 @@ public class FrameworkInfo {
     catch (IOException e) {
       LOG.error("Failed to load bridgesupport file", e);
     }
-    myFramework = framework != null ? new SoftReference<Framework>(framework) : null;
-    myIdSelectorNames = idSelectorNames != null ? new SoftReference<Set<String>>(idSelectorNames) : null;
-    mySelectorNames = selectorNames != null ? new SoftReference<Set<String>>(selectorNames) : null;
+    myFramework = framework != null ? new SoftReference<>(framework) : null;
+    myIdSelectorNames = idSelectorNames != null ? new SoftReference<>(idSelectorNames) : null;
+    mySelectorNames = selectorNames != null ? new SoftReference<>(selectorNames) : null;
     return Trinity.create(framework, idSelectorNames, selectorNames);
   }
 }

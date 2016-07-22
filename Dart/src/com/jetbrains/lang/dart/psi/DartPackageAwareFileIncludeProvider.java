@@ -58,7 +58,7 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
   }
 
   private static FileIncludeInfo[] getIncludeInfos(@NotNull final XmlFile xmlFile) {
-    final List<FileIncludeInfo> result = new ArrayList<FileIncludeInfo>();
+    final List<FileIncludeInfo> result = new ArrayList<>();
 
     xmlFile.acceptChildren(new XmlRecursiveElementVisitor() {
       @Override

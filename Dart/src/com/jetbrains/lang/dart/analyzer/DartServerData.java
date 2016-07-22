@@ -43,7 +43,7 @@ public class DartServerData {
   void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean restartHighlighting) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartError> newErrors = new ArrayList<DartError>(errors.size());
+    final List<DartError> newErrors = new ArrayList<>(errors.size());
     for (AnalysisError error : errors) {
       newErrors.add(new DartError(error));
     }
@@ -58,7 +58,7 @@ public class DartServerData {
   void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartHighlightRegion> newRegions = new ArrayList<DartHighlightRegion>(regions.size());
+    final List<DartHighlightRegion> newRegions = new ArrayList<>(regions.size());
     for (HighlightRegion region : regions) {
       if (region.getLength() > 0) {
         newRegions.add(new DartHighlightRegion(region));
@@ -72,7 +72,7 @@ public class DartServerData {
   void computedNavigation(@NotNull final String filePath, @NotNull final List<NavigationRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartNavigationRegion> newRegions = new ArrayList<DartNavigationRegion>(regions.size());
+    final List<DartNavigationRegion> newRegions = new ArrayList<>(regions.size());
     for (NavigationRegion region : regions) {
       if (region.getLength() > 0) {
         newRegions.add(new DartNavigationRegion(region));
@@ -86,7 +86,7 @@ public class DartServerData {
   void computedOverrides(@NotNull final String filePath, @NotNull final List<OverrideMember> overrides) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartOverrideMember> newOverrides = new ArrayList<DartOverrideMember>(overrides.size());
+    final List<DartOverrideMember> newOverrides = new ArrayList<>(overrides.size());
     for (OverrideMember override : overrides) {
       if (override.getLength() > 0) {
         newOverrides.add(new DartOverrideMember(override));
@@ -102,12 +102,12 @@ public class DartServerData {
                            @NotNull final List<ImplementedMember> implementedMembers) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartRegion> newImplementedClasses = new ArrayList<DartRegion>(implementedClasses.size());
+    final List<DartRegion> newImplementedClasses = new ArrayList<>(implementedClasses.size());
     for (ImplementedClass implementedClass : implementedClasses) {
       newImplementedClasses.add(new DartRegion(implementedClass.getOffset(), implementedClass.getLength()));
     }
 
-    final List<DartRegion> newImplementedMembers = new ArrayList<DartRegion>(implementedMembers.size());
+    final List<DartRegion> newImplementedMembers = new ArrayList<>(implementedMembers.size());
     for (ImplementedMember implementedMember : implementedMembers) {
       newImplementedMembers.add(new DartRegion(implementedMember.getOffset(), implementedMember.getLength()));
     }

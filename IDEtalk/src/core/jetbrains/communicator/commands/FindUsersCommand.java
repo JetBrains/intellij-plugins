@@ -66,7 +66,7 @@ public class FindUsersCommand implements NamedUserCommand {
     try {
       myIdeFacade.runLongProcess(StringUtil.getMsg("FindUsersCommand.dialog.title"), new IDEFacade.Process() {
         public void run(ProgressIndicator indicator) {
-          List<User> result = new ArrayList<User>();
+          List<User> result = new ArrayList<>();
           for (Transport transport : myTransports) {
             result.addAll(Arrays.asList(transport.findUsers(indicator)));
           }

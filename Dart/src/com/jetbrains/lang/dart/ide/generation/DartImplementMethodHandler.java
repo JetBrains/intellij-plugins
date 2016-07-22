@@ -27,9 +27,9 @@ public class DartImplementMethodHandler extends BaseDartGenerateHandler {
   @Override
   protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
     Map<Pair<String, Boolean>, DartComponent> result =
-      new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperInterfacesMembersMap(dartClass));
+      new THashMap<>(computeSuperInterfacesMembersMap(dartClass));
     Map<Pair<String, Boolean>, DartComponent> superClassesMemberMap =
-      new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperClassesMemberMap(dartClass));
+      new THashMap<>(computeSuperClassesMemberMap(dartClass));
     result.keySet().removeAll(superClassesMemberMap.keySet());
     for (Map.Entry<Pair<String, Boolean>, DartComponent> entry : superClassesMemberMap.entrySet()) {
       final DartComponent component = entry.getValue();

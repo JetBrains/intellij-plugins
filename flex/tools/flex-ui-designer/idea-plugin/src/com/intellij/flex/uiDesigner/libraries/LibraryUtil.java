@@ -56,7 +56,7 @@ final class LibraryUtil {
 
     assert catalogReader != null;
     assert swfIn != null;
-    return new Pair<CharArrayReader, ByteArrayInputStream>(catalogReader, swfIn);
+    return new Pair<>(catalogReader, swfIn);
   }
 
   @TestOnly
@@ -78,7 +78,7 @@ final class LibraryUtil {
   }
 
   public static Set<CharSequence> getDefinitions(Reader reader) {
-    final THashSet<CharSequence> set = new THashSet<CharSequence>(512, AbcTranscoder.HASHING_STRATEGY);
+    final THashSet<CharSequence> set = new THashSet<>(512, AbcTranscoder.HASHING_STRATEGY);
     NanoXmlUtil.parse(reader, new NanoXmlUtil.IXMLBuilderAdapter() {
       private boolean processingDef;
 

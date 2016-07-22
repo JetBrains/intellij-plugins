@@ -89,7 +89,7 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
       return EMPTY_ARRAY;
     }
 
-    final List<TreeElement> result = new SmartList<TreeElement>();
+    final List<TreeElement> result = new SmartList<>();
     DomUtil.acceptAvailableChildren(element, new DomElementVisitor() {
       @Override
       public void visitDomElement(final DomElement domElement) {

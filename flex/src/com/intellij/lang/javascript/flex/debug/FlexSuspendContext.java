@@ -175,7 +175,7 @@ public class FlexSuspendContext extends XSuspendContext {
 
   static String[] splitStackFrames(String s) {
     Matcher m = STACK_FRAMES_DELIMITER.matcher(s);
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     int prev = 0;
     while (m.find()) {
       result.add(s.substring(prev, m.start(1)));

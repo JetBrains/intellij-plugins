@@ -89,7 +89,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
                                                   @NotNull final List<TypeHierarchyItem> hierarchyItems) {
     if (hierarchyItems.isEmpty()) return Collections.emptyList();
 
-    final List<DartComponent> result = new ArrayList<DartComponent>(hierarchyItems.size());
+    final List<DartComponent> result = new ArrayList<>(hierarchyItems.size());
     addSubClasses(project, scope, Sets.<TypeHierarchyItem>newHashSet(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }
@@ -100,7 +100,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
                                                   @NotNull final List<TypeHierarchyItem> hierarchyItems) {
     if (hierarchyItems.isEmpty()) return Collections.emptyList();
 
-    final List<DartComponent> result = new ArrayList<DartComponent>(hierarchyItems.size());
+    final List<DartComponent> result = new ArrayList<>(hierarchyItems.size());
     addSubMembers(project, scope, Sets.<TypeHierarchyItem>newHashSet(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }

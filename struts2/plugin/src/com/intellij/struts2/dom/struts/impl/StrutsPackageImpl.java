@@ -41,7 +41,7 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
 
   @NotNull
   public String searchNamespace() {
-    final Ref<String> result = new Ref<String>();
+    final Ref<String> result = new Ref<>();
     final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, strutsPackage -> {
       if (DomUtil.hasXml(strutsPackage.getNamespace())) {
         result.set(strutsPackage.getNamespace().getStringValue());
@@ -56,7 +56,7 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
 
   @Nullable
   public DefaultClassRef searchDefaultClassRef() {
-    final Ref<DefaultClassRef> result = new Ref<DefaultClassRef>();
+    final Ref<DefaultClassRef> result = new Ref<>();
     final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, strutsPackage -> {
       if (DomUtil.hasXml(strutsPackage.getDefaultClassRef())) {
         result.set(strutsPackage.getDefaultClassRef());
@@ -81,7 +81,7 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
 
       myCachedDefaultResultType = CachedValuesManager.getManager(containingFile.getProject()).createCachedValue(
         () -> {
-          final Ref<ResultType> result = new Ref<ResultType>();
+          final Ref<ResultType> result = new Ref<>();
           final StrutsPackageHierarchyWalker walker =
             new StrutsPackageHierarchyWalker(StrutsPackageImpl.this, strutsPackage -> {
               final List<ResultType> resultTypes = strutsPackage.getResultTypes();

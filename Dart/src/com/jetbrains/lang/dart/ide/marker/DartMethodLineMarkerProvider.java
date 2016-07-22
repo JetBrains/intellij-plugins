@@ -83,9 +83,9 @@ public class DartMethodLineMarkerProvider implements LineMarkerProvider {
       }
 
       // finally, create the marker
-      LineMarkerInfo info = new LineMarkerInfo<PsiElement>(markerLocation, markerLocation.getTextRange(), null, Pass.UPDATE_ALL,
-                                                           FunctionUtil.<Object, String>nullConstant(), null,
-                                                           GutterIconRenderer.Alignment.RIGHT);
+      LineMarkerInfo info = new LineMarkerInfo<>(markerLocation, markerLocation.getTextRange(), null, Pass.UPDATE_ALL,
+                                                 FunctionUtil.<Object, String>nullConstant(), null,
+                                                 GutterIconRenderer.Alignment.RIGHT);
       EditorColorsScheme scheme = myColorsManager.getGlobalScheme();
       info.separatorColor = scheme.getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR);
       info.separatorPlacement = SeparatorPlacement.TOP;

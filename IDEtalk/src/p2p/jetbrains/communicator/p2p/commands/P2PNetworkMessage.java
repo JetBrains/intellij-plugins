@@ -33,7 +33,7 @@ import java.util.List;
 public class P2PNetworkMessage implements Message {
   private final String myCommandId;
   private final String myCommand;
-  private final List<String> myCommandParameters = new ArrayList<String>();
+  private final List<String> myCommandParameters = new ArrayList<>();
   private Object myResponse;
 
   public P2PNetworkMessage(String commandId, String command, String[] commandParameters) {
@@ -51,7 +51,7 @@ public class P2PNetworkMessage implements Message {
     }
     
     XmlRpcTargetImpl target = new XmlRpcTargetImpl(port, P2PTransport.getInstance().getAddress(user));
-    List<String> parameters = new ArrayList<String>();
+    List<String> parameters = new ArrayList<>();
     parameters.add(StringUtil.toXMLSafeString(StringUtil.getMyUsername()));
     parameters.addAll(myCommandParameters);
     setResponse(NetworkUtil.sendMessage(target, myCommandId, myCommand, ArrayUtil.toObjectArray(parameters)));

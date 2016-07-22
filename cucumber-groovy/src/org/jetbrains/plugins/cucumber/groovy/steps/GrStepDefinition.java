@@ -41,7 +41,7 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
       GrClosableBlock[] closures = ((GrMethodCall)element).getClosureArguments();
       assert closures.length == 1;
       GrParameter[] parameters = closures[0].getParameterList().getParameters();
-      ArrayList<String> result = new ArrayList<String>();
+      ArrayList<String> result = new ArrayList<>();
       for (GrParameter parameter : parameters) {
         result.add(parameter.getName());
       }

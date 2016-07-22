@@ -30,15 +30,15 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Kir Maximov
  */
 public class UserModelImpl implements UserModel, Disposable {
-  protected final Collection<User> myUsers = new HashSet<User>();
-  protected final Collection<String> myGroups = new HashSet<String>();
+  protected final Collection<User> myUsers = new HashSet<>();
+  protected final Collection<String> myGroups = new HashSet<>();
 
   protected final transient EventBroadcaster myBroadcaster;
   private final transient MyListener myEventListener;
 
   protected final transient Object myUsersGroupsLock = new Object();
 
-  private final transient AtomicReference<User[]> myCachedUsers = new AtomicReference<User[]>();
+  private final transient AtomicReference<User[]> myCachedUsers = new AtomicReference<>();
 
   public UserModelImpl(EventBroadcaster eventBroadcaster) {
     myBroadcaster = eventBroadcaster;
@@ -93,7 +93,7 @@ public class UserModelImpl implements UserModel, Disposable {
 
   @Override
   public String[] getGroups() {
-    Set<String> result = new TreeSet<String>();
+    Set<String> result = new TreeSet<>();
     synchronized (myUsersGroupsLock) {
       result.addAll(myGroups);
     }
@@ -110,7 +110,7 @@ public class UserModelImpl implements UserModel, Disposable {
 
   @Override
   public User[] getUsers(String groupName) {
-    List<User> result = new ArrayList<User>();
+    List<User> result = new ArrayList<>();
     for (User user : getAllUsers()) {
       if (user.getGroup().equals(groupName)) {
         result.add(user);
@@ -210,7 +210,7 @@ public class UserModelImpl implements UserModel, Disposable {
 
   @Override
   public boolean forEach(Object[] nodes, UserAction userAction, boolean considerOnlyOnlineUsers) {
-    final Set<User> users = new LinkedHashSet<User>();
+    final Set<User> users = new LinkedHashSet<>();
     for (Object node : nodes) {
       if (node instanceof User) {
         User user = (User)node;

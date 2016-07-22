@@ -177,7 +177,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myBCManager = myMode == Mode.BC ? FlexBuildConfigurationManager.getInstance(module) : null;
     myProjectLevelOptionsHolder = FlexProjectLevelCompilerOptionsHolder.getInstance(project);
     myModel = model;
-    myCurrentOptions = new THashMap<String, String>();
+    myCurrentOptions = new THashMap<>();
     myFilesToIncludeInSWC = Collections.emptyList();
 
     myShowAllOptionsCheckBox.addActionListener(new ActionListener() {
@@ -206,7 +206,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myIncludeInSWCField.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
     myIncludeInSWCField.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        final List<StringBuilder> value = new ArrayList<StringBuilder>();
+        final List<StringBuilder> value = new ArrayList<>();
         for (String path : myFilesToIncludeInSWC) {
           value.add(new StringBuilder(path));
         }
@@ -215,7 +215,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
                                     CompilerOptionInfo.INCLUDE_FILE_INFO_FOR_UI);
         if (dialog.showAndGet()) {
           final List<StringBuilder> newValue = dialog.getCurrentList();
-          myFilesToIncludeInSWC = new ArrayList<String>(newValue.size());
+          myFilesToIncludeInSWC = new ArrayList<>(newValue.size());
           for (StringBuilder path : newValue) {
             myFilesToIncludeInSWC.add(path.toString());
           }
@@ -512,7 +512,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return new TableCellRenderer() {
       private final JLabel myLabel = new JLabel();
       private final JCheckBox myCheckBox = new JCheckBox();
-      private final ComponentWithBrowseButton<JLabel> myLabelWithBrowse = new ComponentWithBrowseButton<JLabel>(new JLabel(), null);
+      private final ComponentWithBrowseButton<JLabel> myLabelWithBrowse = new ComponentWithBrowseButton<>(new JLabel(), null);
 
       public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
         if (!(value instanceof CompilerOptionInfo)) {
@@ -885,7 +885,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       addActionListener(new ActionListener() {
         public void actionPerformed(final ActionEvent e) {
           final List<String> entries = StringUtil.split(myValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-          final List<StringBuilder> buffers = new ArrayList<StringBuilder>(entries.size());
+          final List<StringBuilder> buffers = new ArrayList<>(entries.size());
           for (String entry : entries) {
             buffers.add(new StringBuilder(entry));
           }

@@ -103,7 +103,8 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     return value;
   }
 
-  private static @NonNls final Set<String> doNotNeedQoting = new THashSet<String>(Arrays.asList("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity"));
+  private static @NonNls final Set<String> doNotNeedQoting =
+    new THashSet<>(Arrays.asList("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity"));
   private static boolean needsQuoting(final String value) {
     return !doNotNeedQoting.contains(value);
   }

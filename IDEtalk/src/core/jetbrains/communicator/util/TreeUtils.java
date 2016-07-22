@@ -71,7 +71,7 @@ public class TreeUtils {
   public static TreePath getPathFromRoot(TreeNode node) {
     if (node == null) return null;
 
-    LinkedList<TreeNode> path = new LinkedList<TreeNode>();
+    LinkedList<TreeNode> path = new LinkedList<>();
     path.add(node);
     while (node.getParent() != null) {
       path.addFirst(node.getParent());

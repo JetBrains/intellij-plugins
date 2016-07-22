@@ -124,7 +124,7 @@ public class UserTreeTransferHandler extends TransferHandler {
   }
 
   public static class UsersTransferable implements Transferable {
-    private final List<User> myUsers = new ArrayList<User>();
+    private final List<User> myUsers = new ArrayList<>();
     private static DataFlavor ourDataFlavor;
 
     public UsersTransferable(JTree tree) {

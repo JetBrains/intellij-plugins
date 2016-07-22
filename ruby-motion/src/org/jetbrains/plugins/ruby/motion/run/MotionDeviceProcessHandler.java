@@ -25,10 +25,10 @@ import java.util.concurrent.TimeoutException;
  */
 public class MotionDeviceProcessHandler extends RubyProcessHandler implements DeviceProcessHandler, ProcessHandlerWithPID {
   private static final Logger LOG = Logger.getInstance(MotionDeviceProcessHandler.class);
-  final ExecutionResult<String> myExecutableName = new ExecutionResult<String>();
-  final ExecutionResult<String> myLocalPath = new ExecutionResult<String>();
-  final ExecutionResult<String> myRemotePath = new ExecutionResult<String>();
-  final ExecutionResult<AMDevice> myDevice = new ExecutionResult<AMDevice>();
+  final ExecutionResult<String> myExecutableName = new ExecutionResult<>();
+  final ExecutionResult<String> myLocalPath = new ExecutionResult<>();
+  final ExecutionResult<String> myRemotePath = new ExecutionResult<>();
+  final ExecutionResult<AMDevice> myDevice = new ExecutionResult<>();
   @NotNull private final GeneralCommandLine myCommandLine;
 
   protected MotionDeviceProcessHandler(@NotNull Process process,
@@ -110,7 +110,7 @@ public class MotionDeviceProcessHandler extends RubyProcessHandler implements De
 
 
   private String getDeviceId() {
-    final Ref<String> deviceId = new Ref<String>();
+    final Ref<String> deviceId = new Ref<>();
     final int rakePid = UnixProcessManager.getProcessPid(myProcess);
     UnixProcessManager.processPSOutput(UnixProcessManager.getPSCmd(false, false), s -> {
       final Scanner scanner = new Scanner(s);

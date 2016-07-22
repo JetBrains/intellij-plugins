@@ -36,10 +36,10 @@ import java.util.Set;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartServerRootsHandler {
-  private final Set<Project> myTrackedProjects = new THashSet<Project>();
-  private final List<String> myIncludedRoots = new SmartList<String>();
-  private final List<String> myExcludedRoots = new SmartList<String>();
-  private final Map<String, String> myPackageRoots = new THashMap<String, String>();
+  private final Set<Project> myTrackedProjects = new THashSet<>();
+  private final List<String> myIncludedRoots = new SmartList<>();
+  private final List<String> myExcludedRoots = new SmartList<>();
+  private final Map<String, String> myPackageRoots = new THashMap<>();
 
   public DartServerRootsHandler() {
     // ProjectManagerListener.projectClosed() is not called in unittest mode, that's why ProjectLifecycleListener is used - it is called always
@@ -95,9 +95,9 @@ public class DartServerRootsHandler {
       DartAnalysisServerService.getInstance().stopServer();
     }
 
-    final List<String> newIncludedRoots = new SmartList<String>();
-    final List<String> newExcludedRoots = new SmartList<String>();
-    final Map<String, String> newPackageRoots = new SmartHashMap<String, String>();
+    final List<String> newIncludedRoots = new SmartList<>();
+    final List<String> newExcludedRoots = new SmartList<>();
+    final Map<String, String> newPackageRoots = new SmartHashMap<>();
 
     if (sdk != null) {
       for (Project project : myTrackedProjects) {
@@ -142,7 +142,7 @@ public class DartServerRootsHandler {
   }
 
   private static Set<String> getExcludedPackageSymlinkUrls(@NotNull final Module module) {
-    final Set<String> result = new THashSet<String>();
+    final Set<String> result = new THashSet<>();
 
     final Collection<VirtualFile> pubspecYamlFiles =
       FilenameIndex.getVirtualFilesByName(module.getProject(), PUBSPEC_YAML, module.getModuleContentScope());

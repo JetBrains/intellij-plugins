@@ -49,7 +49,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   // TODO our special handling for myWithoutJdk, myWithoutLibraries
 
   private static class ModuleData {
-    private Set<FlexBuildConfiguration> bcs = new HashSet<FlexBuildConfiguration>();
+    private Set<FlexBuildConfiguration> bcs = new HashSet<>();
     private boolean accessibleInProduction = false; // true if this module accessible by non-test dependency types
 
     public void addBc(FlexBuildConfiguration bc, boolean production) {
@@ -66,9 +66,9 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   public FlexOrderEnumerationHandler(@NotNull Module module) {
     myRootModule = module;
 
-    myActiveConfigurations = new HashMap<Module, ModuleData>();
+    myActiveConfigurations = new HashMap<>();
     // last argument can be whatever
-    processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<FlexBuildConfiguration>(), true);
+    processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<>(), true);
   }
 
   // configuration is null for root module (one for which scope is being computed)
@@ -236,7 +236,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       s = VirtualFileManager.extractPath(StringUtil.trimEnd(s, JarFileSystem.JAR_SEPARATOR));
       return BCUtils.getSdkEntryLinkageType(s, bc) != null || themePaths.contains(s);
     });
-    urls.addAll(new HashSet<String>(allAccessibleUrls));
+    urls.addAll(new HashSet<>(allAccessibleUrls));
     return true;
   }
 }

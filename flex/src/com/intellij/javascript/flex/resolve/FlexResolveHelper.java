@@ -46,7 +46,7 @@ import java.util.Collection;
 public class FlexResolveHelper implements JSResolveHelper {
   @Nullable
   public PsiElement findClassByQName(final String link, final Project project, final String className, final GlobalSearchScope scope) {
-    final Ref<JSClass> result = new Ref<JSClass>();
+    final Ref<JSClass> result = new Ref<>();
 
     final String expectedPackage = link.equals(className) ? "" : link.substring(0, link.length() - className.length() - 1);
 

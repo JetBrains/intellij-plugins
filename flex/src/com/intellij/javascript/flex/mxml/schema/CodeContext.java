@@ -81,10 +81,10 @@ public class CodeContext {
   private final Map<String, ClassBackedElementDescriptor> myNameToDescriptorsMap;
   public final String namespace;
   public final Module module;
-  private final Set<Object> dependencies = new THashSet<Object>();
+  private final Set<Object> dependencies = new THashSet<>();
 
   CodeContext(String _namespace, Module _module) {
-    myNameToDescriptorsMap = new THashMap<String, ClassBackedElementDescriptor>(100);
+    myNameToDescriptorsMap = new THashMap<>(100);
     namespace = _namespace;
     module = _module;
     if (JavaScriptSupportLoader.isLanguageNamespace(namespace)) {
@@ -215,7 +215,7 @@ public class CodeContext {
     final Sdk sdk = bc.getSdk();
     if (sdk == null) return;
 
-    final Map<String, CodeContext> contextsOfModule = new THashMap<String, CodeContext>();
+    final Map<String, CodeContext> contextsOfModule = new THashMap<>();
     for (final VirtualFile file : sdk.getRootProvider().getFiles(OrderRootType.CLASSES)) {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(file.getUrl(), JarFileSystem.JAR_SEPARATOR));
       if (BCUtils.getSdkEntryLinkageType(swcPath, bc) != null) {
@@ -231,7 +231,7 @@ public class CodeContext {
   private static CodeContext createCodeContextFromLibraries(final String namespace,
                                                             final Module module,
                                                             final FlexBuildConfiguration bc) {
-    final Map<String, CodeContext> contextsOfModule = new THashMap<String, CodeContext>();
+    final Map<String, CodeContext> contextsOfModule = new THashMap<>();
     final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
 
     // TODO: this code should not be invoked per ns!
@@ -429,7 +429,7 @@ public class CodeContext {
   }
 
   public XmlElementDescriptor[] getDescriptorsWithAllowedDeclaration() {
-    THashSet<XmlElementDescriptor> descriptors = new THashSet<XmlElementDescriptor>();
+    THashSet<XmlElementDescriptor> descriptors = new THashSet<>();
     appendDescriptorsWithAllowedDeclaration(descriptors);
     return descriptors.toArray(new XmlElementDescriptor[descriptors.size()]);
   }
@@ -490,7 +490,7 @@ public class CodeContext {
   }
 
   private static void addPredefinedTags(final CodeContext codeContext) {
-    Collection<String> predefinedTags = new ArrayList<String>();
+    Collection<String> predefinedTags = new ArrayList<>();
     predefinedTags.add(FlexPredefinedTagNames.SCRIPT);
     predefinedTags.add(FlexPredefinedTagNames.STYLE);
     predefinedTags.add(FlexPredefinedTagNames.METADATA);

@@ -85,7 +85,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
     final PsiElement parent3 = parent2 instanceof DartReferenceExpression ? parent2.getParent() : null;
     if (parent3 instanceof DartCallExpression) {
       if (TestUtil.isTest((DartCallExpression)parent3) || TestUtil.isGroup((DartCallExpression)parent3)) {
-        return new PsiLocation<PsiElement>(parent3);
+        return new PsiLocation<>(parent3);
       }
     }
     return null;
@@ -101,7 +101,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
   }
 
   protected List<Location> getLocationByGroupAndTestNames(final PsiFile psiFile, final List<String> nodes) {
-    final List<Location> locations = new ArrayList<Location>();
+    final List<Location> locations = new ArrayList<>();
 
     if (psiFile instanceof DartFile && !nodes.isEmpty()) {
       PsiElementProcessor<PsiElement> collector = new PsiElementProcessor<PsiElement>() {
@@ -119,7 +119,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
                   }
                 }
                 if (matches) {
-                  locations.add(new PsiLocation<PsiElement>(element));
+                  locations.add(new PsiLocation<>(element));
                   return false;
                 }
               }

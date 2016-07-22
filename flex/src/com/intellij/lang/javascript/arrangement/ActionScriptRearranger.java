@@ -102,7 +102,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     final JSClass jsClass = JSPsiImplUtils.findClass((JSFile)file);
     if (jsClass == null) return Collections.emptyList();
 
-    final List<ActionScriptArrangementEntry> result = new SortedList<ActionScriptArrangementEntry>(ActionScriptArrangementEntry.COMPARATOR);
+    final List<ActionScriptArrangementEntry> result = new SortedList<>(ActionScriptArrangementEntry.COMPARATOR);
 
     // static init blocks
     final JSBlockStatement[] blockStatements = PsiTreeUtil.getChildrenOfType(jsClass, JSBlockStatement.class);
@@ -113,7 +113,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     }
 
     // vars and consts. Added to map only if there's only one var in JSVarStatement
-    final Map<JSVariable, ActionScriptArrangementEntry> varToEntry = new THashMap<JSVariable, ActionScriptArrangementEntry>();
+    final Map<JSVariable, ActionScriptArrangementEntry> varToEntry = new THashMap<>();
 
     final JSVarStatement[] varStatements = PsiTreeUtil.getChildrenOfType(jsClass, JSVarStatement.class);
     if (varStatements != null) {
@@ -132,7 +132,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     }
 
     // methods, getters/setters and event handlers
-    final Map<JSFunction, ActionScriptArrangementEntry> functionToEntry = new THashMap<JSFunction, ActionScriptArrangementEntry>();
+    final Map<JSFunction, ActionScriptArrangementEntry> functionToEntry = new THashMap<>();
 
     for (final JSFunction function : jsClass.getFunctions()) {
       final ActionScriptArrangementEntry entry = ActionScriptArrangementEntry.create(function, ranges, document);
@@ -237,7 +237,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
 
   public static List<StdArrangementMatchRule> getDefaultMatchRules() {
     // more or less close to Coding Conventions at http://sourceforge.net/adobe/flexsdk/wiki/Coding%20Conventions/
-    final List<StdArrangementMatchRule> matchRules = new ArrayList<StdArrangementMatchRule>();
+    final List<StdArrangementMatchRule> matchRules = new ArrayList<>();
 
     final ArrangementSettingsToken[] visibility = {PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE};
 

@@ -82,7 +82,7 @@ public class AirPackageAction extends DumbAwareAction {
     }
 
     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = dialog.getSelectedBCs();
-    final Set<Module> modules = new THashSet<Module>();
+    final Set<Module> modules = new THashSet<>();
     for (Pair<Module, FlexBuildConfiguration> bc : modulesAndBCs) {
       modules.add(bc.first);
     }
@@ -103,7 +103,7 @@ public class AirPackageAction extends DumbAwareAction {
   private static void createPackages(final Project project,
                                      final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs,
                                      final PasswordStore passwords) {
-    final Collection<Pair<ExternalTask, String>> tasksAndPackagePaths = new ArrayList<Pair<ExternalTask, String>>();
+    final Collection<Pair<ExternalTask, String>> tasksAndPackagePaths = new ArrayList<>();
 
     final AirPackageProjectParameters params = AirPackageProjectParameters.getInstance(project);
 
@@ -147,7 +147,7 @@ public class AirPackageAction extends DumbAwareAction {
     final ExternalTask task = taskAndPackagePath.first;
     final String packagePath = taskAndPackagePath.second;
     final Consumer<List<String>> onSuccessRunnable =
-      createSuccessConsumer(project, iterator, packagePath, new THashMap<String, List<String>>());
+      createSuccessConsumer(project, iterator, packagePath, new THashMap<>());
     ExternalTask
       .runInBackground(task, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
                        onSuccessRunnable, createFailureConsumer(project, packagePath, task));
@@ -231,7 +231,7 @@ public class AirPackageAction extends DumbAwareAction {
   @Nullable
   public static PasswordStore getPasswords(final Project project,
                                            final Collection<? extends AirPackagingOptions> allPackagingOptions) {
-    final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords = new ArrayList<AirSigningOptions>();
+    final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords = new ArrayList<>();
 
     for (AirPackagingOptions packagingOptions : allPackagingOptions) {
       final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();

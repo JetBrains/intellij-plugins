@@ -61,7 +61,7 @@ public class PsiElementFragment<T extends PsiElement> {
       throw new RuntimeException("Parent " + parent + " was not found for " + myElement);
     }
     int shift = myElement.getTextRange().getStartOffset() - parent.getTextRange().getStartOffset();
-    return new PsiElementFragment<P>(parent, myTextRangeInElement.shiftRight(shift));
+    return new PsiElementFragment<>(parent, myTextRangeInElement.shiftRight(shift));
   }
 
   @Nullable
@@ -89,15 +89,15 @@ public class PsiElementFragment<T extends PsiElement> {
     }
     int startOffset = element.getTextRange().getStartOffset();
     TextRange textRange = new TextRange(common.getStartOffset() - startOffset, common.getEndOffset() - startOffset);
-    return new PsiElementFragment<T>(element, textRange);
+    return new PsiElementFragment<>(element, textRange);
   }
 
   public static <T extends PsiElement> PsiElementFragment<T> createWholeElement(@NotNull T element) {
-    return new PsiElementFragment<T>(element, element.getTextRange());
+    return new PsiElementFragment<>(element, element.getTextRange());
   }
 
   public static <T extends PsiElement> PsiElementFragment<T> create(@NotNull T element, @NotNull TextRange textRangeInElement) {
-    return new PsiElementFragment<T>(element, textRangeInElement);
+    return new PsiElementFragment<>(element, textRangeInElement);
   }
 
   @Override

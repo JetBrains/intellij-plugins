@@ -23,9 +23,9 @@ public class KarmaServerRegistry {
   private static final Logger LOG = Logger.getInstance(KarmaServerRegistry.class);
 
   private final Project myProject;
-  private final ConcurrentMap<String, KarmaServer> myServerByConfigFile = new ConcurrentHashMap<String, KarmaServer>();
-  private final ConcurrentMap<KarmaServerSettings, KarmaServer> myServers = new ConcurrentHashMap<KarmaServerSettings, KarmaServer>();
-  private final ConcurrentMap<KarmaServerSettings, KarmaServerSettings> myStartingServers = new ConcurrentHashMap<KarmaServerSettings, KarmaServerSettings>();
+  private final ConcurrentMap<String, KarmaServer> myServerByConfigFile = new ConcurrentHashMap<>();
+  private final ConcurrentMap<KarmaServerSettings, KarmaServer> myServers = new ConcurrentHashMap<>();
+  private final ConcurrentMap<KarmaServerSettings, KarmaServerSettings> myStartingServers = new ConcurrentHashMap<>();
 
   public KarmaServerRegistry(@NotNull Project project) {
     myProject = project;

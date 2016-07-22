@@ -196,7 +196,7 @@ public class AirPackageDialog extends DialogWrapper {
         }
       }
 
-      final Ref<String> firstErrorRef = new Ref<String>();
+      final Ref<String> firstErrorRef = new Ref<>();
       ValidateFlashConfigurationsPrecompileTask.checkPackagingOptions(moduleAndBC.first, bc, problem -> {
         if (problem.severity == ProjectStructureProblemType.Severity.ERROR && firstErrorRef.isNull()) {
           firstErrorRef.set(problem.errorMessage);
@@ -223,7 +223,7 @@ public class AirPackageDialog extends DialogWrapper {
 
   private static boolean checkDisabledCompilation(final Project project,
                                                   final Collection<Pair<Module, FlexBuildConfiguration>> selectedBCs) {
-    final Collection<FlexBuildConfiguration> bcsWithDisabledCompilation = new ArrayList<FlexBuildConfiguration>();
+    final Collection<FlexBuildConfiguration> bcsWithDisabledCompilation = new ArrayList<>();
 
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : selectedBCs) {
       if (moduleAndBC.second.isSkipCompile()) {
@@ -247,7 +247,7 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   private boolean checkPasswords(final Collection<Pair<Module, FlexBuildConfiguration>> selectedBCs) {
-    final Collection<AirPackagingOptions> allPackagingOptions = new ArrayList<AirPackagingOptions>();
+    final Collection<AirPackagingOptions> allPackagingOptions = new ArrayList<>();
 
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : selectedBCs) {
       final FlexBuildConfiguration bc = moduleAndBC.second;

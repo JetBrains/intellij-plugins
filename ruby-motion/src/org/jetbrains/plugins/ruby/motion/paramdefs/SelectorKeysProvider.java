@@ -42,7 +42,7 @@ public class SelectorKeysProvider implements DynamicHashKeyProviderEx {
     final int argument = pair.first;
     if (argument < 1) return Collections.emptyList();
 
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
     for (Function function : functions) {
       final String[] namedArguments = function.getName().split(":");
       if (pathMatches(argument, namedArguments, pair.second)) {
@@ -72,7 +72,7 @@ public class SelectorKeysProvider implements DynamicHashKeyProviderEx {
     final RListOfExpressions expressions = RListOfExpressionsNavigator.getByPsiElement(argument);
     if (expressions == null) return Pair.create(-1, null);
 
-    final List<String> path = new ArrayList<String>();
+    final List<String> path = new ArrayList<>();
     for (int i = 1; i < expressions.getElements().size(); i++) {
       PsiElement arg = expressions.getElements().get(i);
       if (arg == argument) return Pair.create(i, path);

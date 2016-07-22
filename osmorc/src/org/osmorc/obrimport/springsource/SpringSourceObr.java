@@ -57,7 +57,7 @@ public class SpringSourceObr implements Obr {
   public ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString, @NotNull ProgressIndicator indicator) throws IOException {
     try {
       // TODO: make this more robust against URL changes.
-      List<ObrMavenResult> result = new ArrayList<ObrMavenResult>();
+      List<ObrMavenResult> result = new ArrayList<>();
 
       indicator.setText("Connecting to " + getDisplayName() + "...");
       // http://www.springsource.com/repository/app/search?query=log4j

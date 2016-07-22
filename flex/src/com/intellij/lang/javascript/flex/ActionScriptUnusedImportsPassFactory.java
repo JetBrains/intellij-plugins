@@ -138,7 +138,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
 
     private List<HighlightInfo> getHighlights() {
       final AnnotationHolder annotationHolder = new AnnotationHolderImpl(new AnnotationSession(myFile));
-      final List<HighlightInfo> infos = new ArrayList<HighlightInfo>(importStatements.size() + fqnsToReplaceWithShortName.size());
+      final List<HighlightInfo> infos = new ArrayList<>(importStatements.size() + fqnsToReplaceWithShortName.size());
       IntentionAction action = createOptimizeImportsIntention();
 
       createHighlights(importStatements, annotationHolder, action, JSBundle.message("javascript.validation.unused.import"), infos,

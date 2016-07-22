@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class InheritanceInfoHolder {
   private static final Logger LOG = Logger.getInstance(InheritanceInfoHolder.class);
-  private Map<String, Map<String, String>> myInheritanceInfo = new HashMap<String, Map<String, String>>();
+  private Map<String, Map<String, String>> myInheritanceInfo = new HashMap<>();
 
   public static InheritanceInfoHolder getInstance() {
     return ServiceManager.getService(InheritanceInfoHolder.class);
@@ -33,7 +33,7 @@ public class InheritanceInfoHolder {
             final FileInputStream is = new FileInputStream(child);
             try {
               final Map map = RubyUtil.loadYaml(is);
-              final Map<String, String> result = new HashMap<String, String>();
+              final Map<String, String> result = new HashMap<>();
               for (Object key : map.keySet()) {
                 result.put(key.toString(), map.get(key).toString());
               }

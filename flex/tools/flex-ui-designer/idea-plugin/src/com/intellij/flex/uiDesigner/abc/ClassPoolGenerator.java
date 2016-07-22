@@ -59,7 +59,7 @@ public final class ClassPoolGenerator extends AbcEncoder {
     final int start = out.size();
     out.getBuffer(SwfUtil.getWrapHeaderLength());
 
-    ArrayList<Decoder> decoders = new ArrayList<Decoder>(size);
+    ArrayList<Decoder> decoders = new ArrayList<>(size);
     switch (kind) {
       case IMAGE:
         generate(kind, decoders, size, allocatedCount.imageCount);

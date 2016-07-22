@@ -57,15 +57,15 @@ public class DartSdk {
       cachedValue = CachedValuesManager.getManager(project).createCachedValue(() -> {
         final DartSdk sdk = getGlobalDartSdk();
         if (sdk == null) {
-          return new CachedValueProvider.Result<DartSdk>(null, DartProjectComponent.getProjectRootsModificationTracker(project));
+          return new CachedValueProvider.Result<>(null, DartProjectComponent.getProjectRootsModificationTracker(project));
         }
 
-        List<Object> dependencies = new ArrayList<Object>(3);
+        List<Object> dependencies = new ArrayList<>(3);
         dependencies.add(DartProjectComponent.getProjectRootsModificationTracker(project));
         ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
         ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
 
-        return new CachedValueProvider.Result<DartSdk>(sdk, ArrayUtil.toObjectArray(dependencies));
+        return new CachedValueProvider.Result<>(sdk, ArrayUtil.toObjectArray(dependencies));
       }, false);
 
       project.putUserData(CACHED_DART_SDK_KEY, cachedValue);

@@ -32,7 +32,7 @@ public class DartNameSuggesterUtil {
   }
 
   public static Collection<String> getSuggestedNames(final DartExpression expression, @Nullable Collection<String> additionalUsedNames) {
-    Collection<String> candidates = new LinkedHashSet<String>();
+    Collection<String> candidates = new LinkedHashSet<>();
 
     String text = expression.getText();
     if (expression instanceof DartReference) {
@@ -56,7 +56,7 @@ public class DartNameSuggesterUtil {
     if (additionalUsedNames != null && !additionalUsedNames.isEmpty()) {
       usedNames.addAll(additionalUsedNames);
     }
-    final Collection<String> result = new ArrayList<String>();
+    final Collection<String> result = new ArrayList<>();
 
     for (String candidate : candidates) {
       int index = 0;
@@ -90,7 +90,7 @@ public class DartNameSuggesterUtil {
       name = name.substring(0, name.length() - 1);
     }
     final int length = name.length();
-    final Collection<String> possibleNames = new LinkedHashSet<String>();
+    final Collection<String> possibleNames = new LinkedHashSet<>();
     for (int i = 0; i < length; i++) {
       if (Character.isLetter(name.charAt(i)) &&
           (i == 0 || name.charAt(i - 1) == '_' || (Character.isLowerCase(name.charAt(i - 1)) && Character.isUpperCase(name.charAt(i))))) {
@@ -101,7 +101,7 @@ public class DartNameSuggesterUtil {
       }
     }
     // prefer shorter names
-    ArrayList<String> reversed = new ArrayList<String>(possibleNames);
+    ArrayList<String> reversed = new ArrayList<>(possibleNames);
     Collections.reverse(reversed);
     return ContainerUtil.map(reversed, name1 -> {
       if (name1.indexOf('_') == -1) {

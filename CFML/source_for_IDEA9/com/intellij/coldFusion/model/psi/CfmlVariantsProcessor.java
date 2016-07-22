@@ -45,7 +45,7 @@ public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
     public static final CfmlProcessorEvent SET_INITIAL_CLASS = new CfmlProcessorEvent();
   }
 
-  private final Set<T> myResult = new LinkedHashSet<T>();
+  private final Set<T> myResult = new LinkedHashSet<>();
   private final String myReferenceName;
   private final JavaMethodResolveHelper myMethods;
   private final boolean myIsMethodCall;

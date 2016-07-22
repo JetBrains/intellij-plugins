@@ -37,7 +37,7 @@ public class NetworkUtil {
   private static final TimeoutCachedValue<List<InetAddress>> ourInterfaces = new TimeoutCachedValue<List<InetAddress>>(30 * 1000) {
     @Override
     protected List<InetAddress> calculate() {
-      final List<InetAddress> result = new ArrayList<InetAddress>();
+      final List<InetAddress> result = new ArrayList<>();
       try {
         final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
         while (networkInterfaces.hasMoreElements()) {
@@ -86,7 +86,7 @@ public class NetworkUtil {
     }
 
     try {
-      return new XmlRpcClient(url).execute(fullMethodName, new Vector<Object>(parameters));
+      return new XmlRpcClient(url).execute(fullMethodName, new Vector<>(parameters));
     }
     catch (MalformedURLException e) {
       LOG.info(buildFullLogLine(logLine, parameters) + ' ' + e.getLocalizedMessage());

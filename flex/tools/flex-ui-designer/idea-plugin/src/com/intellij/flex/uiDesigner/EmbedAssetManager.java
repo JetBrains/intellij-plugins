@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 abstract class EmbedAssetManager<I extends EmbedAssetInfo> {
   protected final IdPool idPool = new IdPool();
-  protected final ArrayList<I> assets = new ArrayList<I>();
+  protected final ArrayList<I> assets = new ArrayList<>();
 
   protected void add(@NotNull I info) {
     if (info.id == assets.size()) {

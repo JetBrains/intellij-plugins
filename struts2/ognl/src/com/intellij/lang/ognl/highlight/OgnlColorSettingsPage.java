@@ -99,7 +99,7 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
 
   @Override
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-    Map<String, TextAttributesKey> additionalMap = new HashMap<String, TextAttributesKey>();
+    Map<String, TextAttributesKey> additionalMap = new HashMap<>();
     additionalMap.put("fqnType", OgnlHighlighter.FQN_TYPE);
     return additionalMap;
   }

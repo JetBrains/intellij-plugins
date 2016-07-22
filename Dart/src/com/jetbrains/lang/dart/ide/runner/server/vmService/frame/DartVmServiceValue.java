@@ -32,7 +32,7 @@ public class DartVmServiceValue extends XNamedValue {
   @Nullable private final FieldRef myFieldRef;
   private final boolean myIsException;
 
-  private Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<Integer>(0);
+  private Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<>(0);
 
   public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
                             @NotNull final String isolateId,

@@ -14,7 +14,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
 
   private int lastBlockBegin;
   private OutputStream out;
-  private final TLinkedList<Marker> markers = new TLinkedList<Marker>();
+  private final TLinkedList<Marker> markers = new TLinkedList<>();
 
   private int messageCounter;
 

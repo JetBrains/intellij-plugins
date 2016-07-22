@@ -60,12 +60,12 @@ import java.util.concurrent.Callable;
  * @author Kirill Safonov
  */
 public class FlashUmlDataModel extends DiagramDataModel<Object> {
-  private final Map<String, SmartPsiElementPointer<JSClass>> classesAddedByUser = new HashMap<String, SmartPsiElementPointer<JSClass>>();
-  private final Map<String, SmartPsiElementPointer<JSClass>> classesRemovedByUser = new HashMap<String, SmartPsiElementPointer<JSClass>>();
+  private final Map<String, SmartPsiElementPointer<JSClass>> classesAddedByUser = new HashMap<>();
+  private final Map<String, SmartPsiElementPointer<JSClass>> classesRemovedByUser = new HashMap<>();
   private final String initialPackage;
   private SmartPsiElementPointer<? extends PsiElement> myInitialElement;
-  private final Set<String> packages = new HashSet<String>();
-  private final Set<String> packagesRemovedByUser = new HashSet<String>();
+  private final Set<String> packages = new HashSet<>();
+  private final Set<String> packagesRemovedByUser = new HashSet<>();
 
   private final VirtualFile myEditorFile;
   private final SmartPointerManager spManager;
@@ -102,7 +102,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   private static Collection<String> getSubPackages(final String packageName, final GlobalSearchScope searchScope) {
-    final Collection<String> result = new HashSet<String>();
+    final Collection<String> result = new HashSet<>();
     JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
       public boolean process(VirtualFile file, String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         if (kind == JSPackageIndexInfo.Kind.PACKAGE) {
@@ -115,7 +115,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   private static Collection<JSClass> getClasses(final String packageName, final GlobalSearchScope searchScope) {
-    final Collection<JSClass> result = new HashSet<JSClass>();
+    final Collection<JSClass> result = new HashSet<>();
     JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
       public boolean process(VirtualFile file, String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         String qualifiedName = StringUtil.getQualifiedName(packageName, name);
@@ -131,18 +131,18 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     return result;
   }
 
-  private final Collection<DiagramNode<Object>> myNodes = new HashSet<DiagramNode<Object>>();
-  private final Collection<DiagramEdge<Object>> myEdges = new HashSet<DiagramEdge<Object>>();
-  private final Collection<DiagramEdge<Object>> myDependencyEdges = new HashSet<DiagramEdge<Object>>();
+  private final Collection<DiagramNode<Object>> myNodes = new HashSet<>();
+  private final Collection<DiagramEdge<Object>> myEdges = new HashSet<>();
+  private final Collection<DiagramEdge<Object>> myDependencyEdges = new HashSet<>();
 
-  private final Collection<DiagramNode<Object>> myNodesOld = new HashSet<DiagramNode<Object>>();
-  private final Collection<DiagramEdge<Object>> myEdgesOld = new HashSet<DiagramEdge<Object>>();
-  private final Collection<DiagramEdge<Object>> myDependencyEdgesOld = new HashSet<DiagramEdge<Object>>();
+  private final Collection<DiagramNode<Object>> myNodesOld = new HashSet<>();
+  private final Collection<DiagramEdge<Object>> myEdgesOld = new HashSet<>();
+  private final Collection<DiagramEdge<Object>> myDependencyEdgesOld = new HashSet<>();
 
 
   @NotNull
   public Collection<DiagramNode<Object>> getNodes() {
-    return new ArrayList<DiagramNode<Object>>(myNodes);
+    return new ArrayList<>(myNodes);
   }
 
   @NotNull
@@ -151,7 +151,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       return myEdges;
     }
     else {
-      Collection<DiagramEdge<Object>> allEdges = new HashSet<DiagramEdge<Object>>(myEdges);
+      Collection<DiagramEdge<Object>> allEdges = new HashSet<>(myEdges);
       allEdges.addAll(myDependencyEdges);
       return allEdges;
     }
@@ -208,7 +208,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     final Runnable runnable = () -> {
       JSReferenceList refList =
         !fromClass.isInterface() && toClass.isInterface() ? fromClass.getImplementsList() : fromClass.getExtendsList();
-      List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+      List<FormatFixer> formatters = new ArrayList<>();
       JSRefactoringUtil.removeFromReferenceList(refList, toClass, formatters);
       if (!(fromClass instanceof XmlBackedJSClassImpl) && needsImport(fromClass, toClass)) {
         formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(fromClass.getContainingFile()));
@@ -276,7 +276,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   public synchronized void updateDataModel() {
     final Set<JSClass> classes = getAllClasses();
     syncPackages();
-    final Set<JSClass> interfaces = new HashSet<JSClass>();
+    final Set<JSClass> interfaces = new HashSet<>();
 
     for (String psiPackage : packages) {
 
@@ -298,7 +298,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       {
         DiagramNode<Object> source = findNode(psiClass);
         DiagramNode<Object> target = null;
-        Collection<JSClass> processed = new ArrayList<JSClass>();
+        Collection<JSClass> processed = new ArrayList<>();
         JSClass superClass = getSuperClass(psiClass, processed);
         while (target == null && superClass != null) {
           target = findNode(superClass);
@@ -324,7 +324,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
         }
       }
       if (psiClass.isInterface()) {
-        Set<JSClass> found = new HashSet<JSClass>();
+        Set<JSClass> found = new HashSet<>();
         findNearestInterfaces(psiClass, found);
 
         for (JSClass inter : found) {
@@ -339,9 +339,9 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       }
       else {
         //Collect all realized interfaces
-        Set<JSClass> inters = new HashSet<JSClass>();
+        Set<JSClass> inters = new HashSet<>();
         ContainerUtil.addAll(inters, psiClass.getImplementedInterfaces());
-        Collection<JSClass> processed = new ArrayList<JSClass>();
+        Collection<JSClass> processed = new ArrayList<>();
         JSClass cur = getSuperClass(psiClass, processed);
         while (cur != null) {
           if (findNode(cur) == null) {
@@ -353,7 +353,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
           cur = getSuperClass(cur, processed);
         }
 
-        ArrayList<JSClass> faces = new ArrayList<JSClass>(inters);
+        ArrayList<JSClass> faces = new ArrayList<>(inters);
 
         while (!faces.isEmpty()) {
           JSClass inter = faces.get(0);
@@ -458,7 +458,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     final GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
     if (initialPackage == null || FlashUmlElementManager.packageExists(getProject(), initialPackage, searchScope)) return;
 
-    final Set<String> psiPackages = new HashSet<String>();
+    final Set<String> psiPackages = new HashSet<>();
     for (String sub : getSubPackages(initialPackage, searchScope)) {
       psiPackages.add(sub);
     }
@@ -509,7 +509,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   private Set<JSClass> getAllClasses() {
-    Set<JSClass> classes = new HashSet<JSClass>();
+    Set<JSClass> classes = new HashSet<>();
     for (SmartPsiElementPointer<JSClass> pointer : classesAddedByUser.values()) {
       classes.add(pointer.getElement());
     }
@@ -523,7 +523,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       }
     }
     classes.remove(null);
-    Set<JSClass> temp = new HashSet<JSClass>();
+    Set<JSClass> temp = new HashSet<>();
 
     for (JSClass aClass : classes) {
       if (!aClass.isValid()) temp.add(aClass);
@@ -577,7 +577,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       return;
     }
 
-    Collection<DiagramEdge> edgesToRemove = new ArrayList<DiagramEdge>();
+    Collection<DiagramEdge> edgesToRemove = new ArrayList<>();
     for (DiagramEdge edge : myEdges) {
       if (node.equals(edge.getTarget()) || node.equals(edge.getSource())) {
         edgesToRemove.add(edge);
@@ -585,7 +585,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     }
     myEdges.removeAll(edgesToRemove);
 
-    Collection<DiagramEdge> dependencyEdgesToRemove = new ArrayList<DiagramEdge>();
+    Collection<DiagramEdge> dependencyEdgesToRemove = new ArrayList<>();
     for (DiagramEdge edge : myDependencyEdges) {
       if (node.equals(edge.getTarget()) || node.equals(edge.getSource())) {
         dependencyEdgesToRemove.add(edge);
@@ -605,7 +605,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       packages.remove(p);
       packagesRemovedByUser.add(p);
 
-      Set<String> toDelete = new HashSet<String>();
+      Set<String> toDelete = new HashSet<>();
       for (String key : classesAddedByUser.keySet()) {
         final SmartPsiElementPointer<JSClass> pointer = classesAddedByUser.get(key);
         final JSClass psiClass = pointer.getElement();
@@ -683,7 +683,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     }
 
     final String fqnStart = parentPackage + ".";
-    final ArrayList<String> toRemove = new ArrayList<String>();
+    final ArrayList<String> toRemove = new ArrayList<>();
     for (String p : packages) {
       if (p.startsWith(fqnStart)) {
         toRemove.add(p);
@@ -705,7 +705,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   List<String> getAllClassesFQN() {
-    List<String> fqns = new ArrayList<String>();
+    List<String> fqns = new ArrayList<>();
     for (DiagramNode node : getNodes()) {
       final Object identifyingElement = getIdentifyingElement(node);
       if (identifyingElement instanceof JSClass) {
@@ -716,7 +716,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   List<String> getAllPackagesFQN() {
-    List<String> fqns = new ArrayList<String>();
+    List<String> fqns = new ArrayList<>();
     for (DiagramNode node : getNodes()) {
       final Object identifyingElement = getIdentifyingElement(node);
       if (identifyingElement instanceof JSPackage) {
@@ -808,7 +808,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
         String targetQName = toClass.getQualifiedName();
         JSRefactoringUtil.addToSupersList(fromClass, targetQName, true);
         if (targetQName.contains(".") && !(fromClass instanceof XmlBackedJSClassImpl)) {
-          List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+          List<FormatFixer> formatters = new ArrayList<>();
           formatters.add(ImportUtils.insertImportStatements(fromClass, Collections.singletonList(targetQName)));
           formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(fromClass.getContainingFile()));
           FormatFixer.fixAll(formatters);
@@ -867,7 +867,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
           }
         }
         Callable<DiagramEdge<Object>> callable = () -> {
-          List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+          List<FormatFixer> formatters = new ArrayList<>();
           boolean optimize = false;
           if (superClasses.length > 0 && !JSResolveUtil.isObjectClass(superClasses[0])) {
             JSRefactoringUtil.removeFromReferenceList(fromClass.getExtendsList(), superClasses[0], formatters);

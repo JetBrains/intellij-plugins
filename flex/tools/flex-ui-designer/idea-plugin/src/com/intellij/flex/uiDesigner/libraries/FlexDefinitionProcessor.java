@@ -53,7 +53,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     if (StringUtil.equals(name, "mx.containers:Panel")) {
       final List<SkipMethodKey> skippedMethods;
       if (vGreaterOrEquals4_5) {
-        skippedMethods = new ArrayList<SkipMethodKey>(1);
+        skippedMethods = new ArrayList<>(1);
         skippedMethods.add(new SkipMethodKey("addChildAt", true));
       }
       else {
@@ -66,7 +66,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       definition.doAbcData.abcModifier = new MethodAccessModifier("loadContent", null);
     }
     else if (StringUtil.equals(name, "mx.styles:StyleProtoChain")) {
-      List<String> list = new ArrayList<String>(2);
+      List<String> list = new ArrayList<>(2);
       list.add("matchStyleDeclarations");
       list.add("sortOnSpecificity");
       definition.doAbcData.abcModifier = new MethodAccessModifier(list);
@@ -75,7 +75,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       final boolean mxCore = StringUtil.startsWith(name, MX_CORE);
       if (mxCore) {
         if (equals(name, MX_CORE.length(), "UIComponent")) {
-          List<SkipMethodKey> list = new ArrayList<SkipMethodKey>(1);
+          List<SkipMethodKey> list = new ArrayList<>(1);
           list.add(new SkipMethodKey("removedFromStageHandler", false, true));
           definition.doAbcData.abcModifier = new MethodAccessModifier("UIComponent", list, new VarAccessModifier("deferredSetStyles"));
         }
@@ -120,7 +120,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
       final List<SkipMethodKey> skippedMethods;
       if (skipInitialize || skipCommitProperties) {
-        skippedMethods = new ArrayList<SkipMethodKey>(2);
+        skippedMethods = new ArrayList<>(2);
         skippedMethods.add(new SkipMethodKey("initialize", true));
         if (skipCommitProperties) {
           skippedMethods.add(new SkipMethodKey("commitProperties", false));

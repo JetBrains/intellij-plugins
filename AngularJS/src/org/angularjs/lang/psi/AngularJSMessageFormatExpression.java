@@ -38,7 +38,7 @@ public class AngularJSMessageFormatExpression extends JSExpressionImpl {
   }
 
   public AngularJSMessageFormatParser.ExtensionType getExtensionType() {
-    final Ref<PsiElement> ref = new Ref<PsiElement>();
+    final Ref<PsiElement> ref = new Ref<>();
     PsiTreeUtil.processElements(this, new PsiElementProcessor() {
       @Override
       public boolean execute(@NotNull PsiElement element) {
@@ -57,7 +57,7 @@ public class AngularJSMessageFormatExpression extends JSExpressionImpl {
   }
 
   public PsiElement getExtensionTypeElement() {
-    final Ref<PsiElement> ref = new Ref<PsiElement>();
+    final Ref<PsiElement> ref = new Ref<>();
     PsiTreeUtil.processElements(this, new PsiElementProcessor() {
       @Override
       public boolean execute(@NotNull PsiElement element) {

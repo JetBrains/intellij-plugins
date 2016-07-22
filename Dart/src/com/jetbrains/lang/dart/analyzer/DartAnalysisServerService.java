@@ -111,22 +111,22 @@ public class DartAnalysisServerService {
   @NotNull private String mySdkVersion = "";
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
-  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
-  private final List<String> myVisibleFiles = new ArrayList<String>();
-  private final Set<Document> myChangedDocuments = new THashSet<Document>();
+  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<>();
+  private final List<String> myVisibleFiles = new ArrayList<>();
+  private final Set<Document> myChangedDocuments = new THashSet<>();
   private final Alarm myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, ApplicationManager.getApplication());
 
-  @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
-  @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
+  @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
+  @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<>();
 
   @NotNull private final DartServerData myServerData = new DartServerData(myRootsHandler);
 
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
 
-  @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<String>();
+  @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
-  @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<String>();
+  @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -357,8 +357,8 @@ public class DartAnalysisServerService {
     if (sdk == null) return;
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    final SortedSet<String> folderPaths = new TreeSet<String>();
-    final Collection<String> rootsToAddToLib = new THashSet<String>();
+    final SortedSet<String> folderPaths = new TreeSet<>();
+    final Collection<String> rootsToAddToLib = new THashSet<>();
 
     for (final String path : filePaths) {
       if (path != null) {
@@ -509,7 +509,7 @@ public class DartAnalysisServerService {
 
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
-      final List<String> newVisibleFiles = new ArrayList<String>();
+      final List<String> newVisibleFiles = new ArrayList<>();
 
       for (Project project : myRootsHandler.getTrackedProjects()) {
         for (VirtualFile file : FileEditorManager.getInstance(project).getSelectedFiles()) {
@@ -557,16 +557,16 @@ public class DartAnalysisServerService {
 
     myUpdateFilesAlarm.cancelAllRequests();
 
-    final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
+    final Map<String, Object> filesToUpdate = new THashMap<>();
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
-      final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
+      final Set<String> oldTrackedFiles = new THashSet<>(myFilePathWithOverlaidContentToTimestamp.keySet());
 
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
 
       // some documents in myChangedDocuments may be updated by external change, suxh as switch branch, that's why we track them,
       // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for for myChangedDocuments as well (to trigger DAS notifications)
-      final Set<Document> documents = new THashSet<Document>(myChangedDocuments);
+      final Set<Document> documents = new THashSet<>(myChangedDocuments);
       myChangedDocuments.clear();
       ContainerUtil.addAll(documents, fileDocumentManager.getUnsavedDocuments());
 
@@ -591,7 +591,7 @@ public class DartAnalysisServerService {
       }
 
       if (LOG.isDebugEnabled()) {
-        final Set<String> overlaid = new THashSet<String>(filesToUpdate.keySet());
+        final Set<String> overlaid = new THashSet<>(filesToUpdate.keySet());
         for (String removeOverlaid : oldTrackedFiles) {
           overlaid.remove(FileUtil.toSystemDependentName(removeOverlaid));
         }
@@ -750,7 +750,7 @@ public class DartAnalysisServerService {
     server.analysis_getNavigation(filePath, offset, length, new GetNavigationConsumer() {
       @Override
       public void computedNavigation(final List<NavigationRegion> regions) {
-        final List<DartServerData.DartNavigationRegion> dartRegions = new ArrayList<DartServerData.DartNavigationRegion>(regions.size());
+        final List<DartServerData.DartNavigationRegion> dartRegions = new ArrayList<>(regions.size());
         for (NavigationRegion region : regions) {
           if (region.getLength() > 0) {
             dartRegions.add(new DartServerData.DartNavigationRegion(region));
@@ -815,7 +815,7 @@ public class DartAnalysisServerService {
   @Nullable
   public List<AnalysisErrorFixes> edit_getFixes(@NotNull final String _filePath, final int offset) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
+    final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -843,7 +843,7 @@ public class DartAnalysisServerService {
                                            final int offset,
                                            @NotNull final Consumer<SearchResult> consumer) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<String> searchIdRef = new Ref<String>();
+    final Ref<String> searchIdRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return;
@@ -930,7 +930,7 @@ public class DartAnalysisServerService {
   @Nullable
   public String completion_getSuggestions(@NotNull final String _filePath, final int offset) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<String> resultRef = new Ref<String>();
+    final Ref<String> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) {
@@ -962,7 +962,7 @@ public class DartAnalysisServerService {
                                   final int selectionLength,
                                   final int lineLength) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<FormatResult> resultRef = new Ref<FormatResult>();
+    final Ref<FormatResult> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1016,7 +1016,7 @@ public class DartAnalysisServerService {
   @Nullable
   public SourceFileEdit edit_organizeDirectives(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
+    final Ref<SourceFileEdit> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1056,7 +1056,7 @@ public class DartAnalysisServerService {
   @Nullable
   public SourceFileEdit edit_sortMembers(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
+    final Ref<SourceFileEdit> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1120,7 +1120,7 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       if (myServer == null) return;
 
-      final Map<String, List<String>> subscriptions = new THashMap<String, List<String>>();
+      final Map<String, List<String>> subscriptions = new THashMap<>();
       subscriptions.put(AnalysisService.HIGHLIGHTS, myVisibleFiles);
       subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
       subscriptions.put(AnalysisService.OVERRIDES, myVisibleFiles);
@@ -1139,7 +1139,7 @@ public class DartAnalysisServerService {
   @Nullable
   public String execution_createContext(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<String> resultRef = new Ref<String>();
+    final Ref<String> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1186,7 +1186,7 @@ public class DartAnalysisServerService {
     }
 
     final String filePath = _filePath != null ? FileUtil.toSystemDependentName(_filePath) : null;
-    final Ref<String> resultRef = new Ref<String>();
+    final Ref<String> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1326,7 +1326,7 @@ public class DartAnalysisServerService {
   }
 
   public void restartServer() {
-    final Set<Project> projects = new THashSet<Project>(myRootsHandler.getTrackedProjects());
+    final Set<Project> projects = new THashSet<>(myRootsHandler.getTrackedProjects());
 
     stopServer();
 
@@ -1364,7 +1364,7 @@ public class DartAnalysisServerService {
       myChangedDocuments.clear();
       myServerData.clearData();
 
-      final List<Project> projects = new ArrayList<Project>(myRootsHandler.getTrackedProjects());
+      final List<Project> projects = new ArrayList<>(myRootsHandler.getTrackedProjects());
       myRootsHandler.reset();
 
       ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(projects), ModalityState.NON_MODAL);

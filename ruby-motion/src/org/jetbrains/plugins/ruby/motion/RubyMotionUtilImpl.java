@@ -303,8 +303,8 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
 
   private Trinity<String, String[], ProjectType> doCalculateSdkAndFrameworks(RFile file) {
     final ProjectType projectType = calculateProjectType(file);
-    final Ref<String> sdkVersion = new Ref<String>(getDefaultSdkVersion(projectType));
-    final Set<String> frameworks = new HashSet<String>();
+    final Ref<String> sdkVersion = new Ref<>(getDefaultSdkVersion(projectType));
+    final Set<String> frameworks = new HashSet<>();
     Collections.addAll(frameworks, projectType == ProjectType.OSX ? DEFAULT_OSX_FRAMEWORKS :
                                    projectType == ProjectType.ANDROID ? DEFAULT_ANDROID_FRAMEWORKS :
                                    DEFAULT_IOS_FRAMEWORKS);

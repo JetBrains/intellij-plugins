@@ -14,8 +14,8 @@ import java.util.Set;
 
 public class HbBraceMatcher implements BraceMatcher {
 
-  private static final Set<IElementType> LEFT_BRACES = new HashSet<IElementType>();
-  private static final Set<IElementType> RIGHT_BRACES = new HashSet<IElementType>();
+  private static final Set<IElementType> LEFT_BRACES = new HashSet<>();
+  private static final Set<IElementType> RIGHT_BRACES = new HashSet<>();
 
   static {
     LEFT_BRACES.add(HbTokenTypes.OPEN);

@@ -12,7 +12,7 @@ class AddItems extends OverrideBase {
   AddItems(ByteRange dataRange, DynamicObjectContext itemDeferredInstance, boolean autoDestruction) {
     super(dataRange);
     this.autoDestruction = autoDestruction;
-    itemDeferredInstances = new ArrayList<DynamicObjectContext>();
+    itemDeferredInstances = new ArrayList<>();
     addItemDeferredInstance(itemDeferredInstance);
   }
 

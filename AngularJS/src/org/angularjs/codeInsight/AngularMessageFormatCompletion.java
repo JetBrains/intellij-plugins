@@ -115,7 +115,7 @@ public class AngularMessageFormatCompletion {
     final CompletionResultSet set =
       result.withRelevanceSorter(CompletionSorter.emptySorter().weigh(MESSAGE_FORMAT_KEYWORD_WEIGHER));
     if (AngularJSMessageFormatParser.ExtensionType.plural.equals(type)) {
-      final List<AngularJSPluralCategories> values = new ArrayList<AngularJSPluralCategories>(Arrays.asList(AngularJSPluralCategories.values()));
+      final List<AngularJSPluralCategories> values = new ArrayList<>(Arrays.asList(AngularJSPluralCategories.values()));
       Collections.sort(values, PLURAL_CATEGORIES_COMPARATOR);
       for (AngularJSPluralCategories category : values) {
         LookupElementBuilder element = LookupElementBuilder.create(category).withInsertHandler(MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER);

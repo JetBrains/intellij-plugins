@@ -31,7 +31,7 @@ public class FlexColorReference extends BasicAttributeValueReference {
    public Object[] getVariants() {
      if (ourValues == null) {
        ColorSampleLookupValue[] colors = ColorSampleLookupValue.getColors();
-       List<Object> mxmlColors = new ArrayList<Object>();
+       List<Object> mxmlColors = new ArrayList<>();
 
        for (ColorSampleLookupValue color : colors) {
          String value = color.getValue();

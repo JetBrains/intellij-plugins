@@ -96,8 +96,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
   public OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory, final String name) {
     super(project, configurationFactory, name);
-    bundlesToDeploy = new ArrayList<SelectedBundle>();
-    additionalProperties = new HashMap<String, String>();
+    bundlesToDeploy = new ArrayList<>();
+    additionalProperties = new HashMap<>();
     GenericRunProperties.setStartConsole(additionalProperties, true);
   }
 
@@ -107,8 +107,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     OsgiRunConfiguration conf = (OsgiRunConfiguration)super.clone();
     if (conf == null) return null;
 
-    conf.bundlesToDeploy = new ArrayList<SelectedBundle>(bundlesToDeploy);
-    conf.additionalProperties = new HashMap<String, String>(additionalProperties);
+    conf.bundlesToDeploy = new ArrayList<>(bundlesToDeploy);
+    conf.additionalProperties = new HashMap<>(additionalProperties);
     return conf;
   }
 
@@ -266,7 +266,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   @NotNull
   @Override
   public Module[] getModules() {
-    List<Module> modules = new ArrayList<Module>();
+    List<Module> modules = new ArrayList<>();
 
     ModuleManager moduleManager = ModuleManager.getInstance(getProject());
     for (SelectedBundle selectedBundle : getBundlesToDeploy()) {

@@ -51,7 +51,7 @@ public class JTreeUtil {
   }
 
   private static List<TreeNode> childrenToArray(DefaultMutableTreeNode node, int l, int r) {
-    final List<TreeNode> result = new ArrayList<TreeNode>();
+    final List<TreeNode> result = new ArrayList<>();
     for (; l < r; ++l) {
       result.add(node.getChildAt(l));
     }

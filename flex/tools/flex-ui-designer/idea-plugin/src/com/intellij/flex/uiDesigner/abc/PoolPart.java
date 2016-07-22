@@ -12,7 +12,7 @@ class PoolPart {
   int totalBytes;
 
   PoolPart(int poolPartLength) {
-    map = new ObjectIntHashMap<ByteArray>(poolPartLength);
+    map = new ObjectIntHashMap<>(poolPartLength);
     list = new ByteArray[poolPartLength - 1];
   }
 

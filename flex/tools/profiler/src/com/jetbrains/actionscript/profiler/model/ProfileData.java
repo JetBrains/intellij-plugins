@@ -20,8 +20,8 @@ public class ProfileData {
   public static final Key<ProfilingManager> PROFILING_MANAGER = Key.create("ASProfilingManager");
 
   private CallTree callTree = new CallTree();
-  private final Map<Integer, CreateObjectSample> objects = new HashMap<Integer, CreateObjectSample>();
-  private final Map<Integer, Set<Integer>> references = new LinkedHashMap<Integer, Set<Integer>>(50);
+  private final Map<Integer, CreateObjectSample> objects = new HashMap<>();
+  private final Map<Integer, Set<Integer>> references = new LinkedHashMap<>(50);
 
   public CallTree getCallTree() {
     return callTree;

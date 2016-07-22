@@ -144,7 +144,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   @NotNull
   private static List<VirtualFile> getApplicableVirtualFiles(@NotNull final Project project,
                                                              @NotNull final VirtualFile[] filesAndDirs) {
-    final List<VirtualFile> result = new SmartList<VirtualFile>();
+    final List<VirtualFile> result = new SmartList<>();
 
     GlobalSearchScope dirScope = null;
 

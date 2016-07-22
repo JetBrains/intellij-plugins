@@ -38,7 +38,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
       if (namespace != null) {
         String ns = skipNsResolving ? namespace.getText() : JSPsiImplUtils.calcNamespaceReference(place);
         if (ns != null) {
-          openedNses = new THashMap<String, String>(1);
+          openedNses = new THashMap<>(1);
           openedNses.put(ns, null);
           defaultNsIsNotAllowed = true;
         }

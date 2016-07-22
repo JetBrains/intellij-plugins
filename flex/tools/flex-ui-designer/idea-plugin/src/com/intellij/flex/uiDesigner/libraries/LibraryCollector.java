@@ -32,8 +32,8 @@ import java.util.Set;
 class LibraryCollector {
   private static final String DOT_SWC = ".swc";
 
-  final List<Library> externalLibraries = new ArrayList<Library>();
-  final List<Library> sdkLibraries = new ArrayList<Library>();
+  final List<Library> externalLibraries = new ArrayList<>();
+  final List<Library> sdkLibraries = new ArrayList<>();
   private VirtualFile globalLibrary;
 
   final LibraryStyleInfoCollector initializer;
@@ -42,7 +42,7 @@ class LibraryCollector {
   private String flexmojosSdkHomePath;
 
   // AS-200
-  private final Set<VirtualFile> uniqueGuard = new THashSet<VirtualFile>();
+  private final Set<VirtualFile> uniqueGuard = new THashSet<>();
 
   private final LibraryManager libraryManager;
 
