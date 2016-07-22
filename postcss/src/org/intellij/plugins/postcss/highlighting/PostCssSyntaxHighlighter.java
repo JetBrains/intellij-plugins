@@ -51,7 +51,7 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("POST_CSS_BAD_CHARACTER", CssHighlighter.CSS_BAD_CHARACTER);
 
   static {
-    mapping = new HashMap<IElementType, TextAttributesKey>();
+    mapping = new HashMap<>();
     mapping.put(CssElementTypes.CSS_COMMENT, COMMENT);
     mapping.put(CssElementTypes.CSS_HASH, ID_SELECTOR);
     mapping.put(CssElementTypes.CSS_IDENT, IDENTIFIER);
