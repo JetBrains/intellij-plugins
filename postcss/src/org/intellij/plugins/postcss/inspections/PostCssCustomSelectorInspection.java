@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.CssSelectorList;
+import com.intellij.psi.css.impl.CssElementTypes;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.actions.PostCssAddPrefixToCustomSelectorQuickFix;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
@@ -37,6 +38,10 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
         if (selectorList == null || selectorList.getText().isEmpty()) {
           holder.registerProblem(postCssCustomSelectorAtRule,
                                  PostCssBundle.message("annotator.custom.selector.at.rule.should.contain.selector.list"));
+        }
+        if (postCssCustomSelectorAtRule.getLastChild().getNode().getElementType() != CssElementTypes.CSS_SEMICOLON) {
+          holder.registerProblem(postCssCustomSelectorAtRule,
+                                 PostCssBundle.message("inspections.custom.selector.at.rule.should.ends.with.semicolon"));
         }
       }
     };

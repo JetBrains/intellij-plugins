@@ -6,8 +6,6 @@ PostCSS File:CustomSelectorWithWhitespace.pcss
         PsiWhiteSpace(' ')
         PsiElement(POST_CSS_CUSTOM_SELECTOR)
           PsiElement(CSS_COLON)(':')
-          PsiErrorElement:no whitespaces between ':' and <extension-name> allowed
-            <empty list>
           PsiWhiteSpace(' ')
           PsiElement(CSS_IDENT)('--any-link')
         PsiWhiteSpace(' ')

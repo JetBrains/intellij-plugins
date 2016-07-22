@@ -5,8 +5,6 @@ PostCSS File:CustomSelectorDefinitionWithoutColon.pcss
         PsiElement(POST_CSS_CUSTOM_SELECTOR_SYM)('@custom-selector')
         PsiWhiteSpace(' ')
         PsiElement(POST_CSS_CUSTOM_SELECTOR)
-          PsiErrorElement:':' expected
-            <empty list>
           PsiElement(CSS_IDENT)('--button')
         PsiWhiteSpace(' ')
         PsiElement(CSS_SELECTOR_LIST)

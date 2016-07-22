@@ -1,13 +1,10 @@
 package org.intellij.plugins.postcss.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import com.intellij.psi.tree.IElementType;
-import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -93,18 +90,21 @@ public class PostCssParser extends CssParser2 {
     addSingleToken();
     parseCustomSelector();
     parseSelectorList();
-    addSemicolonOrError();
+    if (getTokenType() == CssElementTypes.CSS_SEMICOLON){
+      addSingleToken();
+    }
     customSelectorRule.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE);
     return true;
   }
 
   private boolean parseCustomSelector() {
     PsiBuilder.Marker customSelectorName = createCompositeElement();
-    boolean hasColon = addTokenOrError(CssElementTypes.CSS_COLON, "':'");
-    if (hasColon && hasWhitespaceBefore()) {
-      createErrorElement(PostCssBundle.message("no.whitespaces.between.colon.and.extension.name.allowed"));
+    if (getTokenType() == CssElementTypes.CSS_COLON){
+      addSingleToken();
     }
-    addIdentOrError();
+    if (getTokenType() == CssElementTypes.CSS_IDENT){
+      addSingleToken();
+    }
     customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
     return true;
   }
