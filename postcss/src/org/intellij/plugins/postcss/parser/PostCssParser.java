@@ -91,36 +91,22 @@ public class PostCssParser extends CssParser2 {
     }
     PsiBuilder.Marker customSelectorRule = createCompositeElement();
     addSingleToken();
-    parseCustomSelector(true);
+    parseCustomSelector();
     parseSelectorList();
     addSemicolonOrError();
     customSelectorRule.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE);
     return true;
   }
 
-  private boolean parseCustomSelector(boolean strict) {
-    if (strict) {
-      PsiBuilder.Marker customSelectorName = createCompositeElement();
-      boolean hasColon = addTokenOrError(CssElementTypes.CSS_COLON, "':'");
-      if (hasColon && hasWhitespaceBefore()) {
-        createErrorElement(PostCssBundle.message("no.whitespaces.between.colon.and.extension.name.allowed"));
-      }
-      addIdentOrError();
-      customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
-      return true;
+  private boolean parseCustomSelector() {
+    PsiBuilder.Marker customSelectorName = createCompositeElement();
+    boolean hasColon = addTokenOrError(CssElementTypes.CSS_COLON, "':'");
+    if (hasColon && hasWhitespaceBefore()) {
+      createErrorElement(PostCssBundle.message("no.whitespaces.between.colon.and.extension.name.allowed"));
     }
-    else {
-      if (getTokenType() != CssElementTypes.CSS_COLON || rawLookup(1) != CssElementTypes.CSS_IDENT) return false;
-      PsiBuilder.Marker customSelectorName = createCompositeElement();
-      addSingleToken();
-      if (getTokenText() == null || !StringUtil.startsWith(getTokenText(), "--")) {
-        customSelectorName.rollbackTo();
-        return false;
-      }
-      addSingleToken();
-      customSelectorName.drop();
-      return true;
-    }
+    addIdentOrError();
+    customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
+    return true;
   }
 
   private boolean parseAtRuleNesting() {
@@ -259,26 +245,8 @@ public class PostCssParser extends CssParser2 {
       simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
     }
     else {
-      PsiBuilder.Marker simpleSelector = createCompositeElement();
-      if (parseCustomSelector(false)) {
-        parseSelectorSuffixList(true);
-        simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
-        return;
-      }
-      simpleSelector.drop();
       super.parseSimpleSelector();
     }
-  }
-
-  @Override
-  protected boolean parsePseudo() {
-    PsiBuilder.Marker pseudoClass = createCompositeElement();
-    if (parseCustomSelector(false)) {
-      pseudoClass.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
-      return true;
-    }
-    pseudoClass.drop();
-    return super.parsePseudo();
   }
 
   @Override

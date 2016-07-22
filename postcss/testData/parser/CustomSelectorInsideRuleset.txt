@@ -47,7 +47,7 @@ PostCSS File:CustomSelectorInsideRuleset.pcss
                 PsiElement(CSS_SIMPLE_SELECTOR)
                   PsiElement(CSS_IDENT)('a')
                   PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                    PsiElement(POST_CSS_CUSTOM_SELECTOR)
+                    PsiElement(CSS_PSEUDO_CLASS)
                       PsiElement(CSS_COLON)(':')
                       PsiElement(CSS_IDENT)('--any-link')
             PsiWhiteSpace(' ')

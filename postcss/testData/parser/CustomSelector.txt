@@ -28,10 +28,10 @@ PostCSS File:CustomSelector.pcss
         PsiElement(CSS_SELECTOR_LIST)
           PsiElement(CSS_SELECTOR)
             PsiElement(CSS_SIMPLE_SELECTOR)
-              PsiElement(CSS_COLON)(':')
-              PsiElement(CSS_IDENT)('--button')
               PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                <empty list>
+                PsiElement(CSS_PSEUDO_CLASS)
+                  PsiElement(CSS_COLON)(':')
+                  PsiElement(CSS_IDENT)('--button')
         PsiWhiteSpace(' ')
         PsiElement(CSS_DECLARATION_BLOCK)
           PsiElement(CSS_LBRACE)('{')

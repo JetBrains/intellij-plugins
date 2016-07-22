@@ -16,6 +16,9 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
     else if (type == PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE) {
       return new PostCssCustomSelectorAtRuleImpl();
     }
+    else if (type == PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR) {
+      return new PostCssCustomSelectorImpl();
+    }
     return super.createComposite(type);
   }
 }

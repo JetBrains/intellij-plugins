@@ -1,6 +1,6 @@
 package org.intellij.plugins.postcss.psi;
 
-import com.intellij.psi.css.CssPseudoSelector;
+import com.intellij.psi.css.CssElement;
 
-public interface PostCssCustomSelector extends CssPseudoSelector {
+public interface PostCssCustomSelector extends CssElement {
 }
