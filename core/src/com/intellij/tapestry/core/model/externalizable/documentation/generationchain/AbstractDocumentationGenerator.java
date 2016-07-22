@@ -28,7 +28,7 @@ public abstract class AbstractDocumentationGenerator implements Command {
     }
 
     Map<String, Object> buildVelocityContext() {
-        Map<String, Object> velocityContext = new HashMap<String, Object>();
+        Map<String, Object> velocityContext = new HashMap<>();
 
         try {
             velocityContext.put("style", STYLE);

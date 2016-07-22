@@ -40,7 +40,7 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
             return _templateCache;
         }
 
-        List<IResource> templates = new ArrayList<IResource>();
+        List<IResource> templates = new ArrayList<>();
         String packageName = getElementClass().getFullyQualifiedName().substring(0, getElementClass().getFullyQualifiedName().lastIndexOf('.'));
 
         // Search in the classpath

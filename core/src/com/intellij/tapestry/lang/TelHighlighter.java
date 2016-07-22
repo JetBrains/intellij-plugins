@@ -35,7 +35,7 @@ public class TelHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> ourMap;
 
   static {
-    ourMap = new THashMap<IElementType, TextAttributesKey>();
+    ourMap = new THashMap<>();
     SyntaxHighlighterBase.fillMap(ourMap, TEL_BOUNDS, TAP5_EL_START, TAP5_EL_END);
     SyntaxHighlighterBase.fillMap(ourMap, TEL_IDENT, TAP5_EL_IDENTIFIER);
     SyntaxHighlighterBase.fillMap(ourMap, TEL_DOT, TAP5_EL_DOT, TAP5_EL_COLON, TAP5_EL_COMMA, TAP5_EL_QUESTION_DOT, TAP5_EL_RANGE, TAP5_EL_EXCLAMATION);

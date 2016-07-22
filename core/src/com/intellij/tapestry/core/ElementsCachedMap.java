@@ -43,7 +43,7 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
   }
 
   protected Map<String, PresentationLibraryElement> computeValue(Module module) {
-    Map<String, PresentationLibraryElement> map = new THashMap<String, PresentationLibraryElement>();
+    Map<String, PresentationLibraryElement> map = new THashMap<>();
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
     assert project != null;
     for (Library library : project.getLibraries()) {

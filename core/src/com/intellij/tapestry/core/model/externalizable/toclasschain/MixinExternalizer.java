@@ -24,12 +24,12 @@ public class MixinExternalizer extends ToClassExternalizer {
         Mixin mixin = (Mixin) getContext().getElement();
 
         IJavaField field = mixin.getProject().getJavaTypeCreator().createField(PathUtils.getLastPathElement(mixin.getName()), mixin.getElementClass(), true, true);
-        String suggestedFieldName = suggestName(field.getName(), new ArrayList<String>(getContext().getTargetClass().getFields(false).keySet()));
+        String suggestedFieldName = suggestName(field.getName(), new ArrayList<>(getContext().getTargetClass().getFields(false).keySet()));
         if (!suggestedFieldName.equals(field.getName())) {
             field = mixin.getProject().getJavaTypeCreator().createField(suggestedFieldName, mixin.getElementClass(), true, true);
         }
 
-        mixin.getProject().getJavaTypeCreator().createFieldAnnotation(field, TapestryConstants.MIXIN_ANNOTATION, new HashMap<String, String>());
+        mixin.getProject().getJavaTypeCreator().createFieldAnnotation(field, TapestryConstants.MIXIN_ANNOTATION, new HashMap<>());
 
         String serialized = field.getStringRepresentation();
         if (mixin.getProject().getJavaTypeCreator().ensureClassImport(getContext().getTargetClass(), mixin.getElementClass())) {

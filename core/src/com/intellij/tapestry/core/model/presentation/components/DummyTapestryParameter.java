@@ -71,7 +71,7 @@ public class DummyTapestryParameter extends TapestryParameter {
     }
 
     public Map<String, IJavaAnnotation> getAnnotations() {
-      return new HashMap<String, IJavaAnnotation>();
+      return new HashMap<>();
     }
 
     public String getDocumentation() {

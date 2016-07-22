@@ -47,7 +47,7 @@ class DescriptorUtil {
     if(mixins.isEmpty()) {
       return result;
     }
-    final List<XmlAttributeDescriptor> listResult = new ArrayList<XmlAttributeDescriptor>(result.length);
+    final List<XmlAttributeDescriptor> listResult = new ArrayList<>(result.length);
     Collections.addAll(listResult, result);
     for (Mixin mixin : mixins) {
       ContainerUtil.addAll(listResult, getAttributeDescriptors(mixin, null));
@@ -202,7 +202,7 @@ class DescriptorUtil {
     final Function<TapestryParameter, XmlElementDescriptor> mapping =
       parameter -> new TapestryParameterDescriptor(component, parameter, namespacePrefix, descriptor);
     final List<XmlElementDescriptor> result =
-      new ArrayList<XmlElementDescriptor>(ContainerUtil.map(component.getParameters().values(), mapping));
+      new ArrayList<>(ContainerUtil.map(component.getParameters().values(), mapping));
     for (Mixin mixin : mixins) {
       result.addAll(ContainerUtil.map(mixin.getParameters().values(), mapping));
     }
@@ -294,7 +294,7 @@ class DescriptorUtil {
     if (tapestryProject == null || mixinsAttribute == null) {
       return Collections.emptyList();
     }
-    final List<Mixin> result = new ArrayList<Mixin>();
+    final List<Mixin> result = new ArrayList<>();
     String value = mixinsAttribute.getValue();
     final String[] components = value != null ? value.split(",") : ArrayUtil.EMPTY_STRING_ARRAY;
     for (String mixinName : components) {

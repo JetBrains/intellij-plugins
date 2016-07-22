@@ -50,7 +50,7 @@ public class InjectedElement implements Comparable {
    * @return the parameters of the injected element.
    */
   public Map<String, String> getParameters() {
-    Map<String, String> parameters = new HashMap<String, String>();
+    Map<String, String> parameters = new HashMap<>();
 
     if (_tag != null) {
       for (XmlAttribute attribute : _tag.getAttributes()) {

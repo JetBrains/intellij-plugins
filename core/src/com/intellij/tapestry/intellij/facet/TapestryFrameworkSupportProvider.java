@@ -39,7 +39,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
   @Override
   @NotNull
   public List<FrameworkVersion> getVersions() {
-    List<FrameworkVersion> result = new ArrayList<FrameworkVersion>();
+    List<FrameworkVersion> result = new ArrayList<>();
     for (TapestryVersion version : TapestryVersion.values()) {
       final String name = version.toString();
 

@@ -59,7 +59,7 @@ public class IntellijJavaField implements IJavaField {
      * {@inheritDoc}
      */
     public Map<String, IJavaAnnotation> getAnnotations() {
-        Map<String, IJavaAnnotation> annotations = new HashMap<String, IJavaAnnotation>();
+        Map<String, IJavaAnnotation> annotations = new HashMap<>();
 
         for (PsiAnnotation annotation : _psiField.getModifierList().getAnnotations())
             if (annotation.isValid())

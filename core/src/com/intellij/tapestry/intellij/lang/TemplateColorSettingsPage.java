@@ -120,7 +120,7 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
       logger.error(ex);
     }
     ourColorSettingsText = template.replace('\r', ' ');
-    ourAdditionalHighlightingTagToDescriptorMap = new HashMap<String, TextAttributesKey>();
+    ourAdditionalHighlightingTagToDescriptorMap = new HashMap<>();
     ourAdditionalHighlightingTagToDescriptorMap.put("componenTagName", TAG_NAME);
     ourAdditionalHighlightingTagToDescriptorMap.put("componenTagAttribute", ATTR_NAME);
   }

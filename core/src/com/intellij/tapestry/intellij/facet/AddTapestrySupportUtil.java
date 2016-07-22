@@ -90,7 +90,7 @@ public class AddTapestrySupportUtil {
 
     MavenUtils.createMavenSupport(modulePath, new MavenConfiguration(false, false, null, null, null, configuration.getApplicationPackage(),
                                                                      configuration.getFilterName(), "1.0-SNAPSHOT",
-                                                                     new ArrayList<RemoteRepositoryDescription>()),
+                                                                     new ArrayList<>()),
                                   configuration.getVersion().toString());
   }
 

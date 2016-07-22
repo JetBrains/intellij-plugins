@@ -27,9 +27,9 @@ import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
 
   @NonNls private static final THashSet<String> INSECURE_OBJECT_METHODS =
-    new THashSet<String>(Arrays.asList("wait", "notify", "notifyAll"));
+    new THashSet<>(Arrays.asList("wait", "notify", "notifyAll"));
 
-  private final Set<T> myResult = new LinkedHashSet<T>();
+  private final Set<T> myResult = new LinkedHashSet<>();
   private final boolean myForCompletion;
   private final boolean myMethodCall;
   private final String myReferenceName;

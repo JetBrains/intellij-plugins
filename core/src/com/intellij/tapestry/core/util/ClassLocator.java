@@ -17,7 +17,7 @@ public class ClassLocator {
     private String[] _packageNames;
     private ClassLoader _classLoader;
     private String _packageName;
-    private List<ClassLocation> _classLocations = new LinkedList<ClassLocation>();
+    private List<ClassLocation> _classLocations = new LinkedList<>();
 
     public ClassLocator(String... packageNames) throws ClassNotFoundException {
         this(Thread.currentThread().getContextClassLoader(), packageNames);

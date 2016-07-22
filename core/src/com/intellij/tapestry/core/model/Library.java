@@ -137,7 +137,7 @@ public class Library implements Comparable {
    */
   private Map<String, PresentationLibraryElement> findElements(String componentsOrPages, String basePackage) {
     Map<String, PresentationLibraryElement> components =
-      new THashMap<String, PresentationLibraryElement>(new TObjectHashingStrategy<String>() {
+      new THashMap<>(new TObjectHashingStrategy<String>() {
         @Override
         public int computeHashCode(String object) {
           return StringUtil.stringHashCodeInsensitive(object);

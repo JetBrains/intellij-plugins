@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class ParameterComponent extends Component {
 
-  private final Map<String, TapestryParameter> myParameters = new HashMap<String, TapestryParameter>();
+  private final Map<String, TapestryParameter> myParameters = new HashMap<>();
 
   private ParameterComponent(IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
     super(componentClass, project);

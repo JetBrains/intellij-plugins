@@ -24,12 +24,12 @@ public class PageExternalizer extends ToClassExternalizer {
         Page page = (Page) getContext().getElement();
 
         IJavaField field = page.getProject().getJavaTypeCreator().createField(PathUtils.getLastPathElement(page.getName()), page.getElementClass(), true, true);
-        String suggestedFieldName = suggestName(field.getName(), new ArrayList<String>(getContext().getTargetClass().getFields(false).keySet()));
+        String suggestedFieldName = suggestName(field.getName(), new ArrayList<>(getContext().getTargetClass().getFields(false).keySet()));
         if (!suggestedFieldName.equals(field.getName())) {
             field = page.getProject().getJavaTypeCreator().createField(suggestedFieldName, page.getElementClass(), true, true);
         }
 
-        page.getProject().getJavaTypeCreator().createFieldAnnotation(field, TapestryConstants.INJECT_PAGE_ANNOTATION, new HashMap<String, String>());
+        page.getProject().getJavaTypeCreator().createFieldAnnotation(field, TapestryConstants.INJECT_PAGE_ANNOTATION, new HashMap<>());
 
         String serialized = field.getStringRepresentation();
         if (page.getProject().getJavaTypeCreator().ensureClassImport(getContext().getTargetClass(), page.getElementClass())) {

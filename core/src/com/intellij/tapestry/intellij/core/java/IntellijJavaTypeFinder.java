@@ -43,7 +43,7 @@ public class IntellijJavaTypeFinder implements IJavaTypeFinder {
    * {@inheritDoc}
    */
   public Collection<IJavaClassType> findTypesInPackage(String packageName, boolean includeDependencies) {
-    Collection<IJavaClassType> types = new ArrayList<IJavaClassType>();
+    Collection<IJavaClassType> types = new ArrayList<>();
 
     PsiClass[] classes = findPackage(packageName).getClasses(getScope(includeDependencies));
     for (PsiClass clazz : classes) {
@@ -56,7 +56,7 @@ public class IntellijJavaTypeFinder implements IJavaTypeFinder {
    * {@inheritDoc}
    */
   public Collection<IJavaClassType> findTypesInPackageRecursively(String basePackageName, boolean includeDependencies) {
-    Collection<IJavaClassType> types = new ArrayList<IJavaClassType>();
+    Collection<IJavaClassType> types = new ArrayList<>();
 
     PsiPackage psiPackage = findPackage(basePackageName);
     if (psiPackage != null) {

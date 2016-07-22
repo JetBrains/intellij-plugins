@@ -30,7 +30,7 @@ public class IntellijResourceFinder implements IResourceFinder {
      * {@inheritDoc}
      */
     public Collection<IResource> findClasspathResource(String path, boolean includeDependencies) {
-        Collection<IResource> resources = new ArrayList<IResource>();
+        Collection<IResource> resources = new ArrayList<>();
 
       String filename = PathUtils.getLastPathElement(path);
         for (PsiDirectory directory : findPackageDirectories(path, includeDependencies)) {
@@ -52,7 +52,7 @@ public class IntellijResourceFinder implements IResourceFinder {
      * {@inheritDoc}
      */
     public Collection<IResource> findLocalizedClasspathResource(String path, boolean includeDependencies) {
-        Collection<IResource> resources = new ArrayList<IResource>();
+        Collection<IResource> resources = new ArrayList<>();
 
         String filename = PathUtils.getLastPathElement(path);
         for (PsiDirectory directory : findPackageDirectories(path, includeDependencies)) {
@@ -111,7 +111,7 @@ public class IntellijResourceFinder implements IResourceFinder {
      */
     @NotNull
     public Collection<IResource> findLocalizedContextResource(String path) {
-        Collection<IResource> resources = new ArrayList<IResource>();
+        Collection<IResource> resources = new ArrayList<>();
 
         WebFacet webFacet = IdeaUtils.getWebFacet(_module);
         if (webFacet == null)

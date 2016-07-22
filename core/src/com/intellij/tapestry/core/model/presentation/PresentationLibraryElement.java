@@ -159,7 +159,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
       true);
 
     if (resources.size() > 0) {
-      List<IResource> catalogs = new ArrayList<IResource>();
+      List<IResource> catalogs = new ArrayList<>();
 
       for (IResource catalog : resources) {
         if (LocalizationUtils.unlocalizeFileName(catalog.getName())
@@ -232,9 +232,9 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    */
   public List<TemplateElement> getEmbeddedComponents() {
 
-    final List<TemplateElement> embeddedComponentsClass = new ArrayList<TemplateElement>();
-    final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<TemplateElement>();
-    final List<TemplateElement> embeddedComponents = new ArrayList<TemplateElement>();
+    final List<TemplateElement> embeddedComponentsClass = new ArrayList<>();
+    final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<>();
+    final List<TemplateElement> embeddedComponents = new ArrayList<>();
 
     for (IJavaField field : _class.getFields(true).values()) {
       if (field.isValid() &&
@@ -308,7 +308,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    */
   public List<TemplateElement> getEmbeddedComponentsTemplate() {
 
-    final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<TemplateElement>();
+    final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<>();
     final List<TemplateElement> embeddedComponentsClass = getEmbeddedComponents();
 
     for (int i = 0; i < getTemplate().length; i++) {
@@ -359,7 +359,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    * @return the declared embedded components.
    */
   public List<InjectedElement> getInjectedPages() {
-    List<InjectedElement> injectedPages = new ArrayList<InjectedElement>();
+    List<InjectedElement> injectedPages = new ArrayList<>();
 
     for (IJavaField field : _class.getFields(true).values()) {
       if (field.isValid() && field.getAnnotations().containsKey(TapestryConstants.INJECT_PAGE_ANNOTATION)) {

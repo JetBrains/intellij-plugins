@@ -29,7 +29,7 @@ import java.util.HashSet;
 
 public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetConfiguration> {
 
-  public static final FacetTypeId<TapestryFacet> ID = new FacetTypeId<TapestryFacet>("tapestry");
+  public static final FacetTypeId<TapestryFacet> ID = new FacetTypeId<>("tapestry");
 
   TapestryFacetType() {
     super(ID, "tapestry", "Tapestry");
@@ -84,7 +84,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
     @Override
     public void setupFacet(@NotNull TapestryFacet facet, ModifiableRootModel model) {
       final TapestryFacetConfiguration configuration = facet.getConfiguration();
-      final HashSet<String> componentDirectories = new HashSet<String>(Arrays.asList(TapestryConstants.ELEMENT_PACKAGES));
+      final HashSet<String> componentDirectories = new HashSet<>(Arrays.asList(TapestryConstants.ELEMENT_PACKAGES));
 
       for(VirtualFile file:FileTypeIndex.getFiles(TmlFileType.INSTANCE, GlobalSearchScope.moduleScope(facet.getModule()))) {
         final VirtualFile parent = file.getParent();

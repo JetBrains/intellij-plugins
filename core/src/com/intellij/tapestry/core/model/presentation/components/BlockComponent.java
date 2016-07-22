@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class BlockComponent extends Component {
 
-  private final Map<String, TapestryParameter> myParameters = new HashMap<String, TapestryParameter>();
+  private final Map<String, TapestryParameter> myParameters = new HashMap<>();
 
   private BlockComponent(IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
     super(componentClass, project);

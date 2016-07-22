@@ -30,7 +30,7 @@ import java.util.Set;
  *         Time: 6:39:24 PM
  */
 public class TapestryXmlExtension extends DefaultXmlExtension {
-  private static final Set<String> ourTapestryTemplateNamespaces = new THashSet<String>(Arrays.asList(
+  private static final Set<String> ourTapestryTemplateNamespaces = new THashSet<>(Arrays.asList(
     TapestryConstants.TEMPLATE_NAMESPACE, TapestryConstants.TEMPLATE_NAMESPACE2, TapestryConstants.TEMPLATE_NAMESPACE3,
     TapestryConstants.TEMPLATE_NAMESPACE4));
 

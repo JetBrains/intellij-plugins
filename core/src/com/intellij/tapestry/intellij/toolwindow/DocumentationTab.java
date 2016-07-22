@@ -128,7 +128,7 @@ public class DocumentationTab {
             _text.setText("ldp://Home");
 
             try {
-                List<String> moduleNames = new ArrayList<String>();
+                List<String> moduleNames = new ArrayList<>();
                 for (Module module : TapestryUtils.getAllTapestryModules(project))
                     moduleNames.add(module.getName());
 
@@ -182,7 +182,7 @@ public class DocumentationTab {
      */
     protected List<String> getModules(Project project) {
         Module[] modules = ModuleManager.getInstance(project).getModules();
-        List<String> nameOfModules = new ArrayList<String>();
+        List<String> nameOfModules = new ArrayList<>();
 
         for (Module module : modules)
             nameOfModules.add(module.getName());

@@ -38,7 +38,7 @@ public class ModuleBuilder {
             return _servicesCache;
         }
 
-        _servicesCache = new ArrayList<Service>();
+        _servicesCache = new ArrayList<>();
         for (IJavaMethod method : _moduleBuilderClass.getPublicMethods(true)) {
             if (!(method.getReturnType() instanceof IJavaClassType)) {
                 continue;
@@ -80,7 +80,7 @@ public class ModuleBuilder {
     }
 
     private Collection<Service> getServicesFromBindMethod(IJavaMethod method) {
-        Collection<Service> services = new ArrayList<Service>();
+        Collection<Service> services = new ArrayList<>();
 
         for (ServiceBinding binding : _project.getJavaTypeFinder().getServiceBindingDiscoverer().getServiceBindings(method))
             services.add(new Service(binding, (IJavaClassType) method.getReturnType()));

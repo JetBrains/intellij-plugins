@@ -26,12 +26,12 @@ public class ComponentExternalizer extends ToClassExternalizer {
 
         IJavaField field = component.getProject().getJavaTypeCreator().createField(component.getElementClass().getName(), component.getElementClass(), true, true);
 
-        String suggestedFieldName = suggestName(field.getName(), new ArrayList<String>(getContext().getTargetClass().getFields(false).keySet()));
+        String suggestedFieldName = suggestName(field.getName(), new ArrayList<>(getContext().getTargetClass().getFields(false).keySet()));
         if (!suggestedFieldName.equals(field.getName())) {
             field = component.getProject().getJavaTypeCreator().createField(suggestedFieldName, component.getElementClass(), true, true);
         }
 
-        Map<String, String> annotationParameters = new HashMap<String, String>();
+        Map<String, String> annotationParameters = new HashMap<>();
         StringBuffer parametersParameter = new StringBuffer("{");
         for (TapestryParameter parameter : component.getParameters().values())
             if (parameter.isRequired()) {

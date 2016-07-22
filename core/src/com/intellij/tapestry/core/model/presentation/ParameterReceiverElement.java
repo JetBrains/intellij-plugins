@@ -32,7 +32,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
       return _parametersCache;
     }
 
-    Map<String, TapestryParameter> _parameters = new THashMap<String, TapestryParameter>();
+    Map<String, TapestryParameter> _parameters = new THashMap<>();
     _parameters.put("mixins", new DummyTapestryParameter(getProject(), "mixins", false));
     _parametersCacheTimestamp = getElementClass().getFile().getFile().lastModified();
 
@@ -56,7 +56,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
   @NotNull
   public Map<String, TapestryParameter> getRequiredParameters() {
     Map<String, TapestryParameter> parameters = getParameters();
-    Map<String, TapestryParameter> requiredParameters = new THashMap<String, TapestryParameter>();
+    Map<String, TapestryParameter> requiredParameters = new THashMap<>();
 
     for (TapestryParameter parameter : parameters.values()) {
       if (parameter.isRequired()) {
@@ -74,7 +74,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
    */
   public Map<String, TapestryParameter> getOptionalParameters() {
     Map<String, TapestryParameter> parameters = getParameters();
-    Map<String, TapestryParameter> optionalParameters = new THashMap<String, TapestryParameter>();
+    Map<String, TapestryParameter> optionalParameters = new THashMap<>();
 
     for (TapestryParameter parameter : parameters.values()) {
       if (!parameter.isRequired()) {

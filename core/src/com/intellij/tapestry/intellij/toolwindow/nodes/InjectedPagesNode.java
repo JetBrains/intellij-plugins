@@ -9,7 +9,7 @@ import java.util.List;
 public class InjectedPagesNode extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = 1083245064296005063L;
-    private List<InjectedElement> _injectedComponentNodes = new ArrayList<InjectedElement>();
+    private List<InjectedElement> _injectedComponentNodes = new ArrayList<>();
 
     public InjectedPagesNode(Object userObject) {
         super(userObject);

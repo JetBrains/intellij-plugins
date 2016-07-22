@@ -16,7 +16,7 @@ public class JavaClassTypeCoercionValidator implements Command {
      * List of all possible coercions.
      * The key is the type to coerce to, the values are the types that can be coerced to the key type.
      */
-    private static final Map<String, List<String>> CLASS_COERCION_MAP = new HashMap<String, List<String>>();
+    private static final Map<String, List<String>> CLASS_COERCION_MAP = new HashMap<>();
 
     static {
         CLASS_COERCION_MAP.put(CommonClassNames.JAVA_LANG_STRING, Arrays.asList(

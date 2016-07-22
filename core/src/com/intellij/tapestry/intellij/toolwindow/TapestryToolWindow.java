@@ -24,7 +24,7 @@ public class TapestryToolWindow extends FileSystemListenerAdapter {
     private final DocumentationTab    _documentationTab;
    private final DependenciesTab _dependenciesTab;
 
-    private final List<IJavaClassType> _updateOnChangeFiles = new ArrayList<IJavaClassType>();
+    private final List<IJavaClassType> _updateOnChangeFiles = new ArrayList<>();
     private Module _module;
     private Object _element;
     private final Project _project;

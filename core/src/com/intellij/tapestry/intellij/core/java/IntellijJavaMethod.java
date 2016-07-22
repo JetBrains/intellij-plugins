@@ -37,7 +37,7 @@ public class IntellijJavaMethod implements IJavaMethod {
      * {@inheritDoc}
      */
     public Collection<IMethodParameter> getParameters() {
-        Collection<IMethodParameter> parameters = new ArrayList<IMethodParameter>();
+        Collection<IMethodParameter> parameters = new ArrayList<>();
 
         for (PsiParameter parameter : _psiMethod.getParameterList().getParameters())
             parameters.add(new IntellijMethodParameter(_module, parameter));
@@ -49,7 +49,7 @@ public class IntellijJavaMethod implements IJavaMethod {
      * {@inheritDoc}
      */
     public Collection<IJavaAnnotation> getAnnotations() {
-        Collection<IJavaAnnotation> annotations = new ArrayList<IJavaAnnotation>();
+        Collection<IJavaAnnotation> annotations = new ArrayList<>();
 
         for (PsiAnnotation annotation : _psiMethod.getModifierList().getAnnotations())
             annotations.add(new IntellijJavaAnnotation(annotation));

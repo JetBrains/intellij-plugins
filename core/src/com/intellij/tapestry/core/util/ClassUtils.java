@@ -37,11 +37,11 @@ public class ClassUtils {
      */
     public static Map<String, Object> getClassProperties(IJavaClassType javaClassType) {
         if (javaClassType == null) {
-            return new HashMap<String, Object>();
+            return new HashMap<>();
         }
 
         Collection<IJavaMethod> allPublicMethods = javaClassType.getPublicMethods(true);
-        Map<String, Object> getterMethods = new HashMap<String, Object>();
+        Map<String, Object> getterMethods = new HashMap<>();
 
         for (IJavaMethod method : allPublicMethods) {
 
@@ -64,7 +64,7 @@ public class ClassUtils {
         }
 
         Map<String, IJavaField> allFields = javaClassType.getFields(true);
-        Map<String, Object> propertyFields = new HashMap<String, Object>();
+        Map<String, Object> propertyFields = new HashMap<>();
 
         for (Map.Entry<String, IJavaField> field : allFields.entrySet()) {
             if (field.getValue().getAnnotations().containsKey(TapestryConstants.PROPERTY_ANNOTATION)) {

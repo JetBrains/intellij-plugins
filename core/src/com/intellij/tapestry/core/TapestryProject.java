@@ -149,7 +149,7 @@ public class TapestryProject {
       }
     }
 
-    List<Library> cachedLibraries = new ArrayList<Library>();
+    List<Library> cachedLibraries = new ArrayList<>();
 
     cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
     cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage + "." + applicationFilterName, this));
@@ -248,7 +248,7 @@ public class TapestryProject {
 
   @NotNull
   private Map<String, List<String>> findLibraryMapping() {
-    Map<String, List<String>> result = new THashMap<String, List<String>>();
+    Map<String, List<String>> result = new THashMap<>();
 
     GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule);
     for (PsiMethod psiMethod : JavaMethodNameIndex.getInstance().get(
@@ -276,7 +276,7 @@ public class TapestryProject {
   private static void addFromMappingData(Map<String, List<String>> result, Map<String, String> computedMap) {
     for (String key : computedMap.keySet()) {
       List<String> strings = result.get(key);
-      if (strings == null) result.put(key, strings = new ArrayList<String>(2));
+      if (strings == null) result.put(key, strings = new ArrayList<>(2));
       strings.add(computedMap.get(key));
     }
   }

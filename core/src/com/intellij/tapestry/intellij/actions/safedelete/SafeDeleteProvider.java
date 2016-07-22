@@ -40,10 +40,10 @@ public class SafeDeleteProvider implements DeleteProvider {
         final Project project = (Project) dataContext.getData(DataKeys.PROJECT.getName());
         int numberChildren;
 
-        List<PsiElement> totalElementsToDelete = new ArrayList<PsiElement>();
+        List<PsiElement> totalElementsToDelete = new ArrayList<>();
         for (TreePath treePath : TapestryProjectViewPane.getInstance(project).getSelectionPaths()) {
             PsiElement[] elements;
-            List<PsiElement> elementsList = new ArrayList<PsiElement>();
+            List<PsiElement> elementsList = new ArrayList<>();
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 
             // The selected node is a file

@@ -46,7 +46,7 @@ public class IntellijXmlTag implements XmlTag {
      * {@inheritDoc}
      */
     public XmlAttribute[] getAttributes() {
-        List<XmlAttribute> attributes = new ArrayList<XmlAttribute>();
+        List<XmlAttribute> attributes = new ArrayList<>();
 
         for (com.intellij.psi.xml.XmlAttribute attribute : _xmlTag.getAttributes())
             attributes.add(new IntellijXmlAttribute(attribute));

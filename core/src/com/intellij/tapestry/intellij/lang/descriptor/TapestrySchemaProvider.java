@@ -36,7 +36,7 @@ public class TapestrySchemaProvider extends XmlSchemaProvider implements DumbAwa
   @NotNull
   @Override
   public Set<String> getAvailableNamespaces(final @NotNull XmlFile file, final @Nullable String tagName) {
-    HashSet<String> set = new HashSet<String>();
+    HashSet<String> set = new HashSet<>();
     set.addAll(Arrays.asList(TapestryXmlExtension.tapestryTemplateNamespaces()));
     set.add(TapestryConstants.PARAMETERS_NAMESPACE);
     set.add(XmlUtil.XHTML_URI);

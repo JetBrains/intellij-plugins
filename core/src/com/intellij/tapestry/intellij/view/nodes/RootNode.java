@@ -45,7 +45,7 @@ public class RootNode extends SimpleNode {
             return EMPTY_LIST;
         }
 
-        final List<AbstractModuleNode> newNodes = new ArrayList<AbstractModuleNode>();
+        final List<AbstractModuleNode> newNodes = new ArrayList<>();
         final Module[] allTapestryModules = TapestryUtils.getAllTapestryModules(myProject);
 
         for (final Module module : allTapestryModules)

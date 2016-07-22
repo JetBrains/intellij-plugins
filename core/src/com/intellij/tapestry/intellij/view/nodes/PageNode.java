@@ -31,7 +31,7 @@ public class PageNode extends TapestryNode {
      */
     public SimpleNode[] getChildren() {
         Page page = (Page) getElement();
-        List<SimpleNode> children = new ArrayList<SimpleNode>();
+        List<SimpleNode> children = new ArrayList<>();
 
         ClassNode classNode = new ClassNode((PsiClassOwner) ((IntellijJavaClassType) page.getElementClass()).getPsiClass().getContainingFile(), getModule(), _treeBuilder);
         children.add(classNode);

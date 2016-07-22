@@ -25,8 +25,8 @@ public abstract class AbstractPresentationNode extends TapestryNode {
      * {@inheritDoc}
      */
     public SimpleNode[] getChildren() {
-        TreeSet<TapestryNode> children = new TreeSet<TapestryNode>(PackageNodesComparator.getInstance());
-        List<String> addedFolders = new ArrayList<String>();
+        TreeSet<TapestryNode> children = new TreeSet<>(PackageNodesComparator.getInstance());
+        List<String> addedFolders = new ArrayList<>();
 
         for (PresentationLibraryElement element : getChildElements())
             if (element.getName().contains(PathUtils.TAPESTRY_PATH_SEPARATOR)) {

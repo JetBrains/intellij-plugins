@@ -57,7 +57,7 @@ public class TapestryUtils {
    */
   public static Module[] getAllTapestryModules(Project project) {
     final Module[] modules = ModuleManager.getInstance(project).getModules();
-    List<Module> result = new ArrayList<Module>();
+    List<Module> result = new ArrayList<>();
 
     for (Module module : modules) {
       if (isTapestryModule(module)) {
@@ -142,7 +142,7 @@ public class TapestryUtils {
     if (tapestryProject == null) return Collections.emptyList();
     PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
     if (element == null) return Collections.emptyList();
-    List<String> embeddedIds = new ArrayList<String>();
+    List<String> embeddedIds = new ArrayList<>();
     for (TemplateElement injectedElement : element.getEmbeddedComponents()) {
       ContainerUtil.addIfNotNull(embeddedIds, injectedElement.getElement().getElementId());
     }

@@ -57,7 +57,7 @@ public class Component extends ParameterReceiverElement implements Externalizabl
       TapestryConstants.TEMPLATE_FILE_EXTENSION, true);
 
     if (resources.size() > 0) {
-      List<IResource> templates = new ArrayList<IResource>();
+      List<IResource> templates = new ArrayList<>();
       for (IResource template : resources) {
         templates.add(template);
       }

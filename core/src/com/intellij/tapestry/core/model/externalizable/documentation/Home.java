@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Home implements ExternalizableToDocumentation {
 
-    private List<String> _tapestryProjects = new ArrayList<String>();
+    private List<String> _tapestryProjects = new ArrayList<>();
 
     public Home(List<String> tapestryProjects) {
         _tapestryProjects = tapestryProjects;

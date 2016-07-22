@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class JavaPrimitiveTypeCoercionValidator implements Command {
 
-    private static final Map<String, String> PRIMITIVE_COERCION_MAP = new HashMap<String, String>();
+    private static final Map<String, String> PRIMITIVE_COERCION_MAP = new HashMap<>();
 
     static {
         PRIMITIVE_COERCION_MAP.put("byte", "java.lang.Byte");

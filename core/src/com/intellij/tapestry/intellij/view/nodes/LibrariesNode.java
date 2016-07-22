@@ -24,7 +24,7 @@ public class LibrariesNode extends TapestryNode {
      * {@inheritDoc}
      */
     public SimpleNode[] getChildren() {
-        List<TapestryNode> children = new ArrayList<TapestryNode>();
+        List<TapestryNode> children = new ArrayList<>();
 
         for (Library library : TapestryModuleSupportLoader.getTapestryProject(_module).getLibraries()) {
             if (!library.getId().equals(TapestryProject.APPLICATION_LIBRARY_ID)) {

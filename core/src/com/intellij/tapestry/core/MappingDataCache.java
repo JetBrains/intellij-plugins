@@ -25,7 +25,7 @@ public class MappingDataCache extends FileBasedUserDataCache<Map<String, String>
 
   @Override
   protected Map<String, String> doCompute(PsiFile file) {
-    final Map<String, String> result = new THashMap<String, String>();
+    final Map<String, String> result = new THashMap<>();
     if (file instanceof PsiCompiledElement) {
       PsiElement element = file.getNavigationElement();
       if (element != file && element instanceof PsiFile) {

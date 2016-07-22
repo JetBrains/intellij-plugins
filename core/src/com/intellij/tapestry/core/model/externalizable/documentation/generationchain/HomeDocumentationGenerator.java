@@ -35,7 +35,7 @@ public class HomeDocumentationGenerator extends AbstractDocumentationGenerator {
         velocityContext.put("modules", element.getTapestryProjects());
 
         for (String elementType : DOCUMENTATION_ELEMENT_TYPES) {
-            Map<String, String> filesProperties = new HashMap<String, String>();
+            Map<String, String> filesProperties = new HashMap<>();
 
             List<ClassLocator.ClassLocation> resources;
             try {

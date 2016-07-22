@@ -89,7 +89,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
    * {@inheritDoc}
    */
   public Collection<IJavaMethod> getPublicMethods(boolean fromSuper) {
-    Collection<IJavaMethod> foundMethods = new ArrayList<IJavaMethod>();
+    Collection<IJavaMethod> foundMethods = new ArrayList<>();
 
     for (PsiMethod method : getMethods(fromSuper)) {
       if (method.getModifierList().hasExplicitModifier(PsiModifier.PUBLIC) && isNotMethodOfJavaLangObject(method)) {
@@ -112,7 +112,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
    * {@inheritDoc}
    */
   public Collection<IJavaMethod> getAllMethods(boolean fromSuper) {
-    Collection<IJavaMethod> foundMethods = new ArrayList<IJavaMethod>();
+    Collection<IJavaMethod> foundMethods = new ArrayList<>();
 
     for (PsiMethod method : getMethods(fromSuper)) {
       if (isNotMethodOfJavaLangObject(method)) {
@@ -128,7 +128,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
    */
   public Collection<IJavaMethod> findPublicMethods(String methodNameRegExp) {
     RegExpValidator regexpValidator = new RegExpValidator(methodNameRegExp);
-    Collection<IJavaMethod> foundMethods = new ArrayList<IJavaMethod>();
+    Collection<IJavaMethod> foundMethods = new ArrayList<>();
 
     Collection<IJavaMethod> allMethods = getPublicMethods(true);
     for (IJavaMethod method : allMethods) {
@@ -144,7 +144,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
    * {@inheritDoc}
    */
   public Collection<IJavaAnnotation> getAnnotations() {
-    Collection<IJavaAnnotation> annotations = new ArrayList<IJavaAnnotation>();
+    Collection<IJavaAnnotation> annotations = new ArrayList<>();
 
     PsiClass psiClass = getPsiClass();
     if (psiClass == null) {
@@ -162,7 +162,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
    * {@inheritDoc}
    */
   public Map<String, IJavaField> getFields(boolean fromSuper) {
-    Map<String, IJavaField> fields = new HashMap<String, IJavaField>();
+    Map<String, IJavaField> fields = new HashMap<>();
 
     PsiClass psiClass = getPsiClass();
     if (psiClass == null) {

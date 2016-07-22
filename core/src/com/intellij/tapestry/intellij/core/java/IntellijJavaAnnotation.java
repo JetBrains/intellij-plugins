@@ -20,7 +20,7 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
         @Override
         protected final CachedValue<Map<String, String[]>> compute(final PsiAnnotation owner, Object o) {
             return CachedValuesManager.getManager(owner.getProject()).createCachedValue(
-              () -> new CachedValueProvider.Result<Map<String, String[]>>(doCalcParameters(owner), owner), false);
+              () -> new CachedValueProvider.Result<>(doCalcParameters(owner), owner), false);
         }
     };
 
@@ -47,7 +47,7 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
     }
 
     private static Map<String, String[]> doCalcParameters(PsiAnnotation owner) {
-        Map<String, String[]> parameters = new HashMap<String, String[]>(); // HashMap to handle null keys
+        Map<String, String[]> parameters = new HashMap<>(); // HashMap to handle null keys
     
         for (PsiNameValuePair parameter : owner.getParameterList().getAttributes()) {
             String literalValue = parameter.getLiteralValue();

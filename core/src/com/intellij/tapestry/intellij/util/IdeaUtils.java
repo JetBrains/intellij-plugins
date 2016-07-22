@@ -57,7 +57,7 @@ public class IdeaUtils {
    * @return all the module web roots expect the WEB-INF directory.
    */
   public static List<WebRoot> findWebRoots(Module module) {
-    List<WebRoot> finalWebRoots = new ArrayList<WebRoot>();
+    List<WebRoot> finalWebRoots = new ArrayList<>();
 
     WebFacet webFacet = IdeaUtils.getWebFacet(module);
     if (webFacet == null) return finalWebRoots;
