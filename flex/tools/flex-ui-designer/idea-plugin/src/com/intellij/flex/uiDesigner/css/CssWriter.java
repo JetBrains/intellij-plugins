@@ -54,7 +54,7 @@ public class CssWriter {
   @Nullable
   public byte[] write(@NotNull VirtualFile file, @NotNull Module module) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
-    CssFile cssFile = document == null ? null : (CssFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
+    StylesheetFile cssFile = document != null ? (StylesheetFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document) : null;
     if (cssFile == null) {
       LOG.warn("CSS file is null for " + file.getName());
       return null;
@@ -70,15 +70,15 @@ public class CssWriter {
   }
 
   @Nullable
-  public byte[] write(@NotNull CssFile cssFile, @NotNull Module module) {
-    problemsHolder.setCurrentFile(cssFile.getVirtualFile());
+  public byte[] write(@NotNull StylesheetFile stylesheetFile, @NotNull Module module) {
+    problemsHolder.setCurrentFile(stylesheetFile.getVirtualFile());
     try {
-      Document document = PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile);
+      Document document = PsiDocumentManager.getInstance(module.getProject()).getDocument(stylesheetFile);
       if (document == null) {
-        LOG.warn("Document is null for " + cssFile.getName());
+        LOG.warn("Document is null for " + stylesheetFile.getName());
         return null;
       }
-      return write(cssFile, document, module);
+      return write(stylesheetFile, document, module);
     }
     finally {
       problemsHolder.setCurrentFile(null);
@@ -86,10 +86,10 @@ public class CssWriter {
   }
 
   @Nullable
-  private byte[] write(@NotNull CssFile cssFile, @NotNull Document document, @NotNull Module module) {
-    CssStylesheet stylesheet = cssFile.getStylesheet();
+  private byte[] write(@NotNull StylesheetFile stylesheetFile, @NotNull Document document, @NotNull Module module) {
+    CssStylesheet stylesheet = stylesheetFile.getStylesheet();
     if (stylesheet == null) {
-      LOG.warn("Stylesheet is null for " + cssFile.getName());
+      LOG.warn("Stylesheet is null for " + stylesheetFile.getName());
       return null;
     }
 

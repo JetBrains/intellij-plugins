@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.css.CssFile;
+import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttribute;
@@ -197,9 +197,9 @@ public final class ModuleInfoUtil {
 
         MyInjectedPsiVisitor visitor = new MyInjectedPsiVisitor(host);
         InjectedLanguageUtil.enumerate(host, visitor);
-        CssFile cssFile = visitor.getCssFile();
-        byte[] data = cssFile == null ? null : cssWriter.write(cssFile, module);
-        return data == null ? null : new LocalStyleHolder(InjectedLanguageManager.getInstance(cssFile.getProject()).getTopLevelFile(cssFile).getVirtualFile(), data);
+        StylesheetFile stylesheetFile = visitor.getStylesheetFile();
+        byte[] data = stylesheetFile == null ? null : cssWriter.write(stylesheetFile, module);
+        return data == null ? null : new LocalStyleHolder(InjectedLanguageManager.getInstance(stylesheetFile.getProject()).getTopLevelFile(stylesheetFile).getVirtualFile(), data);
       }
       else {
         XmlAttributeValue valueElement = source.getValueElement();
@@ -208,15 +208,15 @@ public final class ModuleInfoUtil {
         }
 
         PsiFileSystemItem psiFile = InjectionUtil.getReferencedPsiFile(valueElement);
-        if (!(psiFile instanceof CssFile)) {
+        if (!(psiFile instanceof StylesheetFile)) {
           throw new InvalidPropertyException(valueElement, "embed.source.is.not.css.file", psiFile.getName());
         }
 
-        CssFile cssFile = (CssFile)psiFile;
-        VirtualFile virtualFile = cssFile.getVirtualFile();
+        StylesheetFile stylesheetFile = (StylesheetFile)psiFile;
+        VirtualFile virtualFile = stylesheetFile.getVirtualFile();
         ExternalLocalStyleHolder existingLocalStyleHolder = externalLocalStyleHolders.get(virtualFile);
         if (existingLocalStyleHolder == null) {
-          byte[] data = cssWriter.write(cssFile, module);
+          byte[] data = cssWriter.write(stylesheetFile, module);
           if (data == null) {
             return null;
           }
@@ -236,15 +236,15 @@ public final class ModuleInfoUtil {
       private final PsiElement host;
       private boolean visited;
 
-      private CssFile cssFile;
+      private StylesheetFile stylesheetFile;
 
       public MyInjectedPsiVisitor(PsiElement host) {
         this.host = host;
       }
 
       @Nullable
-      public CssFile getCssFile() {
-        return cssFile;
+      public StylesheetFile getStylesheetFile() {
+        return stylesheetFile;
       }
 
       @Override
@@ -254,7 +254,7 @@ public final class ModuleInfoUtil {
 
         assert places.size() == 1;
         assert places.get(0).getHost() == host;
-        cssFile = (CssFile)injectedPsi;
+        stylesheetFile = (StylesheetFile)injectedPsi;
       }
     }
   }

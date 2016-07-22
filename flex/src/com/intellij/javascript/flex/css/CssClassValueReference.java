@@ -144,8 +144,8 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     if (file instanceof XmlFile) {
       CssResolveManager.getInstance().getNewResolver().processOneFile((XmlFile)file, processor, true);
     }
-    else if (file instanceof CssFile) {
-      processOneCssFile((CssFile)file, processor);
+    else if (file instanceof StylesheetFile) {
+      processOneStylesheetFile((StylesheetFile)file, processor);
     }
     Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module != null) {
@@ -153,7 +153,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     }
   }
 
-  private static void processOneCssFile(@NotNull CssFile file, @NotNull CssElementProcessor processor) {
+  private static void processOneStylesheetFile(@NotNull StylesheetFile file, @NotNull CssElementProcessor processor) {
     CssStylesheet stylesheet = file.getStylesheet();
     if (stylesheet != null) {
       for (CssRuleset ruleset : stylesheet.getRulesets()) {

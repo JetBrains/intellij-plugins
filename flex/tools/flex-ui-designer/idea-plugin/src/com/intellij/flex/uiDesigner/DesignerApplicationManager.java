@@ -44,13 +44,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiTreeChangeAdapter;
 import com.intellij.psi.PsiTreeChangeEvent;
-import com.intellij.psi.css.CssFile;
+import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.xml.XmlComment;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.Processor;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
@@ -585,11 +584,11 @@ public class DesignerApplicationManager {
 
       if (psiFile instanceof XmlFile) {
         DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile);
-        if (info == null && psiFile != previewToolWindowManager.getServedFile()) {
+        if (info == null && !psiFile.equals(previewToolWindowManager.getServedFile())) {          
           return;
         }
       }
-      else if (!(psiFile instanceof CssFile)) {
+      else if (!(psiFile instanceof StylesheetFile)) {
         return;
       }
 
