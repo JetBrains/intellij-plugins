@@ -44,14 +44,19 @@ public class DartServerData {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartError> newErrors = new ArrayList<DartError>(errors.size());
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+
     for (AnalysisError error : errors) {
-      newErrors.add(new DartError(error));
+      final int offset = service.getConvertedOffset(file, error.getLocation().getOffset());
+      final int length = service.getConvertedOffset(file, error.getLocation().getOffset() + error.getLocation().getLength()) - offset;
+      newErrors.add(new DartError(error, offset, length));
     }
 
     myErrorData.put(filePath, newErrors);
 
     if (restartHighlighting) {
-      forceFileAnnotation(filePath, false);
+      forceFileAnnotation(file, false);
     }
   }
 
@@ -59,42 +64,69 @@ public class DartServerData {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartHighlightRegion> newRegions = new ArrayList<DartHighlightRegion>(regions.size());
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+
     for (HighlightRegion region : regions) {
       if (region.getLength() > 0) {
-        newRegions.add(new DartHighlightRegion(region));
+        final int offset = service.getConvertedOffset(file, region.getOffset());
+        final int length = service.getConvertedOffset(file, region.getOffset() + region.getLength()) - offset;
+        newRegions.add(new DartHighlightRegion(offset, length, region.getType()));
       }
     }
 
     myHighlightData.put(filePath, newRegions);
-    forceFileAnnotation(filePath, false);
+    forceFileAnnotation(file, false);
   }
 
   void computedNavigation(@NotNull final String filePath, @NotNull final List<NavigationRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartNavigationRegion> newRegions = new ArrayList<DartNavigationRegion>(regions.size());
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+
     for (NavigationRegion region : regions) {
       if (region.getLength() > 0) {
-        newRegions.add(new DartNavigationRegion(region));
+        final DartNavigationRegion dartNavigationRegion = createDartNavigationRegion(file, region);
+        newRegions.add(dartNavigationRegion);
       }
     }
 
     myNavigationData.put(filePath, newRegions);
-    forceFileAnnotation(filePath, true);
+    forceFileAnnotation(file, true);
+  }
+
+  @NotNull
+  static DartNavigationRegion createDartNavigationRegion(@Nullable final VirtualFile file,
+                                                         @NotNull final NavigationRegion region) {
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+
+    final int offset = service.getConvertedOffset(file, region.getOffset());
+    final int length = service.getConvertedOffset(file, region.getOffset() + region.getLength()) - offset;
+    final SmartList<DartNavigationTarget> targets = new SmartList<>();
+    for (NavigationTarget target : region.getTargetObjects()) {
+      targets.add(new DartNavigationTarget(target));
+    }
+    return new DartNavigationRegion(offset, length, targets);
   }
 
   void computedOverrides(@NotNull final String filePath, @NotNull final List<OverrideMember> overrides) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartOverrideMember> newOverrides = new ArrayList<DartOverrideMember>(overrides.size());
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+
     for (OverrideMember override : overrides) {
       if (override.getLength() > 0) {
-        newOverrides.add(new DartOverrideMember(override));
+        final int offset = service.getConvertedOffset(file, override.getOffset());
+        final int length = service.getConvertedOffset(file, override.getOffset() + override.getLength()) - offset;
+        newOverrides.add(new DartOverrideMember(offset, length, override.getSuperclassMember(), override.getInterfaceMembers()));
       }
     }
 
     myOverrideData.put(filePath, newOverrides);
-    forceFileAnnotation(filePath, false);
+    forceFileAnnotation(file, false);
   }
 
   void computedImplemented(@NotNull final String filePath,
@@ -102,14 +134,21 @@ public class DartServerData {
                            @NotNull final List<ImplementedMember> implementedMembers) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+
     final List<DartRegion> newImplementedClasses = new ArrayList<DartRegion>(implementedClasses.size());
     for (ImplementedClass implementedClass : implementedClasses) {
-      newImplementedClasses.add(new DartRegion(implementedClass.getOffset(), implementedClass.getLength()));
+      final int offset = service.getConvertedOffset(file, implementedClass.getOffset());
+      final int length = service.getConvertedOffset(file, implementedClass.getOffset() + implementedClass.getLength()) - offset;
+      newImplementedClasses.add(new DartRegion(offset, length));
     }
 
     final List<DartRegion> newImplementedMembers = new ArrayList<DartRegion>(implementedMembers.size());
     for (ImplementedMember implementedMember : implementedMembers) {
-      newImplementedMembers.add(new DartRegion(implementedMember.getOffset(), implementedMember.getLength()));
+      final int offset = service.getConvertedOffset(file, implementedMember.getOffset());
+      final int length = service.getConvertedOffset(file, implementedMember.getOffset() + implementedMember.getLength()) - offset;
+      newImplementedMembers.add(new DartRegion(offset, length));
     }
 
     boolean hasChanges = false;
@@ -126,7 +165,7 @@ public class DartServerData {
     }
 
     if (hasChanges) {
-      forceFileAnnotation(filePath, false);
+      forceFileAnnotation(file, false);
     }
   }
 
@@ -166,9 +205,8 @@ public class DartServerData {
     return classes != null ? classes : Collections.<DartRegion>emptyList();
   }
 
-  private void forceFileAnnotation(@NotNull final String filePath, final boolean clearCache) {
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    if (virtualFile != null) {
+  private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
+    if (file != null) {
       Set<Project> projects = myRootsHandler.getTrackedProjects();
       for (final Project project : projects) {
         if (project.isDisposed()) continue;
@@ -197,32 +235,32 @@ public class DartServerData {
   void onFlushedResults(@NotNull final List<String> filePaths) {
     if (!myErrorData.isEmpty()) {
       for (String path : filePaths) {
-        myErrorData.remove(FileUtil.toSystemIndependentName(path));
+        myErrorData.remove(path);
       }
     }
     if (!myHighlightData.isEmpty()) {
       for (String path : filePaths) {
-        myHighlightData.remove(FileUtil.toSystemIndependentName(path));
+        myHighlightData.remove(path);
       }
     }
     if (!myNavigationData.isEmpty()) {
       for (String path : filePaths) {
-        myNavigationData.remove(FileUtil.toSystemIndependentName(path));
+        myNavigationData.remove(path);
       }
     }
     if (!myOverrideData.isEmpty()) {
       for (String path : filePaths) {
-        myOverrideData.remove(FileUtil.toSystemIndependentName(path));
+        myOverrideData.remove(path);
       }
     }
     if (!myImplementedClassData.isEmpty()) {
       for (String path : filePaths) {
-        myImplementedClassData.remove(FileUtil.toSystemIndependentName(path));
+        myImplementedClassData.remove(path);
       }
     }
     if (!myImplementedMemberData.isEmpty()) {
       for (String path : filePaths) {
-        myImplementedMemberData.remove(FileUtil.toSystemIndependentName(path));
+        myImplementedMemberData.remove(path);
       }
     }
   }
@@ -267,8 +305,8 @@ public class DartServerData {
       if (region instanceof DartNavigationRegion) {
         // may be we'd better delete target touched by editing?
         for (DartNavigationTarget target : ((DartNavigationRegion)region).getTargets()) {
-          if (target.myFile.equals(filePath) && target.myOffset >= eventOffset) {
-            target.myOffset += deltaLength;
+          if (target.myFile.equals(filePath) && target.myConvertedOffset >= eventOffset) {
+            target.myConvertedOffset += deltaLength;
           }
         }
       }
@@ -366,9 +404,9 @@ public class DartServerData {
   public static class DartHighlightRegion extends DartRegion {
     private final String type;
 
-    private DartHighlightRegion(@NotNull final HighlightRegion region) {
-      super(region.getOffset(), region.getLength());
-      type = region.getType().intern();
+    private DartHighlightRegion(final int offset, final int length, @NotNull final String type) {
+      super(offset, length);
+      this.type = type.intern();
     }
 
     public String getType() {
@@ -383,8 +421,8 @@ public class DartServerData {
     @Nullable private final String myCode;
     private final String myMessage;
 
-    private DartError(@NotNull final AnalysisError error) {
-      super(error.getLocation().getOffset(), error.getLocation().getLength());
+    private DartError(@NotNull final AnalysisError error, final int correctedOffset, final int correctedLength) {
+      super(correctedOffset, correctedLength);
       myAnalysisErrorFileSD = error.getLocation().getFile().intern();
       mySeverity = error.getSeverity().intern();
       myType = error.getType().intern();
@@ -415,14 +453,11 @@ public class DartServerData {
   }
 
   public static class DartNavigationRegion extends DartRegion {
-    private final List<DartNavigationTarget> myTargets = new SmartList<>();
+    private final List<DartNavigationTarget> myTargets;
 
-    DartNavigationRegion(@NotNull final NavigationRegion region) {
-      super(region.getOffset(), region.getLength());
-
-      for (NavigationTarget target : region.getTargetObjects()) {
-        myTargets.add(new DartNavigationTarget(target));
-      }
+    DartNavigationRegion(final int offset, final int length, @NotNull final List<DartNavigationTarget> targets) {
+      super(offset, length);
+      myTargets = targets;
     }
 
     @Override
@@ -437,12 +472,14 @@ public class DartServerData {
 
   public static class DartNavigationTarget {
     private final String myFile;
-    private int myOffset;
+    private final int myOriginalOffset;
     private final String myKind;
+
+    private int myConvertedOffset = -1;
 
     private DartNavigationTarget(@NotNull final NavigationTarget target) {
       myFile = FileUtil.toSystemIndependentName(target.getFile()).intern();
-      myOffset = target.getOffset();
+      myOriginalOffset = target.getOffset();
       myKind = target.getKind().intern();
     }
 
@@ -450,8 +487,11 @@ public class DartServerData {
       return myFile;
     }
 
-    public int getOffset() {
-      return myOffset;
+    public int getOffset(@Nullable final VirtualFile file) {
+      if (myConvertedOffset == -1) {
+        myConvertedOffset = DartAnalysisServerService.getInstance().getConvertedOffset(file, myOriginalOffset);
+      }
+      return myConvertedOffset;
     }
 
     public String getKind() {
@@ -463,11 +503,13 @@ public class DartServerData {
     @Nullable private final OverriddenMember mySuperclassMember;
     @Nullable private final List<OverriddenMember> myInterfaceMembers;
 
-    private DartOverrideMember(@NotNull final OverrideMember overrideMember) {
-      super(overrideMember.getOffset(), overrideMember.getLength());
-
-      mySuperclassMember = overrideMember.getSuperclassMember();
-      myInterfaceMembers = overrideMember.getInterfaceMembers();
+    private DartOverrideMember(final int offset,
+                               final int length,
+                               @Nullable final OverriddenMember superclassMember,
+                               @Nullable final List<OverriddenMember> interfaceMembers) {
+      super(offset, length);
+      mySuperclassMember = superclassMember;
+      myInterfaceMembers = interfaceMembers;
     }
 
     @Nullable

@@ -240,7 +240,7 @@ public class DartAnnotator implements Annotator {
 
       if (annotation != null) {
         final DartQuickFixSet quickFixSet =
-          new DartQuickFixSet(psiFile.getManager(), file.getPath(), error.getOffset(), error.getCode(), error.getSeverity());
+          new DartQuickFixSet(psiFile.getManager(), file, error.getOffset(), error.getCode(), error.getSeverity());
 
         for (IntentionAction quickFix : quickFixSet.getQuickFixes()) {
           annotation.registerFix(quickFix);

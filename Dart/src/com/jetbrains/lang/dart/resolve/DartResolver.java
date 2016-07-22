@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -177,7 +176,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     String targetPath = target.getFile();
     PsiFile file = findPsiFile(project, targetPath);
     if (file != null) {
-      int targetOffset = target.getOffset();
+      int targetOffset = target.getOffset(file.getVirtualFile());
 
       PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartComponentName.class, false);
       if (elementAt == null) elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartLibraryNameElement.class, false);

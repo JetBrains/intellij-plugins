@@ -15,7 +15,7 @@ import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider;
+import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -118,7 +118,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
     if (addItem) {
       final Element element = currentItem.getClassElement();
       final Location location = element.getLocation();
-      final DartComponent component = DartServerOverrideMarkerProvider.findDartComponent(project, location);
+      final DartComponent component = DartHierarchyUtil.findDartComponent(project, location);
       if (component != null && isInScope(scope, component)) {
         components.add(component);
       }
@@ -143,7 +143,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
       final Element element = currentItem.getMemberElement();
       if (element != null) {
         final Location location = element.getLocation();
-        final DartComponent component = DartServerOverrideMarkerProvider.findDartComponent(project, location);
+        final DartComponent component = DartHierarchyUtil.findDartComponent(project, location);
         if (component != null && isInScope(scope, component)) {
           components.add(component);
         }

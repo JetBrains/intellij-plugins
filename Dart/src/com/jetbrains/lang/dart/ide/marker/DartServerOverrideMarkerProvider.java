@@ -26,22 +26,17 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
+import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.OverriddenMember;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,34 +65,8 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
     return null;
   }
 
-  @Nullable
-  public static DartComponent findDartComponent(Project project, Location location) {
-    return findDartComponent(project, location.getFile(), location.getOffset());
-  }
-
-  @Nullable
-  public static DartComponent findDartComponent(Project project, String filePath, int offset) {
-    if (filePath == null) {
-      return null;
-    }
-    filePath = FileUtil.toSystemIndependentName(filePath);
-
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    if (virtualFile == null) {
-      return null;
-    }
-
-    final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-    if (psiFile == null) {
-      return null;
-    }
-
-    final PsiElement elementAtOffset = psiFile.findElementAt(offset);
-    return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponent.class);
-  }
-
   private static void addDartComponent(List<DartComponent> components, Project project, OverriddenMember member) {
-    final DartComponent component = findDartComponent(project, member);
+    final DartComponent component = member == null ? null : DartHierarchyUtil.findDartComponent(project, member.getElement().getLocation());
     if (component != null) {
       components.add(component);
     }
@@ -117,7 +86,8 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
     List<DartComponent> interfaceComponents = Lists.newArrayList();
     for (DartServerData.DartOverrideMember overrideMember : overrideMembers) {
       if (overrideMember.getOffset() == nameOffset) {
-        superclassComponent = findDartComponent(project, overrideMember.getSuperclassMember());
+        final OverriddenMember member = overrideMember.getSuperclassMember();
+        superclassComponent = member == null ? null : DartHierarchyUtil.findDartComponent(project, member.getElement().getLocation());
         if (overrideMember.getInterfaceMembers() != null) {
           for (OverriddenMember overriddenMember : overrideMember.getInterfaceMembers()) {
             addDartComponent(interfaceComponents, project, overriddenMember);
@@ -126,15 +96,6 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
       }
     }
     return tryCreateOverrideMarker(componentName, superclassComponent, interfaceComponents);
-  }
-
-  @Nullable
-  private static DartComponent findDartComponent(@NotNull final Project project, @Nullable final OverriddenMember member) {
-    if (member != null) {
-      final Location location = member.getElement().getLocation();
-      return findDartComponent(project, location.getFile(), location.getOffset());
-    }
-    return null;
   }
 
   @Nullable

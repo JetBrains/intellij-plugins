@@ -14,11 +14,8 @@
 
 package com.jetbrains.lang.dart.ide.refactoring;
 
-import org.dartlang.analysis.server.protocol.InlineMethodFeedback;
-import org.dartlang.analysis.server.protocol.InlineMethodOptions;
-import org.dartlang.analysis.server.protocol.RefactoringFeedback;
-import org.dartlang.analysis.server.protocol.RefactoringKind;
-import org.dartlang.analysis.server.protocol.RefactoringOptions;
+import com.intellij.openapi.vfs.VirtualFile;
+import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,7 +26,7 @@ public class ServerInlineMethodRefactoring extends ServerRefactoring {
   private String fullName;
   private boolean isDeclaration;
 
-  public ServerInlineMethodRefactoring(String file, int offset, int length) {
+  public ServerInlineMethodRefactoring(VirtualFile file, int offset, int length) {
     super("Inline Method", RefactoringKind.INLINE_METHOD, file, offset, length);
   }
 
@@ -58,12 +55,13 @@ public class ServerInlineMethodRefactoring extends ServerRefactoring {
 
   @Override
   protected void setFeedback(@NotNull RefactoringFeedback _feedback) {
-    InlineMethodFeedback feedback = (InlineMethodFeedback) _feedback;
+    InlineMethodFeedback feedback = (InlineMethodFeedback)_feedback;
     String className = feedback.getClassName();
     String methodName = feedback.getMethodName();
     if (className != null) {
       fullName = className + "." + methodName;
-    } else {
+    }
+    else {
       fullName = methodName;
     }
     isDeclaration = feedback.isDeclaration();

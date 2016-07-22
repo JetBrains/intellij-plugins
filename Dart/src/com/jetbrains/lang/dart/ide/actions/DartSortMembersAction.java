@@ -85,12 +85,13 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
         showHintLater(editor, DartBundle.message("dart.sort.members.hint.already.good"), false);
       }
       else {
-        AssistUtils.applySourceEdits(document, edits);
+        AssistUtils.applySourceEdits(psiFile.getVirtualFile(), document, edits);
         showHintLater(editor, DartBundle.message("dart.sort.members.hint.success"), false);
       }
     };
 
-    ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null));
+    ApplicationManager.getApplication().runWriteAction(
+      () -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null));
   }
 
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
@@ -140,7 +141,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
           final Document document = FileDocumentManager.getInstance().getDocument(file);
           final SourceFileEdit fileEdit = entry.getValue();
           if (document != null) {
-            AssistUtils.applySourceEdits(document, fileEdit.getEdits());
+            AssistUtils.applySourceEdits(file, document, fileEdit.getEdits());
           }
         }
       };

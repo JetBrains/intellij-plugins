@@ -50,11 +50,9 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
     final SelectionModel selectionModel = editor.getSelectionModel();
     if (!selectionModel.hasSelection()) selectionModel.selectLineAtCaret();
 
-    final String filePath = file.getVirtualFile().getPath();
     final int offset = selectionModel.getSelectionStart();
     final int length = selectionModel.getSelectionEnd() - offset;
-
-    final ServerExtractMethodRefactoring refactoring = new ServerExtractMethodRefactoring(filePath, offset, length);
+    final ServerExtractMethodRefactoring refactoring = new ServerExtractMethodRefactoring(file.getVirtualFile(), offset, length);
 
     // Validate initial status.
     {

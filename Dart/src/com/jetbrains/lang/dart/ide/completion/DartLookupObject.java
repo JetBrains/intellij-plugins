@@ -9,6 +9,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
@@ -29,12 +30,15 @@ public class DartLookupObject implements ResolveResult {
   @Nullable
   @Override
   public PsiElement getElement() {
-    // todo for some reason Analysis Server doesn't provide location for local vars, fields and other local elements
     final String filePath = myLocation == null ? null : FileUtil.toSystemIndependentName(myLocation.getFile());
     final VirtualFile vFile = filePath == null ? null : LocalFileSystem.getInstance().findFileByPath(filePath);
     final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(myProject).findFile(vFile);
-    final PsiElement elementAtOffset = psiFile == null ? null : psiFile.findElementAt(myLocation.getOffset());
-    return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponentName.class);
+    if (psiFile != null) {
+      final int offset = DartAnalysisServerService.getInstance().getConvertedOffset(vFile, myLocation.getOffset());
+      final PsiElement elementAtOffset = psiFile.findElementAt(offset);
+      return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponentName.class);
+    }
+    return null;
   }
 
   @Override
