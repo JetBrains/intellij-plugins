@@ -5,25 +5,27 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.css.CssBundle;
+import com.intellij.util.containers.ContainerUtil;
 import icons.PostcssIcons;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
 import java.util.Map;
 
 public class PostCssColorsPage implements ColorSettingsPage {
-
+  private static final Map<String, TextAttributesKey> ADDITIONAL_ATTRIBUTES_KEY_MAP = ContainerUtil.newHashMap(
+    Pair.create("tag", PostCssSyntaxHighlighter.TAG_NAME));
   private static final String DEMO_TEXT = "@import \"manual.css\";\n\n" +
                                           "@font-face {\n" +
                                           "  font-family: DroidSans;\n" +
                                           "  src: url(DroidSans.ttf);\n" +
                                           "  unicode-range: U+000-5FF, U+1e00-1fff, U+2000-2300;\n" +
                                           "}\n\n" +
-                                          "h1.mystyle:lang(en) {\n" +
+                                          "<tag>h1</tag>.mystyle:lang(en) {\n" +
                                           "  color:blue; /* TODO: change THIS to yellow for next version! */\n" +
                                           "  border:rgb(255,0,0);\n" +
                                           "  background-color: #FAFAFA;\n" +
@@ -32,7 +34,7 @@ public class PostCssColorsPage implements ColorSettingsPage {
                                           "    color: yellow;\n" +
                                           "  }\n" +
                                           "}\n\n" +
-                                          "div > p, p ~ ul, input[type=\"radio\"] {\n" +
+                                          "<tag>div</tag> > <tag>p</tag>, <tag>p</tag> ~ <tag>ul</tag>, <tag>input</tag> [type=\"radio\"] {\n" +
                                           "  color: green;\n" +
                                           "  width: 80%;\n" +
                                           "}\n\n" +
@@ -69,7 +71,7 @@ public class PostCssColorsPage implements ColorSettingsPage {
 
   @Nullable
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-    return Collections.emptyMap();
+    return ADDITIONAL_ATTRIBUTES_KEY_MAP;
   }
 
   @NotNull
