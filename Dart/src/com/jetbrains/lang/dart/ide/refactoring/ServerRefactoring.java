@@ -77,6 +77,7 @@ public abstract class ServerRefactoring {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Validating the specified parameters.");
+        indicator.setIndeterminate(true);
         setOptions(false, indicator);
       }
     });
@@ -98,6 +99,7 @@ public abstract class ServerRefactoring {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Checking availability at the selection.");
+        indicator.setIndeterminate(true);
         setOptions(true, indicator);
       }
     });
