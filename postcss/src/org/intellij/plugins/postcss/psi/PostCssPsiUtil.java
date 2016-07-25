@@ -24,7 +24,8 @@ public class PostCssPsiUtil {
   private PostCssPsiUtil() {
   }
 
-  public static boolean isInsidePostCss(@Nullable CssElement element) {
+  @Contract("null -> false")
+  public static boolean isInsidePostCss(@Nullable PsiElement element) {
     return CssPsiUtil.getStylesheetLanguage(element) == PostCssLanguage.INSTANCE;
   }
 

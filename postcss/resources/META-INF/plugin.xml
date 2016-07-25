@@ -23,6 +23,12 @@
     <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssDumbAwareCompletionContributor"/>
     <css.elementDescriptorProvider implementation="org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider"
                                    order="before cssElementDescriptorProvider"/>
+    <psi.referenceContributor implementation="org.intellij.plugins.postcss.references.PostCssReferenceContributor"/>
+    <lang.findUsagesProvider language="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssFindUsagesProvider"/>
+    <renameInputValidator implementation="org.intellij.plugins.postcss.rename.PostCssInputValidator"/>
+
+    <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex"/>
+    <stubElementTypeHolder class="org.intellij.plugins.postcss.PostCssElementTypes"/>
 
     <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
                      key="inspections.nesting.problems.name"

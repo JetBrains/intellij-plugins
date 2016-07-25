@@ -13,21 +13,26 @@ import org.intellij.plugins.postcss.inspections.PostCssNestingQuickFixTest;
 import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
 import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerTest;
 import org.intellij.plugins.postcss.parser.PostCssParsingTest;
+import org.intellij.plugins.postcss.rename.PostCssRenameTest;
+import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
+import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
 
 @SuppressWarnings({"JUnitTestClassNamingConvention", "JUnitTestCaseWithNoTests"})
 public class PostCssTestSuite extends TestCase {
   public static Test suite() {
-    TestSuite testSuite = new TestSuite("All PostCss");
+    TestSuite testSuite = new TestSuite("All PostCSS");
     testSuite.addTest(WithoutPerformance.suite());
     return testSuite;
   }
 
   public static class WithoutPerformance extends TestCase {
     public static Test suite() {
-      TestSuite suite = new TestSuite("All PostCss without performance");
+      TestSuite suite = new TestSuite("All PostCSS without performance");
       suite.addTest(Fast.suite());
       suite.addTest(Inspections.suite());
       suite.addTest(Completion.suite());
+      suite.addTest(Resolving.suite());
+      suite.addTest(Refactoring.suite());
       suite.addTest(Other.suite());
       return suite;
     }
@@ -35,7 +40,7 @@ public class PostCssTestSuite extends TestCase {
 
   public static class Fast extends TestCase {
     public static Test suite() {
-      TestSuite suite = new TestSuite("Fast PostCss");
+      TestSuite suite = new TestSuite("Fast PostCSS");
       suite.addTestSuite(PostCssLexerTest.class);
       suite.addTestSuite(PostCssParsingTest.class);
       suite.addTestSuite(PostCssHighlightingLexerTest.class);
@@ -45,7 +50,7 @@ public class PostCssTestSuite extends TestCase {
 
   public static class Inspections extends TestCase {
     public static Test suite() {
-      TestSuite suite = new TestSuite("Inspections PostCss");
+      TestSuite suite = new TestSuite("Inspections PostCSS");
       suite.addTestSuite(PostCssNestingInspectionTest.class);
       suite.addTestSuite(PostCssCustomSelectorInspectionTest.class);
 
@@ -57,16 +62,33 @@ public class PostCssTestSuite extends TestCase {
 
   public static class Completion extends TestCase {
     public static Test suite() {
-      TestSuite suite = new TestSuite("Completion PostCss");
+      TestSuite suite = new TestSuite("Completion PostCSS");
       suite.addTestSuite(PostCssNestCompletionTest.class);
       suite.addTestSuite(PostCssCustomSelectorCompletionTest.class);
       return suite;
     }
   }
 
+  public static class Resolving extends TestCase {
+    public static Test suite() {
+      TestSuite suite = new TestSuite("Resolving PostCSS");
+      suite.addTestSuite(PostCssCustomSelectorResolveTest.class);
+      suite.addTestSuite(PostCssFindUsagesTest.class);
+      return suite;
+    }
+  }
+
+  public static class Refactoring extends TestCase {
+    public static Test suite() {
+      TestSuite suite = new TestSuite("Refactoring PostCSS");
+      suite.addTestSuite(PostCssRenameTest.class);
+      return suite;
+    }
+  }
+
   public static class Other extends TestCase {
     public static Test suite() {
-      TestSuite suite = new TestSuite("Other PostCss");
+      TestSuite suite = new TestSuite("Other PostCSS");
       suite.addTestSuite(PostCssFileStructureTest.class);
       return suite;
     }
