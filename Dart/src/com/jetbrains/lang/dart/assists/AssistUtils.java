@@ -44,10 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class AssistUtils {
   /**
@@ -83,18 +80,27 @@ public class AssistUtils {
         return;
       }
     }
+
     // do apply the change
     CommandProcessor.getInstance().executeCommand(project, () -> {
+      final ChangeTarget linkedEditTarget = withLinkedEdits ? findChangeTarget(project, sourceChange) : null;
+      List<SourceEditInfo> sourceEditInfos = null;
+
       for (Map.Entry<VirtualFile, SourceFileEdit> entry : changeMap.entrySet()) {
         final VirtualFile file = entry.getKey();
         final SourceFileEdit fileEdit = entry.getValue();
         final Document document = FileDocumentManager.getInstance().getDocument(file);
         if (document != null) {
-          applySourceEdits(file, document, fileEdit.getEdits(), excludedIds);
+          final List<SourceEditInfo> infos = applySourceEdits(file, document, fileEdit.getEdits(), excludedIds);
+
+          if (linkedEditTarget != null && linkedEditTarget.virtualFile.equals(file)) {
+            sourceEditInfos = infos;
+          }
         }
       }
-      if (withLinkedEdits) {
-        runLinkedEdits(project, sourceChange);
+
+      if (withLinkedEdits && sourceEditInfos != null) {
+        runLinkedEdits(project, sourceChange, linkedEditTarget, sourceEditInfos);
       }
     }, sourceChange.getMessage(), null);
   }
@@ -106,10 +112,11 @@ public class AssistUtils {
     applySourceEdits(file, document, edits, excludedIds);
   }
 
-  public static void applySourceEdits(@NotNull final VirtualFile file,
-                                      @NotNull final Document document,
-                                      @NotNull final List<SourceEdit> edits,
-                                      @NotNull final Set<String> excludedIds) {
+  public static List<SourceEditInfo> applySourceEdits(@NotNull final VirtualFile file,
+                                                      @NotNull final Document document,
+                                                      @NotNull final List<SourceEdit> edits,
+                                                      @NotNull final Set<String> excludedIds) {
+    final List<SourceEditInfo> result = new ArrayList<>(edits.size());
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
 
     for (SourceEdit edit : edits) {
@@ -121,11 +128,25 @@ public class AssistUtils {
       final int length = service.getConvertedOffset(file, edit.getOffset() + edit.getLength()) - offset;
       final String replacement = StringUtil.convertLineSeparators(edit.getReplacement());
 
+      for (SourceEditInfo info : result) {
+        if (info.resultingOriginalOffset > edit.getOffset()) {
+          info.resultingOriginalOffset -= edit.getLength();
+          info.resultingOriginalOffset += edit.getReplacement().length();
+          info.resultingConvertedOffset -= length;
+          info.resultingConvertedOffset += replacement.length();
+        }
+      }
+
+      result.add(new SourceEditInfo(edit.getOffset(), offset, edit.getLength(), length,
+                                    edit.getReplacement(), replacement));
+
       if (length != replacement.length() ||
           !replacement.equals(document.getText(TextRange.create(offset, offset + length)))) {
         document.replaceString(offset, offset + length, replacement);
       }
     }
+
+    return result;
   }
 
   @NotNull
@@ -161,6 +182,7 @@ public class AssistUtils {
     return map;
   }
 
+  @Nullable
   private static ChangeTarget findChangeTarget(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
     for (LinkedEditGroup group : sourceChange.getLinkedEditGroups()) {
       final List<Position> positions = group.getPositions();
@@ -177,11 +199,49 @@ public class AssistUtils {
           return null;
         }
 
-        final int offset = DartAnalysisServerService.getInstance().getConvertedOffset(virtualFile, position.getOffset());
-        return new ChangeTarget(project, offset, virtualFile, psiFile);
+        return new ChangeTarget(project, virtualFile, psiFile, position.getOffset());
       }
     }
     return null;
+  }
+
+  private static int getLinkedEditConvertedOffset(@NotNull final VirtualFile file,
+                                                  final int linkedEditOffset,
+                                                  @NotNull final List<SourceEditInfo> editInfos) {
+    // first check if linkedEditOffset is inside of some SourceEdit
+    for (SourceEditInfo info : editInfos) {
+      if (linkedEditOffset >= info.resultingOriginalOffset &&
+          linkedEditOffset <= info.resultingOriginalOffset + info.originalReplacement.length()) {
+        final String substring = info.originalReplacement.substring(0, linkedEditOffset - info.resultingOriginalOffset);
+        final int crlfCount = StringUtil.getOccurrenceCount(substring, "\r\n");
+        return info.resultingConvertedOffset + linkedEditOffset - info.resultingOriginalOffset - crlfCount;
+      }
+    }
+
+    // if we are here, it means that linkedEditOffset is outside of all SourceEdits
+    int leOffset = linkedEditOffset;
+
+    // 1. find offset before any SourceEdits applied
+    for (int i = editInfos.size() - 1; i >= 0; i--) {
+      final SourceEditInfo info = editInfos.get(i);
+      if (linkedEditOffset >= info.originalOffset) {
+        leOffset -= info.originalReplacement.length();
+        leOffset += info.originalLength;
+      }
+    }
+
+    // 2. convert offset
+    leOffset = DartAnalysisServerService.getInstance().getConvertedOffset(file, leOffset);
+
+    // 3. find offset after all SourceEdits applied
+    for (SourceEditInfo info : editInfos) {
+      if (leOffset >= info.convertedOffset) {
+        leOffset -= info.convertedLength;
+        leOffset += info.normalizedReplacement.length();
+      }
+    }
+
+    return leOffset;
   }
 
   @Nullable
@@ -203,13 +263,12 @@ public class AssistUtils {
     return fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
   }
 
-  private static void runLinkedEdits(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
-    final ChangeTarget target = findChangeTarget(project, sourceChange);
-    if (target == null) {
-      return;
-    }
-
-    final Editor editor = navigate(project, target.virtualFile, target.offset);
+  private static void runLinkedEdits(@NotNull final Project project,
+                                     @NotNull final SourceChange sourceChange,
+                                     @NotNull final ChangeTarget target,
+                                     @NotNull final List<SourceEditInfo> sourceEditInfos) {
+    final int caretOffset = getLinkedEditConvertedOffset(target.virtualFile, target.originalOffset, sourceEditInfos);
+    final Editor editor = navigate(project, target.virtualFile, caretOffset);
     if (editor == null) {
       return;
     }
@@ -218,8 +277,6 @@ public class AssistUtils {
     PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
     final TemplateBuilderImpl builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(target.psiFile);
     boolean hasTextRanges = false;
-
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
 
     // fill the builder with ranges
     int groupIndex = 0;
@@ -231,7 +288,7 @@ public class AssistUtils {
         if (FileUtil.toSystemIndependentName(position.getFile()).equals(target.virtualFile.getPath())) {
           hasTextRanges = true;
 
-          final int offset = service.getConvertedOffset(target.virtualFile, position.getOffset());
+          final int offset = getLinkedEditConvertedOffset(target.virtualFile, position.getOffset(), sourceEditInfos);
           final int end = offset + group.getLength();
           final TextRange range = new TextRange(offset, end);
           if (firstPosition) {
@@ -250,6 +307,29 @@ public class AssistUtils {
     // run the template
     if (hasTextRanges) {
       builder.run(editor, true);
+    }
+  }
+
+  private static class SourceEditInfo {
+    private final int originalOffset;
+    private int resultingOriginalOffset;
+    private final int convertedOffset;
+    private int resultingConvertedOffset;
+    private final int originalLength;
+    private final int convertedLength;
+    private final String originalReplacement;
+    private final String normalizedReplacement;
+
+    public SourceEditInfo(int originalOffset, int convertedOffset, int originalLength, int convertedLength,
+                          String originalReplacement, String normalizedReplacement) {
+      this.originalOffset = originalOffset;
+      resultingOriginalOffset = originalOffset;
+      this.convertedOffset = convertedOffset;
+      resultingConvertedOffset = convertedOffset;
+      this.originalLength = originalLength;
+      this.convertedLength = convertedLength;
+      this.originalReplacement = originalReplacement;
+      this.normalizedReplacement = normalizedReplacement;
     }
   }
 }
@@ -312,13 +392,16 @@ class DartLookupExpression extends Expression {
 
 class ChangeTarget {
   @NotNull final Project project;
-  final int offset;
   @NotNull final VirtualFile virtualFile;
   @NotNull final PsiFile psiFile;
+  final int originalOffset;
 
-  ChangeTarget(@NotNull Project project, int offset, @NotNull VirtualFile virtualFile, @NotNull PsiFile psiFile) {
+  ChangeTarget(@NotNull final Project project,
+               @NotNull final VirtualFile virtualFile,
+               @NotNull final PsiFile psiFile,
+               final int originalOffset) {
     this.project = project;
-    this.offset = offset;
+    this.originalOffset = originalOffset;
     this.virtualFile = virtualFile;
     this.psiFile = psiFile;
   }
