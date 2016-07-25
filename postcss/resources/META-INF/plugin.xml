@@ -22,7 +22,7 @@
     <css.structureViewChildrenProvider implementation="org.intellij.plugins.postcss.fileStructure.PostCssStructureViewElementsProvider"/>
     <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssDumbAwareCompletionContributor"/>
     <css.elementDescriptorProvider implementation="org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider"
-                                   order="last, before cssElementDescriptorProvider"/>
+                                   order="before cssElementDescriptorProvider"/>
 
     <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
                      key="inspections.nesting.problems.name"
