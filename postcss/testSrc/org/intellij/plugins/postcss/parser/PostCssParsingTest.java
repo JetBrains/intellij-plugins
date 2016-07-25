@@ -11,6 +11,7 @@ import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.PostCssTestUtils;
+import org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider;
 import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory;
 
 @TestDataPath("$CONTENT_ROOT/testData/parser/")
@@ -24,6 +25,7 @@ public class PostCssParsingTest extends ParsingTestCase {
     super.setUp();
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
+    registerExtension(CssElementDescriptorProvider.EP_NAME, new PostCssElementDescriptorProvider());
 
     registerApplicationService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2("css-parsing-tests.xml"));
 
