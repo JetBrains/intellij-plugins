@@ -31,12 +31,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,11 +55,12 @@ public class AssistUtils {
    */
   public static boolean applyFileEdit(@NotNull final SourceFileEdit fileEdit) {
     final VirtualFile file = findVirtualFile(fileEdit);
-    if (file != null) {
-      return applyFileEdit(file, fileEdit, Collections.emptySet());
-    }
+    final Document document = file == null ? null : FileDocumentManager.getInstance().getDocument(file);
+    if (document == null) return false;
 
-    return false;
+    final long initialModStamp = document.getModificationStamp();
+    applySourceEdits(file, document, fileEdit.getEdits(), Collections.emptySet());
+    return document.getModificationStamp() != initialModStamp;
   }
 
   public static void applySourceChange(@NotNull final Project project,
@@ -85,7 +88,10 @@ public class AssistUtils {
       for (Map.Entry<VirtualFile, SourceFileEdit> entry : changeMap.entrySet()) {
         final VirtualFile file = entry.getKey();
         final SourceFileEdit fileEdit = entry.getValue();
-        applyFileEdit(file, fileEdit, excludedIds);
+        final Document document = FileDocumentManager.getInstance().getDocument(file);
+        if (document != null) {
+          applySourceEdits(file, document, fileEdit.getEdits(), excludedIds);
+        }
       }
       if (withLinkedEdits) {
         runLinkedEdits(project, sourceChange);
@@ -93,24 +99,31 @@ public class AssistUtils {
     }, sourceChange.getMessage(), null);
   }
 
-  public static void applySourceEdits(@NotNull final Document document, @NotNull final List<SourceEdit> edits) {
+  public static void applySourceEdits(@NotNull final VirtualFile file,
+                                      @NotNull final Document document,
+                                      @NotNull final List<SourceEdit> edits) {
     final Set<String> excludedIds = Collections.emptySet();
-    applySourceEdits(document, edits, excludedIds);
+    applySourceEdits(file, document, edits, excludedIds);
   }
 
-  public static void applySourceEdits(@NotNull final Document document,
+  public static void applySourceEdits(@NotNull final VirtualFile file,
+                                      @NotNull final Document document,
                                       @NotNull final List<SourceEdit> edits,
                                       @NotNull final Set<String> excludedIds) {
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+
     for (SourceEdit edit : edits) {
       if (excludedIds.contains(edit.getId())) {
         continue;
       }
-      final int offset = edit.getOffset();
-      final int length = edit.getLength();
 
-      if (length != edit.getReplacement().length() ||
-          !edit.getReplacement().equals(document.getText(TextRange.create(offset, offset + length)))) {
-        document.replaceString(offset, offset + length, edit.getReplacement());
+      final int offset = service.getConvertedOffset(file, edit.getOffset());
+      final int length = service.getConvertedOffset(file, edit.getOffset() + edit.getLength()) - offset;
+      final String replacement = StringUtil.convertLineSeparators(edit.getReplacement());
+
+      if (length != replacement.length() ||
+          !replacement.equals(document.getText(TextRange.create(offset, offset + length)))) {
+        document.replaceString(offset, offset + length, replacement);
       }
     }
   }
@@ -148,31 +161,13 @@ public class AssistUtils {
     return map;
   }
 
-  /**
-   * @return <code>true</code> if file contents changed, <code>false</code> otherwise
-   */
-  private static boolean applyFileEdit(@NotNull final VirtualFile file,
-                                       @NotNull final SourceFileEdit fileEdit,
-                                       @NotNull final Set<String> excludedIds) {
-    final Document document = FileDocumentManager.getInstance().getDocument(file);
-    if (document != null) {
-      final long initialModStamp = document.getModificationStamp();
-
-      applySourceEdits(document, fileEdit.getEdits(), excludedIds);
-
-      return document.getModificationStamp() != initialModStamp;
-    }
-    return false;
-  }
-
-  private static ChangeTarget findChangeTarget(@NotNull Project project, final SourceChange sourceChange) {
+  private static ChangeTarget findChangeTarget(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
     for (LinkedEditGroup group : sourceChange.getLinkedEditGroups()) {
       final List<Position> positions = group.getPositions();
       if (!positions.isEmpty()) {
         final Position position = positions.get(0);
-        final String path = position.getFile();
         // find VirtualFile
-        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(path));
+        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(position.getFile()));
         if (virtualFile == null) {
           return null;
         }
@@ -181,8 +176,9 @@ public class AssistUtils {
         if (psiFile == null) {
           return null;
         }
-        // done
-        return new ChangeTarget(project, path, position.getOffset(), virtualFile, psiFile);
+
+        final int offset = DartAnalysisServerService.getInstance().getConvertedOffset(virtualFile, position.getOffset());
+        return new ChangeTarget(project, offset, virtualFile, psiFile);
       }
     }
     return null;
@@ -207,7 +203,7 @@ public class AssistUtils {
     return fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
   }
 
-  private static void runLinkedEdits(@NotNull Project project, @NotNull SourceChange sourceChange) {
+  private static void runLinkedEdits(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
     final ChangeTarget target = findChangeTarget(project, sourceChange);
     if (target == null) {
       return;
@@ -223,6 +219,8 @@ public class AssistUtils {
     final TemplateBuilderImpl builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(target.psiFile);
     boolean hasTextRanges = false;
 
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+
     // fill the builder with ranges
     int groupIndex = 0;
     for (LinkedEditGroup group : sourceChange.getLinkedEditGroups()) {
@@ -230,9 +228,10 @@ public class AssistUtils {
       boolean firstPosition = true;
       groupIndex++;
       for (Position position : group.getPositions()) {
-        if (position.getFile().equals(target.path)) {
+        if (FileUtil.toSystemIndependentName(position.getFile()).equals(target.virtualFile.getPath())) {
           hasTextRanges = true;
-          final int offset = position.getOffset();
+
+          final int offset = service.getConvertedOffset(target.virtualFile, position.getOffset());
           final int end = offset + group.getLength();
           final TextRange range = new TextRange(offset, end);
           if (firstPosition) {
@@ -311,17 +310,14 @@ class DartLookupExpression extends Expression {
   }
 }
 
-
 class ChangeTarget {
   @NotNull final Project project;
-  @NotNull final String path;
   final int offset;
   @NotNull final VirtualFile virtualFile;
   @NotNull final PsiFile psiFile;
 
-  ChangeTarget(@NotNull Project project, @NotNull String path, int offset, @NotNull VirtualFile virtualFile, @NotNull PsiFile psiFile) {
+  ChangeTarget(@NotNull Project project, int offset, @NotNull VirtualFile virtualFile, @NotNull PsiFile psiFile) {
     this.project = project;
-    this.path = path;
     this.offset = offset;
     this.virtualFile = virtualFile;
     this.psiFile = psiFile;

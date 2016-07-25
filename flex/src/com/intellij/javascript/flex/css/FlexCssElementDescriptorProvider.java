@@ -436,7 +436,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @Nullable
   public static XmlElementDescriptor getTypeSelectorDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
-    CssStylesheet stylesheet = ((CssFile)selector.getContainingFile()).getStylesheet();
+    CssStylesheet stylesheet = ((StylesheetFile)selector.getContainingFile()).getStylesheet();
     CssNamespace namespace = stylesheet != null ? stylesheet.getNamespace(selector.getNamespaceName()) : null;
     if (namespace != null && namespace.getUri() != null) {
       return CodeContext.getContext(namespace.getUri(), module).getElementDescriptor(selector.getElementName(), (XmlTag)null);

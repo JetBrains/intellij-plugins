@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatusEntry;
@@ -42,7 +43,7 @@ public abstract class ServerRefactoring {
   @NotNull private final String refactoringName;
   @NotNull private final String kind;
 
-  @NotNull private final String file;
+  @NotNull private final VirtualFile file;
   private final int offset;
   private final int length;
 
@@ -57,12 +58,17 @@ public abstract class ServerRefactoring {
   private int lastId = 0;
   @Nullable private ServerRefactoringListener listener;
 
-  public ServerRefactoring(@NotNull String refactoringName, @NotNull String kind, @NotNull String file, int offset, int length) {
+  public ServerRefactoring(@NotNull String refactoringName, @NotNull String kind, @NotNull VirtualFile file, int offset, int length) {
     this.refactoringName = refactoringName;
     this.kind = kind;
     this.file = file;
     this.offset = offset;
     this.length = length;
+  }
+
+  @NotNull
+  protected VirtualFile getFile() {
+    return file;
   }
 
   @Nullable

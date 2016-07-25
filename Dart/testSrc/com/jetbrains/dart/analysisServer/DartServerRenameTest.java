@@ -19,7 +19,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -110,11 +109,10 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
 
   @NotNull
   private ServerRenameRefactoring createRenameRefactoring() {
-    final PsiFile psiFile = myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.doHighlighting(); // make sure server is warmed up
-    final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
     final int offset = getEditor().getCaretModel().getOffset();
-    return new ServerRenameRefactoring(path, offset, 0);
+    return new ServerRenameRefactoring(getFile().getVirtualFile(), offset, 0);
   }
 
   public void testAvailability() {
@@ -176,12 +174,11 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
   }
 
   public void testTypeAndImmediatelyRenameLocalVar() throws Throwable {
-    final PsiFile psiFile = myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.doHighlighting(); // warm up
     myFixture.type('\n');
-    final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
     final int offset = getEditor().getCaretModel().getOffset();
-    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(path, offset, 0);
+    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(getFile().getVirtualFile(), offset, 0);
 
     doTest(refactoring, "newName");
   }

@@ -7,15 +7,13 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.Element;
@@ -40,12 +38,13 @@ public class DartHierarchyUtil {
   public static DartClass findDartClass(@NotNull final Project project, @NotNull final TypeHierarchyItem item) {
     final Element classElement = item.getClassElement();
     final Location location = classElement.getLocation();
-    final DartComponent component = DartServerOverrideMarkerProvider.findDartComponent(project, location);
+    final DartComponent component = findDartComponent(project, location);
     return component instanceof DartClass ? (DartClass)component : null;
   }
 
   public static Comparator<NodeDescriptor> getComparator(Project project) {
-    if (HierarchyBrowserManager.getInstance(project).getState().SORT_ALPHABETICALLY) {
+    final HierarchyBrowserManager.State state = HierarchyBrowserManager.getInstance(project).getState();
+    if (state != null && state.SORT_ALPHABETICALLY) {
       return AlphaComparator.INSTANCE;
     }
     else {
@@ -99,11 +98,11 @@ public class DartHierarchyUtil {
         dartReference = getRightmostReference(dartReference.getFirstChild());
       }
       DartComponent comp = DartResolveUtil.findReferenceAndComponentTarget(dartReference);
-      return comp != null && DartHierarchyUtil.isExecutable(comp) ? comp : null;
+      return comp != null && isExecutable(comp) ? comp : null;
     }
     else {
       if (psiElement == null) return null;
-      if (DartHierarchyUtil.isExecutable(psiElement)) return psiElement;
+      if (isExecutable(psiElement)) return psiElement;
       DartComponentName name = PsiTreeUtil.getParentOfType(psiElement, DartComponentName.class);
       if (name == null) {
         // Cursor may be between identifier and left paren of function definition.
@@ -116,7 +115,7 @@ public class DartHierarchyUtil {
       }
       if (name != null) {
         PsiElement def = name.getParent();
-        return def != null && DartHierarchyUtil.isExecutable(def) ? def : null;
+        return def != null && isExecutable(def) ? def : null;
       }
       return null;
     }
@@ -125,5 +124,28 @@ public class DartHierarchyUtil {
   private static DartReference getRightmostReference(PsiElement element) {
     PsiElement last = PsiTreeUtil.getDeepestLast(element);
     return PsiTreeUtil.getParentOfType(last, DartReference.class);
+  }
+
+  @Nullable
+  public static DartComponent findDartComponent(@NotNull final Project project, @NotNull final Location location) {
+    String filePath = location.getFile();
+    if (filePath == null) {
+      return null;
+    }
+    filePath = FileUtil.toSystemIndependentName(filePath);
+
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (virtualFile == null) {
+      return null;
+    }
+
+    final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+    if (psiFile == null) {
+      return null;
+    }
+
+    final int offset = DartAnalysisServerService.getInstance().getConvertedOffset(virtualFile, location.getOffset());
+    final PsiElement elementAtOffset = psiFile.findElementAt(offset);
+    return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponent.class);
   }
 }

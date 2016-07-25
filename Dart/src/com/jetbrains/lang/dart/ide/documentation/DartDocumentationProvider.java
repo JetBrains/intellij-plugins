@@ -116,8 +116,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
 
   @Nullable
   public static HoverInformation getSingleHover(@NotNull final PsiFile psiFile, final int offset) {
-    final String filePath = psiFile.getVirtualFile().getPath();
-    final List<HoverInformation> hoverList = DartAnalysisServerService.getInstance().analysis_getHover(filePath, offset);
+    final List<HoverInformation> hoverList = DartAnalysisServerService.getInstance().analysis_getHover(psiFile.getVirtualFile(), offset);
     if (hoverList.isEmpty()) {
       return null;
     }

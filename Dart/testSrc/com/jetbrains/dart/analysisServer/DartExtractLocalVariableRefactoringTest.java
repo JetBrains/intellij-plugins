@@ -17,8 +17,6 @@ package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
@@ -61,7 +59,7 @@ public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureT
     final SelectionModel selectionModel = getEditor().getSelectionModel();
     int offset = selectionModel.getSelectionStart();
     final int length = selectionModel.getSelectionEnd() - offset;
-    return new ServerExtractLocalVariableRefactoring(getSystemPath(psiFile), offset, length);
+    return new ServerExtractLocalVariableRefactoring(psiFile.getVirtualFile(), offset, length);
   }
 
   private void doTest(String filePath, boolean all) {
@@ -90,12 +88,5 @@ public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureT
     });
     // validate
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
-  }
-
-  @NotNull
-  private static String getSystemPath(PsiFile psiFile) {
-    final VirtualFile virtualFile = psiFile.getVirtualFile();
-    final String path = virtualFile.getPath();
-    return FileUtil.toSystemDependentName(path);
   }
 }

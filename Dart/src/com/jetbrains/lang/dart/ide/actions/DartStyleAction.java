@@ -12,6 +12,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -52,13 +53,12 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
     final Runnable runnable = () -> {
-      final String path = psiFile.getVirtualFile().getPath();
       final int caretOffset = editor.getCaretModel().getOffset();
       final int lineLength = getRightMargin(project);
 
       DartAnalysisServerService.getInstance().updateFilesContent();
       DartAnalysisServerService.FormatResult formatResult =
-        DartAnalysisServerService.getInstance().edit_format(path, caretOffset, 0, lineLength);
+        DartAnalysisServerService.getInstance().edit_format(psiFile.getVirtualFile(), caretOffset, 0, lineLength);
 
       if (formatResult == null) {
         showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
@@ -71,8 +71,10 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
         showHintLater(editor, DartBundle.message("dart.style.hint.already.good"), false);
       }
       else if (edits.size() == 1) {
-        document.replaceString(0, document.getTextLength(), edits.get(0).getReplacement());
-        editor.getCaretModel().moveToOffset(formatResult.getOffset());
+        final String replacement = StringUtil.convertLineSeparators(edits.get(0).getReplacement());
+        document.replaceString(0, document.getTextLength(), replacement);
+        final int offset = DartAnalysisServerService.getInstance().getConvertedOffset(psiFile.getVirtualFile(), formatResult.getOffset());
+        editor.getCaretModel().moveToOffset(offset);
         showHintLater(editor, DartBundle.message("dart.style.hint.success"), false);
       }
       else {
@@ -81,7 +83,8 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       }
     };
 
-    ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.style.action.name"), null));
+    ApplicationManager.getApplication().runWriteAction(
+      () -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.style.action.name"), null));
   }
 
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
@@ -109,11 +112,11 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
           indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
         }
 
-        final String path = virtualFile.getPath();
         final DartAnalysisServerService.FormatResult formatResult =
-          DartAnalysisServerService.getInstance().edit_format(path, 0, 0, lineLength);
+          DartAnalysisServerService.getInstance().edit_format(virtualFile, 0, 0, lineLength);
         if (formatResult != null && formatResult.getEdits() != null && formatResult.getEdits().size() == 1) {
-          fileToNewContentMap.put(virtualFile, formatResult.getEdits().get(0).getReplacement());
+          final String replacement = StringUtil.convertLineSeparators(formatResult.getEdits().get(0).getReplacement());
+          fileToNewContentMap.put(virtualFile, replacement);
         }
       }
     };
@@ -138,7 +141,8 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
         }
       };
 
-      ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, onSuccessRunnable, DartBundle.message("dart.style.action.name"), null));
+      ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance()
+        .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.style.action.name"), null));
     }
   }
 

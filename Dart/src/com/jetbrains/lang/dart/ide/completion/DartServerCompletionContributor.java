@@ -15,7 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
-import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -58,7 +57,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                DartAnalysisServerService.getInstance().updateFilesContent();
 
                final String completionId =
-                 DartAnalysisServerService.getInstance().completion_getSuggestions(file.getPath(), parameters.getOffset());
+                 DartAnalysisServerService.getInstance().completion_getSuggestions(file, parameters.getOffset());
                if (completionId == null) return;
 
                final String uriPrefix = getPrefixIfCompletingUri(parameters);

@@ -6,7 +6,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.css.CssFile;
+import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.css.resolve.CssInclusionContext;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
@@ -34,7 +34,7 @@ public class AngularJSCssInclusionContext extends CssInclusionContext {
             final List<Pair<PsiElement, TextRange>> injected = InjectedLanguageManager.getInstance(context.getProject()).getInjectedPsiFiles(expression);
             if (injected != null) {
               for (Pair<PsiElement, TextRange> pair : injected) {
-                if (pair.first instanceof CssFile) {
+                if (pair.first instanceof StylesheetFile) {
                   result.add((PsiFile)pair.first);
                 }
               }

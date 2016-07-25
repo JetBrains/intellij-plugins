@@ -33,7 +33,6 @@ import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
@@ -78,7 +77,6 @@ class ExtractLocalVariableProcessor {
   final @NotNull Project project;
   final @NotNull Editor editor;
   final @NotNull PsiFile file;
-  final @NotNull String filePath;
 
   ServerExtractLocalVariableRefactoring refactoring;
 
@@ -86,7 +84,6 @@ class ExtractLocalVariableProcessor {
     this.project = project;
     this.editor = editor;
     this.file = file;
-    this.filePath = file.getVirtualFile().getPath();
   }
 
   public void perform() {
@@ -123,7 +120,7 @@ class ExtractLocalVariableProcessor {
   }
 
   private void createRefactoring(int offset, int length) {
-    refactoring = new ServerExtractLocalVariableRefactoring(filePath, offset, length);
+    refactoring = new ServerExtractLocalVariableRefactoring(file.getVirtualFile(), offset, length);
     final RefactoringStatus initialStatus = refactoring.checkInitialConditions();
     if (showMessageIfError(initialStatus)) {
       refactoring = null;
