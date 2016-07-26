@@ -1,5 +1,5 @@
-<error descr="Custom selector at-rule should contain selector list">@custom-selector :--hs;</error>
-<error descr="Custom selector at-rule should contain selector list">@custom-selector :--hs ;</error>
-<error descr="Custom selector at-rule should contain selector list">@custom-selector :--hs
-;</error>
-<error descr="Custom selector at-rule should contain selector list">@custom-selector :--hs</error><EOLError descr="';' expected"></EOLError>
+@custom-selector :--hs<error descr="Custom selector at-rule should contain selector list">;</error>
+@custom-selector :--hs <error descr="Custom selector at-rule should contain selector list">;</error>
+@custom-selector :--hs
+<error descr="Custom selector at-rule should contain selector list">;</error>
+@custom-selector :--hs<EOLError descr="';' expected"></EOLError>
