@@ -27,6 +27,7 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
       final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
       if (entry != null && cliJson != null) {
         entry.addExcludeFolder(baseDir.getUrl() + "/dist");
+        entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
         ApplicationManager.getApplication().runWriteAction(() -> {
           model.commit();
           project.save();
