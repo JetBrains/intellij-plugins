@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.server;
 
-import com.google.common.base.Charsets;
 import com.google.gson.stream.JsonWriter;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.common.JstdCommonConstants;
@@ -23,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -123,7 +123,7 @@ public class JstdServer {
   private static GeneralCommandLine createCommandLine(@NotNull JstdServerSettings settings) {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setExePath(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
-    Charset charset = Charsets.UTF_8;
+    Charset charset = StandardCharsets.UTF_8;
     commandLine.setCharset(charset);
     commandLine.addParameter("-Dfile.encoding=" + charset.name());
     //commandLine.addParameter("-Xdebug");

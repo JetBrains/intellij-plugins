@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.google.common.base.Charsets;
 import com.intellij.flex.uiDesigner.abc.AbcModifierBase;
 import com.intellij.flex.uiDesigner.abc.AbcUtil;
 import com.intellij.flex.uiDesigner.abc.DataBuffer;
@@ -14,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -188,14 +188,14 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     }
 
     n = AbcUtil.readU32(buffer);
-    final CharsetEncoder charsetEncoder = Charsets.UTF_8.newEncoder().onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(
+    final CharsetEncoder charsetEncoder = StandardCharsets.UTF_8.newEncoder().onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(
       CodingErrorAction.REPLACE);
     o:
     while (n-- > 1) {
       int l = AbcUtil.readU32(buffer);
       buffer.limit(buffer.position() + l);
       buffer.mark();
-      final CharBuffer charBuffer = Charsets.UTF_8.decode(buffer);
+      final CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer);
       buffer.limit(buffer.capacity());
       int index = 0;
       do {

@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.io;
 
-import com.google.common.base.Charsets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -21,6 +20,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public final class IOUtil {
   private static final Logger LOG = Logger.getInstance(IOUtil.class.getName());
@@ -269,11 +269,11 @@ public final class IOUtil {
   }
 
   public static CharSequence getCharSequence(File file) throws IOException {
-    return (CharSequence)getCharSequenceOrReader(new FileInputStream(file), (int)file.length(), Charsets.UTF_8, false);
+    return (CharSequence)getCharSequenceOrReader(new FileInputStream(file), (int)file.length(), StandardCharsets.UTF_8, false);
   }
 
   public static CharArrayReader getCharArrayReader(InputStream inputStream, int length) throws IOException {
-    return (CharArrayReader)getCharSequenceOrReader(inputStream, length, Charsets.UTF_8, true);
+    return (CharArrayReader)getCharSequenceOrReader(inputStream, length, StandardCharsets.UTF_8, true);
   }
 
   public static void parseXml(VirtualFile file, IXMLBuilder builder) throws IOException {

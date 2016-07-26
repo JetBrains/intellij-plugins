@@ -13,7 +13,6 @@
  */
 package com.google.dart.server.internal.remote;
 
-import com.google.common.base.Charsets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.gson.JsonObject;
 
@@ -21,6 +20,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +51,7 @@ public class ByteRequestSink implements RequestSink {
    * @param debugStream the {@link PrintStream} to print all lines to, may be {@code null}
    */
   public ByteRequestSink(OutputStream stream, DebugPrintStream debugStream) {
-    writer = new PrintWriter(new OutputStreamWriter(stream, Charsets.UTF_8));
+    writer = new PrintWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8));
     this.debugStream = debugStream;
     new LinesWriterThread().start();
   }
