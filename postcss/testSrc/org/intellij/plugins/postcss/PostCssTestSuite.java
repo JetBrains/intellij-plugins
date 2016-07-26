@@ -15,6 +15,7 @@ import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerT
 import org.intellij.plugins.postcss.parser.PostCssParsingTest;
 import org.intellij.plugins.postcss.rename.PostCssRenameTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
+import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
 
 @SuppressWarnings({"JUnitTestClassNamingConvention", "JUnitTestCaseWithNoTests"})
@@ -90,6 +91,7 @@ public class PostCssTestSuite extends TestCase {
     public static Test suite() {
       TestSuite suite = new TestSuite("Other PostCSS");
       suite.addTestSuite(PostCssFileStructureTest.class);
+      suite.addTestSuite(PostCssSmartEnterTest.class);
       return suite;
     }
   }
