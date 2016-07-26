@@ -1,7 +1,6 @@
 package org.intellij.plugins.postcss.descriptors;
 
 import com.intellij.css.util.CssPsiUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssSimpleSelector;
@@ -29,13 +28,6 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name) {
-    return isPossiblePseudoSelector(name, null)
-           ? Collections.singletonList(new CssPseudoSelectorDescriptorStub(name))
-           : super.findPseudoSelectorDescriptors(name);
-  }
-
-  @Override
-  public boolean isPossiblePseudoSelector(@NotNull String selectorName, @Nullable PsiElement context) {
-    return StringUtil.startsWith(selectorName, "--");
+    return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
   }
 }
