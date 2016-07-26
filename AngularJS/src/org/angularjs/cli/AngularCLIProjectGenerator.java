@@ -102,6 +102,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Pair<NodeJsIn
         final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
         if (entry != null) {
           entry.addExcludeFolder(baseDir.getUrl() + "/dist");
+          entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
         }
         ApplicationManager.getApplication().runWriteAction(() -> {
           model.commit();
