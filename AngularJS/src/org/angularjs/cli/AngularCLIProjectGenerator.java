@@ -101,8 +101,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Pair<NodeJsIn
         final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
         final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
         if (entry != null) {
-          entry.addExcludeFolder(baseDir.getUrl() + "/dist");
-          entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
+          AngularJSProjectConfigurator.excludeDefault(baseDir, entry);
         }
         ApplicationManager.getApplication().runWriteAction(() -> {
           model.commit();

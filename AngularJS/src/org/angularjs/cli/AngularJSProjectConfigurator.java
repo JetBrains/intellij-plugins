@@ -26,8 +26,7 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
       final ModifiableRootModel model = ModuleRootManager.getInstance(modules[0]).getModifiableModel();
       final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
       if (entry != null && cliJson != null) {
-        entry.addExcludeFolder(baseDir.getUrl() + "/dist");
-        entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
+        excludeDefault(baseDir, entry);
         ApplicationManager.getApplication().runWriteAction(() -> {
           model.commit();
           project.save();
@@ -38,4 +37,8 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
     }
   }
 
+  public static void excludeDefault(@NotNull VirtualFile baseDir, ContentEntry entry) {
+    entry.addExcludeFolder(baseDir.getUrl() + "/dist");
+    entry.addExcludeFolder(baseDir.getUrl() + "/tmp");
+  }
 }
