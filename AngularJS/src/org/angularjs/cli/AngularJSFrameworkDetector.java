@@ -46,7 +46,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   @Override
   public List<? extends DetectedFrameworkDescription> detect(@NotNull Collection<VirtualFile> newFiles,
                                                              @NotNull FrameworkDetectionContext context) {
-    return Collections.singletonList(new AngularCLIFrameworkDescription(newFiles));
+    return newFiles.size() > 0 ? Collections.singletonList(new AngularCLIFrameworkDescription(newFiles)) : Collections.emptyList();
   }
 
   @Override
