@@ -1,5 +1,6 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ public class PostCssCustomSelectorInspectionTest extends PostCssFixtureTestCase 
   public void setUp() throws Exception {
     super.setUp();
     myFixture.enableInspections(PostCssCustomSelectorInspection.class);
+    myFixture.enableInspections(CssInvalidPseudoSelectorInspection.class);
   }
 
   public void testIncorrectCustomSelectorName() {
@@ -30,6 +32,10 @@ public class PostCssCustomSelectorInspectionTest extends PostCssFixtureTestCase 
   }
 
   public void testEmptyCustomSelector() {
+    doTest();
+  }
+
+  public void testCustomSelectorWithoutDashes() {
     doTest();
   }
 
