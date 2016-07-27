@@ -34,7 +34,7 @@ public class TemplateCompletionContributor extends CompletionContributor {
   private static final Logger _logger = Logger.getInstance(TemplateCompletionContributor.class);
 
   public TemplateCompletionContributor() {
-    extend(CompletionType.BASIC, psiElement(), new CompletionProvider<CompletionParameters>() {
+    extend(null, psiElement(), new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     ProcessingContext context,
