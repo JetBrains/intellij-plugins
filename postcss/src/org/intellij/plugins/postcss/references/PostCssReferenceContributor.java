@@ -2,28 +2,26 @@ package org.intellij.plugins.postcss.references;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
-import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssPseudoClass;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.ProcessingContext;
-import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 public class PostCssReferenceContributor extends PsiReferenceContributor {
-  public static final PsiElementPattern.Capture<PsiElement> PATTERN = psiElement().with(new PostCssReferencePattern());
 
   @Override
   public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
-    registrar.registerReferenceProvider(PATTERN, new SassScssReferenceProvider(), PsiReferenceRegistrar.HIGHER_PRIORITY);
+    registrar.registerReferenceProvider(psiElement().with(new PostCssReferencePattern()), new PostCssReferenceProvider(),
+                                        PsiReferenceRegistrar.HIGHER_PRIORITY);
   }
 
-  private static class SassScssReferenceProvider extends PsiReferenceProvider {
+  private static class PostCssReferenceProvider extends PsiReferenceProvider {
     @NotNull
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
       return CachedValuesManager.getCachedValue(element, () -> CachedValueProvider.Result.create(getReferences(element), element));

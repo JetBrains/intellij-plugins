@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<PsiElement> {
   public PostCssCustomSelectorReference(PsiElement psiElement) {
-    super(psiElement, true);
+    super(psiElement, false);
   }
 
   @NotNull
@@ -35,7 +35,7 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
 
       final GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(myElement);
       PostCssCustomSelectorIndex.process(myElement.getText(), project, scope, selector -> {
-        if (importedFiles.contains(selector.getContainingFile().getVirtualFile())){
+        if (importedFiles.contains(selector.getContainingFile().getVirtualFile())) {
           result.add(new PsiElementResolveResult(selector, true));
         }
         return true;
@@ -58,12 +58,7 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    if (element instanceof PostCssCustomSelector) {
-      final String canonicalText = getCanonicalText();
-      final String name = ((PostCssCustomSelector)element).getName();
-      return canonicalText.equalsIgnoreCase(name);
-    }
-    return false;
+    return element instanceof PostCssCustomSelector && getCanonicalText().equalsIgnoreCase(((PostCssCustomSelector)element).getName());
   }
 
   @NotNull
