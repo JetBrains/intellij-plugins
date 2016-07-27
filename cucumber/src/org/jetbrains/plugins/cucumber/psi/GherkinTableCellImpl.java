@@ -26,10 +26,9 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
     gherkinElementVisitor.visitGherkinTableCell(this);
   }
 
-
   @Override
-  public String toString() {
-    return "GherkinTableCell";
+  protected String getPresentableText() {
+    return String.format("Step parameter '%s'", getName());
   }
 
   @Override
