@@ -8,6 +8,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
+import org.intellij.plugins.postcss.PostCssLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class PostCssSmartEnterTest extends PostCssFixtureTestCase {
 
   private void doTest() throws IncorrectOperationException {
     myFixture.configureByFile(getTestName(true) + "_before.pcss");
-    final List<SmartEnterProcessor> processors = SmartEnterProcessors.INSTANCE.forKey(CSSLanguage.INSTANCE);
+    final List<SmartEnterProcessor> processors = SmartEnterProcessors.INSTANCE.allForLanguage(PostCssLanguage.INSTANCE);
     new WriteCommandAction(myFixture.getProject()) {
       @Override
       protected void run(@NotNull Result result) throws Throwable {
