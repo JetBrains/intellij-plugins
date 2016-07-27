@@ -42,7 +42,7 @@
 
     <lang.formatter language="TML" implementationClass="com.intellij.lang.xhtml.XhtmlFormattingModelBuilder"/>
 
-    <completionData fileType="TML" className="com.intellij.tapestry.intellij.lang.completion.TemplateCompletionData"/>
+    <completion.contributor language="TML" implementationClass="com.intellij.tapestry.intellij.lang.completion.TemplateCompletionContributor"/>
 
     <lang.findUsagesProvider language="TML"
                              implementationClass="com.intellij.tapestry.intellij.editorActions.TmlFindUsagesProvider"/>
