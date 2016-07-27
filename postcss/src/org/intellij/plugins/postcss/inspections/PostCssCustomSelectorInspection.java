@@ -27,8 +27,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
         String text = postCssCustomSelector.getText();
         if (StringUtil.isEmpty(text)) {
           String description = PostCssBundle.message("annotator.custom.selector.name.expected");
-          TextRange textRange =
-            new TextRange(postCssCustomSelector.getStartOffsetInParent(), postCssCustomSelector.getStartOffsetInParent() + 1);
+          TextRange textRange = TextRange.from(postCssCustomSelector.getStartOffsetInParent(), 1);
           ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(
             postCssCustomSelector.getParent(), textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true);
           holder.registerProblem(problemDescriptor);
@@ -48,7 +47,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
         if (selectorList == null) return;
         if (selectorList.getText().isEmpty()) {
           String description = PostCssBundle.message("annotator.custom.selector.at.rule.should.contain.selector.list");
-          TextRange textRange = new TextRange(selectorList.getStartOffsetInParent(), postCssCustomSelectorAtRule.getTextLength());
+          TextRange textRange = TextRange.from(selectorList.getStartOffsetInParent(), 1);
           ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(
             postCssCustomSelectorAtRule, textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true);
           holder.registerProblem(problemDescriptor);

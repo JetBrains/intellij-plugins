@@ -25,11 +25,11 @@ public class PostCssCustomSelectorInspectionTest extends PostCssFixtureTestCase 
     doTest();
   }
 
-  public void testEmptyCustomSelector() {
+  public void testEmptySelectorListTwoInLine() {
     doTest();
   }
 
-  public void testNoCustomSelector() {
+  public void testEmptyCustomSelector() {
     doTest();
   }
 
