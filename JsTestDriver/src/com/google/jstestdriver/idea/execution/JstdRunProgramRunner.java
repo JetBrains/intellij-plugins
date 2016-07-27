@@ -18,7 +18,6 @@ import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.util.Alarm;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
@@ -43,13 +42,13 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
   protected Promise<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     if (jstdState.getRunSettings().isExternalServerType()) {
-      return Promise.<RunProfileStarter>resolve(new JstdRunStarter(null, false));
+      return Promise.resolve(new JstdRunStarter(null, false));
     }
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
-      return Promise.<RunProfileStarter>resolve(new JstdRunStarter(server, false));
+      return Promise.resolve(new JstdRunStarter(server, false));
     }
     return jstdToolWindowManager.restartServer().then(server1 -> server1 == null ? null : new JstdRunStarter(server1, false));
   }
