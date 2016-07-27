@@ -24,7 +24,6 @@
     <css.elementDescriptorProvider implementation="org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider"/>
     <psi.referenceContributor implementation="org.intellij.plugins.postcss.references.PostCssReferenceContributor"/>
     <lang.findUsagesProvider language="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssFindUsagesProvider"/>
-    <renameInputValidator implementation="org.intellij.plugins.postcss.rename.PostCssInputValidator"/>
 
     <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex"/>
     <stubElementTypeHolder class="org.intellij.plugins.postcss.PostCssElementTypes"/>

@@ -5,7 +5,7 @@ import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 public class PostCssRenameTest extends PostCssFixtureTestCase {
 
   public void testCustomSelector() {
-    doTest("--new-name");
+    doTest("new-name");
   }
 
   private void doTest(String newName) {

@@ -27,7 +27,7 @@ public class PostCssCustomSelectorResolveTest extends PostCssFixtureTestCase {
     assertTrue(results[0].isValidResult());
 
     PostCssCustomSelector selector = (PostCssCustomSelector)results[0].getElement();
-    assertEquals("--button", selector.getName());
+    assertEquals("button", selector.getName());
     assertEquals("definition.pcss", selector.getContainingFile().getName());
   }
 

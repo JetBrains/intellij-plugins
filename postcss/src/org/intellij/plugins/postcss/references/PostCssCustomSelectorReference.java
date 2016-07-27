@@ -1,8 +1,8 @@
 package org.intellij.plugins.postcss.references;
 
-import com.intellij.css.util.CssPsiUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssStylesheet;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<PsiElement> {
   public PostCssCustomSelectorReference(PsiElement psiElement) {
-    super(psiElement, false);
+    super(psiElement, TextRange.from(0, psiElement.getTextLength()));
   }
 
   @NotNull
@@ -34,7 +34,7 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
       final ArrayList<ResolveResult> result = new ArrayList<>();
 
       final GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(myElement);
-      PostCssCustomSelectorIndex.process(myElement.getText(), project, scope, selector -> {
+      PostCssCustomSelectorIndex.process(StringUtil.trimStart(myElement.getText(), "--"), project, scope, selector -> {
         if (importedFiles.contains(selector.getContainingFile().getVirtualFile())) {
           result.add(new PsiElementResolveResult(selector, true));
         }
@@ -47,18 +47,14 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
   }
 
   @Override
-  protected TextRange calculateDefaultRangeInElement() {
-    return new TextRange(0, myElement.getTextLength());
-  }
-
-  @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-    return CssPsiUtil.replaceToken(myElement, newElementName);
+    return super.handleElementRename("--" + newElementName);
   }
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    return element instanceof PostCssCustomSelector && getCanonicalText().equalsIgnoreCase(((PostCssCustomSelector)element).getName());
+    if (!(element instanceof PostCssCustomSelector)) return false;
+    return StringUtil.trimStart(getCanonicalText(), "--").equalsIgnoreCase(((PostCssCustomSelector)element).getName());
   }
 
   @NotNull

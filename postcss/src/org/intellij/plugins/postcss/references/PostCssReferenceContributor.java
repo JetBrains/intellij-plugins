@@ -17,8 +17,7 @@ public class PostCssReferenceContributor extends PsiReferenceContributor {
 
   @Override
   public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
-    registrar.registerReferenceProvider(psiElement().with(new PostCssReferencePattern()), new PostCssReferenceProvider(),
-                                        PsiReferenceRegistrar.HIGHER_PRIORITY);
+    registrar.registerReferenceProvider(psiElement().with(new PostCssReferencePattern()), new PostCssReferenceProvider());
   }
 
   private static class PostCssReferenceProvider extends PsiReferenceProvider {

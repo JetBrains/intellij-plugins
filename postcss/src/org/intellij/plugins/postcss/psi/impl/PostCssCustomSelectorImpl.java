@@ -1,10 +1,14 @@
 package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.css.util.CssPsiUtil;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.impl.CssElementTypes;
+import com.intellij.psi.css.impl.CssNamedItemPresentation;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStub;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElement;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElementType;
@@ -13,6 +17,8 @@ import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<PostCssCustomSelector>> implements PostCssCustomSelector {
 
@@ -36,21 +42,28 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
   @Override
   public String getName() {
     CssNamedStub<PostCssCustomSelector> stub = getStub();
-    if (stub != null) {
-      return stub.getName();
-    }
-
+    if (stub != null) return stub.getName();
     PsiElement nameIdentifier = getNameIdentifier();
-    return nameIdentifier != null ? nameIdentifier.getText() : "";
+    if (nameIdentifier == null) return "";
+    String text = nameIdentifier.getText();
+    return StringUtil.startsWith(text, "--") ? text.substring(2): "";
   }
 
   @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     PsiElement nameIdentifier = getNameIdentifier();
-    if (nameIdentifier != null) {
-      CssPsiUtil.replaceToken(nameIdentifier, name);
-    }
-    return this;
+    return nameIdentifier != null ? CssPsiUtil.replaceToken(nameIdentifier, "--" + name) : this;
+  }
+
+  @Override
+  public ItemPresentation getPresentation() {
+    return new CssNamedItemPresentation(this, getName());
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon(int flags) {
+    return AllIcons.Css.Pseudo_class;
   }
 
   @Override
