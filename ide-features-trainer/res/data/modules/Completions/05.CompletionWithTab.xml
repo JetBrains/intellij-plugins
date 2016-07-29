@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Completion with tab" passed="false" version="0.1" subtype="aimless" projectTree="hide">
+<xml type="Scenario" name="Completion with Tab" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock><CopyText>import javax.swing.*;
 
 class FrameDemo {
