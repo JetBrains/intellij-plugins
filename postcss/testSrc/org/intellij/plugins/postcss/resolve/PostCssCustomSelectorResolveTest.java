@@ -23,7 +23,7 @@ public class PostCssCustomSelectorResolveTest extends PostCssFixtureTestCase {
     final PsiReference reference = myFixture.getReferenceAtCaretPosition("invocation.pcss", "definition.pcss");
     assertNotNull(reference);
     final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-    assertTrue(results.length == 1);
+    assertEquals(1, results.length);
     assertTrue(results[0].isValidResult());
 
     PostCssCustomSelector selector = (PostCssCustomSelector)results[0].getElement();
@@ -35,14 +35,14 @@ public class PostCssCustomSelectorResolveTest extends PostCssFixtureTestCase {
     final PsiReference reference = myFixture.getReferenceAtCaretPosition("invocationWithoutImport.pcss", "definition.pcss");
     assertNotNull(reference);
     final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-    assertTrue(results.length == 0);
+    assertEquals(0, results.length);
   }
 
   public void testResolveMulti() throws Throwable {
     final PsiReference reference = myFixture.getReferenceAtCaretPosition(getTestName(true) + ".pcss");
     assertNotNull(reference);
     final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-    assertTrue(results.length == 2);
+    assertEquals(2, results.length);
     assertTrue(results[0].isValidResult());
     assertTrue(results[1].isValidResult());
   }
@@ -51,7 +51,7 @@ public class PostCssCustomSelectorResolveTest extends PostCssFixtureTestCase {
     final PsiReference reference = myFixture.getReferenceAtCaretPosition(getTestName(true) + ".pcss");
     assertNotNull(reference);
     final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-    assertTrue(results.length == 1);
+    assertEquals(1, results.length);
     assertTrue(results[0].isValidResult());
   }
 

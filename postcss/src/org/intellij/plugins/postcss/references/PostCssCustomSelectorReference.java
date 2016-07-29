@@ -1,12 +1,12 @@
 package org.intellij.plugins.postcss.references;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssStylesheet;
 import com.intellij.psi.css.impl.util.CssUtil;
+import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<PsiElement> {
   public PostCssCustomSelectorReference(PsiElement psiElement) {
-    super(psiElement, TextRange.from(0, psiElement.getTextLength()));
+    super(psiElement);
   }
 
   @NotNull
@@ -33,11 +33,14 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
       final Project project = myElement.getProject();
       final ArrayList<ResolveResult> result = new ArrayList<>();
 
-      final GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(myElement);
-      PostCssCustomSelectorIndex.process(StringUtil.trimStart(myElement.getText(), "--"), project, scope, selector -> {
-        if (importedFiles.contains(selector.getContainingFile().getVirtualFile())) {
-          result.add(new PsiElementResolveResult(selector, true));
+      final GlobalSearchScope scope = new DelegatingGlobalSearchScope(CssUtil.getCompletionAndResolvingScopeForElement(myElement)) {
+        @Override
+        public boolean contains(@NotNull VirtualFile file) {
+          return importedFiles.contains(file);
         }
+      };
+      PostCssCustomSelectorIndex.process(StringUtil.trimStart(myElement.getText(), "--"), project, scope, selector -> {
+        result.add(new PsiElementResolveResult(selector, true));
         return true;
       });
 
@@ -48,13 +51,13 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
 
   @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-    return super.handleElementRename("--" + newElementName);
+    return super.handleElementRename(StringUtil.startsWith(newElementName, "--") ? newElementName : "--" + newElementName);
   }
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    if (!(element instanceof PostCssCustomSelector)) return false;
-    return StringUtil.trimStart(getCanonicalText(), "--").equalsIgnoreCase(((PostCssCustomSelector)element).getName());
+    return element instanceof PostCssCustomSelector &&
+           StringUtil.trimStart(getCanonicalText(), "--").equals(((PostCssCustomSelector)element).getName());
   }
 
   @NotNull

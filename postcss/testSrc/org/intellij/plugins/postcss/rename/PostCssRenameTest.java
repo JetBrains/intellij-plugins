@@ -8,6 +8,10 @@ public class PostCssRenameTest extends PostCssFixtureTestCase {
     doTest("new-name");
   }
 
+  public void testCustomSelectorWithTwoDashes() {
+    doTest("--new-name");
+  }
+
   private void doTest(String newName) {
     myFixture.testRename(getTestName(true) + "-before.pcss", getTestName(true) + "-after.pcss", newName);
   }

@@ -46,13 +46,13 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
     PsiElement nameIdentifier = getNameIdentifier();
     if (nameIdentifier == null) return "";
     String text = nameIdentifier.getText();
-    return StringUtil.startsWith(text, "--") ? text.substring(2): "";
+    return StringUtil.startsWith(text, "--") ? text.substring(2) : "";
   }
 
   @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     PsiElement nameIdentifier = getNameIdentifier();
-    return nameIdentifier != null ? CssPsiUtil.replaceToken(nameIdentifier, "--" + name) : this;
+    return nameIdentifier != null ? CssPsiUtil.replaceToken(nameIdentifier, StringUtil.startsWith(name, "--") ? name : "--" + name) : this;
   }
 
   @Override
@@ -69,7 +69,7 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
   @Override
   public int getTextOffset() {
     PsiElement identifier = getNameIdentifier();
-    return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
+    return identifier != null ? identifier.getTextRange().getStartOffset() : super.getTextOffset();
   }
 
   @Override
