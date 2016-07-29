@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Formatting" lessonsPath="Formatting/" version="0.3" id="formatting" fileType="SCRATCH" description="Foldings and code format">
-  <lesson filename="01.Folding.xml" solution="training.training.solutions.Formatting.FoldingSolution"/>
-  <lesson filename="02.CodeFormat.xml" solution="training.training.solutions.Formatting.CodeFormatSolution"/>
-</module>
-
