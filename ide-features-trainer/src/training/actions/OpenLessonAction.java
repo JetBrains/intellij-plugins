@@ -122,7 +122,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
 
             //open next lesson if current is passed
             final Project currentProject = project;
-            CourseManager.getInstance().setLessonView(currentProject);
+            CourseManager.getInstance().setLessonView();
 
             lesson.onStart();
 
@@ -215,7 +215,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
         if (learnToolWindow != null) {
             learnToolWindow.show(null);
             try {
-                CourseManager.getInstance().setModulesView(project);
+                CourseManager.getInstance().setModulesView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -229,7 +229,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
             if (learnToolWindow != null) {
                 learnToolWindow.show(null);
                 try {
-                    CourseManager.getInstance().setLessonView(myLearnProject);
+                    CourseManager.getInstance().setLessonView();
                     CourseManager.getInstance().openLesson(myLearnProject, lesson);
                 } catch (Exception e) {
                     e.printStackTrace();

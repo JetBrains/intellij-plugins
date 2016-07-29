@@ -1,26 +1,12 @@
 package training.ui;
-import com.intellij.ide.ui.UISettings;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.wm.impl.StripeButton;
-import com.intellij.openapi.wm.impl.ToolWindowsPane;
-import com.intellij.ui.GotItMessage;
-import com.intellij.ui.UIBundle;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.Alarm;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.Nullable;
 import training.learn.CourseManager;
-import training.learn.LearnBundle;
 
 import javax.swing.*;
-import java.awt.*;
 
 
 /**
@@ -39,6 +25,7 @@ public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvid
         myContentPanel = new JPanel();
     }
 
+    public static int preferableWidth = 350;
 
     public LearnToolWindow(boolean vertical) {
         super(vertical);
@@ -49,10 +36,8 @@ public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvid
     }
 
     public void init(Project project) {
-        int preferableWidth = 350;
 
         myProject = project;
-
         myLearnPanel = new LearnPanel(preferableWidth);
         mainLearnPanel = new MainLearnPanel(preferableWidth);
         CourseManager.getInstance().setMainLearnPanel(mainLearnPanel);

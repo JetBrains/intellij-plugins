@@ -24,10 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import training.actions.OpenLessonAction;
 import training.learn.exceptons.*;
 import training.learn.log.GlobalLessonLog;
-import training.ui.LearnPanel;
-import training.ui.LearnToolWindow;
-import training.ui.LearnToolWindowFactory;
-import training.ui.MainLearnPanel;
+import training.ui.*;
 import training.util.GenModuleXml;
 
 import java.awt.*;
@@ -326,7 +323,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         factory.createToolWindowContent(project, windowManager.getToolWindow(learnToolWindow));
     }
 
-    public void setLessonView(Project project) {
+    public void setLessonView() {
         final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
         scrollPane.setViewportView(getLearnPanel());
@@ -334,12 +331,22 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         scrollPane.repaint();
     }
 
-    public void setModulesView(Project project) {
+    public void setModulesView() {
         MainLearnPanel mainLearnPanel = getMainLearnPanel();
         mainLearnPanel.updateMainPanel();
         final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
         scrollPane.setViewportView(mainLearnPanel);
+        scrollPane.revalidate();
+        scrollPane.repaint();
+    }
+
+    public void setFeedbackView(){
+        FeedbackFormPanel feedbackFormPanel = new FeedbackFormPanel(LearnToolWindow.preferableWidth);
+        final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
+
+        final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
+        scrollPane.setViewportView(feedbackFormPanel);
         scrollPane.revalidate();
         scrollPane.repaint();
     }
