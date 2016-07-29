@@ -92,9 +92,35 @@ enum Property {
     public String getDefault() {
       return "";
     }
+  },
+
+  RESOLVE_PARTIALS_PATHS {
+    @NotNull
+    @Override
+    public String getStringName() {
+      return "HbResolvePartialsPaths";
+    }
+
+    @NotNull
+    @Override
+    public String getDefault() {
+      return DISABLED;
+    }
+  },
+
+  TEMPLATES_LOCATIONS {
+    @NotNull
+    @Override
+    public String getStringName() {
+      return "HbTemplatesLocations";
+    }
+
+    @NotNull
+    @Override
+    public String getDefault() {
+      return "";
+    }
   };
-
-
 
   public static final String ENABLED = "enabled";
   public static final String DISABLED = "disabled";

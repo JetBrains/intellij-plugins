@@ -11,6 +11,8 @@ import static com.dmarcotte.handlebars.config.Property.*;
 
 public class HbConfig {
 
+  public static final String STRING_ARRAY_SEPARATOR = "\n";
+
   public static boolean isAutoGenerateCloseTagEnabled() {
     return getBooleanPropertyValue(AUTO_GENERATE_CLOSE_TAG);
   }
@@ -56,6 +58,23 @@ public class HbConfig {
     else {
       setStringPropertyValue(COMMENTER_LANGUAGE_ID, language.getID());
     }
+  }
+
+  public static boolean isResolvePartialsPathsFromNameEnabled() {
+    return getBooleanPropertyValue(RESOLVE_PARTIALS_PATHS);
+  }
+
+  public static void setResolvePartialsPathsFromNameEnabled(boolean enabled) {
+    setBooleanPropertyValue(RESOLVE_PARTIALS_PATHS, enabled);
+  }
+
+  public static String[] getTemplatesLocations() {
+    String templatesLocations = getStringPropertyValue(TEMPLATES_LOCATIONS);
+    return getArrayFromString(templatesLocations);
+  }
+
+  public static void setTemplatesLocations(String templatesLocations) {
+    setStringPropertyValue(TEMPLATES_LOCATIONS, templatesLocations);
   }
 
   public static String getRawOpenHtmlAsHandlebarsValue(Project project) {
@@ -105,5 +124,26 @@ public class HbConfig {
 
   private static void setBooleanPropertyValue(Property property, boolean enabled) {
     setBooleanPropertyValue(property, enabled, null);
+  }
+
+  public static String[] getArrayFromString(String str) {
+    return str.replaceAll(" ", "").split(STRING_ARRAY_SEPARATOR);
+  }
+
+  public static String[] getNormalizedTemplatesLocations() {
+    String[] templatesLocations = getTemplatesLocations();
+    String[] normalizedTemplatesLocations = new String[templatesLocations.length];
+
+    for(int i = 0; i < templatesLocations.length; i++) {
+      normalizedTemplatesLocations[i] = normalizeTemplateLocation(templatesLocations[i]);
+    }
+
+    return normalizedTemplatesLocations;
+  }
+
+  private static String normalizeTemplateLocation(String templateLocation) {
+    templateLocation = templateLocation.startsWith("/") ? templateLocation : "/" + templateLocation;
+    templateLocation = templateLocation.endsWith("/") ? templateLocation : templateLocation + "/";
+    return templateLocation;
   }
 }

@@ -12,10 +12,14 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.ui.ListCellRendererWrapper;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -27,10 +31,19 @@ public class HbConfigurationPage implements SearchableConfigurable {
   private JComboBox myCommenterLanguage;
   private JCheckBox myAutocompleteMustaches;
   private JCheckBox htmlAsHb;
+  private JCheckBox resolvePartialsPathsFromName;
+  private JLabel templatesLocationsLabel;
+  private JTextArea myTemplatesLocations;
   private Project myProject;
 
   public HbConfigurationPage(Project project) {
     myProject = project;
+    resolvePartialsPathsFromName.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        setTemplatesLocationsControlsEnabled();
+      }
+    });
   }
 
   @NotNull
@@ -71,7 +84,9 @@ public class HbConfigurationPage implements SearchableConfigurable {
            || myAutocompleteMustaches.isSelected() != HbConfig.isAutocompleteMustachesEnabled()
            || myFormattingCheckBox.isSelected() != HbConfig.isFormattingEnabled()
            || htmlAsHb.isSelected() != HbConfig.shouldOpenHtmlAsHandlebars(myProject)
-           || !HbConfig.getCommenterLanguage().getID().equals(getSelectedLanguageId());
+           || !HbConfig.getCommenterLanguage().getID().equals(getSelectedLanguageId())
+           || resolvePartialsPathsFromName.isSelected() != HbConfig.isResolvePartialsPathsFromNameEnabled()
+           || !Arrays.equals(HbConfig.getArrayFromString(myTemplatesLocations.getText()), HbConfig.getTemplatesLocations());
   }
 
   private String getSelectedLanguageId() {
@@ -85,6 +100,8 @@ public class HbConfigurationPage implements SearchableConfigurable {
     HbConfig.setAutocompleteMustachesEnabled(myAutocompleteMustaches.isSelected());
     HbConfig.setFormattingEnabled(myFormattingCheckBox.isSelected());
     HbConfig.setCommenterLanguage((Language)myCommenterLanguage.getSelectedItem());
+    HbConfig.setResolvePartialsPathsFromNameEnabled(resolvePartialsPathsFromName.isSelected());
+    HbConfig.setTemplatesLocations(myTemplatesLocations.getText());
 
     if (HbConfig.setShouldOpenHtmlAsHandlebars(htmlAsHb.isSelected(), myProject)) {
       ApplicationManager.getApplication().runWriteAction(() -> FileTypeManagerEx.getInstanceEx().fireFileTypesChanged());
@@ -97,7 +114,16 @@ public class HbConfigurationPage implements SearchableConfigurable {
     myAutocompleteMustaches.setSelected(HbConfig.isAutocompleteMustachesEnabled());
     myFormattingCheckBox.setSelected(HbConfig.isFormattingEnabled());
     htmlAsHb.setSelected(HbConfig.shouldOpenHtmlAsHandlebars(myProject));
+    resolvePartialsPathsFromName.setSelected(HbConfig.isResolvePartialsPathsFromNameEnabled());
+    myTemplatesLocations.setText(StringUtils.join(HbConfig.getTemplatesLocations(), HbConfig.STRING_ARRAY_SEPARATOR));
+
     resetCommentLanguageCombo(HbConfig.getCommenterLanguage());
+  }
+
+  private void setTemplatesLocationsControlsEnabled() {
+    boolean isEnabled = resolvePartialsPathsFromName.isSelected();
+    myTemplatesLocations.setEnabled(isEnabled);
+    templatesLocationsLabel.setEnabled(isEnabled);
   }
 
   private void resetCommentLanguageCombo(@NotNull Language commentLanguage) {
