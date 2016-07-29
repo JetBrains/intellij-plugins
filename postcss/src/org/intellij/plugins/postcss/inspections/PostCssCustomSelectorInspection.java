@@ -6,7 +6,9 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.css.CssSelectorList;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.actions.PostCssAddPrefixToCustomSelectorQuickFix;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
@@ -24,6 +26,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
       @Override
       public void visitPostCssCustomSelector(PostCssCustomSelectorImpl postCssCustomSelector) {
         if (!PostCssPsiUtil.isInsidePostCss(postCssCustomSelector)) return;
+        if (PsiTreeUtil.findChildOfType(postCssCustomSelector.getParent(), PsiErrorElement.class, false) != null) return;
         String text = postCssCustomSelector.getText();
         if (StringUtil.isEmpty(text)) {
           String description = PostCssBundle.message("annotator.custom.selector.name.expected");
@@ -43,6 +46,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
 
       @Override
       public void visitPostCssCustomSelectorAtRule(PostCssCustomSelectorAtRuleImpl postCssCustomSelectorAtRule) {
+        if (PsiTreeUtil.findChildOfType(postCssCustomSelectorAtRule, PsiErrorElement.class, false) != null) return;
         CssSelectorList selectorList = postCssCustomSelectorAtRule.getSelectorList();
         if (selectorList == null) return;
         if (selectorList.getText().isEmpty()) {
