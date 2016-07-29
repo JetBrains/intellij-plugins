@@ -183,7 +183,7 @@ public class LearnPanel extends JPanel {
         allTopicsLabel.setFocusable(false);
         allTopicsLabel.setListener((aSource, aLinkData) -> {
             Project guessCurrentProject = ProjectUtil.guessCurrentProject(lessonPanel);
-            CourseManager.getInstance().setModulesView(guessCurrentProject);
+            CourseManager.getInstance().setModulesView();
         }, null);
 
         lessonNameLabel = new JLabel();
@@ -541,6 +541,10 @@ public class LearnPanel extends JPanel {
                 userTextColor = null;
             }
         }
+    }
+
+    public void clickButton(){
+        if (button != null) button.doClick();
     }
 
     @Override
