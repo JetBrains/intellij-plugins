@@ -16,6 +16,7 @@ import training.learn.LearnBundle;
 import training.learn.Module;
 import training.learn.CourseManager;
 import training.learn.Lesson;
+import training.ui.LearnIcons;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -129,7 +130,10 @@ public class MainLearnPanel extends JPanel {
         submitFeedbackPanel.setOpaque(false);
         submitFeedbackPanel.setAlignmentX(LEFT_ALIGNMENT);
         submitFeedback = new LinkLabel(LearnBundle.message("learn.ui.mainpanel.submit.feedback"), null);
-        submitFeedback.setListener((linkLabel, o) -> BrowserUtil.browse(LearnBundle.message("learn.ui.mainpanel.submit.feedback.url")), null);
+        submitFeedback.setListener((linkLabel, o) -> {
+            //switch to feedback form view
+            CourseManager.getInstance().setFeedbackView();
+        }, null);
         submitFeedbackPanel.add(Box.createHorizontalGlue());
         submitFeedbackPanel.add(submitFeedback);
     }
