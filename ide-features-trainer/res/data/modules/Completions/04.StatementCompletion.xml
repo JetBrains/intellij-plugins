@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Statement completion" passed="false" version="0.1" subtype="aimless" projectTree="hide">
+<xml type="Scenario" name="Statement Completion" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock><CopyText>class PrimeNumbers {
     public static void main(String[] args) {
         System.out.println(&quot;Prime numbers between 1 and 100&quot;);

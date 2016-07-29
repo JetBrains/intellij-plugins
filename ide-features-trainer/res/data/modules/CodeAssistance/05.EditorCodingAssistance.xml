@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Editor coding assistance" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Editor Coding Assistance" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
     <MouseBlock><CopyText>import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Quick popups" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Quick Popups" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
     <MouseBlock><CopyText>import java.text.*;
 
 class DecimalFormatDemo {

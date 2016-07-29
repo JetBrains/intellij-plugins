@@ -6,5 +6,5 @@
   <lesson filename="04.Duplicate.xml" solution="training.training.solutions.EditorBasics.DuplicateSolution"/>
   <lesson filename="05.Move.xml" solution="training.training.solutions.EditorBasics.MoveSolution"/>
   <lesson filename="06.Collapse.xml" solution="training.training.solutions.EditorBasics.CollapseSolution"/>
+  <lesson filename="07.MultipleSelections.xml"/>
 </module>
-
