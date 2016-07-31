@@ -47,8 +47,16 @@ public class PostCssCustomSelectorResolveTest extends PostCssFixtureTestCase {
     assertTrue(results[1].isValidResult());
   }
 
+  public void testInline() throws Throwable {
+    doTest("html");
+  }
+
   private void doTest() {
-    final PsiReference reference = myFixture.getReferenceAtCaretPosition(getTestName(true) + ".pcss");
+    doTest("pcss");
+  }
+
+  private void doTest(String extension) {
+    final PsiReference reference = myFixture.getReferenceAtCaretPosition(getTestName(true) + "." + extension);
     assertNotNull(reference);
     final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
     assertEquals(1, results.length);

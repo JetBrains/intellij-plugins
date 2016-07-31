@@ -1,22 +1,18 @@
 package org.intellij.plugins.postcss.references;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import com.intellij.psi.css.CssStylesheet;
-import com.intellij.psi.css.impl.util.CssUtil;
-import com.intellij.psi.search.DelegatingGlobalSearchScope;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiPolyVariantReferenceBase;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import org.intellij.plugins.postcss.PostCssUtil;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<PsiElement> {
   public PostCssCustomSelectorReference(PsiElement psiElement) {
@@ -26,27 +22,10 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    PsiFile file = myElement.getContainingFile();
-    CssStylesheet styleSheet = PsiTreeUtil.getParentOfType(myElement, CssStylesheet.class);
-    if (styleSheet != null) {
-      final Set<VirtualFile> importedFiles = CssUtil.getImportedFiles(file, myElement, false);
-      final Project project = myElement.getProject();
-      final ArrayList<ResolveResult> result = new ArrayList<>();
-
-      final GlobalSearchScope scope = new DelegatingGlobalSearchScope(CssUtil.getCompletionAndResolvingScopeForElement(myElement)) {
-        @Override
-        public boolean contains(@NotNull VirtualFile file) {
-          return importedFiles.contains(file);
-        }
-      };
-      PostCssCustomSelectorIndex.process(StringUtil.trimStart(myElement.getText(), "--"), project, scope, selector -> {
-        result.add(new PsiElementResolveResult(selector, true));
-        return true;
-      });
-
-      return result.toArray(new ResolveResult[result.size()]);
-    }
-    return ResolveResult.EMPTY_ARRAY;
+    GlobalSearchScope scope = PostCssUtil.getCustomSelectorSearchScope(myElement, myElement.getContainingFile());
+    String key = StringUtil.trimStart(myElement.getText(), "--");
+    return PsiElementResolveResult.createResults(
+      StubIndex.getElements(PostCssCustomSelectorIndex.KEY, key, myElement.getProject(), scope, PostCssCustomSelector.class));
   }
 
   @Override

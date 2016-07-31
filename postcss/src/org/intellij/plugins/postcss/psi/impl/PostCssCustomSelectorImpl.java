@@ -57,7 +57,7 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
 
   @Override
   public ItemPresentation getPresentation() {
-    return new CssNamedItemPresentation(this, getName());
+    return new CssNamedItemPresentation(this);
   }
 
   @Nullable
