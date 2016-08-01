@@ -26,5 +26,6 @@
     <Try description="Try increase your selection with &lt;action=&quot;EditorSelectWord&quot;&gt; until your file will be selected" trigger="EditorSelectWord"/>
     <Try description="To decrease selection use &lt;action=&quot;EditorUnSelectWord&quot;&gt;" action="EditorUnSelectWord" trigger="EditorUnSelectWord"/>
     <Try description="Select the whole file with &lt;action=&quot;$SelectAll&quot;&gt;" action="$SelectAll" trigger="$SelectAll"/>
+    <Text description="Awesome, press button to start next lesson or use &lt;action=&quot;learn.next.lesson&quot;&gt;" action="learn.next.lesson" />
     <Win/>
 </xml>

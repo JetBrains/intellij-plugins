@@ -11,7 +11,6 @@ public class OpenLessonDialog extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        // TODO: insert action logic here
         final LessonDialog lessonDialog = LessonDialog.createForProject(e.getProject());
         lessonDialog.setContent("blockCaret.html");
         lessonDialog.show();
