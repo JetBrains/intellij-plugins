@@ -26,11 +26,11 @@ public class KeymapUtil {
         KeyStroke keyStroke = null;
         for (Shortcut each : shortcuts) {
             if (each instanceof KeyboardShortcut) {
-                keyStroke = ((KeyboardShortcut) each).getFirstKeyStroke();
-                if (keyStroke != null) break;
+                KeyboardShortcut keyboardShortcut = (KeyboardShortcut) each;
+                keyStroke = keyboardShortcut.getFirstKeyStroke();
+                if (keyboardShortcut != null && KeymapManager.getInstance().getActiveKeymap().getConflicts(actionId, keyboardShortcut) == null) break;
             }
         }
-
 
         if (keyStroke == null) return null;
         else return keyStroke;

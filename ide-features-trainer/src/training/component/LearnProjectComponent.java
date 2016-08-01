@@ -96,17 +96,14 @@ public class LearnProjectComponent implements ProjectComponent {
 
     public void startTrackActivity(Project project) {
         final Alarm alarm = new Alarm();
-        //TODO: return -1 case back
-//        if (CourseManager.getInstance().getLastActivityTime() == -1) return;
+        if (CourseManager.getInstance().getLastActivityTime() == -1) return;
         if (CourseManager.getInstance().calcUnpassedLessons() == 0) return;
         alarm.addRequest(new Runnable() {
             @Override
             public void run() {
                 long lastActivityTime = CourseManager.getInstance().getLastActivityTime();
                 long currentTimeMillis = System.currentTimeMillis();
-                //TODO: replace two minutes with two weeks
-//                final long TWO_WEEKS = TimeUnit.DAYS.toMillis(14);
-                final long TWO_WEEKS = TimeUnit.SECONDS.toMillis(2);
+                final long TWO_WEEKS = TimeUnit.DAYS.toMillis(14);
 
                 if (currentTimeMillis - lastActivityTime > TWO_WEEKS) {
                     StringBuilder message = new StringBuilder();
@@ -134,6 +131,7 @@ public class LearnProjectComponent implements ProjectComponent {
                     AnAction neverAction = new AnAction(LearnBundle.message("learn.activity.never")) {
                         @Override
                         public void actionPerformed(AnActionEvent e) {
+                            CourseManager.getInstance().setLastActivityTime(-1);
                             notification.expire();
                         }
                     };
@@ -146,8 +144,6 @@ public class LearnProjectComponent implements ProjectComponent {
 
     public void pluginFirstStart() {
         final String key = "learn.toolwindow.button.info.shown";
-        //TODO: remove before release
-        PropertiesComponent.getInstance().setValue(key, String.valueOf(false));
         if (UISettings.getInstance().HIDE_TOOL_STRIPES) {
             UISettings.getInstance().HIDE_TOOL_STRIPES = false;
             UISettings.getInstance().fireUISettingsChanged();
