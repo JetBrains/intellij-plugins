@@ -34,9 +34,9 @@ public class PostCssCompletionContributor extends CompletionContributor {
     if (PostCssPsiUtil.isInsidePostCss(position) &&
         psiElement(CssElementTypes.CSS_IDENT).withReference(PostCssCustomSelectorReference.class).accepts(position)) {
       Project project = position.getProject();
+      GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(position);
       for (String name : StubIndex.getInstance().getAllKeys(PostCssCustomSelectorIndex.KEY, project)) {
         if (name.isEmpty()) continue;
-        GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(position);
         Collection<PostCssCustomSelector> customSelectors = StubIndex.getElements(PostCssCustomSelectorIndex.KEY, name, project, scope,
                                                                                   PostCssCustomSelector.class);
         for (PostCssCustomSelector customSelector : customSelectors) {

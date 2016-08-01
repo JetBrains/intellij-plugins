@@ -89,6 +89,11 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
     myFixture.testCompletion(getTestName(true) + ".html", getTestName(true) + "_after.html");
   }
 
+  public void testTwoColons() {
+    List<String> variants = myFixture.getCompletionVariants(getTestName(true) + ".pcss");
+    assertFalse(variants.contains("--test"));
+  }
+
   @NotNull
   @Override
   protected String getTestDataSubdir() {
