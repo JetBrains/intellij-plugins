@@ -5,6 +5,8 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase {
 
   public void testCustomSelectorTopLevel() {
@@ -44,21 +46,20 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
   }
 
   public void testCustomSelectorOneDefinitionIsFirstVariant() {
-    myFixture.configureByFiles(getTestName(true) + ".pcss");
-    assertEquals("--test", myFixture.completeBasic()[0].getLookupString());
+    assertEquals("--test", myFixture.getCompletionVariants(getTestName(true) + ".pcss").get(0));
   }
 
   public void testCustomSelectorTwoDefinitions() {
-    myFixture.configureByFiles(getTestName(true) + ".pcss");
-    assertEquals("--test", myFixture.completeBasic()[0].getLookupString());
-    assertEquals("--test2", myFixture.completeBasic()[1].getLookupString());
+    List<String> variants = myFixture.getCompletionVariants(getTestName(true) + ".pcss");
+    assertEquals("--test", variants.get(0));
+    assertEquals("--test2", variants.get(1));
   }
 
   public void testCustomSelectorTwoDefinitionsWithImport() {
-    myFixture.configureByFiles("definition.pcss");
-    myFixture.configureByFiles(getTestName(true) + ".pcss");
-    LookupElement first = myFixture.completeBasic()[0];
-    LookupElement second = myFixture.completeBasic()[1];
+    myFixture.configureByFiles(getTestName(true) + ".pcss", "definition.pcss");
+    LookupElement[] lookupElements = myFixture.completeBasic();
+    LookupElement first = lookupElements[0];
+    LookupElement second = lookupElements[1];
 
     LookupElementPresentation presentation = new LookupElementPresentation();
     first.renderElement(presentation);
@@ -70,17 +71,17 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
   }
 
   public void testCustomSelectorWithImport() {
-    myFixture.configureByFiles("definition.pcss");
+    myFixture.configureByFile("definition.pcss");
     doTest();
   }
 
   public void testCustomSelectorWithIncorrectImport() {
-    myFixture.configureByFiles("definition.pcss");
+    myFixture.configureByFile("definition.pcss");
     doTest();
   }
 
   public void testCustomSelectorWithoutImport() {
-    myFixture.configureByFiles("definition.pcss");
+    myFixture.configureByFile("definition.pcss");
     doTest();
   }
 
