@@ -26,7 +26,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
       @Override
       public void visitPostCssCustomSelector(PostCssCustomSelectorImpl postCssCustomSelector) {
         if (!PostCssPsiUtil.isInsidePostCss(postCssCustomSelector)) return;
-        if (PsiTreeUtil.findChildOfType(postCssCustomSelector.getParent(), PsiErrorElement.class, false) != null) return;
+        if (PsiTreeUtil.hasErrorElements(postCssCustomSelector.getParent())) return;
         String text = postCssCustomSelector.getText();
         if (StringUtil.isEmpty(text)) {
           String description = PostCssBundle.message("annotator.custom.selector.name.expected");
@@ -46,7 +46,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
 
       @Override
       public void visitPostCssCustomSelectorAtRule(PostCssCustomSelectorAtRuleImpl postCssCustomSelectorAtRule) {
-        if (PsiTreeUtil.findChildOfType(postCssCustomSelectorAtRule, PsiErrorElement.class, false) != null) return;
+        if (PsiTreeUtil.hasErrorElements(postCssCustomSelectorAtRule)) return;
         CssSelectorList selectorList = postCssCustomSelectorAtRule.getSelectorList();
         if (selectorList == null) return;
         if (selectorList.getText().isEmpty()) {
