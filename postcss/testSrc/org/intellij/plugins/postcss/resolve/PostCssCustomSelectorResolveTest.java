@@ -20,47 +20,44 @@ public class PostCssCustomSelectorResolveTest extends PostCssFixtureTestCase {
   }
 
   public void testResolveWithImport() throws Throwable {
-    final PsiReference reference = myFixture.getReferenceAtCaretPosition("invocation.pcss", "definition.pcss");
-    assertNotNull(reference);
-    final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-    assertEquals(1, results.length);
-    assertTrue(results[0].isValidResult());
-
-    PostCssCustomSelector selector = (PostCssCustomSelector)results[0].getElement();
-    assertEquals("button", selector.getName());
-    assertEquals("definition.pcss", selector.getContainingFile().getName());
+    myFixture.configureByFile("definition.pcss");
+    doTest();
   }
 
   public void testResolveWithoutImport() throws Throwable {
-    final PsiReference reference = myFixture.getReferenceAtCaretPosition("invocationWithoutImport.pcss", "definition.pcss");
-    assertNotNull(reference);
-    final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-    assertEquals(0, results.length);
+    myFixture.configureByFile("definition.pcss");
+    doTest();
   }
 
   public void testResolveMulti() throws Throwable {
-    final PsiReference reference = myFixture.getReferenceAtCaretPosition(getTestName(true) + ".pcss");
-    assertNotNull(reference);
-    final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-    assertEquals(2, results.length);
-    assertTrue(results[0].isValidResult());
-    assertTrue(results[1].isValidResult());
+    doTest(2);
+  }
+
+  public void testResolveMultiInDifferentFiles() throws Throwable {
+    myFixture.configureByFile("definition.pcss");
+    doTest(2);
   }
 
   public void testInline() throws Throwable {
-    doTest("html");
+    doTest(1, "html");
   }
 
   private void doTest() {
-    doTest("pcss");
+    doTest(1, "pcss");
   }
 
-  private void doTest(String extension) {
+  private void doTest(int count) {
+    doTest(count, "pcss");
+  }
+
+  private void doTest(int count, String extension) {
     final PsiReference reference = myFixture.getReferenceAtCaretPosition(getTestName(true) + "." + extension);
     assertNotNull(reference);
     final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-    assertEquals(1, results.length);
-    assertTrue(results[0].isValidResult());
+    assertEquals(count, results.length);
+    for (int i = 0; i < count; i++) {
+      assertTrue(results[i].isValidResult());
+    }
   }
 
   @Override

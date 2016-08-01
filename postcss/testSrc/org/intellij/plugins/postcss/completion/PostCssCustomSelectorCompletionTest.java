@@ -75,7 +75,7 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
     doTest();
   }
 
-  public void testCustomSelectorWithIncorrectImport() {
+  public void testCustomSelectorWithPartialImport() {
     myFixture.configureByFile("definition.pcss");
     doTest();
   }

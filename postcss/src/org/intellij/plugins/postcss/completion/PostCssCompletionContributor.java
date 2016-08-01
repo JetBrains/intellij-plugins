@@ -11,10 +11,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.impl.CssElementTypes;
+import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.ObjectUtils;
-import org.intellij.plugins.postcss.PostCssUtil;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex;
@@ -36,7 +36,7 @@ public class PostCssCompletionContributor extends CompletionContributor {
       Project project = position.getProject();
       for (String name : StubIndex.getInstance().getAllKeys(PostCssCustomSelectorIndex.KEY, project)) {
         if (name.isEmpty()) continue;
-        GlobalSearchScope scope = PostCssUtil.getCustomSelectorSearchScope(position, parameters.getOriginalFile());
+        GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(position);
         Collection<PostCssCustomSelector> customSelectors = StubIndex.getElements(PostCssCustomSelectorIndex.KEY, name, project, scope,
                                                                                   PostCssCustomSelector.class);
         for (PostCssCustomSelector customSelector : customSelectors) {

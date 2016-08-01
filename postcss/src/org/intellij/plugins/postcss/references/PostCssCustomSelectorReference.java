@@ -5,11 +5,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import org.intellij.plugins.postcss.PostCssUtil;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    GlobalSearchScope scope = PostCssUtil.getCustomSelectorSearchScope(myElement, myElement.getContainingFile());
+    GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(myElement);
     String key = StringUtil.trimStart(myElement.getText(), "--");
     return PsiElementResolveResult.createResults(
       StubIndex.getElements(PostCssCustomSelectorIndex.KEY, key, myElement.getProject(), scope, PostCssCustomSelector.class));
