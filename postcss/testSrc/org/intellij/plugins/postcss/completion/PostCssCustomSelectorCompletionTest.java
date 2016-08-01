@@ -55,7 +55,22 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
     assertEquals("--test2", variants.get(1));
   }
 
-  public void testCustomSelectorTwoDefinitionsWithImport() {
+  public void testCustomSelectorPriorityWithImport() {
+    myFixture.configureByFiles(getTestName(true) + ".pcss", "definition.pcss");
+    LookupElement[] lookupElements = myFixture.completeBasic();
+    LookupElement first = lookupElements[0];
+    LookupElement second = lookupElements[1];
+
+    LookupElementPresentation presentation = new LookupElementPresentation();
+    first.renderElement(presentation);
+    assertEquals("test", presentation.getItemText());
+    assertEquals("definition.pcss:1", presentation.getTypeText());
+    second.renderElement(presentation);
+    assertEquals("z-in-file", presentation.getItemText());
+    assertEquals("customSelectorPriorityWithImport.pcss:3", presentation.getTypeText());
+  }
+
+  public void testCustomSelectorPriorityWithoutImport() {
     myFixture.configureByFiles(getTestName(true) + ".pcss", "definition.pcss");
     LookupElement[] lookupElements = myFixture.completeBasic();
     LookupElement first = lookupElements[0];
@@ -64,7 +79,7 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
     LookupElementPresentation presentation = new LookupElementPresentation();
     first.renderElement(presentation);
     assertEquals("z-in-file", presentation.getItemText());
-    assertEquals("customSelectorTwoDefinitionsWithImport.pcss:3", presentation.getTypeText());
+    assertEquals("customSelectorPriorityWithoutImport.pcss:1", presentation.getTypeText());
     second.renderElement(presentation);
     assertEquals("test", presentation.getItemText());
     assertEquals("definition.pcss:1", presentation.getTypeText());

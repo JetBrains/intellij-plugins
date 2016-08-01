@@ -40,16 +40,20 @@ public class PostCssCompletionContributor extends CompletionContributor {
         Collection<PostCssCustomSelector> customSelectors = StubIndex.getElements(PostCssCustomSelectorIndex.KEY, name, project, scope,
                                                                                   PostCssCustomSelector.class);
         for (PostCssCustomSelector customSelector : customSelectors) {
-          result.addElement(createCustomSelectorLookup(customSelector, parameters.getOriginalFile()));
+          result.addElement(createCustomSelectorLookup(customSelector, position, parameters.getOriginalFile()));
         }
       }
     }
   }
 
   @NotNull
-  private static LookupElement createCustomSelectorLookup(@NotNull PostCssCustomSelector customSelector, @Nullable PsiFile contextFile) {
+  private static LookupElement createCustomSelectorLookup(@NotNull final PostCssCustomSelector customSelector,
+                                                          @NotNull final PsiElement position,
+                                                          @Nullable final PsiFile contextFile) {
     //TODO use com.intellij.psi.css.impl.util.completion.CssCompletionUtil#CSS_PSEUDO_SELECTOR_PRIORITY instead when PostCSS module will be part of API
-    int priority = 10 + (customSelector.getContainingFile() == contextFile ? 1 : 0);
+    boolean increasePriority =
+      CssUtil.getImportedFiles(contextFile, position, false).contains(customSelector.getContainingFile().getVirtualFile());
+    int priority = 10 + (increasePriority ? 1 : 0);
 
     ItemPresentation itemPresentation = ObjectUtils.notNull(customSelector.getPresentation());
     return PrioritizedLookupElement.withPriority(
