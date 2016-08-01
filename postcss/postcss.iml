@@ -15,6 +15,7 @@
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="css-api" />
     <orderEntry type="module" module-name="css-psi-impl" />
+    <orderEntry type="module" module-name="css-analysis-impl" />
     <orderEntry type="module" module-name="core-impl" />
     <orderEntry type="module" module-name="xml" exported="" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />

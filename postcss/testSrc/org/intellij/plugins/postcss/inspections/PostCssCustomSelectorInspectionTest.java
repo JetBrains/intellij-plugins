@@ -11,8 +11,7 @@ public class PostCssCustomSelectorInspectionTest extends PostCssFixtureTestCase 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(PostCssCustomSelectorInspection.class);
-    myFixture.enableInspections(CssInvalidPseudoSelectorInspection.class);
+    myFixture.enableInspections(PostCssCustomSelectorInspection.class, CssInvalidPseudoSelectorInspection.class);
   }
 
   public void testIncorrectCustomSelectorName() {
