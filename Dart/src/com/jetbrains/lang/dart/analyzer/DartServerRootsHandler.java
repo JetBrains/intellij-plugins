@@ -44,7 +44,7 @@ public class DartServerRootsHandler {
   public DartServerRootsHandler() {
     // ProjectManagerListener.projectClosed() is not called in unittest mode, that's why ProjectLifecycleListener is used - it is called always
     final MessageBusConnection busConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    busConnection.subscribe(ProjectLifecycleListener.TOPIC, new ProjectLifecycleListener.Adapter() {
+    busConnection.subscribe(ProjectLifecycleListener.TOPIC, new ProjectLifecycleListener() {
       @Override
       public void afterProjectClosed(@NotNull final Project project) {
         if (myTrackedProjects.remove(project)) {
