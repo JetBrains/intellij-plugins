@@ -94,7 +94,7 @@ public class FeedbackFormPanel extends JPanel {
         north_inset = 16;
         east_inset = 32;
         south_inset = 32;
-        check_width = LearnIcons.CheckmarkGray12.getIconWidth();
+        check_width = LearnIcons.CheckmarkGray.getIconWidth();
         check_right_indent = 5;
 
         //UI colors and fonts
