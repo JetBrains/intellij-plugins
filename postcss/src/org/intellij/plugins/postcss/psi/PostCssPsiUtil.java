@@ -48,6 +48,11 @@ public class PostCssPsiUtil {
   }
 
   @Contract("null -> false")
+  public static boolean isInsideCustomSelector(@Nullable PsiElement element) {
+    return PsiTreeUtil.getParentOfType(element, PostCssCustomSelectorAtRule.class) != null;
+  }
+
+  @Contract("null -> false")
   private static boolean isConditionalGroupAtRule(@Nullable PsiElement element) {
     if (element == null || !(element instanceof CssAtRule)) return false;
     final ASTNode node = element.getNode();

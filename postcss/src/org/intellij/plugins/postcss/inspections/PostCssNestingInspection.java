@@ -24,7 +24,10 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
     return new PostCssElementVisitor() {
       @Override
       public void visitCssSelector(CssSelector selector) {
-        if (PostCssPsiUtil.isEmptyElement(selector) || !PostCssPsiUtil.isInsidePostCss(selector)) return;
+        if (PostCssPsiUtil.isEmptyElement(selector) || !PostCssPsiUtil.isInsidePostCss(selector) ||
+            PostCssPsiUtil.isInsideCustomSelector(selector)) {
+          return;
+        }
         if (PostCssPsiUtil.isInsideNestedRuleset(selector)) {
           annotateNestedSelectorsWithoutAmpersand(selector, holder);
         }
@@ -35,7 +38,10 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
 
       @Override
       public void visitCssSelectorList(CssSelectorList selectorList) {
-        if (PostCssPsiUtil.isEmptyElement(selectorList) || !PostCssPsiUtil.isInsidePostCss(selectorList)) return;
+        if (PostCssPsiUtil.isEmptyElement(selectorList) || !PostCssPsiUtil.isInsidePostCss(selectorList) ||
+            PostCssPsiUtil.isInsideCustomSelector(selectorList)) {
+          return;
+        }
         if (PostCssPsiUtil.isInsideNestedRuleset(selectorList)) {
           annotateNestedSelectorsWithoutNest(selectorList, holder);
         }
@@ -43,7 +49,10 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
 
       @Override
       public void visitPostCssNest(PostCssNestImpl postCssNest) {
-        if (PostCssPsiUtil.isEmptyElement(postCssNest) || !PostCssPsiUtil.isInsidePostCss(postCssNest)) return;
+        if (PostCssPsiUtil.isEmptyElement(postCssNest) || !PostCssPsiUtil.isInsidePostCss(postCssNest) ||
+            PostCssPsiUtil.isInsideCustomSelector(postCssNest)) {
+          return;
+        }
         CssSelectorList selectorList = postCssNest.getSelectorList();
         if (PostCssPsiUtil.isInsideNestedRuleset(selectorList) && PostCssPsiUtil.isEmptyElement(selectorList)) {
           holder

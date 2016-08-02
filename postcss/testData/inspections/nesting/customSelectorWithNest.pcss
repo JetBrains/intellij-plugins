@@ -1,7 +1,9 @@
-p {
-  @custom-selector :--a & h1;
+@custom-selector :--a @nest a &;
 
+p {
   <warning descr="Nested ruleset selector should start with '&'">:--a</warning> {
     color: red;
   }
+
+  @custom-selector :--b div &;
 }
