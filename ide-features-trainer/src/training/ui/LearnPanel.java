@@ -123,7 +123,7 @@ public class LearnPanel extends JPanel {
         north_inset = 16;
         east_inset = 32;
         south_inset = 32;
-        check_width = LearnIcons.CheckmarkGray12.getIconWidth();
+        check_width = LearnIcons.CheckmarkGray.getIconWidth();
         check_right_indent = 5;
         checkmarkShift = new EmptyBorder(0, check_width + check_right_indent, 0, 0);
 
@@ -511,9 +511,9 @@ public class LearnPanel extends JPanel {
                     JLabel jLabel = lessonLabelMap.get(lesson);
                     Point point = jLabel.getLocation();
                     if (!SystemInfo.isMac) {
-                        LearnIcons.CheckmarkGray12.paintIcon(this, g, point.x, point.y + 1);
+                        LearnIcons.CheckmarkGray.paintIcon(this, g, point.x, point.y + 1);
                     } else {
-                        LearnIcons.CheckmarkGray12.paintIcon(this, g, point.x, point.y + 2);
+                        LearnIcons.CheckmarkGray.paintIcon(this, g, point.x, point.y + 2);
                     }
                 }
             }

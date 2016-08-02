@@ -3,7 +3,6 @@ package training.component;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -28,10 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.CourseManager;
 import training.learn.LearnBundle;
+import training.ui.LearnIcons;
 import training.ui.LearnToolWindowFactory;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
@@ -90,7 +89,8 @@ public class LearnProjectComponent implements ProjectComponent {
         //register tool window
         final ToolWindow toolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
         if (toolWindow == null) {
-            toolWindowManager.registerToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW, true, ToolWindowAnchor.LEFT, myProject, true);
+            ToolWindow createdToolWindow = toolWindowManager.registerToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW, true, ToolWindowAnchor.LEFT, myProject, true);
+            createdToolWindow.setIcon(LearnIcons.ChevronToolWindowIcon);
         }
     }
 

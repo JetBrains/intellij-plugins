@@ -1,6 +1,5 @@
 package training.ui;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.SystemInfo;
@@ -16,7 +15,6 @@ import training.learn.LearnBundle;
 import training.learn.Module;
 import training.learn.CourseManager;
 import training.learn.Lesson;
-import training.ui.LearnIcons;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -92,7 +90,7 @@ public class MainLearnPanel extends JPanel {
         north_inset = 16;
         east_inset = 32;
         south_inset = 32;
-        check_width = LearnIcons.CheckmarkGray12.getIconWidth();
+        check_width = LearnIcons.CheckmarkGray.getIconWidth();
         check_right_indent = 5;
 
         //UI colors and fonts
@@ -290,9 +288,9 @@ public class MainLearnPanel extends JPanel {
                     final Point basePoint = this.getLocationOnScreen();
                     int y = point.y + 1 - basePoint.y;
                     if (!SystemInfo.isMac) {
-                        LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 4);
+                        LearnIcons.CheckmarkGray.paintIcon(this, g, west_inset, y + 4);
                     } else {
-                        LearnIcons.CheckmarkGray12.paintIcon(this, g, west_inset, y + 2);
+                        LearnIcons.CheckmarkGray.paintIcon(this, g, west_inset, y + 2);
                     }
                 }
             }

@@ -222,9 +222,9 @@ class LessonMessagePane extends JTextPane {
                 try {
                     Rectangle rectangle = modelToView(startOffset);
                     if (!SystemInfo.isMac) {
-                        LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 17, rectangle.y + 3);
+                        LearnIcons.CheckmarkGray.paintIcon(this, g, rectangle.x - 17, rectangle.y + 3);
                     } else {
-                        LearnIcons.CheckmarkGray12.paintIcon(this, g, rectangle.x - 17, rectangle.y + 1);
+                        LearnIcons.CheckmarkGray.paintIcon(this, g, rectangle.x - 17, rectangle.y + 1);
                     }
                 } catch (BadLocationException e) {
                     e.printStackTrace();

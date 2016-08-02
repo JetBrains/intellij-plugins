@@ -14,6 +14,8 @@ public class LearnIcons {
         return IconLoader.getIcon(path, LearnIcons.class);
     }
 
-    public static final Icon CheckmarkGray12 =  load("/img/checkmarks/CheckMark12.png");
+    public static final Icon CheckmarkGray =  load("/img/checkmark.png");
+    public static final Icon ChevronIcon =  load("/img/chevron.png");
+    public static final Icon ChevronToolWindowIcon =  load("/img/chevron_toolwin.png");
 
 }
