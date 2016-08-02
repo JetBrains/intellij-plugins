@@ -7,9 +7,11 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.css.CssBlock;
+import com.intellij.psi.css.CssRuleset;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.completion.CssAddSpaceWithBracesInsertHandler;
 import com.intellij.psi.css.util.CssCompletionUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.completion.handler.PostCssCustomSelectorInsertHandler;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
@@ -37,10 +39,9 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
     PsiElement prev = position.getPrevSibling();
     boolean insideBlock = parent instanceof CssBlock && (prev == null || !(prev instanceof PsiErrorElement));
     boolean insideNestedRule = parent.getNode().getElementType() == CssElementTypes.CSS_BAD_AT_RULE &&
-                               PostCssPsiUtil.getParentRulesetOrAtRuleWhereNestingAllowed(parent) != null;
+                               PsiTreeUtil.getParentOfType(parent, CssRuleset.class) != null;
     if (insideBlock || insideNestedRule) {
       result.addElement(CssCompletionUtil.lookupForKeyword("@nest", new CssAddSpaceWithBracesInsertHandler(false)));
     }
   }
-
 }

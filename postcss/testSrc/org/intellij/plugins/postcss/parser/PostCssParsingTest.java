@@ -57,6 +57,10 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testNestRulesetInsideAtRule() {
+    doTest();
+  }
+
   public void testPartOfNestKeywordTopLevel() {
     doTest();
   }

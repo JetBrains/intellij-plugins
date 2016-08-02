@@ -25,7 +25,7 @@
 div {
   @media screen {
     @document domain(jetbrains.com) {
-      h1 {
+      <warning descr="Nested ruleset selector should start with '&'">h1</warning> {
         <warning descr="Nested ruleset selector should start with '&'">div</warning> {
           color: white;
         }

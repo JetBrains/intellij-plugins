@@ -54,7 +54,7 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected boolean parseStylesheetItem() {
-    return super.parseStylesheetItem() || parseCustomSelectorAtRule();
+    return parseCustomSelectorAtRule() || parseAtRuleNesting() || super.parseStylesheetItem();
   }
 
   @Override

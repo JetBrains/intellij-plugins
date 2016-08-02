@@ -13,7 +13,7 @@ public class PostCssNestCompletionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
-  public void testNestInsideSelector_2() {
+  public void testNestInsideSelectorList() {
     doTest();
   }
 
@@ -42,6 +42,10 @@ public class PostCssNestCompletionTest extends PostCssFixtureTestCase {
   }
 
   public void testNestInsidePageAtRule() {
+    doTest();
+  }
+
+  public void testNestInsideNestedPageAtRule() {
     doTest();
   }
 

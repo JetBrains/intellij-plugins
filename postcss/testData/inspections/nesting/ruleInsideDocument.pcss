@@ -14,15 +14,15 @@
 
 h1 {
   @document url(http://www.w3.org/) {
-    div {
+    <warning descr="Nested ruleset selector should start with '&'">div</warning> {
       color: white;
     }
 
-    <warning descr="Top level ruleset selector should not contain '&'">&</warning> div {
+    & div {
       color: red;
     }
 
-    <warning descr="Top level ruleset selector should not contain '@nest'">@nest</warning> div <warning descr="Top level ruleset selector should not contain '&'">&</warning> {
+    @nest div & {
         color: red;
     }
   }

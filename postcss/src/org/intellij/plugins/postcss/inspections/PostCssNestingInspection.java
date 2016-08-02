@@ -54,9 +54,14 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
           return;
         }
         CssSelectorList selectorList = postCssNest.getSelectorList();
-        if (PostCssPsiUtil.isInsideNestedRuleset(selectorList) && PostCssPsiUtil.isEmptyElement(selectorList)) {
-          holder
-            .registerProblem(postCssNest.getFirstChild(), PostCssBundle.message("annotator.nested.selector.doesnt.have.ampersand.error"));
+        if (PostCssPsiUtil.isInsideNestedRuleset(selectorList)) {
+          if (PostCssPsiUtil.isEmptyElement(selectorList)) {
+            holder
+              .registerProblem(postCssNest.getFirstChild(), PostCssBundle.message("annotator.nested.selector.doesnt.have.ampersand.error"));
+          }
+        }
+        else {
+          annotateTopLevelSelectorsWithNest(postCssNest, holder);
         }
       }
     };
@@ -83,14 +88,11 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
           .message("annotator.normal.selector.contains.direct.nesting.selector"), new PostCssDeleteAmpersandQuickFix());
       }
     }
-    CssSimpleSelector[] nests =
-      Arrays.stream(selector.getSimpleSelectors()).filter(PostCssPsiUtil::isNestSym).toArray(CssSimpleSelector[]::new);
-    if (nests != null) {
-      for (CssSimpleSelector nest : nests) {
-        holder.registerProblem(nest, PostCssBundle
-          .message("annotator.normal.selector.contains.nest"), new PostCssDeleteAtRuleNestQuickFix());
-      }
-    }
+  }
+
+  private static void annotateTopLevelSelectorsWithNest(PostCssNestImpl postCssNest, ProblemsHolder holder) {
+    holder.registerProblem(postCssNest.getFirstChild(), PostCssBundle
+      .message("annotator.normal.selector.contains.nest"), new PostCssDeleteAtRuleNestQuickFix());
   }
 
   private static void annotateNestedSelectorsWithoutNest(CssSelectorList list, ProblemsHolder holder) {
