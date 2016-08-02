@@ -3,6 +3,7 @@ package training.ui;
 import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import training.learn.LearnBundle;
 
 import java.util.ArrayList;
 
@@ -25,11 +26,20 @@ public class FeedbackManager {
     }
 
     private void initRateQuestions(){
-        rateQuestions.add(new RateQuestion("Please rate how your training experience was:", "don't like it", "love it"));
-        rateQuestions.add(new RateQuestion("Please rate how much you've learned when using the plugin:", "nothing", "everything"));
-        rateQuestions.add(new RateQuestion("How likely is it that you would recommend the training plugin to a friend or colleague?", "no, thanks", "sure"));
-        customQuestion = "Your detailed feedback:";
-        description = "Thank you for using this plugin. We hope that our knowledge about productivity could be shared easily. Please fill this form to tell us how the experience of using this plugin was for you";
+        rateQuestions.add(new RateQuestion(
+                LearnBundle.message("learn.feedback.rate.question.1"),
+                LearnBundle.message("learn.feedback.rate.question.1.low"),
+                LearnBundle.message("learn.feedback.rate.question.1.high")));
+        rateQuestions.add(new RateQuestion(
+                LearnBundle.message("learn.feedback.rate.question.2"),
+                LearnBundle.message("learn.feedback.rate.question.2.low"),
+                LearnBundle.message("learn.feedback.rate.question.2.high")));
+        rateQuestions.add(new RateQuestion(
+                LearnBundle.message("learn.feedback.rate.question.3"),
+                LearnBundle.message("learn.feedback.rate.question.3.low"),
+                LearnBundle.message("learn.feedback.rate.question.3.high")));
+        customQuestion = LearnBundle.message("learn.feedback.detailed.feedback");
+        description = LearnBundle.message("learn.feedback.description");
     }
 
     public ArrayList<RateQuestion> getRateQuestions() {
