@@ -331,6 +331,20 @@ public class LearnPanel extends JPanel {
         this.repaint();
     }
 
+    public void setButtonSuggestSubmitFeedback(){
+        Action buttonAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                CourseManager.getInstance().setFeedbackView();
+            }
+        };
+        buttonAction.putValue(Action.NAME, "Next");
+        buttonAction.setEnabled(true);
+        button.setAction(buttonAction);
+        button.setSelected(true);
+        button.setText(LearnBundle.message("learn.ui.button.submit.feedback"));
+        getRootPane().setDefaultButton(button);
+    }
 
     public void setButtonNextAction(final Runnable runnable, Lesson notPassedLesson) {
         setButtonNextAction(runnable, notPassedLesson, null);
@@ -344,9 +358,6 @@ public class LearnPanel extends JPanel {
                 runnable.run();
             }
         };
-
-        int mnemonic_int = 'N';
-        buttonAction.putValue(Action.MNEMONIC_KEY, mnemonic_int);
         buttonAction.putValue(Action.NAME, "Next");
         buttonAction.setEnabled(true);
         button.setAction(buttonAction);

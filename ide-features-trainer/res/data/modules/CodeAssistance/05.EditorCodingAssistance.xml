@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class Sorter {
+class CodeAssistance {
 
     public static final String EXT = "txt";
 

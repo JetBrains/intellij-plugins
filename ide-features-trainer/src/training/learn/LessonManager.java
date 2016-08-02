@@ -164,7 +164,10 @@ public class LessonManager {
             }, notPassedLesson);
         } else {
             Module module = CourseManager.getInstance().giveNextModule(myCurrentLesson);
-            if (module == null) hideButtons();
+            if (module == null) {
+            //TODO: check that feedback is not submitted
+                learnPanel.setButtonSuggestSubmitFeedback();
+            }
             else {
                 Lesson lesson = module.giveNotPassedLesson();
                 if (lesson == null) lesson = module.getLessons().get(0);
