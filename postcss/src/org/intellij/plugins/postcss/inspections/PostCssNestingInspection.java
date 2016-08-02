@@ -1,5 +1,6 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.CssSelector;
@@ -47,7 +48,8 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
         CssSelectorList selectorList = postCssNest.getSelectorList();
         if (PostCssPsiUtil.isInsideNestedRuleset(selectorList) && PostCssPsiUtil.isEmptyElement(selectorList)) {
           holder
-            .registerProblem(postCssNest.getFirstChild(), PostCssBundle.message("annotator.nested.selector.doesnt.have.ampersand.error"));
+            .registerProblem(postCssNest.getFirstChild(), PostCssBundle.message("annotator.nested.selector.doesnt.have.ampersand.error"),
+                             ProblemHighlightType.GENERIC_ERROR);
         }
       }
     };
@@ -56,12 +58,13 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
   private static void annotateNestedSelectorsWithoutAmpersand(CssSelector selector, ProblemsHolder holder) {
     if (PostCssPsiUtil.isInsideNest(selector)) {
       if (!PostCssPsiUtil.containsAmpersand(selector)) {
-        holder.registerProblem(selector, PostCssBundle.message("annotator.nested.selector.doesnt.have.ampersand.error"));
+        holder.registerProblem(selector, PostCssBundle.message("annotator.nested.selector.doesnt.have.ampersand.error"),
+                               ProblemHighlightType.GENERIC_ERROR);
       }
     }
     else if (!PostCssPsiUtil.containsAmpersand(selector)) {
       holder.registerProblem(selector, PostCssBundle.message("annotator.nested.selector.doesnt.starts.with.ampersand.error"),
-                             new PostCssAddAmpersandToSelectorQuickFix());
+                             ProblemHighlightType.GENERIC_ERROR, new PostCssAddAmpersandToSelectorQuickFix());
     }
   }
 
@@ -90,7 +93,7 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
     boolean everySelectorStartsWithAmpersand = Arrays.stream(list.getSelectors()).allMatch(PostCssPsiUtil::startsWithAmpersand);
     if (everySelectorHasAmpersand && !everySelectorStartsWithAmpersand) {
       holder.registerProblem(list, PostCssBundle.message("annotator.nested.selector.list.doesnt.have.nest.at.rule.error"),
-                             new PostCssAddAtRuleNestToSelectorQuickFix());
+                             ProblemHighlightType.GENERIC_ERROR, new PostCssAddAtRuleNestToSelectorQuickFix());
     }
   }
 }
