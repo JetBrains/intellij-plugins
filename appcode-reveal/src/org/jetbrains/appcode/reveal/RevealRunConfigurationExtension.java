@@ -61,7 +61,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   protected void readExternal(@NotNull AppCodeRunConfiguration runConfiguration, @NotNull Element element)
-    throws InvalidDataException {
+          throws InvalidDataException {
     Element settingsTag = element.getChild(REVEAL_SETTINGS_TAG);
     RevealSettings settings = null;
     if (settingsTag != null) {
@@ -69,7 +69,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       settings.autoInject = getAttributeValue(settingsTag.getAttributeValue("autoInject"), settings.autoInject);
       settings.autoInstall = getAttributeValue(settingsTag.getAttributeValue("autoInstall"), settings.autoInstall);
       settings.askToEnableAutoInstall =
-        getAttributeValue(settingsTag.getAttributeValue("askToEnableAutoInstall"), settings.askToEnableAutoInstall);
+              getAttributeValue(settingsTag.getAttributeValue("askToEnableAutoInstall"), settings.askToEnableAutoInstall);
     }
     setRevealSettings(runConfiguration, settings);
   }
@@ -80,7 +80,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   protected void writeExternal(@NotNull AppCodeRunConfiguration runConfiguration, @NotNull Element element)
-    throws WriteExternalException {
+          throws WriteExternalException {
     RevealSettings settings = getRevealSettings(runConfiguration);
 
     Element settingsTag = new Element(REVEAL_SETTINGS_TAG);
@@ -93,7 +93,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @Nullable
   @Override
   protected <P extends AppCodeRunConfiguration> SettingsEditor<P> createEditor(@NotNull P configuration) {
-    return new MyEditor<>();
+    return new RevealRunConfigurationEditor<P>();
   }
 
   @Nullable
@@ -146,10 +146,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
     actions.add(new RefreshRevealAction(configuration,
-                                        environment,
-                                        processHandler,
-                                        buildConfiguration.getDestination(),
-                                        getBundleID(environment, product)));
+            environment,
+            processHandler,
+            buildConfiguration.getDestination(),
+            getBundleID(environment, product)));
   }
 
   @Override
@@ -206,45 +206,45 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
         @Override
         public void run() {
           response[0] = Messages.showYesNoDialog("Project is not configured with Reveal library.<br><br>" +
-                                                 "Would you like to enable automatic library upload for this run configuration?",
-                                                 "Reveal",
-                                                 Messages.YES_BUTTON,
-                                                 Messages.NO_BUTTON,
-                                                 Messages.getQuestionIcon(),
-                                                 new DialogWrapper.DoNotAskOption() {
-                                                   @Override
-                                                   public boolean isToBeShown() {
-                                                     return true;
-                                                   }
+                          "Would you like to enable automatic library upload for this run configuration?",
+                  "Reveal",
+                  Messages.YES_BUTTON,
+                  Messages.NO_BUTTON,
+                  Messages.getQuestionIcon(),
+                  new DialogWrapper.DoNotAskOption() {
+                    @Override
+                    public boolean isToBeShown() {
+                      return true;
+                    }
 
-                                                   @Override
-                                                   public void setToBeShown(boolean value, int exitCode) {
-                                                     settings.askToEnableAutoInstall = value;
-                                                   }
+                    @Override
+                    public void setToBeShown(boolean value, int exitCode) {
+                      settings.askToEnableAutoInstall = value;
+                    }
 
-                                                   @Override
-                                                   public boolean canBeHidden() {
-                                                     return true;
-                                                   }
+                    @Override
+                    public boolean canBeHidden() {
+                      return true;
+                    }
 
-                                                   @Override
-                                                   public boolean shouldSaveOptionsOnCancel() {
-                                                     return false;
-                                                   }
+                    @Override
+                    public boolean shouldSaveOptionsOnCancel() {
+                      return false;
+                    }
 
-                                                   @NotNull
-                                                   @Override
-                                                   public String getDoNotShowMessage() {
-                                                     return CommonBundle.message("dialog.options.do.not.show");
-                                                   }
-                                                 }
+                    @NotNull
+                    @Override
+                    public String getDoNotShowMessage() {
+                      return CommonBundle.message("dialog.options.do.not.show");
+                    }
+                  }
           );
         }
       });
       if (response[0] != Messages.YES) return null;
 
       settings.autoInstall = true;
-      settings.askToEnableAutoInstall = true; // is user changes autoInstall in future, ask him/her again 
+      settings.askToEnableAutoInstall = true; // is user changes autoInstall in future, ask him/her again
       setRevealSettings(configuration, settings);
     }
 
@@ -252,7 +252,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
     AMDevice device = destination.getDeviceSafe();
     return installOnDevice(libReveal, buildConfiguration, mainExecutable, commandLine, device,
-                           getBundleID(environment, product));
+            getBundleID(environment, product));
   }
 
   private static boolean hasBundledRevealLib(@NotNull final BuildConfiguration buildConfiguration, @NotNull final File libReveal) {
@@ -286,8 +286,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       libRevealInTempDir = new File(tempDir, libReveal.getName());
 
       FileUtil.copy(libReveal, libRevealInTempDir);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
 
@@ -328,133 +327,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                   @NotNull String runnerId) throws ExecutionException {
   }
 
-  private static class MyEditor<T extends AppCodeRunConfiguration> extends SettingsEditor<T> {
-    private HyperlinkLabel myRevealNotFoundOrIncompatible;
-    private JBLabel myNotAvailable;
-
-    private JBCheckBox myInjectCheckBox;
-    private JBLabel myInjectHint;
-    private JBCheckBox myInstallCheckBox;
-    private JBLabel myInstallHint;
-
-    boolean isFound;
-    boolean isAvailable;
-
-    @Override
-    protected void resetEditorFrom(AppCodeRunConfiguration s) {
-      RevealSettings settings = getRevealSettings(s);
-
-      myInjectCheckBox.setSelected(settings.autoInject);
-      myInstallCheckBox.setSelected(settings.autoInstall);
-
-      boolean found = Reveal.getRevealLib(getSdk(s)) != null;
-      boolean compatible = Reveal.isCompatible();
-
-      String notFoundText = null;
-      if (!found) {
-        notFoundText = "Reveal.app not found. You can install it from ";
-      }
-      else if (!compatible) {
-        notFoundText = "Incompatible version of Reveal.app. You can download the latest one from ";
-      }
-      if (notFoundText != null) {
-        myRevealNotFoundOrIncompatible.setHyperlinkText(notFoundText, "revealapp.com", "");
-      }
-
-      isFound = found && compatible;
-      isAvailable = isAvailableForPlatform(s);
-
-      updateControls();
-    }
-
-    @Override
-    protected void applyEditorTo(AppCodeRunConfiguration s) throws ConfigurationException {
-      RevealSettings settings = getRevealSettings(s);
-
-      settings.autoInject = myInjectCheckBox.isSelected();
-      settings.autoInstall = myInstallCheckBox.isSelected();
-
-      setRevealSettings(s, settings);
-    }
-
-    @NotNull
-    @Override
-    protected JComponent createEditor() {
-      FormBuilder builder = new FormBuilder();
-
-      myRevealNotFoundOrIncompatible = new HyperlinkLabel();
-      myRevealNotFoundOrIncompatible.setIcon(AllIcons.RunConfigurations.ConfigurationWarning);
-      myRevealNotFoundOrIncompatible.setHyperlinkTarget("http://revealapp.com");
-
-      myNotAvailable = new JBLabel("<html>" +
-                                   "Reveal integration is only available for iOS applications.<br>" +
-                                   "OS X targets are not yet supported.<br>" +
-                                   "</html>");
-
-      myInjectCheckBox = new JBCheckBox("Inject Reveal library on launch");
-      myInstallCheckBox = new JBCheckBox("Upload Reveal library on the device if necessary");
-
-      myInjectHint = new JBLabel(UIUtil.ComponentStyle.SMALL);
-      myInstallHint = new JBLabel(UIUtil.ComponentStyle.SMALL);
-
-      myInjectCheckBox.addItemListener(new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          updateControls();
-        }
-      });
-
-      builder.addComponent(myNotAvailable);
-      builder.addComponent(myInjectCheckBox, UIUtil.DEFAULT_VGAP * 3);
-      builder.setIndent(UIUtil.DEFAULT_HGAP * 4);
-      builder.addComponent(myInjectHint);
-      builder.setIndent(UIUtil.DEFAULT_HGAP);
-      builder.addComponent(myInstallCheckBox);
-      builder.setIndent(UIUtil.DEFAULT_HGAP * 5);
-      builder.addComponent(myInstallHint);
-
-      JPanel controls = builder.getPanel();
-
-      JPanel panel = new JPanel(new BorderLayout());
-      panel.add(controls, BorderLayout.NORTH);
-      panel.add(Box.createGlue(), BorderLayout.CENTER);
-      panel.add(myRevealNotFoundOrIncompatible, BorderLayout.SOUTH);
-      return panel;
-    }
-
-    private void updateControls() {
-      boolean controlsEnabled = isFound && isAvailable;
-
-      myRevealNotFoundOrIncompatible.setVisible(!isFound);
-      myNotAvailable.setVisible(!isAvailable);
-
-      updateStatusAndHint(myInjectCheckBox, myInjectHint,
-                          controlsEnabled,
-                          "Library is injected on launch using DYLD_INSERT_LIBRARIES variable");
-
-      boolean installButtonEnabled = controlsEnabled && myInjectCheckBox.isSelected();
-      updateStatusAndHint(myInstallCheckBox, myInstallHint,
-                          installButtonEnabled,
-                          "It's not necessary to configure the project manually,<br>" +
-                          "library is signed and uploaded automatically"
-      );
-    }
-
-    private static void updateStatusAndHint(JComponent comp, JBLabel label, boolean enabled, String text) {
-      comp.setEnabled(enabled);
-      label.setEnabled(enabled);
-      StringBuilder fontString = new StringBuilder();
-      Color color = enabled ? UIUtil.getLabelForeground() : UIUtil.getLabelDisabledForeground();
-      if (color != null) {
-        fontString.append("<font color=#");
-        UIUtil.appendColor(color, fontString);
-        fontString.append(">");
-      }
-      label.setText("<html>" + fontString + text + "</html>");
-    }
-  }
-
   public static class RevealSettings {
+    public String path;
     public boolean autoInject;
     public boolean autoInstall = true;
     public boolean askToEnableAutoInstall = true;
