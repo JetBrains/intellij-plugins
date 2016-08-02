@@ -110,9 +110,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   protected boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
-    XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
-    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
-    if (Reveal.getRevealLib(sdk) == null) return false;
+    if (Reveal.getRevealLib(getSdk(config)) == null) return false;
     return isAvailableForPlatform(config);
   }
 
@@ -120,11 +118,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
       @Override
       public Boolean compute() {
-        XCBuildConfiguration configuration = config.getConfiguration();
-        AppleSdk sdk = configuration == null ? null : configuration.getBaseSdk();
+        AppleSdk sdk = getSdk(config);
         return sdk != null && (sdk.getPlatform().isIOS() || sdk.getPlatform().isTv());
       }
     });
+  }
+
+  @Nullable
+  private static AppleSdk getSdk(@NotNull AppCodeRunConfiguration config) {
+    XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
+    return xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
   }
 
   @Override
@@ -175,9 +178,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                     @NotNull GeneralCommandLine commandLine,
                                     @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
-    XCBuildConfiguration xcBuildConfiguration = configuration.getConfiguration();
-    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
-    File libReveal = Reveal.getRevealLib(sdk);
+    File libReveal = Reveal.getRevealLib(getSdk(configuration));
     if (libReveal == null || !libReveal.exists()) throw new ExecutionException("Reveal library not found");
 
     Reveal.LOG.info("Reveal lib found at " + libReveal);
@@ -341,9 +342,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       myInjectCheckBox.setSelected(settings.autoInject);
       myInstallCheckBox.setSelected(settings.autoInstall);
 
-      XCBuildConfiguration xcBuildConfiguration = s.getConfiguration();
-      AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
-      boolean found = Reveal.getRevealLib(sdk) != null;
+      boolean found = Reveal.getRevealLib(getSdk(s)) != null;
       boolean compatible = Reveal.isCompatible();
 
       String notFoundText = null;

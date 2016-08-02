@@ -12,6 +12,7 @@ import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.script.IdeScriptException;
@@ -41,8 +42,10 @@ public class Reveal {
     return result.exists() ? result : null;
   }
 
-  @Nullable
-  public static File getRevealLib(AppleSdk sdk) {
+  @Contract("null -> null")
+  public static File getRevealLib(@Nullable AppleSdk sdk) {
+    if (sdk == null) return null;
+
     File bundle = getRevealBundle();
     if (bundle == null) return null;
 
