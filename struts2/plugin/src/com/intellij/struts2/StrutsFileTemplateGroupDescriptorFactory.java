@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2016 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,6 +52,11 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
   public static final String STRUTS_2_3_XML = "struts_2_3.xml";
 
   /**
+   * Template for {@code >=2.5}.
+   */
+  public static final String STRUTS_2_5_XML = "struts_2_5.xml";
+
+  /**
    * Template for {@code validation.xml}.  TODO cannot name "validation.xml" due to SA using this template name.
    */
   public static final String VALIDATION_XML = "validator.xml";
@@ -66,6 +71,8 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_1_7_XML,
                                                  StrutsIcons.STRUTS_CONFIG_FILE));
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_3_XML,
+                                                 StrutsIcons.STRUTS_CONFIG_FILE));
+    group.addTemplate(new FileTemplateDescriptor(STRUTS_2_5_XML,
                                                  StrutsIcons.STRUTS_CONFIG_FILE));
 
     group.addTemplate(new FileTemplateDescriptor(VALIDATION_XML,

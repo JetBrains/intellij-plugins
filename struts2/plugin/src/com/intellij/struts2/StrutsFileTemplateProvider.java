@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2016 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,10 @@ public class StrutsFileTemplateProvider {
   @NotNull
   public FileTemplate determineFileTemplate(Project project) {
     String template;
-    if (isNewerThan("2.3")) {
+    if (isNewerThan("2.5")) {
+      template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_5_XML;
+    }
+    else if (isNewerThan("2.3")) {
       template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_3_XML;
     }
     else if (my21orNewer) {
