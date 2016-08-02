@@ -1,10 +1,10 @@
 @supports (display: table-cell) and (display: list-item) {
   h1 {
-    <error descr="Nested ruleset selector should start with '&'">div</error> {
+    <warning descr="Nested ruleset selector should start with '&'">div</warning> {
       color: white;
     }
 
-    @nest <error descr="Nested ruleset selector should contain '&'">div</error> {
+    @nest <warning descr="Nested ruleset selector should contain '&'">div</warning> {
       color: white;
     }
 
@@ -16,7 +16,7 @@
       color: red;
     }
 
-    <error descr="Nested ruleset selector should start with '@nest'">div &</error> {
+    <warning descr="Nested ruleset selector should start with '@nest'">div &</warning> {
       color: red;
     }
   }
@@ -26,11 +26,11 @@ div {
   @media screen {
     @supports (display: table-cell) and (display: list-item) {
       h1 {
-        <error descr="Nested ruleset selector should start with '&'">div</error> {
+        <warning descr="Nested ruleset selector should start with '&'">div</warning> {
           color: white;
         }
 
-        @nest <error descr="Nested ruleset selector should contain '&'">div</error> {
+        @nest <warning descr="Nested ruleset selector should contain '&'">div</warning> {
           color: white;
         }
 
