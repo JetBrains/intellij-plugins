@@ -77,6 +77,10 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testNestAtRuleIncorrectSelectorList() {
+    doTest();
+  }
+
   public void testCustomSelector() {
     doTest();
   }
