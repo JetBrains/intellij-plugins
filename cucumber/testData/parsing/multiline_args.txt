@@ -36,13 +36,13 @@ GherkinFile:multiline_args.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('table')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
           PsiWhiteSpace('\n      ')
           GherkinTableRow
             PsiElement(PIPE)('|')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('example')
             PsiElement(PIPE)('|')

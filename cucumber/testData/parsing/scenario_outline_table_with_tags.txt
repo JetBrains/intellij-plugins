@@ -43,12 +43,12 @@ GherkinFile:scenario_outline_table_with_tags.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('start')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('total')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
@@ -56,12 +56,12 @@ GherkinFile:scenario_outline_table_with_tags.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace('  ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('12')
             PsiWhiteSpace('   ')
             PsiElement(PIPE)('|')
             PsiWhiteSpace('   ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('13')
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')
@@ -69,12 +69,12 @@ GherkinFile:scenario_outline_table_with_tags.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace('  ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('20')
             PsiWhiteSpace('   ')
             PsiElement(PIPE)('|')
             PsiWhiteSpace('   ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('20')
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')
@@ -89,12 +89,12 @@ GherkinFile:scenario_outline_table_with_tags.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('start')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('total')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
@@ -102,12 +102,12 @@ GherkinFile:scenario_outline_table_with_tags.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace('  ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('06')
             PsiWhiteSpace('   ')
             PsiElement(PIPE)('|')
             PsiWhiteSpace('   ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('66')
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')

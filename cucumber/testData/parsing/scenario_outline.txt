@@ -33,7 +33,7 @@ GherkinFile:scenario_outline.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('start')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
@@ -41,7 +41,7 @@ GherkinFile:scenario_outline.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace('  ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('12')
             PsiWhiteSpace('   ')
             PsiElement(PIPE)('|')
@@ -49,7 +49,7 @@ GherkinFile:scenario_outline.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace('  ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('20')
             PsiWhiteSpace('   ')
             PsiElement(PIPE)('|')
@@ -64,7 +64,7 @@ GherkinFile:scenario_outline.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('start')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
@@ -72,7 +72,7 @@ GherkinFile:scenario_outline.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCell
+            GherkinTableCellImpl(table cell)
               PsiElement(TABLE_CELL)('15')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
