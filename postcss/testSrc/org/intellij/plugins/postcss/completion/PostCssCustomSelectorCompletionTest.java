@@ -2,6 +2,7 @@ package org.intellij.plugins.postcss.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.openapi.util.Pair;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,43 +47,21 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
   }
 
   public void testCustomSelectorOneDefinitionIsFirstVariant() {
-    assertEquals("--test", myFixture.getCompletionVariants(getTestName(true) + ".pcss").get(0));
+    doTestPreferred("--test");
   }
 
   public void testCustomSelectorTwoDefinitions() {
-    List<String> variants = myFixture.getCompletionVariants(getTestName(true) + ".pcss");
-    assertEquals("--test", variants.get(0));
-    assertEquals("--test2", variants.get(1));
+    doTestPreferred("--test", "--test2");
   }
 
   public void testCustomSelectorPriorityWithImport() {
-    myFixture.configureByFiles(getTestName(true) + ".pcss", "definition.pcss");
-    LookupElement[] lookupElements = myFixture.completeBasic();
-    LookupElement first = lookupElements[0];
-    LookupElement second = lookupElements[1];
-
-    LookupElementPresentation presentation = new LookupElementPresentation();
-    first.renderElement(presentation);
-    assertEquals("test", presentation.getItemText());
-    assertEquals("definition.pcss:1", presentation.getTypeText());
-    second.renderElement(presentation);
-    assertEquals("z-in-file", presentation.getItemText());
-    assertEquals("customSelectorPriorityWithImport.pcss:3", presentation.getTypeText());
+    myFixture.configureByFile("definition.pcss");
+    doTestPreferred(Pair.create("test", "definition.pcss:1"), Pair.create("z-in-file", "customSelectorPriorityWithImport.pcss:3"));
   }
 
   public void testCustomSelectorPriorityWithoutImport() {
-    myFixture.configureByFiles(getTestName(true) + ".pcss", "definition.pcss");
-    LookupElement[] lookupElements = myFixture.completeBasic();
-    LookupElement first = lookupElements[0];
-    LookupElement second = lookupElements[1];
-
-    LookupElementPresentation presentation = new LookupElementPresentation();
-    first.renderElement(presentation);
-    assertEquals("z-in-file", presentation.getItemText());
-    assertEquals("customSelectorPriorityWithoutImport.pcss:1", presentation.getTypeText());
-    second.renderElement(presentation);
-    assertEquals("test", presentation.getItemText());
-    assertEquals("definition.pcss:1", presentation.getTypeText());
+    myFixture.configureByFile("definition.pcss");
+    doTestPreferred(Pair.create("z-in-file", "customSelectorPriorityWithoutImport.pcss:1"), Pair.create("test", "definition.pcss:1"));
   }
 
   public void testCustomSelectorWithImport() {
@@ -105,8 +84,28 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
   }
 
   public void testTwoColons() {
-    List<String> variants = myFixture.getCompletionVariants(getTestName(true) + ".pcss");
-    assertFalse(variants.contains("--test"));
+    assertFalse(myFixture.getCompletionVariants(getTestName(true) + ".pcss").contains("--test"));
+  }
+
+  private void doTestPreferred(String... items) {
+    myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject(getTestName(true) + ".pcss"));
+    myFixture.completeBasic();
+    myFixture.assertPreferredCompletionItems(0, items);
+  }
+
+  private void doTestPreferred(Pair<String, String>... items) {
+    myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject(getTestName(true) + ".pcss"));
+    LookupElement[] lookupElements = myFixture.completeBasic();
+    LookupElementPresentation presentation = new LookupElementPresentation();
+    for (int i = 0; i < items.length; i++) {
+      lookupElements[i].renderElement(presentation);
+      assertEquals(items[i].first, presentation.getItemText());
+      assertEquals(items[i].second, presentation.getTypeText());
+    }
+  }
+
+  private void doTest() {
+    myFixture.testCompletion(getTestName(true) + ".pcss", getTestName(true) + "_after.pcss");
   }
 
   @NotNull
@@ -114,9 +113,4 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
   protected String getTestDataSubdir() {
     return "customSelector";
   }
-
-  private void doTest() {
-    myFixture.testCompletion(getTestName(true) + ".pcss", getTestName(true) + "_after.pcss");
-  }
-
 }
