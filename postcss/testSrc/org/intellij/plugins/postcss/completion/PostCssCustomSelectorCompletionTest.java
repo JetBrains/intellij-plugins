@@ -88,13 +88,13 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
   }
 
   private void doTestPreferred(String... items) {
-    myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject(getTestName(true) + ".pcss"));
+    myFixture.configureByFile(getTestName(true) + ".pcss");
     myFixture.completeBasic();
     myFixture.assertPreferredCompletionItems(0, items);
   }
 
   private void doTestPreferred(Pair<String, String>... items) {
-    myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject(getTestName(true) + ".pcss"));
+    myFixture.configureByFile(getTestName(true) + ".pcss");
     LookupElement[] lookupElements = myFixture.completeBasic();
     LookupElementPresentation presentation = new LookupElementPresentation();
     for (int i = 0; i < items.length; i++) {
