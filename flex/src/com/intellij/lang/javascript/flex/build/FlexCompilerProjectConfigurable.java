@@ -40,10 +40,6 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     return "flex.compiler";
   }
 
-  public Runnable enableSearch(String option) {
-    return null;
-  }
-
   @Nls
   public String getDisplayName() {
     return "Flex Compiler";

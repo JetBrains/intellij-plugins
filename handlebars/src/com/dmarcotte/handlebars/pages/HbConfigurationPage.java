@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class HbConfigurationPage implements SearchableConfigurable {
@@ -37,11 +36,6 @@ public class HbConfigurationPage implements SearchableConfigurable {
   @Override
   public String getId() {
     return "editor.preferences.handlebarsOptions";
-  }
-
-  @Override
-  public Runnable enableSearch(String option) {
-    return null;
   }
 
   @Nls

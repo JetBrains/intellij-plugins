@@ -285,12 +285,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   }
 
   @Override
-  @Nullable
-  public Runnable enableSearch(final String option) {
-    return null;
-  }
-
-  @Override
   @Nls
   public String getDisplayName() {
     return DART_SETTINGS_PAGE_NAME;

@@ -54,10 +54,6 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
     return getHelpTopic();
   }
 
-  public Runnable enableSearch(String option) {
-    return null;
-  }
-
   @Nls
   public String getDisplayName() {
     return "ColdFusion";

@@ -55,8 +55,4 @@ public class ActionScriptProfileSettingsConfigurable implements SearchableConfig
   public void disposeUIResources() {
     mySettingsPane = null;
   }
-
-  public Runnable enableSearch(String option) {
-    return null;
-  }
 }
