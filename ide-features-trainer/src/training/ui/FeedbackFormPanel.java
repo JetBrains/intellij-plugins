@@ -127,7 +127,7 @@ public class FeedbackFormPanel extends JPanel {
         customFeedback.setBorder(new EmptyBorder(0, 0, 0, 0));
 
 
-        submitFeedbackButton = new JButton(LearnBundle.message("learn.ui.feedback.submit.button"));
+        submitFeedbackButton = new JButton(LearnBundle.message("learn.feedback.submit.button"));
         submitFeedbackButton.setOpaque(false);
 
         headerGap = 2;
@@ -176,7 +176,7 @@ public class FeedbackFormPanel extends JPanel {
         submitFeedbackPanel.setLayout(new BoxLayout(submitFeedbackPanel, BoxLayout.LINE_AXIS));
         submitFeedbackPanel.setOpaque(false);
         submitFeedbackPanel.setAlignmentX(LEFT_ALIGNMENT);
-        backToModules = new LinkLabel(LearnBundle.message("learn.ui.feedback.back.to.modules"), null);
+        backToModules = new LinkLabel(LearnBundle.message("learn.feedback.back.to.modules"), null);
 
         backToModules.setListener((linkLabel, o) -> {
             //return to modules view
@@ -186,7 +186,7 @@ public class FeedbackFormPanel extends JPanel {
         submitFeedbackPanel.add(backToModules);
 
 
-        caption.setText("Feedback Form");
+        caption.setText(LearnBundle.message("learn.feedback.caption"));
         try {
             description.getDocument().insertString(0, FeedbackManager.getInstance().getDescription(), REGULAR_GRAY);
         } catch (BadLocationException e) {

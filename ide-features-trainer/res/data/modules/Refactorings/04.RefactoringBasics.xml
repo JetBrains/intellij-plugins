@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class Sorter {
+class Refactorings {
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(&quot;input.txt&quot;));
         ArrayList&lt;String&gt; lines = new ArrayList&lt;String&gt;();
