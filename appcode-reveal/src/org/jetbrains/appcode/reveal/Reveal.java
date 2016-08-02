@@ -8,6 +8,8 @@ import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.mac.foundation.NSWorkspace;
 import com.jetbrains.cidr.AppleScript;
+import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
+import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
 import org.jetbrains.annotations.NotNull;
@@ -40,11 +42,22 @@ public class Reveal {
   }
 
   @Nullable
-  public static File getRevealLib() {
+  public static File getRevealLib(AppleSdk sdk) {
     File bundle = getRevealBundle();
     if (bundle == null) return null;
 
-    File result = new File(bundle, "/Contents/SharedSupport/iOS-Libraries/libReveal.dylib");
+    ApplePlatform platform = sdk.getPlatform();
+    String libraryPath = null;
+
+    if (platform.isIOS()) {
+      libraryPath = "/Contents/SharedSupport/iOS-Libraries/libReveal.dylib";
+    } else if (platform.isTv()) {
+      libraryPath = "/Contents/SharedSupport/tvOS-Libraries/libReveal-tvOS.dylib";
+    }
+
+    if (libraryPath == null) return null;
+
+    File result = new File(bundle, libraryPath);
     return result.exists() ? result : null;
   }
 
