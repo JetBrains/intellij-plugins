@@ -13,4 +13,5 @@ public interface PostCssTokenTypes {
   IElementType POST_CSS_CUSTOM_SELECTOR_SYM = new PostCssElementType("POST_CSS_CUSTOM_SELECTOR_SYM");
 
   TokenSet KEYWORDS = TokenSet.create(POST_CSS_NEST_SYM, POST_CSS_CUSTOM_SELECTOR_SYM);
+  TokenSet IDENTIFIERS = TokenSet.create(AMPERSAND, HASH_SIGN);
 }

@@ -30,7 +30,7 @@ public class PostCssColorsPage implements ColorSettingsPage {
                                           "  border:rgb(255,0,0);\n" +
                                           "  background-color: #FAFAFA;\n" +
                                           "  background:url(hello.jpg) !important;\n" +
-                                          "  @nest span & {\n" +
+                                          "  @nest span &, #&-id {\n" +
                                           "    color: yellow;\n" +
                                           "  }\n" +
                                           "}\n\n" +

@@ -76,11 +76,13 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     mapping.put(CssElementTypes.CSS_COLON, COLON);
     mapping.put(CssElementTypes.CSS_COMMA, COMMA);
     mapping.put(CssElementTypes.CSS_SEMICOLON, SEMICOLON);
-    mapping.put(PostCssTokenTypes.AMPERSAND, IDENTIFIER);
     mapping.put(CssElementTypes.CSS_BAD_CHARACTER, BAD_CHARACTER);
     mapping.put(CssElementTypes.CSS_KEYWORD, KEYWORD);
     for (IElementType type : PostCssTokenTypes.KEYWORDS.getTypes()) {
       mapping.put(type, KEYWORD);
+    }
+    for (IElementType type : PostCssTokenTypes.IDENTIFIERS.getTypes()) {
+      mapping.put(type, IDENTIFIER);
     }
 
     HtmlFileHighlighter.registerEmbeddedTokenAttributes(mapping, null);

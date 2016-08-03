@@ -54,6 +54,14 @@ public class PostCssHighlightingLexerTest extends LexerTestCase {
     doTest();
   }
 
+  public void testHashSignInId() {
+    doTest();
+  }
+
+  public void testHashSignInPseudoFunction() {
+    doTest();
+  }
+
   private void doTest() {
     doFileTest("pcss");
   }

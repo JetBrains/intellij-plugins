@@ -23,6 +23,14 @@ public class PostCssLexerTest extends LexerTestCase {
     doTest();
   }
 
+  public void testHashSignInId() {
+    doTest();
+  }
+
+  public void testHashSignInPseudoFunction() {
+    doTest();
+  }
+
   private void doTest() {
     doFileTest("pcss");
   }
