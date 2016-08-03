@@ -1,6 +1,8 @@
 Menu
 Amazon Web Services <https://aws.amazon.com>
-Sign In to the Console <https://console.aws.amazon.com/console/home>
+Sign In to the Console <https://console.aws.amazon.com/console/home> Try 
+AWS for Free
+<https://portal.aws.amazon.com/gp/aws/developer/registration/index.html>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
 
@@ -58,7 +60,6 @@ User Guide (API Version 2010-05-15)
           o Working with Windows Stacks
                 + Windows AMIs and Templates
                 + Bootstrapping Windows Stacks
-                + Accessing Windows Instances
     * Working with Templates
           o Template Anatomy
                 + Format Version
@@ -162,6 +163,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::DHCPOptions
                 + AWS::EC2::EIP
                 + AWS::EC2::EIPAssociation
+                + AWS::EC2::FlowLog
                 + AWS::EC2::Host
                 + AWS::EC2::Instance
                 + AWS::EC2::InternetGateway
@@ -224,7 +226,14 @@ User Guide (API Version 2010-05-15)
                 + AWS::IAM::Role
                 + AWS::IAM::User
                 + AWS::IAM::UserToGroupAddition
+                + AWS::IoT::Certificate
+                + AWS::IoT::Policy
+                + AWS::IoT::PolicyPrincipalAttachment
+                + AWS::IoT::Thing
+                + AWS::IoT::ThingPrincipalAttachment
+                + AWS::IoT::TopicRule
                 + AWS::Kinesis::Stream
+                + AWS::KinesisFirehose::DeliveryStream
                 + AWS::KMS::Key
                 + AWS::Lambda::EventSourceMapping
                 + AWS::Lambda::Alias
@@ -440,6 +449,37 @@ User Guide (API Version 2010-05-15)
                 + GameLift Fleet EC2InboundPermission
                 + IAM Policies
                 + IAM User LoginProfile
+                + AWS IoT Actions
+                + AWS IoT CloudwatchAlarm Action
+                + AWS IoT CloudwatchMetric Action
+                + AWS IoT DynamoDB Action
+                + AWS IoT Elasticsearch Action
+                + AWS IoT Firehose Action
+                + AWS IoT Kinesis Action
+                + AWS IoT Lambda Action
+                + AWS IoT Republish Action
+                + AWS IoT S3 Action
+                + AWS IoT Sns Action
+                + AWS IoT Sqs Action
+                + AWS IoT TopicRulePayload
+                + Firehose DeliveryStream Destination
+                  CloudWatchLoggingOptions
+                + Firehose DeliveryStream
+                  ElasticsearchDestinationConfiguration
+                + Firehose DeliveryStream
+                  ElasticsearchDestinationConfiguration BufferingHints
+                + Firehose DeliveryStream
+                  ElasticsearchDestinationConfiguration RetryOptions
+                + Firehose DeliveryStream RedshiftDestinationConfiguration
+                + Firehose DeliveryStream RedshiftDestinationConfiguration
+                  CopyCommand
+                + Firehose DeliveryStream S3DestinationConfiguration
+                + Firehose DeliveryStream S3DestinationConfiguration
+                  BufferingHints
+                + Firehose DeliveryStream S3DestinationConfiguration
+                  EncryptionConfiguration KMSEncryptionConfig
+                + Firehose DeliveryStream S3DestinationConfiguration
+                  EncryptionConfiguration
                 + AWS Lambda Function Code
                 + AWS Lambda Function VPCConfig
                 + Name Type
@@ -534,6 +574,10 @@ User Guide (API Version 2010-05-15)
                 + cfn-get-metadata
                 + cfn-hup
     * Sample Templates
+          o Asia Pacific (Mumbai) Region
+                + Sample Solutions
+                + Application Frameworks
+                + Services
           o Asia Pacific (Seoul) Region
                 + Sample Solutions
                 + Application Frameworks
@@ -593,6 +637,108 @@ The following table describes the important changes to the documentation
 since the preceeding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+New resources 	
+
+July 20, 2016
+
+AWS IoT
+
+    Use AWS IoT to declare an AWS IoT policy, an X.509 certificate, an
+    association between a policy and a principal (an X.509 certificate or
+    other credential), an AWS IoT thing, an association between a principal
+    and a thing, or an AWS IoT rule.
+
+        * AWS::IoT::Certificate
+
+        * AWS::IoT::Policy
+
+        * AWS::IoT::PolicyPrincipalAttachment
+
+        * AWS::IoT::Thing
+
+        * AWS::IoT::ThingPrincipalAttachment
+
+        * AWS::IoT::TopicRule
+
+2010-05-15
+
+Updated resources
+
+July 20, 2016
+
+AWS CloudFormation updated the following resources:
+
+AWS::IAM::Group, AWS::IAM::Role, AWS::IAM::User
+
+    Use the name properties to specify a custom name for AWS Identity and
+    Access Management (IAM) resources.
+
+AWS::ApiGateway::Method
+
+    For the Integration property, you can use the PassthroughBehavior 
+    property to specify when Amazon API Gateway passes requests to the
+    targeted back end.
+
+AWS::ApiGateway::Model and AWS::ApiGateway::RestApi
+
+    You can specify JSON objects for the Schema and Body properties.
+
+2010-05-15
+
+Auto Scaling group UpdatePolicy
+
+June 9, 2016
+
+For the UpdatePolicy attribute, use the AutoScalingReplacingUpdate 
+property to specify whether an Auto Scaling group and the instances it 
+contains are replaced when you update the Auto Scaling group. During a 
+replacement, AWS CloudFormation retains the old Auto Scaling group until it 
+creates the new one successfully so that AWS CloudFormation can roll back 
+to the old Auto Scaling group if the update fails. For more information, 
+see UpdatePolicy.
+
+2010-05-15
+
+New resource
+
+June 9, 2016
+
+AWS CloudFormation added the following resources:
+
+AWS::EC2::FlowLog
+
+    Creates an Amazon Elastic Compute Cloud flow log that captures IP
+    traffic for a specified network interface, subnet, or VPC.
+
+AWS::KinesisFirehose::DeliveryStream
+
+    Creates a delivery stream that delivers real-time streaming data to a
+    destination, such as Amazon Simple Storage Service, Amazon Redshift, or
+    Amazon Elasticsearch Service.
+
+2010-05-15
+
+Updated resources
+
+June 9, 2016
+
+AWS CloudFormation updated the following resources:
+
+AWS::Kinesis::Stream
+
+    Use the Name property to specify a name for an Amazon Kinesis stream.
+
+AWS::Lambda::Function
+
+    For the Code property, you can use the ZipFile property and cfn
+    response module for nodejs4.3 runtime environments.
+
+AWS::SNS::Topic
+
+    AWS CloudFormation enabled updates for the Amazon Simple Notification
+    Service topic resource.
+
+2010-05-15
 
 New resource
 
@@ -701,8 +847,7 @@ AWS CloudFormation updated the following resources:
 AWS::EMR::Cluster and AWS::EMR::InstanceGroupConfig
 
     Use the EbsConfiguration property to configure Amazon Elastic Block
-    Store storage volumes for your Amazon Elastic MapReduce clusters or
-    instance groups.
+    Store storage volumes for your Amazon EMR clusters or instance groups.
 
 AWS::Lambda::Function
 
@@ -759,9 +904,8 @@ AWS::Elasticsearch::Domain
 
 AWS::EMR::Cluster, AWS::EMR::InstanceGroupConfig, AWS::EMR::Step
 
-    Use the Amazon Elastic MapReduce resources to help you analyze and
-    process vast amounts of data. You can create clusters and then run jobs
-    on them.
+    Use the Amazon EMR resources to help you analyze and process vast
+    amounts of data. You can create clusters and then run jobs on them.
 
 2010-05-15
 
@@ -2171,8 +2315,6 @@ New information about working with Windows stacks:
       Templates
 
     * Bootstrapping AWS CloudFormation Windows Stacks
-
-    * Accessing AWS CloudFormation Windows Instances
 
 New topic: Using Regular Expressions in AWS CloudFormation Templates.
 
