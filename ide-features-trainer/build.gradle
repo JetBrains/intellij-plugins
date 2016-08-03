@@ -15,6 +15,12 @@ plugins {
     id "org.jetbrains.intellij" version "0.0.43"
 }
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven { url "http://repository.jetbrains.com/repo/"}
+}
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
