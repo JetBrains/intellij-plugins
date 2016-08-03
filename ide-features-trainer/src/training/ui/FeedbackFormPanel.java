@@ -13,10 +13,7 @@ import training.statistic.FeedbackEvent;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Position;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -143,22 +140,7 @@ public class FeedbackFormPanel extends JPanel {
                 submitFeedbackAsyncProcessIcon.setVisible(true);
                 submitFeedbackAsyncProcessIcon.resume();
 
-                StringBuilder answer = new StringBuilder();
-                for (RadioButtonRow radioButtonRow : radioButtonRows) {
-                    String myQuestion = radioButtonRow.myQuestion;
-                    String rate = radioButtonRow.getRate();
-                    String myLowRate = radioButtonRow.myLowRate;
-                    String myMaxRate = radioButtonRow.myMaxRate;
-                    answer.
-                            append("question=\"" + myQuestion + "\" ").
-                            append("rate=\"" + myLowRate + "/" + rate + "/" + myMaxRate + "\"");
-                }
-                try {
-                    answer.append("detailed-feedback=\"" + customFeedback.getDocument().getText(0, customFeedback.getDocument().getLength()) + "\"");
-                } catch (BadLocationException e1) {
-                    e1.printStackTrace();
-                }
-                FeedbackEvent feedbackEvent = new FeedbackEvent(answer.toString());
+                FeedbackEvent feedbackEvent = new FeedbackEvent(getFeedbackData());
                 FeedbackManager.getInstance().submitFeedback(feedbackEvent, () -> {
                     //success
                     submitFeedbackAsyncProcessIcon.suspend();
@@ -215,6 +197,29 @@ public class FeedbackFormPanel extends JPanel {
         StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 0.0f);
         StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f);
         StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f);
+    }
+
+    @NotNull
+    private String getFeedbackData() {
+        StringBuilder answer = new StringBuilder();
+        for (RadioButtonRow radioButtonRow : radioButtonRows) {
+            String myQuestion = radioButtonRow.myQuestion;
+            String rate = radioButtonRow.getRate();
+            String myLowRate = radioButtonRow.myLowRate;
+            String myMaxRate = radioButtonRow.myMaxRate;
+            answer.
+                    append("question=\"" + myQuestion + "\" ").
+                    append("rate=\"" + myLowRate + "/" + rate + "/" + myMaxRate + "\"");
+        }
+        try {
+            Document document = customFeedback.getDocument();
+            // we trim user answer if it exceeded 1000 symbols
+            int max_length = Math.min(document.getLength(), 1000);
+            answer.append("detailed-feedback=\"" + document.getText(0, max_length) + "\"");
+        } catch (BadLocationException e1) {
+            e1.printStackTrace();
+        }
+        return answer.toString();
     }
 
 
