@@ -54,15 +54,11 @@ public class PostCssPsiUtil {
     PsiElementProcessor.CollectElements<PsiElement> processor = new PsiElementProcessor.CollectElements<PsiElement>() {
       @Override
       public boolean execute(@NotNull PsiElement each) {
-        if (isAmpersand(each)) {
-          return super.execute(each);
-        }
-        else {
-          PsiElement child = each.getFirstChild();
-          while (child != null) {
-            execute(child);
-            child = child.getNextSibling();
-          }
+        if (isAmpersand(each)) return super.execute(each);
+        PsiElement child = each.getFirstChild();
+        while (child != null) {
+          execute(child);
+          child = child.getNextSibling();
         }
         return true;
       }
