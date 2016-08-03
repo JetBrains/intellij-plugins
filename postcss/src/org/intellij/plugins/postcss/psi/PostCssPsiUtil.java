@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
-import org.intellij.plugins.postcss.psi.impl.PostCssAmpersandImpl;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +42,7 @@ public class PostCssPsiUtil {
 
   @Contract("null -> false")
   public static boolean containsAmpersand(@Nullable PsiElement element) {
-    return PsiTreeUtil.findChildOfAnyType(element, false, PostCssAmpersandImpl.class) != null;
+    return !findAllAmpersands(element).isEmpty();
   }
 
   @NotNull

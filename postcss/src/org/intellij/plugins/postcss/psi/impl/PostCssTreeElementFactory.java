@@ -11,15 +11,6 @@ import org.jetbrains.annotations.NotNull;
 public class PostCssTreeElementFactory extends CssTreeElementFactory {
 
   @NotNull
-  @Override
-  public LeafElement createLeaf(@NotNull IElementType type, @NotNull CharSequence text) {
-    if (type == PostCssTokenTypes.AMPERSAND) {
-      return new PostCssAmpersandImpl();
-    }
-    return super.createLeaf(type, text);
-  }
-
-  @NotNull
   public CompositeElement createComposite(final IElementType type) {
     if (type == PostCssElementTypes.POST_CSS_NEST) {
       return new PostCssNestImpl();
