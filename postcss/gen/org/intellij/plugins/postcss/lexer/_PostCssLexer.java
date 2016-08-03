@@ -73,28 +73,28 @@ public class _PostCssLexer implements FlexLexer {
 
   private static final String ZZ_ACTION_PACKED_0 =
     "\1\0\1\1\3\0\1\2\1\3\1\4\2\5\1\2"+
-    "\1\6\1\7\1\10\1\11\2\12\1\5\1\13\1\5"+
-    "\1\14\1\15\1\5\2\2\1\5\1\16\1\2\1\17"+
-    "\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27"+
-    "\1\30\1\5\1\31\1\32\1\33\3\1\1\34\2\5"+
-    "\1\1\1\35\2\0\1\7\1\36\2\37\2\0\1\40"+
-    "\1\0\2\37\1\0\1\2\1\0\1\2\1\41\1\3"+
-    "\3\12\1\42\2\0\1\43\3\0\1\44\2\0\1\45"+
-    "\1\2\2\46\2\0\16\46\1\2\1\47\1\50\1\0"+
-    "\1\51\1\52\1\53\2\1\1\54\2\55\1\0\2\56"+
-    "\1\2\1\57\2\12\2\0\1\2\1\60\2\0\1\2"+
-    "\30\46\1\2\1\0\1\61\1\1\1\55\1\56\1\0"+
-    "\1\56\1\2\1\62\2\63\2\0\1\2\30\46\1\2"+
-    "\1\64\2\1\3\56\1\2\1\63\1\0\1\2\17\46"+
-    "\1\65\1\66\5\46\1\2\2\1\3\56\1\2\1\0"+
-    "\1\2\4\46\1\67\10\46\1\70\3\46\1\71\4\46"+
-    "\1\2\1\1\1\61\3\56\1\2\1\0\7\46\1\72"+
-    "\5\46\1\73\5\46\1\2\1\1\3\56\1\2\1\0"+
-    "\4\46\1\74\15\46\1\2\1\1\1\56\1\2\1\0"+
-    "\4\46\1\75\3\46\1\76\2\46\1\77\1\46\1\76"+
-    "\1\100\1\2\1\1\1\101\1\102\3\46\1\103\2\46"+
-    "\1\104\3\46\1\2\6\46\1\105\6\46\1\73\2\46"+
-    "\1\106\1\46\1\107";
+    "\1\6\1\7\1\10\1\11\2\12\1\13\1\14\1\5"+
+    "\1\15\1\16\1\5\2\2\1\5\1\17\1\2\1\20"+
+    "\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30"+
+    "\1\31\1\5\1\32\1\33\1\34\3\1\1\35\2\5"+
+    "\1\1\1\36\2\0\1\7\1\37\2\40\2\0\1\41"+
+    "\1\0\2\40\1\0\1\2\1\0\1\2\1\42\1\3"+
+    "\3\12\1\43\2\0\1\44\3\0\1\45\2\0\1\46"+
+    "\1\2\2\47\2\0\16\47\1\2\1\50\1\51\1\0"+
+    "\1\52\1\53\1\54\2\1\1\55\2\56\1\0\2\57"+
+    "\1\2\1\60\2\12\2\0\1\2\1\61\2\0\1\2"+
+    "\30\47\1\2\1\0\1\62\1\1\1\56\1\57\1\0"+
+    "\1\57\1\2\1\63\2\64\2\0\1\2\30\47\1\2"+
+    "\1\65\2\1\3\57\1\2\1\64\1\0\1\2\17\47"+
+    "\1\66\1\67\5\47\1\2\2\1\3\57\1\2\1\0"+
+    "\1\2\4\47\1\70\10\47\1\71\3\47\1\72\4\47"+
+    "\1\2\1\1\1\62\3\57\1\2\1\0\7\47\1\73"+
+    "\5\47\1\74\5\47\1\2\1\1\3\57\1\2\1\0"+
+    "\4\47\1\75\15\47\1\2\1\1\1\57\1\2\1\0"+
+    "\4\47\1\76\3\47\1\77\2\47\1\100\1\47\1\77"+
+    "\1\101\1\2\1\1\1\102\1\103\3\47\1\104\2\47"+
+    "\1\105\3\47\1\2\6\47\1\106\6\47\1\74\2\47"+
+    "\1\107\1\47\1\110";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[360];
@@ -1198,287 +1198,291 @@ public class _PostCssLexer implements FlexLexer {
           case 1: 
             { return CssElementTypes.CSS_URL;
             }
-          case 72: break;
+          case 73: break;
           case 2: 
             { return CssElementTypes.CSS_IDENT;
             }
-          case 73: break;
+          case 74: break;
           case 3: 
             { return CssElementTypes.CSS_NUMBER;
             }
-          case 74: break;
+          case 75: break;
           case 4: 
             { return CssElementTypes.CSS_WHITE_SPACE;
             }
-          case 75: break;
+          case 76: break;
           case 5: 
             { return CssElementTypes.CSS_BAD_CHARACTER;
             }
-          case 76: break;
+          case 77: break;
           case 6: 
             { return CssElementTypes.CSS_PLUS;
             }
-          case 77: break;
+          case 78: break;
           case 7: 
             { return CssElementTypes.CSS_MINUS;
             }
-          case 78: break;
+          case 79: break;
           case 8: 
             { return CssElementTypes.CSS_RPAREN;
             }
-          case 79: break;
+          case 80: break;
           case 9: 
             { return CssElementTypes.CSS_PERIOD;
             }
-          case 80: break;
+          case 81: break;
           case 10: 
             { return CssElementTypes.CSS_STRING_TOKEN;
             }
-          case 81: break;
-          case 11: 
-            { return CssElementTypes.CSS_LBRACE;
-            }
           case 82: break;
-          case 12: 
-            { return CssElementTypes.CSS_RBRACE;
+          case 11: 
+            { return PostCssTokenTypes.HASH_SIGN;
             }
           case 83: break;
-          case 13: 
-            { return CssElementTypes.CSS_SLASH;
+          case 12: 
+            { return CssElementTypes.CSS_LBRACE;
             }
           case 84: break;
-          case 14: 
-            { return CssElementTypes.CSS_LPAREN;
+          case 13: 
+            { return CssElementTypes.CSS_RBRACE;
             }
           case 85: break;
-          case 15: 
-            { return CssElementTypes.CSS_COLON;
+          case 14: 
+            { return CssElementTypes.CSS_SLASH;
             }
           case 86: break;
-          case 16: 
-            { return CssElementTypes.CSS_SEMICOLON;
+          case 15: 
+            { return CssElementTypes.CSS_LPAREN;
             }
           case 87: break;
-          case 17: 
-            { return CssElementTypes.CSS_COMMA;
+          case 16: 
+            { return CssElementTypes.CSS_COLON;
             }
           case 88: break;
-          case 18: 
-            { return CssElementTypes.CSS_PERCENT;
+          case 17: 
+            { return CssElementTypes.CSS_SEMICOLON;
             }
           case 89: break;
-          case 19: 
-            { return CssElementTypes.CSS_GT;
+          case 18: 
+            { return CssElementTypes.CSS_COMMA;
             }
           case 90: break;
-          case 20: 
-            { return CssElementTypes.CSS_ASTERISK;
+          case 19: 
+            { return CssElementTypes.CSS_PERCENT;
             }
           case 91: break;
-          case 21: 
-            { return CssElementTypes.CSS_LBRACKET;
+          case 20: 
+            { return CssElementTypes.CSS_GT;
             }
           case 92: break;
-          case 22: 
-            { return CssElementTypes.CSS_RBRACKET;
+          case 21: 
+            { return CssElementTypes.CSS_ASTERISK;
             }
           case 93: break;
-          case 23: 
-            { return CssElementTypes.CSS_TILDA;
+          case 22: 
+            { return CssElementTypes.CSS_LBRACKET;
             }
           case 94: break;
-          case 24: 
-            { return CssElementTypes.CSS_EQ;
+          case 23: 
+            { return CssElementTypes.CSS_RBRACKET;
             }
           case 95: break;
-          case 25: 
-            { return CssElementTypes.CSS_PIPE;
+          case 24: 
+            { return CssElementTypes.CSS_TILDA;
             }
           case 96: break;
-          case 26: 
-            { return CssElementTypes.CSS_HAT;
+          case 25: 
+            { return CssElementTypes.CSS_EQ;
             }
           case 97: break;
-          case 27: 
-            { return PostCssTokenTypes.AMPERSAND;
+          case 26: 
+            { return CssElementTypes.CSS_PIPE;
             }
           case 98: break;
-          case 28: 
-            { yybegin(YYINITIAL); return CssElementTypes.CSS_RPAREN;
+          case 27: 
+            { return CssElementTypes.CSS_HAT;
             }
           case 99: break;
-          case 29: 
-            { yybegin(YYINITIAL); return CssElementTypes.CSS_FUNCTION_TOKEN;
+          case 28: 
+            { return PostCssTokenTypes.AMPERSAND;
             }
           case 100: break;
-          case 30: 
-            { yybegin(YYINITIAL); return CssElementTypes.CSS_IDENT;
+          case 29: 
+            { yybegin(YYINITIAL); return CssElementTypes.CSS_RPAREN;
             }
           case 101: break;
-          case 31: 
-            { return CssElementTypes.CSS_COMMENT;
+          case 30: 
+            { yybegin(YYINITIAL); return CssElementTypes.CSS_FUNCTION_TOKEN;
             }
           case 102: break;
-          case 32: 
-            { yybegin(CSS_FUNCTION); yypushback(yylength());
+          case 31: 
+            { yybegin(YYINITIAL); return CssElementTypes.CSS_IDENT;
             }
           case 103: break;
-          case 33: 
-            { yybegin(CSS_FUNCTION_MINUS_N); yypushback(yylength());
+          case 32: 
+            { return CssElementTypes.CSS_COMMENT;
             }
           case 104: break;
-          case 34: 
-            { return CssElementTypes.CSS_HASH;
+          case 33: 
+            { yybegin(CSS_FUNCTION); yypushback(yylength());
             }
           case 105: break;
-          case 35: 
-            { return CssElementTypes.CSS_ENDS_WITH;
+          case 34: 
+            { yybegin(CSS_FUNCTION_MINUS_N); yypushback(yylength());
             }
           case 106: break;
-          case 36: 
-            { yybegin(CSS_COMMENT); return CssElementTypes.CSS_COMMENT;
+          case 35: 
+            { return CssElementTypes.CSS_HASH;
             }
           case 107: break;
-          case 37: 
-            { return CssElementTypes.CSS_JQUERY_NOT_EQUALS;
+          case 36: 
+            { return CssElementTypes.CSS_ENDS_WITH;
             }
           case 108: break;
-          case 38: 
-            { return CssElementTypes.CSS_ATKEYWORD;
+          case 37: 
+            { yybegin(CSS_COMMENT); return CssElementTypes.CSS_COMMENT;
             }
           case 109: break;
-          case 39: 
-            { return CssElementTypes.CSS_CONTAINS;
+          case 38: 
+            { return CssElementTypes.CSS_JQUERY_NOT_EQUALS;
             }
           case 110: break;
-          case 40: 
-            { return CssElementTypes.CSS_INCLUDES;
+          case 39: 
+            { return CssElementTypes.CSS_ATKEYWORD;
             }
           case 111: break;
-          case 41: 
-            { return CssElementTypes.CSS_DASHMATCH;
+          case 40: 
+            { return CssElementTypes.CSS_CONTAINS;
             }
           case 112: break;
-          case 42: 
-            { return CssElementTypes.CSS_BEGINS_WITH;
+          case 41: 
+            { return CssElementTypes.CSS_INCLUDES;
             }
           case 113: break;
-          case 43: 
-            { return CssElementTypes.CSS_CAT;
+          case 42: 
+            { return CssElementTypes.CSS_DASHMATCH;
             }
           case 114: break;
-          case 44: 
-            { yybegin(YYINITIAL); return CssElementTypes.CSS_COMMENT;
+          case 43: 
+            { return CssElementTypes.CSS_BEGINS_WITH;
             }
           case 115: break;
-          case 45: 
-            { if(StringUtil.endsWith(yytext(), "\\0") || StringUtil.endsWith(yytext(), "\\9")) yypushback(2); else yypushback(3); return CssElementTypes.CSS_IDENT;
+          case 44: 
+            { return CssElementTypes.CSS_CAT;
             }
           case 116: break;
-          case 46: 
-            { return CssElementTypes.CSS_UNICODE_RANGE;
+          case 45: 
+            { yybegin(YYINITIAL); return CssElementTypes.CSS_COMMENT;
             }
           case 117: break;
-          case 47: 
-            { return CssElementTypes.CSS_CDC;
+          case 46: 
+            { if(StringUtil.endsWith(yytext(), "\\0") || StringUtil.endsWith(yytext(), "\\9")) yypushback(2); else yypushback(3); return CssElementTypes.CSS_IDENT;
             }
           case 118: break;
-          case 48: 
-            { return CssElementTypes.CSS_SLASHED_COMBINATOR;
+          case 47: 
+            { return CssElementTypes.CSS_UNICODE_RANGE;
             }
           case 119: break;
-          case 49: 
-            { return CssElementTypes.CSS_URI_START;
+          case 48: 
+            { return CssElementTypes.CSS_CDC;
             }
           case 120: break;
-          case 50: 
-            { yybegin(CSS_URI); yypushback(yylength());
+          case 49: 
+            { return CssElementTypes.CSS_SLASHED_COMBINATOR;
             }
           case 121: break;
-          case 51: 
-            { if(StringUtil.endsWith(yytext(), "\\0") || StringUtil.endsWith(yytext(), "\\9")) yypushback(2); else yypushback(3); return CssElementTypes.CSS_HASH;
+          case 50: 
+            { return CssElementTypes.CSS_URI_START;
             }
           case 122: break;
-          case 52: 
-            { return CssElementTypes.CSS_CDO;
+          case 51: 
+            { yybegin(CSS_URI); yypushback(yylength());
             }
           case 123: break;
-          case 53: 
-            { return PostCssTokenTypes.POST_CSS_NEST_SYM;
+          case 52: 
+            { if(StringUtil.endsWith(yytext(), "\\0") || StringUtil.endsWith(yytext(), "\\9")) yypushback(2); else yypushback(3); return CssElementTypes.CSS_HASH;
             }
           case 124: break;
-          case 54: 
-            { return CssElementTypes.CSS_PAGE_SYM;
+          case 53: 
+            { return CssElementTypes.CSS_CDO;
             }
           case 125: break;
-          case 55: 
-            { return CssElementTypes.CSS_APPLY_SYM;
+          case 54: 
+            { return PostCssTokenTypes.POST_CSS_NEST_SYM;
             }
           case 126: break;
-          case 56: 
-            { return CssElementTypes.CSS_MEDIA_SYM;
+          case 55: 
+            { return CssElementTypes.CSS_PAGE_SYM;
             }
           case 127: break;
-          case 57: 
-            { return CssElementTypes.CSS_SCOPE_SYM;
+          case 56: 
+            { return CssElementTypes.CSS_APPLY_SYM;
             }
           case 128: break;
-          case 58: 
-            { return CssElementTypes.CSS_IMPORT_SYM;
+          case 57: 
+            { return CssElementTypes.CSS_MEDIA_SYM;
             }
           case 129: break;
-          case 59: 
-            { return CssElementTypes.CSS_REGION_SYM;
+          case 58: 
+            { return CssElementTypes.CSS_SCOPE_SYM;
             }
           case 130: break;
-          case 60: 
-            { return CssElementTypes.CSS_CHARSET_SYM;
+          case 59: 
+            { return CssElementTypes.CSS_IMPORT_SYM;
             }
           case 131: break;
-          case 61: 
-            { return CssElementTypes.CSS_DOCUMENT_SYM;
+          case 60: 
+            { return CssElementTypes.CSS_REGION_SYM;
             }
           case 132: break;
-          case 62: 
-            { return CssElementTypes.CSS_PAGE_MARGIN_SYM;
+          case 61: 
+            { return CssElementTypes.CSS_CHARSET_SYM;
             }
           case 133: break;
-          case 63: 
-            { return CssElementTypes.CSS_SUPPORTS_SYM;
+          case 62: 
+            { return CssElementTypes.CSS_DOCUMENT_SYM;
             }
           case 134: break;
-          case 64: 
-            { return CssElementTypes.CSS_VIEWPORT_SYM;
+          case 63: 
+            { return CssElementTypes.CSS_PAGE_MARGIN_SYM;
             }
           case 135: break;
-          case 65: 
-            { return CssElementTypes.CSS_IMPORTANT;
+          case 64: 
+            { return CssElementTypes.CSS_SUPPORTS_SYM;
             }
           case 136: break;
-          case 66: 
-            { return CssElementTypes.CSS_FONTFACE_SYM;
+          case 65: 
+            { return CssElementTypes.CSS_VIEWPORT_SYM;
             }
           case 137: break;
-          case 67: 
-            { return CssElementTypes.CSS_KEYFRAMES_SYM;
+          case 66: 
+            { return CssElementTypes.CSS_IMPORTANT;
             }
           case 138: break;
-          case 68: 
-            { return CssElementTypes.CSS_NAMESPACE_SYM;
+          case 67: 
+            { return CssElementTypes.CSS_FONTFACE_SYM;
             }
           case 139: break;
-          case 69: 
-            { yypushback(1); return CssElementTypes.CSS_EXPRESSION;
+          case 68: 
+            { return CssElementTypes.CSS_KEYFRAMES_SYM;
             }
           case 140: break;
-          case 70: 
-            { return CssElementTypes.CSS_COUNTER_STYLE_SYM;
+          case 69: 
+            { return CssElementTypes.CSS_NAMESPACE_SYM;
             }
           case 141: break;
-          case 71: 
-            { return PostCssTokenTypes.POST_CSS_CUSTOM_SELECTOR_SYM;
+          case 70: 
+            { yypushback(1); return CssElementTypes.CSS_EXPRESSION;
             }
           case 142: break;
+          case 71: 
+            { return CssElementTypes.CSS_COUNTER_STYLE_SYM;
+            }
+          case 143: break;
+          case 72: 
+            { return PostCssTokenTypes.POST_CSS_CUSTOM_SELECTOR_SYM;
+            }
+          case 144: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

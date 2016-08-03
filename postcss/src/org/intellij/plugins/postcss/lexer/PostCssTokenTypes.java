@@ -8,6 +8,7 @@ import org.intellij.plugins.postcss.PostCssElementType;
 public interface PostCssTokenTypes {
   TokenSet POST_CSS_COMMENTS = CssElementTypes.COMMENTS;
   IElementType AMPERSAND = new PostCssElementType("POST_CSS_AMPERSAND");
+  IElementType HASH_SIGN = new PostCssElementType("POST_CSS_HASH_SIGN");
   IElementType POST_CSS_NEST_SYM = new PostCssElementType("POST_CSS_NEST_SYM");
   IElementType POST_CSS_CUSTOM_SELECTOR_SYM = new PostCssElementType("POST_CSS_CUSTOM_SELECTOR_SYM");
 

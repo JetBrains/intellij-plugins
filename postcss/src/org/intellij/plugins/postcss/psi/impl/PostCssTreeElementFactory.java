@@ -2,11 +2,22 @@ package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.psi.css.impl.CssTreeElementFactory;
 import com.intellij.psi.impl.source.tree.CompositeElement;
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.postcss.PostCssElementTypes;
+import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssTreeElementFactory extends CssTreeElementFactory {
+
+  @NotNull
+  @Override
+  public LeafElement createLeaf(@NotNull IElementType type, @NotNull CharSequence text) {
+    if (type == PostCssTokenTypes.AMPERSAND) {
+      return new PostCssAmpersandImpl();
+    }
+    return super.createLeaf(type, text);
+  }
 
   @NotNull
   public CompositeElement createComposite(final IElementType type) {

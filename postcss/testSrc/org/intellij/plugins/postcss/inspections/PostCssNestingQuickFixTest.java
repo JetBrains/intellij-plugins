@@ -12,19 +12,51 @@ public class PostCssNestingQuickFixTest extends PostCssFixtureTestCase {
   }
 
   public void testDeleteAmpersand() throws Throwable {
-    doInspectionTest("deleteAmpersand.pcss", "deleteAmpersand_after.pcss", "Delete '&'");
+    doTestDeleteAmpersand();
+  }
+
+  public void testDeleteAmpersandFromClass() throws Throwable {
+    doTestDeleteAmpersand();
+  }
+
+  public void testDeleteAmpersandFromId() throws Throwable {
+    doTestDeleteAmpersand();
+  }
+
+  public void testDeleteAmpersandFromSimpleSelector() throws Throwable {
+    doTestDeleteAmpersand();
+  }
+
+  public void testDeleteAmpersandFromPseudoClass() throws Throwable {
+    doTestDeleteAmpersand();
+  }
+
+  public void testDeleteAmpersandFromPseudoFunction() throws Throwable {
+    doTestDeleteAmpersand();
+  }
+
+  public void testDeleteAmpersandFromAttribute() throws Throwable {
+    doTestDeleteAmpersand();
   }
 
   public void testDeleteNest() throws Throwable {
-    doInspectionTest("deleteNest.pcss", "deleteNest_after.pcss", "Delete '@nest'");
+    doTest("Delete '@nest'");
   }
 
   public void testAddAmpersand() throws Throwable {
-    doInspectionTest("addAmpersand.pcss", "addAmpersand_after.pcss", "Add '&' to selector");
+    doTest("Add '&' to selector");
   }
 
   public void testAddNest() throws Throwable {
-    doInspectionTest("addNest.pcss", "addNest_after.pcss", "Add '@nest' to selector");
+    doTest("Add '@nest' to selector");
+  }
+
+  private void doTestDeleteAmpersand(){
+    doInspectionTest(getTestName(true) + ".pcss", getTestName(true) + "_after.pcss", "Delete '&'");
+  }
+
+  private void doTest(String message){
+    doInspectionTest(getTestName(true) + ".pcss", getTestName(true) + "_after.pcss", message);
   }
 
   protected void doInspectionTest(final String testFile,

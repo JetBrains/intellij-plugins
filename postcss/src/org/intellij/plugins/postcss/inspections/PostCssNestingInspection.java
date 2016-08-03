@@ -1,10 +1,10 @@
 package org.intellij.plugins.postcss.inspections;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.CssSelector;
 import com.intellij.psi.css.CssSelectorList;
-import com.intellij.psi.css.CssSimpleSelector;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.actions.PostCssAddAmpersandToSelectorQuickFix;
 import org.intellij.plugins.postcss.actions.PostCssAddAtRuleNestToSelectorQuickFix;
@@ -16,6 +16,7 @@ import org.intellij.plugins.postcss.psi.impl.PostCssNestImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 public class PostCssNestingInspection extends PostCssBaseInspection {
   @NotNull
@@ -80,13 +81,10 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
   }
 
   private static void annotateTopLevelSelectorsWithNestingSigns(CssSelector selector, ProblemsHolder holder) {
-    CssSimpleSelector[] directNests =
-      Arrays.stream(selector.getSimpleSelectors()).filter(PostCssPsiUtil::isAmpersand).toArray(CssSimpleSelector[]::new);
-    if (directNests != null) {
-      for (CssSimpleSelector directNest : directNests) {
-        holder.registerProblem(directNest, PostCssBundle
-          .message("annotator.normal.selector.contains.direct.nesting.selector"), new PostCssDeleteAmpersandQuickFix());
-      }
+    Collection<PsiElement> ampersands = PostCssPsiUtil.findAllAmpersands(selector);
+    for (PsiElement ampersand : ampersands) {
+      holder.registerProblem(ampersand, PostCssBundle
+        .message("annotator.normal.selector.contains.direct.nesting.selector"), new PostCssDeleteAmpersandQuickFix());
     }
   }
 

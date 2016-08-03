@@ -81,6 +81,34 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
+  public void testAmpersandInClass() {
+    doTest();
+  }
+
+  public void testAmpersandInId() {
+    doTest();
+  }
+
+  public void testAmpersandInSimpleSelector() {
+    doTest();
+  }
+
+  public void testAmpersandInPseudoClass() {
+    doTest();
+  }
+
+  public void testAmpersandInPseudoFunction() {
+    doTest();
+  }
+
+  public void testAmpersandInAttributes() {
+    doTest();
+  }
+
+  public void testAmpersandWithOperators() {
+    doTest();
+  }
+
   private long doTest() {
     return myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
   }

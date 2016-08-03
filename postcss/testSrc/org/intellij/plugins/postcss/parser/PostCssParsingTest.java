@@ -117,6 +117,34 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testAmpersandInSimpleSelector() {
+    doTest();
+  }
+
+  public void testAmpersandInClass() {
+    doTest();
+  }
+
+  public void testAmpersandIdSelector() {
+    doTest();
+  }
+
+  public void testAmpersandInPseudoClasses() {
+    doTest();
+  }
+
+  public void testAmpersandInPseudoFunction() {
+    doTest();
+  }
+
+  public void testAmpersandInAttributes() {
+    doTest();
+  }
+
+  public void testAmpersandWithOperators() {
+    doTest();
+  }
+
   private void doTest() {
     super.doTest(true);
   }

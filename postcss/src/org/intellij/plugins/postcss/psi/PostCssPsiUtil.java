@@ -4,17 +4,17 @@ import com.intellij.css.util.CssPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssAtRule;
 import com.intellij.psi.css.CssRuleset;
-import com.intellij.psi.css.CssSelector;
-import com.intellij.psi.impl.source.tree.LeafElement;
+import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
+import org.intellij.plugins.postcss.psi.impl.PostCssAmpersandImpl;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.Collection;
 
 public class PostCssPsiUtil {
   private PostCssPsiUtil() {
@@ -42,13 +42,39 @@ public class PostCssPsiUtil {
   }
 
   @Contract("null -> false")
-  public static boolean containsAmpersand(@Nullable CssSelector selector) {
-    return selector != null && Arrays.stream(selector.getSimpleSelectors()).anyMatch(PostCssPsiUtil::isAmpersand);
+  public static boolean containsAmpersand(@Nullable PsiElement element) {
+    return PsiTreeUtil.findChildOfAnyType(element, false, PostCssAmpersandImpl.class) != null;
+  }
+
+  @NotNull
+  public static Collection<PsiElement> findAllAmpersands(@Nullable final PsiElement element) {
+    if (element == null) {
+      return ContainerUtil.emptyList();
+    }
+
+    PsiElementProcessor.CollectElements<PsiElement> processor = new PsiElementProcessor.CollectElements<PsiElement>() {
+      @Override
+      public boolean execute(@NotNull PsiElement each) {
+        if (isAmpersand(each)) {
+          return super.execute(each);
+        }
+        else {
+          PsiElement child = each.getFirstChild();
+          while (child != null) {
+            execute(child);
+            child = child.getNextSibling();
+          }
+        }
+        return true;
+      }
+    };
+    processor.execute(element);
+    return processor.getCollection();
   }
 
   @Contract("null -> false")
-  public static boolean startsWithAmpersand(@NotNull CssSelector selector) {
-    return isAmpersand(ArrayUtil.getFirstElement(selector.getSimpleSelectors()));
+  public static boolean startsWithAmpersand(@NotNull PsiElement selector) {
+    return isAmpersand(PsiTreeUtil.getDeepestFirst(selector));
   }
 
   @Contract("null -> false")
@@ -59,8 +85,6 @@ public class PostCssPsiUtil {
   @Contract("null -> false")
   public static boolean isAmpersand(@Nullable PsiElement element) {
     if (element == null) return false;
-    PsiElement firstChild = element.getFirstChild();
-    return firstChild instanceof LeafElement && ((LeafElement)firstChild).getElementType() == PostCssTokenTypes.AMPERSAND;
+    return element.getNode().getElementType() == PostCssTokenTypes.AMPERSAND;
   }
-
 }
