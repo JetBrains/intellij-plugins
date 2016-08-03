@@ -1,9 +1,12 @@
 package training.ui;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.LearnBundle;
+import training.statistic.FeedbackEvent;
+import training.statistic.FeedbackSender;
 
 import java.util.ArrayList;
 
@@ -54,6 +57,16 @@ public class FeedbackManager {
         return description;
     }
 
+    public void submitFeedback(final FeedbackEvent feedbackEvent, final Runnable doWhenSuccess, final Runnable doWhenNotSuccess) {
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            if (ServiceManager.getService(FeedbackSender.class).sendStatsData(feedbackEvent.toString())) {
+                doWhenSuccess.run();
+            } else {
+                doWhenNotSuccess.run();
+            }
+        });
+    }
+
     class RateQuestion{
         String question;
         String lowRate;
@@ -71,4 +84,5 @@ public class FeedbackManager {
             maxRate = null;
         }
     }
+
 }

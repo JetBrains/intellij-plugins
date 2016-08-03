@@ -3,10 +3,13 @@ package training.ui;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.CourseManager;
 import training.learn.LearnBundle;
+import training.statistic.FeedbackEvent;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -15,6 +18,7 @@ import javax.swing.text.Position;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 /**
@@ -61,6 +65,10 @@ public class FeedbackFormPanel extends JPanel {
     private JTextArea customFeedback;
 
     private JButton submitFeedbackButton;
+    private JPanel submitFeedbackButtonPanel;
+    private JLabel submitFeedbackStatusLabel;
+    private AsyncProcessIcon submitFeedbackAsyncProcessIcon;
+
 
     public FeedbackFormPanel(int width) {
         super();
@@ -126,9 +134,69 @@ public class FeedbackFormPanel extends JPanel {
         customFeedback.setMargin(new Insets(10, 0, 0, 0));
         customFeedback.setBorder(new EmptyBorder(0, 0, 0, 0));
 
+        submitFeedbackButton = new JButton();
+        submitFeedbackButton.setAction(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                submitFeedbackButton.setEnabled(false);
+                submitFeedbackStatusLabel.setText("feedback is sending");
+                submitFeedbackAsyncProcessIcon.setVisible(true);
+                submitFeedbackAsyncProcessIcon.resume();
 
-        submitFeedbackButton = new JButton(LearnBundle.message("learn.feedback.submit.button"));
+                StringBuilder answer = new StringBuilder();
+                for (RadioButtonRow radioButtonRow : radioButtonRows) {
+                    String myQuestion = radioButtonRow.myQuestion;
+                    String rate = radioButtonRow.getRate();
+                    String myLowRate = radioButtonRow.myLowRate;
+                    String myMaxRate = radioButtonRow.myMaxRate;
+                    answer.
+                            append("question=\"" + myQuestion + "\" ").
+                            append("rate=\"" + myLowRate + "/" + rate + "/" + myMaxRate + "\"");
+                }
+                try {
+                    answer.append("detailed-feedback=\"" + customFeedback.getDocument().getText(0, customFeedback.getDocument().getLength()) + "\"");
+                } catch (BadLocationException e1) {
+                    e1.printStackTrace();
+                }
+                FeedbackEvent feedbackEvent = new FeedbackEvent(answer.toString());
+                FeedbackManager.getInstance().submitFeedback(feedbackEvent, () -> {
+                    //success
+                    submitFeedbackAsyncProcessIcon.suspend();
+                    submitFeedbackAsyncProcessIcon.setVisible(false);
+                    submitFeedbackStatusLabel.setText("feedback is sent.");
+                }, () -> {
+                    //not success
+                    submitFeedbackAsyncProcessIcon.suspend();
+                    submitFeedbackAsyncProcessIcon.setVisible(false);
+                    submitFeedbackStatusLabel.setText("sending error. Please try later.");
+                });
+            }
+        });
         submitFeedbackButton.setOpaque(false);
+        submitFeedbackButton.setText(LearnBundle.message("learn.feedback.submit.button"));
+
+        submitFeedbackStatusLabel = new JLabel();
+        submitFeedbackStatusLabel.setOpaque(false);
+
+        submitFeedbackAsyncProcessIcon = new AsyncProcessIcon("Progress") {
+            @Override
+            protected void paintIcon(Graphics g, Icon icon, int x, int y) {
+                super.paintIcon(g, icon, x, y);
+            }
+        };
+        submitFeedbackAsyncProcessIcon.setVisible(false);
+
+        submitFeedbackButtonPanel = new JPanel();
+        submitFeedbackButtonPanel.setLayout(new BoxLayout(submitFeedbackButtonPanel, BoxLayout.LINE_AXIS));
+        submitFeedbackButtonPanel.setOpaque(false);
+
+        submitFeedbackButtonPanel.add(submitFeedbackButton);
+        submitFeedbackButtonPanel.add(Box.createHorizontalStrut(12));
+        submitFeedbackButtonPanel.add(submitFeedbackStatusLabel);
+        submitFeedbackButtonPanel.add(Box.createHorizontalStrut(6));
+        submitFeedbackButtonPanel.add(submitFeedbackAsyncProcessIcon);
+        submitFeedbackButtonPanel.setAlignmentX(LEFT_ALIGNMENT);
+
 
         headerGap = 2;
         afterCaptionGap = 12;
@@ -170,8 +238,6 @@ public class FeedbackFormPanel extends JPanel {
         }
 
         //add JTextField for a custom feedback
-
-
         submitFeedbackPanel = new JPanel();
         submitFeedbackPanel.setLayout(new BoxLayout(submitFeedbackPanel, BoxLayout.LINE_AXIS));
         submitFeedbackPanel.setOpaque(false);
@@ -255,7 +321,7 @@ public class FeedbackFormPanel extends JPanel {
         mainPanel.add(customFeedback);
         mainPanel.add(Box.createVerticalStrut(moduleGap));
 
-        mainPanel.add(submitFeedbackButton);
+        mainPanel.add(submitFeedbackButtonPanel);
         mainPanel.add(Box.createVerticalGlue());
     }
 
@@ -347,12 +413,12 @@ public class FeedbackFormPanel extends JPanel {
             }
         }
 
-        @Nullable
+        @NotNull
         public String getRate() {
             for (JRadioButton myRadioButton : myRadioButtons) {
                 if (myRadioButton.isSelected()) return myRadioButton.getText();
             }
-            return null;
+            return "missed";
         }
 
         @Override

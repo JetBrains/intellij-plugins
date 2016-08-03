@@ -224,6 +224,11 @@ public class Module{
         return name;
     }
 
+    @NotNull
+    public String getNameWithoutWhitespaces(){
+        return name.replaceAll("\\s+", "");
+    }
+
     ModuleSdkType getSdkType() {
          return mySdkType;
     }

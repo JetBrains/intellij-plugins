@@ -401,5 +401,4 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return null;
     }
 
-
 }
