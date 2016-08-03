@@ -331,10 +331,10 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
       final Editor topEditor = InjectedLanguageUtil.getTopLevelEditor(editor);
       PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(topEditor.getDocument());
+      final int startOffset = templateBaseElement.getTextRange().getStartOffset();
 
       final Template template = templateBuilder.buildInlineTemplate();
 
-      final int startOffset = templateBaseElement.getTextRange().getStartOffset();
       topEditor.getCaretModel().moveToOffset(InjectedLanguageManager.getInstance(project).injectedToHost(templateBaseElement, startOffset));
 
       TemplateManager.getInstance(project).startTemplate(topEditor, template);
