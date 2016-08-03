@@ -1,5 +1,7 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.psi.css.inspections.invalid.CssInvalidHtmlTagReferenceInspection;
+import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +13,8 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
   public void setUp() throws Exception {
     super.setUp();
     myFixture.enableInspections(PostCssNestingInspection.class);
+    myFixture.enableInspections(CssInvalidPseudoSelectorInspection.class);
+    myFixture.enableInspections(CssInvalidHtmlTagReferenceInspection.class);
   }
 
   public void testNormalRulesetWithNestingSelectors() {
@@ -106,6 +110,22 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
   }
 
   public void testAmpersandWithOperators() {
+    doTest();
+  }
+
+  public void testPseudoClassStartsWithAmpersand() {
+    doTest();
+  }
+
+  public void testSimpleSelectorWithoutNestedRuleset() {
+    doTest();
+  }
+
+  public void testSimpleSelectorWithNestedRuleset() {
+    doTest();
+  }
+
+  public void testSimpleSelectorWithNestedRulesetInsideMedia() {
     doTest();
   }
 
