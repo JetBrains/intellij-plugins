@@ -1,4 +1,4 @@
-package training.component;
+package training.components;
 
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.PropertiesComponent;

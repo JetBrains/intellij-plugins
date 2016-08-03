@@ -143,7 +143,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
             final String target;
             if (lesson.getTargetPath() != null) {
                 InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getModule().getAnswersPath() + lesson.getTargetPath());
-                if (is == null) throw new IOException("Unable to get answer for \"" + lesson.getName() + "\" lesson");
+                if (is == null) throw new IOException("Unable to get feedback for \"" + lesson.getName() + "\" lesson");
                 target = new Scanner(is).useDelimiter("\\Z").next();
             } else {
                 target = null;
@@ -290,7 +290,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
             if (lesson.getModule() != null) {
                 String extensionFile = ".java";
                 if (lesson.getLang() != null) extensionFile = "." + lesson.getLang().toLowerCase();
-                fileName = lesson.getModule().getName() + extensionFile;
+                fileName = lesson.getModule().getNameWithoutWhitespaces() + extensionFile;
             }
 
             VirtualFile lessonVirtualFile = sourceRootFile.findChild(fileName);

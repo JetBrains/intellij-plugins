@@ -397,11 +397,11 @@ public class LearnUiUtil {
                 "If none of the layout managers we discuss is right for your situation and you cannot use a builder tool, feel free to use other layout managers that you may write or find. Also keep in mind that flexible layout managers such as GridBagLayout and SpringLayout can fulfill many layout needs.\n" +
                 "\n", null, false, true);
 
-//        final JRootPane rootPane = SwingUtilities.getRootPane(component);
+//        final JRootPane rootPane = SwingUtilities.getRootPane(components);
         final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
 
 
-        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the component", null, false, true);
+        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the components", null, false, true);
         JComponent componentProjectWindow = null;
 
         java.util.List<Component> allComponents = getAllComponents(ideRootPane);

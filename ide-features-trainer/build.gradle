@@ -1,11 +1,30 @@
+buildscript {
+    ext.kotlinVersion='1.0.2'
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "http://repository.jetbrains.com/repo/"}
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+    }
+}
+
+
 plugins {
     id "org.jetbrains.intellij" version "0.0.43"
+}
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
 group 'org.sk'
 version "$version.$buildNumber"
 
 apply plugin: 'java'
+apply plugin: "kotlin"
 
 sourceCompatibility = 1.8
 
@@ -21,20 +40,13 @@ intellij{
 sourceSets {
     main {
         java.srcDir 'src'
+        kotlin.srcDir 'src'
         resources.srcDir 'res'
     }
     test {
         java.srcDir 'tests'
         java.srcDir 'testsData'
     }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
 task printVersion << {
