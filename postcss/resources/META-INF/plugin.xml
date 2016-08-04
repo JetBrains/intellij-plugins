@@ -4,6 +4,7 @@
   <category>HTML/JavaScript Development</category>
   <vendor>JetBrains</vendor>
   <description>PostCSS language support</description>
+  <resource-bundle>org.intellij.plugins.postcss.PostCssBundle</resource-bundle>
   <depends>com.intellij.css</depends>
   <depends>com.intellij.modules.lang</depends>
 
