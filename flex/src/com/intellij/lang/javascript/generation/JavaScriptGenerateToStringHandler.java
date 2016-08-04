@@ -4,7 +4,8 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSOverrideHandler;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -32,7 +33,7 @@ class JavaScriptGenerateToStringHandler extends BaseJSGenerateHandler {
         evalAnchor(editor, file);
 
         final boolean[] needOverride = new boolean[1];
-        JSResolveUtil.processOverrides(jsClass, new JSResolveUtil.OverrideHandler() {
+        JSInheritanceUtil.processOverrides(jsClass, new JSOverrideHandler() {
           public boolean process(@NotNull List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             needOverride[0] = !"Object".equals(className);
             return false;

@@ -43,7 +43,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -57,7 +56,6 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTagChild;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -300,7 +298,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   public static void checkActionScriptImplementedMethods(final JSClass jsClass, final ErrorReportingClient reportingClient) {
-    final JSResolveUtil.CollectMethodsToImplementProcessor implementedMethodProcessor = new ImplementedMethodProcessor(jsClass) {
+    final JSCollectMethodsToImplementProcessor implementedMethodProcessor = new JSImplementedMethodProcessor(jsClass) {
       ImplementMethodsFix implementMethodsFix = null;
 
       protected void addNonimplementedFunction(final JSFunction function) {
@@ -432,7 +430,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         final boolean hasOverride = attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.OVERRIDE);
 
         final Ref<JSFunction> set = new Ref<JSFunction>();
-        boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSResolveUtil.OverrideHandler() {
+        boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSOverrideHandler() {
           public boolean process(@NotNull final List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             //noinspection StringEquality
             if (qName == className || qName != null && qName.equals(className)) return true;
