@@ -2,11 +2,10 @@ package org.intellij.plugins.postcss.psi;
 
 import com.intellij.css.util.CssPsiUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.SyntaxTraverser;
 import com.intellij.psi.css.CssAtRule;
 import com.intellij.psi.css.CssRuleset;
-import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.Contract;
@@ -46,20 +45,8 @@ public class PostCssPsiUtil {
   }
 
   @NotNull
-  public static Collection<PsiElement> findAllAmpersands(@Nullable final PsiElement element) {
-    if (element == null) return ContainerUtil.emptyList();
-    PsiElementProcessor.CollectElements<PsiElement> processor = new PsiElementProcessor.CollectElements<PsiElement>() {
-      @Override
-      public boolean execute(@NotNull PsiElement each) {
-        if (isAmpersand(each)) return super.execute(each);
-        for (PsiElement child = each.getFirstChild(); child != null; child = child.getNextSibling()) {
-          execute(child);
-        }
-        return true;
-      }
-    };
-    processor.execute(element);
-    return processor.getCollection();
+  public static Collection<? extends PsiElement> findAllAmpersands(@Nullable final PsiElement element) {
+    return SyntaxTraverser.psiTraverser(element).filter(PostCssPsiUtil::isAmpersand).toList();
   }
 
   @Contract("null -> false")
@@ -74,7 +61,6 @@ public class PostCssPsiUtil {
 
   @Contract("null -> false")
   public static boolean isAmpersand(@Nullable PsiElement element) {
-    if (element == null) return false;
-    return element.getNode().getElementType() == PostCssTokenTypes.AMPERSAND;
+    return element != null && element.getNode().getElementType() == PostCssTokenTypes.AMPERSAND;
   }
 }

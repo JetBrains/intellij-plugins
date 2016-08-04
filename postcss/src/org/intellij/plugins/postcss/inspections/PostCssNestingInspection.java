@@ -16,7 +16,6 @@ import org.intellij.plugins.postcss.psi.impl.PostCssNestImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 public class PostCssNestingInspection extends PostCssBaseInspection {
   @NotNull
@@ -81,8 +80,7 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
   }
 
   private static void annotateTopLevelSelectorsWithNestingSigns(CssSelector selector, ProblemsHolder holder) {
-    Collection<PsiElement> ampersands = PostCssPsiUtil.findAllAmpersands(selector);
-    for (PsiElement ampersand : ampersands) {
+    for (PsiElement ampersand : PostCssPsiUtil.findAllAmpersands(selector)) {
       holder.registerProblem(ampersand, PostCssBundle
         .message("annotator.normal.selector.contains.direct.nesting.selector"), new PostCssDeleteAmpersandQuickFix());
     }
