@@ -25,6 +25,9 @@ public class PostCssColorsPage implements ColorSettingsPage {
                                           "  src: url(DroidSans.ttf);\n" +
                                           "  unicode-range: U+000-5FF, U+1e00-1fff, U+2000-2300;\n" +
                                           "}\n\n" +
+                                          "@media (500px < width <= 1200px) and (height >= 400px){\n" +
+                                          "  color: red;\n" +
+                                          "}\n\n" +
                                           "<tag>h1</tag>.mystyle:lang(en) {\n" +
                                           "  color:blue; /* TODO: change THIS to yellow for next version! */\n" +
                                           "  border:rgb(255,0,0);\n" +
@@ -35,7 +38,6 @@ public class PostCssColorsPage implements ColorSettingsPage {
                                           "  }\n" +
                                           "}\n\n" +
                                           "<tag>div</tag> > <tag>p</tag>, <tag>p</tag> ~ <tag>ul</tag>, <tag>input</tag> [type=\"radio\"] {\n" +
-                                          "  color: green;\n" +
                                           "  width: 80%;\n" +
                                           "}\n\n" +
                                           "#header:after {\n" +
@@ -58,6 +60,7 @@ public class PostCssColorsPage implements ColorSettingsPage {
     new AttributesDescriptor(CssBundle.message("css.important"), PostCssSyntaxHighlighter.IMPORTANT),
     new AttributesDescriptor(CssBundle.message("css.keyword"), PostCssSyntaxHighlighter.KEYWORD),
     new AttributesDescriptor(CssBundle.message("css.number"), PostCssSyntaxHighlighter.NUMBER),
+    new AttributesDescriptor(PostCssBundle.message("postcss.operators"), PostCssSyntaxHighlighter.OPERATORS),
     new AttributesDescriptor(CssBundle.message("css.parenthesis"), PostCssSyntaxHighlighter.PARENTHESES),
     new AttributesDescriptor(CssBundle.message("css.property.name"), PostCssSyntaxHighlighter.PROPERTY_NAME),
     new AttributesDescriptor(CssBundle.message("css.property.value"), PostCssSyntaxHighlighter.PROPERTY_VALUE),

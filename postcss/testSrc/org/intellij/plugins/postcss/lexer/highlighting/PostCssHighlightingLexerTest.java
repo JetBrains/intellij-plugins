@@ -62,6 +62,14 @@ public class PostCssHighlightingLexerTest extends LexerTestCase {
     doTest();
   }
 
+  public void testGreaterOrEqual() {
+    doTest();
+  }
+
+  public void testLessAndLessOrEqual() {
+    doTest();
+  }
+
   private void doTest() {
     doFileTest("pcss");
   }

@@ -48,9 +48,13 @@ public class PostCssParser extends CssParser2 {
   @Override
   protected boolean parseSingleDeclarationInBlock(boolean withPageMarginRules, boolean inlineCss,
                                                   boolean requirePropertyValue, @NotNull IElementType elementType) {
-    // to parse @page with error elements
     if (withPageMarginRules && getTokenType() == CssElementTypes.CSS_ATKEYWORD) {
+      // to parse @page with error elements
       return super.parseSingleDeclarationInBlock(true, inlineCss, requirePropertyValue, elementType);
+    }
+    if (elementType == CssElementTypes.CSS_MEDIA_FEATURE && !parseMediaFeatureRange()) {
+      // parse plain media feature
+      return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
     }
     myRulesetSeen = false;
     // Nesting
@@ -73,6 +77,42 @@ public class PostCssParser extends CssParser2 {
       return true;
     }
     return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+  }
+
+  private boolean parseMediaFeatureRange() {
+    PsiBuilder.Marker mediaFeature = createCompositeElement();
+    if (!parseMediaFeatureRangeInner()) {
+      mediaFeature.rollbackTo();
+      return false;
+    }
+    mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
+    return true;
+  }
+
+  private boolean parseMediaFeatureRangeInner() {
+    boolean startsWithValue = parseNumberTerm();
+    if (!startsWithValue && !addIdentOrError()) return false;
+    if (!parseOperatorSign()) return false;
+    if (!startsWithValue && parseNumberTerm()) return true;
+    if (!addIdentOrError()) return false;
+    if (getTokenType() == CssElementTypes.CSS_RPAREN) return true;
+    return parseOperatorSign() && parseNumberTerm();
+  }
+
+  private boolean parseOperatorSign() {
+    if (!PostCssTokenTypes.OPERATORS.contains(getTokenType())) return false;
+    addSingleToken();
+    return true;
+  }
+
+  private boolean parseNumberTerm() {
+    if (getTokenType() == CssElementTypes.CSS_MINUS) addSingleToken();
+    if (getTokenType() != CssElementTypes.CSS_NUMBER) return false;
+    PsiBuilder.Marker numberTerm = createCompositeElement();
+    addSingleToken();
+    addIdentOrError();
+    numberTerm.done(CssElementTypes.CSS_NUMBER_TERM);
+    return true;
   }
 
   @Override

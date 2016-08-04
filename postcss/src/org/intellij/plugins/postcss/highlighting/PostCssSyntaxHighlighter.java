@@ -47,6 +47,7 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   public static final TextAttributesKey SEMICOLON = createTextAttributesKey("POST_CSS_SEMICOLON", CssHighlighter.CSS_SEMICOLON);
   public static final TextAttributesKey COLON = createTextAttributesKey("POST_CSS_COLON", CssHighlighter.CSS_COLON);
   public static final TextAttributesKey COMMA = createTextAttributesKey("POST_CSS_COMMA", CssHighlighter.CSS_COMMA);
+  public static final TextAttributesKey OPERATORS = createTextAttributesKey("POST_CSS_OPERATORS", CssHighlighter.CSS_OPERATORS);
   public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("POST_CSS_BAD_CHARACTER", CssHighlighter.CSS_BAD_CHARACTER);
 
   static {
@@ -83,6 +84,9 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     }
     for (IElementType type : PostCssTokenTypes.IDENTIFIERS.getTypes()) {
       mapping.put(type, IDENTIFIER);
+    }
+    for (IElementType type : PostCssTokenTypes.OPERATORS.getTypes()) {
+      mapping.put(type, OPERATORS);
     }
 
     HtmlFileHighlighter.registerEmbeddedTokenAttributes(mapping, null);

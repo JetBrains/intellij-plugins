@@ -168,6 +168,9 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 // PostCSS specific
 <YYINITIAL> "&" { return PostCssTokenTypes.AMPERSAND; }
 <YYINITIAL> "#" { return PostCssTokenTypes.HASH_SIGN; }
+<YYINITIAL> "<" { return PostCssTokenTypes.LT; }
+<YYINITIAL> "<=" { return PostCssTokenTypes.LE; }
+<YYINITIAL> ">=" { return PostCssTokenTypes.GE; }
 
 <YYINITIAL> {CSS_IDENT}"(" { yybegin(CSS_FUNCTION); yypushback(yylength()); }
 <YYINITIAL> {CSS_UNICODE_RANGE} { return CssElementTypes.CSS_UNICODE_RANGE; }
