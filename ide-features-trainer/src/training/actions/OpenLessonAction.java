@@ -96,13 +96,13 @@ public class OpenLessonAction extends AnAction implements DumbAware {
                     //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
                 } else if (learnProject == null && !getCurrentProject().getName().equals(LEARN_PROJECT_NAME)) {
                     Project myLearnProject = initLearnProject(myProject);
-                    assert myLearnProject != null;
+                    if (myLearnProject == null) return; // in case of user aborted to create a LearnProject
                     openLessonWhenLearnProjectStart(lesson, myLearnProject);
                     return;
                     //2. learnProject != null and learnProject is disposed then reinitProject and getFileInLearnProject
                 } else if (learnProject.isDisposed()) {
                     Project myLearnProject = initLearnProject(myProject);
-                    assert myLearnProject != null;
+                    if (myLearnProject == null) return; // in case of user aborted to create a LearnProject
                     openLessonWhenLearnProjectStart(lesson, myLearnProject);
                     return;
                     //3. learnProject != null and learnProject is opened but not focused then focus Project and getFileInLearnProject
@@ -308,6 +308,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
         });
     }
 
+    @Nullable
     private Project initLearnProject(Project projectToClose) {
         Project myLearnProject = null;
 
@@ -378,16 +379,17 @@ public class OpenLessonAction extends AnAction implements DumbAware {
     private Sdk getJavaSdk() {
         JavaSdk javaSdk = JavaSdk.getInstance();
         final String suggestedHomePath = javaSdk.suggestHomePath();
-        final String versionString = javaSdk.getVersionString(suggestedHomePath);
-        assert versionString != null;
+        String versionString = javaSdk.getVersionString(suggestedHomePath);
+        if (versionString == null) versionString = "java-deafult";
         assert suggestedHomePath != null;
         final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath, false);
 
         final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
         if (foundJdk == null) {
-            ProjectJdkTable.getInstance().addJdk(newJdk);
+            ApplicationManager.getApplication().runWriteAction(() -> {
+                ProjectJdkTable.getInstance().addJdk(newJdk);
+            });
         }
-        //fix: No IDEA annotations attached to the JDK
         ApplicationManager.getApplication().runWriteAction(() -> {
             SdkModificator modificator = newJdk.getSdkModificator();
             JavaSdkImpl.attachJdkAnnotations(modificator);
