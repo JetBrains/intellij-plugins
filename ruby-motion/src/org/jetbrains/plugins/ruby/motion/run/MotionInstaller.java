@@ -2,6 +2,7 @@ package org.jetbrains.plugins.ruby.motion.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import com.jetbrains.cidr.execution.Installer;
@@ -33,7 +34,9 @@ class MotionInstaller implements Installer {
     try {
       device.lock();
       device.connect();
-      result.putUserData(DebuggerDriver.DEBUGSERVER_SOCKET, device.startDebugserver());
+      Pair<Integer, String> pair = device.startDebugserver();
+      result.putUserData(DebuggerDriver.DEBUGSERVER_ID, pair.first);
+      result.putUserData(DebuggerDriver.DEBUGSERVER_SOCKET, pair.second);
     }
     finally {
       device.disconnect();

@@ -29,7 +29,7 @@ public class RubyMotionDeviceDebugProcess extends IPhoneDebugProcess {
                                       @NotNull Executor executor,
                                       @NotNull TextConsoleBuilder consoleBuilder,
                                       @NotNull ProcessHandler processHandler) throws ExecutionException {
-    super(new MotionAppRunParameters(true, processHandler), MotionAppRunParameters.getDevice(processHandler), session, consoleBuilder);
+    super(new MotionAppRunParameters(true, processHandler), MotionAppRunParameters.getDevice(processHandler), session, consoleBuilder, false);
     myState = state;
     myExecutor = executor;
     myProcessHandler = processHandler;
