@@ -1,4 +1,4 @@
-PostCSS File:PartOfNestKeywordInsideRuleset.pcss
+PostCSS File:PartOfNestInsideApplyFunction.pcss
   PsiElement(POST_CSS_STYLESHEET)
     PsiElement(CSS_RULESET_LIST)
       PsiElement(CSS_RULESET)
@@ -12,8 +12,18 @@ PostCSS File:PartOfNestKeywordInsideRuleset.pcss
         PsiElement(CSS_DECLARATION_BLOCK)
           PsiElement(CSS_LBRACE)('{')
           PsiWhiteSpace('\n  ')
+          PsiElement(CSS_APPLY)
+            PsiElement(CSS_APPLY_SYM)('@apply')
+            PsiElement(CSS_LPAREN)('(')
+            PsiErrorElement:an identifier expected
+              <empty list>
+            PsiErrorElement:')' expected
+              <empty list>
+          PsiErrorElement:';' expected
+            <empty list>
           PsiElement(CSS_BAD_AT_RULE)
             PsiElement(CSS_ATKEYWORD)('@n')
+            PsiElement(CSS_RPAREN)(')')
             PsiWhiteSpace('\n')
             PsiElement(CSS_RBRACE)('}')
           PsiErrorElement:'}' expected

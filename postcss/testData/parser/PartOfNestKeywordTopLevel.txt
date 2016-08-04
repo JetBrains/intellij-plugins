@@ -3,7 +3,3 @@ PostCSS File:PartOfNestKeywordTopLevel.pcss
     PsiElement(CSS_RULESET_LIST)
       PsiElement(CSS_BAD_AT_RULE)
         PsiElement(CSS_ATKEYWORD)('@n')
-        PsiErrorElement:'{' expected
-          <empty list>
-        PsiErrorElement:'}' expected
-          <empty list>

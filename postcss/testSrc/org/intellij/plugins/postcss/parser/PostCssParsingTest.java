@@ -77,6 +77,10 @@ public class PostCssParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testPartOfNestInsideApplyFunction() {
+    doTest();
+  }
+
   public void testNestAtRuleIncorrectSelectorList() {
     doTest();
   }
@@ -142,6 +146,30 @@ public class PostCssParsingTest extends ParsingTestCase {
   }
 
   public void testAmpersandWithOperators() {
+    doTest();
+  }
+
+  public void testDeclarationBlockInMedia() {
+    doTest();
+  }
+
+  public void testDeclarationBlockInDocument() {
+    doTest();
+  }
+
+  public void testDeclarationBlockInSupports() {
+    doTest();
+  }
+
+  public void testDeclarationBlockInRegion() {
+    doTest();
+  }
+
+  public void testDeclarationBlockInScope() {
+    doTest();
+  }
+
+  public void testDeclarationBlockInBadAtRule() {
     doTest();
   }
 

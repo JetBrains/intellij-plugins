@@ -48,6 +48,10 @@ public class PostCssParser extends CssParser2 {
   @Override
   protected boolean parseSingleDeclarationInBlock(boolean withPageMarginRules, boolean inlineCss,
                                                   boolean requirePropertyValue, @NotNull IElementType elementType) {
+    // to parse @page with error elements
+    if (withPageMarginRules && getTokenType() == CssElementTypes.CSS_ATKEYWORD) {
+      return super.parseSingleDeclarationInBlock(true, inlineCss, requirePropertyValue, elementType);
+    }
     myRulesetSeen = false;
     // Nesting
     if (parseMedia() ||
@@ -63,11 +67,17 @@ public class PostCssParser extends CssParser2 {
         parseKeyframesRuleset() ||
         parseCustomSelectorAtRule() ||
         parseAtRuleNesting() ||
+        parseBadAtRule(false) ||
         tryToParseRuleset()) {
       myRulesetSeen = true;
       return true;
     }
     return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+  }
+
+  @Override
+  protected void parseNestedRulesetList() {
+    parseDeclarationBlock();
   }
 
   private boolean parseCustomSelectorAtRule() {
