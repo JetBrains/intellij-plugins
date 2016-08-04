@@ -47,18 +47,13 @@ public class PostCssPsiUtil {
 
   @NotNull
   public static Collection<PsiElement> findAllAmpersands(@Nullable final PsiElement element) {
-    if (element == null) {
-      return ContainerUtil.emptyList();
-    }
-
+    if (element == null) return ContainerUtil.emptyList();
     PsiElementProcessor.CollectElements<PsiElement> processor = new PsiElementProcessor.CollectElements<PsiElement>() {
       @Override
       public boolean execute(@NotNull PsiElement each) {
         if (isAmpersand(each)) return super.execute(each);
-        PsiElement child = each.getFirstChild();
-        while (child != null) {
+        for (PsiElement child = each.getFirstChild(); child != null; child = child.getNextSibling()) {
           execute(child);
-          child = child.getNextSibling();
         }
         return true;
       }
