@@ -126,8 +126,13 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Nullable
   private static AppleSdk getSdk(@NotNull AppCodeRunConfiguration config) {
-    XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
-    return xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
+    return ApplicationManager.getApplication().runReadAction(new Computable<AppleSdk>() {
+      @Override
+      public AppleSdk compute() {
+        XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
+        return xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
+      }
+    });
   }
 
   @Override
