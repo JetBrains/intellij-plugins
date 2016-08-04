@@ -11,7 +11,7 @@ import java.io.File;
 @State(name = "DartCodeFoldingSettings", storages = @Storage("editor.codeinsight.xml"))
 public class DartCodeFoldingSettings implements PersistentStateComponent<DartCodeFoldingSettings>, ExportableComponent {
   private boolean myCollapseParts = true;
-  private boolean myCollapseGenericParams = false;
+  private boolean myCollapseGenericParams;
 
   public static DartCodeFoldingSettings getInstance() {
     return ServiceManager.getService(DartCodeFoldingSettings.class);
@@ -39,7 +39,6 @@ public class DartCodeFoldingSettings implements PersistentStateComponent<DartCod
     XmlSerializerUtil.copyBean(state, this);
   }
 
-  // property name must be equal to checkBox() argument in DartCodeFoldingOptionsProvider
   public boolean isCollapseGenericParameters() {
     return myCollapseGenericParams;
   }
@@ -48,7 +47,6 @@ public class DartCodeFoldingSettings implements PersistentStateComponent<DartCod
     myCollapseGenericParams = collapseGenericParams;
   }
 
-  // property name must be equal to checkBox() argument in DartCodeFoldingOptionsProvider
   public boolean isCollapseParts() {
     return myCollapseParts;
   }
