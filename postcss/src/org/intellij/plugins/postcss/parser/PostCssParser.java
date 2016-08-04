@@ -1,20 +1,19 @@
 package org.intellij.plugins.postcss.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.WhitespacesBinders;
-import com.intellij.psi.TokenType;
 import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ArrayUtil;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssParser extends CssParser2 {
   private boolean myRulesetSeen;
+  private boolean myAmpersandAllowed;
+  private IElementType myAdditionalIdent;
 
   public PostCssParser(PsiBuilder builder) {
     super(builder);
@@ -263,71 +262,58 @@ public class PostCssParser extends CssParser2 {
   }
 
   @Override
-  protected void parseSimpleSelector() {
-    PsiBuilder.Marker simpleSelector = createCompositeElement();
-    boolean hasPrefix = false;
-    if (isSimpleSelectorStart()) {
-      if (isIdentOrAmpersand()) {
-        addIdentOrAmpersandOrError();
-      }
-      else {
-        addToken();
-      }
-      hasPrefix = true;
-    }
-    if (getTokenType() == CssElementTypes.CSS_PIPE) {
-      addToken();
-      if (getTokenType() == CssElementTypes.CSS_ASTERISK) {
-        addToken();
-      }
-      else {
-        addIdentOrAmpersandOrError();
-      }
-    }
-    parseSelectorSuffixList(hasPrefix);
-    simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
-  }
-
-  //TODO make CssParser2#parseAttribute protected and remove
-  @Override
-  protected void parseSelectorSuffixList(boolean hasPrefix) {
-    PsiBuilder.Marker selectorSuffixList = createCompositeElement();
-    if (hasPrefix && getTokenType() != TokenType.BAD_CHARACTER && hasWhitespaceBefore()) {
-      selectorSuffixList.done(CssElementTypes.CSS_SELECTOR_SUFFIX_LIST);
-      selectorSuffixList.setCustomEdgeTokenBinders(WhitespacesBinders.GREEDY_LEFT_BINDER, null);
-      return;
-    }
-    while (!isDone()) {
-      if (parseClass() || parseIdSelector() || parsePseudo()) {
-        if (hasWhitespaceBefore()) break;
-      }
-      else if (!parseAttribute()) {
-        if (getTokenType() == TokenType.BAD_CHARACTER) {
-          final PsiBuilder.Marker element = createRootErrorElement();
-          if (element != null) {
-            addToken();
-            element.error(CssBundle.message("expected", "valid token"));
-          }
-        }
-        break;
-      }
-    }
-    selectorSuffixList.done(CssElementTypes.CSS_SELECTOR_SUFFIX_LIST);
-    selectorSuffixList.setCustomEdgeTokenBinders(WhitespacesBinders.GREEDY_LEFT_BINDER, null);
+  protected void parseSelectorList() {
+    myAmpersandAllowed = true;
+    super.parseSelectorList();
+    myAmpersandAllowed = false;
   }
 
   @Override
-  protected boolean parseClass() {
-    if (getTokenType() != CssElementTypes.CSS_PERIOD) {
-      return false;
-    }
-    PsiBuilder.Marker cssClass = createCompositeElement();
-    addToken();
-    if (!hasWhitespaceBefore()) {
+  public void addToken() {
+    if (myAmpersandAllowed && isIdentOrAmpersand()) {
       addIdentOrAmpersandOrError();
     }
-    cssClass.done(CssElementTypes.CSS_CLASS);
+    super.addToken();
+  }
+
+  @Override
+  public boolean addIdentOrError() {
+    return myAmpersandAllowed ? addIdentOrAmpersandOrError() : super.addIdentOrError();
+  }
+
+  @Override
+  public boolean isIdent(IElementType type) {
+    return myAmpersandAllowed ? isIdentOrAmpersand(type) : super.isIdent(type);
+  }
+
+  private boolean addIdentOrAmpersandOrError() {
+    if (!isIdentOrAmpersand()) return super.addIdentOrError();
+    addSingleToken();
+    addIdentOrAmpersandSuffix();
     return true;
+  }
+
+  private void addIdentOrAmpersandSuffix() {
+    while (!hasWhitespaceBefore() && !isDone()) {
+      IElementType type = getTokenType();
+      boolean isAdditionalType = type == myAdditionalIdent;
+      if (type == PostCssTokenTypes.AMPERSAND || type == CssElementTypes.CSS_NUMBER ||
+          type == CssElementTypes.CSS_IDENT || isAdditionalType) {
+        if (isAdditionalType) myAdditionalIdent = null;
+        addSingleToken();
+      }
+      else {
+        return;
+      }
+    }
+  }
+
+  private boolean isIdentOrAmpersand() {
+    return isIdentOrAmpersand(getTokenType());
+  }
+
+  private static boolean isIdentOrAmpersand(IElementType type) {
+    return type == CssElementTypes.CSS_IDENT || type == PostCssTokenTypes.AMPERSAND;
   }
 
   @Override
@@ -337,7 +323,7 @@ public class PostCssParser extends CssParser2 {
       return false;
     }
     PsiBuilder.Marker idSelector = createCompositeElement();
-    addToken();
+    addSingleToken();
     addIdentOrAmpersandSuffix();
     idSelector.done(CssElementTypes.CSS_ID_SELECTOR);
     return true;
@@ -345,78 +331,10 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected boolean parsePseudo() {
-    if (getTokenType() != CssElementTypes.CSS_COLON) {
-      return false;
-    }
-
-    PsiBuilder.Marker pseudo = createCompositeElement();
-    addToken();
-    if (!hasWhitespaceBefore() && getTokenType() == CssElementTypes.CSS_COLON) {
-      addToken();
-    }
-
-    IElementType tokenType = getTokenType();
-    String tokenText = getTokenText();
-
-    IElementType type = suggestPseudoType(tokenText);
-    if (hasWhitespaceBefore()) {
-      createErrorElement(CssBundle.message("expected", CssBundle.message("an.identifier")));
-      pseudo.done(type);
-      return true;
-    }
-
-    if (isIdentOrAmpersand(tokenType)) {
-      PsiBuilder.Marker possibleFunction = createCompositeElement();
-      addIdentOrAmpersandOrError(CssElementTypes.CSS_FUNCTION_TOKEN);
-      if (getTokenType() == CssElementTypes.CSS_LPAREN) {
-        addTokenAndSkipWhitespace();
-        parsePseudoTermList();
-        addRParenOrError();
-        possibleFunction.done(CssElementTypes.CSS_FUNCTION);
-      }
-      else {
-        possibleFunction.drop();
-      }
-    }
-    else if (tokenType == CssElementTypes.CSS_FUNCTION_TOKEN) {
-      parsePseudoFunction();
-    }
-    else {
-      createErrorElement(CssBundle.message("expected", CssBundle.message("an.identifier")));
-    }
-    pseudo.done(type);
-    return true;
-  }
-
-  //TODO make CssParser2#parsePseudoTermList protected and remove
-  private void parsePseudoTermList() {
-    PsiBuilder.Marker termList = createCompositeElement();
-    boolean taken = parsePseudoTerm();
-    if (!taken) {
-      createTermExpectedErrorElement();
-    }
-    while (!isDone()) {
-      IElementType type = getTokenType();
-      if (type == CssElementTypes.CSS_COMMA) {
-        addTokenAndSkipWhitespace();
-      }
-      if (!parsePseudoTerm()) {
-        type = getTokenType();
-        if (isDone() ||
-            type == CssElementTypes.CSS_SEMICOLON ||
-            type == CssElementTypes.CSS_RBRACE ||
-            type == CssElementTypes.CSS_IMPORTANT ||
-            type == CssElementTypes.CSS_RPAREN) {
-          break;
-        }
-        else {
-          createTermExpectedErrorElement(); // ???
-          addToken();
-        }
-      }
-    }
-
-    termList.done(CssElementTypes.CSS_TERM_LIST);
+    myAdditionalIdent = CssElementTypes.CSS_FUNCTION_TOKEN;
+    boolean result = super.parsePseudo();
+    myAdditionalIdent = null;
+    return result;
   }
 
   @Override
@@ -439,14 +357,14 @@ public class PostCssParser extends CssParser2 {
     PsiBuilder.Marker term = createCompositeElement();
     tokenType = getTokenType();
     if (!parsePseudoExpression()) {
-      if (isIdentOrAmpersand()) {
-        addIdentOrAmpersandOrError();
+      if (isIdent()) {
+        addIdentOrError();
       }
       else if (isSimpleSelectorStart()) {
         addToken();
       }
       else if (tokenType == CssElementTypes.CSS_HASH || tokenType == PostCssTokenTypes.HASH_SIGN) {
-        addTokenAndSkipWhitespace();
+        addSingleToken();
         addIdentOrAmpersandSuffix();
         parseAttribute();
       }
@@ -478,44 +396,29 @@ public class PostCssParser extends CssParser2 {
     return true;
   }
 
+  //TODO make CssParser2#parseAttributeLSide protected and remove
   private boolean parseAttributeLSide() {
-    if(!isIdentOrAmpersand() && getTokenType() != CssElementTypes.CSS_PIPE && getTokenType() != CssElementTypes.CSS_ASTERISK) {
+    if (!isIdent() && getTokenType() != CssElementTypes.CSS_PIPE && getTokenType() != CssElementTypes.CSS_ASTERISK) {
       return false;
     }
-    if(isIdentOrAmpersand()) {
-      addIdentOrAmpersandOrError();
-    } else if (getTokenType() == CssElementTypes.CSS_ASTERISK) {
-      if(myBuilder.lookAhead(1) != CssElementTypes.CSS_PIPE) {
+    if (isIdent()) {
+      addIdentOrError();
+    }
+    else if (getTokenType() == CssElementTypes.CSS_ASTERISK) {
+      if (myBuilder.lookAhead(1) != CssElementTypes.CSS_PIPE) {
         final PsiBuilder.Marker error = myBuilder.mark();
         addToken();
         error.error("unexpected asterisk");
-      } else {
+      }
+      else {
         addToken();
       }
     }
-    if(getTokenType() == CssElementTypes.CSS_PIPE) {
+    if (getTokenType() == CssElementTypes.CSS_PIPE) {
       addToken();
-      addIdentOrAmpersandOrError();
+      addIdentOrError();
     }
     return true;
-  }
-
-  @Override
-  protected void parseAttributeRSide() {
-    if (!CssElementTypes.ATTRIBUTE_OPERATORS.contains(getTokenType())) {
-      return;
-    }
-    addTokenAndSkipWhitespace();
-    PsiBuilder.Marker attributeRSide = createCompositeElement();
-    if (!parseCssString()) {
-      if (isIdentOrAmpersand()) {
-        addIdentOrAmpersandOrError();
-      }
-      else {
-        createErrorElement(CssBundle.message("expected.a.string.or.an.identifier"));
-      }
-    }
-    attributeRSide.done(CssElementTypes.CSS_ATTRIBUTE_RSIDE);
   }
 
   //TODO make CssParser2#parsePseudoExpression protected and remove
@@ -565,37 +468,5 @@ public class PostCssParser extends CssParser2 {
     }
     expression.done(CssElementTypes.CSS_EXPRESSION);
     return false;
-  }
-
-  private boolean addIdentOrAmpersandOrError(IElementType... additionalTypesToAdd) {
-    if (isIdentOrAmpersand()) {
-      addSingleToken();
-      addIdentOrAmpersandSuffix(additionalTypesToAdd);
-      return true;
-    }
-    else {
-      return super.addIdentOrError();
-    }
-  }
-
-  private void addIdentOrAmpersandSuffix(IElementType... additionalTypesToAdd) {
-    while (!hasWhitespaceBefore() && !isDone()) {
-      IElementType type = getTokenType();
-      if (type == PostCssTokenTypes.AMPERSAND || type == CssElementTypes.CSS_NUMBER || type == CssElementTypes.CSS_IDENT ||
-          ArrayUtil.contains(type, additionalTypesToAdd)) {
-        addSingleToken();
-      }
-      else {
-        return;
-      }
-    }
-  }
-
-  private boolean isIdentOrAmpersand() {
-    return isIdentOrAmpersand(getTokenType());
-  }
-
-  private boolean isIdentOrAmpersand(IElementType type) {
-    return isIdent(type) || type == PostCssTokenTypes.AMPERSAND;
   }
 }

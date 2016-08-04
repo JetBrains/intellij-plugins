@@ -1,0 +1,35 @@
+PostCSS File:AmpersandInDeclaration.pcss
+  PsiElement(POST_CSS_STYLESHEET)
+    PsiElement(CSS_RULESET_LIST)
+      PsiElement(CSS_RULESET)
+        PsiElement(CSS_SELECTOR_LIST)
+          PsiElement(CSS_SELECTOR)
+            PsiElement(CSS_SIMPLE_SELECTOR)
+              PsiElement(CSS_IDENT)('div')
+              PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                <empty list>
+        PsiElement(CSS_DECLARATION_BLOCK)
+          PsiElement(CSS_LBRACE)('{')
+          PsiWhiteSpace('\n  ')
+          PsiElement(CSS_RULESET)
+            PsiElement(CSS_SELECTOR_LIST)
+              PsiElement(CSS_SELECTOR)
+                PsiElement(CSS_SIMPLE_SELECTOR)
+                  PsiElement(CSS_IDENT)('col')
+                  PsiElement(POST_CSS_AMPERSAND)('&')
+                  PsiElement(CSS_IDENT)('or')
+                  PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                    PsiElement(CSS_PSEUDO_CLASS)
+                      PsiElement(CSS_COLON)(':')
+                      PsiErrorElement:an identifier expected
+                        <empty list>
+                PsiWhiteSpace(' ')
+                PsiElement(CSS_SIMPLE_SELECTOR)
+                  PsiElement(CSS_IDENT)('red')
+                  PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                    <empty list>
+            PsiErrorElement:'{ expected
+              <empty list>
+          PsiElement(CSS_SEMICOLON)(';')
+          PsiWhiteSpace('\n')
+          PsiElement(CSS_RBRACE)('}')

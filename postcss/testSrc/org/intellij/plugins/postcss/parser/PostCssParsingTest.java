@@ -120,6 +120,12 @@ public class PostCssParsingTest extends ParsingTestCase {
   public void testAmpersandWithOperators() {
     doTest();
   }
+  public void testAmpersandInDeclaration() {
+    doTest();
+  }
+  public void testAmpersandInPropertyValue() {
+    doTest();
+  }
   public void testDeclarationBlockInMedia() {
     doTest();
   }
