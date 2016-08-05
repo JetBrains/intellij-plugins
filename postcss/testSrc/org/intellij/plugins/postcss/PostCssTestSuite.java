@@ -56,6 +56,8 @@ public class PostCssTestSuite extends TestCase {
 
       suite.addTestSuite(PostCssNestingQuickFixTest.class);
       suite.addTestSuite(PostCssCustomSelectorQuickFixTest.class);
+
+      suite.addTestSuite(PostCssMediaRangeInspectionTest.class);
       return suite;
     }
   }

@@ -49,6 +49,11 @@ public class PostCssPsiUtil {
     return SyntaxTraverser.psiTraverser(element).filter(PostCssPsiUtil::isAmpersand).toList();
   }
 
+  @NotNull
+  public static Collection<? extends PsiElement> findAllOperatorSigns(@Nullable final PsiElement element) {
+    return SyntaxTraverser.psiTraverser(element).filter(PostCssPsiUtil::isOperatorSign).toList();
+  }
+
   @Contract("null -> false")
   public static boolean startsWithAmpersand(@NotNull PsiElement selector) {
     return isAmpersand(PsiTreeUtil.getDeepestFirst(selector));
@@ -62,5 +67,10 @@ public class PostCssPsiUtil {
   @Contract("null -> false")
   public static boolean isAmpersand(@Nullable PsiElement element) {
     return element != null && element.getNode().getElementType() == PostCssTokenTypes.AMPERSAND;
+  }
+
+  @Contract("null -> false")
+  public static boolean isOperatorSign(@Nullable PsiElement element) {
+    return element != null && PostCssTokenTypes.OPERATORS.contains(element.getNode().getElementType());
   }
 }

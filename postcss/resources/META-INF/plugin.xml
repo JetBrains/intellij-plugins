@@ -38,6 +38,10 @@
                      key="inspections.custom.selector.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomSelectorInspection"/>
+    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+                     key="inspections.media.query.range.problems.name"
+                     groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.intellij.plugins.postcss.inspections.PostCssMediaRangeInspection"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij.css">
     <cssInspectionFilter language="PostCSS" implementationClass="org.intellij.plugins.postcss.inspections.suppress.PostCssInspectionFilter"/>
