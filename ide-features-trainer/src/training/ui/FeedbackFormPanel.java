@@ -1,5 +1,6 @@
 package training.ui;
 
+import com.intellij.ide.ui.UISettings;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.labels.LinkLabel;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
  */
 public class FeedbackFormPanel extends JPanel {
 
+    private int left_indent;
     private int width;
 
     //UI Preferences
@@ -30,8 +32,6 @@ public class FeedbackFormPanel extends JPanel {
     private int west_inset;
     private int south_inset;
     private int east_inset;
-    private int check_width;
-    private int check_right_indent;
 
     private JLabel caption;
     private MyJTextPane description;
@@ -41,7 +41,9 @@ public class FeedbackFormPanel extends JPanel {
     private static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
     private int headerGap;
     private int afterCaptionGap;
-    private int moduleGap;
+    private int rateQuestionGap;
+    private int groupGap;
+
     private Font questionRateLabelFont;
     private Font questionFont;
     private Color questionColor;
@@ -57,7 +59,8 @@ public class FeedbackFormPanel extends JPanel {
     private ArrayList<RadioButtonRow> radioButtonRows;
     private Font radioButtonLabelFont;
     private Color radioButtonLabelColor;
-
+    private int label_line_gap = 12;
+    private int label_vertical_gap = 5;
 
     private JTextArea customFeedback;
 
@@ -99,22 +102,21 @@ public class FeedbackFormPanel extends JPanel {
         north_inset = 16;
         east_inset = 32;
         south_inset = 32;
-        check_width = LearnIcons.CheckmarkGray.getIconWidth();
-        check_right_indent = 5;
+
+        left_indent = 17;
 
         //UI colors and fonts
-        fontSize = 12;
-        questionRateLabelFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 2);
-        questionFont = new Font(UIUtil.getLabelFont().getName(), Font.PLAIN, fontSize + 1);
+        fontSize = UISettings.getInstance().FONT_SIZE;
+        questionFont = new Font(UISettings.getInstance().FONT_FACE, Font.PLAIN, fontSize);
         questionColor = new JBColor(new Color(0, 0, 0), Gray._202);
-        descriptionFont = new Font(UIUtil.getLabelFont().getName(), Font.PLAIN, fontSize + 1);
+        descriptionFont = new Font(UISettings.getInstance().FONT_FACE, Font.PLAIN, fontSize);
         descriptionColor = Gray._128;
-        radioButtonLabelFont = new Font(UIUtil.getLabelFont().getName(), Font.PLAIN, fontSize - 2);
+        radioButtonLabelFont = new Font(UISettings.getInstance().FONT_FACE, Font.PLAIN, fontSize - 2);
         radioButtonLabelColor = Gray._128;
 
         caption = new JLabel();
         caption.setOpaque(false);
-        caption.setFont(new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 2));
+        caption.setFont(new Font(UISettings.getInstance().FONT_FACE, Font.BOLD, fontSize + 1));
 
         description = new MyJTextPane(width);
         description.setOpaque(false);
@@ -122,7 +124,6 @@ public class FeedbackFormPanel extends JPanel {
         description.setAlignmentX(Component.LEFT_ALIGNMENT);
         description.setMargin(new Insets(0, 0, 0, 0));
         description.setBorder(new EmptyBorder(0, 0, 0, 0));
-
 
         customFeedback = new JTextArea();
         customFeedback.setEditable(true);
@@ -182,7 +183,8 @@ public class FeedbackFormPanel extends JPanel {
 
         headerGap = 2;
         afterCaptionGap = 12;
-        moduleGap = 20;
+        rateQuestionGap = 16;
+        groupGap = 24;
 
         StyleConstants.setFontFamily(REGULAR, questionFont.getFamily());
         StyleConstants.setFontSize(REGULAR, questionFont.getSize());
@@ -234,7 +236,7 @@ public class FeedbackFormPanel extends JPanel {
         mainPanel.add(caption);
         mainPanel.add(Box.createVerticalStrut(afterCaptionGap));
         mainPanel.add(description);
-        mainPanel.add(Box.createVerticalStrut(moduleGap));
+        mainPanel.add(Box.createVerticalStrut(groupGap));
 
         try {
             initRateQuestionsPanel();
@@ -259,7 +261,7 @@ public class FeedbackFormPanel extends JPanel {
 
         caption.setText(LearnBundle.message("learn.feedback.caption"));
         try {
-            description.getDocument().insertString(0, FeedbackManager.getInstance().getDescription(), REGULAR_GRAY);
+            description.getDocument().insertString(0, FeedbackManager.getInstance().getDescription(), REGULAR);
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
@@ -276,22 +278,13 @@ public class FeedbackFormPanel extends JPanel {
             JPanel questionBox = new JPanel();
             questionBox.setFocusable(false);
             questionBox.setAlignmentX(LEFT_ALIGNMENT);
-            questionBox.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
+            questionBox.setBorder(new EmptyBorder(0, left_indent, 0, 0));
             questionBox.setOpaque(false);
             questionBox.setLayout(new BoxLayout(questionBox, BoxLayout.X_AXIS));
 
-//            JLabel questionRateName = new JLabel(question);
-//            questionRateName.setFont(questionRateLabelFont);
-//            questionRateName.setAlignmentY(BOTTOM_ALIGNMENT);
-//            questionRateName.setAlignmentX(LEFT_ALIGNMENT);
-//
-//            questionBox.add(questionRateName);
-
             //rate bar
             MyJTextPane ratePane = new MyJTextPane(width);
-
-            Position endPosition = ratePane.getDocument().getEndPosition();
-            ratePane.getDocument().insertString(endPosition.getOffset(), rateQuestion.question + "\n", REGULAR);
+            ratePane.getDocument().insertString(0, rateQuestion.question, REGULAR);
             ratePane.setEditable(false);
             ratePane.setOpaque(false);
             ratePane.setParagraphAttributes(PARAGRAPH_STYLE, true);
@@ -305,10 +298,11 @@ public class FeedbackFormPanel extends JPanel {
             ratePane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
             mainPanel.add(ratePane);
-            mainPanel.add(Box.createVerticalStrut(headerGap));
+            mainPanel.add(Box.createVerticalStrut(4 * headerGap));
             mainPanel.add(radioButtonRow);
-            mainPanel.add(Box.createVerticalStrut(moduleGap));
+            mainPanel.add(Box.createVerticalStrut(rateQuestionGap));
         }
+        mainPanel.add(Box.createVerticalStrut(rateQuestionGap));
 
         MyJTextPane customFeedbackQuestion = new MyJTextPane(width);
 
@@ -321,10 +315,10 @@ public class FeedbackFormPanel extends JPanel {
         customFeedbackQuestion.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         mainPanel.add(customFeedbackQuestion);
-        mainPanel.add(Box.createVerticalStrut(4 * headerGap));
+        mainPanel.add(Box.createVerticalStrut(2 * headerGap));
 
         mainPanel.add(customFeedback);
-        mainPanel.add(Box.createVerticalStrut(moduleGap));
+        mainPanel.add(Box.createVerticalStrut(rateQuestionGap));
 
         mainPanel.add(submitFeedbackButtonPanel);
         mainPanel.add(Box.createVerticalGlue());
@@ -375,22 +369,43 @@ public class FeedbackFormPanel extends JPanel {
         String myLowRate;
         String myMaxRate;
 
-        RadioButtonRow(String questionRate, int count, @Nullable String lowRate, @Nullable String maxRate) {
+        JLabel myLowRateLabel;
+        JLabel myHighRateLabel;
+
+        RadioButtonRow(String questionRate, int count, @Nullable String lowRate, @Nullable String highRate) {
             super();
             myCount = count;
             myQuestion = questionRate;
             myRadioButtons = new ArrayList<>(myCount);
 
             myLowRate = lowRate;
-            myMaxRate = maxRate;
+            myMaxRate = highRate;
+
+            //add low rate label
+            if (lowRate != null) {
+                myLowRateLabel = new JLabel(lowRate);
+                myLowRateLabel.setForeground(descriptionColor);
+                myLowRateLabel.setOpaque(false);
+                add(myLowRateLabel);
+                add(Box.createHorizontalStrut(label_line_gap));
+            }
 
             setFocusable(false);
             setAlignmentX(LEFT_ALIGNMENT);
-            setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
+            setBorder(new EmptyBorder(0, left_indent, label_vertical_gap + UISettings.getInstance().FONT_SIZE, 0));
             setOpaque(false);
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
             addRadioButtonRow(count);
+
+            //add high rate label
+            if (highRate != null) {
+                add(Box.createHorizontalStrut(label_line_gap));
+                myHighRateLabel = new JLabel(highRate);
+                myHighRateLabel.setForeground(descriptionColor);
+                myHighRateLabel.setOpaque(false);
+                add(myHighRateLabel);
+            }
             revalidate();
             repaint();
         }
@@ -406,12 +421,10 @@ public class FeedbackFormPanel extends JPanel {
                 } else {
                     jrb = new JRadioButton();
                 }
-                jrb.setText(Integer.toString(i));
-                jrb.setVerticalAlignment(JRadioButton.BOTTOM);
-                jrb.setHorizontalAlignment(JRadioButton.CENTER);
+                jrb.setName(Integer.toString(i));
                 jrb.setOpaque(false);
-                jrb.updateUI();
-                jrb.setAlignmentY(TOP_ALIGNMENT);
+                //eliminate insets, borders...
+                jrb.setBorder(null);
                 btngrp.add(jrb);
                 add(jrb);
                 myRadioButtons.add(jrb);
@@ -421,7 +434,7 @@ public class FeedbackFormPanel extends JPanel {
         @NotNull
         public String getRate() {
             for (JRadioButton myRadioButton : myRadioButtons) {
-                if (myRadioButton.isSelected()) return myRadioButton.getText();
+                if (myRadioButton.isSelected()) return myRadioButton.getName();
             }
             return "missed";
         }
@@ -430,8 +443,9 @@ public class FeedbackFormPanel extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             if (myRadioButtons != null) {
-                paintLabel(g, myLowRate, myRadioButtons.get(0));
-                paintLabel(g, myMaxRate, myRadioButtons.get(myRadioButtons.size() - 1));
+                for (int i = 0; i < myRadioButtons.size(); i++) {
+                    paintLabel(g, Integer.toString(i + 1), myRadioButtons.get(i));
+                }
             }
         }
 
@@ -439,16 +453,22 @@ public class FeedbackFormPanel extends JPanel {
             FontMetrics fontMetrics = g.getFontMetrics();
             g.setFont(radioButtonLabelFont);
             g.setColor(radioButtonLabelColor);
+            int height = g.getFontMetrics().getHeight();
             int width = g.getFontMetrics().stringWidth(label);
             Point location = jrb.getLocation();
-            g.drawString(label, jrb.getInsets().left + location.x + (int) jrb.getBounds().getHeight() / 2 - width / 2, (int) jrb.getBounds().getHeight() + 12);
-            g.setFont(fontMetrics.getFont());
+            g.drawString(label, location.x + jrb.getBounds().height / 2 - width / 2, location.y + jrb.getBounds().height + label_vertical_gap + height / 2);
         }
 
-        @Override
-        public Dimension getPreferredSize() {
-            Dimension preferredSize = super.getPreferredSize();
-            return new Dimension((int) preferredSize.getWidth(), (int) preferredSize.getHeight() + 18);
-        }
+//        @Override
+//        public Dimension getPreferredSize() {
+//            Dimension preferredSize = super.getPreferredSize();
+//            Graphics g = getGraphics();
+//            FontMetrics fontMetrics = g.getFontMetrics();
+//            g.setFont(radioButtonLabelFont);
+//            g.setColor(radioButtonLabelColor);
+//            int height = g.getFontMetrics().getHeight();
+//
+//            return new Dimension(preferredSize.width, preferredSize.height + label_vertical_gap + 2 * height);
+//        }
     }
 }

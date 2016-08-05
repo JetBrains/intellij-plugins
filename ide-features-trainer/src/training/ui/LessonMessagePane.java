@@ -37,26 +37,29 @@ class LessonMessagePane extends JTextPane {
     private JBColor bckShortcutColor;
     private Icon passedIcon;
     private int fontSize;
+    private String fontFamily;
 
-    LessonMessagePane(int fontSize, int leftIndent) {
+    LessonMessagePane(int fontSize, String fontFace, int leftIndent) {
         super();
         this.fontSize = fontSize;
+        fontFamily = new Font(fontFace, Font.PLAIN, fontSize).getFamily();
         initStyleConstants(leftIndent);
         setEditable(false);
         this.setParagraphAttributes(PARAGRAPH_STYLE, true);
+        setFont(new Font(fontFace, Font.PLAIN, fontSize));
     }
 
     private void initStyleConstants(int leftIndent) {
-        StyleConstants.setFontFamily(REGULAR, UIUtil.getLabelFont().getFamily());
+        StyleConstants.setFontFamily(REGULAR, fontFamily);
         StyleConstants.setFontSize(REGULAR, fontSize);
         StyleConstants.setForeground(REGULAR, JBColor.BLACK);
 
-        StyleConstants.setFontFamily(BOLD, UIUtil.getLabelFont().getFamily());
+        StyleConstants.setFontFamily(BOLD, fontFamily);
         StyleConstants.setFontSize(BOLD, fontSize);
         StyleConstants.setBold(BOLD, true);
         StyleConstants.setForeground(BOLD, JBColor.BLACK);
 
-        StyleConstants.setFontFamily(SHORTCUT, UIUtil.getLabelFont().getFamily());
+        StyleConstants.setFontFamily(SHORTCUT, fontFamily);
         StyleConstants.setFontSize(SHORTCUT, fontSize);
         StyleConstants.setBold(SHORTCUT, true);
         StyleConstants.setForeground(SHORTCUT, JBColor.BLACK);
@@ -66,7 +69,7 @@ class LessonMessagePane extends JTextPane {
         StyleConstants.setFontSize(CODE, fontSize);
 
         StyleConstants.setForeground(LINK, JBColor.BLUE);
-        StyleConstants.setFontFamily(LINK, UIUtil.getLabelFont().getFamily());
+        StyleConstants.setFontFamily(LINK, fontFamily);
         StyleConstants.setUnderline(LINK, true);
         StyleConstants.setFontSize(LINK, fontSize);
 
