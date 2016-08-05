@@ -2,6 +2,7 @@ package training.ui;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.LearnBundle;
@@ -60,9 +61,9 @@ public class FeedbackManager {
     public void submitFeedback(final FeedbackEvent feedbackEvent, final Runnable doWhenSuccess, final Runnable doWhenNotSuccess) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             if (ServiceManager.getService(FeedbackSender.class).sendStatsData(feedbackEvent.toString())) {
-                doWhenSuccess.run();
+                UIUtil.invokeLaterIfNeeded(doWhenSuccess);
             } else {
-                doWhenNotSuccess.run();
+                UIUtil.invokeLaterIfNeeded(doWhenNotSuccess);
             }
         });
     }

@@ -143,6 +143,10 @@ public class LearnProjectComponent implements ProjectComponent {
     }
 
     public void pluginFirstStart() {
+
+        //do not show popups in test mode
+        if (ApplicationManager.getApplication().isUnitTestMode()) return;
+
         final String key = "learn.toolwindow.button.info.shown";
         if (UISettings.getInstance().HIDE_TOOL_STRIPES) {
             UISettings.getInstance().HIDE_TOOL_STRIPES = false;
