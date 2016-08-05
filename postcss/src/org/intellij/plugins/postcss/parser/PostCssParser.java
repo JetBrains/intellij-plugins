@@ -6,6 +6,7 @@ import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import com.intellij.psi.tree.IElementType;
+import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -51,9 +52,9 @@ public class PostCssParser extends CssParser2 {
       // to parse @page with error elements
       return super.parseSingleDeclarationInBlock(true, inlineCss, requirePropertyValue, elementType);
     }
-    if (elementType == CssElementTypes.CSS_MEDIA_FEATURE && !parseMediaFeatureRange()) {
-      // parse plain media feature
-      return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+    if (elementType == CssElementTypes.CSS_MEDIA_FEATURE) {
+      return parseMediaFeatureRange() ||
+             super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
     }
     myRulesetSeen = false;
     // Nesting
@@ -79,39 +80,53 @@ public class PostCssParser extends CssParser2 {
   }
 
   private boolean parseMediaFeatureRange() {
+    boolean startsWithValue = isNumberTermStart();
+    if (!startsWithValue && !(isIdent() && PostCssTokenTypes.OPERATORS.contains(lookAhead(1)))) return false;
     PsiBuilder.Marker mediaFeature = createCompositeElement();
-    if (!parseMediaFeatureRangeInner()) {
-      mediaFeature.rollbackTo();
-      return false;
+    if (startsWithValue) {
+      parseNumberTerm();
+      parseOperatorSign();
+      addIdentOrError();
+      if (getTokenType() == CssElementTypes.CSS_RPAREN) {
+        mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
+        return true;
+      }
+      parseOperatorSign();
+      parseNumberTerm();
+    }
+    else {
+      addIdentOrError();
+      parseOperatorSign();
+      parseNumberTerm();
     }
     mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
     return true;
   }
 
-  private boolean parseMediaFeatureRangeInner() {
-    boolean startsWithValue = parseNumberTerm();
-    if (!startsWithValue && !addIdentOrError()) return false;
-    if (!parseOperatorSign()) return false;
-    if (!startsWithValue && parseNumberTerm()) return true;
-    if (!addIdentOrError()) return false;
-    if (getTokenType() == CssElementTypes.CSS_RPAREN) return true;
-    return parseOperatorSign() && parseNumberTerm();
+  private void parseOperatorSign() {
+    if (PostCssTokenTypes.OPERATORS.contains(getTokenType())) {
+      addSingleToken();
+    }
+    else {
+      createErrorElement(CssBundle.message("expected", PostCssBundle.message("postcss.operator.sign")));
+    }
   }
 
-  private boolean parseOperatorSign() {
-    if (!PostCssTokenTypes.OPERATORS.contains(getTokenType())) return false;
-    addSingleToken();
-    return true;
+  private boolean isNumberTermStart() {
+    return getTokenType() == CssElementTypes.CSS_NUMBER ||
+           getTokenType() == CssElementTypes.CSS_MINUS && lookAhead(1) == CssElementTypes.CSS_NUMBER;
   }
 
-  private boolean parseNumberTerm() {
-    if (getTokenType() == CssElementTypes.CSS_MINUS) addSingleToken();
-    if (getTokenType() != CssElementTypes.CSS_NUMBER) return false;
+  private void parseNumberTerm() {
+    if (!isNumberTermStart()) {
+      createErrorElement(CssBundle.message("a.term.expected"));
+      return;
+    }
     PsiBuilder.Marker numberTerm = createCompositeElement();
+    if (getTokenType() == CssElementTypes.CSS_MINUS) addSingleToken();
     addSingleToken();
-    addIdentOrError();
+    if (isIdent()) addSingleToken();
     numberTerm.done(CssElementTypes.CSS_NUMBER_TERM);
-    return true;
   }
 
   @Override

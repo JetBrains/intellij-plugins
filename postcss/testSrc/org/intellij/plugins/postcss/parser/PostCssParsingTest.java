@@ -165,6 +165,21 @@ public class PostCssParsingTest extends ParsingTestCase {
   public void testMediaRangeWithMinus() {
     doTest();
   }
+  public void testMediaRangeIncomplete() {
+    doTest();
+  }
+  public void testMediaRangeTwoValuesIncomplete() {
+    doTest();
+  }
+  public void testMediaRangeValueIncomplete() {
+    doTest();
+  }
+  public void testMediaRangeOperatorExpected() {
+    doTest();
+  }
+  public void testMediaRangeWithIncorrectRParen() {
+    doTest();
+  }
 
   private void doTest() {
     super.doTest(true);

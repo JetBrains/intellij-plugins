@@ -10,14 +10,12 @@ PostCSS File:MediaRangeWithoutUnit.pcss
               PsiElement(CSS_MEDIA_EXPRESSION)
                 PsiElement(CSS_LPAREN)('(')
                 PsiElement(CSS_MEDIA_FEATURE)
-                  PsiElement(CSS_IDENT)('width')
+                  PsiElement(CSS_IDENT)('color')
                   PsiWhiteSpace(' ')
-                  PsiElement(POST_CSS_LE)('<=')
+                  PsiElement(POST_CSS_GE)('>=')
                   PsiWhiteSpace(' ')
                   PsiElement(CSS_NUMBER_TERM)
-                    PsiElement(CSS_NUMBER)('300')
-                    PsiErrorElement:an identifier expected
-                      <empty list>
+                    PsiElement(CSS_NUMBER)('8')
                 PsiElement(CSS_RPAREN)(')')
         PsiElement(CSS_DECLARATION_BLOCK)
           PsiElement(CSS_LBRACE)('{')

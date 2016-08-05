@@ -1,4 +1,4 @@
-PostCSS File:MediaRangeWithMinus.pcss
+PostCSS File:MediaRangeWithIncorrectRParen.pcss
   PsiElement(POST_CSS_STYLESHEET)
     PsiElement(CSS_RULESET_LIST)
       PsiElement(CSS_MEDIA)
@@ -15,9 +15,17 @@ PostCSS File:MediaRangeWithMinus.pcss
                   PsiElement(POST_CSS_GE)('>=')
                   PsiWhiteSpace(' ')
                   PsiElement(CSS_NUMBER_TERM)
-                    PsiElement(CSS_MINUS)('-')
-                    PsiElement(CSS_NUMBER)('300')
+                    PsiElement(CSS_NUMBER)('100')
                     PsiElement(CSS_IDENT)('px')
+                PsiErrorElement:')' expected
+                  <empty list>
+              PsiWhiteSpace(' ')
+              PsiElement(CSS_IDENT)('abc')
+              PsiElement(CSS_MEDIA_EXPRESSION)
+                PsiErrorElement:'(' expected
+                  <empty list>
+                PsiErrorElement:media feature expected
+                  <empty list>
                 PsiElement(CSS_RPAREN)(')')
         PsiElement(CSS_DECLARATION_BLOCK)
           PsiElement(CSS_LBRACE)('{')
