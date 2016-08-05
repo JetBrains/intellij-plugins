@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 public class PostCssPsiUtil {
   private PostCssPsiUtil() {
@@ -50,7 +51,7 @@ public class PostCssPsiUtil {
   }
 
   @NotNull
-  public static Collection<? extends PsiElement> findAllOperatorSigns(@Nullable final PsiElement element) {
+  public static List<? extends PsiElement> findAllOperatorSigns(@Nullable final PsiElement element) {
     return SyntaxTraverser.psiTraverser(element).filter(PostCssPsiUtil::isOperatorSign).toList();
   }
 

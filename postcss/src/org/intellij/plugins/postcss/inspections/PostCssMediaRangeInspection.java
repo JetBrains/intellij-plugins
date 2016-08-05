@@ -13,7 +13,7 @@ import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
 
 public class PostCssMediaRangeInspection extends PostCssBaseInspection {
   @NotNull
@@ -23,7 +23,7 @@ public class PostCssMediaRangeInspection extends PostCssBaseInspection {
       @Override
       public void visitMediaFeature(@NotNull CssMediaFeature mediaFeature) {
         if (!PostCssPsiUtil.isInsidePostCss(mediaFeature) || PsiTreeUtil.hasErrorElements(mediaFeature)) return;
-        Collection<? extends PsiElement> signs = PostCssPsiUtil.findAllOperatorSigns(mediaFeature);
+        List<? extends PsiElement> signs = PostCssPsiUtil.findAllOperatorSigns(mediaFeature);
         if (signs.size() != 2) return;
         boolean hasEqualSign = false;
         for (PsiElement sign : signs) {
@@ -33,10 +33,8 @@ public class PostCssMediaRangeInspection extends PostCssBaseInspection {
           }
         }
         if (hasEqualSign) return;
-        if (signs.stream().map(PostCssMediaRangeInspection::getSignDirection).mapToInt(i -> i).sum() == 0) {
-          for (PsiElement sign : signs) {
-            holder.registerProblem(sign, PostCssBundle.message("annotator.media.query.range.operators.should.have.equal.direction"));
-          }
+        if (getSignDirection(signs.get(0)) != getSignDirection(signs.get(1))) {
+          holder.registerProblem(signs.get(1), PostCssBundle.message("annotator.media.query.range.operators.should.have.equal.direction"));
         }
       }
     };
