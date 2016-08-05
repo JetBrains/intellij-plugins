@@ -298,7 +298,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   public static void checkActionScriptImplementedMethods(final JSClass jsClass, final ErrorReportingClient reportingClient) {
-    final JSCollectMethodsToImplementProcessor implementedMethodProcessor = new JSImplementedMethodProcessor(jsClass) {
+    final JSCollectMembersToImplementProcessor implementedMethodProcessor = new JSImplementedMethodProcessor(jsClass) {
       ImplementMethodsFix implementMethodsFix = null;
 
       protected void addNonimplementedFunction(final JSFunction function) {
@@ -384,7 +384,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
       }
     };
-    JSResolveUtil.processInterfaceMethods(jsClass, implementedMethodProcessor);
+    JSResolveUtil.processInterfaceMembers(jsClass, implementedMethodProcessor);
   }
 
   @Override
