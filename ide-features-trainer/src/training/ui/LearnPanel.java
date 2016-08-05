@@ -1,5 +1,6 @@
 package training.ui;
 
+import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.SystemInfo;
@@ -56,6 +57,7 @@ public class LearnPanel extends JPanel {
 
     //lessonPanel UI
     private int fontSize;
+    private String fontFace;
     private int lessonNameGap;
     private int beforeButtonGap;
     private int afterButtonGap;
@@ -115,8 +117,8 @@ public class LearnPanel extends JPanel {
 
     private void generalizeUI() {
         //generalize fonts, colors and sizes
-        //TODO: change size to UiUtil size
-        fontSize = 12;
+        fontSize = UISettings.getInstance().FONT_SIZE;
+        fontFace = UISettings.getInstance().FONT_FACE;
         insets = 16;
 
         west_inset = 13;
@@ -139,10 +141,10 @@ public class LearnPanel extends JPanel {
         lessonGap = 12;
 
         //UI colors and fonts
-        moduleNameFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
-        allTopicsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
-        lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 3);
-        messageFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 2);
+        moduleNameFont = new Font(fontFace, Font.PLAIN, fontSize );
+        allTopicsFont = new Font(fontFace, Font.PLAIN, fontSize);
+        lessonNameFont = new Font(fontFace, Font.BOLD, fontSize + 2);
+        messageFont = new Font(fontFace, Font.PLAIN, fontSize + 1);
         defaultTextColor = new JBColor(Gray._30, Gray._208);
         passedColor = new JBColor(Gray._105, Gray._103);
         lessonPassedColor = new JBColor(new Color(49, 140, 64), new Color(7, 140, 45));
@@ -160,8 +162,8 @@ public class LearnPanel extends JPanel {
         lessonActiveColor = new JBColor(new Color(0, 0, 0), Gray._202);
         lessonInactiveColor = lessonLinkColor;
 //        lessonsFont = new Font(UIUtil.getFont(fontSize, ), 0, fontSize);
-        lessonsFont = new Font(JBUI.Fonts.label().getName(), Font.PLAIN, fontSize + 1);
-        allLessonsFont = new Font(JBUI.Fonts.label().getName(), Font.BOLD, fontSize + 1);
+        lessonsFont = new Font(fontFace, Font.PLAIN, fontSize);
+        allLessonsFont = new Font(fontFace, Font.BOLD, fontSize);
 
     }
 
@@ -192,7 +194,7 @@ public class LearnPanel extends JPanel {
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNameLabel.setFocusable(false);
 
-        lessonMessagePane = new LessonMessagePane(fontSize + 1, check_width + check_right_indent);
+        lessonMessagePane = new LessonMessagePane(fontSize, fontFace, check_width + check_right_indent);
         lessonMessagePane.setFocusable(false);
         lessonMessagePane.setOpaque(false);
         lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, lessonLinkColor, passedColor, shortcutBackgroundColor);
