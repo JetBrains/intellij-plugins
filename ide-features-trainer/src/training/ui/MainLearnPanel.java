@@ -1,5 +1,6 @@
 package training.ui;
 
+import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.SystemInfo;
@@ -49,6 +50,7 @@ public class MainLearnPanel extends JPanel {
     private Font progressLabelFont;
     private Color descriptionColor;
     private int fontSize;
+    private String fontFace;
 
     private JPanel lessonPanel;
     private JPanel submitFeedbackPanel;
@@ -94,10 +96,12 @@ public class MainLearnPanel extends JPanel {
         check_right_indent = 5;
 
         //UI colors and fonts
-        fontSize = 12;
-        moduleNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize + 2);
-        progressLabelFont = new Font(UIUtil.getLabelFont().getName(), Font.PLAIN, fontSize + 1);
-        descriptionFont = new Font(UIUtil.getLabelFont().getName(), Font.PLAIN, fontSize + 1);
+        fontSize = UISettings.getInstance().FONT_SIZE;
+        fontFace = UISettings.getInstance().FONT_FACE;
+
+        moduleNameFont = new Font(fontFace, Font.BOLD, fontSize + 1);
+        progressLabelFont = new Font(fontFace, Font.PLAIN, fontSize);
+        descriptionFont = new Font(fontFace, Font.PLAIN, fontSize);
         descriptionColor = Gray._128;
 
         headerGap = 2;
@@ -119,6 +123,7 @@ public class MainLearnPanel extends JPanel {
 
     private void initMainPanel() {
         lessonPanel = new JPanel();
+        lessonPanel.setName("lessonPanel");
         lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.PAGE_AXIS));
         lessonPanel.setOpaque(false);
         lessonPanel.setFocusable(false);
@@ -132,8 +137,8 @@ public class MainLearnPanel extends JPanel {
             //switch to feedback form view
             CourseManager.getInstance().setFeedbackView();
         }, null);
-        submitFeedbackPanel.add(Box.createHorizontalGlue());
         submitFeedbackPanel.add(submitFeedback);
+        submitFeedbackPanel.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
     }
 
     private void initLessonPanel() {
@@ -298,7 +303,7 @@ public class MainLearnPanel extends JPanel {
     }
 
     @Override
-    public Color getBackground(){
+    public Color getBackground() {
         if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
         else return UIUtil.getPanelBackground();
     }
