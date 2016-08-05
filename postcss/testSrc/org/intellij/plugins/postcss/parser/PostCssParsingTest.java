@@ -126,6 +126,9 @@ public class PostCssParsingTest extends ParsingTestCase {
   public void testAmpersandInPropertyValue() {
     doTest();
   }
+  public void testAmpersandBetweenTwoHashes () {
+    doTest();
+  }
   public void testDeclarationBlockInMedia() {
     doTest();
   }

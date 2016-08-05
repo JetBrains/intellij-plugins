@@ -5,9 +5,7 @@ PostCSS File:AmpersandInSimpleSelector.pcss
         PsiElement(CSS_SELECTOR_LIST)
           PsiElement(CSS_SELECTOR)
             PsiElement(CSS_SIMPLE_SELECTOR)
-              PsiElement(CSS_IDENT)('h')
-              PsiElement(POST_CSS_AMPERSAND)('&')
-              PsiElement(CSS_NUMBER)('1')
+              PsiElement(CSS_IDENT)('h&1')
               PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                 <empty list>
         PsiElement(CSS_DECLARATION_BLOCK)
@@ -18,8 +16,7 @@ PostCSS File:AmpersandInSimpleSelector.pcss
         PsiElement(CSS_SELECTOR_LIST)
           PsiElement(CSS_SELECTOR)
             PsiElement(CSS_SIMPLE_SELECTOR)
-              PsiElement(POST_CSS_AMPERSAND)('&')
-              PsiElement(CSS_NUMBER)('1')
+              PsiElement(CSS_IDENT)('&1')
               PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                 <empty list>
         PsiElement(CSS_DECLARATION_BLOCK)
@@ -30,8 +27,7 @@ PostCSS File:AmpersandInSimpleSelector.pcss
         PsiElement(CSS_SELECTOR_LIST)
           PsiElement(CSS_SELECTOR)
             PsiElement(CSS_SIMPLE_SELECTOR)
-              PsiElement(CSS_IDENT)('h')
-              PsiElement(POST_CSS_AMPERSAND)('&')
+              PsiElement(CSS_IDENT)('h&')
               PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                 <empty list>
         PsiElement(CSS_DECLARATION_BLOCK)
@@ -51,8 +47,7 @@ PostCSS File:AmpersandInSimpleSelector.pcss
             PsiElement(CSS_SELECTOR_LIST)
               PsiElement(CSS_SELECTOR)
                 PsiElement(CSS_SIMPLE_SELECTOR)
-                  PsiElement(POST_CSS_AMPERSAND)('&')
-                  PsiElement(CSS_NUMBER)('1')
+                  PsiElement(CSS_IDENT)('&1')
                   PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                     <empty list>
             PsiElement(CSS_DECLARATION_BLOCK)

@@ -6,10 +6,12 @@ import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PostCssParser extends CssParser2 {
   private boolean myRulesetSeen;
@@ -302,25 +304,28 @@ public class PostCssParser extends CssParser2 {
   }
 
   private boolean addIdentOrAmpersandOrError() {
-    if (!isIdentOrAmpersand()) return super.addIdentOrError();
-    addSingleToken();
-    addIdentOrAmpersandSuffix();
-    return true;
+    return addIdentOrAmpersandOrError(null);
   }
 
-  private void addIdentOrAmpersandSuffix() {
+  private boolean addIdentOrAmpersandOrError(@Nullable final IElementType toCollapse, final IElementType... validTypes) {
+    if (!isIdentOrAmpersand() && !ArrayUtil.contains(getTokenType(), validTypes)) return super.addIdentOrError();
+    PsiBuilder.Marker ident = createCompositeElement();
+    addSingleToken();
+    boolean lastIsAdditionalType = false;
     while (!hasWhitespaceBefore() && !isDone()) {
       IElementType type = getTokenType();
-      boolean isAdditionalType = type == myAdditionalIdent;
-      if (type == PostCssTokenTypes.AMPERSAND || type == CssElementTypes.CSS_NUMBER ||
-          type == CssElementTypes.CSS_IDENT || isAdditionalType) {
-        if (isAdditionalType) myAdditionalIdent = null;
+      if (isIdentOrAmpersand(type) || type == CssElementTypes.CSS_NUMBER || toCollapse == null && type == myAdditionalIdent) {
         addSingleToken();
+        lastIsAdditionalType = type == myAdditionalIdent;
       }
       else {
-        return;
+        break;
       }
     }
+    ident.collapse(toCollapse != null ? toCollapse :
+                   (myAdditionalIdent != null && lastIsAdditionalType)? myAdditionalIdent : CssElementTypes.CSS_IDENT);
+    myAdditionalIdent = null;
+    return true;
   }
 
   private boolean isIdentOrAmpersand() {
@@ -338,8 +343,7 @@ public class PostCssParser extends CssParser2 {
       return false;
     }
     PsiBuilder.Marker idSelector = createCompositeElement();
-    addSingleToken();
-    addIdentOrAmpersandSuffix();
+    addIdentOrAmpersandOrError(CssElementTypes.CSS_HASH, CssElementTypes.CSS_HASH, PostCssTokenTypes.HASH_SIGN);
     idSelector.done(CssElementTypes.CSS_ID_SELECTOR);
     return true;
   }
@@ -379,8 +383,7 @@ public class PostCssParser extends CssParser2 {
         addToken();
       }
       else if (tokenType == CssElementTypes.CSS_HASH || tokenType == PostCssTokenTypes.HASH_SIGN) {
-        addSingleToken();
-        addIdentOrAmpersandSuffix();
+        addIdentOrAmpersandOrError(CssElementTypes.CSS_HASH, CssElementTypes.CSS_HASH, PostCssTokenTypes.HASH_SIGN);
         parseAttribute();
       }
       else if (tokenType == CssElementTypes.CSS_STRING_TOKEN) {

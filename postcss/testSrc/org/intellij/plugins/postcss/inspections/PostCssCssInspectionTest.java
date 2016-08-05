@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.inspections;
 
 import com.intellij.psi.css.inspections.invalid.CssInvalidImportInspection;
+import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 
@@ -10,10 +11,14 @@ public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(CssInvalidImportInspection.class);
+    myFixture.enableInspections(CssInvalidImportInspection.class, CssInvalidPseudoSelectorInspection.class);
   }
 
   public void testImportEverywhere() {
+    doTest();
+  }
+
+  public void testInvalidPseudoClass() {
     doTest();
   }
 

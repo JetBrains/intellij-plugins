@@ -1,7 +1,9 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.CssSelector;
 import com.intellij.psi.css.CssSelectorList;
@@ -31,9 +33,6 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
         if (PostCssPsiUtil.isInsideNestedRuleset(selector)) {
           annotateNestedSelectorsWithoutAmpersand(selector, holder);
         }
-        else {
-          annotateTopLevelSelectorsWithNestingSigns(selector, holder);
-        }
       }
 
       @Override
@@ -44,6 +43,9 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
         }
         if (PostCssPsiUtil.isInsideNestedRuleset(selectorList)) {
           annotateNestedSelectorsWithoutNest(selectorList, holder);
+        }
+        else {
+          annotateTopLevelSelectorsWithNestingSigns(selectorList, holder);
         }
       }
 
@@ -79,10 +81,12 @@ public class PostCssNestingInspection extends PostCssBaseInspection {
     }
   }
 
-  private static void annotateTopLevelSelectorsWithNestingSigns(CssSelector selector, ProblemsHolder holder) {
-    for (PsiElement ampersand : PostCssPsiUtil.findAllAmpersands(selector)) {
-      holder.registerProblem(ampersand, PostCssBundle
-        .message("annotator.normal.selector.contains.direct.nesting.selector"), new PostCssDeleteAmpersandQuickFix());
+  private static void annotateTopLevelSelectorsWithNestingSigns(CssSelectorList selectorList, ProblemsHolder holder) {
+    for (TextRange range : PostCssPsiUtil.findAllAmpersands(selectorList)) {
+      ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(
+        selectorList, range, PostCssBundle.message("annotator.normal.selector.contains.direct.nesting.selector"),
+        ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, new PostCssDeleteAmpersandQuickFix());
+      holder.registerProblem(problemDescriptor);
     }
   }
 

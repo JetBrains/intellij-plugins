@@ -113,6 +113,10 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
+  public void testAmpersandInSelectorListMulti() {
+    doTest();
+  }
+
   public void testPseudoClassStartsWithAmpersand() {
     doTest();
   }
