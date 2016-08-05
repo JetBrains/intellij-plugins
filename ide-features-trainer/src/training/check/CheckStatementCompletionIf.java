@@ -4,6 +4,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.java.PsiForStatementImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 
 import java.util.Collection;
@@ -35,12 +36,10 @@ public class CheckStatementCompletionIf implements Check{
         if (psiForStatements.length < 2) return false;
 
         final PsiForStatement psiForStatement = (PsiForStatement) psiForStatements[1];
-        final PsiElement[] children = psiForStatement.getBody().getChildren()[0].getChildren();
-        for (PsiElement child : children) {
-            if (child instanceof PsiIfStatement) return true;
-        }
 
-        return false;
+        String text = psiForStatement.getBody().getText();
+        String trimmedText = text.replaceAll("\\s+", "");
+        return trimmedText.equals("{if(){}}");
     }
 
     @Override
