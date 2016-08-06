@@ -70,6 +70,10 @@ public class PostCssHighlightingLexerTest extends LexerTestCase {
     doTest();
   }
 
+  public void testMediaRangeInverted() {
+    doTest();
+  }
+
   public void testCustomMedia() {
     doTest();
   }

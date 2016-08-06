@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.intellij.plugins.postcss.completion.PostCssCustomSelectorCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssNestCompletionTest;
+import org.intellij.plugins.postcss.editor.PostCssEditorHighlightingTest;
 import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
 import org.intellij.plugins.postcss.inspections.*;
 import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
@@ -91,6 +92,7 @@ public class PostCssTestSuite extends TestCase {
   public static class Other extends TestCase {
     public static Test suite() {
       TestSuite suite = new TestSuite("Other PostCSS");
+      suite.addTestSuite(PostCssEditorHighlightingTest.class);
       suite.addTestSuite(PostCssFileStructureTest.class);
       suite.addTestSuite(PostCssSmartEnterTest.class);
       return suite;
