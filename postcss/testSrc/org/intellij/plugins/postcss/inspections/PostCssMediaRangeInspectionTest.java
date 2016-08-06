@@ -1,5 +1,6 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.psi.css.inspections.invalid.CssInvalidMediaFeatureInspection;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ public class PostCssMediaRangeInspectionTest extends PostCssFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(PostCssMediaRangeInspection.class);
+    myFixture.enableInspections(PostCssMediaRangeInspection.class, CssInvalidMediaFeatureInspection.class);
   }
 
   public void testIncorrectMediaRange() {
@@ -38,6 +39,18 @@ public class PostCssMediaRangeInspectionTest extends PostCssFixtureTestCase {
   }
 
   public void testOneSign() {
+    doTest();
+  }
+
+  public void testMediaFeatureInvalid() {
+    doTest();
+  }
+
+  public void testMediaFeatureCustom() {
+    doTest();
+  }
+
+  public void testMediaFeatureCustomIncorrect() {
     doTest();
   }
 

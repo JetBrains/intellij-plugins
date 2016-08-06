@@ -4,6 +4,7 @@ import com.intellij.css.util.CssPsiUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssElementDescriptorProvider;
+import com.intellij.psi.css.CssMediaFeatureDescriptor;
 import com.intellij.psi.css.CssRuleset;
 import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
@@ -39,5 +40,15 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
     CssRuleset ruleset = PsiTreeUtil.getParentOfType(context, CssRuleset.class);
     return ruleset != null && PsiTreeUtil.findChildOfAnyType(ruleset.getBlock(), false, CssRuleset.class) != null;
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends CssMediaFeatureDescriptor> findMediaFeatureDescriptors(@NotNull String mediaFeatureName,
+                                                                                     @Nullable PsiElement context) {
+    if (context == null) return Collections.emptyList();
+    PsiElement child = context.getFirstChild();
+    if (child == null || child.getNextSibling() != null || !StringUtil.startsWith(mediaFeatureName, "--")) return Collections.emptyList();
+    return Collections.singletonList(new CssMediaFeatureDescriptorStub(mediaFeatureName));
   }
 }
