@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.util.JdkBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.learn.*;
@@ -30,11 +31,14 @@ import training.learn.dialogs.SdkModuleProblemDialog;
 import training.learn.dialogs.SdkProjectProblemDialog;
 import training.learn.exceptons.*;
 import training.ui.LearnToolWindowFactory;
+import training.util.JdkSetupUtil;
 import training.util.MyClassLoader;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -378,11 +382,13 @@ public class OpenLessonAction extends AnAction implements DumbAware {
     @NotNull
     private Sdk getJavaSdk() {
         JavaSdk javaSdk = JavaSdk.getInstance();
-        final String suggestedHomePath = javaSdk.suggestHomePath();
-        String versionString = javaSdk.getVersionString(suggestedHomePath);
-        if (versionString == null) versionString = "java-deafult";
-        assert suggestedHomePath != null;
-        final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath, false);
+
+        ArrayList<JdkBundle> bundleList = JdkSetupUtil.findJdkPaths().toArrayList();
+        //we believe that Idea has at least one bundled jdk
+        JdkBundle jdkBundle = bundleList.get(0);
+        String jdkBundleLocation = JdkSetupUtil.getJavaHomePath(jdkBundle);
+        String jdk_name = "JDK_" + jdkBundle.getVersion().toString();
+        final Sdk newJdk = javaSdk.createJdk(jdk_name, jdkBundleLocation, false);
 
         final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
         if (foundJdk == null) {
@@ -397,5 +403,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
         });
         return newJdk;
     }
+
+
 
 }
