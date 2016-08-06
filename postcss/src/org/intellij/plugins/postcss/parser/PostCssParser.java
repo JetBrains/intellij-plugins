@@ -44,7 +44,7 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected boolean parseStylesheetItem() {
-    return parseCustomSelectorAtRule() || parseAtRuleNesting() || super.parseStylesheetItem();
+    return parseCustomSelectorAtRule() || parseCustomMediaAtRule() || parseAtRuleNesting() || super.parseStylesheetItem();
   }
 
   @Override
@@ -72,6 +72,7 @@ public class PostCssParser extends CssParser2 {
         parseCounterStyle() ||
         parseKeyframesRuleset() ||
         parseCustomSelectorAtRule() ||
+        parseCustomMediaAtRule() ||
         parseAtRuleNesting() ||
         parseBadAtRule(false) ||
         tryToParseRuleset()) {
@@ -79,6 +80,19 @@ public class PostCssParser extends CssParser2 {
       return true;
     }
     return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+  }
+
+  private boolean parseCustomMediaAtRule() {
+    if (getTokenType() != PostCssTokenTypes.POST_CSS_CUSTOM_MEDIA_SYM) {
+      return false;
+    }
+    PsiBuilder.Marker customMediaAtRule = createCompositeElement();
+    addSingleToken();
+    addIdentOrError();
+    parseMediumList();
+    addSemicolonOrError();
+    customMediaAtRule.done(PostCssElementTypes.POST_CSS_CUSTOM_MEDIA_RULE);
+    return true;
   }
 
   private boolean parseMediaFeatureRange() {

@@ -27,6 +27,14 @@ public class PostCssFileStructureTest extends FileStructureTestBase {
     checkTree();
   }
 
+  public void testCustomMedia() {
+    checkTree();
+  }
+
+  public void testCustomMediaWithNesting() {
+    checkTree();
+  }
+
   @Override
   protected String getFileExtension() {
     return "pcss";

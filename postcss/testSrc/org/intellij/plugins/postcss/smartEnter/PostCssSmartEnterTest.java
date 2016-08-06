@@ -10,6 +10,10 @@ public class PostCssSmartEnterTest extends PostCssFixtureTestCase {
     doTest();
   }
 
+  public void testCompleteCustomMediaWithSemicolon() {
+    doTest();
+  }
+
   private void doTest() throws IncorrectOperationException {
     myFixture.configureByFile(getTestName(true) + "_before.pcss");
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COMPLETE_STATEMENT);

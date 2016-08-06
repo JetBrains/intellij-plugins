@@ -1,0 +1,9 @@
+PostCSS File:CustomMediaEmptyWithSemicolon.pcss
+  PsiElement(POST_CSS_STYLESHEET)
+    PsiElement(CSS_RULESET_LIST)
+      PsiElement(POST_CSS_CUSTOM_MEDIA_RULE)
+        PsiElement(POST_CSS_CUSTOM_MEDIA_SYM)('@custom-media')
+        PsiErrorElement:an identifier expected
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(CSS_SEMICOLON)(';')

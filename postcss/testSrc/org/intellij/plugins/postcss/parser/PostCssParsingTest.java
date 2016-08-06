@@ -183,6 +183,36 @@ public class PostCssParsingTest extends ParsingTestCase {
   public void testMediaRangeWithIncorrectRParen() {
     doTest();
   }
+  public void testCustomMediaEmpty() {
+    doTest();
+  }
+  public void testCustomMediaEmptyWithoutSemicolon() {
+    doTest();
+  }
+  public void testCustomMediaEmptyWithSemicolon() {
+    doTest();
+  }
+  public void testCustomMediaNested() {
+    doTest();
+  }
+  public void testCustomMediaSimple() {
+    doTest();
+  }
+  public void testCustomMediaWithAnd() {
+    doTest();
+  }
+  public void testCustomMediaWithComma() {
+    doTest();
+  }
+  public void testCustomMediaWithFeature() {
+    doTest();
+  }
+  public void testCustomMediaWithFeatureRange() {
+    doTest();
+  }
+  public void testCustomMediaWithoutSemicolon() {
+    doTest();
+  }
 
   private void doTest() {
     super.doTest(true);

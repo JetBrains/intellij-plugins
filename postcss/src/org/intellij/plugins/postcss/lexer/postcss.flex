@@ -150,6 +150,7 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 // PostCSS specific
 <YYINITIAL> @{N}{E}{S}{T} { return PostCssTokenTypes.POST_CSS_NEST_SYM; }
 <YYINITIAL> @{C}{U}{S}{T}{O}{M}-{S}{E}{L}{E}{C}{T}{O}{R} { return PostCssTokenTypes.POST_CSS_CUSTOM_SELECTOR_SYM; }
+<YYINITIAL> @{C}{U}{S}{T}{O}{M}-{M}{E}{D}{I}{A} { return PostCssTokenTypes.POST_CSS_CUSTOM_MEDIA_SYM; }
 
 <YYINITIAL> "~=" { return CssElementTypes.CSS_INCLUDES; }
 <YYINITIAL> "|=" { return CssElementTypes.CSS_DASHMATCH; }
