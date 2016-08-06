@@ -3,7 +3,6 @@ package org.intellij.plugins.postcss.actions;
 import com.intellij.codeInspection.LocalQuickFixBase;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssElementFactory;
 import org.intellij.plugins.postcss.PostCssBundle;

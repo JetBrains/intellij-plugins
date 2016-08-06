@@ -45,7 +45,7 @@ public class PostCssPsiUtil {
 
   @Contract("null -> false")
   public static boolean containsAmpersand(@Nullable PsiElement element) {
-    return element != null && StringUtil.containsChar(element.getText(), '&');
+    return element != null && element.textContains('&');
   }
 
   @NotNull
