@@ -12,6 +12,14 @@ public class PostCssRenameTest extends PostCssFixtureTestCase {
     doTest("--new-name");
   }
 
+  public void testCustomMedia() {
+    doTest("new-name");
+  }
+
+  public void testCustomMediaWithTwoDashes() {
+    doTest("--new-name");
+  }
+
   private void doTest(String newName) {
     myFixture.testRename(getTestName(true) + "-before.pcss", getTestName(true) + "-after.pcss", newName);
   }

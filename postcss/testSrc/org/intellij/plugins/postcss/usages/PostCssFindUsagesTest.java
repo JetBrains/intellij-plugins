@@ -5,10 +5,22 @@ import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 public class PostCssFindUsagesTest extends PostCssFixtureTestCase {
 
   public void testCustomSelectors() {
-    assertEquals(2, myFixture.testFindUsages("customSelectors.pcss").size());
+    doTest(2);
   }
 
   public void testCustomSelectorsDifferentCases() {
-    assertEquals(1, myFixture.testFindUsages("customSelectorsDifferentCases.pcss").size());
+    doTest(1);
+  }
+
+  public void testCustomMedia() {
+    doTest(2);
+  }
+
+  public void testCustomMediaDifferentCases() {
+    doTest(1);
+  }
+
+  private void doTest(int count) {
+    assertEquals(count, myFixture.testFindUsages(getTestName(true) + ".pcss").size());
   }
 }

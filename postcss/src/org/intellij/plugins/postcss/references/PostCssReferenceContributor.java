@@ -3,10 +3,14 @@ package org.intellij.plugins.postcss.references;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.psi.*;
+import com.intellij.psi.css.CssMediaFeature;
 import com.intellij.psi.css.CssPseudoClass;
 import com.intellij.psi.css.impl.CssElementTypes;
+import com.intellij.psi.css.impl.CssTokenImpl;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +36,11 @@ public class PostCssReferenceContributor extends PsiReferenceContributor {
         PsiElement parent = element.getParent();
         if (parent instanceof CssPseudoClass && StringUtil.startsWith(parent.getText(), ":--")) {
           return new PsiReference[]{new PostCssCustomSelectorReference(element)};
+        }
+        if (parent instanceof CssMediaFeature &&
+            ObjectUtils.notNull(PsiTreeUtil.getChildrenOfType(parent, CssTokenImpl.class)).length == 1 &&
+            StringUtil.startsWith(element.getText(), "--")) {
+          return new PsiReference[]{new PostCssCustomMediaReference(element)};
         }
       }
       return PsiReference.EMPTY_ARRAY;

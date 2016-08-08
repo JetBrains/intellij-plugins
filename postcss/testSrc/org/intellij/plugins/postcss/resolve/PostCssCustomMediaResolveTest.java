@@ -3,14 +3,14 @@ package org.intellij.plugins.postcss.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.annotations.NotNull;
 
-@TestDataPath("$CONTENT_ROOT/testData/resolve/customSelectors")
-public class PostCssCustomSelectorResolveTest extends PostCssResolveTest {
+@TestDataPath("$CONTENT_ROOT/testData/resolve/customMedia")
+public class PostCssCustomMediaResolveTest extends PostCssResolveTest {
 
   public void testResolve() throws Throwable {
     doTest();
   }
 
-  public void testResolveInCustomSelectorAtRule() throws Throwable {
+  public void testResolveInCustomMediaAtRule() throws Throwable {
     doTest();
   }
 
@@ -40,6 +40,6 @@ public class PostCssCustomSelectorResolveTest extends PostCssResolveTest {
   @Override
   @NotNull
   protected String getTestDataSubdir() {
-    return "customSelectors";
+    return "customMedia";
   }
 }
