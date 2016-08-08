@@ -37,19 +37,19 @@ public class TapestryProjectTest {
         expect(_web3ResourceFinder.findContextResource(isA(String.class))).andReturn(new TestableResource("web.xml", "web3.xml")).anyTimes();
 
         _meta1ResourceFinder = createMock(IResourceFinder.class);
-        Collection<IResource> manifest1 = new ArrayList<IResource>();
+        Collection<IResource> manifest1 = new ArrayList<>();
         manifest1.add(new TestableResource("MANIFEST.MF", "MANIFEST1.MF"));
         expect(_meta1ResourceFinder.findClasspathResource(isA(String.class), eq(true))).andReturn(manifest1).anyTimes();
         expect(_meta1ResourceFinder.findContextResource(isA(String.class))).andReturn(new TestableResource("web.xml", "web1.xml")).anyTimes();
 
         _meta2ResourceFinder = createMock(IResourceFinder.class);
-        Collection<IResource> manifest2 = new ArrayList<IResource>();
+        Collection<IResource> manifest2 = new ArrayList<>();
         manifest2.add(new TestableResource("MANIFEST.MF", "MANIFEST2.MF"));
         expect(_meta2ResourceFinder.findClasspathResource(isA(String.class), eq(true))).andReturn(manifest2).anyTimes();
         expect(_meta2ResourceFinder.findContextResource(isA(String.class))).andReturn(new TestableResource("web.xml", "web1.xml")).anyTimes();
 
         _meta3ResourceFinder = createMock(IResourceFinder.class);
-        Collection<IResource> manifest3 = new ArrayList<IResource>();
+        Collection<IResource> manifest3 = new ArrayList<>();
         manifest3.add(new TestableResource("MANIFEST.MF", "MANIFEST3.MF"));
         expect(_meta3ResourceFinder.findClasspathResource(isA(String.class), eq(true))).andReturn(manifest3).anyTimes();
         expect(_meta3ResourceFinder.findContextResource(isA(String.class))).andReturn(new TestableResource("web.xml", "web1.xml")).anyTimes();

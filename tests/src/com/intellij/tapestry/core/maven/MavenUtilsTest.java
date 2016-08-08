@@ -35,7 +35,7 @@ public class MavenUtilsTest {
 
     @Test
     public void createMavenSupport_with_remote_repositories() throws IOException, XpathException, SAXException {
-        List<RemoteRepositoryDescription> repositories = new ArrayList<RemoteRepositoryDescription>();
+        List<RemoteRepositoryDescription> repositories = new ArrayList<>();
         repositories.add(new RemoteRepositoryDescription("url1", "id1", "name1", true, true));
 
         MavenConfiguration mavenConfiguration = new MavenConfiguration(true, true, null, null, null, "group", "artifact", "1.1", repositories);

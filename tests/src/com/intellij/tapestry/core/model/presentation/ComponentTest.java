@@ -53,14 +53,14 @@ public class ComponentTest {
 
     @Test
     public void getTemplate_no_template() {
-        expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(new ArrayList<IResource>()).anyTimes();
+        expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
         assert new Component(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length == 0;
 
         reset(_resourceFinderMock);
-        expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(new ArrayList<IResource>()).anyTimes();
-        expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<IResource>()).anyTimes();
+        expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(new ArrayList<>()).anyTimes();
+        expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
         assert new Component(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length == 0;
@@ -68,11 +68,11 @@ public class ComponentTest {
 
     @Test
     public void getTemplate_template_in_classpath() {
-        Collection<IResource> web1 = new ArrayList<IResource>();
+        Collection<IResource> web1 = new ArrayList<>();
         web1.add(new TestableResource("SomeClass.tml", "web1.xml"));
         expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(web1).anyTimes();
 
-        Collection<IResource> templates = new ArrayList<IResource>();
+        Collection<IResource> templates = new ArrayList<>();
         templates.add(new TestableResource("SomeClass.tml", "web2.xml"));
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(templates).anyTimes();
         replay(_resourceFinderMock);

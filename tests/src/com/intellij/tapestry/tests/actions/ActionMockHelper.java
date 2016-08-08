@@ -99,14 +99,14 @@ public class ActionMockHelper {
     }
 
     public void setModuleAsTapestryModule() {
-        Collection<TapestryFacet> facet = new ArrayList<TapestryFacet>();
+        Collection<TapestryFacet> facet = new ArrayList<>();
         facet.add(new TapestryFacet(TapestryFacetType.getInstance(), _moduleMock, null, new TapestryFacetConfiguration(), null));
 
         org.easymock.EasyMock.expect(_facetManagerMock.getFacetsByType(TapestryFacetType.ID)).andReturn(facet).anyTimes();
     }
 
     public void setModuleAsNotTapestryModule() {
-        org.easymock.EasyMock.expect(_facetManagerMock.getFacetsByType(TapestryFacetType.ID)).andReturn(new ArrayList<TapestryFacet>());
+        org.easymock.EasyMock.expect(_facetManagerMock.getFacetsByType(TapestryFacetType.ID)).andReturn(new ArrayList<>());
     }
 
     private DataContext createDataContext() {

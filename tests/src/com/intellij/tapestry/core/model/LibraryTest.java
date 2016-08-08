@@ -40,7 +40,8 @@ public class LibraryTest {
         IJavaTypeFinder javaTypeFinderMock = createMock(IJavaTypeFinder.class);
 
         expect(javaTypeFinderMock.findTypesInPackageRecursively("com.app.components", true))
-                .andReturn(new ArrayList<IJavaClassType>(Arrays.asList(new JavaClassTypeMock("com.app.components.Component1").setPublic(true).setDefaultConstructor(true))));
+                .andReturn(new ArrayList<>(
+                  Arrays.asList(new JavaClassTypeMock("com.app.components.Component1").setPublic(true).setDefaultConstructor(true))));
 
         replay(javaTypeFinderMock);
 
@@ -57,7 +58,8 @@ public class LibraryTest {
         IJavaTypeFinder javaTypeFinderMock = createMock(IJavaTypeFinder.class);
 
         expect(javaTypeFinderMock.findTypesInPackageRecursively("com.app.pages", true))
-                .andReturn(new ArrayList<IJavaClassType>(Arrays.asList(new JavaClassTypeMock("com.app.pages.Page1").setPublic(true).setDefaultConstructor(true))));
+                .andReturn(
+                  new ArrayList<>(Arrays.asList(new JavaClassTypeMock("com.app.pages.Page1").setPublic(true).setDefaultConstructor(true))));
 
         replay(javaTypeFinderMock);
 
@@ -74,7 +76,8 @@ public class LibraryTest {
         IJavaTypeFinder javaTypeFinderMock = createMock(IJavaTypeFinder.class);
 
         expect(javaTypeFinderMock.findTypesInPackageRecursively("com.app.mixins", true))
-                .andReturn(new ArrayList<IJavaClassType>(Arrays.asList(new JavaClassTypeMock("com.app.mixins.Mixin1").setPublic(true).setDefaultConstructor(true))));
+                .andReturn(
+                  new ArrayList<>(Arrays.asList(new JavaClassTypeMock("com.app.mixins.Mixin1").setPublic(true).setDefaultConstructor(true))));
 
         replay(javaTypeFinderMock);
 

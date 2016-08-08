@@ -227,7 +227,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
       UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings(), expectedItems);
       return;
     }
-    final Set<String> elements = new THashSet<String>(myFixture.getLookupElementStrings());
+    final Set<String> elements = new THashSet<>(myFixture.getLookupElementStrings());
     for (String expectedItem : expectedItems) {
       assertTrue(expectedItem + " not found", elements.contains(expectedItem));
     }

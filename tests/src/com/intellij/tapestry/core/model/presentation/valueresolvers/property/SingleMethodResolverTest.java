@@ -22,7 +22,7 @@ public class SingleMethodResolverTest extends AbstractSpecialCaseTest {
         _contextClassTypeMock = new JavaClassTypeMock("MyClass");
 
         // public method that returns a class and has no parameters
-        _contextClassTypeMock.addPublicMethod(new JavaMethodMock("method1", new JavaClassTypeMock("method1returntype"), new ArrayList<IMethodParameter>()));
+        _contextClassTypeMock.addPublicMethod(new JavaMethodMock("method1", new JavaClassTypeMock("method1returntype"), new ArrayList<>()));
 
         // public method that returns a class and has one parameter
         _contextClassTypeMock

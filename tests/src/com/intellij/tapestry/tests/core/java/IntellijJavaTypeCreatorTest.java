@@ -52,7 +52,7 @@ public class IntellijJavaTypeCreatorTest extends BaseTestCase {
 
         IJavaField psiField1 = intellijJavaTypeCreator.createField("field1",
                 new IntellijJavaClassType(fixture.getModule(), getJavaFacade(fixture).findClass("java.lang.String", getAllScope(fixture)).getContainingFile()), true, true);
-        intellijJavaTypeCreator.createFieldAnnotation(psiField1, "java.lang.Deprecated", new HashMap<String, String>());
+        intellijJavaTypeCreator.createFieldAnnotation(psiField1, "java.lang.Deprecated", new HashMap<>());
 
         assert psiField1.getAnnotations().size() == 1;
 
@@ -68,7 +68,7 @@ public class IntellijJavaTypeCreatorTest extends BaseTestCase {
         IJavaField psiField1 = intellijJavaTypeCreator.createField("field1",
                 new IntellijJavaClassType(fixture.getModule(), getJavaFacade(fixture).findClass("java.lang.String", getAllScope(fixture)).getContainingFile()), true, true);
 
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("param1", "param1value");
         parameters.put("param2", "param2value");
 

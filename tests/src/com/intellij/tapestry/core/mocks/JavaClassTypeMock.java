@@ -19,10 +19,10 @@ public class JavaClassTypeMock implements IJavaClassType {
   private boolean _interface;
   private boolean _public;
   private boolean _defaultConstructor;
-  private Collection<IJavaMethod> _publicMethods = new ArrayList<IJavaMethod>();
-  private Collection<IJavaMethod> _allMethods = new ArrayList<IJavaMethod>();
-  private Collection<IJavaAnnotation> _annotations = new ArrayList<IJavaAnnotation>();
-  private Map<String, IJavaField> _fields = new HashMap<String, IJavaField>();
+  private Collection<IJavaMethod> _publicMethods = new ArrayList<>();
+  private Collection<IJavaMethod> _allMethods = new ArrayList<>();
+  private Collection<IJavaAnnotation> _annotations = new ArrayList<>();
+  private Map<String, IJavaField> _fields = new HashMap<>();
   private String _documentation;
   private IResource _file;
   private IJavaClassType _superClassType;
@@ -116,7 +116,7 @@ public class JavaClassTypeMock implements IJavaClassType {
   @Override
   public Collection<IJavaMethod> findPublicMethods(String methodNameRegExp) {
     Pattern pattern = Pattern.compile(methodNameRegExp);
-    Collection<IJavaMethod> foundMethods = new ArrayList<IJavaMethod>();
+    Collection<IJavaMethod> foundMethods = new ArrayList<>();
 
     Collection<IJavaMethod> allMethods = getPublicMethods(true);
     for (IJavaMethod method : allMethods) {

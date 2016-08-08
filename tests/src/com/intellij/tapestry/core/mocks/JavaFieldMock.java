@@ -17,7 +17,7 @@ public class JavaFieldMock implements IJavaField {
     private String _name;
     private IJavaType _type;
     private boolean _private;
-    private Map<String, IJavaAnnotation> _annotations = new HashMap<String, IJavaAnnotation>();
+    private Map<String, IJavaAnnotation> _annotations = new HashMap<>();
     private String _documentation;
     private String _stringRepresentation;
 

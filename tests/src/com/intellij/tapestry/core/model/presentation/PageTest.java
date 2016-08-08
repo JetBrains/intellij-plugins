@@ -43,8 +43,8 @@ public class PageTest {
 
     @Test
     public void getTemplate_no_template() {
-        expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/pages/SomeClass.tml", true)).andReturn(new ArrayList<IResource>()).anyTimes();
-        expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<IResource>()).anyTimes();
+        expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/pages/SomeClass.tml", true)).andReturn(new ArrayList<>()).anyTimes();
+        expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
         assert new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getTemplate().length == 0;
@@ -52,10 +52,10 @@ public class PageTest {
 
     @Test
     public void getTemplate_template_in_classpath() {
-        Collection<IResource> web1 = new ArrayList<IResource>();
+        Collection<IResource> web1 = new ArrayList<>();
         web1.add(new TestableResource("SomeClass.tml", "web1.xml"));
         expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/pages/SomeClass.tml", true)).andReturn(web1).anyTimes();
-        expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<IResource>()).anyTimes();
+        expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
         assert new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getTemplate()[0].getName().equals("SomeClass.tml");
@@ -63,9 +63,9 @@ public class PageTest {
 
     @Test
     public void getTemplate_template_in_context() {
-        expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/pages/SomeClass.tml", true)).andReturn(new ArrayList<IResource>()).anyTimes();
+        expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/pages/SomeClass.tml", true)).andReturn(new ArrayList<>()).anyTimes();
 
-        Collection<IResource> templates = new ArrayList<IResource>();
+        Collection<IResource> templates = new ArrayList<>();
         templates.add(new TestableResource("SomeClass.tml", "web2.xml"));
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(templates).anyTimes();
         replay(_resourceFinderMock);
@@ -75,7 +75,7 @@ public class PageTest {
 
     @Test
     public void getTemplate_template_in_both() {
-        Collection<IResource> web1 = new ArrayList<IResource>();
+        Collection<IResource> web1 = new ArrayList<>();
         web1.add(new TestableResource("SomeClass.tml", "web1.xml"));
         expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/pages/SomeClass.tml", true)).andReturn(web1).anyTimes();
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(web1).anyTimes();

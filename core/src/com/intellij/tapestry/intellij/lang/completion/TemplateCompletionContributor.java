@@ -94,7 +94,7 @@ public class TemplateCompletionContributor extends CompletionContributor {
               // Completion of all attribute values that starts with "prop:"
               if (attributeValue.equals("prop:IntellijIdeaRulezzz ")) {
                 Set<String> properties = ClassUtils.getClassProperties(elementClass).keySet();
-                ArrayList<String> returnedProperties = new ArrayList<String>();
+                ArrayList<String> returnedProperties = new ArrayList<>();
 
                 for (String property : properties) {
                   returnedProperties.add("prop:" + property);
@@ -138,7 +138,7 @@ public class TemplateCompletionContributor extends CompletionContributor {
                     new IntellijJavaClassType(module, ((IntellijJavaClassType)resolvedValue.getType()).getPsiClass().getContainingFile());
                   properties = ClassUtils.getClassProperties(elementClass).keySet();
 
-                  ArrayList<String> returnedProperties = new ArrayList<String>();
+                  ArrayList<String> returnedProperties = new ArrayList<>();
                   for (String property : properties) {
                     returnedProperties.add(attributeValue + property);
                   }

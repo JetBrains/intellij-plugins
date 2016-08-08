@@ -11,8 +11,8 @@ import java.util.Collection;
 public class JavaMethodMock implements IJavaMethod {
     private String _name;
     private IJavaType _returnType;
-    private Collection<IMethodParameter> _parameters = new ArrayList<IMethodParameter>();
-    private Collection<IJavaAnnotation> _annotations = new ArrayList<IJavaAnnotation>();
+    private Collection<IMethodParameter> _parameters = new ArrayList<>();
+    private Collection<IJavaAnnotation> _annotations = new ArrayList<>();
     private IJavaClassType _containingClass;
     private String _documentation;
 

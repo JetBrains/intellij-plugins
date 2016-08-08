@@ -40,13 +40,13 @@ public class ModuleBuilderTest {
 
         _buildMethodMock = createMock(IJavaMethod.class);
         expect(_buildMethodMock.getName()).andReturn("build").anyTimes();
-        expect(_buildMethodMock.getParameters()).andReturn(new ArrayList<IMethodParameter>()).anyTimes();
+        expect(_buildMethodMock.getParameters()).andReturn(new ArrayList<>()).anyTimes();
         expect(_buildMethodMock.getReturnType()).andReturn(_returnTypeMock).anyTimes();
         expect(_buildMethodMock.getContainingClass()).andReturn(_builderClassWithBuildMethodsMock).anyTimes();
 
         _buildMethodWithSuffixMock = createMock(IJavaMethod.class);
         expect(_buildMethodWithSuffixMock.getName()).andReturn("buildSomeService").anyTimes();
-        expect(_buildMethodWithSuffixMock.getParameters()).andReturn(new ArrayList<IMethodParameter>()).anyTimes();
+        expect(_buildMethodWithSuffixMock.getParameters()).andReturn(new ArrayList<>()).anyTimes();
         expect(_buildMethodWithSuffixMock.getReturnType()).andReturn(_returnTypeMock).anyTimes();
         expect(_buildMethodWithSuffixMock.getContainingClass()).andReturn(_builderClassWithBuildMethodsMock).anyTimes();
     }
