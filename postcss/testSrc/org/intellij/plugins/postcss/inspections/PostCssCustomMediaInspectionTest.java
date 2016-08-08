@@ -1,5 +1,6 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.psi.css.inspections.invalid.CssInvalidMediaFeatureInspection;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ public class PostCssCustomMediaInspectionTest extends PostCssFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(PostCssCustomMediaInspection.class);
+    myFixture.enableInspections(PostCssCustomMediaInspection.class, CssInvalidMediaFeatureInspection.class);
   }
 
   public void testIncorrectCustomMediaName() {
@@ -26,6 +27,22 @@ public class PostCssCustomMediaInspectionTest extends PostCssFixtureTestCase {
   }
 
   public void testCorrectCustomMedia() {
+    doTest();
+  }
+
+  public void testMediaFeatureCustom() {
+    doTest();
+  }
+
+  public void testMediaFeatureCustomIncorrect() {
+    doTest();
+  }
+
+  public void testMediaFeatureCustomNotDefined() {
+    doTest();
+  }
+
+  public void testMediaFeatureCustomDefinedTwoTimes() {
     doTest();
   }
 

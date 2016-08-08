@@ -3,6 +3,8 @@ package org.intellij.plugins.postcss.descriptors;
 import com.intellij.css.util.CssPsiUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssMediaFeatureDescriptor;
 import com.intellij.psi.css.CssRuleset;
@@ -11,6 +13,7 @@ import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
+import org.intellij.plugins.postcss.references.PostCssCustomMediaReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +52,14 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
     if (context == null) return Collections.emptyList();
     PsiElement child = context.getFirstChild();
     if (child == null || child.getNextSibling() != null || !StringUtil.startsWith(mediaFeatureName, "--")) return Collections.emptyList();
-    return Collections.singletonList(new CssMediaFeatureDescriptorStub(mediaFeatureName));
+    for (PsiReference ref : child.getReferences()) {
+      if (ref instanceof PostCssCustomMediaReference) {
+        ResolveResult[] results = ((PostCssCustomMediaReference)ref).multiResolve(false);
+        return results.length > 0
+               ? Collections.singletonList(new CssMediaFeatureDescriptorStub(mediaFeatureName))
+               : Collections.emptyList();
+      }
+    }
+    return Collections.emptyList();
   }
 }
