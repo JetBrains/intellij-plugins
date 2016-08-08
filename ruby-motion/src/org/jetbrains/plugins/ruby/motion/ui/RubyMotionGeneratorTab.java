@@ -40,7 +40,7 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   private static final String ADD_RUBY_SDK = "Add Ruby SDK...";
   private static final int COMBO_WIDTH = PlatformUtils.isRubyMine() ? 320 : 150;
 
-  public static final Condition<Sdk> IS_PURE_RBENV_SDK = sdk -> !RbenvGemsetManager.getInstance().isGemsetSdk(sdk);
+  public static final Condition<Sdk> IS_PURE_RBENV_SDK = sdk -> !RbenvGemsetManager.isGemsetSdk(sdk);
 
   private final RubyMotionSettingsHolder mySettingsHolder;
   private ComboBox myRubyInterpreterComboBox;
