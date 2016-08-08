@@ -2,19 +2,28 @@ package training.ui;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.*;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import training.learn.CourseManager;
 import training.learn.LearnBundle;
 import training.statistic.FeedbackEvent;
 import training.statistic.FeedbackSender;
 
+import java.awt.*;
 import java.util.ArrayList;
+
+import static training.util.PerformActionUtil.performAction;
 
 /**
  * Created by karashevich on 18/07/16.
  */
 public class FeedbackManager {
+
+    private FeedbackFormPanel myFeedbackFormPanel;
 
     private ArrayList<RateQuestion> rateQuestions;
     private String customQuestion;
@@ -58,14 +67,19 @@ public class FeedbackManager {
         return description;
     }
 
-    public void submitFeedback(final FeedbackEvent feedbackEvent, final Runnable doWhenSuccess, final Runnable doWhenNotSuccess) {
+    public void submitFeedback(final FeedbackEvent feedbackEvent) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
-            if (ServiceManager.getService(FeedbackSender.class).sendStatsData(feedbackEvent.toString())) {
-                UIUtil.invokeLaterIfNeeded(doWhenSuccess);
-            } else {
-                UIUtil.invokeLaterIfNeeded(doWhenNotSuccess);
-            }
+            if (ServiceManager.getService(FeedbackSender.class).sendStatsData(feedbackEvent.toString()))
+                UIUtil.invokeLaterIfNeeded(() -> doWhenSuccess());
+            else
+                UIUtil.invokeLaterIfNeeded(() -> doWhenNotSuccess());
+
         });
+    }
+
+    public FeedbackFormPanel getFeedbackFormPanel(int preferableWidth) {
+        if (myFeedbackFormPanel == null) myFeedbackFormPanel = new FeedbackFormPanel(preferableWidth);
+        return myFeedbackFormPanel;
     }
 
     class RateQuestion{
@@ -86,4 +100,46 @@ public class FeedbackManager {
         }
     }
 
+    public void doWhenSuccess() {
+        if (myFeedbackFormPanel.submitFeedbackAsyncProcessIcon != null) {
+            myFeedbackFormPanel.submitFeedbackAsyncProcessIcon.suspend();
+            myFeedbackFormPanel.submitFeedbackAsyncProcessIcon.setVisible(false);
+        }
+        CourseManager.getInstance().setModulesView();
+        try {
+            showBalloon(CourseManager.getInstance().getMainLearnPanel().getSendFeedbackPosition(), LearnBundle.message("learn.feedback.submit.success"), MessageType.WARNING.getPopupBackground());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void doWhenNotSuccess() {
+        if (myFeedbackFormPanel.submitFeedbackAsyncProcessIcon != null) {
+            myFeedbackFormPanel.submitFeedbackAsyncProcessIcon.suspend();
+            myFeedbackFormPanel.submitFeedbackAsyncProcessIcon.setVisible(false);
+            myFeedbackFormPanel.setButtonActive();
+        }
+        try {
+            showBalloon(myFeedbackFormPanel.getButtonPosition(), LearnBundle.message("learn.feedback.submit.notsuccess"), MessageType.ERROR.getPopupBackground());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void showBalloon(Point point, String text, Color popupBackground) throws InterruptedException {
+
+        String balloonText = text;
+
+        BalloonBuilder builder =
+                JBPopupFactory.getInstance().
+                        createHtmlTextBalloonBuilder(balloonText, null, popupBackground, null)
+                        .setHideOnClickOutside(true)
+                        .setCloseButtonEnabled(false)
+                        .setHideOnKeyOutside(true)
+                        .setFadeoutTime(3000);
+        final Balloon myBalloon = builder.createBalloon();
+
+        myBalloon.show(new RelativePoint(point), Balloon.Position.above);
+
+    }
 }

@@ -66,8 +66,7 @@ public class FeedbackFormPanel extends JPanel {
 
     private JButton submitFeedbackButton;
     private JPanel submitFeedbackButtonPanel;
-    private JLabel submitFeedbackStatusLabel;
-    private AsyncProcessIcon submitFeedbackAsyncProcessIcon;
+    AsyncProcessIcon submitFeedbackAsyncProcessIcon;
 
 
     public FeedbackFormPanel(int width) {
@@ -137,29 +136,16 @@ public class FeedbackFormPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 submitFeedbackButton.setEnabled(false);
-                submitFeedbackStatusLabel.setText("feedback is sending");
                 submitFeedbackAsyncProcessIcon.setVisible(true);
                 submitFeedbackAsyncProcessIcon.resume();
 
                 FeedbackEvent feedbackEvent = new FeedbackEvent(getFeedbackData());
-                FeedbackManager.getInstance().submitFeedback(feedbackEvent, () -> {
-                    //success
-                    submitFeedbackAsyncProcessIcon.suspend();
-                    submitFeedbackAsyncProcessIcon.setVisible(false);
-                    submitFeedbackStatusLabel.setText("feedback is sent.");
-                }, () -> {
-                    //not success
-                    submitFeedbackAsyncProcessIcon.suspend();
-                    submitFeedbackAsyncProcessIcon.setVisible(false);
-                    submitFeedbackStatusLabel.setText("sending error. Please try later.");
-                });
+                FeedbackManager.getInstance().submitFeedback(feedbackEvent);
             }
         });
         submitFeedbackButton.setOpaque(false);
         submitFeedbackButton.setText(LearnBundle.message("learn.feedback.submit.button"));
 
-        submitFeedbackStatusLabel = new JLabel();
-        submitFeedbackStatusLabel.setOpaque(false);
 
         submitFeedbackAsyncProcessIcon = new AsyncProcessIcon("Progress") {
             @Override
@@ -175,8 +161,6 @@ public class FeedbackFormPanel extends JPanel {
 
         submitFeedbackButtonPanel.add(submitFeedbackButton);
         submitFeedbackButtonPanel.add(Box.createHorizontalStrut(12));
-        submitFeedbackButtonPanel.add(submitFeedbackStatusLabel);
-        submitFeedbackButtonPanel.add(Box.createHorizontalStrut(6));
         submitFeedbackButtonPanel.add(submitFeedbackAsyncProcessIcon);
         submitFeedbackButtonPanel.setAlignmentX(LEFT_ALIGNMENT);
 
@@ -360,6 +344,14 @@ public class FeedbackFormPanel extends JPanel {
         else return UIUtil.getPanelBackground();
     }
 
+    Point getButtonPosition(){
+        Point locationOnScreen = submitFeedbackButton.getLocationOnScreen();
+        return new Point(locationOnScreen.x + submitFeedbackButton.getWidth() / 2, locationOnScreen.y);
+    }
+
+    void setButtonActive(){
+        submitFeedbackButton.setEnabled(true);
+    }
 
     private class RadioButtonRow extends JPanel {
 
@@ -458,6 +450,8 @@ public class FeedbackFormPanel extends JPanel {
             Point location = jrb.getLocation();
             g.drawString(label, location.x + jrb.getBounds().height / 2 - width / 2, location.y + jrb.getBounds().height + label_vertical_gap + height / 2);
         }
+
+
 
 //        @Override
 //        public Dimension getPreferredSize() {
