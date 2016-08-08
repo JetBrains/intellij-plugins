@@ -50,7 +50,7 @@ public abstract class BaseTestCase extends LightTestCase {
   protected static Logger LOG;
 
   private IDEtalkListener myListener;
-  protected final List<IDEtalkEvent> myEvents = new ArrayList<IDEtalkEvent>();
+  protected final List<IDEtalkEvent> myEvents = new ArrayList<>();
   protected IDEtalkOptions myOptions;
 
   protected BaseTestCase() {

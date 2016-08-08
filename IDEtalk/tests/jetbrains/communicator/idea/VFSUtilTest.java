@@ -40,7 +40,7 @@ public class VFSUtilTest extends PlatformTestCase {
   private VirtualFile myContentRoot;
   private VirtualFile mySourceRoot;
   private ContentEntry myContentEntry;
-  private final Set<File> myFilesToDelete = new HashSet<File>();
+  private final Set<File> myFilesToDelete = new HashSet<>();
 
   @Override
   protected void setUp() throws Exception {

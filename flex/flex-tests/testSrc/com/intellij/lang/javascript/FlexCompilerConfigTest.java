@@ -321,7 +321,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
   }
 
   private static Map<String, String> createMap(String... keysAndValues) {
-    final Map<String, String> result = new THashMap<String, String>();
+    final Map<String, String> result = new THashMap<>();
     for (int i = 0; i < keysAndValues.length; i++) {
       //noinspection AssignmentToForLoopParameter
       result.put(keysAndValues[i], keysAndValues[++i]);
@@ -494,7 +494,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     doTest("4.5.1.21328", tempBc, Factory.createCompilerOptions(), Factory.createCompilerOptions(), "_1", null);
 
     tempBc.setMainClass(FlexCommonUtils.FLEX_UNIT_LAUNCHER);
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, String> map = new HashMap<>();
     map.put("$FLEX_UNIT_TEMP_FOLDER$", FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory(myProject));
     map.put("$FLEX_DIR$", PathUtil.getParentPath(PathUtil.getParentPath(FlexTestUtils.getTestDataPath(""))));
 

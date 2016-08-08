@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class FileOffsetsManager {
 
-  private final Map<VirtualFile, LineOffsets> myLineOffsetsMap = new THashMap<VirtualFile, LineOffsets>();
+  private final Map<VirtualFile, LineOffsets> myLineOffsetsMap = new THashMap<>();
 
   private static class LineOffsets {
     private final long myFileModificationStamp; // todo stamp outside of this class

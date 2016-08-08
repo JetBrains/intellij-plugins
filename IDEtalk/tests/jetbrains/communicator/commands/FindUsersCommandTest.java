@@ -137,7 +137,7 @@ public class FindUsersCommandTest extends BaseTestCase {
     myUserModelMock.expects(once()).method("hasUser").with(eq(teddy)).will(returnValue(false));
     myUserModelMock.expects(once()).method("getGroups").will(returnValue(null));
 
-    final List<User> userList = new ArrayList<User>();
+    final List<User> userList = new ArrayList<>();
     userList.add(teddy);
 
     myIDEFacade.setReturnedData(new FindUsersCommand.UsersInfo(new User[]{teddy}, "new group"));

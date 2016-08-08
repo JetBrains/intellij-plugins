@@ -117,7 +117,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
         }
       }, JSVisibilityUtil.DEFAULT_OPTIONS);
 
-    ArrayList<String> messages = new ArrayList<String>(conflicts.values());
+    ArrayList<String> messages = new ArrayList<>(conflicts.values());
     for (int i = 0; i < messages.size(); i++) {
       messages.set(i, messages.get(i).replaceAll("<[^>]+>", ""));
     }
@@ -133,7 +133,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
   }
 
   public static List<JSMemberInfo> getMemberInfos(final String[] members, JSClass clazz, boolean makeAbstract) {
-    final List<JSMemberInfo> memberInfos = new ArrayList<JSMemberInfo>();
+    final List<JSMemberInfo> memberInfos = new ArrayList<>();
     JSMemberInfo.extractClassMembers(clazz, memberInfos, new MemberInfoBase.Filter<JSAttributeListOwner>() {
       @Override
       public boolean includeMember(JSAttributeListOwner member) {

@@ -112,9 +112,9 @@ public class DartAnalysisServerService {
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final FileOffsetsManager myOffsetsManager = new FileOffsetsManager();
-  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
-  private final List<String> myVisibleFiles = new ArrayList<String>();
-  private final Set<Document> myChangedDocuments = new THashSet<Document>();
+  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<>();
+  private final List<String> myVisibleFiles = new ArrayList<>();
+  private final Set<Document> myChangedDocuments = new THashSet<>();
   private final Alarm myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, ApplicationManager.getApplication());
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
@@ -863,7 +863,7 @@ public class DartAnalysisServerService {
   @Nullable
   public List<AnalysisErrorFixes> edit_getFixes(@NotNull final VirtualFile file, final int _offset) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
+    final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -892,7 +892,7 @@ public class DartAnalysisServerService {
                                            final int _offset,
                                            @NotNull final Consumer<SearchResult> consumer) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<String> searchIdRef = new Ref<String>();
+    final Ref<String> searchIdRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return;
@@ -981,7 +981,7 @@ public class DartAnalysisServerService {
   @Nullable
   public String completion_getSuggestions(@NotNull final VirtualFile file, final int _offset) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<String> resultRef = new Ref<String>();
+    final Ref<String> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) {
@@ -1014,7 +1014,7 @@ public class DartAnalysisServerService {
                                   final int _selectionLength,
                                   final int lineLength) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<FormatResult> resultRef = new Ref<FormatResult>();
+    final Ref<FormatResult> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;

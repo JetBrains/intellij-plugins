@@ -2137,9 +2137,9 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testBadResolveOfSuperclass() throws Exception {
     final Module module2 = doCreateRealModuleIn("module2", myProject, FlexModuleType.getInstance());
-    final Ref<VirtualFile> fileFromModule2 = new Ref<VirtualFile>();
-    final Ref<Sdk> sdk1 = new Ref<Sdk>();
-    final Ref<Sdk> sdk2 = new Ref<Sdk>();
+    final Ref<VirtualFile> fileFromModule2 = new Ref<>();
+    final Ref<Sdk> sdk1 = new Ref<>();
+    final Ref<Sdk> sdk2 = new Ref<>();
     myAfterCommitRunnable = () -> {
       sdk1.set(FlexTestUtils.createSdk(getTestDataPath() + BASE_PATH + "fake_sdk", "4.0.0"));
       {

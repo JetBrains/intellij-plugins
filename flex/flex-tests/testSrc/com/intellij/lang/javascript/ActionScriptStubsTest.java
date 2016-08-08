@@ -39,7 +39,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     super.setUp();
   }
 
-  protected List<PsiFile> myPsiFiles = new ArrayList<PsiFile>();
+  protected List<PsiFile> myPsiFiles = new ArrayList<>();
 
   @Override
   protected String getBasePath() {

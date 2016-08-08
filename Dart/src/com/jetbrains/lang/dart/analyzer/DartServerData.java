@@ -43,7 +43,7 @@ public class DartServerData {
   void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean restartHighlighting) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartError> newErrors = new ArrayList<DartError>(errors.size());
+    final List<DartError> newErrors = new ArrayList<>(errors.size());
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
@@ -63,7 +63,7 @@ public class DartServerData {
   void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartHighlightRegion> newRegions = new ArrayList<DartHighlightRegion>(regions.size());
+    final List<DartHighlightRegion> newRegions = new ArrayList<>(regions.size());
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
@@ -82,7 +82,7 @@ public class DartServerData {
   void computedNavigation(@NotNull final String filePath, @NotNull final List<NavigationRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartNavigationRegion> newRegions = new ArrayList<DartNavigationRegion>(regions.size());
+    final List<DartNavigationRegion> newRegions = new ArrayList<>(regions.size());
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
     for (NavigationRegion region : regions) {
@@ -113,7 +113,7 @@ public class DartServerData {
   void computedOverrides(@NotNull final String filePath, @NotNull final List<OverrideMember> overrides) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<DartOverrideMember> newOverrides = new ArrayList<DartOverrideMember>(overrides.size());
+    final List<DartOverrideMember> newOverrides = new ArrayList<>(overrides.size());
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
@@ -137,14 +137,14 @@ public class DartServerData {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
-    final List<DartRegion> newImplementedClasses = new ArrayList<DartRegion>(implementedClasses.size());
+    final List<DartRegion> newImplementedClasses = new ArrayList<>(implementedClasses.size());
     for (ImplementedClass implementedClass : implementedClasses) {
       final int offset = service.getConvertedOffset(file, implementedClass.getOffset());
       final int length = service.getConvertedOffset(file, implementedClass.getOffset() + implementedClass.getLength()) - offset;
       newImplementedClasses.add(new DartRegion(offset, length));
     }
 
-    final List<DartRegion> newImplementedMembers = new ArrayList<DartRegion>(implementedMembers.size());
+    final List<DartRegion> newImplementedMembers = new ArrayList<>(implementedMembers.size());
     for (ImplementedMember implementedMember : implementedMembers) {
       final int offset = service.getConvertedOffset(file, implementedMember.getOffset());
       final int length = service.getConvertedOffset(file, implementedMember.getOffset() + implementedMember.getLength()) - offset;

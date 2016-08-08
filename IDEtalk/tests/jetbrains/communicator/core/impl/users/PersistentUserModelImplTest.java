@@ -128,7 +128,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
       }
     };
 
-    Collection<Thread> threads = new ArrayList<Thread>();
+    Collection<Thread> threads = new ArrayList<>();
     for(int i = 0; i < 20; i ++) {
       threads.add(new Thread(createCycle(createGroupCommand), "create group"));
       threads.add(new Thread(createCycle(createUserCommand), "create user"));

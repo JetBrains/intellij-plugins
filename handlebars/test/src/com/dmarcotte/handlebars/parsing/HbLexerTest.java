@@ -19,7 +19,7 @@ public abstract class HbLexerTest extends PlatformLiteFixture {
   }
 
   TokenizerResult tokenize(String string) {
-    List<Token> tokens = new ArrayList<Token>();
+    List<Token> tokens = new ArrayList<>();
     IElementType currentElement;
 
     _lexer.start(string);

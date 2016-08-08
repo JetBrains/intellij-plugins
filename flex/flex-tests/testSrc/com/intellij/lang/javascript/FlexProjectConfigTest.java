@@ -101,7 +101,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
     FlexTestUtils.modifyConfigs(myProject, editor -> {
       ModifiableFlexBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
-      editor.setEntries(module1Config.getDependencies(), new ArrayList<ModifiableDependencyEntry>());
+      editor.setEntries(module1Config.getDependencies(), new ArrayList<>());
     });
     assertFalse(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));

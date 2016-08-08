@@ -53,8 +53,8 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
   private boolean addStrutsFacet;
   private String webXmlUrl;
 
-  private final List<LibraryDefinition> libraries = new SmartList<LibraryDefinition>();
-  private final List<Callback> callbacks = new SmartList<Callback>();
+  private final List<LibraryDefinition> libraries = new SmartList<>();
+  private final List<Callback> callbacks = new SmartList<>();
 
   public Struts2ProjectDescriptorBuilder withWebModuleType(String testDataRoot) {
     webXmlUrl = VfsUtilCore.pathToUrl(testDataRoot + "/WEB-INF/web.xml");

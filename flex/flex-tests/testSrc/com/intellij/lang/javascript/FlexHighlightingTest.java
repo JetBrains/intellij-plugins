@@ -404,7 +404,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   private List<PsiReference> collectCssRefs() {
-    final List<PsiReference> cssRefs = new ArrayList<PsiReference>();
+    final List<PsiReference> cssRefs = new ArrayList<>();
 
     myFile.acceptChildren(new XmlRecursiveElementVisitor() {
       @Override
@@ -796,9 +796,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, testName + ".as", testName + ".swc");
     checkNavigatableSymbols("layoutObject");
 
-    final Set<String> resolvedNses = new THashSet<String>();
-    final Ref<String> foundConst = new Ref<String>();
-    final Ref<String> foundConst2 = new Ref<String>();
+    final Set<String> resolvedNses = new THashSet<>();
+    final Ref<String> foundConst = new Ref<>();
+    final Ref<String> foundConst2 = new Ref<>();
 
     myFile.acceptChildren(new JSRecursiveElementVisitor() {
       @Override
@@ -1195,7 +1195,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     source = PsiTreeUtil.getParentOfType(source, JSFunction.class);
     PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, offset, true, true);
     assertEquals(3, functions.length);
-    Collection<String> classNames = new ArrayList<String>();
+    Collection<String> classNames = new ArrayList<>();
     for (PsiElement function : functions) {
       assertEquals("foo", ((JSFunction)function).getName());
       PsiElement clazz = function.getParent();
@@ -1218,7 +1218,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, offset, true, true);
     assertEquals(2, functions.length);
     //assertEquals(3, functions.length); IDEADEV-34319
-    Collection<String> classNames = new ArrayList<String>();
+    Collection<String> classNames = new ArrayList<>();
     for (PsiElement function : functions) {
       assertEquals("bar", ((JSFunction)function).getName());
       PsiElement clazz = function.getParent();

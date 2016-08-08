@@ -44,7 +44,7 @@ public class MxmlTest extends MxmlTestBase {
       final VirtualFile assetsDir = DesignerTests.getFile("assets");
       model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
 
-      THashSet<ProblemDescriptor> expectedProblems = new THashSet<ProblemDescriptor>();
+      THashSet<ProblemDescriptor> expectedProblems = new THashSet<>();
       TestDocumentProblemManager.setExpectedProblems(expectedProblems);
       expectedProblems.add(new ProblemDescriptor("spark.components.supportClasses.TrackBase is abstract class",
                                                  sourceDir.findFileByRelativePath("AbstractClass.mxml"), 3));
@@ -109,8 +109,8 @@ public class MxmlTest extends MxmlTestBase {
   }
 
   private static Pair<VirtualFile[], VirtualFile[]> getTestFiles(VirtualFile... roots) {
-    final ArrayList<VirtualFile> files = new ArrayList<VirtualFile>(128);
-    final ArrayList<VirtualFile> auxFiles = new ArrayList<VirtualFile>(8);
+    final ArrayList<VirtualFile> files = new ArrayList<>(128);
+    final ArrayList<VirtualFile> auxFiles = new ArrayList<>(8);
 
     for (VirtualFile root : roots) {
       collectMxmlFiles(files, auxFiles, root);
@@ -123,7 +123,7 @@ public class MxmlTest extends MxmlTestBase {
     Arrays.sort(list, virtualFileComparator);
     Arrays.sort(auxList, virtualFileComparator);
     
-    return new Pair<VirtualFile[], VirtualFile[]>(list, auxList);
+    return new Pair<>(list, auxList);
   }
 
   private Pair<VirtualFile[], VirtualFile[]> computeFiles(Pair<VirtualFile[], VirtualFile[]> pair) {
@@ -144,7 +144,7 @@ public class MxmlTest extends MxmlTestBase {
         }
       }
 
-      return new Pair<VirtualFile[], VirtualFile[]>(new VirtualFile[]{getSource(strings[0] + ".mxml")}, auxiliaryFiles);
+      return new Pair<>(new VirtualFile[]{getSource(strings[0] + ".mxml")}, auxiliaryFiles);
     }
   }
 

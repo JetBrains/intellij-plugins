@@ -108,7 +108,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
                       Computable<GlobalSearchScope> scopeProvider,
                       @Nullable EnumSet<FlashUmlDependenciesSettingsOption> dependencies,
                       @Nullable String expectedFileNamePrefix) throws Exception {
-    List<VirtualFile> vFiles = new ArrayList<VirtualFile>(files.length);
+    List<VirtualFile> vFiles = new ArrayList<>(files.length);
     for (String file : files) {
       vFiles.add(getVirtualFile(BASE_PATH + file));
     }
@@ -161,7 +161,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
         model.refreshDataModel();
 
         // first limit elements by scope
-        Collection<DiagramNode<Object>> nodesToRemove = new ArrayList<DiagramNode<Object>>();
+        Collection<DiagramNode<Object>> nodesToRemove = new ArrayList<>();
         for (DiagramNode<Object> node : model.getNodes()) {
           if (node.getIdentifyingElement() instanceof JSClass &&
               !scopeProvider.compute().contains(((JSClass)node.getIdentifyingElement()).getContainingFile().getVirtualFile())) {

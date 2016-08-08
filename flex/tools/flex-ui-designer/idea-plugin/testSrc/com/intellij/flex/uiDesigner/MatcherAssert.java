@@ -32,24 +32,24 @@ public final class MatcherAssert {
   }
 
   public static void assertThat(int actual, int expected) {
-    assertThat(actual, new IsEqual<Integer>(expected));
+    assertThat(actual, new IsEqual<>(expected));
   }
 
   public static void assertThat(long actual, int expected) {
-    assertThat((int)actual, new IsEqual<Integer>(expected));
+    assertThat((int)actual, new IsEqual<>(expected));
   }
 
   public static void assertThat(String actual, String expected) {
-    assertThat(actual, new IsEqual<String>(expected));
+    assertThat(actual, new IsEqual<>(expected));
   }
 
   public static void assertThat(int[] actual, int... expected) {
     IsEqual[] elementMatchers = new IsEqual[expected.length];
     for (int i = 0, expectedLength = expected.length; i < expectedLength; i++) {
-      elementMatchers[i] = new IsEqual<Integer>(expected[i]);
+      elementMatchers[i] = new IsEqual<>(expected[i]);
     }
 
-    assertThat(toIntegerList(actual), new IsArray<Integer>(elementMatchers));
+    assertThat(toIntegerList(actual), new IsArray<>(elementMatchers));
   }
 
   private static Integer[] toIntegerList(int[] array) {
@@ -64,9 +64,9 @@ public final class MatcherAssert {
   public static void assertThat(String[] actual, String... expected) {
     IsEqual[] elementMatchers = new IsEqual[expected.length];
     for (int i = 0, expectedLength = expected.length; i < expectedLength; i++) {
-      elementMatchers[i] = new IsEqual<String>(expected[i]);
+      elementMatchers[i] = new IsEqual<>(expected[i]);
     }
 
-    assertThat(actual, new IsArray<String>(elementMatchers));
+    assertThat(actual, new IsArray<>(elementMatchers));
   }
 }

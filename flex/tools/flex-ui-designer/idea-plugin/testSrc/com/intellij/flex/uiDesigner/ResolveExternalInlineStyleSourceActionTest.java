@@ -20,7 +20,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
   public void testFindInnerComponentInDeclarations() throws Exception {
-    Map<String, String> styles = new THashMap<String, String>();
+    Map<String, String> styles = new THashMap<>();
     styles.put("skinClass", "spark.skins.spark.ButtonBarMiddleButtonSkin");
     ResolveExternalInlineStyleSourceAction action = new ResolveExternalInlineStyleSourceAction("innerComponentInDeclarations", "spark.components.ButtonBarButton", "skinClass", styles, myModule);
     PsiElement element = (PsiElement) action.find();
@@ -30,7 +30,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
   public void testFindInnerComponentInDeclarationsAsTag() throws Exception {
-    Map<String, String> styles = new THashMap<String, String>();
+    Map<String, String> styles = new THashMap<>();
     styles.put("skinClass", "spark.skins.spark.ButtonBarLastButtonSkin");
     ResolveExternalInlineStyleSourceAction action = new ResolveExternalInlineStyleSourceAction("innerComponentInDeclarations", "spark.components.ButtonBarButton", "skinClass", styles, myModule);
     PsiElement element = (PsiElement) action.find();
@@ -40,7 +40,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
   
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
   public void testFindComponent() throws Exception {
-    Map<String, String> styles = new THashMap<String, String>();
+    Map<String, String> styles = new THashMap<>();
     styles.put("left", "10");
     styles.put("right", "10");
     ResolveExternalInlineStyleSourceAction action = new ResolveExternalInlineStyleSourceAction("innerComponentInDeclarations", "spark.components.Button", "left", styles, myModule);
@@ -51,7 +51,7 @@ public class ResolveExternalInlineStyleSourceActionTest extends FlashUIDesignerB
   
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
   public void testFindComponent2() throws Exception {
-    Map<String, String> styles = new THashMap<String, String>();
+    Map<String, String> styles = new THashMap<>();
     styles.put("left", "10");
     styles.put("right", "10");
     styles.put("top", "4");

@@ -210,7 +210,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
 
   @Override
   protected VirtualFile configureByFiles(final File projectRoot, @NotNull final VirtualFile[] vFiles) throws IOException {
-    final Ref<VirtualFile> result = new Ref<VirtualFile>();
+    final Ref<VirtualFile> result = new Ref<>();
     UIUtil.invokeAndWaitIfNeeded(new Runnable() {
       @Override
       public void run() {
@@ -251,7 +251,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
                                    @Nullable FlexUnitRunnerParameters.OutputLogLevel outputLogLevel,
                                    String... files) throws Exception {
     configureByFiles(projectRoot, files);
-    final Ref<IXMLElement> expected = new Ref<IXMLElement>();
+    final Ref<IXMLElement> expected = new Ref<>();
     UIUtil.invokeAndWaitIfNeeded(new Runnable() {
       @Override
       public void run() {
@@ -345,7 +345,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
       }
     };
 
-    final Ref<ExecutionConsole> executionConsole = new Ref<ExecutionConsole>();
+    final Ref<ExecutionConsole> executionConsole = new Ref<>();
     ApplicationManager.getApplication().invokeLater(() -> {
       try {
         runner.execute(env, new ProgramRunner.Callback() {

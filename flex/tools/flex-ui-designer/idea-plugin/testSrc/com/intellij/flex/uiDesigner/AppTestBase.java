@@ -37,7 +37,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   protected TestSocketInputHandler socketInputHandler;
 
   protected String flexSdkRootPath;
-  protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
+  protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<>();
 
   protected String getSourceBasePath() {
     return "common";
@@ -126,7 +126,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;
 
-    libs.add(new Pair<VirtualFile, VirtualFile>(virtualFile, jarFile));
+    libs.add(new Pair<>(virtualFile, jarFile));
     sdkModificator.addRoot(jarFile, OrderRootType.CLASSES);
   }
 

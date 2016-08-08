@@ -146,7 +146,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
     addFileWithContent(FlashBuilderImporter.DOT_ACTION_SCRIPT_PROPERTIES, dotActionScriptPropertiesFileContent, myFlashBuilderProjectDir);
 
     final FlashBuilderProject flashBuilderProject = FlashBuilderProjectLoadUtil.loadProject(dotProjectFile, false);
-    final Collection<FlashBuilderProject> allFBProjects = new ArrayList<FlashBuilderProject>();
+    final Collection<FlashBuilderProject> allFBProjects = new ArrayList<>();
     allFBProjects.add(flashBuilderProject);
     for (String name : otherProjectNames) {
       allFBProjects.add(FlashBuilderProjectLoadUtil.getDummyFBProject(name));
@@ -182,7 +182,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   private void checkTestSourceRoots(final String... sourceRootUrls) {
-    final Collection<String> roots = new THashSet<String>(Arrays.asList(ModuleRootManager.getInstance(myModule).getSourceRootUrls(true)));
+    final Collection<String> roots = new THashSet<>(Arrays.asList(ModuleRootManager.getInstance(myModule).getSourceRootUrls(true)));
     roots.removeAll(Arrays.asList(ModuleRootManager.getInstance(myModule).getSourceRootUrls(false)));
     assertSameElements(roots, Arrays.asList(sourceRootUrls));
   }
@@ -192,7 +192,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   private void checkLibraries(final LibraryInfo[] libraryInfos) {
-    final Collection<Library> libraries = new ArrayList<Library>();
+    final Collection<Library> libraries = new ArrayList<>();
 
     final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
     for (DependencyEntry entry : bc.getDependencies().getEntries()) {
@@ -737,7 +737,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
                   "    </libraryPath>" +
                   "  </compiler>\n" +
                   "</actionScriptProperties>",
-                  new ArrayList<String>(),
+                  new ArrayList<>(),
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final String contentRootUrl = myFlashBuilderProjectDir.getUrl();
@@ -909,7 +909,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   private List<AirPackagingOptions.FilePathAndPathInPackage> getExpectedPaths(final String... relPaths) {
-    final List<AirPackagingOptions.FilePathAndPathInPackage> expected = new ArrayList<AirPackagingOptions.FilePathAndPathInPackage>();
+    final List<AirPackagingOptions.FilePathAndPathInPackage> expected = new ArrayList<>();
     for (String relPath : relPaths) {
       final int slashIndex = relPath.indexOf("/");
       expected.add(new AirPackagingOptions.FilePathAndPathInPackage(myFlashBuilderProjectDir.getPath() + "/" + relPath,

@@ -45,7 +45,7 @@ public class PropertyTest {
 
   @Test
   public void testPropertyNameUniqueness() {
-    Set<String> propertyNameStrings = new HashSet<String>();
+    Set<String> propertyNameStrings = new HashSet<>();
 
     for (Property property : Property.values()) {
       String propertyNameString = property.getStringName();

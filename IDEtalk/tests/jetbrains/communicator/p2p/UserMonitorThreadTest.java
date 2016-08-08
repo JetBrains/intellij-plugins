@@ -165,7 +165,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
     try {
       myUserMonitorClientMock.expects(once()).method("setOnlineUsers") .with(eq(new HashSet()));
 
-      myUserMonitorThread.addOnlineUser("localhost", "nick", new Integer(PORT), new HashSet<String>(), new UserPresence(PresenceMode.AWAY));
+      myUserMonitorThread.addOnlineUser("localhost", "nick", new Integer(PORT), new HashSet<>(), new UserPresence(PresenceMode.AWAY));
       myUserMonitorThread.flushOnlineUsers();
     }
     finally {
@@ -176,7 +176,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
   private void expectSetOneOnlineUser() throws UnknownHostException {
     User p2PUser = UserImpl.create("nick", P2PTransport.CODE);
 
-    List<String> projects = new ArrayList<String>();
+    List<String> projects = new ArrayList<>();
     projects.add("project1");
 
     OnlineUserInfo onlineUserInfo = new OnlineUserInfo(InetAddress.getByName("localhost"), PORT, projects, new UserPresence(PresenceMode.AWAY));

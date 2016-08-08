@@ -36,7 +36,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
     final PsiClass psiClass = getStepDefClass();
     final PsiFile psiFile = psiClass.getContainingFile();
 
-    final Ref<String> createdMethodName = new Ref<String>();
+    final Ref<String> createdMethodName = new Ref<>();
 
     new WriteCommandAction(getProject(), psiFile) {
       @Override

@@ -49,7 +49,7 @@ public class MockIDEFacade implements IDEFacade {
   private FindUsersCommand.UsersInfo myUsersInfo = new FindUsersCommand.UsersInfo();
   private LocalMessage myMessageToReturn;
   private String[] myProjects = new String[0];
-  private final Map<Cloneable,String> myFileText = new HashMap<Cloneable, String>();
+  private final Map<Cloneable,String> myFileText = new HashMap<>();
   private String myMessage;
   private String myProjectId;
   private String myProjectName;
@@ -117,7 +117,7 @@ public class MockIDEFacade implements IDEFacade {
 
   @Override
   public Change[] getDiff(Object[] src, Object[] dest) {
-    List<MyChangeAdapter> result = new ArrayList<MyChangeAdapter>();
+    List<MyChangeAdapter> result = new ArrayList<>();
     Diff.Change change = null;
     try {
       change = Diff.buildChanges(src, dest);

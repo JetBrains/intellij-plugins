@@ -28,7 +28,7 @@ import java.util.Stack;
  * @author Kir
  */
 public abstract class LightTestCase extends MockObjectTestCase {
-  protected Stack<Disposable> myDisposables = new Stack<Disposable>();
+  protected Stack<Disposable> myDisposables = new Stack<>();
   protected static boolean ourShouldFail;
 
   public LightTestCase(String string) {

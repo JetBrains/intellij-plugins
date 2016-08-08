@@ -429,7 +429,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         final String qName = clazz.getQualifiedName();
         final boolean hasOverride = attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.OVERRIDE);
 
-        final Ref<JSFunction> set = new Ref<JSFunction>();
+        final Ref<JSFunction> set = new Ref<>();
         boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSOverrideHandler() {
           public boolean process(@NotNull final List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             //noinspection StringEquality
