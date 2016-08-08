@@ -12,7 +12,7 @@ import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.completion.CssAddSpaceWithBracesInsertHandler;
 import com.intellij.psi.css.util.CssCompletionUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.intellij.plugins.postcss.completion.handler.PostCssCustomSelectorInsertHandler;
+import org.intellij.plugins.postcss.completion.handler.PostCssOneLineAtRuleInsertHandler;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,8 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
     if (!result.isStopped()) {
       PsiElement position = parameters.getPosition();
       if (PostCssPsiUtil.isInsidePostCss(position) && position.getNode().getElementType() == CssElementTypes.CSS_ATKEYWORD) {
-        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-selector", new PostCssCustomSelectorInsertHandler()));
+        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-selector", new PostCssOneLineAtRuleInsertHandler()));
+        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-media", new PostCssOneLineAtRuleInsertHandler()));
         addNest(position, result);
       }
     }

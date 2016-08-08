@@ -3,6 +3,7 @@ package org.intellij.plugins.postcss;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.intellij.plugins.postcss.completion.PostCssCustomMediaCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssCustomSelectorCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssNestCompletionTest;
 import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
@@ -67,6 +68,7 @@ public class PostCssTestSuite extends TestCase {
       TestSuite suite = new TestSuite("Completion PostCSS");
       suite.addTestSuite(PostCssNestCompletionTest.class);
       suite.addTestSuite(PostCssCustomSelectorCompletionTest.class);
+      suite.addTestSuite(PostCssCustomMediaCompletionTest.class);
       return suite;
     }
   }

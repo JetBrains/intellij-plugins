@@ -7,7 +7,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.psi.css.util.CssEditorUtil;
 
-public class PostCssCustomSelectorInsertHandler implements InsertHandler<LookupElement> {
+public class PostCssOneLineAtRuleInsertHandler implements InsertHandler<LookupElement> {
 
   @Override
   public void handleInsert(InsertionContext context, LookupElement item) {
