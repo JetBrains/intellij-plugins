@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript;
 
-import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.highlighting.HighlightUsagesHandler;
@@ -24,7 +23,6 @@ import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
@@ -60,14 +58,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.search.searches.DefinitionsScopedSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.util.CommonProcessors;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import com.sixrr.inspectjs.validity.FunctionWithInconsistentReturnsJSInspection;
@@ -1405,7 +1400,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testShowImplementationsForStatic() throws Exception {
-    doTestFor(true, () -> invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 0, true), getTestName(false) + ".js2");
+    doTestFor(true, () -> JSTestUtils
+      .invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 0, true), getTestName(false) + ".js2");
   }
 
   private static void checkSetProperty(final PsiElement at) {
@@ -1426,7 +1422,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, () -> {
       PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
       invokeShowImplemenationsForLineMarker(at, 1);
-      PsiElement elt = invokeShowImplementations(JSClass.class, at, 1, false);
+      PsiElement elt = JSTestUtils.invokeShowImplementations(JSClass.class, at, 1, false);
 
       assertNull(ActionScriptClassResolver.findClassByQNameStatic("BaseType", elt));
       PsiElement byQName = JSClassResolver.findClassFromNamespace("BaseType", elt);
@@ -1441,7 +1437,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testGotoSuperWorksFromClass() throws Exception {
     doTestFor(true, () -> {
       final PsiElement at = invokeGotoSuperMethodAction("AAA");
-      invokeShowImplementations(JSClass.class, at, 1, false);
+      JSTestUtils.invokeShowImplementations(JSClass.class, at, 1, false);
       invokeShowImplemenationsForLineMarker(at, 1);
     }, getTestName(false) + ".js2");
   }
@@ -1451,7 +1447,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     doTestFor(true, () -> {
       PsiElement at = invokeGotoSuperMethodAction("SecondInterface");
-      invokeShowImplementations(JSFunction.class, at, 3, false);
+      JSTestUtils.invokeShowImplementations(JSFunction.class, at, 3, false);
       invokeShowImplemenationsForLineMarker(at, 5);
     }, getTestName(false) + ".js2");
   }
@@ -1460,7 +1456,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testShowImplementationsFromInterface() throws Exception {
     doTestFor(true, () -> {
       final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-      invokeShowImplementations(JSClass.class, at, 3, false);
+      JSTestUtils.invokeShowImplementations(JSClass.class, at, 3, false);
       invokeShowImplemenationsForLineMarker(at, 3);
     }, getTestName(false) + ".js2");
   }
@@ -1469,7 +1465,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testShowImplementationsFromInterface2() throws Exception {
     doTestFor(true, () -> {
       final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-      invokeShowImplementations(JSClass.class, at, 2, false);
+      JSTestUtils.invokeShowImplementations(JSClass.class, at, 2, false);
       invokeShowImplemenationsForLineMarker(at, 2);
     }, getTestName(false) + ".js2");
   }
@@ -1478,7 +1474,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testShowImplementationsFromInterfaceCall() throws Exception {
     doTestFor(true, () -> {
       final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-      invokeShowImplementations(JSFunction.class, at, 1, false);
+      JSTestUtils.invokeShowImplementations(JSFunction.class, at, 1, false);
     }, getTestName(false) + ".js2");
   }
 
@@ -1497,26 +1493,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   private static PsiElement invokeShowImplementations(final Class<? extends JSNamedElement> destinationClazz, final PsiElement at) {
-    return invokeShowImplementations(destinationClazz, at, 1, true);
-  }
-
-  private static PsiElement invokeShowImplementations(final Class<? extends JSNamedElement> destinationClazz,
-                                                      final PsiElement at,
-                                                      final int num,
-                                                      boolean status) {
-    JSReferenceExpression refExpr = PsiTreeUtil.getParentOfType(at, JSReferenceExpression.class);
-    final PsiElement resolve = refExpr != null ? refExpr.resolve() : at.getParent();
-    assertNotNull(resolve);
-    final CommonProcessors.CollectUniquesProcessor<PsiElement> processor = new CommonProcessors.CollectUniquesProcessor<PsiElement>();
-    DefinitionsScopedSearch.INSTANCE.createQuery(new DefinitionsScopedSearch.SearchParameters(resolve)).forEach(processor);
-
-    assertEquals(status, TargetElementUtil.getInstance().includeSelfInGotoImplementation(resolve));
-
-    assertEquals(num, processor.getResults().size());
-    if (num == 0) return null;
-    final PsiElement element = processor.getResults().iterator().next();
-    assertTrue(destinationClazz.isInstance(element));
-    return element;
+    return JSTestUtils.invokeShowImplementations(destinationClazz, at, 1, true);
   }
 
   private static void invokeShowImplemenationsForLineMarker(PsiElement at, int num) {
@@ -1716,7 +1693,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testImplicitImplementMarker_() throws Exception {
     doTestFor(true, () -> {
       final PsiElement element =
-        invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 1, false);
+        JSTestUtils.invokeShowImplementations(JSFunction.class, myFile.findElementAt(myEditor.getCaretModel().getOffset()), 1, false);
       assertTrue(element instanceof JSFunction);
       assertTrue(element.getParent() instanceof JSClass);
       assertEquals("Base", ((JSClass)element.getParent()).getQualifiedName());

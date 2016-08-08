@@ -21,10 +21,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
@@ -74,8 +71,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         final JSReferenceExpression expression = (JSReferenceExpression)calledExpr;
         @NonNls final String s = expression.getReferencedName();
 
-        if ("addEventListener".equals(s) ||
-            "removeEventListener".equals(s) ||
+        if (ActionScriptResolveUtil.ADD_EVENT_LISTENER_METHOD.equals(s) ||
+            ActionScriptResolveUtil.REMOVE_EVENT_LISTENER_METHOD.equals(s) ||
             "willTrigger".equals(s) ||
             "hasEventListener".equals(s)
           ) {
