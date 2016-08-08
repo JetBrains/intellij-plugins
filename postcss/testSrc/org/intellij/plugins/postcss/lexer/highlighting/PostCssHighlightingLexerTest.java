@@ -13,7 +13,7 @@ import java.util.Set;
 
 @TestDataPath("$CONTENT_ROOT/testData/lexer/highlighting/")
 public class PostCssHighlightingLexerTest extends LexerTestCase {
-  private static Set<String> DEFAULT_PROPERTY_VALUES =
+  private static final Set<String> DEFAULT_PROPERTY_VALUES =
     ContainerUtil.union(CssHighlighterLexer.Lazy.DEFAULT_PROPERTY_VALUES, Collections.singleton("all"));
 
   public void testNestedRules() {
