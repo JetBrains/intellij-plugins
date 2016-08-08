@@ -6,7 +6,7 @@ import org.intellij.plugins.postcss.PostCssLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssFileElementType extends IStubFileElementType {
-  private static final int MY_STUB_VERSION = 2;
+  private static final int MY_STUB_VERSION = 3;
 
   public PostCssFileElementType() {
     super("POST_CSS_FILE", PostCssLanguage.INSTANCE);

@@ -4,6 +4,7 @@ PostCSS File:CustomMediaWithoutSemicolon.pcss
       PsiElement(POST_CSS_CUSTOM_MEDIA_RULE)
         PsiElement(POST_CSS_CUSTOM_MEDIA_SYM)('@custom-media')
         PsiWhiteSpace(' ')
-        PsiElement(CSS_IDENT)('--my-media')
+        PsiElement(POST_CSS_CUSTOM_MEDIA)
+          PsiElement(CSS_IDENT)('--my-media')
         PsiErrorElement:';' expected
           <empty list>

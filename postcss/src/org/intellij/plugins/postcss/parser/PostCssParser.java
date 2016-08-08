@@ -88,7 +88,13 @@ public class PostCssParser extends CssParser2 {
     }
     PsiBuilder.Marker customMediaAtRule = createCompositeElement();
     addSingleToken();
-    addIdentOrError();
+    if (getTokenType() == CssElementTypes.CSS_IDENT){
+      PsiBuilder.Marker customMedia = createCompositeElement();
+      addSingleToken();
+      customMedia.done(PostCssElementTypes.POST_CSS_CUSTOM_MEDIA);
+    } else {
+      addIdentOrError();
+    }
     parseMediumList();
     addSemicolonOrError();
     customMediaAtRule.done(PostCssElementTypes.POST_CSS_CUSTOM_MEDIA_RULE);

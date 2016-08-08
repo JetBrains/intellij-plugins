@@ -28,6 +28,7 @@
     <lang.findUsagesProvider language="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssFindUsagesProvider"/>
 
     <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex"/>
+    <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex"/>
     <stubElementTypeHolder class="org.intellij.plugins.postcss.PostCssElementTypes"/>
 
     <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
