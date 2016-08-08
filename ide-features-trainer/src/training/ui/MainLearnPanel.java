@@ -302,6 +302,11 @@ public class MainLearnPanel extends JPanel {
         }
     }
 
+    public Point getSendFeedbackPosition(){
+        Point locationOnScreen = submitFeedback.getLocationOnScreen();
+        return new Point(locationOnScreen.x + submitFeedback.getWidth() / 2, locationOnScreen.y);
+    }
+
     @Override
     public Color getBackground() {
         if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
