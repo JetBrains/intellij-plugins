@@ -4,12 +4,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
+import org.junit.Ignore;
 
 /**
  * Created by jetbrains on 04/08/16.
  */
 public class LearnProjectTest extends LightPlatformTestCase{
 
+    @Ignore
     public void testLearnProject(){
         closeAndDeleteProject();
 
