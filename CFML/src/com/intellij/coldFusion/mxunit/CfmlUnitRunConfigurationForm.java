@@ -57,15 +57,15 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
 
     myMethodPanel.setVisible(false);
 
-    myFileChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(null, null, myDirectoryOrFileField, project,
-                                                                                         FileChooserDescriptorFactory
-                                                                                           .createSingleFileOrFolderDescriptor(),
-                                                                                         TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+    myFileChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<>(null, null, myDirectoryOrFileField, project,
+                                                                               FileChooserDescriptorFactory
+                                                                                 .createSingleFileOrFolderDescriptor(),
+                                                                               TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
-    myDirectoryChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(null, null, myDirectoryOrFileField, project,
-                                                                                              FileChooserDescriptorFactory
-                                                                                                .createSingleFolderDescriptor(),
-                                                                                              TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+    myDirectoryChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<>(null, null, myDirectoryOrFileField, project,
+                                                                                    FileChooserDescriptorFactory
+                                                                                      .createSingleFolderDescriptor(),
+                                                                                    TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
     myMethodRadioButton.addChangeListener(myScopeChangeListener);
     myDirectoryRadioButton.addChangeListener(myScopeChangeListener);
     myComponentRadioButton.addChangeListener(myScopeChangeListener);

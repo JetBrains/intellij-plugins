@@ -30,7 +30,7 @@ public class CreateStepDefinitionFileModel {
 
   public CreateStepDefinitionFileModel(@NotNull final Project project, @NotNull final Map<BDDFrameworkType, String> fileTypeToDefaultNameMap, @NotNull final Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap) {
     myProject = project;
-    List<FileTypeComboboxItem> myFileTypeList = new ArrayList<FileTypeComboboxItem>();
+    List<FileTypeComboboxItem> myFileTypeList = new ArrayList<>();
     for (Map.Entry<BDDFrameworkType, String> entry : fileTypeToDefaultNameMap.entrySet()) {
       if (myFileName == null) {
         myFileName = entry.getValue();

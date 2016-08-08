@@ -32,7 +32,7 @@ public class EventBroadcasterImpl implements EventBroadcaster {
   private static final Logger LOG = Logger.getLogger(EventBroadcasterImpl.class);
   public static final Runnable NO_ACTION = () -> { };
 
-  private final List<IDEtalkListener> myListeners = new CopyOnWriteArrayList<IDEtalkListener>();
+  private final List<IDEtalkListener> myListeners = new CopyOnWriteArrayList<>();
 
   @Override
   public void addListener(IDEtalkListener listener) {

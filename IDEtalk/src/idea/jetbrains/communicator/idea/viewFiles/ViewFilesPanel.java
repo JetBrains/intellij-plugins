@@ -197,7 +197,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
 
     protected List getChildNodes() {
       if (myChildren == null) {
-        myChildren = new ArrayList<KirTreeNode>();
+        myChildren = new ArrayList<>();
         String[] projects = myProjectsData.getProjects();
         Arrays.sort(projects);
         for (String project : projects) {
@@ -231,7 +231,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
 
     protected List getChildNodes() {
       if (myChildren == null) {
-        myChildren = new ArrayList<FileNode>();
+        myChildren = new ArrayList<>();
         VFile[] projectFiles = myProjectFiles;
         Arrays.sort(projectFiles);
         for (VFile projectFile : projectFiles) {

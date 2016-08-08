@@ -27,7 +27,7 @@ public class RubyMotionRequireProvider implements ImplicitRequireProvider {
     if (module == null) return Collections.emptySet();
     if (!RubyMotionUtil.getInstance().hasMacRubySupport(file)) return Collections.emptySet();
 
-    final LinkedHashSet<VirtualFile> result = new LinkedHashSet<VirtualFile>();
+    final LinkedHashSet<VirtualFile> result = new LinkedHashSet<>();
     final VirtualFile motion = VirtualFileUtil.findFileBy(RubyMotionUtil.getInstance().getRubyMotionPath() + "/lib");
     addIfNotNull(result, motion);
     for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
@@ -42,7 +42,7 @@ public class RubyMotionRequireProvider implements ImplicitRequireProvider {
     if (!RubyMotionUtil.getInstance().hasMacRubySupport(file)) return Collections.emptySet();
     final VirtualFile vFile = file.getVirtualFile();
     final boolean isTestFile = vFile != null && vFile.getPath().contains("/spec/");
-    final LinkedHashSet<VirtualFile> result = new LinkedHashSet<VirtualFile>();
+    final LinkedHashSet<VirtualFile> result = new LinkedHashSet<>();
     final Collection<VirtualFile> loadPath = getLoadPath(module, file);
     for (VirtualFile path : loadPath) {
       if (path.getPath().startsWith(RubyMotionUtil.getInstance().getRubyMotionPath())) {

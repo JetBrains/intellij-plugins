@@ -30,14 +30,14 @@ public class FlashUIDesignerLineMarkerProvider implements LineMarkerProvider {
     }
 
     //holder.createInfoAnnotation(textRange, null).setGutterIconRenderer(new MyRenderer());
-    return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), PlatformIcons.UI_FORM_ICON, Pass.UPDATE_ALL,
-                                          element1 -> FlashUIDesignerBundle.message("gutter.open"),
-                                          new GutterIconNavigationHandler<PsiElement>() {
-                                            @Override
-                                            public void navigate(MouseEvent e, PsiElement elt) {
-                                              DesignerApplicationManager.getInstance().openDocument(psiFile, false);
-                                            }
-                                          }, GutterIconRenderer.Alignment.LEFT
+    return new LineMarkerInfo<>(element, element.getTextRange(), PlatformIcons.UI_FORM_ICON, Pass.UPDATE_ALL,
+                                element1 -> FlashUIDesignerBundle.message("gutter.open"),
+                                new GutterIconNavigationHandler<PsiElement>() {
+                                  @Override
+                                  public void navigate(MouseEvent e, PsiElement elt) {
+                                    DesignerApplicationManager.getInstance().openDocument(psiFile, false);
+                                  }
+                                }, GutterIconRenderer.Alignment.LEFT
     );
   }
 

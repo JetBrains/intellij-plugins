@@ -251,7 +251,7 @@ public class VmServiceWrapper implements Disposable {
       public void received(final Stack vmStack) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           InstanceRef exceptionToAddToFrame = exception;
-          final List<XStackFrame> result = new ArrayList<XStackFrame>(vmStack.getFrames().size());
+          final List<XStackFrame> result = new ArrayList<>(vmStack.getFrames().size());
           for (Frame vmFrame : vmStack.getFrames()) {
             final DartVmServiceStackFrame stackFrame =
               new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, exceptionToAddToFrame);

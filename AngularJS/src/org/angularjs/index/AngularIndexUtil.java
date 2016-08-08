@@ -54,7 +54,7 @@ public class AngularIndexUtil {
   public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
 
   public static JSImplicitElement resolve(final Project project, final StubIndexKey<String, JSImplicitElementProvider> index, final String lookupKey) {
-    final Ref<JSImplicitElement> result = new Ref<JSImplicitElement>(null);
+    final Ref<JSImplicitElement> result = new Ref<>(null);
     final Processor<JSImplicitElement> processor = element -> {
       if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
                                                   AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
@@ -106,7 +106,7 @@ public class AngularIndexUtil {
       files = filtered;
     }
 
-    final List<JSImplicitElement> elements = new ArrayList<JSImplicitElement>();
+    final List<JSImplicitElement> elements = new ArrayList<>();
     for (VirtualFile file : files) {
       final List<AngularNamedItemDefinition> values = instance.getValues(INDEX, id, GlobalSearchScope.fileScope(project, file));
       for (AngularNamedItemDefinition value : values) {

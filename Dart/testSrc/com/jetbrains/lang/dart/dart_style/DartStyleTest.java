@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public abstract class DartStyleTest extends FormatterTestCase {
 
   /** The set of tests that are known to fail in all test modes. */
-  protected static final Set<String> KNOWN_TO_FAIL = new THashSet<String>();
+  protected static final Set<String> KNOWN_TO_FAIL = new THashSet<>();
 
   static {
     KNOWN_TO_FAIL.add("comments/classes.unit:147  force doc comment between classes to have two newlines before");

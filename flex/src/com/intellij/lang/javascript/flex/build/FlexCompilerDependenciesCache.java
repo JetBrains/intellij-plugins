@@ -27,7 +27,7 @@ import java.util.*;
 public class FlexCompilerDependenciesCache {
 
   private final Project myProject;
-  private final Map<Module, Collection<BCInfo>> myCache = new THashMap<Module, Collection<BCInfo>>();
+  private final Map<Module, Collection<BCInfo>> myCache = new THashMap<>();
 
   private static final String[] TAGS_FOR_FILE_PATHS_IN_CONFIG_FILE =
     {"<flex-config><compiler><external-library-path><path-element>", "<flex-config><compiler><local-font-paths><path-element>",
@@ -103,7 +103,7 @@ public class FlexCompilerDependenciesCache {
   public void cacheBC(final Module module, final FlexBuildConfiguration bc, final List<VirtualFile> configFiles) {
     Collection<BCInfo> infosForModule = myCache.get(module);
     if (infosForModule == null) {
-      infosForModule = new ArrayList<BCInfo>();
+      infosForModule = new ArrayList<>();
       myCache.put(module, infosForModule);
     }
     else {
@@ -171,7 +171,7 @@ public class FlexCompilerDependenciesCache {
   private static class BCInfo {
     private final FlexBuildConfiguration myBC;
     private final String[] mySourceRootUrls;
-    private final Collection<Pair<File, Long>> myFileToTimestamp = new ArrayList<Pair<File, Long>>();
+    private final Collection<Pair<File, Long>> myFileToTimestamp = new ArrayList<>();
 
     private BCInfo(final FlexBuildConfiguration bc, final String[] sourceRootUrls) {
       myBC = bc;

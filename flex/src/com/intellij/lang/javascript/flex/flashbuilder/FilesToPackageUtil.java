@@ -26,7 +26,7 @@ public class FilesToPackageUtil {
   static void setupFilesToPackage(final ModifiableAirPackagingOptions packagingOptions,
                                   final Collection<String> pathsExcludedFromPackaging,
                                   final ModuleRootModel rootModel) {
-    final List<AirPackagingOptions.FilePathAndPathInPackage> filesToPackage = new ArrayList<AirPackagingOptions.FilePathAndPathInPackage>();
+    final List<AirPackagingOptions.FilePathAndPathInPackage> filesToPackage = new ArrayList<>();
 
     for (VirtualFile srcRoot : rootModel.getSourceRoots()) {
       final FolderNode rootNode = new FolderNode(null, srcRoot.getPath(), ".");
@@ -40,7 +40,7 @@ public class FilesToPackageUtil {
   private static void initNodes(final VirtualFile rootFolder,
                                 final FolderNode rootFolderNode,
                                 final Collection<String> pathsExcludedFromPackaging) {
-    final Map<VirtualFile, Node> map = new THashMap<VirtualFile, Node>();
+    final Map<VirtualFile, Node> map = new THashMap<>();
     map.put(rootFolder, rootFolderNode);
 
     VfsUtilCore.visitChildrenRecursively(rootFolder, new VirtualFileVisitor() {
@@ -118,7 +118,7 @@ public class FilesToPackageUtil {
   }
 
   private static class FolderNode extends Node {
-    private final Collection<Node> childNodes = new ArrayList<Node>();
+    private final Collection<Node> childNodes = new ArrayList<>();
     private boolean hasExcludedChildren;
 
     protected FolderNode(@Nullable final FolderNode parent, final String path, final String relativePath) {

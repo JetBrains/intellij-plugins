@@ -47,7 +47,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     final DartClass dartClass = PsiTreeUtil.getParentOfType(file.findElementAt(offset), DartClassDefinition.class);
     if (dartClass == null) return;
 
-    final List<DartComponent> candidates = new ArrayList<DartComponent>();
+    final List<DartComponent> candidates = new ArrayList<>();
     collectCandidates(dartClass, candidates);
 
     List<DartNamedElementNode> selectedElements = Collections.emptyList();
@@ -119,12 +119,12 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
 
   @NotNull
   protected final Map<Pair<String, Boolean>, DartComponent> computeSuperClassesMemberMap(@NotNull final DartClass dartClass) {
-    final List<DartClass> superClasses = new ArrayList<DartClass>();
-    final List<DartClass> superInterfaces = new ArrayList<DartClass>();
+    final List<DartClass> superClasses = new ArrayList<>();
+    final List<DartClass> superInterfaces = new ArrayList<>();
 
     DartResolveUtil.collectSupers(superClasses, superInterfaces, dartClass);
 
-    List<DartComponent> superClassesMembers = new ArrayList<DartComponent>();
+    List<DartComponent> superClassesMembers = new ArrayList<>();
     for (DartClass superClass : superClasses) {
       superClassesMembers.addAll(DartResolveUtil.getNamedSubComponents(superClass));
     }
@@ -137,12 +137,12 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
 
   @NotNull
   protected final Map<Pair<String, Boolean>, DartComponent> computeSuperInterfacesMembersMap(@NotNull final DartClass dartClass) {
-    final List<DartClass> superClasses = new ArrayList<DartClass>();
-    final List<DartClass> superInterfaces = new ArrayList<DartClass>();
+    final List<DartClass> superClasses = new ArrayList<>();
+    final List<DartClass> superInterfaces = new ArrayList<>();
 
     DartResolveUtil.collectSupers(superClasses, superInterfaces, dartClass);
 
-    List<DartComponent> superInterfacesMembers = new ArrayList<DartComponent>();
+    List<DartComponent> superInterfacesMembers = new ArrayList<>();
     for (DartClass superInterface : superInterfaces) {
       superInterfacesMembers.addAll(DartResolveUtil.getNamedSubComponents(superInterface));
     }

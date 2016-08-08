@@ -163,7 +163,7 @@ public class VFSUtil {
     VirtualFile result = findFileByFQName(file, project);
 
     if (result == null) {
-      final Set<VirtualFile> candidates = new HashSet<VirtualFile>();
+      final Set<VirtualFile> candidates = new HashSet<>();
 
       Module[] modules = ModuleManager.getInstance(project).getModules();
       for (Module module : modules) {

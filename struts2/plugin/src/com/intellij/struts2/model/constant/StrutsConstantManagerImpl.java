@@ -171,7 +171,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     // 2. <constant> from StrutsModel
     final Condition<Constant> constantNameCondition = constant -> Comparing.equal(constant.getName().getStringValue(), name);
 
-    final List<DomFileElement<StrutsRoot>> domFileElements = new ArrayList<DomFileElement<StrutsRoot>>();
+    final List<DomFileElement<StrutsRoot>> domFileElements = new ArrayList<>();
     collectStrutsXmls(domFileElements, strutsModel, "struts-default.xml", true);
     collectStrutsXmls(domFileElements, strutsModel, "struts-plugin.xml", true);
     collectStrutsXmls(domFileElements, strutsModel, "struts.xml", false);
@@ -252,9 +252,9 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
                                         @NotNull @NonNls final String strutsXmlName,
                                         final boolean onlyInJARs) {
     ContainerUtil.process(model.getRoots(),
-                          new FilteringProcessor<DomFileElement<StrutsRoot>>(
-                              getStrutsXmlCondition(strutsXmlName, onlyInJARs),
-                              new CommonProcessors.CollectProcessor<DomFileElement<StrutsRoot>>(domFileElements)));
+                          new FilteringProcessor<>(
+                            getStrutsXmlCondition(strutsXmlName, onlyInJARs),
+                            new CommonProcessors.CollectProcessor<>(domFileElements)));
   }
 
   /**

@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuilderProvider {
 
   static final ConstantFunction<DomElement, DomService.StructureViewMode> ALWAYS_SHOW =
-    new ConstantFunction<DomElement, DomService.StructureViewMode>(DomService.StructureViewMode.SHOW);
+    new ConstantFunction<>(DomService.StructureViewMode.SHOW);
 
   /**
    * Returns the DomFileElement depending on the root tag of the implementing class.

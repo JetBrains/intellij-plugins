@@ -70,7 +70,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
 
       if (region != null) {
         final Project project = reference.getProject();
-        final List<PsiElement> result = new SmartList<PsiElement>();
+        final List<PsiElement> result = new SmartList<>();
         for (DartNavigationTarget target : region.getTargets()) {
           final PsiElement targetElement = getElementForNavigationTarget(project, target);
           if (targetElement != null) {
@@ -110,7 +110,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     final DartReference[] references = PsiTreeUtil.getChildrenOfType(reference, DartReference.class);
     if (references != null && references.length == 2) {
       // import prefix
-      final List<DartComponentName> result = new SmartList<DartComponentName>();
+      final List<DartComponentName> result = new SmartList<>();
       final String importPrefix = references[0].getCanonicalText();
       final String componentName = references[1].getCanonicalText();
       DartResolveUtil
@@ -134,7 +134,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       }
 
       // import prefix
-      final List<DartComponentName> result = new SmartList<DartComponentName>();
+      final List<DartComponentName> result = new SmartList<>();
       final String importPrefix = leftReference.getCanonicalText();
       final String componentName = reference.getCanonicalText();
       DartResolveUtil
@@ -201,7 +201,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     if (element == null) {
       return Collections.emptyList();
     }
-    return new SmartList<PsiElement>(element);
+    return new SmartList<>(element);
   }
 
   @Nullable
@@ -261,7 +261,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     if (!isSimpleConstructor || result.isEmpty()) {
       return result;
     }
-    final List<PsiElement> filteredResult = new ArrayList<PsiElement>(result.size());
+    final List<PsiElement> filteredResult = new ArrayList<>(result.size());
     for (PsiElement element : result) {
       final PsiElement elementParent = element.getParent();
       if (element instanceof DartComponentName && elementParent instanceof DartClass) {
@@ -278,7 +278,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
 
   @NotNull
   public static List<? extends PsiElement> resolveSimpleReference(@NotNull final PsiElement scopeElement, @NotNull final String name) {
-    final List<DartComponentName> result = new ArrayList<DartComponentName>();
+    final List<DartComponentName> result = new ArrayList<>();
     // local
     final DartResolveProcessor dartResolveProcessor = new DartResolveProcessor(result, name, DartResolveUtil.isLValue(scopeElement));
     PsiTreeUtil.treeWalkUp(dartResolveProcessor, scopeElement, null, ResolveState.initial());

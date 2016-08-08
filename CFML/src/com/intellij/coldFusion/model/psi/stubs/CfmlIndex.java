@@ -40,7 +40,7 @@ import java.util.*;
 public abstract class CfmlIndex implements Disposable {
   private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.model.psi.stubs.CfmlIndex");
   private static final Key<GlobalSearchScope> MY_SCOPE_KEY = Key.create("default.cfml.scope");
-  private static final Map<Project, CfmlIndex> managers = new HashMap<Project, CfmlIndex>();
+  private static final Map<Project, CfmlIndex> managers = new HashMap<>();
   private final Project project;
 
   private CfmlIndex(Project project) {
@@ -129,7 +129,7 @@ public abstract class CfmlIndex implements Disposable {
 
     if (ok) return items;
 
-    Set<T> result = new THashSet<T>(items.size());
+    Set<T> result = new THashSet<>(items.size());
     for (PsiElement element : items) {
       if (aClass.isInstance(element)) {
         //noinspection unchecked

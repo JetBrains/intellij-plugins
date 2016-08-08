@@ -60,7 +60,7 @@ public class Struts2ModelValidator extends ValidatorBase {
       }
     };
 
-    final Set<VirtualFile> files = new THashSet<VirtualFile>();
+    final Set<VirtualFile> files = new THashSet<>();
     for (final VirtualFile file : context.getCompileScope().getFiles(StdFileTypes.XML, false)) {
       final Module module = context.getModuleByFile(file);
       if (module != null &&

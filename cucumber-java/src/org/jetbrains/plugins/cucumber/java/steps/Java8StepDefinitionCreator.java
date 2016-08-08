@@ -146,7 +146,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
   }
 
   private static PsiElement buildStepDefinitionByStep(@NotNull final GherkinStep step, Language language) {
-    final Step cucumberStep = new Step(new ArrayList<Comment>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
     final SnippetGenerator generator = new SnippetGenerator(new Java8Snippet());
 
     final String snippet = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()))

@@ -50,7 +50,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
     if (o instanceof PsiElement) {
       PsiElement element = (PsiElement)o;
 
-      List<PsiElement> methods = new ArrayList<PsiElement>();
+      List<PsiElement> methods = new ArrayList<>();
       if (element instanceof CfmlFunction || element instanceof PsiMethod) {
         methods.add(element);
       }

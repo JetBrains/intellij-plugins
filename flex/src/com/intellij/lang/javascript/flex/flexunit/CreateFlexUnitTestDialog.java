@@ -143,7 +143,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
                                                        JSBundle.message("choose.super.class.title"));
 
 
-    final List<JSMemberInfo> memberInfos = new ArrayList<JSMemberInfo>();
+    final List<JSMemberInfo> memberInfos = new ArrayList<>();
     JSMemberInfo.extractClassMembers(myContextClass, memberInfos, new MemberInfoBase.Filter<JSAttributeListOwner>() {
       public boolean includeMember(final JSAttributeListOwner member) {
         final JSAttributeList attributeList = member.getAttributeList();

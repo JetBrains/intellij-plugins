@@ -102,11 +102,11 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private boolean myDartSupportEnabledInitial;
   private @Nullable DartSdk mySdkInitial;
-  private final @NotNull Collection<Module> myModulesWithDartSdkLibAttachedInitial = new THashSet<Module>();
+  private final @NotNull Collection<Module> myModulesWithDartSdkLibAttachedInitial = new THashSet<>();
 
   private @Nullable WebBrowser myDartiumInitial;
   private ChromeSettings myDartiumSettingsCurrent;
-  private final @NotNull Map<Module, String> myModuleToCustomPackageRootCurrent = new THashMap<Module, String>();
+  private final @NotNull Map<Module, String> myModuleToCustomPackageRootCurrent = new THashMap<>();
 
   public DartConfigurable(final @NotNull Project project) {
     myProject = project;
@@ -240,10 +240,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     });
 
     final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> bfListener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(DartBundle.message("select.custom.package.root"), null,
-                                                                           myCustomPackageRootTextWithBrowse, myProject,
-                                                                           FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                                           TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+      new ComponentWithBrowseButton.BrowseFolderActionListener<>(DartBundle.message("select.custom.package.root"), null,
+                                                                 myCustomPackageRootTextWithBrowse, myProject,
+                                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                                                                 TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
     myCustomPackageRootTextWithBrowse.addBrowseFolderListener(myProject, bfListener);
 
@@ -662,7 +662,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
         final TextFieldWithBrowseButton fieldWithBrowse = new TextFieldWithBrowseButton();
         fieldWithBrowse.addBrowseFolderListener(DartBundle.message("select.custom.package.root"), null, myProject,
                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
-        myComponent = new CellEditorComponentWithBrowseButton<JTextField>(fieldWithBrowse, this);
+        myComponent = new CellEditorComponentWithBrowseButton<>(fieldWithBrowse, this);
         final String text = value != null ? FileUtil.toSystemDependentName((String)value) : "";
 
         myComponent.getChildComponent().setText(text);
@@ -834,7 +834,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   public static Map<String, String> getContentRootPathToCustomPackageRootMap(@NotNull final Module module) {
     final String customPackageRootPath = getCustomPackageRootPath(module);
     if (customPackageRootPath != null) {
-      final Map<String, String> result = new SmartHashMap<String, String>();
+      final Map<String, String> result = new SmartHashMap<>();
       for (String contentRootUrl : ModuleRootManager.getInstance(module).getContentRootUrls()) {
         result.put(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentRootUrl)),
                    FileUtil.toSystemDependentName(customPackageRootPath));

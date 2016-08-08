@@ -93,7 +93,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
   }
 
   private boolean isSuitableFile(VirtualFile file) {
-    List<String> headersToDetect = new ArrayList<String>(Arrays.asList(DETECTION_HEADERS));
+    List<String> headersToDetect = new ArrayList<>(Arrays.asList(DETECTION_HEADERS));
 
     if (file != null && file.exists() && !file.isDirectory()) {
       try {

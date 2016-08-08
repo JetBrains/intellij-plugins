@@ -117,17 +117,17 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
       superComponent = interfaceComponents.iterator().next();
     }
     final Icon icon = overrides ? AllIcons.Gutter.OverridingMethod : AllIcons.Gutter.ImplementingMethod;
-    return new LineMarkerInfo<PsiElement>(componentName, componentName.getTextRange(), icon, Pass.UPDATE_ALL,
-                                          element -> {
-                                            final DartClass superClass = PsiTreeUtil.getParentOfType(superComponent, DartClass.class);
-                                            if (superClass == null) return "null";
-                                            if (overrides) {
-                                              return superclassComponent.isOperator()
-                                                     ? DartBundle.message("overrides.operator.in", name, superClass.getName())
-                                                     : DartBundle.message("overrides.method.in", name, superClass.getName());
-                                            }
-                                            return DartBundle.message("implements.method.in", name, superClass.getName());
-                                          }, new GutterIconNavigationHandler<PsiElement>() {
+    return new LineMarkerInfo<>(componentName, componentName.getTextRange(), icon, Pass.UPDATE_ALL,
+                                element -> {
+                                  final DartClass superClass = PsiTreeUtil.getParentOfType(superComponent, DartClass.class);
+                                  if (superClass == null) return "null";
+                                  if (overrides) {
+                                    return superclassComponent.isOperator()
+                                           ? DartBundle.message("overrides.operator.in", name, superClass.getName())
+                                           : DartBundle.message("overrides.method.in", name, superClass.getName());
+                                  }
+                                  return DartBundle.message("implements.method.in", name, superClass.getName());
+                                }, new GutterIconNavigationHandler<PsiElement>() {
       @Override
       public void navigate(MouseEvent e, PsiElement elt) {
         List<DartComponent> superComponents = Lists.newArrayList();

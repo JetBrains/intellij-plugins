@@ -37,7 +37,7 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
   private final GlobalSearchScope scope;
   private final Project project;
 
-  private final static Set<String> ignoredRootTags = new THashSet<String>(5);
+  private final static Set<String> ignoredRootTags = new THashSet<>(5);
 
   static {
     ignoredRootTags.add("Metadata");
@@ -55,7 +55,7 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
     project = module.getProject();
 
     int size = input.readShort();
-    properties = new THashMap<String, String>(size);
+    properties = new THashMap<>(size);
     assert size > 0;
     for (int i = 0; i < size; i++) {
       String name = input.readUTF();

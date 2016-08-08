@@ -38,7 +38,7 @@ public class LibrarySorter {
 
   private static List<LibrarySetItem> collectItems(final List<Library> libraries, Map<CharSequence, Definition> definitionMap,
                                                    Condition<String> isExternal) throws IOException {
-    final List<LibrarySetItem> items = new ArrayList<LibrarySetItem>(libraries.size());
+    final List<LibrarySetItem> items = new ArrayList<>(libraries.size());
     final CatalogXmlBuilder catalogXmlBuilder = new CatalogXmlBuilder(definitionMap, isExternal);
     for (Library library : libraries) {
       LibrarySetItem item = new LibrarySetItem(library);
@@ -53,11 +53,11 @@ public class LibrarySorter {
   }
 
   public SortResult sort(List<Library> libraries, File outFile, Condition<String> isExternal, boolean returnDefinitionMap) throws IOException {
-    final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcTranscoder.HASHING_STRATEGY);
+    final THashMap<CharSequence, Definition> definitionMap = new THashMap<>(libraries.size() * 128, AbcTranscoder.HASHING_STRATEGY);
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, definitionMap, isExternal);
     final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile, definitionProcessor);
     try {
-      final ArrayList<Library> resourceOrStyleHolders = new ArrayList<Library>(unsortedItems.size());
+      final ArrayList<Library> resourceOrStyleHolders = new ArrayList<>(unsortedItems.size());
       for (LibrarySetItem item : unsortedItems) {
         if (!item.hasDefinitions()) {
           if (item.library.hasResourceBundles()) {
@@ -77,7 +77,7 @@ public class LibrarySorter {
         definitionMapProcessor.process(definitionMap, abcMerger);
       }
 
-      final List<Decoder> decoders = new ArrayList<Decoder>(definitionMap.size());
+      final List<Decoder> decoders = new ArrayList<>(definitionMap.size());
       final String[] singleStringArray = new String[1];
       definitionMap.forEachValue(new TObjectProcedure<Definition>() {
         @Override
@@ -109,7 +109,7 @@ public class LibrarySorter {
   @SuppressWarnings({"UnusedDeclaration"})
   @TestOnly
   private static Map<CharSequence, Definition> getDefinitions(LibrarySetItem library, THashMap<CharSequence, Definition> definitionMap) {
-    Map<CharSequence, Definition> definitions = new HashMap<CharSequence, Definition>();
+    Map<CharSequence, Definition> definitions = new HashMap<>();
     for (Entry<CharSequence, Definition> entry : definitionMap.entrySet()) {
       if (entry.getValue().getLibrary() == library) {
         definitions.put(entry.getKey(), entry.getValue());

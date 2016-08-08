@@ -102,10 +102,10 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
     new JamAnnotationMeta(ANNOTATION_NAME).addAttribute(VALUE_ATTRIBUTE);
 
   public static final JamClassMeta<JamParentPackage> META_CLASS =
-    new JamClassMeta<JamParentPackage>(JamParentPackage.class).addAnnotation(PARENT_PACKAGE_META);
+    new JamClassMeta<>(JamParentPackage.class).addAnnotation(PARENT_PACKAGE_META);
 
   public static final JamPackageMeta<JamParentPackage> META_PACKAGE =
-    new JamPackageMeta<JamParentPackage>(JamParentPackage.class)
+    new JamPackageMeta<>(JamParentPackage.class)
       .addAnnotation(PARENT_PACKAGE_META);
 
   @JamPsiConnector

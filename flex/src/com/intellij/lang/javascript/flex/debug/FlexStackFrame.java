@@ -80,7 +80,7 @@ public class FlexStackFrame extends XStackFrame {
 
   @Override
   public void computeChildren(@NotNull final XCompositeNode node) {
-    List<DebuggerCommand> commands = new ArrayList<DebuggerCommand>();
+    List<DebuggerCommand> commands = new ArrayList<>();
     commands.add(new MyDebuggerCommand("print this", node, true, FlexValue.ValueType.This));
     commands.add(new MyDebuggerCommand("info arguments", node, false, FlexValue.ValueType.Parameter));
     commands.add(new MyDebuggerCommand("info locals", node, false, FlexValue.ValueType.Variable));
@@ -127,7 +127,7 @@ public class FlexStackFrame extends XStackFrame {
             // Interesting for us: closures and one object after the last closure,
             // i.e. in this case #2, #5 and #6.
 
-            scopeChain = new ArrayList<String>(2);
+            scopeChain = new ArrayList<>(2);
 
             String firstTokenAfterLastClosure = null;
             for (String token : qName2IdMap.keySet()) {
@@ -234,7 +234,7 @@ public class FlexStackFrame extends XStackFrame {
     qName2IdMap = myDebugProcess.getQName2IdIfSameEqualityObject(getEqualityObject());
 
     if (qName2IdMap != null) return;
-    qName2IdMap = new LinkedHashMap<String, String>();
+    qName2IdMap = new LinkedHashMap<>();
     final DebuggerCommand command = new DebuggerCommand("info scopechain", CommandOutputProcessingType.SPECIAL_PROCESSING) {
       @Override
       CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
@@ -328,7 +328,7 @@ public class FlexStackFrame extends XStackFrame {
                 PsiTreeUtil.getParentOfType(element, PsiLanguageInjectionHost.class);
 
             if (psiLanguageInjectionHost != null) {
-              final Ref<PsiElement> result = new Ref<PsiElement>();
+              final Ref<PsiElement> result = new Ref<>();
               InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
                 @Override
                 public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
@@ -366,7 +366,7 @@ public class FlexStackFrame extends XStackFrame {
         }
       } else if (scopeChain != null) {
           for(String id2:scopeChain) {
-            final Ref<Boolean> resolved = new Ref<Boolean>();
+            final Ref<Boolean> resolved = new Ref<>();
             DebuggerCommand evaluateCommand = new EvaluateCommand(id2 + "." + expression, callback) {
               @Override
               CommandOutputProcessingMode doOnTextAvailable(@NonNls final String s) {

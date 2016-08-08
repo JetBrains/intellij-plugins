@@ -16,7 +16,7 @@ import java.util.List;
 
 public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
 
-  private static final List<VisibilityLevel> predefinedLevels = new ArrayList<VisibilityLevel>();
+  private static final List<VisibilityLevel> predefinedLevels = new ArrayList<>();
 
   static {
     for (JSAttributeList.AccessType accessType : JSVisibilityUtil.ACCESS_TYPES) {

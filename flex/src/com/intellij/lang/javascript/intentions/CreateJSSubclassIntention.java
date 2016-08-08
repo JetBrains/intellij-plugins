@@ -171,7 +171,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       targetDirectory = p.getTargetDirectory();
       superClass = CreateClassOrInterfaceFix.calcClass(p.getSuperclassFqn(), element);
       interfaces = p.getInterfacesFqns();
-      templateAttributes = new HashMap<String, Object>(p.getTemplateAttributes());
+      templateAttributes = new HashMap<>(p.getTemplateAttributes());
     }
 
     JSClass createdClass = CreateClassOrInterfaceFix
@@ -204,7 +204,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     }
 
     public void execute() {
-      Collection<JSNamedElementNode> candidates = new ArrayList<JSNamedElementNode>();
+      Collection<JSNamedElementNode> candidates = new ArrayList<>();
       collectCandidates(myClass, candidates);
       ImplementMethodsFix fix = new ImplementMethodsFix(myClass);
       for(JSNamedElementNode el: candidates) {

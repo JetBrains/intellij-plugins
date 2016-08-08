@@ -163,7 +163,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
           final String packagePath = packageName.replace('.', '/');
           final String path = sourceRoot != null ? sourceRoot.getPath() : directory.getPath();
           // ToDo: I shouldn't create directories, only create VirtualFile object.
-          final Ref<PsiDirectory> resultRef = new Ref<PsiDirectory>();
+          final Ref<PsiDirectory> resultRef = new Ref<>();
           new WriteAction() {
             protected void run(@NotNull Result result) throws Throwable {
               final VirtualFile packageFile = VfsUtil.createDirectoryIfMissing(path + '/' + packagePath);
@@ -207,7 +207,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     String annotationPackage = new AnnotationPackageProvider().getAnnotationPackageFor(step);
     String methodAnnotation = String.format("@%s.", annotationPackage);
 
-    final Step cucumberStep = new Step(new ArrayList<Comment>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
     final SnippetGenerator generator = new SnippetGenerator(new JavaSnippet());
 
     final String snippet = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()))

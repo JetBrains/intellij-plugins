@@ -26,7 +26,7 @@ class FlexSwcFoldersRootDetector extends RootDetector {
   @NotNull
   @Override
   public Collection<VirtualFile> detectRoots(@NotNull final VirtualFile rootCandidate, @NotNull final ProgressIndicator progressIndicator) {
-    List<VirtualFile> result = new ArrayList<VirtualFile>();
+    List<VirtualFile> result = new ArrayList<>();
     collectRoots(rootCandidate, result, progressIndicator);
     return result;
   }

@@ -16,10 +16,10 @@ public class KnownFilesInfo {
   private boolean myUpToDate = false;
 
   private final TIntObjectHashMap<BidirectionalMap<String, String>> myWorkerToFilePathToIdMap =
-    new TIntObjectHashMap<BidirectionalMap<String, String>>();
+    new TIntObjectHashMap<>();
 
   private final TIntObjectHashMap<Map<String, Collection<String>>> myWorkerToFileNameToPathsMap =
-    new TIntObjectHashMap<Map<String, Collection<String>>>();
+    new TIntObjectHashMap<>();
 
   public KnownFilesInfo(final FlexDebugProcess flexDebugProcess) {
     myFlexDebugProcess = flexDebugProcess;
@@ -125,14 +125,14 @@ public class KnownFilesInfo {
 
       BidirectionalMap<String, String> filePathToIdMap = myWorkerToFilePathToIdMap.get(worker);
       if (filePathToIdMap == null) {
-        filePathToIdMap = new BidirectionalMap<String, String>();
+        filePathToIdMap = new BidirectionalMap<>();
         myWorkerToFilePathToIdMap.put(worker, filePathToIdMap);
       }
       filePathToIdMap.put(fullPath, id);
 
       Map<String, Collection<String>> fileNameToPaths = myWorkerToFileNameToPathsMap.get(worker);
       if (fileNameToPaths == null) {
-        fileNameToPaths = new THashMap<String, Collection<String>>();
+        fileNameToPaths = new THashMap<>();
         myWorkerToFileNameToPathsMap.put(worker, fileNameToPaths);
       }
       addToMap(fileNameToPaths, shortName, fullPath);
@@ -142,7 +142,7 @@ public class KnownFilesInfo {
   private static <K, T> void addToMap(final Map<K, Collection<T>> map, final K key, final T valueCollectionElement) {
     Collection<T> valueCollection = map.get(key);
     if (valueCollection == null) {
-      valueCollection = new ArrayList<T>(1);
+      valueCollection = new ArrayList<>(1);
       map.put(key, valueCollection);
     }
 

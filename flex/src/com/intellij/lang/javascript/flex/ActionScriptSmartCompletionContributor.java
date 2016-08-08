@@ -63,7 +63,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   public List<?> getSmartCompletionVariants(final @NotNull JSReferenceExpression location) {
     final PsiElement parent = location.getParent();
 
-    List<Object> variants = new ArrayList<Object>();
+    List<Object> variants = new ArrayList<>();
     if (parent instanceof JSArgumentList &&
         ((JSArgumentList)parent).getArguments()[0] == location &&
         location.getQualifier() == null
@@ -91,7 +91,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       JSClass clazz = expectedClassType.resolveClass();
 
       if (clazz != null && !JSGenericTypeImpl.isGenericActionScriptVectorType(expectedClassType)) {
-        final Set<String> processedCandidateNames = new THashSet<String>(50);
+        final Set<String> processedCandidateNames = new THashSet<>(50);
         Query<JSClass> query;
 
         if (clazz.isInterface()) {
@@ -202,7 +202,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   protected void processClasses(PsiElement parentInOriginalTree, final SinkResolveProcessor<?> processor) {
     final Project project = parentInOriginalTree.getProject();
     final GlobalSearchScope resolveScope = JSResolveUtil.getResolveScope(parentInOriginalTree);
-    final LinkedHashSet<String> qualifiedNames = new LinkedHashSet<String>();
+    final LinkedHashSet<String> qualifiedNames = new LinkedHashSet<>();
     JSPackageIndex.processElementsInScopeRecursive("", new JSPackageIndex.PackageQualifiedElementsProcessor() {
       @Override
       public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
@@ -255,7 +255,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   public static Map<String, String> getEventsMap(JSClass clazzToProcess) {
     if (clazzToProcess == null) return Collections.emptyMap();
 
-    final Map<String, String> eventsMap = new THashMap<String, String>();
+    final Map<String, String> eventsMap = new THashMap<>();
     class EventsDataCollector extends ResolveProcessor implements JSResolveUtil.MetaDataProcessor {
 
       public EventsDataCollector() {
@@ -367,7 +367,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     private final PsiElement myExpr;
     private final List<Object> myVariants;
     private final ResolveState state = new ResolveState();
-    private Map<String, String> myEventsMap = new THashMap<String, String>();
+    private Map<String, String> myEventsMap = new THashMap<>();
 
     public MyEventSubclassesProcessor(final PsiElement expr, final List<Object> variants) {
       super(null);
@@ -432,7 +432,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         setToProcessMembers(true);
         setTypeContext(false);
 
-        final Set<String> visited = new THashSet<String>();
+        final Set<String> visited = new THashSet<>();
         for (JSClass cls : JSClassSearch.searchClassInheritors((JSClass)eventClass1, true, expression.getResolveScope()).findAll()) {
           if (!visited.add(cls.getQualifiedName())) continue;
           process(cls);
@@ -446,7 +446,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         setToProcessMembers(true);
         setTypeContext(false);
 
-        final Set<String> visited = new THashSet<String>();
+        final Set<String> visited = new THashSet<>();
         for (JSClass cls : JSClassSearch.searchClassInheritors((JSClass)eventClass2, true, expression.getResolveScope()).findAll()) {
           if (!visited.add(cls.getQualifiedName())) continue;
           process(cls);

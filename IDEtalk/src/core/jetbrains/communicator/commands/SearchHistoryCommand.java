@@ -46,7 +46,7 @@ public class SearchHistoryCommand implements UserCommand {
 
     if (searchString != null) {
       LocalMessage[] localMessages = myMessageDispatcher.getHistory(myUser, null);
-      List<LocalMessage> result = new ArrayList<LocalMessage>();
+      List<LocalMessage> result = new ArrayList<>();
       for (LocalMessage message : localMessages) {
         if (message.containsString(searchString)) {
           result.add(message);

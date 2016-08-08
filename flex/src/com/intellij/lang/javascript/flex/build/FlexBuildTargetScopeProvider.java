@@ -41,7 +41,7 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
   static Collection<Pair<Module, FlexBuildConfiguration>> getModulesAndBCsToCompile(final CompileScope scope)
     throws ConfigurationException {
 
-    final Collection<Pair<Module, FlexBuildConfiguration>> result = new HashSet<Pair<Module, FlexBuildConfiguration>>();
+    final Collection<Pair<Module, FlexBuildConfiguration>> result = new HashSet<>();
     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile = FlexResourceBuildTargetScopeProvider.getBCsToCompileForPackaging(scope);
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
 
@@ -60,7 +60,7 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
                                              : ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
       final Pair<Module, FlexBuildConfiguration> moduleAndBC;
 
-      final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();
+      final Ref<RuntimeConfigurationError> exceptionRef = new Ref<>();
       moduleAndBC = ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexBuildConfiguration>>() {
         public Pair<Module, FlexBuildConfiguration> compute() {
           try {
@@ -161,7 +161,7 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
     final Collection<Pair<Module, FlexBuildConfiguration>> bcsToCompileForPackaging =
       FlexResourceBuildTargetScopeProvider.getBCsToCompileForPackaging(baseScope);
 
-    List<String> targetIds = new ArrayList<String>();
+    List<String> targetIds = new ArrayList<>();
     try {
       for (Pair<Module, FlexBuildConfiguration> moduleAndBC : getModulesAndBCsToCompile(baseScope)) {
         final Module module = moduleAndBC.first;

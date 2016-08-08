@@ -32,7 +32,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
     if (xmlTag != null) {
-      final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
+      final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<>();
       final Project project = xmlTag.getProject();
       final XmlElementDescriptor descriptor = xmlTag.getDescriptor();
       final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.KEY, project);

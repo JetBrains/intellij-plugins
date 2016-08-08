@@ -40,7 +40,7 @@ public class FilesToPackageForm {
   private JBTable myFilesToPackageTable;
 
   private final Project myProject;
-  private List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<FilePathAndPathInPackage>();
+  private List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<>();
 
   private enum Column {
     Path("Path to file or folder", String.class) {
@@ -140,7 +140,7 @@ public class FilesToPackageForm {
           }
         };
 
-        myComponent = new CellEditorComponentWithBrowseButton<JTextField>(new TextFieldWithBrowseButton(listener), this);
+        myComponent = new CellEditorComponentWithBrowseButton<>(new TextFieldWithBrowseButton(listener), this);
         myComponent.getChildComponent().setText((String)value);
         return myComponent;
       }

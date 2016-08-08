@@ -41,7 +41,7 @@ public abstract class StrutsConstantManager {
    * EP for contributing plugin-specific {@link StrutsConstant}s.
    */
   public static final ExtensionPointName<StrutsConstantContributor> EP_NAME =
-      new ExtensionPointName<StrutsConstantContributor>("com.intellij.struts2.constantContributor");
+    new ExtensionPointName<>("com.intellij.struts2.constantContributor");
 
   public static StrutsConstantManager getInstance(@NotNull final Project project) {
     return INSTANCE_KEY.getValue(project);

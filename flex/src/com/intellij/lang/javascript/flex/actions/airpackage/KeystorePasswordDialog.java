@@ -37,7 +37,7 @@ public class KeystorePasswordDialog extends DialogWrapper {
 
   private Collection<Trinity<AirSigningOptions, JPasswordField, JPasswordField>> createPasswordFields(final Collection<AirSigningOptions> signingOptionsWithUnknownPasswords) {
     final Collection<Trinity<AirSigningOptions, JPasswordField, JPasswordField>> result =
-      new ArrayList<Trinity<AirSigningOptions, JPasswordField, JPasswordField>>();
+      new ArrayList<>();
 
     final JPanel panel = new JPanel(new GridBagLayout());
     myMainPanel.add(panel, BorderLayout.CENTER);

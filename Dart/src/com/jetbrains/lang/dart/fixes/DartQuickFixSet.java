@@ -21,7 +21,7 @@ public class DartQuickFixSet {
   @Nullable private final String myErrorCode;
   @NotNull private final String myErrorSeverity;
 
-  @NotNull private final List<DartQuickFix> myQuickFixes = new ArrayList<DartQuickFix>(MAX_QUICK_FIXES);
+  @NotNull private final List<DartQuickFix> myQuickFixes = new ArrayList<>(MAX_QUICK_FIXES);
   private long myPsiModCount;
 
 

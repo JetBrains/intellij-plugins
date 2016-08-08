@@ -68,7 +68,7 @@ public class ValidatorModelValidator extends ValidatorBase {
     };
 
     // collect all validation.xml files located in sources of S2-modules
-    final Set<VirtualFile> files = new THashSet<VirtualFile>();
+    final Set<VirtualFile> files = new THashSet<>();
     for (final VirtualFile file : context.getProjectCompileScope().getFiles(StdFileTypes.XML, true)) {
       if (StringUtil.endsWith(file.getName(), FILENAME_EXTENSION_VALIDATION_XML)) {
         final PsiFile psiFile = psiManager.findFile(file);
@@ -84,7 +84,7 @@ public class ValidatorModelValidator extends ValidatorBase {
     }
 
     // add validator-config.xml if not default one from xwork.jar
-    final Set<VirtualFile> descriptorFiles = new THashSet<VirtualFile>();
+    final Set<VirtualFile> descriptorFiles = new THashSet<>();
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
       if (enabledForModule.get(module)) {
         final PsiFile psiFile = validatorManager.getValidatorConfigFile(module);

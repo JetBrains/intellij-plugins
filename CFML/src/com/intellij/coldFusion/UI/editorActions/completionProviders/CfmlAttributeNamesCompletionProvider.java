@@ -70,7 +70,7 @@ class CfmlAttributeNamesCompletionProvider extends CompletionProvider<Completion
       tagName =
         element instanceof CfmlTag ? ((CfmlTag)element).getTagName() : element instanceof CfmlPropertyImpl ? "cfproperty" : "cfcomponent";
     }
-    Set<String> excluded = new HashSet<String>();
+    Set<String> excluded = new HashSet<>();
     final CfmlAttributeImpl[] attributes = PsiTreeUtil.getChildrenOfType(element, CfmlAttributeImpl.class);
     if (attributes != null) {
       for (CfmlAttributeImpl attribute : attributes) {

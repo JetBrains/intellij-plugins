@@ -35,7 +35,7 @@ public class DartComponentInfoListExternalizer implements DataExternalizer<List<
     int size = DataInputOutputUtil.readINT(in);
     if (size == 0) return Collections.emptyList();
 
-    List<DartComponentInfo> result = new ArrayList<DartComponentInfo>(size);
+    List<DartComponentInfo> result = new ArrayList<>(size);
 
     for (int i = 0; i < size; i++) {
       final int componentTypeKey = DataInputOutputUtil.readINT(in);

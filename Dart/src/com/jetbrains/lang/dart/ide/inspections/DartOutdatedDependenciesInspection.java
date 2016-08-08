@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
-  private final Set<String> myIgnoredPubspecPaths = new THashSet<String>(); // remember for the current session only, do not serialize
+  private final Set<String> myIgnoredPubspecPaths = new THashSet<>(); // remember for the current session only, do not serialize
 
   @Nullable
   @Override

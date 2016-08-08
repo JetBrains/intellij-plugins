@@ -204,7 +204,7 @@ public class AngularCLIProjectGenerator extends WebProjectTemplate<Pair<NodeJsIn
         panel.add(component);
 
         final NotNullProducer<List<String>> producer = () -> {
-          List<String> dirs = new ArrayList<String>();
+          List<String> dirs = new ArrayList<>();
           final NodeJsLocalInterpreter local = NodeJsLocalInterpreter.tryCast(myInterpreter.getInterpreter());
           List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
           NodeModuleSearchUtil.findModulesWithName(modules,

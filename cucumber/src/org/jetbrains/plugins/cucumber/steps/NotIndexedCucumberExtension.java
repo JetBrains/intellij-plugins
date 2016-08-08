@@ -70,7 +70,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     // clear caches after modules roots were changed
     final MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-      final List<VirtualFile> myPreviousStepDefsProviders = new ArrayList<VirtualFile>();
+      final List<VirtualFile> myPreviousStepDefsProviders = new ArrayList<>();
 
       public void beforeRootsChange(ModuleRootEvent event) {
         myPreviousStepDefsProviders.clear();
@@ -80,7 +80,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
 
       public void rootsChanged(ModuleRootEvent event) {
         // compare new and previous content roots
-        final List<VirtualFile> newStepDefsProviders = new ArrayList<VirtualFile>();
+        final List<VirtualFile> newStepDefsProviders = new ArrayList<>();
         collectAllStepDefsProviders(newStepDefsProviders, project);
 
         if (!compareRoots(newStepDefsProviders)) {
@@ -125,10 +125,10 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
       return Collections.emptySet();
     }
 
-    final List<PsiDirectory> result = new ArrayList<PsiDirectory>();
-    findRelatedStepDefsRoots(module, featureFile, result, new HashSet<String>());
+    final List<PsiDirectory> result = new ArrayList<>();
+    findRelatedStepDefsRoots(module, featureFile, result, new HashSet<>());
 
-    return new HashSet<PsiDirectory>(result);
+    return new HashSet<>(result);
   }
 
 
@@ -196,7 +196,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
 
   @NotNull
   private List<PsiFile> gatherStepDefinitionsFilesFromDirectory(@NotNull final PsiDirectory dir, final boolean writableOnly) {
-    final List<PsiFile> result = new ArrayList<PsiFile>();
+    final List<PsiFile> result = new ArrayList<>();
 
     // find step definitions in current folder
     for (PsiFile file : dir.getFiles()) {
@@ -230,11 +230,11 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   }
 
   public List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
-    final Set<Module> modules = new HashSet<Module>();
+    final Set<Module> modules = new HashSet<>();
     collectDependencies(module, modules);
     modules.add(module);
 
-    final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
+    final List<AbstractStepDefinition> result = new ArrayList<>();
     for (Module current : modules) {
       result.addAll(loadStepsForModule(featureFile, current));
     }
@@ -244,7 +244,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   public List<AbstractStepDefinition> loadStepsForModule(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(module.getProject()).getExtensionDataObject(this);
     // New step definitions folders roots
-    final List<PsiDirectory> notLoadedStepDefinitionsRoots = new ArrayList<PsiDirectory>();
+    final List<PsiDirectory> notLoadedStepDefinitionsRoots = new ArrayList<>();
     try {
       if (featureFile != null) {
         findRelatedStepDefsRoots(module, featureFile, notLoadedStepDefinitionsRoots, dataObject.myProcessedStepDirectories);
@@ -258,7 +258,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
 
     synchronized (dataObject.myStepDefinitions) {
       // Parse new folders
-      final List<AbstractStepDefinition> stepDefinitions = new ArrayList<AbstractStepDefinition>();
+      final List<AbstractStepDefinition> stepDefinitions = new ArrayList<>();
       for (PsiDirectory root : notLoadedStepDefinitionsRoots) {
         stepDefinitions.clear();
         // let's process each folder separately
@@ -286,7 +286,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     }
 
     synchronized (dataObject.myStepDefinitions) {
-      return new ArrayList<AbstractStepDefinition>(dataObject.myStepDefinitions);
+      return new ArrayList<>(dataObject.myStepDefinitions);
     }
   }
 
@@ -350,14 +350,14 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   public List<AbstractStepDefinition> getAllStepDefinitions(Project project) {
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(project).getExtensionDataObject(this);
     synchronized (dataObject.myStepDefinitions) {
-      return new ArrayList<AbstractStepDefinition>(dataObject.myStepDefinitions);
+      return new ArrayList<>(dataObject.myStepDefinitions);
     }
   }
 
   public static class DataObject {
-    final List<AbstractStepDefinition> myStepDefinitions = new ArrayList<AbstractStepDefinition>();
+    final List<AbstractStepDefinition> myStepDefinitions = new ArrayList<>();
 
-    final Set<String> myProcessedStepDirectories = new HashSet<String>();
+    final Set<String> myProcessedStepDirectories = new HashSet<>();
 
     final MergingUpdateQueue myUpdateQueue = new MergingUpdateQueue("Steps reparse", 500, true, null);
 

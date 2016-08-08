@@ -45,7 +45,7 @@ public abstract class ExtendableClassConverter extends Converter<PsiClass>
    * References from this EP will be added automatically.
    */
   public static final ExtensionPointName<ExtendableClassConverterContributor> EP_NAME =
-      new ExtensionPointName<ExtendableClassConverterContributor>("com.intellij.struts2.classContributor");
+    new ExtensionPointName<>("com.intellij.struts2.classContributor");
 
 
   /**

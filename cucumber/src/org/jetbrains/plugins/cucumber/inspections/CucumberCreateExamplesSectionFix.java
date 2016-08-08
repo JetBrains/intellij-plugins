@@ -52,7 +52,7 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     buff.append(keywordsTable.getScenarioOutlineKeyword()).append(": boo\n");
     buff.append(keywordsTable.getExampleSectionKeyword()).append(":\n|");
 
-    final List<String> params = new ArrayList<String>();
+    final List<String> params = new ArrayList<>();
     final PsiElement[] elements = outline.getChildren();
     for (PsiElement element : elements) {
       if (!(element instanceof GherkinStep)) {

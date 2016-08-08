@@ -88,7 +88,7 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
         final JavaCodeStyleManager codeStyleManager = JavaCodeStyleManager.getInstance(project);
         final SuggestedNameInfo info = codeStyleManager.suggestVariableName(VariableKind.LOCAL_VARIABLE, null, null, classType);
 
-        final Set<String> variants = new HashSet<String>(Arrays.asList(info.names));
+        final Set<String> variants = new HashSet<>(Arrays.asList(info.names));
         variants.remove(ACTION_SUFFIX);
 
         // remove existing action-names

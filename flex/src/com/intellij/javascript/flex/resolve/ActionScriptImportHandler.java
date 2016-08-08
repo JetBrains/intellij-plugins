@@ -79,7 +79,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
       name = genericSignature.elementType;
     }
 
-    final Ref<JSImportedElementResolveResult> resultRef = new Ref<JSImportedElementResolveResult>();
+    final Ref<JSImportedElementResolveResult> resultRef = new Ref<>();
 
     final String name1 = name;
     JSResolveUtil.walkOverStructure(context, context1 -> {

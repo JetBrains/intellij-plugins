@@ -42,7 +42,7 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
 
   @NotNull
   public Collection<? extends ResultType> getVariants(final ConvertContext context) {
-    final List<ResultType> results = new SmartList<ResultType>();
+    final List<ResultType> results = new SmartList<>();
     final Processor<StrutsPackage> processor = strutsPackage -> {
       results.addAll(strutsPackage.getResultTypes());
       return true;
@@ -62,7 +62,7 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
 
     final Condition<ResultType> nameCondition = resultType -> Comparing.equal(name, resultType.getName().getStringValue());
 
-    final Ref<ResultType> resolveResult = new Ref<ResultType>();
+    final Ref<ResultType> resolveResult = new Ref<>();
     final Processor<StrutsPackage> processor = strutsPackage -> {
       final ResultType result = ContainerUtil.find(strutsPackage.getResultTypes(), nameCondition);
       if (result != null) {

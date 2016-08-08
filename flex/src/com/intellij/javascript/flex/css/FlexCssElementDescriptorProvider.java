@@ -232,7 +232,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         }
       }
     }
-    List<FlexStyleIndexInfo> result = new ArrayList<FlexStyleIndexInfo>();
+    List<FlexStyleIndexInfo> result = new ArrayList<>();
     for (Collection<FlexStyleIndexInfo> collection : collections) {
       for (FlexStyleIndexInfo info : collection) {
         if (namesFromSelectors == null || namesFromSelectors.contains(info.getClassOrFileName())) {
@@ -397,7 +397,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
     FileBasedIndex index = FileBasedIndex.getInstance();
     Collection<String> keys = ContainerUtil.sorted(index.getAllKeys(FlexStyleIndex.INDEX_ID, context.getProject()));
-    List<FlexCssPropertyDescriptor> result = new ArrayList<FlexCssPropertyDescriptor>();
+    List<FlexCssPropertyDescriptor> result = new ArrayList<>();
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
     for (String key : keys) {
       if (!isInClassicForm(key)) {
@@ -494,7 +494,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @Nullable PsiElement context) {
     Collection<JSQualifiedNamedElement> elements = getClasses(className, context);
     if (elements != null && elements.size() > 0) {
-      List<PsiElement> result = new ArrayList<PsiElement>();
+      List<PsiElement> result = new ArrayList<>();
       Set<String> qNames = ContainerUtil.newLinkedHashSet();
       for (JSQualifiedNamedElement c : elements) {
         if (c instanceof JSClass) {

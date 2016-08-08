@@ -47,10 +47,10 @@ public class LibraryManager implements Disposable {
 
   private final File appDir;
 
-  private final InfoMap<VirtualFile, Library> libraries = new InfoMap<VirtualFile, Library>();
-  private final THashMap<String, LibrarySet> librarySets = new THashMap<String, LibrarySet>();
+  private final InfoMap<VirtualFile, Library> libraries = new InfoMap<>();
+  private final THashMap<String, LibrarySet> librarySets = new THashMap<>();
 
-  private final Map<VirtualFile, Set<CharSequence>> globalDefinitionsMap = new THashMap<VirtualFile, Set<CharSequence>>();
+  private final Map<VirtualFile, Set<CharSequence>> globalDefinitionsMap = new THashMap<>();
 
   private LibrariesData data;
 
@@ -66,7 +66,7 @@ public class LibraryManager implements Disposable {
   }
 
   public void unregister(final int[] ids) {
-    librarySets.retainEntries(new RetainCondition<String, LibrarySet>(ids));
+    librarySets.retainEntries(new RetainCondition<>(ids));
   }
 
   public static LibraryManager getInstance() {
@@ -259,7 +259,7 @@ public class LibraryManager implements Disposable {
       }
       else {
         final String[] libraryPaths = result.libraryPaths;
-        final List<Library> filteredLibraries = new ArrayList<Library>(libraryPaths.length);
+        final List<Library> filteredLibraries = new ArrayList<>(libraryPaths.length);
         for (Library library : libraries) {
           if (ArrayUtil.indexOf(libraryPaths, library.getFile().getPath()) != -1) {
             filteredLibraries.add(library);
@@ -313,7 +313,7 @@ public class LibraryManager implements Disposable {
       PropertiesFile propertiesFile;
       for (Library library : librarySet.getLibraries()) {
         if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, project)) != null) {
-          return new Pair<PropertiesFile, Integer>(propertiesFile, librarySet.getId());
+          return new Pair<>(propertiesFile, librarySet.getId());
         }
       }
     }
@@ -330,7 +330,7 @@ public class LibraryManager implements Disposable {
       for (String libName : new String[]{"framework", "spark", "mx", "airframework", "rpc", "advancedgrids", "charts", "textLayout"}) {
         VirtualFile file = dir.findFileByRelativePath(libName + "/bundles/" + locale + "/" + bundleName + PROPERTIES_EXTENSION);
         if (file != null) {
-          return new Pair<PropertiesFile, Integer>(virtualFileToProperties(project, file), moduleInfo.getFlexLibrarySet().getId());
+          return new Pair<>(virtualFileToProperties(project, file), moduleInfo.getFlexLibrarySet().getId());
         }
       }
     }

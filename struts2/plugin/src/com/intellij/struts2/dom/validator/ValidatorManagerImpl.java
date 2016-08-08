@@ -96,7 +96,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
 
         final List<ValidatorConfig> defaultValidators = fileElement.getRootElement().getValidatorConfigs();
 
-        final List<ValidatorConfig> allValidatorConfigs = new ArrayList<ValidatorConfig>(defaultValidators);
+        final List<ValidatorConfig> allValidatorConfigs = new ArrayList<>(defaultValidators);
         allValidatorConfigs.addAll(validatorConfigs); // custom overrides defaults
         return allValidatorConfigs;
       }

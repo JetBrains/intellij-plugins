@@ -98,7 +98,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       return;
     }
 
-    final Map<VirtualFile, String> fileToNewContentMap = new THashMap<VirtualFile, String>();
+    final Map<VirtualFile, String> fileToNewContentMap = new THashMap<>();
     final int lineLength = getRightMargin(project);
 
     final Runnable runnable = () -> {

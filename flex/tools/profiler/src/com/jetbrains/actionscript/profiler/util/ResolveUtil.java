@@ -22,7 +22,7 @@ public class ResolveUtil {
 
   public static List<FrameInfo> filterByScope(Collection<FrameInfo> traces, final GlobalSearchScope scope) {
     if (scope == null || scope instanceof EverythingGlobalScope) {
-      return new ArrayList<FrameInfo>(traces);
+      return new ArrayList<>(traces);
     }
     return ContainerUtil.filter(traces, frameInfo -> {
       final String qName = frameInfo.isAnonymous() ? frameInfo.getQNameByFile() : frameInfo.getQName();

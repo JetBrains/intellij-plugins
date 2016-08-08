@@ -39,7 +39,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
   private final boolean reportProblems;
 
   ComplexRenderAction(Document[] documents, boolean onlyStyle, boolean reportProblems) {
-    super(null, null, new AsyncResult<List<DocumentFactoryManager.DocumentInfo>>());
+    super(null, null, new AsyncResult<>());
 
     this.documents = documents;
     this.onlyStyle = onlyStyle;
@@ -52,7 +52,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
   }
 
   void merge(Document[] otherDocuments) {
-    THashSet<Document> merged = new THashSet<Document>(documents.length + otherDocuments.length);
+    THashSet<Document> merged = new THashSet<>(documents.length + otherDocuments.length);
     Collections.addAll(merged, documents);
     Collections.addAll(merged, otherDocuments);
     documents = merged.toArray(new Document[merged.size()]);
@@ -79,8 +79,8 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
 
   private void renderDocumentsAndCheckLocalStyleModification(AsyncResult<List<DocumentFactoryManager.DocumentInfo>> result) {
     final Client client = Client.getInstance();
-    final List<DocumentFactoryManager.DocumentInfo> documentInfos = new ArrayList<DocumentFactoryManager.DocumentInfo>(documents.length);
-    final THashMap<ModuleInfo, List<LocalStyleHolder>> localStyleSources = new THashMap<ModuleInfo, List<LocalStyleHolder>>();
+    final List<DocumentFactoryManager.DocumentInfo> documentInfos = new ArrayList<>(documents.length);
+    final THashMap<ModuleInfo, List<LocalStyleHolder>> localStyleSources = new THashMap<>();
     collectChanges(documentInfos, localStyleSources);
     if (!localStyleSources.isEmpty()) {
       updateLocalStyleSources(client, localStyleSources);
@@ -220,7 +220,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
 
   private static boolean collectChangedLocalStyleSources(final THashMap<ModuleInfo, List<LocalStyleHolder>> holders,
                                                       final VirtualFile file) {
-    final Ref<Boolean> result = new Ref<Boolean>(false);
+    final Ref<Boolean> result = new Ref<>(false);
     Client.getInstance().getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
       @Override
       public boolean execute(ModuleInfo moduleInfo) {
@@ -235,7 +235,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
           for (LocalStyleHolder styleHolder : styleHolders) {
             if (styleHolder.file.equals(file)) {
               if (list == null) {
-                list = new ArrayList<LocalStyleHolder>();
+                list = new ArrayList<>();
                 holders.put(moduleInfo, list);
                 result.set(true);
               }

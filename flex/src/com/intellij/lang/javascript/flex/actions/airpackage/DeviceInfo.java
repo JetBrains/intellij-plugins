@@ -23,11 +23,11 @@ public class DeviceInfo {
   }
 
   public static List<DeviceInfo> getAndroidDevices(final Project project, final Sdk sdk) {
-    final List<DeviceInfo> result = new ArrayList<DeviceInfo>();
+    final List<DeviceInfo> result = new ArrayList<>();
 
     ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
       protected List<String> createCommandLine() {
-        final ArrayList<String> command = new ArrayList<String>();
+        final ArrayList<String> command = new ArrayList<>();
         command.add(sdk.getHomePath() + AirPackageUtil.ADB_RELATIVE_PATH);
         command.add("devices");
         return command;
@@ -58,7 +58,7 @@ public class DeviceInfo {
   }
 
   public static List<DeviceInfo> getIosDevices(final Project project, final Sdk sdk) {
-    final List<DeviceInfo> result = new ArrayList<DeviceInfo>();
+    final List<DeviceInfo> result = new ArrayList<>();
 
     ExternalTask.runWithProgress(new AdtTask(project, sdk) {
       protected void appendAdtOptions(final List<String> command) {

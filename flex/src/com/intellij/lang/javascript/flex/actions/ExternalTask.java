@@ -37,7 +37,7 @@ public abstract class ExternalTask {
   private Process myProcess;
   private boolean myFinished;
   private String myCommandLine = "";
-  protected List<String> myMessages = new ArrayList<String>();
+  protected List<String> myMessages = new ArrayList<>();
   private int myExitCode = -1;
 
   public ExternalTask(final Project project, final Sdk flexSdk) {

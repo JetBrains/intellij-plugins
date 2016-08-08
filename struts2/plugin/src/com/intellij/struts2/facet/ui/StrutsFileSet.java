@@ -47,7 +47,7 @@ public class StrutsFileSet implements Disposable {
   private boolean autodetected;
   private boolean removed;
 
-  private final List<VirtualFilePointer> files = new SmartList<VirtualFilePointer>();
+  private final List<VirtualFilePointer> files = new SmartList<>();
 
   @NonNls
   private static final String ID_PREFIX = "s2fileset";

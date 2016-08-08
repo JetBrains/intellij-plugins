@@ -97,7 +97,7 @@ public class JstdDebugBrowserInfo {
   @Nullable
   public static JstdDebugBrowserInfo build(@NotNull JstdServer server, @NotNull JstdRunSettings runSettings) {
     Collection<JstdBrowserInfo> capturedBrowsers = server.getCapturedBrowsers();
-    List<JstdDebugBrowserInfo> debugBrowserInfos = new SmartList<JstdDebugBrowserInfo>();
+    List<JstdDebugBrowserInfo> debugBrowserInfos = new SmartList<>();
     for (JstdBrowserInfo browserInfo : capturedBrowsers) {
       Pair<JavaScriptDebugEngine, WebBrowser> engine = JavaScriptDebugEngine.Companion.findByBrowserIdOrName(browserInfo.getName());
       if (engine != null) {

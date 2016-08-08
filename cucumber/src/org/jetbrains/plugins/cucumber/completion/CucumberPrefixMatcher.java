@@ -45,7 +45,7 @@ public class CucumberPrefixMatcher extends PrefixMatcher {
   }
 
   private static List<String> getSignificantWords(String source) {
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
 
     final String[] words = source.split(" ");
     for (String word : words) {

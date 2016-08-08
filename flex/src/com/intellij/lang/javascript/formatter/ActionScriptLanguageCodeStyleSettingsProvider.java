@@ -76,7 +76,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
-      List<String> blankLinesOptions = new ArrayList<String>();
+      List<String> blankLinesOptions = new ArrayList<>();
       blankLinesOptions.addAll(Arrays.asList(JSLanguageCodeStyleSettingsProvider.STANDARD_BLANK_LINES_OPTIONS));
       blankLinesOptions.addAll(Arrays.asList("BLANK_LINES_AFTER_IMPORTS",
                                              "BLANK_LINES_BEFORE_IMPORTS",
@@ -87,7 +87,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
       consumer.showStandardOptions(ArrayUtil.toStringArray(blankLinesOptions));
     }
     else if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
-      List<String> wrappingOptions = new ArrayList<String>();
+      List<String> wrappingOptions = new ArrayList<>();
       wrappingOptions.addAll(Arrays.asList(JSLanguageCodeStyleSettingsProvider.STANDARD_WRAPPING_OPTIONS));
       wrappingOptions.addAll(Arrays.asList("CLASS_BRACE_STYLE",
                                            "EXTENDS_LIST_WRAP",

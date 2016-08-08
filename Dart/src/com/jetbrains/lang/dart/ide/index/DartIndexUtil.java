@@ -89,7 +89,7 @@ public class DartIndexUtil {
                                                      final @NotNull DartImportOrExportStatement importOrExportStatement) {
     final String uri = importOrExportStatement.getUriString();
 
-    final Set<String> showComponentNames = new THashSet<String>();
+    final Set<String> showComponentNames = new THashSet<>();
     for (DartShowCombinator showCombinator : importOrExportStatement.getShowCombinatorList()) {
       final DartLibraryReferenceList libraryReferenceList = showCombinator.getLibraryReferenceList();
       if (libraryReferenceList != null) {
@@ -99,7 +99,7 @@ public class DartIndexUtil {
       }
     }
 
-    final Set<String> hideComponentNames = new THashSet<String>();
+    final Set<String> hideComponentNames = new THashSet<>();
     for (DartHideCombinator hideCombinator : importOrExportStatement.getHideCombinatorList()) {
       final DartLibraryReferenceList libraryReferenceList = hideCombinator.getLibraryReferenceList();
       if (libraryReferenceList != null) {

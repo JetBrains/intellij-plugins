@@ -40,7 +40,7 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
   @NotNull
   @Override
   public String[] getSimpleSelectors(@NotNull PsiElement context) {
-    final List<String> result = new LinkedList<String>();
+    final List<String> result = new LinkedList<>();
     DirectiveUtil.processTagDirectives(context.getProject(), proxy -> {
       result.add(proxy.getName());
       return true;

@@ -111,7 +111,7 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
     if (myTestCaseStructures.isEmpty()) {
       return Collections.emptyList();
     }
-    List<String> out = new ArrayList<String>(myTestCaseStructures.size());
+    List<String> out = new ArrayList<>(myTestCaseStructures.size());
     for (JstdTestCaseStructure structure : myTestCaseStructures) {
       out.add(structure.getName());
     }
@@ -125,7 +125,7 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
     if (testCaseStructure == null) {
       return Collections.emptyList();
     }
-    List<String> out = new ArrayList<String>(testCaseStructure.getTestCount());
+    List<String> out = new ArrayList<>(testCaseStructure.getTestCount());
     for (JstdTestStructure testStructure : testCaseStructure.getTestStructures()) {
       out.add(testStructure.getName());
     }
@@ -153,9 +153,9 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
         }
       }
     }
-    myNameByPsiElementMap = new IdentityHashMap<PsiElement, String>(totalCount);
+    myNameByPsiElementMap = new IdentityHashMap<>(totalCount);
     if (prototypeBasedTestCount > 0) {
-      myPrototypeBasedTestElements = new IdentityHashMap<PsiElement, Void>(prototypeBasedTestCount);
+      myPrototypeBasedTestElements = new IdentityHashMap<>(prototypeBasedTestCount);
     }
     for (JstdTestCaseStructure testCaseStructure : myTestCaseStructures) {
       JSExpression testCaseMethodExpr = testCaseStructure.getEnclosingCallExpression().getMethodExpression();

@@ -634,7 +634,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private static final TableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
-    private ComboBoxTableRenderer<LinkageType> myComboBoxTableRenderer = new ComboBoxTableRenderer<LinkageType>(null);
+    private ComboBoxTableRenderer<LinkageType> myComboBoxTableRenderer = new ComboBoxTableRenderer<>(null);
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       final Object tableItem = ((EditableTreeTable)table).getItemAt(row);
@@ -888,7 +888,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       @Override
       public void moduleRemoved(Module module) {
         // TODO return if module == this module
-        Set<MyTableItem> itemsToRemove = new HashSet<MyTableItem>();
+        Set<MyTableItem> itemsToRemove = new HashSet<>();
         // 1st-level nodes are always visible
         // 2nd-level nodes cannot refer to BC
         for (int row = 0; row < myTable.getRowCount(); row++) {
@@ -1133,7 +1133,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private void removeSelection() {
     TableUtil.stopEditing(myTable);
     int[] selectedRows = myTable.getSelectedRows();
-    Set<MyTableItem> itemsToRemove = new HashSet<MyTableItem>(selectedRows.length);
+    Set<MyTableItem> itemsToRemove = new HashSet<>(selectedRows.length);
     for (int row : selectedRows) {
       itemsToRemove.add(myTable.getItemAt(row));
     }
@@ -1267,7 +1267,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     List<MyTableItem> items = myTable.getItems();
-    List<ModifiableDependencyEntry> newEntries = new ArrayList<ModifiableDependencyEntry>();
+    List<ModifiableDependencyEntry> newEntries = new ArrayList<>();
     for (MyTableItem item : items) {
       ModifiableDependencyEntry entry = item.apply(myDependencies);
       if (entry != null) {
@@ -1495,7 +1495,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private void initPopupActions() {
     if (myPopupActions == null) {
       int actionIndex = 1;
-      final List<AddItemPopupAction> actions = new ArrayList<AddItemPopupAction>();
+      final List<AddItemPopupAction> actions = new ArrayList<>();
       actions.add(new AddBuildConfigurationDependencyAction(actionIndex++));
       actions.add(new AddFilesAction(actionIndex++));
       actions.add(new AddSharedLibraryAction(actionIndex++));
@@ -1510,7 +1510,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public void run() {
-      final Collection<FlexBCConfigurable> dependencies = new ArrayList<FlexBCConfigurable>();
+      final Collection<FlexBCConfigurable> dependencies = new ArrayList<>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof BCItem) {
@@ -1563,7 +1563,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public void run() {
       // TODO we can have problems if we add the same library twice for one module?
-      final Collection<Library> usedLibraries = new ArrayList<Library>();
+      final Collection<Library> usedLibraries = new ArrayList<>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof ModuleLibraryItem) {
@@ -1605,7 +1605,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     public void run() {
-      final Collection<Library> usedLibraries = new HashSet<Library>();
+      final Collection<Library> usedLibraries = new HashSet<>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof SharedLibraryItem) {
@@ -1794,7 +1794,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     @NotNull
     public Iterator<Library> getLibraryIterator() {
-      return new FilteringIterator<Library, Library>(myDelegate.getLibraryIterator(), myLibraryFilter);
+      return new FilteringIterator<>(myDelegate.getLibraryIterator(), myLibraryFilter);
     }
 
     @Override

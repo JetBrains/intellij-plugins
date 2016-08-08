@@ -156,7 +156,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
     public Object[] getVariants() {
       final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
 
-      final List<Object> variants = new ArrayList<Object>(actionList.size());
+      final List<Object> variants = new ArrayList<>(actionList.size());
       for (final Action action : actionList) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {

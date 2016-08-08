@@ -62,7 +62,7 @@ public class CfmlFile extends PsiFileBase {
 
   CachedValueProvider<Map<String, CfmlImplicitVariable>> createImplicitVarsProvider() {
     return () -> {
-      final Map<String, CfmlImplicitVariable> result = new THashMap<String, CfmlImplicitVariable>();
+      final Map<String, CfmlImplicitVariable> result = new THashMap<>();
       CfmlFile.this.accept(new PsiRecursiveElementVisitor() {
         @Override
         public void visitComment(final PsiComment comment) {
@@ -143,7 +143,7 @@ public class CfmlFile extends PsiFileBase {
   }
 
   public Collection<CfmlFunction> getGlobalFunctions() {
-    final Collection<CfmlFunction> result = new LinkedList<CfmlFunction>();
+    final Collection<CfmlFunction> result = new LinkedList<>();
     accept(new CfmlRecursiveElementVisitor() {
       @Override
       public void visitCfmlFunction(CfmlFunction function) {
@@ -171,7 +171,7 @@ public class CfmlFile extends PsiFileBase {
 
   @Nullable
   public CfmlComponent getComponentDefinition() {
-    final Ref<CfmlComponent> ref = new Ref<CfmlComponent>(null);
+    final Ref<CfmlComponent> ref = new Ref<>(null);
     accept(new CfmlRecursiveElementVisitor() {
       @Override
       public void visitCfmlFunction(CfmlFunction function) {
@@ -211,7 +211,7 @@ public class CfmlFile extends PsiFileBase {
   }
 
   public Collection<String> getImportStrings() {
-    Set<String> result = new HashSet<String>();
+    Set<String> result = new HashSet<>();
     CfmlImport[] childrenByClass = findChildrenByClass(CfmlImport.class);
     for (CfmlImport importStatement : childrenByClass) {
       String importString = importStatement.getImportString();

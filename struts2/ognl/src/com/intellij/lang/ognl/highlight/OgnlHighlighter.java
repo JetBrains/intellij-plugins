@@ -93,7 +93,7 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
     "OGNL.FQN_TYPE", DefaultLanguageHighlighterColors.CLASS_REFERENCE);
 
   static {
-    keys1 = new HashMap<IElementType, TextAttributesKey>();
+    keys1 = new HashMap<>();
 
     // single characters
     keys1.put(TokenType.BAD_CHARACTER, BAD_CHARACTER);

@@ -51,7 +51,7 @@ public class DartResolveUtil {
   }
 
   private static List<PsiElement> findDartRootsInXml(XmlFile xmlFile) {
-    final List<PsiElement> result = new ArrayList<PsiElement>();
+    final List<PsiElement> result = new ArrayList<>();
     xmlFile.acceptChildren(new XmlRecursiveElementWalkingVisitor() {
       @Override
       public void visitElement(PsiElement element) {
@@ -144,7 +144,7 @@ public class DartResolveUtil {
   @NotNull
   public static DartClassResolveResult findCoreClass(PsiElement context, String className) {
     final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(context.getProject(), DART_CORE_URI);
-    final List<DartComponentName> result = new ArrayList<DartComponentName>();
+    final List<DartComponentName> result = new ArrayList<>();
     processTopLevelDeclarations(context, new DartResolveProcessor(result, className), dartCoreLib, className);
     final PsiElement parent = result.isEmpty() ? null : result.iterator().next().getParent();
     return DartClassResolveResult.create(parent instanceof DartClass ? (DartClass)parent : null);
@@ -201,7 +201,7 @@ public class DartResolveUtil {
 
   @NotNull
   public static Collection<DartClass> getClassDeclarations(@NotNull final PsiElement root) {
-    final List<DartClass> result = new SmartList<DartClass>();
+    final List<DartClass> result = new SmartList<>();
     for (PsiElement child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (child instanceof DartClass) {
         result.add((DartClass)child);
@@ -258,7 +258,7 @@ public class DartResolveUtil {
     if (filesOfInterest != null && filesOfInterest.isEmpty()) return true;
 
     final boolean privateOnly = componentNameHint != null && componentNameHint.startsWith("_");
-    return processTopLevelDeclarationsImpl(context, processor, rootVirtualFile, filesOfInterest, new THashSet<VirtualFile>(), privateOnly);
+    return processTopLevelDeclarationsImpl(context, processor, rootVirtualFile, filesOfInterest, new THashSet<>(), privateOnly);
   }
 
   private static boolean processTopLevelDeclarationsImpl(final @NotNull PsiElement context,
@@ -375,7 +375,7 @@ public class DartResolveUtil {
     if (librariesForContext1.isEmpty()) return false;
     final List<VirtualFile> librariesForContext2 = findLibrary(context2.getContainingFile());
     if (librariesForContext2.isEmpty()) return false;
-    final THashSet<VirtualFile> librariesSetForContext1 = new THashSet<VirtualFile>(librariesForContext1);
+    final THashSet<VirtualFile> librariesSetForContext1 = new THashSet<>(librariesForContext1);
     return ContainerUtil.find(librariesForContext2, file -> librariesSetForContext1.contains(file)) != null;
   }
 
@@ -391,13 +391,13 @@ public class DartResolveUtil {
           final String libraryName = partOfStatement.getLibraryName();
           final List<VirtualFile> files = findLibraryByName(context, libraryName);
           if (!files.isEmpty()) {
-            return new CachedValueProvider.Result<List<VirtualFile>>(files, PsiModificationTracker.MODIFICATION_COUNT);
+            return new CachedValueProvider.Result<>(files, PsiModificationTracker.MODIFICATION_COUNT);
           }
         }
       }
 
       // no 'part of' statement in file -> this file itself is a library
-      return new CachedValueProvider.Result<List<VirtualFile>>(Collections.singletonList(contextVirtualFile), PsiModificationTracker.MODIFICATION_COUNT);
+      return new CachedValueProvider.Result<>(Collections.singletonList(contextVirtualFile), PsiModificationTracker.MODIFICATION_COUNT);
     });
   }
 
@@ -425,7 +425,7 @@ public class DartResolveUtil {
   public static DartFunctionDeclarationWithBodyOrNative getMainFunction(final @Nullable PsiFile file) {
     if (!(file instanceof DartFile)) return null;
 
-    final ArrayList<DartComponentName> result = new ArrayList<DartComponentName>();
+    final ArrayList<DartComponentName> result = new ArrayList<>();
     DartPsiCompositeElementImpl.processDeclarationsImpl(file, new DartResolveProcessor(result, "main"), ResolveState.initial(), null);
 
     for (DartComponentName componentName : result) {
@@ -487,7 +487,7 @@ public class DartResolveUtil {
   @NotNull
   public static List<DartComponent> findNamedSubComponents(boolean unique, @NotNull DartClass... rootDartClasses) {
     final List<DartComponent> unfilteredResult = findSubComponents(dartClass -> {
-      final List<DartComponent> result = new ArrayList<DartComponent>();
+      final List<DartComponent> result = new ArrayList<>();
       for (DartComponent namedComponent : getNamedSubComponents(dartClass)) {
         if (namedComponent.getName() != null) {
           result.add(namedComponent);
@@ -498,7 +498,7 @@ public class DartResolveUtil {
     if (!unique) {
       return unfilteredResult;
     }
-    return new ArrayList<DartComponent>(namedComponentToMap(unfilteredResult).values());
+    return new ArrayList<>(namedComponentToMap(unfilteredResult).values());
   }
 
   public static List<DartMethodDeclaration> findOperators(AbstractDartPsiClass dartPsiClass) {
@@ -518,7 +518,7 @@ public class DartResolveUtil {
 
   @NotNull
   public static <T> List<T> findSubComponents(final Function<DartClass, List<T>> fun, @NotNull DartClass... rootDartClasses) {
-    final List<T> unfilteredResult = new ArrayList<T>();
+    final List<T> unfilteredResult = new ArrayList<>();
     processSuperClasses(new PsiElementProcessor<DartClass>() {
       @Override
       public boolean execute(@NotNull DartClass dartClass) {
@@ -530,8 +530,8 @@ public class DartResolveUtil {
   }
 
   public static boolean processSuperClasses(PsiElementProcessor<DartClass> processor, @NotNull DartClass... rootDartClasses) {
-    final Set<DartClass> processedClasses = new THashSet<DartClass>();
-    final LinkedList<DartClass> classes = new LinkedList<DartClass>();
+    final Set<DartClass> processedClasses = new THashSet<>();
+    final LinkedList<DartClass> classes = new LinkedList<>();
     classes.addAll(Arrays.asList(rootDartClasses));
 
     while (!classes.isEmpty()) {
@@ -575,7 +575,7 @@ public class DartResolveUtil {
   public static void processSupers(@Nullable PsiElementProcessor<DartClass> superClassProcessor,
                                    @Nullable PsiElementProcessor<DartClass> superInterfaceProcessor,
                                    @Nullable DartClass rootDartClass) {
-    final Set<DartClass> processedClasses = new THashSet<DartClass>();
+    final Set<DartClass> processedClasses = new THashSet<>();
     DartClass currentClass = rootDartClass;
     while (currentClass != null) {
       processedClasses.add(currentClass);
@@ -618,7 +618,7 @@ public class DartResolveUtil {
   }
 
   public static Map<Pair<String, Boolean>, DartComponent> namedComponentToMap(List<DartComponent> unfilteredResult) {
-    final Map<Pair<String, Boolean>, DartComponent> result = new HashMap<Pair<String, Boolean>, DartComponent>();
+    final Map<Pair<String, Boolean>, DartComponent> result = new HashMap<>();
     for (DartComponent dartComponent : unfilteredResult) {
       // need order
       Pair<String, Boolean> key = Pair.create(dartComponent.getName(), dartComponent.isGetter());
@@ -655,7 +655,7 @@ public class DartResolveUtil {
   public static List<DartComponent> getNamedSubComponents(DartClass dartClass) {
     if (dartClass.isEnum()) {
       final List<DartEnumConstantDeclaration> enumConstants = dartClass.getEnumConstantDeclarationList();
-      final List<DartComponent> result = new ArrayList<DartComponent>(enumConstants.size());
+      final List<DartComponent> result = new ArrayList<>(enumConstants.size());
       for (DartEnumConstantDeclaration constant : enumConstants) {
         result.add(constant);
       }
@@ -664,7 +664,7 @@ public class DartResolveUtil {
 
     PsiElement body = getBody(dartClass);
 
-    final List<DartComponent> result = new ArrayList<DartComponent>();
+    final List<DartComponent> result = new ArrayList<>();
     if (body == null) {
       return result;
     }
@@ -1043,7 +1043,7 @@ public class DartResolveUtil {
     if (dartClass == null) {
       return ContainerUtilRt.emptyList();
     }
-    final List<DartClass> supers = new ArrayList<DartClass>();
+    final List<DartClass> supers = new ArrayList<>();
     final DartClassResolveResult dartClassResolveResult = dartClass.getSuperClassResolvedOrObjectClass();
     if (dartClassResolveResult.getDartClass() != null) {
       supers.add(dartClassResolveResult.getDartClass());

@@ -98,7 +98,7 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
   public void scrollToMarkdownSrcOffset(final int offset) {
     ApplicationManager.getApplication().invokeAndWait(() -> {
       final DOMNodeImpl root = myPanel.getRootNode();
-      final Ref<Pair<Node, Integer>> resultY = new Ref<Pair<Node, Integer>>();
+      final Ref<Pair<Node, Integer>> resultY = new Ref<>();
       root.visit(new NodeVisitor() {
         @Override
         public void visit(Node node) {

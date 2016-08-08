@@ -29,7 +29,7 @@ public class BCCombo extends JComboBox {
 
   private FlexBuildConfiguration[] myAllConfigs;
   private boolean mySingleModuleProject;
-  private Map<FlexBuildConfiguration, Module> myBCToModuleMap = new THashMap<FlexBuildConfiguration, Module>();
+  private Map<FlexBuildConfiguration, Module> myBCToModuleMap = new THashMap<>();
 
   public BCCombo(final Project project) {
     myProject = project;
@@ -39,7 +39,7 @@ public class BCCombo extends JComboBox {
   private void initCombo() {
     setMinimumSize(new Dimension(150, getMinimumSize().height));
 
-    final Collection<FlexBuildConfiguration> allConfigs = new ArrayList<FlexBuildConfiguration>();
+    final Collection<FlexBuildConfiguration> allConfigs = new ArrayList<>();
 
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
     mySingleModuleProject = modules.length == 1;

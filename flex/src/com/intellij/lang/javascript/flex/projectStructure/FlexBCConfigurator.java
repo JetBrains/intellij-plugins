@@ -57,10 +57,10 @@ public class FlexBCConfigurator {
   }
 
   private final BidirectionalMap<ModifiableFlexBuildConfiguration, CompositeConfigurable> myConfigurablesMap =
-    new BidirectionalMap<ModifiableFlexBuildConfiguration, CompositeConfigurable>();
+    new BidirectionalMap<>();
 
   private final BidirectionalMap<ModifiableFlexBuildConfiguration, String> myBCToOutputPathMap =
-    new BidirectionalMap<ModifiableFlexBuildConfiguration, String>();
+    new BidirectionalMap<>();
 
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
@@ -142,7 +142,7 @@ public class FlexBCConfigurator {
 
     final ModifiableFlexBuildConfiguration[] configurations = myConfigEditor.getConfigurations(module);
 
-    List<CompositeConfigurable> configurables = new ArrayList<CompositeConfigurable>(configurations.length);
+    List<CompositeConfigurable> configurables = new ArrayList<>(configurations.length);
 
     for (final ModifiableFlexBuildConfiguration bc : configurations) {
       CompositeConfigurable configurable = myConfigurablesMap.get(bc);
@@ -418,7 +418,7 @@ public class FlexBCConfigurator {
   }
 
   private Collection<String> getUsedNames(final Module module) {
-    final Collection<String> result = new LinkedList<String>();
+    final Collection<String> result = new LinkedList<>();
     for (final ModifiableFlexBuildConfiguration configuration : myConfigEditor.getConfigurations(module)) {
       result.add(myConfigurablesMap.get(configuration).getDisplayName());
     }
@@ -447,7 +447,7 @@ public class FlexBCConfigurator {
   }
 
   public boolean canBeRemoved(ModifiableFlexBuildConfiguration[] configurations) {
-    Map<Module, Integer> module2ConfigCount = new HashMap<Module, Integer>();
+    Map<Module, Integer> module2ConfigCount = new HashMap<>();
     for (ModifiableFlexBuildConfiguration bc : configurations) {
       Module module = myConfigEditor.getModule(bc);
       Integer count = module2ConfigCount.get(module);

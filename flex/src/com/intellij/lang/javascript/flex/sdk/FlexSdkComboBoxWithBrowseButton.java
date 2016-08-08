@@ -149,7 +149,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
   private void rebuildSdkListAndSelectSdk(@Nullable final Sdk selectedSdk) {
     final String previousSelectedSdkName = getSelectedSdkRaw();
-    final List<Object> sdkList = new ArrayList<Object>();
+    final List<Object> sdkList = new ArrayList<>();
 
     if (myShowBCSdk) {
       sdkList.add(myBCSdk);
@@ -262,7 +262,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
     // sdk not found
     if (addErrorItemIfSdkNotFound) {
-      final List<Object> items = new ArrayList<Object>();
+      final List<Object> items = new ArrayList<>();
       items.add(sdkName);
       for (int i = 0; i < combo.getItemCount(); i++) {
         final Object item = combo.getItemAt(i);

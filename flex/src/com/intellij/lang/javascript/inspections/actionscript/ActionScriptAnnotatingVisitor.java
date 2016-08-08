@@ -252,7 +252,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
       if (resolved instanceof JSClass) {
         boolean correctClass = false;
-        final Collection<String> resolvedBaseClasses = new ArrayList<String>();
+        final Collection<String> resolvedBaseClasses = new ArrayList<>();
         final GlobalSearchScope scope = JSResolveUtil.getResolveScope(attributeNameValuePair);
 
         for (String baseClassFqn : StringUtil.split(baseClassFqns, ",")) {
@@ -674,7 +674,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       });
     }
 
-    final Set<JSNamedElement> elements = new THashSet<JSNamedElement>();
+    final Set<JSNamedElement> elements = new THashSet<>();
 
     for (JSSourceElement statement : packageStatement.getStatements()) {
       if (statement instanceof JSNamedElement && !(statement instanceof JSImportStatement)) {

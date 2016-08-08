@@ -26,7 +26,7 @@ import java.util.List;
 
 public class JstdSettingsUtil {
 
-  private static final Key<Boolean> JSTD_CONFIG_FILES_IN_PROJECT = new Key<Boolean>("JSTD_CONFIG_FILES_IN_PROJECT");
+  private static final Key<Boolean> JSTD_CONFIG_FILES_IN_PROJECT = new Key<>("JSTD_CONFIG_FILES_IN_PROJECT");
 
   private JstdSettingsUtil() {}
 

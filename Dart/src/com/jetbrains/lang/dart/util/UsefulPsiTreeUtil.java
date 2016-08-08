@@ -60,7 +60,7 @@ public class UsefulPsiTreeUtil {
   public static List<PsiElement> getPathToParentOfType(@Nullable PsiElement element,
                                                        @NotNull Class<? extends PsiElement> aClass) {
     if (element == null) return null;
-    final List<PsiElement> result = new ArrayList<PsiElement>();
+    final List<PsiElement> result = new ArrayList<>();
     while (element != null) {
       result.add(element);
       if (aClass.isInstance(element)) {

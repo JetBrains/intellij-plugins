@@ -330,8 +330,8 @@ public class DartFileListener extends VirtualFileAdapter {
 
   public static class DartLibInfo {
     private final boolean myProjectWithoutPubspec;
-    private final Set<String> myLibRootUrls = new TreeSet<String>();
-    private final Map<String, List<String>> myPackagesMap = new TreeMap<String, List<String>>();
+    private final Set<String> myLibRootUrls = new TreeSet<>();
+    private final Map<String, List<String>> myPackagesMap = new TreeMap<>();
 
     public DartLibInfo(final boolean projectWithoutPubspec) {
       myProjectWithoutPubspec = projectWithoutPubspec;
@@ -342,7 +342,7 @@ public class DartFileListener extends VirtualFileAdapter {
 
       List<String> paths = myPackagesMap.get((packageName));
       if (paths == null) {
-        paths = new SmartList<String>();
+        paths = new SmartList<>();
         myPackagesMap.put(packageName, paths);
       }
 

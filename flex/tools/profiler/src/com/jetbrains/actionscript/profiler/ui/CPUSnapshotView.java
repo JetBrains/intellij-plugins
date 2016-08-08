@@ -219,7 +219,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
                                                     boolean backTrace,
                                                     FrameInfo[] frames) {
     final MutableTreeNode root = (MutableTreeNode)node;
-    List<FrameInfo> traces = scopeMatcher.fun(new ArrayList<FrameInfo>(countMap.keySet()));
+    List<FrameInfo> traces = scopeMatcher.fun(new ArrayList<>(countMap.keySet()));
 
     GlobalSearchScope scope = getCurrentScope();
     int index = 0;

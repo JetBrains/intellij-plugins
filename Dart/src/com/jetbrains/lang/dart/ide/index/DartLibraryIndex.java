@@ -97,7 +97,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
   private static BidirectionalMap<String, String> getSdkLibUriToRelativePathMap(final @NotNull Project project,
                                                                                 final @NotNull DartSdk sdk) {
     final VirtualFile librariesDartFile = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/_internal/libraries.dart");
-    if (librariesDartFile == null) return new BidirectionalMap<String, String>();
+    if (librariesDartFile == null) return new BidirectionalMap<>();
 
     final Pair<Long, BidirectionalMap<String, String>> data = librariesDartFile.getUserData(LIBRARIES_TIME_AND_MAP_KEY);
     final Long cachedTimestamp = data == null ? null : data.first;
@@ -114,7 +114,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
           final PsiFile psiFile =
             PsiFileFactory.getInstance(project).createFileFromText("libraries.dart", DartLanguage.INSTANCE, contents);
           if (!(psiFile instanceof DartFile)) {
-            return new BidirectionalMap<String, String>();
+            return new BidirectionalMap<>();
           }
 
           final Pair<Long, BidirectionalMap<String, String>> data =
@@ -123,7 +123,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
           return data.second;
         }
         catch (IOException e) {
-          return new BidirectionalMap<String, String>();
+          return new BidirectionalMap<>();
         }
       }
     });
@@ -144,7 +144,7 @@ const Map<String, LibraryInfo> LIBRARIES = const {
       category: "Client"),
 
 */
-    final BidirectionalMap<String, String> result = new BidirectionalMap<String, String>();
+    final BidirectionalMap<String, String> result = new BidirectionalMap<>();
 
     librariesDartFile.acceptChildren(new DartRecursiveVisitor() {
       public void visitMapLiteralEntry(final @NotNull DartMapLiteralEntry mapLiteralEntry) {

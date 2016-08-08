@@ -70,9 +70,9 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   private final UserMonitorThread myUserMonitorThread;
 
   private final Object myLock = new Object();
-  private final Map<User, OnlineUserInfo> myUserToInfo = new THashMap<User, OnlineUserInfo>();
-  private final Map<User, OnlineUserInfo> myUserToInfoNew = new THashMap<User, OnlineUserInfo>();
-  private final Collection<User> myOnlineUsers = new THashSet<User>();
+  private final Map<User, OnlineUserInfo> myUserToInfo = new THashMap<>();
+  private final Map<User, OnlineUserInfo> myUserToInfoNew = new THashMap<>();
+  private final Collection<User> myOnlineUsers = new THashSet<>();
 
   private final EventBroadcaster myEventBroadcaster;
   private final IDEtalkListener myUserAddedCallbackListener;
@@ -204,7 +204,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   public void initializeProject(final String projectName, MutablePicoContainer projectLevelContainer) {
     getIdeFacade().runOnPooledThread(() -> {
       User[] users = findUsers(new NullProgressIndicator());
-      Set<User> ourUsers = new HashSet<User>();
+      Set<User> ourUsers = new HashSet<>();
       for (User user : users) {
         if (Arrays.asList(user.getProjects()).contains(projectName)) {
           ourUsers.add(user);
@@ -310,7 +310,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       result = myUserToInfo.get(user);
     }
     if (result == null) {
-      result = new OnlineUserInfo(null, -1, new THashSet<String>(), new UserPresence(false));
+      result = new OnlineUserInfo(null, -1, new THashSet<>(), new UserPresence(false));
     }
     return result;
   }
@@ -429,11 +429,11 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   private void addNewOnlineUsers(@NotNull Collection<User> onlineUsers) {
-    List<Pair<IDEtalkEvent, Runnable>> events = new SmartList<Pair<IDEtalkEvent, Runnable>>();
+    List<Pair<IDEtalkEvent, Runnable>> events = new SmartList<>();
     synchronized (myLock) {
       for (final User user : onlineUsers) {
         if (!myOnlineUsers.contains(user) && myUserToInfoNew.containsKey(user)) {
-          events.add(new Pair<IDEtalkEvent, Runnable>(new UserEvent.Online(user), new MySyncRunnable() {
+          events.add(new Pair<>(new UserEvent.Online(user), new MySyncRunnable() {
             @Override
             protected void execute() {
               myOnlineUsers.add(user);
@@ -448,12 +448,12 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   private void removeOfflineUsersAndUpdateOldOnlineUsers(@NotNull Collection onlineUsers) {
-    List<Pair<IDEtalkEvent, Runnable>> events = new SmartList<Pair<IDEtalkEvent, Runnable>>();
+    List<Pair<IDEtalkEvent, Runnable>> events = new SmartList<>();
     synchronized (myLock) {
       for (final User user : myOnlineUsers) {
         if (!onlineUsers.contains(user)) {
           // User was removed
-          events.add(new Pair<IDEtalkEvent, Runnable>(new UserEvent.Offline(user), new MySyncRunnable() {
+          events.add(new Pair<>(new UserEvent.Offline(user), new MySyncRunnable() {
             @Override
             protected void execute() {
               myOnlineUsers.remove(user);
@@ -471,7 +471,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
           UserPresence newPresence = onlineUserInfo.getPresence();
           if (!newPresence.equals(oldPresence)) {
-            events.add(new Pair<IDEtalkEvent, Runnable>(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new MySyncRunnable() {
+            events.add(new Pair<>(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new MySyncRunnable() {
               @Override
               protected void execute() {
                 myUserToInfo.put(user, onlineUserInfo);

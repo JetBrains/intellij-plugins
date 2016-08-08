@@ -43,7 +43,7 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
     final FindUsagesManager manager = ((FindManagerImpl)FindManager.getInstance(getProject())).getFindUsagesManager();
     final FindUsagesHandler handler = manager.getFindUsagesHandler(elementToSearch, false);
     assertInstanceOf(handler, DartServerFindUsagesHandler.class);
-    final CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<UsageInfo>();
+    final CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<>();
     handler.processElementUsages(elementToSearch, processor, new FindUsagesOptions(scope));
 
     return processor.getResults();

@@ -74,7 +74,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
     final InterceptorRef resolvedInterceptorRef =
         ContainerUtil.find(stack.getInterceptorRefs(), ref -> Comparing.strEqual(refName, ref.getName().getStringValue()));
 
-    final List<PsiReference> customReferences = new ArrayList<PsiReference>(2);
+    final List<PsiReference> customReferences = new ArrayList<>(2);
     customReferences.add(new InterceptorRefPsiReference(nameAttributeValue,
                                                         TextRange.from(1, idx),
                                                         resolvedInterceptorRef,
@@ -129,7 +129,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
     @Override
     public Object[] getVariants() {
       final List<InterceptorRef> allInterceptorRefs = interceptorStack.getInterceptorRefs();
-      List<LookupElement> names = new ArrayList<LookupElement>(allInterceptorRefs.size());
+      List<LookupElement> names = new ArrayList<>(allInterceptorRefs.size());
       for (InterceptorRef interceptorRef : allInterceptorRefs) {
         final InterceptorOrStackBase resolvedInterceptor = interceptorRef.getName().getValue();
         if (resolvedInterceptor == null) {

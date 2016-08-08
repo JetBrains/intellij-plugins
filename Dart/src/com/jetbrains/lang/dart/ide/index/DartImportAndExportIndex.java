@@ -67,18 +67,18 @@ public class DartImportAndExportIndex extends FileBasedIndexExtension<String, Li
       @NotNull
       public List<DartImportOrExportInfo> read(final @NotNull DataInput in) throws IOException {
         final int size = DataInputOutputUtil.readINT(in);
-        final List<DartImportOrExportInfo> result = new ArrayList<DartImportOrExportInfo>(size);
+        final List<DartImportOrExportInfo> result = new ArrayList<>(size);
         for (int i = 0; i < size; ++i) {
           final DartImportOrExportInfo.Kind kind = DartImportOrExportInfo.Kind.valueOf(IOUtil.readUTF(in));
           final String uri = IOUtil.readUTF(in);
           final String prefix = IOUtil.readUTF(in);
           final int showSize = DataInputOutputUtil.readINT(in);
-          final Set<String> showComponentNames = showSize == 0 ? Collections.<String>emptySet() : new THashSet<String>(showSize);
+          final Set<String> showComponentNames = showSize == 0 ? Collections.<String>emptySet() : new THashSet<>(showSize);
           for (int j = 0; j < showSize; j++) {
             showComponentNames.add(IOUtil.readUTF(in));
           }
           final int hideSize = DataInputOutputUtil.readINT(in);
-          final Set<String> hideComponentNames = hideSize == 0 ? Collections.<String>emptySet() : new THashSet<String>(hideSize);
+          final Set<String> hideComponentNames = hideSize == 0 ? Collections.<String>emptySet() : new THashSet<>(hideSize);
           for (int j = 0; j < hideSize; j++) {
             hideComponentNames.add(IOUtil.readUTF(in));
           }
@@ -103,7 +103,7 @@ public class DartImportAndExportIndex extends FileBasedIndexExtension<String, Li
   @NotNull
   public static List<DartImportOrExportInfo> getImportAndExportInfos(final @NotNull Project project,
                                                                      final @NotNull VirtualFile virtualFile) {
-    final List<DartImportOrExportInfo> result = new ArrayList<DartImportOrExportInfo>();
+    final List<DartImportOrExportInfo> result = new ArrayList<>();
     for (List<DartImportOrExportInfo> list : FileBasedIndex.getInstance()
       .getValues(DART_IMPORT_EXPORT_INDEX, virtualFile.getName(), GlobalSearchScope.fileScope(project, virtualFile))) {
       result.addAll(list);

@@ -38,11 +38,11 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
   private boolean myIsFunctionHelpSection = false;
   private Map<String, CfmlTagDescription> myTags;
   private Map<String, CfmlFunctionDescription> myFunctions;
-  private Map<String, Integer> myPredefinedVariables = new HashMap<String, Integer>();
+  private Map<String, Integer> myPredefinedVariables = new HashMap<>();
   private CfmlTagDescription myCurrentTag = null;
   private CfmlFunctionDescription myCurrentFunction = null;
   private CfmlAttributeDescription myCurrentAttribute = null;
-  private List<String> myFunctionUpperCased = new LinkedList<String>();
+  private List<String> myFunctionUpperCased = new LinkedList<>();
   private String myCurrentScope = "";
 
   private static final int TAG_STATE = 0;
@@ -53,8 +53,8 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
   private int myState;
 
   public void startDocument() throws SAXException {
-    myTags = new HashMap<String, CfmlTagDescription>();
-    myFunctions = new HashMap<String, CfmlFunctionDescription>();
+    myTags = new HashMap<>();
+    myFunctions = new HashMap<>();
   }
 
   public void endDocument() throws SAXException {

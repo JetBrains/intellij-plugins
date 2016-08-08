@@ -78,7 +78,7 @@ public class ReferenceSupport {
         }
         psiFile = psiFile.getOriginalFile();
 
-        final List<VirtualFile> dirs = new ArrayList<VirtualFile>();
+        final List<VirtualFile> dirs = new ArrayList<>();
 
         // paths relative to file should not start with slash
         if (lookupOptions.RELATIVE_TO_FILE && !startsWithSlash) {

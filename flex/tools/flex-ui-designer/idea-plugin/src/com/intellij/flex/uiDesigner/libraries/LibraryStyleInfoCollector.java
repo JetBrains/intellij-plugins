@@ -41,13 +41,13 @@ class LibraryStyleInfoCollector {
     final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
     final GlobalSearchScope searchScope = GlobalSearchScope.fileScope(module.getProject(), libraryFile);
 
-    final List<String> dataKeys = new ArrayList<String>(32);
+    final List<String> dataKeys = new ArrayList<>(32);
     fileBasedIndex.processAllKeys(FlexStyleIndex.INDEX_ID, dataKey -> {
       dataKeys.add(dataKey);
       return true;
     }, module.getProject());
 
-    final THashSet<String> uniqueGuard = new THashSet<String>();
+    final THashSet<String> uniqueGuard = new THashSet<>();
     final FileBasedIndex.ValueProcessor<Set<FlexStyleIndexInfo>> processor = new FileBasedIndex.ValueProcessor<Set<FlexStyleIndexInfo>>() {
       @Override
       public boolean process(VirtualFile file, Set<FlexStyleIndexInfo> value) {

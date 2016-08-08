@@ -146,7 +146,7 @@ public class DartVmServiceListener implements VmServiceListener {
     final String evalText = xExpression == null ? null : xExpression.getExpression();
     if (vmTopFrame == null || StringUtil.isEmptyOrSpaces(evalText)) return null;
 
-    final Ref<String> evalResult = new Ref<String>();
+    final Ref<String> evalResult = new Ref<>();
     final Semaphore semaphore = new Semaphore();
     semaphore.down();
 

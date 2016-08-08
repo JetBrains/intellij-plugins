@@ -42,7 +42,7 @@ public class DartExecutionStack extends XExecutionStack {
     myIsolate = isolate;
 
     if (vmCallFrames != null) {
-      myStackFrames = new ArrayList<DartStackFrame>(vmCallFrames.size());
+      myStackFrames = new ArrayList<>(vmCallFrames.size());
 
       for (VmCallFrame vmCallFrame : vmCallFrames) {
         final DartStackFrame frame = new DartStackFrame(debugProcess, vmCallFrame, exception);
@@ -71,7 +71,7 @@ public class DartExecutionStack extends XExecutionStack {
     }
 
     if (myStackFrames == null) {
-      myStackFrames = new ArrayList<DartStackFrame>();
+      myStackFrames = new ArrayList<>();
 
       try {
         myDebugProcess.getVmConnection().getStackTrace(myIsolate, new VmCallback<List<VmCallFrame>>() {

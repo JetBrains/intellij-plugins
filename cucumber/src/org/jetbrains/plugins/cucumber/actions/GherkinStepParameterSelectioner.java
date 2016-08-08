@@ -25,7 +25,7 @@ import java.util.Set;
  * @author Dennis.Ushakov
  */
 public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
-  private final static Set<Pair<String, String>> START_END = new LinkedHashSet<Pair<String, String>>();
+  private final static Set<Pair<String, String>> START_END = new LinkedHashSet<>();
 
   static {
     START_END.add(Pair.create("'", "'"));
@@ -46,7 +46,7 @@ public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
                                 @NotNull final CharSequence editorText,
                                 final int cursorOffset,
                                 @NotNull final Editor editor) {
-    final List<TextRange> result = new ArrayList<TextRange>();
+    final List<TextRange> result = new ArrayList<>();
     if (editor.getSettings().isCamelWords()) {
       result.addAll(super.select(e, editorText, cursorOffset, editor));
     }
@@ -83,7 +83,7 @@ public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
 
   @NotNull
   private static List<TextRange> buildAdditionalRanges(@NotNull final List<TextRange> ranges, @NotNull final CharSequence editorText) {
-    final List<TextRange> result = new ArrayList<TextRange>();
+    final List<TextRange> result = new ArrayList<>();
     for (TextRange textRange : ranges) {
       if (textRange.isEmpty()) continue;
       addRangesForText(result, textRange, editorText);

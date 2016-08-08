@@ -28,7 +28,7 @@ public class DartOverrideMethodHandler extends BaseDartGenerateHandler {
   @Override
   protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
     Map<Pair<String, Boolean>, DartComponent> result =
-      new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperClassesMemberMap(dartClass));
+      new THashMap<>(computeSuperClassesMemberMap(dartClass));
     result.keySet().removeAll(computeClassMembersMap(dartClass, false).keySet());
     candidates.addAll(ContainerUtil.findAll(result.values(), component -> DartComponentType.typeOf(component) != DartComponentType.FIELD &&
                                                                       (component.isPublic() || DartResolveUtil.sameLibrary(dartClass, component))));

@@ -88,7 +88,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
     final StrutsPluginDomFactory<TilesDefinitions, TilesModel> factory =
         StrutsProjectComponent.getInstance(project).getTilesFactory();
 
-    final Set<TilesModel> struts2TilesModels = new HashSet<TilesModel>();
+    final Set<TilesModel> struts2TilesModels = new HashSet<>();
     final Consumer<Set<XmlFile>> consumer = definitions -> {
       final DomFileElement<TilesDefinitions> domFileElement = factory.createMergedModelRoot(definitions);
       if (domFileElement != null) {
@@ -113,7 +113,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
       }
 
       // resolve to XmlFile
-      final Set<XmlFile> tilesFileSet = new HashSet<XmlFile>();
+      final Set<XmlFile> tilesFileSet = new HashSet<>();
       for (final String tilesPath : tilesConfigNames) {
         final PsiElement tilesXmlFile = webDirectoryUtil.findFileByPath(tilesPath, webFacet);
         if (tilesXmlFile instanceof XmlFile) {
@@ -141,7 +141,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
    * @return File names.
    */
   private static Set<String> findConfiguredTilesPaths(final WebApp webApp) {
-    @NonNls final Set<String> tilesConfigNames = new THashSet<String>();
+    @NonNls final Set<String> tilesConfigNames = new THashSet<>();
     final ParamValue tilesParamValue = ContainerUtil.find(webApp.getContextParams(), TILES_CONTEXT_PARAM_CONDITION);
     if (tilesParamValue == null) {
       return tilesConfigNames;

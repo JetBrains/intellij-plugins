@@ -28,7 +28,7 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
 
   private final ActionToolbar myRightToolbar;
 
-  private final List<EditorGutterComponentEx> myGutters = new ArrayList<EditorGutterComponentEx>();
+  private final List<EditorGutterComponentEx> myGutters = new ArrayList<>();
 
   private final ComponentAdapter myAdjustToGutterListener = new ComponentAdapter() {
     @Override

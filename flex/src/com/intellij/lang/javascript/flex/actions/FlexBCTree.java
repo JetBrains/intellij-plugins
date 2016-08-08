@@ -71,7 +71,7 @@ public class FlexBCTree extends CheckboxTree {
 
   private Collection<Pair<Module, FlexBuildConfiguration>> getBCs(final boolean checked) {
     final CollectConsumer<Pair<Module, FlexBuildConfiguration>> consumer =
-      new CollectConsumer<Pair<Module, FlexBuildConfiguration>>();
+      new CollectConsumer<>();
     iterateRecursively((CheckedTreeNode)getModel().getRoot(), checked, consumer);
     return consumer.getResult();
   }

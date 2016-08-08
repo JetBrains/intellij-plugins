@@ -23,7 +23,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
   private boolean collectResourceBundles;
 
   private Definition definition;
-  private final ArrayList<String> dependencies = new ArrayList<String>();
+  private final ArrayList<String> dependencies = new ArrayList<>();
 
   private String mod;
   private String dep;
@@ -140,7 +140,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
         @SuppressWarnings("ConstantConditions")
         THashSet<String> bundles = library.library.resourceBundles.get(locale);
         if (bundles == null) {
-          bundles = new THashSet<String>();
+          bundles = new THashSet<>();
           library.library.resourceBundles.put(locale, bundles);
         }
         bundles.add(value.substring(secondSlashPosition + 1, vLength - PROPERTIES_EXTENSION_LENGTH));

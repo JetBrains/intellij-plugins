@@ -32,7 +32,7 @@ public final class OnlineUserInfo {
 
   // For tests only:
   public OnlineUserInfo(InetAddress address, int port) {
-    this(address, port, new HashSet<String>(), new UserPresence(true));
+    this(address, port, new HashSet<>(), new UserPresence(true));
   }
 
   public OnlineUserInfo(InetAddress address, int port, Collection<String> projects, UserPresence presence) {

@@ -345,7 +345,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   public void testAutocompletePathToComponentInPresentOfMapping() throws Throwable {
     addOneComponentTo(myFixture);
 
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/folder/subfolder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
@@ -367,7 +367,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   public void testAutocompletePathToIncludeTagInPresentOfMapping() throws Throwable {
     addOneComponentTo(myFixture);
 
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/folder/subfolder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
@@ -395,7 +395,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   public void testNoCompletionToIncludeTagInPresentOfMapping() throws Throwable {
     addOneComponentTo(myFixture);
 
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/folder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
@@ -419,7 +419,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   public void testAutocompletePathToScriptIncludeInPresentOfMappingWithEnteredPath() throws Throwable {
     addOneComponentToDir(myFixture);
 
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/subfolder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
@@ -444,7 +444,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   public void testAutocompletePathToIncludeTagInPresentOfMappingWithFile() throws Throwable {
     addOneComponentToDir(myFixture);
 
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/subfolder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
@@ -468,7 +468,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   public void testAutocompletePathToScriptIncludeInPresentOfMapping() throws Throwable {
     addOneComponentTo(myFixture);
 
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/folder/subfolder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
@@ -491,7 +491,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   public void testAutocompletePathToScriptIncludeInPresentOfMappingWithFile() throws Throwable {
     addOneComponentToDir(myFixture);
 
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/subfolder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);

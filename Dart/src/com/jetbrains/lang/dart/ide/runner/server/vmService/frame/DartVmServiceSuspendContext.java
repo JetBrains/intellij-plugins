@@ -38,7 +38,7 @@ public class DartVmServiceSuspendContext extends XSuspendContext {
   public void computeExecutionStacks(@NotNull final XExecutionStackContainer container) {
     if (myExecutionStacks == null) {
       final Collection<IsolatesInfo.IsolateInfo> isolateInfos = myDebugProcess.getIsolateInfos();
-      myExecutionStacks = new ArrayList<XExecutionStack>(isolateInfos.size());
+      myExecutionStacks = new ArrayList<>(isolateInfos.size());
       for (IsolatesInfo.IsolateInfo isolateInfo : isolateInfos) {
         if (isolateInfo.getIsolateId().equals(myActiveExecutionStack.getIsolateId())) {
           myExecutionStacks.add(myActiveExecutionStack);

@@ -37,7 +37,7 @@ import java.util.List;
  */
 class AdditionalJARContentsTableModel extends AbstractTableModel {
   AdditionalJARContentsTableModel() {
-    _additionalContents = new ArrayList<Pair<String, String>>();
+    _additionalContents = new ArrayList<>();
   }
 
   public void replaceContent(@NotNull List<Pair<String, String>> content) {
@@ -48,7 +48,7 @@ class AdditionalJARContentsTableModel extends AbstractTableModel {
 
   @NotNull
   public List<Pair<String, String>> getAdditionalContents() {
-    return new ArrayList<Pair<String, String>>(_additionalContents);
+    return new ArrayList<>(_additionalContents);
   }
 
   public Pair<String, String> getAdditionalJARContent(int row) {

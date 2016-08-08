@@ -45,7 +45,7 @@ public class StrutsConstantKey<T> {
    * @return Instance.
    */
   public static <T> StrutsConstantKey<T> create(@NotNull @NonNls final String key) {
-    return new StrutsConstantKey<T>(key);
+    return new StrutsConstantKey<>(key);
   }
 
 }

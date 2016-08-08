@@ -77,7 +77,7 @@ public class FlexUnitTestFinder implements TestFinder {
 
     final Collection<String> allNames = StubIndex.getInstance().getAllKeys(JSNameIndex.KEY, element.getProject());
     final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependentsScope(module);
-    final List<Pair<? extends PsiNamedElement, Integer>> classesWithProximity = new ArrayList<Pair<? extends PsiNamedElement, Integer>>();
+    final List<Pair<? extends PsiNamedElement, Integer>> classesWithProximity = new ArrayList<>();
 
     for (final String possibleTestName : allNames) {
       if (possibleTestName.contains(className)) {
@@ -112,7 +112,7 @@ public class FlexUnitTestFinder implements TestFinder {
     final GlobalSearchScope scope =
       GlobalSearchScope.moduleWithDependenciesScope(module).intersectWith(GlobalSearchScopes.projectProductionScope(module.getProject()));
 
-    final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<Pair<? extends PsiNamedElement, Integer>>();
+    final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<>();
     for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {
       for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
         if (jsElement instanceof JSClass && jsElement != jsClass && !((JSClass)jsElement).isInterface() &&

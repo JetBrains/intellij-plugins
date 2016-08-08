@@ -129,7 +129,7 @@ public class AngularUiRouterDiagramBuilder {
   private void groupStates() {
     // root template file vs. state
     // but the same state can be used for several root templates
-    myRootTemplates2States = new HashMap<VirtualFile, Map<String, UiRouterState>>();
+    myRootTemplates2States = new HashMap<>();
     final Set<UiRouterState> statesUsedInRoots = new HashSet<>();
     for (Map.Entry<VirtualFile, RootTemplate> entry : myRootTemplates.entrySet()) {
       final Set<VirtualFile> modulesFiles = entry.getValue().getModulesFiles();
@@ -142,7 +142,7 @@ public class AngularUiRouterDiagramBuilder {
       }
     }
 
-    myDefiningFiles2States = new HashMap<VirtualFile, Map<String, UiRouterState>>();
+    myDefiningFiles2States = new HashMap<>();
     for (UiRouterState state : myStates) {
       if (statesUsedInRoots.contains(state)) continue;
       if (state.isGeneric()) {
@@ -275,9 +275,10 @@ public class AngularUiRouterDiagramBuilder {
     Set<VirtualFile> processed = filesQueue.getProcessed();
 
     final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(myProject);
-    processed = new HashSet<VirtualFile>(ContainerUtil.filter(processed, file1 -> file1.getFileType() instanceof LanguageFileType && ((LanguageFileType)file1
-      .getFileType()).getLanguage().isKindOf(
-      JavascriptLanguage.INSTANCE) && projectScope.contains(file1)));
+    processed =
+      new HashSet<>(ContainerUtil.filter(processed, file1 -> file1.getFileType() instanceof LanguageFileType && ((LanguageFileType)file1
+        .getFileType()).getLanguage().isKindOf(
+        JavascriptLanguage.INSTANCE) && projectScope.contains(file1)));
     myModuleRecursiveDependencies.put(file, processed);
     return processed;
   }

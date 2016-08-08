@@ -53,7 +53,7 @@ public abstract class JamDefaultInterceptorRef extends CommonModelElement.PsiBas
           .addAttribute(VALUE_ATTRIBUTE);
 
   public static final JamPackageMeta<JamDefaultInterceptorRef> META_PACKAGE =
-      new JamPackageMeta<JamDefaultInterceptorRef>(JamDefaultInterceptorRef.class).addAnnotation(INTERCEPTOR_REF_META);
+    new JamPackageMeta<>(JamDefaultInterceptorRef.class).addAnnotation(INTERCEPTOR_REF_META);
 
   @JamPsiConnector
   public abstract PsiPackage getOwner();

@@ -105,7 +105,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   @Nullable
   private final Project myProject;
 
-  private final Map<Module, List<Editor>> myModule2Editors = new HashMap<Module, List<Editor>>();
+  private final Map<Module, List<Editor>> myModule2Editors = new HashMap<>();
   //private final FlexSdksEditor mySdksEditor;
   private final EventDispatcher<ModulesModelChangeListener> myModulesModelChangeEventDispatcher =
     EventDispatcher.create(ModulesModelChangeListener.class);
@@ -236,7 +236,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private void addEditorsForModule(Module module) {
     FlexBuildConfiguration[] buildConfigurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
-    List<Editor> configEditors = new ArrayList<Editor>(buildConfigurations.length);
+    List<Editor> configEditors = new ArrayList<>(buildConfigurations.length);
     for (FlexBuildConfiguration buildConfiguration : buildConfigurations) {
       configEditors.add(new Editor(module, (FlexBuildConfigurationImpl)buildConfiguration, true));
     }
@@ -386,7 +386,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public void checkCanCommit() throws ConfigurationException {
     for (Module module : myModule2Editors.keySet()) {
       List<Editor> editors = myModule2Editors.get(module);
-      Set<String> names = new HashSet<String>();
+      Set<String> names = new HashSet<>();
       for (Editor editor : editors) {
         if (!names.add(editor.getName())) {
           throw new ConfigurationException(
@@ -397,15 +397,15 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   public void commit() throws ConfigurationException {
-    final Map<Pair<String, String>, String> renamedConfigs = new HashMap<Pair<String, String>, String>();
+    final Map<Pair<String, String>, String> renamedConfigs = new HashMap<>();
     for (Module module : myModule2Editors.keySet()) {
       ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
-      Collection<String> usedModulesLibrariesIds = new ArrayList<String>();
+      Collection<String> usedModulesLibrariesIds = new ArrayList<>();
 
       // ---------------- SDK and shared libraries entries ----------------------
-      Map<Library, Boolean> librariesToAdd = new LinkedHashMap<Library, Boolean>(); // Library -> add_library_entry_flag
+      Map<Library, Boolean> librariesToAdd = new LinkedHashMap<>(); // Library -> add_library_entry_flag
 
-      final Collection<String> sdkNames = new HashSet<String>();
+      final Collection<String> sdkNames = new HashSet<>();
       for (Editor editor : myModule2Editors.get(module)) {
         final SdkEntry sdkEntry = editor.getDependencies().getSdkEntry();
         if (sdkEntry != null) {
@@ -444,7 +444,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
       modifiableModel.setSdk(sdk);
 
-      Collection<OrderEntry> entriesToRemove = new ArrayList<OrderEntry>();
+      Collection<OrderEntry> entriesToRemove = new ArrayList<>();
       for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
         if (orderEntry instanceof LibraryOrderEntry) {
           if (((LibraryOrderEntry)orderEntry).isModuleLevel()) {
@@ -477,7 +477,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       // ---------------- modules entries ----------------------
-      final Set<Module> modulesToAdd = new THashSet<Module>();
+      final Set<Module> modulesToAdd = new THashSet<>();
       for (Editor editor : myModule2Editors.get(module)) {
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof BuildConfigurationEntry) {
@@ -628,11 +628,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
   public void setEntries(ModifiableDependencies dependant, List<? extends ModifiableDependencyEntry> newEntries) {
     assertAlive();
 
-    Map<String, ModifiableDependencyEntry> existingModuleLibrariesEntries = new HashMap<String, ModifiableDependencyEntry>();
+    Map<String, ModifiableDependencyEntry> existingModuleLibrariesEntries = new HashMap<>();
     Map<Pair<String, String>, ModifiableBuildConfigurationEntry> existingBcEntries =
-      new HashMap<Pair<String, String>, ModifiableBuildConfigurationEntry>();
+      new HashMap<>();
     Map<Pair<String, String>, ModifiableSharedLibraryEntry> existingSharedLibrariesEntries =
-      new HashMap<Pair<String, String>, ModifiableSharedLibraryEntry>();
+      new HashMap<>();
 
     for (ModifiableDependencyEntry entry : dependant.getModifiableEntries()) {
       if (entry instanceof ModuleLibraryEntry) {
@@ -651,7 +651,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
     }
 
-    List<ModifiableDependencyEntry> entriesToRemove = new ArrayList<ModifiableDependencyEntry>(dependant.getModifiableEntries());
+    List<ModifiableDependencyEntry> entriesToRemove = new ArrayList<>(dependant.getModifiableEntries());
     for (Iterator<? extends ModifiableDependencyEntry> i = newEntries.iterator(); i.hasNext(); ) {
       ModifiableDependencyEntry newEntry = i.next();
       ModifiableDependencyEntry existingEntry = null;
@@ -684,7 +684,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         ModuleLibraryEntry libraryEntry = (ModuleLibraryEntry)entry;
         Library dependencyLibrary = findLibrary(dependantModifiableModel, libraryEntry.getLibraryId());
         if (dependencyLibrary != null) {
-          List<Editor> otherEditors = new ArrayList<Editor>(myModule2Editors.get(dependantEditor.myModule));
+          List<Editor> otherEditors = new ArrayList<>(myModule2Editors.get(dependantEditor.myModule));
           otherEditors.remove(dependantEditor);
           if (!libraryIsUsed(libraryEntry.getLibraryId(), otherEditors)) {
             LibraryOrderEntry orderEntry = dependantModifiableModel.findLibraryOrderEntry(dependencyLibrary);

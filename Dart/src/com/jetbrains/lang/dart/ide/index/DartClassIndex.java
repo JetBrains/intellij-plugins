@@ -63,7 +63,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
   public static List<DartComponentName> getItemsByName(String name, Project project, GlobalSearchScope searchScope) {
     final Collection<VirtualFile> files =
       FileBasedIndex.getInstance().getContainingFiles(DART_CLASS_INDEX, name, searchScope);
-    final Set<DartComponentName> result = new THashSet<DartComponentName>();
+    final Set<DartComponentName> result = new THashSet<>();
     for (VirtualFile vFile : files) {
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
@@ -74,7 +74,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
         }
       }
     }
-    return new ArrayList<DartComponentName>(result);
+    return new ArrayList<>(result);
   }
 
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
@@ -82,7 +82,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
     @NotNull
     public Map<String, Void> map(@NotNull final FileContent inputData) {
       DartFileIndexData indexData = DartIndexUtil.indexFile(inputData);
-      final Map<String, Void> result = new THashMap<String, Void>();
+      final Map<String, Void> result = new THashMap<>();
       for (String componentName : indexData.getClassNames()) {
         result.put(componentName, null);
       }

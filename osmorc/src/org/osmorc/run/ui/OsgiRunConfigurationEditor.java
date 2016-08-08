@@ -309,7 +309,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     private final List<SelectedBundle> mySelectedBundles;
 
     public RunConfigurationTableModel() {
-      mySelectedBundles = new ArrayList<SelectedBundle>();
+      mySelectedBundles = new ArrayList<>();
     }
 
     @Override

@@ -88,7 +88,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
                                         : null;
 
     if (pubspecYamlFile != null && !pubspecYamlFile.isDirectory()) {
-      final ArrayList<AbstractTreeNode> modifiedChildren = new ArrayList<AbstractTreeNode>(children);
+      final ArrayList<AbstractTreeNode> modifiedChildren = new ArrayList<>(children);
 
       final DartUrlResolver resolver = DartUrlResolver.getInstance(project, pubspecYamlFile);
       resolver.processLivePackages((packageName, packageDir) -> {

@@ -54,7 +54,7 @@ public class AirPackageUtil {
 
   @Nullable
   public static String getAdtVersion(final Project project, final Sdk sdk) {
-    final Ref<String> versionRef = new Ref<String>();
+    final Ref<String> versionRef = new Ref<>();
 
     ExternalTask.runWithProgress(new AdtTask(project, sdk) {
       protected void appendAdtOptions(final List<String> command) {
@@ -84,7 +84,7 @@ public class AirPackageUtil {
   public static String getAirRuntimeVersionOnDevice(final Project project,
                                                     final Sdk sdk,
                                                     final FlashRunnerParameters runnerParameters) throws AdtException {
-    final Ref<String> versionRef = new Ref<String>();
+    final Ref<String> versionRef = new Ref<>();
 
     final boolean ok = ExternalTask.runWithProgress(
       new AdtTask(project, sdk) {
@@ -146,7 +146,7 @@ public class AirPackageUtil {
   public static boolean startAdbServer(final Project project, final Sdk sdk) {
     return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
       protected List<String> createCommandLine() {
-        final ArrayList<String> command = new ArrayList<String>();
+        final ArrayList<String> command = new ArrayList<>();
         command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
         command.add("start-server");
         return command;
@@ -170,7 +170,7 @@ public class AirPackageUtil {
   private static void stopAdbServer(final Project project, final Sdk sdk, final String progressTitle, final String frameTitle) {
     ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
       protected List<String> createCommandLine() {
-        final ArrayList<String> command = new ArrayList<String>();
+        final ArrayList<String> command = new ArrayList<>();
         command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
         command.add("kill-server");
         return command;
@@ -624,7 +624,7 @@ public class AirPackageUtil {
       final String preferredId = PropertiesComponent.getInstance(project).getValue(PREFERRED_IOS_DEVICE_ID_PROPERTY);
       String preferredPresentableName = null;
 
-      final Collection<String> presentableNames = new ArrayList<String>();
+      final Collection<String> presentableNames = new ArrayList<>();
       for (DeviceInfo device : devices) {
         final StringBuilder presentableName = new StringBuilder();
         if (device.DEVICE_NAME != null && device.IOS_DEVICE_CLASS != null && !device.DEVICE_NAME.contains(device.IOS_DEVICE_CLASS)) {
@@ -674,7 +674,7 @@ public class AirPackageUtil {
       final String preferredId = PropertiesComponent.getInstance(project).getValue(PREFERRED_ANDROID_DEVICE_ID_PROPERTY);
       String preferredPresentableName = null;
 
-      final Collection<String> presentableNames = new ArrayList<String>();
+      final Collection<String> presentableNames = new ArrayList<>();
       for (DeviceInfo device : devices) {
         final StringBuilder presentableName = new StringBuilder();
         if (!"device".equals(device.DEVICE_NAME)) {
@@ -804,7 +804,7 @@ public class AirPackageUtil {
                                               final int usbDebugPort) {
     return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
       protected List<String> createCommandLine() {
-        final List<String> command = new ArrayList<String>();
+        final List<String> command = new ArrayList<>();
         command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
 
         if (device != null) {

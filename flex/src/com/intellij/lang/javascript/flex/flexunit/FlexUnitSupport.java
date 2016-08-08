@@ -240,7 +240,7 @@ public class FlexUnitSupport {
   public Collection<JSClass> getSuiteTestClasses(JSClass suiteClass) {
     if (!SUITE_RUNNER.equals(getCustomRunner(suiteClass))) return Collections.emptyList();
 
-    Collection<JSClass> result = new ArrayList<JSClass>();
+    Collection<JSClass> result = new ArrayList<>();
     for (JSVariable field : suiteClass.getFields()) {
       if (field.getAttributeList() == null) continue;
       if (field.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC)) continue;

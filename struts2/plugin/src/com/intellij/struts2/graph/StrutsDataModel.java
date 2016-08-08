@@ -49,10 +49,10 @@ import java.util.Set;
  */
 public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStrutsEdge> {
 
-  private final Set<BasicStrutsNode> myNodes = new HashSet<BasicStrutsNode>();
-  private final Set<BasicStrutsEdge> myEdges = new HashSet<BasicStrutsEdge>();
+  private final Set<BasicStrutsNode> myNodes = new HashSet<>();
+  private final Set<BasicStrutsEdge> myEdges = new HashSet<>();
 
-  private final Map<PsiFile, NodesGroup> myGroups = new HashMap<PsiFile, NodesGroup>();
+  private final Map<PsiFile, NodesGroup> myGroups = new HashMap<>();
 
   private final Project myProject;
   private final XmlFile myFile;

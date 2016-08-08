@@ -139,7 +139,7 @@ public class DartVmListener implements VmListener {
     final String evalText = xExpression == null ? null : xExpression.getExpression();
     if (topFrame == null || StringUtil.isEmptyOrSpaces(evalText)) return null;
 
-    final Ref<String> evalResult = new Ref<String>();
+    final Ref<String> evalResult = new Ref<>();
     final Semaphore semaphore = new Semaphore();
     semaphore.down();
 

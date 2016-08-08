@@ -53,7 +53,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
   @NotNull
   @Override
   public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent, @NotNull Collection<AbstractTreeNode> children, ViewSettings settings) {
-    List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+    List<AbstractTreeNode> result = new ArrayList<>();
     if (parent instanceof SwfQualifiedNamedElementNode || parent instanceof FlexFileNode) {
       if (((ProjectViewNode)parent).getSettings().isShowMembers()) {
         JSQualifiedNamedElement parentElement = getElement(parent);

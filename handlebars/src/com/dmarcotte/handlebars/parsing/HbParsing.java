@@ -28,7 +28,7 @@ public class HbParsing {
   private static final Set<IElementType> RECOVERY_SET;
 
   static {
-    RECOVERY_SET = new HashSet<IElementType>();
+    RECOVERY_SET = new HashSet<>();
     RECOVERY_SET.add(OPEN);
     RECOVERY_SET.add(OPEN_BLOCK);
     RECOVERY_SET.add(OPEN_ENDBLOCK);

@@ -86,7 +86,7 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
     });
 
     myProjectTypeLabel.setDisplayedMnemonic('T');
-    myProjectType.setModel(new EnumComboBoxModel<RubyMotionUtilImpl.ProjectType>(RubyMotionUtilImpl.ProjectType.class));
+    myProjectType.setModel(new EnumComboBoxModel<>(RubyMotionUtilImpl.ProjectType.class));
     myProjectType.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent event) {
@@ -119,7 +119,7 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   }
 
   private void refreshSdkList() {
-    List<Sdk> sdkList = new ArrayList<Sdk>();
+    List<Sdk> sdkList = new ArrayList<>();
     for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(RubySdkType.getInstance())) {
       final RubyRemoteInterpreterManager manager = RubyRemoteInterpreterManager.getInstance();
       if (!RubySdkUtil.isRuby18(sdk) && !manager.isRemoteSdk(sdk)) {

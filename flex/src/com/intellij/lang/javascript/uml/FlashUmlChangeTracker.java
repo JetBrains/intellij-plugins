@@ -62,7 +62,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
 
     @Override
     public Visitor<JSFunction> createVisitor(List<JSFunction> elements) {
-      return new InjectingVisitor<JSFunction>(this, elements);
+      return new InjectingVisitor<>(this, elements);
     }
   }
 
@@ -97,7 +97,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
 
     @Override
     public Visitor<JSVariable> createVisitor(List<JSVariable> elements) {
-      return new InjectingVisitor<JSVariable>(this, elements);
+      return new InjectingVisitor<>(this, elements);
     }
   };
 
@@ -156,7 +156,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
   @Override
   public Map<JSClass, FileStatus> getNodeElements() {
     if (myNodeElements == null) {
-      myNodeElements = new HashMap<JSClass, FileStatus>();
+      myNodeElements = new HashMap<>();
 
       Pair<PsiElement, PsiElement> beforeAndAfter = adjustBeforeAfter();
       for (PsiFilter<JSClass> filter : getNodeFilters()) {
@@ -187,7 +187,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
 
   @Override
   public RelationshipInfo[] getRelationships() {
-    final List<RelationshipInfo> result = new ArrayList<RelationshipInfo>();
+    final List<RelationshipInfo> result = new ArrayList<>();
     Pair<PsiElement, PsiElement> beforeAndAfter = adjustBeforeAfter();
     for (PsiFilter<JSReferenceExpression> filter : getRelationshipFilters()) {
       final Map<JSReferenceExpression, FileStatus> map =
@@ -247,7 +247,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
 
     @Override
     public Visitor<JSReferenceExpression> createVisitor(List<JSReferenceExpression> elements) {
-      return new InjectingVisitor<JSReferenceExpression>(this, elements);
+      return new InjectingVisitor<>(this, elements);
     }
   }
 

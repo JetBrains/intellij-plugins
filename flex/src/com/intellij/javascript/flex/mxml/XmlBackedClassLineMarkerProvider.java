@@ -41,10 +41,10 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
         Query<JSClass> classQuery = JSClassSearch.searchClassInheritors(clazz, true);
         XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)element);
         if (classQuery.findFirst() != null && nameElement != null) {
-          result.add(new LineMarkerInfo<PsiElement>(clazz, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
-                                                 Pass.UPDATE_OVERRIDDEN_MARKERS,
-                                                 JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
-                                                 JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
+          result.add(new LineMarkerInfo<>(clazz, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
+                                          Pass.UPDATE_OVERRIDDEN_MARKERS,
+                                          JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
+                                          JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
         }
       }
     }

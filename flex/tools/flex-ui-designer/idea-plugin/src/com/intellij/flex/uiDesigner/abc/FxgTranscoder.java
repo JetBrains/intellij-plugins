@@ -38,7 +38,7 @@ public class FxgTranscoder extends SymbolTranscoderBase {
     FXG2SWFTranscoder transcoder = new FXG2SWFTranscoder();
     DefineSprite spriteDefinition = (DefineSprite)transcoder.transcode(node);
     MyTagEncoder tagEncoder = new MyTagEncoder();
-    define(spriteDefinition, new THashSet<Tag>(), tagEncoder);
+    define(spriteDefinition, new THashSet<>(), tagEncoder);
     fileLength += tagEncoder.getWriter().getPos();
 
     bounds = computeBounds(spriteDefinition, null, null);

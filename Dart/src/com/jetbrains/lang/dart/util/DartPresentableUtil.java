@@ -213,7 +213,7 @@ public class DartPresentableUtil {
 
   public static void appendArgumentList(@NotNull Template result, @NotNull DartArgumentList argumentList) {
     final List<DartNamedArgument> namedArgumentList = argumentList.getNamedArgumentList();
-    final Set<String> additionalUsedNamed = new THashSet<String>();
+    final Set<String> additionalUsedNamed = new THashSet<>();
     for (DartNamedArgument namedArgument : namedArgumentList) {
       additionalUsedNamed.add(namedArgument.getParameterReferenceExpression().getText());
     }

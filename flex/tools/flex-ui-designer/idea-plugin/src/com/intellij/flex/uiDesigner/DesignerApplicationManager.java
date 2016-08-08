@@ -69,12 +69,12 @@ import static com.intellij.flex.uiDesigner.RenderActionQueue.RenderAction;
 
 public class DesignerApplicationManager {
   private static final ExtensionPointName<ServiceDescriptor> SERVICES =
-    new ExtensionPointName<ServiceDescriptor>("com.intellij.flex.uiDesigner.service");
+    new ExtensionPointName<>("com.intellij.flex.uiDesigner.service");
 
   public static final File APP_DIR = new File(PathManager.getSystemPath(), "flashUIDesigner");
 
   public static final Topic<DocumentRenderedListener> MESSAGE_TOPIC =
-    new Topic<DocumentRenderedListener>("Flash UI Designer document rendered event", DocumentRenderedListener.class);
+    new Topic<>("Flash UI Designer document rendered event", DocumentRenderedListener.class);
 
   private DesignerApplication application;
 
@@ -225,7 +225,7 @@ public class DesignerApplicationManager {
     synchronized (initialRenderQueue) {
       AsyncResult<DocumentInfo> renderResult = initialRenderQueue.findResult(psiFile);
       if (renderResult == null) {
-        renderResult = new AsyncResult<DocumentInfo>();
+        renderResult = new AsyncResult<>();
         if (renderRejectedCallback != null) {
           renderResult.notifyWhenRejected(renderRejectedCallback);
         }
@@ -279,7 +279,7 @@ public class DesignerApplicationManager {
 
   @NotNull
   public AsyncResult<BufferedImage> getDocumentImage(@NotNull XmlFile psiFile) {
-    final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
+    final AsyncResult<BufferedImage> result = new AsyncResult<>();
     renderIfNeed(psiFile, documentInfo -> Client.getInstance().getDocumentImage(documentInfo, result), result, false);
     return result;
   }
@@ -290,7 +290,7 @@ public class DesignerApplicationManager {
 
   @TestOnly
   public AsyncResult<DocumentInfo> renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
-    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
+    final AsyncResult<DocumentInfo> result = new AsyncResult<>();
     renderDocument(module, psiFile, false, result);
     return result;
   }
@@ -449,7 +449,7 @@ public class DesignerApplicationManager {
         }
 
         if (unregisterTaskQueueProcessor == null) {
-          unregisterTaskQueueProcessor = new QueueProcessor<Module>(module1 -> {
+          unregisterTaskQueueProcessor = new QueueProcessor<>(module1 -> {
             boolean hasError = true;
             final ActionCallback callback;
             initialRenderQueue.suspend();

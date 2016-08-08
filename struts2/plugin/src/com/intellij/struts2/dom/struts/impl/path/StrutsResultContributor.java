@@ -55,7 +55,7 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
    * Extension point name.
    */
   public static final ExtensionPointName<StrutsResultContributor> EP_NAME =
-    new ExtensionPointName<StrutsResultContributor>("com.intellij.struts2.resultContributor");
+    new ExtensionPointName<>("com.intellij.struts2.resultContributor");
 
   /**
    * Returns whether this ResultContributor handles the given result type.
@@ -112,7 +112,7 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
   protected PathReference createDefaultPathReference(final String path,
                                                      final PsiElement element,
                                                      @Nullable final Icon staticIcon) {
-    final ArrayList<PsiReference> list = new ArrayList<PsiReference>(5);
+    final ArrayList<PsiReference> list = new ArrayList<>(5);
     createReferences(element, list, true);
     if (list.isEmpty()) {
       return null;
@@ -127,7 +127,7 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
     if (staticIcon == null) {
       iconFunction = webPath -> target.getIcon(Iconable.ICON_FLAG_READ_STATUS);
     } else {
-      iconFunction = new ConstantFunction<PathReference, Icon>(staticIcon);
+      iconFunction = new ConstantFunction<>(staticIcon);
     }
 
     return new PathReference(path, iconFunction) {

@@ -51,7 +51,7 @@ class AndroidPackagingOptionsImpl extends AirPackagingOptionsBase implements Mod
     public String PACKAGE_FILE_NAME = "";
     @Tag("files-to-package")
     @AbstractCollection(surroundWithTag = false)
-    public List<FilePathAndPathInPackage> FILES_TO_PACKAGE = new ArrayList<FilePathAndPathInPackage>();
+    public List<FilePathAndPathInPackage> FILES_TO_PACKAGE = new ArrayList<>();
     @Property(surroundWithTag = false)
     public AirSigningOptions SIGNING_OPTIONS = new AirSigningOptions();
   }

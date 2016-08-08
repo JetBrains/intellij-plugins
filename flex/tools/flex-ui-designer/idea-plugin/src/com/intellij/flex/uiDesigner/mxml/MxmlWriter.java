@@ -60,7 +60,7 @@ public class MxmlWriter {
   final ProblemsHolder problemsHolder;
 
   final ValueProviderFactory valueProviderFactory = new ValueProviderFactory();
-  private final List<RangeMarker> rangeMarkers = new ArrayList<RangeMarker>();
+  private final List<RangeMarker> rangeMarkers = new ArrayList<>();
 
   final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
 

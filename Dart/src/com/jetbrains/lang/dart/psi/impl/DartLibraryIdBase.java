@@ -93,7 +93,7 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
     final List<VirtualFile> libFiles = DartResolveUtil.findLibraryByName(this, libraryName);
     if (libFiles.isEmpty()) return ResolveResult.EMPTY_ARRAY;
 
-    final List<ResolveResult> result = new SmartList<ResolveResult>();
+    final List<ResolveResult> result = new SmartList<>();
 
     for (VirtualFile libFile : libFiles) {
       final PsiFile psiFile = getManager().findFile(libFile);

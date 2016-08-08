@@ -60,7 +60,7 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
   }
 
   public static String[] getAllSymbols(@NotNull final GlobalSearchScope scope) {
-    final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>();
+    final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<>();
     FileBasedIndex.getInstance().processAllKeys(DART_SYMBOL_INDEX, processor, scope, null);
     return ArrayUtil.toStringArray(processor.getResults());
   }
@@ -70,7 +70,7 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
                                                        @NotNull final GlobalSearchScope searchScope) {
     final Collection<VirtualFile> files =
       FileBasedIndex.getInstance().getContainingFiles(DART_SYMBOL_INDEX, name, searchScope);
-    final Set<DartComponentName> result = new THashSet<DartComponentName>();
+    final Set<DartComponentName> result = new THashSet<>();
     for (VirtualFile vFile : files) {
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
@@ -85,7 +85,7 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
         });
       }
     }
-    return new ArrayList<DartComponentName>(result);
+    return new ArrayList<>(result);
   }
 
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
@@ -93,7 +93,7 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
     @NotNull
     public Map<String, Void> map(@NotNull final FileContent inputData) {
       List<String> symbols = DartIndexUtil.indexFile(inputData).getSymbols();
-      final Map<String, Void> result = new THashMap<String, Void>();
+      final Map<String, Void> result = new THashMap<>();
       for (String symbol : symbols) {
         result.put(symbol, null);
       }

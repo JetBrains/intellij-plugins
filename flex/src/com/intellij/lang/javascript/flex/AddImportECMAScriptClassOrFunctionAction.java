@@ -142,7 +142,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     if (myReference instanceof JSReferenceExpression && ((JSReferenceExpression)myReference).getQualifier() == null) {
       Collection<JSQualifiedNamedElement> c = getCandidates(editor, file, myReference.getCanonicalText());
       filterCandidates(c);
-      candidates = new THashSet<JSQualifiedNamedElement>(c, JSPsiImplUtils.QUALIFIED_NAME_HASHING_STRATEGY);
+      candidates = new THashSet<>(c, JSPsiImplUtils.QUALIFIED_NAME_HASHING_STRATEGY);
     }
     else {
       JSQualifiedNamedElement invalidResult = null;
@@ -158,7 +158,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
            ((JSFunction)invalidResult).isConstructor()) {
           invalidResult = (JSClass)invalidResult.getParent();
         }
-        candidates = new SmartList<JSQualifiedNamedElement>();
+        candidates = new SmartList<>();
         candidates.add(invalidResult);
       }
       else {

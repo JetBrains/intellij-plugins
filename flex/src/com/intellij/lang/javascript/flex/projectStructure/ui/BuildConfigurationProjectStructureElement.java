@@ -247,7 +247,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     assert editor != null;
     final ModulesConfigurator modulesConfigurator = myContext.getModulesConfigurator();
 
-    final List<ProjectStructureElementUsage> usages = new ArrayList<ProjectStructureElementUsage>();
+    final List<ProjectStructureElementUsage> usages = new ArrayList<>();
     for (DependencyEntry dependencyEntry : myBc.getDependencies().getEntries()) {
       if (dependencyEntry instanceof SharedLibraryEntry) {
         String libraryName = ((SharedLibraryEntry)dependencyEntry).getLibraryName();

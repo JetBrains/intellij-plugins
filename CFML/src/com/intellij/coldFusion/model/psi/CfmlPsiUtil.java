@@ -47,7 +47,7 @@ public class CfmlPsiUtil {
   @Nullable
   public static Collection<String> findBetween(@NotNull String source, @NotNull String startMarker, @NotNull String endMarker) {
     int fromIndex = 0;
-    Collection<String> collection = new LinkedList<String>();
+    Collection<String> collection = new LinkedList<>();
     while (fromIndex < source.length() && fromIndex >= 0) {
       int start = source.indexOf(startMarker, fromIndex);
       if (start < 0) {
@@ -78,7 +78,7 @@ public class CfmlPsiUtil {
     return new TextRange(start, end);
   }
 
-  private final static Set<String> OUR_TRANSPARENT_FUNCTIONS = new HashSet<String>();
+  private final static Set<String> OUR_TRANSPARENT_FUNCTIONS = new HashSet<>();
 
   static {
     OUR_TRANSPARENT_FUNCTIONS.add("cfsilent");
@@ -322,8 +322,8 @@ public class CfmlPsiUtil {
                                                                                       Getter<Result[], CfmlComponent> gatherer,
                                                                                       Result[] EMPTY_ARRAY, boolean isSuperPriority) {
     CfmlComponent currentComponent = isSuperPriority ? component.getSuper() : component;
-    Set<String> names = new HashSet<String>();
-    List<Result> result = new LinkedList<Result>();
+    Set<String> names = new HashSet<>();
+    List<Result> result = new LinkedList<>();
     while (currentComponent != null) {
       for (Result candidate : gatherer.get(currentComponent)) {
         if (names.add(candidate.getName())) {

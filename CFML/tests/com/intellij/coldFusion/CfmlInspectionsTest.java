@@ -65,7 +65,7 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
   public void testUnResolveIncludeWithMappings() throws Throwable {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     addScriptComponentsTo(myFixture);
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/folder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);
@@ -90,7 +90,7 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
   public void testResolveIncludeWithBaclSlashMappings() throws Throwable {
     myFixture.configureByFile(getTestName(true) + ".test.cfml");
     addScriptComponentsTo(myFixture);
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       VirtualFile directory = root.findChild("folder");
       if (directory != null && directory.isDirectory()) {

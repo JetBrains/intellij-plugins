@@ -66,7 +66,7 @@ public class KarmaDebugBrowserSelector {
 
   @NotNull
   private static List<DebuggableWebBrowser> toDebuggableWebBrowsers(@NotNull List<WebBrowser> browsers) {
-    List<DebuggableWebBrowser> debuggableWebBrowsers = new SmartList<DebuggableWebBrowser>();
+    List<DebuggableWebBrowser> debuggableWebBrowsers = new SmartList<>();
     for (WebBrowser browser : browsers) {
       DebuggableWebBrowser debuggableBrowser = DebuggableWebBrowser.create(browser);
       if (debuggableBrowser != null) {

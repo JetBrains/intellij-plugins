@@ -123,7 +123,7 @@ public class DartControlFlow {
   }
 
   private static class DartReferenceVisitor extends PsiRecursiveElementVisitor {
-    private final List<DartComponentName> myComponentNames = new ArrayList<DartComponentName>();
+    private final List<DartComponentName> myComponentNames = new ArrayList<>();
 
     public List<DartComponentName> getComponentNames() {
       return myComponentNames;

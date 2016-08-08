@@ -130,8 +130,8 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
    */
   private static List<VirtualFile> mavenIdToOutputFileMapping(final MavenWorkspaceMap workspaceMap, final Project project,
                                                               final Collection<MavenProject> mavenProjects) throws IOException {
-    final Ref<IOException> exception = new Ref<IOException>();
-    final List<VirtualFile> temporaryFiles = new ArrayList<VirtualFile>();
+    final Ref<IOException> exception = new Ref<>();
+    final List<VirtualFile> temporaryFiles = new ArrayList<>();
     MavenUtil.invokeAndWaitWriteAction(project, () -> {
       try {
         for (MavenProject mavenProject : mavenProjects) {

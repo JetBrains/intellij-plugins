@@ -55,7 +55,7 @@ public class FelixRunner extends AbstractFrameworkRunner {
 
     // bundles and start levels
 
-    MultiMap<Integer, String> startBundles = new MultiMap<Integer, String>();
+    MultiMap<Integer, String> startBundles = new MultiMap<>();
     List<String> installBundles = ContainerUtil.newSmartList();
 
     for (SelectedBundle bundle : myBundles) {

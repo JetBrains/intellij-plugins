@@ -55,7 +55,7 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
       .addAttribute(VALUE_ATTRIBUTE);
 
   public static final JamClassMeta<JamInterceptorRef> META_CLASS =
-    new JamClassMeta<JamInterceptorRef>(JamInterceptorRef.class).addAnnotation(INTERCEPTOR_REF_META);
+    new JamClassMeta<>(JamInterceptorRef.class).addAnnotation(INTERCEPTOR_REF_META);
 
 
   private static final JamAnnotationAttributeMeta.Collection<JamInterceptorRef> INTERCEPTOR_REFS_VALUE_ATTRIBUTE =
@@ -69,7 +69,7 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
     new JamAnnotationMeta(ANNOTATION_NAME_LIST).addAttribute(INTERCEPTOR_REFS_VALUE_ATTRIBUTE);
 
   public static final JamClassMeta<JamInterceptorRef> META_CLASS_LIST =
-    new JamClassMeta<JamInterceptorRef>(JamInterceptorRef.class).addAnnotation(INTERCEPTOR_REFS_META);
+    new JamClassMeta<>(JamInterceptorRef.class).addAnnotation(INTERCEPTOR_REFS_META);
 
   @JamPsiConnector
   public abstract PsiMember getOwner();

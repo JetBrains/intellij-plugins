@@ -56,7 +56,7 @@ class PropertyProcessor implements ValueWriter {
   private boolean isEffect;
   private boolean isStyle;
 
-  private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<String>();
+  private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<>();
 
   PropertyProcessor(InjectedASWriter injectedASWriter, BaseWriter writer, MxmlWriter mxmlWriter) {
     this.injectedASWriter = injectedASWriter;
@@ -839,7 +839,7 @@ class PropertyProcessor implements ValueWriter {
         return;
       }
       else {
-        effectiveClassInfo = new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, "mx.core.UIComponent", null);
+        effectiveClassInfo = new Trinity<>(-1, "mx.core.UIComponent", null);
       }
     }
     else {

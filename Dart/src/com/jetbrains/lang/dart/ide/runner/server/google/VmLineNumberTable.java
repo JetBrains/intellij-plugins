@@ -56,7 +56,7 @@ public class VmLineNumberTable {
     return lineNumberTable;
   }
 
-  Map<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
+  Map<Integer, Integer> lineMap = new HashMap<>();
 
   private int libraryId;
 

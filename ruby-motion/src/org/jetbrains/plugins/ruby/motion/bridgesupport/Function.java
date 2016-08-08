@@ -13,7 +13,7 @@ public class Function extends Sealable {
   private final boolean myVariadic;
   private final boolean myClassMethod;
   private String myReturnValue;
-  private List<Pair<String, String>> myArguments = new ArrayList<Pair<String, String>>();
+  private List<Pair<String, String>> myArguments = new ArrayList<>();
 
   public Function(final String name, final boolean isVariadic, final boolean isClassMethod) {
     myName = name;

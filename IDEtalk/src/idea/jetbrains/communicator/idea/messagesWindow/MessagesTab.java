@@ -53,7 +53,7 @@ import java.util.Date;
  * @author Kir
  */
 public class MessagesTab implements Disposable {
-  private static final Key<MessagesTab> KEY = new Key<MessagesTab>("MESSAGES_TAB");
+  private static final Key<MessagesTab> KEY = new Key<>("MESSAGES_TAB");
 
   @NonNls
   private static final String LF = "LineFeed";

@@ -22,11 +22,11 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
   private final DartVmServiceDebugProcess myDebugProcess;
 
-  private final Set<XLineBreakpoint<XBreakpointProperties>> myXBreakpoints = new THashSet<XLineBreakpoint<XBreakpointProperties>>();
+  private final Set<XLineBreakpoint<XBreakpointProperties>> myXBreakpoints = new THashSet<>();
   private final Map<String, XLineBreakpoint<XBreakpointProperties>> myVmBreakpointIdToXBreakpointMap =
-    new THashMap<String, XLineBreakpoint<XBreakpointProperties>>();
+    new THashMap<>();
   private final Map<XLineBreakpoint<XBreakpointProperties>, Collection<Pair<String, String>>> myXBreakpointToIsolateAndVmBreakpointIdsMap =
-    new THashMap<XLineBreakpoint<XBreakpointProperties>, Collection<Pair<String, String>>>();
+    new THashMap<>();
 
   protected DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
     super(DartLineBreakpointType.class);
@@ -71,7 +71,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
     Collection<Pair<String, String>> isolateAndVmBreakpointIds = myXBreakpointToIsolateAndVmBreakpointIdsMap.get(xBreakpoint);
     if (isolateAndVmBreakpointIds == null) {
-      isolateAndVmBreakpointIds = new SmartList<Pair<String, String>>();
+      isolateAndVmBreakpointIds = new SmartList<>();
       myXBreakpointToIsolateAndVmBreakpointIdsMap.put(xBreakpoint, isolateAndVmBreakpointIds);
     }
     isolateAndVmBreakpointIds.add(Pair.create(isolateId, vmBreakpoint.getId()));

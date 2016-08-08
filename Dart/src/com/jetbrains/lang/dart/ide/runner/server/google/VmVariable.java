@@ -94,7 +94,7 @@ public class VmVariable extends VmRef implements Comparable<VmVariable> {
       return null;
     }
 
-    List<VmVariable> variables = new ArrayList<VmVariable>();
+    List<VmVariable> variables = new ArrayList<>();
 
     for (int i = 0; i < arr.length(); i++) {
       variables.add(createFrom(isolate, arr.getJSONObject(i), isLocal));

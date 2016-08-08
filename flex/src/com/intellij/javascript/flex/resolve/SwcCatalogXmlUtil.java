@@ -75,7 +75,7 @@ public class SwcCatalogXmlUtil {
   }
 
   public static class XmlBuilderAdapter implements XmlBuilder {
-    private final Stack<String> myLocation = new Stack<String>();
+    private final Stack<String> myLocation = new Stack<>();
 
     public XmlBuilderAdapter() {
       myLocation.push("");
@@ -174,7 +174,7 @@ public class SwcCatalogXmlUtil {
     //          <def id="flash.sampler:clearSamples" />
     //          ...
 
-    final THashMap<String, TObjectLongHashMap<String>> swfNameToQnameWithTimestampMap = new THashMap<String, TObjectLongHashMap<String>>(1);
+    final THashMap<String, TObjectLongHashMap<String>> swfNameToQnameWithTimestampMap = new THashMap<>(1);
 
     try {
       final Element rootElement = JDOMUtil.load(catalogFile.getInputStream());
@@ -186,7 +186,7 @@ public class SwcCatalogXmlUtil {
               continue;
             }
 
-            final TObjectLongHashMap<String> qNameWithTimestampMap = new TObjectLongHashMap<String>();
+            final TObjectLongHashMap<String> qNameWithTimestampMap = new TObjectLongHashMap<>();
             swfNameToQnameWithTimestampMap.put(swfName, qNameWithTimestampMap);
 
             for (final Element scriptElement : libraryElement.getChildren("script", libraryElement.getNamespace())) {
@@ -233,7 +233,7 @@ public class SwcCatalogXmlUtil {
   }
 
   private static ComponentFromCatalogXml[] parseComponentsFromCatalogXml(final VirtualFile catalogFile) {
-    final Collection<ComponentFromCatalogXml> result = new ArrayList<ComponentFromCatalogXml>();
+    final Collection<ComponentFromCatalogXml> result = new ArrayList<>();
 
     final XmlBuilder xmlBuilder = new XmlBuilderAdapter() {
       private static final String COMPONENT_LOCATION = ".swc.components.component";
@@ -314,7 +314,7 @@ public class SwcCatalogXmlUtil {
   }
 
   private static ComponentFromManifest[] parseManifestFile(final VirtualFile manifestFile) {
-    final Collection<ComponentFromManifest> result = new ArrayList<ComponentFromManifest>();
+    final Collection<ComponentFromManifest> result = new ArrayList<>();
 
     final XmlBuilder builder = new XmlBuilderAdapter() {
       private static final String COMPONENT = "component";

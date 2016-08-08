@@ -87,7 +87,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   private static final Map<String, String> DOCUMENTED_ATTRIBUTES;
   static {
-    DOCUMENTED_ATTRIBUTES = new THashMap<String, String>();
+    DOCUMENTED_ATTRIBUTES = new THashMap<>();
     DOCUMENTED_ATTRIBUTES.put("Event", "event:");
     DOCUMENTED_ATTRIBUTES.put("Style", "style:");
     DOCUMENTED_ATTRIBUTES.put("Effect", "effect:");
@@ -330,7 +330,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   public static PsiElement findTopLevelNavigationElement(JSQualifiedNamedElement element) {
     if (element.getName() == null) return element;
 
-    final Ref<JSQualifiedNamedElement> withAsdoc = new Ref<JSQualifiedNamedElement>();
+    final Ref<JSQualifiedNamedElement> withAsdoc = new Ref<>();
     final PsiElement sourceElement =
       JSPsiImplUtils.findTopLevelNavigatableElementWithSource(element, candidate -> {
         if (withAsdoc.isNull()) {
@@ -504,7 +504,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
     List<String> urls = findUrlsForClass(clazz);
     if (anchor != null) {
-      List<String> anchored = new ArrayList<String>(urls.size());
+      List<String> anchored = new ArrayList<>(urls.size());
       for (String url : urls) {
         anchored.add(url + "#" + anchor);
       }
@@ -822,7 +822,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   @Nullable
   private static JSAttributeNameValuePair findNamedAttribute(JSClass clazz, final String type, final String name) {
-    final Ref<JSAttributeNameValuePair> attribute = new Ref<JSAttributeNameValuePair>();
+    final Ref<JSAttributeNameValuePair> attribute = new Ref<>();
     JSResolveUtil.processMetaAttributesForClass(clazz, new JSResolveUtil.MetaDataProcessor() {
       public boolean process(@NotNull JSAttribute jsAttribute) {
         if (type.equals(jsAttribute.getName())) {

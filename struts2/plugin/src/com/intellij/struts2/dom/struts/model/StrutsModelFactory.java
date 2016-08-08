@@ -48,13 +48,13 @@ class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiEle
     final StrutsManager strutsManager = StrutsManager.getInstance(module.getProject());
     final Set<StrutsFileSet> fileSets = strutsManager.getAllConfigFileSets(module);
 
-    final List<StrutsModel> models = new ArrayList<StrutsModel>(fileSets.size());
+    final List<StrutsModel> models = new ArrayList<>(fileSets.size());
     for (final StrutsFileSet set : fileSets) {
       if (set.isRemoved()) {
         continue;
       }
 //      System.out.println("adding " + set);
-      final Set<XmlFile> files = new LinkedHashSet<XmlFile>(set.getFiles().size());
+      final Set<XmlFile> files = new LinkedHashSet<>(set.getFiles().size());
       for (final VirtualFilePointer filePointer : set.getFiles()) {
         final VirtualFile file = filePointer.getFile();
         if (file == null) {

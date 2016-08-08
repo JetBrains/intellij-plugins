@@ -158,8 +158,8 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     presentation.setDynamicUsagesString(DartBundle.message("dynamic.usages.to.rename"));
     presentation.setUsageTypeFilteringAvailable(false);
 
-    final List<UsageTarget> usageTargets = new SmartList<UsageTarget>();
-    final Map<Usage, String> usageToEditIdMap = new THashMap<Usage, String>();
+    final List<UsageTarget> usageTargets = new SmartList<>();
+    final Map<Usage, String> usageToEditIdMap = new THashMap<>();
     fillTargetsAndUsageToEditIdMap(usageTargets, usageToEditIdMap);
 
     final UsageTarget[] targets = usageTargets.toArray(new UsageTarget[usageTargets.size()]);
@@ -214,10 +214,10 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
   @NotNull
   private Runnable createRefactoringRunnable(@NotNull final UsageView usageView, @NotNull final Map<Usage, String> usageToEditIdMap) {
     return () -> {
-      final Set<String> excludedIds = new THashSet<String>();
+      final Set<String> excludedIds = new THashSet<>();
 
       // usageView.getExcludedUsages() and usageView.getUsages() doesn't contain deleted usages, that's why we need to start with full set usageToEditIdMap.keySet()
-      final Set<Usage> excludedUsages = new THashSet<Usage>(usageToEditIdMap.keySet());
+      final Set<Usage> excludedUsages = new THashSet<>(usageToEditIdMap.keySet());
       excludedUsages.removeAll(usageView.getUsages());
       excludedUsages.addAll(usageView.getExcludedUsages());
 

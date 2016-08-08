@@ -61,7 +61,7 @@ public class MotionObjectRenderer extends ValueRenderer {
   protected void doComputeChildren(@NotNull EvaluationContext context,
                                    @NotNull XCompositeNode container) throws ExecutionException, DebuggerCommandException {
 
-    final Collection<CidrValue> children = new ArrayList<CidrValue>();
+    final Collection<CidrValue> children = new ArrayList<>();
     final LLValue names = getInstanceVariablesNames(context);
     final int count = count(context, names);
     for (int i = 0; i < count; i++) {

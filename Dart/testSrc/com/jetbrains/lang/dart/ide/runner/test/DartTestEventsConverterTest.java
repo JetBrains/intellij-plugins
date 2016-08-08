@@ -368,7 +368,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myNodes = new HashMap<String, DefaultMutableTreeNode>();
+    myNodes = new HashMap<>();
     final ExecutionEnvironment environment = new ExecutionEnvironment();
     myMockResettablePrinter = new MockPrinter(true);
     TestConsoleProperties consoleProperties = createConsoleProperties();
@@ -428,7 +428,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   }
 
   private class DartTestEventsProcessor extends GeneralTestEventsProcessor {
-    List<String> signals = new ArrayList<String>();
+    List<String> signals = new ArrayList<>();
 
     public DartTestEventsProcessor(Project project, @NotNull String testFrameworkName) {
       super(project, testFrameworkName);

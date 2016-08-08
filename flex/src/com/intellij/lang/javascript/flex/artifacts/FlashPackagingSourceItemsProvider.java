@@ -37,7 +37,7 @@ public class FlashPackagingSourceItemsProvider extends PackagingSourceItemsProvi
   }
 
   private static Collection<? extends PackagingSourceItem> createFlashModuleSourceItems(final ArtifactEditorContext editorContext) {
-    final List<PackagingSourceItem> result = new ArrayList<PackagingSourceItem>();
+    final List<PackagingSourceItem> result = new ArrayList<>();
 
     for (Module module : editorContext.getModulesProvider().getModules()) {
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {
@@ -49,7 +49,7 @@ public class FlashPackagingSourceItemsProvider extends PackagingSourceItemsProvi
   }
 
   private static Collection<? extends PackagingSourceItem> createFlashBCOutputSourceItems(final Module module) {
-    final List<PackagingSourceItem> result = new ArrayList<PackagingSourceItem>();
+    final List<PackagingSourceItem> result = new ArrayList<>();
 
     int orderNumber = 0;
 

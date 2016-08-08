@@ -139,7 +139,7 @@ public class DartPsiImplUtil {
 
     if (cachedValue == null) {
       cachedValue = CachedValuesManager.getManager(dartType.getProject()).createCachedValue(
-        () -> new CachedValueProvider.Result<PsiElement>(doResolveTypeReference(dartType), PsiModificationTracker.MODIFICATION_COUNT), false);
+        () -> new CachedValueProvider.Result<>(doResolveTypeReference(dartType), PsiModificationTracker.MODIFICATION_COUNT), false);
 
       dartType.putUserData(DART_TYPE_CACHED_RESOLVE_RESULT_KEY, cachedValue);
     }
@@ -153,7 +153,7 @@ public class DartPsiImplUtil {
     if (typeName.indexOf('.') != -1) {
       return ((DartReference)expression).resolve();
     }
-    List<DartComponentName> result = new ArrayList<DartComponentName>();
+    List<DartComponentName> result = new ArrayList<>();
     final DartResolveProcessor dartResolveProcessor = new DartResolveProcessor(result, typeName);
 
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(dartType.getContainingFile());

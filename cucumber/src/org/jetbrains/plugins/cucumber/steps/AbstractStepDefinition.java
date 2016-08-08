@@ -138,11 +138,11 @@ public abstract class AbstractStepDefinition {
       return Collections.emptyList();
     }
 
-    final CollectProcessor<PsiReference> consumer = new CollectProcessor<PsiReference>();
+    final CollectProcessor<PsiReference> consumer = new CollectProcessor<>();
     CucumberUtil.findGherkinReferencesToElement(element, regex, consumer, searchScope);
 
     // We use hash to get rid of duplicates
-    final Collection<GherkinStep> results = new HashSet<GherkinStep>(consumer.getResults().size());
+    final Collection<GherkinStep> results = new HashSet<>(consumer.getResults().size());
     for (final PsiReference reference : consumer.getResults()) {
       final PsiElement step = reference.getElement();
       if (step instanceof GherkinStep) {

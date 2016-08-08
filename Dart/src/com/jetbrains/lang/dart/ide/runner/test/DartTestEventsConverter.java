@@ -102,9 +102,9 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     super(testFrameworkName, consoleProperties);
     myUrlResolver = urlResolver;
     myTestIdToTimestamp = new TIntLongHashMap();
-    myTestData = new HashMap<Integer, Test>();
-    myGroupData = new HashMap<Integer, Group>();
-    mySuiteData = new HashMap<Integer, Suite>();
+    myTestData = new HashMap<>();
+    myGroupData = new HashMap<>();
+    mySuiteData = new HashMap<>();
   }
 
   protected boolean processServiceMessages(final String text, final Key outputType, final ServiceMessageVisitor visitor)
@@ -664,7 +664,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     List<String> nameList() {
-      List<String> names = new ArrayList<String>();
+      List<String> names = new ArrayList<>();
       addNames(names);
       return names;
     }

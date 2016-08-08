@@ -88,8 +88,8 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
     final Project project = configuration.getProject();
     final Semaphore targetDone = new Semaphore();
-    final Ref<Boolean> result = new Ref<Boolean>(true);
-    final List<Exception> exceptions = new ArrayList<Exception>();
+    final Ref<Boolean> result = new Ref<>(true);
+    final List<Exception> exceptions = new ArrayList<>();
     ApplicationManager.getApplication().invokeAndWait(() -> {
 
       //Save all opened documents

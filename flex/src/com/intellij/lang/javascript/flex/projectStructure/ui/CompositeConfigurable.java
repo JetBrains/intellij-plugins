@@ -33,7 +33,7 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private final FlexBCConfigurable myMainChild;
-  private final List<NamedConfigurable> myChildren = new ArrayList<NamedConfigurable>();
+  private final List<NamedConfigurable> myChildren = new ArrayList<>();
   private final Disposable myDisposable = Disposer.newDisposable();
   private final TabbedPaneWrapper myTabs;
 

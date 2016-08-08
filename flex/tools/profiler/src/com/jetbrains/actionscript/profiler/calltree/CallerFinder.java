@@ -22,13 +22,13 @@ class CallerFinder {
   * Method return only <code>foo</code>.
   */
   static List<CallTreeNode> findCallsByFrames(CallTreeNode root, FrameInfo[] frames) {
-    List<CallTreeNode> calls = new ArrayList<CallTreeNode>();
+    List<CallTreeNode> calls = new ArrayList<>();
     if (frames.length == 0) {
       return calls;
     }
     frames = ArrayUtil.reverseArray(frames);
     for (CallTreeNode node : root.getChildren()) {
-      fillCallsByFrames(node, calls, frames, new ArrayList<FrameInfo>());
+      fillCallsByFrames(node, calls, frames, new ArrayList<>());
     }
     return calls;
   }

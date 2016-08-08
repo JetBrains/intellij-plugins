@@ -56,15 +56,15 @@ import java.util.*;
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXERS =
-    new HashMap<String, StubIndexKey<String, JSImplicitElementProvider>>();
-  private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
-  private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
-  private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<String, PairProcessor<JSProperty, JSElementIndexingData>>();
-  private final static Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<String, Function<String, List<String>>>();
+    new HashMap<>();
+  private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<>();
+  private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<>();
+  private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<>();
+  private final static Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<>();
   private final static Map<String, Processor<JSArgumentList>> ARGUMENT_LIST_CHECKERS = new HashMap<>();
 
-  public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
-  public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
+  public static final Set<String> INTERESTING_METHODS = new HashSet<>();
+  public static final Set<String> INJECTABLE_METHODS = new HashSet<>();
   public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
   public static final String COMPONENT = "component";
@@ -99,14 +99,14 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXERS.put(FILTER, AngularFilterIndex.KEY);
     INDEXERS.put(STATE, AngularUiRouterStatesIndex.KEY);
 
-    final THashSet<String> allInterestingMethods = new THashSet<String>(INTERESTING_METHODS);
+    final THashSet<String> allInterestingMethods = new THashSet<>(INTERESTING_METHODS);
     allInterestingMethods.addAll(INJECTABLE_METHODS);
     allInterestingMethods.addAll(INDEXERS.keySet());
     allInterestingMethods.add(START_SYMBOL);
     allInterestingMethods.add(END_SYMBOL);
     ALL_INTERESTING_METHODS = ArrayUtil.toStringArray(allInterestingMethods);
 
-    INDEXES = new BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>>();
+    INDEXES = new BidirectionalMap<>();
     INDEXES.put("aci", AngularControllerIndex.KEY);
     INDEXES.put("addi", AngularDirectivesDocIndex.KEY);
     INDEXES.put("adi", AngularDirectivesIndex.KEY);
@@ -129,7 +129,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     // example of nested states https://scotch.io/tutorials/angular-routing-using-ui-router
     POLY_NAME_CONVERTERS.put(STATE, (NotNullFunction<String, List<String>>)dom -> {
       final String[] parts = dom.split("\\.");
-      final List<String> result = new ArrayList<String>();
+      final List<String> result = new ArrayList<>();
       result.add(dom);
       String tail = "";
       for (int i = parts.length - 1; i > 0; i--) {

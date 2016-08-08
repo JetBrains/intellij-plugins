@@ -411,7 +411,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       final Module module = moduleAndBC.first;
       final FlexBuildConfiguration bc = moduleAndBC.second;
 
-      final Ref<String> errorMessageRef = new Ref<String>(null);
+      final Ref<String> errorMessageRef = new Ref<>(null);
       final Consumer<FlashProjectStructureProblem> consumer = problem -> errorMessageRef.set(problem.errorMessage);
 
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {

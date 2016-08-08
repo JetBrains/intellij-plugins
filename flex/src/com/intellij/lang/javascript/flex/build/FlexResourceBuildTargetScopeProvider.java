@@ -40,7 +40,7 @@ public class FlexResourceBuildTargetScopeProvider extends BuildTargetScopeProvid
                                                          @NotNull final CompilerFilter filter,
                                                          @NotNull final Project project,
                                                          boolean forceBuild) {
-    List<String> moduleNames = new ArrayList<String>();
+    List<String> moduleNames = new ArrayList<>();
     try {
       for (Pair<Module, FlexBuildConfiguration> moduleAndBC : FlexBuildTargetScopeProvider.getModulesAndBCsToCompile(baseScope)) {
         moduleNames.add(moduleAndBC.first.getName());

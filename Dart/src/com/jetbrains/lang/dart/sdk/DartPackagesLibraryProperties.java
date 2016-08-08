@@ -15,7 +15,7 @@ public class DartPackagesLibraryProperties extends LibraryProperties<DartPackage
   private @NotNull Map<String, List<String>> myPackageNameToDirsMap;
 
   public DartPackagesLibraryProperties() {
-    myPackageNameToDirsMap = new TreeMap<String, List<String>>();
+    myPackageNameToDirsMap = new TreeMap<>();
   }
 
   @NotNull

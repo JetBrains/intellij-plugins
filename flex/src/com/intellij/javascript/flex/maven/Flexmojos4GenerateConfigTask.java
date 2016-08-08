@@ -55,8 +55,8 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
   private Process process;
   private MavenProgressIndicator indicator;
-  private final List<MavenProject> projects = new ArrayList<MavenProject>();
-  private final Map<Module, String> myModuleToConfigFilePath = new THashMap<Module, String>();
+  private final List<MavenProject> projects = new ArrayList<>();
+  private final Map<Module, String> myModuleToConfigFilePath = new THashMap<>();
 
   private RefreshConfigFiles postTask;
 
@@ -219,8 +219,8 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
       int exitCode = -1;
       @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
       final InputStreamReader reader = new InputStreamReader(process.getInputStream());
-      final List<String> filesForRefresh = new ArrayList<String>(projects.size());
-      final THashMap<MavenProject, List<String>> sourceRoots = new THashMap<MavenProject, List<String>>(projects.size());
+      final List<String> filesForRefresh = new ArrayList<>(projects.size());
+      final THashMap<MavenProject, List<String>> sourceRoots = new THashMap<>(projects.size());
       try {
         char[] buf = new char[8196];
         int read;
@@ -239,7 +239,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             filesForRefresh.add(matcher.group(2));
 
             StringTokenizer tokenizer = new StringTokenizer(matcher.group(3), "|");
-            List<String> moduleSourcesRoots = new ArrayList<String>();
+            List<String> moduleSourcesRoots = new ArrayList<>();
             while (tokenizer.hasMoreTokens()) {
               moduleSourcesRoots.add(tokenizer.nextToken());
             }
@@ -315,7 +315,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
         p.refresh(false, true);
 
-        final List<VirtualFile> virtualFiles = new ArrayList<VirtualFile>(filesForRefresh.size());
+        final List<VirtualFile> virtualFiles = new ArrayList<>(filesForRefresh.size());
         for (String path : filesForRefresh) {
           final VirtualFile file = p.findChild(path);
           if (file != null) {

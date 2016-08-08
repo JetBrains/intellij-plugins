@@ -53,7 +53,7 @@ public class CfmlUnitRemoteTestsRunner {
   }
 
   public static void deleteFile(Project project, final VirtualFile file) throws ExecutionException {
-    final Ref<IOException> error = new Ref<IOException>();
+    final Ref<IOException> error = new Ref<>();
 
     final Runnable runnable = new Runnable() {
       public void run() {
@@ -83,8 +83,8 @@ public class CfmlUnitRemoteTestsRunner {
   public static VirtualFile createFile(Project project, final VirtualFile directory, final String fileName, final String fileText)
     throws ExecutionException {
     LOG.assertTrue(directory != null);
-    final Ref<IOException> error = new Ref<IOException>();
-    final Ref<VirtualFile> launcherFile = new Ref<VirtualFile>();
+    final Ref<IOException> error = new Ref<>();
+    final Ref<VirtualFile> launcherFile = new Ref<>();
 
     final Runnable runnable = () -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {
@@ -125,7 +125,7 @@ public class CfmlUnitRemoteTestsRunner {
                                    final String methodName,
                                    final ProcessHandler processHandler*/,
                                    final Project project) throws ExecutionException {
-    final Ref<ExecutionException> ref = new Ref<ExecutionException>();
+    final Ref<ExecutionException> ref = new Ref<>();
 
     ApplicationManager.getApplication().assertIsDispatchThread();
 

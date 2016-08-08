@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DartSdkUtil {
-  private static final Map<Pair<File, Long>, String> ourVersions = new HashMap<Pair<File, Long>, String>();
+  private static final Map<Pair<File, Long>, String> ourVersions = new HashMap<>();
   private static final String DART_SDK_KNOWN_PATHS = "DART_SDK_KNOWN_PATHS";
   private static final String DARTIUM_KNOWN_PATHS = "DARTIUM_KNOWN_PATHS";
 
@@ -115,9 +115,9 @@ public class DartSdkUtil {
     };
 
     final ComponentWithBrowseButton.BrowseFolderActionListener<JComboBox> browseFolderListener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<JComboBox>("Select Dart SDK path", null, dartSdkPathComponent, project,
-                                                                          FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                                          textComponentAccessor);
+      new ComponentWithBrowseButton.BrowseFolderActionListener<>("Select Dart SDK path", null, dartSdkPathComponent, project,
+                                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                                                                 textComponentAccessor);
     dartSdkPathComponent.addBrowseFolderListener(project, browseFolderListener);
 
     dartiumPathComponent.addBrowseFolderListener("Select Dartium browser path", null, project,

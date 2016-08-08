@@ -22,8 +22,8 @@ import java.util.Map;
 public abstract class DartPsiScopeProcessor implements PsiScopeProcessor {
   private static final Logger LOG = Logger.getInstance(DartResolveProcessor.class.getName());
 
-  private final Stack<Pair<VirtualFile, DartShowHideInfo>> myShowHideFilters = new Stack<Pair<VirtualFile, DartShowHideInfo>>();
-  private final Map<VirtualFile, Collection<PsiElement>> myFilteredOutElements = new THashMap<VirtualFile, Collection<PsiElement>>();
+  private final Stack<Pair<VirtualFile, DartShowHideInfo>> myShowHideFilters = new Stack<>();
+  private final Map<VirtualFile, Collection<PsiElement>> myFilteredOutElements = new THashMap<>();
 
   public void importedFileProcessingStarted(final @NotNull VirtualFile importedFile, final @NotNull DartShowHideInfo showHideInfo) {
     myShowHideFilters.push(Pair.create(importedFile, showHideInfo));
@@ -58,7 +58,7 @@ public abstract class DartPsiScopeProcessor implements PsiScopeProcessor {
       final VirtualFile importedFile = myShowHideFilters.peek().first;
       Collection<PsiElement> elements = myFilteredOutElements.get(importedFile);
       if (elements == null) {
-        elements = new ArrayList<PsiElement>();
+        elements = new ArrayList<>();
         myFilteredOutElements.put(importedFile, elements);
       }
       elements.add(element);

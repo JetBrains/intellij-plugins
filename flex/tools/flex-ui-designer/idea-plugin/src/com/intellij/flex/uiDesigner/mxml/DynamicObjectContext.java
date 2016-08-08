@@ -14,7 +14,7 @@ class DynamicObjectContext extends Context {
   int overrideUserCount;
 
   // IDEA-73040
-  final ArrayList<State> includeInStates = new ArrayList<State>();
+  final ArrayList<State> includeInStates = new ArrayList<>();
 
   DynamicObjectContext(NullContext nullContext) {
     super(nullContext.getParentScope());

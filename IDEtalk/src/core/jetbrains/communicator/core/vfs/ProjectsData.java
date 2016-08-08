@@ -39,7 +39,7 @@ public class ProjectsData {
   public static final String NON_PROJECT_KEY = "non project files";
 
   public ProjectsData() {
-    this(new Hashtable<String, Vector<List>>());
+    this(new Hashtable<>());
   }
 
   public ProjectsData(Hashtable<String,Vector<List>> serializedStatus) {
@@ -52,7 +52,7 @@ public class ProjectsData {
   }
 
   public String[] getProjects() {
-    Set<String> set = new HashSet<String>(myStatus.keySet());
+    Set<String> set = new HashSet<>(myStatus.keySet());
     set.remove(NON_PROJECT_KEY);
     return ArrayUtil.toStringArray(set);
   }
@@ -87,7 +87,7 @@ public class ProjectsData {
   private Vector<List> getFilesVector(String projectName) {
     Vector<List> files = myStatus.get(projectName);
     if (files == null) {
-      files = new Vector<List>();
+      files = new Vector<>();
       myStatus.put(projectName, files);
     }
     return files;
@@ -97,7 +97,7 @@ public class ProjectsData {
     Vector<List> files = myStatus.get(projectName);
     if (files == null) return new VFile[0];
 
-    List<VFile> result = new ArrayList<VFile>(files.size());
+    List<VFile> result = new ArrayList<>(files.size());
     for (List fileData : files) {
       result.add(VFile.createFromList(fileData));
     }

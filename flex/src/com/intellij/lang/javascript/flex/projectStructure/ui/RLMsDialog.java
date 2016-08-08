@@ -34,7 +34,7 @@ public class RLMsDialog extends RepeatableValueDialog {
   }
 
   private static List<StringBuilder> toStringBuilderList(final Collection<FlexBuildConfiguration.RLMInfo> rlms) {
-    final List<StringBuilder> result = new ArrayList<StringBuilder>();
+    final List<StringBuilder> result = new ArrayList<>();
     for (FlexBuildConfiguration.RLMInfo rlm : rlms) {
       result.add(new StringBuilder()
                    .append(rlm.MAIN_CLASS)
@@ -111,7 +111,7 @@ public class RLMsDialog extends RepeatableValueDialog {
 
   public Collection<FlexBuildConfiguration.RLMInfo> getRLMs() {
     final List<StringBuilder> currentList = getCurrentList();
-    final Collection<FlexBuildConfiguration.RLMInfo> result = new ArrayList<FlexBuildConfiguration.RLMInfo>(currentList.size());
+    final Collection<FlexBuildConfiguration.RLMInfo> result = new ArrayList<>(currentList.size());
 
     for (StringBuilder listEntry : currentList) {
       final List<String> parts = StringUtil.split(listEntry.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);

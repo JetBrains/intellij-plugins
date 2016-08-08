@@ -27,7 +27,7 @@ public class AngularAttributeIndexer implements DataIndexer<String, AngularNamed
   @NotNull
   @Override
   public Map<String, AngularNamedItemDefinition> map(@NotNull FileContent inputData) {
-    final Map<String, AngularNamedItemDefinition> map = new HashMap<String, AngularNamedItemDefinition>();
+    final Map<String, AngularNamedItemDefinition> map = new HashMap<>();
     final PsiFile file = inputData.getPsiFile();
     if (file instanceof XmlFile) {
       file.accept(

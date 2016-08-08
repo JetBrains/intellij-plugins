@@ -131,9 +131,9 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     Object userObject = node == null ? null : node.getUserObject();
     if (userObject == null) return;
 
-    final Ref<Module> moduleRef = new Ref<Module>();
-    final Ref<FlexBuildConfiguration> bcRef = new Ref<FlexBuildConfiguration>();
-    final Ref<FlashProjectStructureProblem> problemRef = new Ref<FlashProjectStructureProblem>();
+    final Ref<Module> moduleRef = new Ref<>();
+    final Ref<FlexBuildConfiguration> bcRef = new Ref<>();
+    final Ref<FlashProjectStructureProblem> problemRef = new Ref<>();
 
     if (userObject instanceof FlashProjectStructureProblem) {
       problemRef.set((FlashProjectStructureProblem)userObject);

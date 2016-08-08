@@ -172,7 +172,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
     }
 
     if (file.isDirectory()) {
-      final List<String> projectPaths = new ArrayList<String>();
+      final List<String> projectPaths = new ArrayList<>();
       // false if user cancelled
       final boolean ok = FlashBuilderProjectFinder.collectAllProjectPaths(getWizardContext().getProject(), projectPaths, path);
 

@@ -17,7 +17,7 @@ import java.util.Set;
  * @author Dennis.Ushakov
  */
 public class BridgeSupportLoader {
-  private final Map<String, List<FrameworkInfo>> myFrameworks = new HashMap<String, List<FrameworkInfo>>();
+  private final Map<String, List<FrameworkInfo>> myFrameworks = new HashMap<>();
 
   public static BridgeSupportLoader getInstance() {
     return ServiceManager.getService(BridgeSupportLoader.class);

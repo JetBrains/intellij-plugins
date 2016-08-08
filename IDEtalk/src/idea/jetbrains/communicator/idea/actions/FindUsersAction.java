@@ -34,9 +34,9 @@ public class FindUsersAction extends ActionGroup {
   private final List<AnAction> myActions;
 
   public FindUsersAction() {
-    myActions = new ArrayList<AnAction>();
+    myActions = new ArrayList<>();
     myActions.add(new CreateGroupAction());
-    myActions.add(new BaseAction<FindUsersCommand>(FindUsersCommand.class));
+    myActions.add(new BaseAction<>(FindUsersCommand.class));
 
     List instancesOfType = Pico.getInstance().getComponentInstancesOfType(Transport.class);
     for (Object aInstancesOfType : instancesOfType) {

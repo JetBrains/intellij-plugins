@@ -479,7 +479,7 @@ public class FlexDebugProcess extends XDebugProcess {
     return new FlexDebuggerEditorsProvider();
   }
 
-  private static final Set<String> ourAlreadyMadeExecutable = new THashSet<String>();
+  private static final Set<String> ourAlreadyMadeExecutable = new THashSet<>();
 
   private static synchronized void ensureExecutable(String path) {
     if (!SystemInfo.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
@@ -679,7 +679,7 @@ public class FlexDebugProcess extends XDebugProcess {
       final String message = result == null || result.startsWith(FlexStackFrame.CANNOT_EVALUATE_EXPRESSION)
                              ? FlexBundle.message("failed.to.evaluate.breakpoint.condition", expression)
                              : FlexBundle.message("not.boolean.breakpoint.condition", expression, result);
-      final Ref<Boolean> stopRef = new Ref<Boolean>(false);
+      final Ref<Boolean> stopRef = new Ref<>(false);
 
       ApplicationManager.getApplication().invokeAndWait(() -> {
         final Project project = getSession().getProject();
@@ -817,7 +817,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
     // [3]
     final GlobalSearchScope bcScopeBase = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, isFlexUnit());
-    final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new THashSet<FlexBuildConfiguration>());
+    final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new THashSet<>());
 
     Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
 
@@ -914,7 +914,7 @@ public class FlexDebugProcess extends XDebugProcess {
                                                                final Collection<FlexBuildConfiguration> processedConfigurations) {
     if (!processedConfigurations.add(bc)) return scope;
 
-    final Collection<VirtualFile> libSourceRoots = new THashSet<VirtualFile>();
+    final Collection<VirtualFile> libSourceRoots = new THashSet<>();
 
     final Sdk sdk = bc.getSdk();
     if (sdk != null) {

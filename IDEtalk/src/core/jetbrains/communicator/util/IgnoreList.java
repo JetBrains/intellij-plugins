@@ -36,7 +36,7 @@ public class IgnoreList {
   private static final String JABBER_IGNORE_TXT = "jabber.ignore.txt";
   private final IDEFacade myIdeFacade;
 
-  private final List<String> myIgnored = new ArrayList<String>();
+  private final List<String> myIgnored = new ArrayList<>();
   private long myWhenIgnoredListUpdated;
 
   public IgnoreList(IDEFacade ideFacade) {

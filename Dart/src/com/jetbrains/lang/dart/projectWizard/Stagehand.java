@@ -49,7 +49,7 @@ public class Stagehand {
   }
 
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.projectWizard.Stagehand");
-  private static final List<StagehandDescriptor> EMPTY = new ArrayList<StagehandDescriptor>();
+  private static final List<StagehandDescriptor> EMPTY = new ArrayList<>();
 
   private static final class PubRunner {
 
@@ -99,7 +99,7 @@ public class Stagehand {
 
       // [{"name":"consoleapp", "label":"Console App", "description":"A minimal command-line application."}, {"name": ..., }]
       JSONArray arr = new JSONArray(output.getStdout());
-      List<StagehandDescriptor> result = new ArrayList<StagehandDescriptor>();
+      List<StagehandDescriptor> result = new ArrayList<>();
 
       for (int i = 0; i < arr.length(); i++) {
         JSONObject obj = arr.getJSONObject(i);

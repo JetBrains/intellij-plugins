@@ -56,17 +56,17 @@ public class NodeClassInfo {
     final JSAttributeList classAttributes = jsClass.getAttributeList();
     final boolean dynamic = classAttributes != null && classAttributes.hasModifier(JSAttributeList.ModifierType.DYNAMIC);
 
-    final Map<String, Icon> ownStaticFields = new THashMap<String, Icon>();
-    final Map<String, Icon> ownStaticProperties = new THashMap<String, Icon>();
-    final Map<String, Icon> ownFields = new THashMap<String, Icon>();
-    final Map<String, Icon> ownProperties = new THashMap<String, Icon>();
-    final Map<String, Icon> inheritedStaticFields = new THashMap<String, Icon>();
-    final Map<String, Icon> inheritedStaticProperties = new THashMap<String, Icon>();
-    final Map<String, Icon> inheritedFields = new THashMap<String, Icon>();
-    final Map<String, Icon> inheritedProperties = new THashMap<String, Icon>();
+    final Map<String, Icon> ownStaticFields = new THashMap<>();
+    final Map<String, Icon> ownStaticProperties = new THashMap<>();
+    final Map<String, Icon> ownFields = new THashMap<>();
+    final Map<String, Icon> ownProperties = new THashMap<>();
+    final Map<String, Icon> inheritedStaticFields = new THashMap<>();
+    final Map<String, Icon> inheritedStaticProperties = new THashMap<>();
+    final Map<String, Icon> inheritedFields = new THashMap<>();
+    final Map<String, Icon> inheritedProperties = new THashMap<>();
 
     fillMapsForClass(jsClass, ownStaticFields, ownStaticProperties, ownFields, ownProperties);
-    fillMapsForSupersRecursively(jsClass, new THashSet<JSClass>(), inheritedStaticFields, inheritedStaticProperties, inheritedFields,
+    fillMapsForSupersRecursively(jsClass, new THashSet<>(), inheritedStaticFields, inheritedStaticProperties, inheritedFields,
                                  inheritedProperties);
 
     return new NodeClassInfo(normalizeIfVector(jsClass.getQualifiedName()), dynamic, ownStaticFields, ownStaticProperties, ownFields,

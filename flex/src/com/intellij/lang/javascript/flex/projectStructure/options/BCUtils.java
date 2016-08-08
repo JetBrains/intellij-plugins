@@ -141,7 +141,7 @@ public class BCUtils {
       });
 
       if (playerDir != null) {
-        final Collection<String> availablePlayers = new ArrayList<String>(2);
+        final Collection<String> availablePlayers = new ArrayList<>(2);
         FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, playerglobalSwcFile -> {
           availablePlayers.add(playerglobalSwcFile.getParent().getName());
           return true;

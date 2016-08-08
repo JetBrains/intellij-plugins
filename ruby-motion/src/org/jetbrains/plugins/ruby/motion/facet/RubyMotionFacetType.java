@@ -16,7 +16,7 @@ import javax.swing.*;
  * @author Dennis.Ushakov
  */
 public class RubyMotionFacetType extends FacetType<RubyMotionFacet, RubyMotionFacetConfiguration> {
-  public static final FacetTypeId<RubyMotionFacet> ID = new FacetTypeId<RubyMotionFacet>("ruby_motion");
+  public static final FacetTypeId<RubyMotionFacet> ID = new FacetTypeId<>("ruby_motion");
 
   public static RubyMotionFacetType getInstance() {
     return findInstance(RubyMotionFacetType.class);

@@ -112,7 +112,7 @@ public class FlexStackTraceFilter implements Filter {
                                            final String matchingRelativePath,
                                            final int lineNumber,
                                            final int highlightEndOffset) {
-    final Collection<VirtualFile> result = new ArrayList<VirtualFile>();
+    final Collection<VirtualFile> result = new ArrayList<>();
 
     final Collection<VirtualFile> files =
       FilenameIndex.getVirtualFilesByName(myProject, PathUtil.getFileName(filePath), GlobalSearchScope.allScope(myProject));
@@ -149,7 +149,7 @@ public class FlexStackTraceFilter implements Filter {
     }
 
     public void navigate(final Project project) {
-      final List<VirtualFile> validFiles = new ArrayList<VirtualFile>(myFiles.size());
+      final List<VirtualFile> validFiles = new ArrayList<>(myFiles.size());
       for (final VirtualFile file : myFiles) {
         if (file.isValid()) {
           validFiles.add(file);
@@ -165,7 +165,7 @@ public class FlexStackTraceFilter implements Filter {
       }
       else {
         final PsiManager psiManager = PsiManager.getInstance(project);
-        final Collection<PsiFile> psiFiles = new ArrayList<PsiFile>(validFiles.size());
+        final Collection<PsiFile> psiFiles = new ArrayList<>(validFiles.size());
         for (final VirtualFile file : validFiles) {
           final PsiFile psiFile = psiManager.findFile(file);
           if (psiFile != null) {

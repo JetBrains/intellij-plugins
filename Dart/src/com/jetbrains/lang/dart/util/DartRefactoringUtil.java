@@ -25,11 +25,11 @@ import java.util.Set;
 
 public class DartRefactoringUtil {
   public static Set<String> collectUsedNames(PsiElement context) {
-    return new THashSet<String>(ContainerUtil.map(collectUsedComponents(context), componentName -> componentName.getName()));
+    return new THashSet<>(ContainerUtil.map(collectUsedComponents(context), componentName -> componentName.getName()));
   }
 
   public static Set<DartComponentName> collectUsedComponents(PsiElement context) {
-    final Set<DartComponentName> usedComponentNames = new THashSet<DartComponentName>();
+    final Set<DartComponentName> usedComponentNames = new THashSet<>();
     PsiTreeUtil.treeWalkUp(new ComponentNameScopeProcessor(usedComponentNames), context, null, ResolveState.initial());
     return usedComponentNames;
   }
@@ -54,7 +54,7 @@ public class DartRefactoringUtil {
     if (context == null) {
       return Collections.emptyList();
     }
-    final List<PsiElement> occurrences = new ArrayList<PsiElement>();
+    final List<PsiElement> occurrences = new ArrayList<>();
     context.acceptChildren(new DartRecursiveVisitor() {
       @Override
       public void visitElement(@NotNull final PsiElement element) {

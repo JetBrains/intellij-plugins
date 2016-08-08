@@ -38,8 +38,8 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
       return children;
     }
 
-    Set<Sdk> processedSdks = new HashSet<Sdk>();
-    Collection<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+    Set<Sdk> processedSdks = new HashSet<>();
+    Collection<AbstractTreeNode> result = new ArrayList<>();
 
     for (AbstractTreeNode child : children) {
       Object value = child.getValue();

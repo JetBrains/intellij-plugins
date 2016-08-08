@@ -39,7 +39,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   public static final Logger LOG = Logger.getInstance(DartCommandLineDebugProcess.class.getName());
 
   // just a few files, several kBytes each, won't cause OOM
-  private static final Map<String, LightVirtualFile> DART_SDK_PATCH_FILES = new THashMap<String, LightVirtualFile>();
+  private static final Map<String, LightVirtualFile> DART_SDK_PATCH_FILES = new THashMap<>();
 
   private final @Nullable ExecutionResult myExecutionResult;
   private final @NotNull DartUrlResolver myDartUrlResolver;
@@ -47,8 +47,8 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private final @NotNull VmConnection myVmConnection;
   private final int myObservatoryPort;
 
-  private final @NotNull LinkedList<VmIsolate> myAllIsolates = new LinkedList<VmIsolate>();
-  private final @NotNull Set<VmIsolate> mySuspendedIsolates = new THashSet<VmIsolate>();
+  private final @NotNull LinkedList<VmIsolate> myAllIsolates = new LinkedList<>();
+  private final @NotNull Set<VmIsolate> mySuspendedIsolates = new THashSet<>();
   private VmIsolate myLatestCurrentIsolate;
 
   private boolean myVmConnected = false;
@@ -197,7 +197,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   @Override
   public void resume(@Nullable XSuspendContext context) {
     try {
-      for (VmIsolate isolate : new THashSet<VmIsolate>(mySuspendedIsolates)) {
+      for (VmIsolate isolate : new THashSet<>(mySuspendedIsolates)) {
         myVmConnection.resume(isolate);
       }
     }

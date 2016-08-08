@@ -54,12 +54,12 @@ public class VmConnection {
 
   private static Charset UTF8 = Charset.forName("UTF-8");
 
-  private List<VmListener> listeners = new ArrayList<VmListener>();
+  private List<VmListener> listeners = new ArrayList<>();
 
   private String host;
   private int port;
 
-  private Map<Integer, Callback> callbackMap = new HashMap<Integer, Callback>();
+  private Map<Integer, Callback> callbackMap = new HashMap<>();
 
   private int nextCommandId = 1;
 
@@ -68,11 +68,11 @@ public class VmConnection {
 
   private List<VmBreakpoint> breakpoints = Collections.synchronizedList(new ArrayList<VmBreakpoint>());
 
-  private Map<String, String> sourceCache = new HashMap<String, String>();
+  private Map<String, String> sourceCache = new HashMap<>();
 
-  private Map<String, VmLineNumberTable> lineNumberTableCache = new HashMap<String, VmLineNumberTable>();
+  private Map<String, VmLineNumberTable> lineNumberTableCache = new HashMap<>();
 
-  private Map<Integer, VmIsolate> isolateMap = new HashMap<Integer, VmIsolate>();
+  private Map<Integer, VmIsolate> isolateMap = new HashMap<>();
 
   private VmLocation currentLocation;
   private boolean isStepping;
@@ -398,8 +398,8 @@ public class VmConnection {
       });
     }
     else {
-      VmResult<List<VmLibraryRef>> result = new VmResult<List<VmLibraryRef>>();
-      result.setResult(new ArrayList<VmLibraryRef>());
+      VmResult<List<VmLibraryRef>> result = new VmResult<>();
+      result.setResult(new ArrayList<>());
       callback.handleResult(result);
     }
   }
@@ -794,7 +794,7 @@ public class VmConnection {
       sendRequest(request, isolate.getId(), new Callback() {
         @Override
         public void handleResult(JSONObject object) throws JSONException {
-          VmResult<VmBreakpoint> result = new VmResult<VmBreakpoint>();
+          VmResult<VmBreakpoint> result = new VmResult<>();
 
           if (!object.has("error")) {
             int breakpointId = JsonUtils.getInt(object.getJSONObject("result"), "breakpointId");
@@ -958,7 +958,7 @@ public class VmConnection {
 
   public synchronized void handleTerminated() {
     // Clean up the callbackMap on termination.
-    List<Callback> callbacks = new ArrayList<Callback>(callbackMap.values());
+    List<Callback> callbacks = new ArrayList<>(callbackMap.values());
 
     for (Callback callback : callbacks) {
       try {
@@ -1111,7 +1111,7 @@ public class VmConnection {
     if (object.has("result")) {
       JSONArray arr = object.getJSONObject("result").optJSONArray("isolateIds");
 
-      List<Integer> isolateIds = new ArrayList<Integer>();
+      List<Integer> isolateIds = new ArrayList<>();
 
       for (int i = 0; i < arr.length(); i++) {
         isolateIds.add(new Integer(arr.getInt(i)));
@@ -1197,7 +1197,7 @@ public class VmConnection {
     VmResult<List<String>> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
-      List<String> libUrls = new ArrayList<String>();
+      List<String> libUrls = new ArrayList<>();
 
       JSONArray arr = object.getJSONObject("result").getJSONArray("urls");
 
