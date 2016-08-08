@@ -218,7 +218,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         this.mainLearnPanel = mainLearnPanel;
     }
 
-    private MainLearnPanel getMainLearnPanel() {
+    public MainLearnPanel getMainLearnPanel() {
         return mainLearnPanel;
     }
 
@@ -342,7 +342,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     public void setFeedbackView(){
-        FeedbackFormPanel feedbackFormPanel = new FeedbackFormPanel(LearnToolWindow.preferableWidth);
+        FeedbackFormPanel feedbackFormPanel = FeedbackManager.getInstance().getFeedbackFormPanel(LearnToolWindow.preferableWidth);
         final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
 
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
