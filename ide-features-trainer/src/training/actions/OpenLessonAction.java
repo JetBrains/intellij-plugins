@@ -12,17 +12,17 @@ import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.JdkBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -213,7 +215,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
         }
     }
 
-    private void showModules(Project project){
+    private void showModules(Project project) {
         final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         final ToolWindow learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW);
         if (learnToolWindow != null) {
@@ -381,6 +383,18 @@ public class OpenLessonAction extends AnAction implements DumbAware {
 
     @NotNull
     private Sdk getJavaSdk() {
+
+        //check for stored jdk
+        ArrayList<Sdk> jdkList = getJdkList();
+        if (!jdkList.isEmpty()) {
+            for (Sdk sdk : jdkList) {
+                if (JavaSdk.getInstance().getVersion(sdk)!= null && JavaSdk.getInstance().getVersion(sdk).isAtLeast(JavaSdkVersion.JDK_1_6)) {
+                    return sdk;
+                }
+            }
+        }
+        //if no predefined jdks -> add bundled jdk to available list and return it
+
         JavaSdk javaSdk = JavaSdk.getInstance();
 
         ArrayList<JdkBundle> bundleList = JdkSetupUtil.findJdkPaths().toArrayList();
@@ -402,8 +416,27 @@ public class OpenLessonAction extends AnAction implements DumbAware {
             modificator.commitChanges();
         });
         return newJdk;
+
     }
 
 
+    @NotNull
+    public static ArrayList<Sdk> getJdkList() {
+
+        ArrayList<Sdk> compatibleJdks = new ArrayList<>();
+
+        SdkType type = JavaSdk.getInstance();
+        final Sdk[] allJdks = ProjectJdkTable.getInstance().getAllJdks();
+        for (Sdk projectJdk : allJdks) {
+            if (isCompatibleJdk(projectJdk, type)) {
+                compatibleJdks.add(projectJdk);
+            }
+        }
+        return compatibleJdks;
+    }
+
+    private static boolean isCompatibleJdk(final Sdk projectJdk, final @Nullable SdkType type) {
+        return type == null || projectJdk.getSdkType() == type;
+    }
 
 }
