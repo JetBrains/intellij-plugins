@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.descriptor.CssContextType;
 import com.intellij.psi.css.impl.AtRulePresentation;
 import com.intellij.psi.css.impl.CssAtRuleImpl;
@@ -31,4 +32,13 @@ public class PostCssCustomMediaAtRuleImpl extends CssAtRuleImpl implements PostC
     return customMedia != null && customMedia.getNode().getElementType() == CssElementTypes.CSS_IDENT ? customMedia : null;
   }
 
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof PostCssElementVisitor) {
+      ((PostCssElementVisitor)visitor).visitPostCssCustomMediaAtRule(this);
+    }
+    else {
+      visitor.visitElement(this);
+    }
+  }
 }

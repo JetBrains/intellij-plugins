@@ -50,14 +50,13 @@ public class PostCssTestSuite extends TestCase {
     public static Test suite() {
       TestSuite suite = new TestSuite("Inspections PostCSS");
       suite.addTestSuite(PostCssCssInspectionTest.class);
-
       suite.addTestSuite(PostCssNestingInspectionTest.class);
       suite.addTestSuite(PostCssCustomSelectorInspectionTest.class);
-
       suite.addTestSuite(PostCssNestingQuickFixTest.class);
       suite.addTestSuite(PostCssCustomSelectorQuickFixTest.class);
-
       suite.addTestSuite(PostCssMediaRangeInspectionTest.class);
+      suite.addTestSuite(PostCssCustomMediaInspectionTest.class);
+      suite.addTestSuite(PostCssCustomMediaQuickFixTest.class);
       return suite;
     }
   }

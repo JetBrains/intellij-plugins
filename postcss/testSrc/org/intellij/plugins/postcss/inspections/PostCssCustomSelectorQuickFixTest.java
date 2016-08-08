@@ -1,10 +1,8 @@
 package org.intellij.plugins.postcss.inspections;
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssCustomSelectorQuickFixTest extends PostCssFixtureTestCase {
+public class PostCssCustomSelectorQuickFixTest extends PostCssQuickFixTest {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -12,24 +10,19 @@ public class PostCssCustomSelectorQuickFixTest extends PostCssFixtureTestCase {
   }
 
   public void testAddCustomSelectorPrefixEmpty() throws Throwable {
-    doInspectionTest("addCustomSelectorPrefixEmpty.pcss", "addCustomSelectorPrefixEmpty_after.pcss", "Add ':--' to custom selector");
+    doTestAddDashes();
   }
 
   public void testAddCustomSelectorPrefixColon() throws Throwable {
-    doInspectionTest("addCustomSelectorPrefixColon.pcss", "addCustomSelectorPrefixColon_after.pcss", "Add ':--' to custom selector");
+    doTestAddDashes();
   }
 
   public void testAddCustomSelectorPrefixColonDash() throws Throwable {
-    doInspectionTest("addCustomSelectorPrefixColonDash.pcss", "addCustomSelectorPrefixColonDash_after.pcss", "Add ':--' to custom selector");
+    doTestAddDashes();
   }
 
-  protected void doInspectionTest(final String testFile,
-                                  final String resultFile,
-                                  final String quickFixName) {
-    myFixture.configureByFile(testFile);
-    final IntentionAction intentionAction = myFixture.findSingleIntention(quickFixName);
-    myFixture.launchAction(intentionAction);
-    myFixture.checkResultByFile(resultFile);
+  private void doTestAddDashes() {
+    doTest("Add ':--' to custom selector");
   }
 
   @NotNull

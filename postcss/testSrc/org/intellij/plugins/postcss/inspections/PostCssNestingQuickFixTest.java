@@ -1,10 +1,8 @@
 package org.intellij.plugins.postcss.inspections;
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssNestingQuickFixTest extends PostCssFixtureTestCase {
+public class PostCssNestingQuickFixTest extends PostCssQuickFixTest {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -52,20 +50,7 @@ public class PostCssNestingQuickFixTest extends PostCssFixtureTestCase {
   }
 
   private void doTestDeleteAmpersand(){
-    doInspectionTest(getTestName(true) + ".pcss", getTestName(true) + "_after.pcss", "Delete '&'");
-  }
-
-  private void doTest(String message){
-    doInspectionTest(getTestName(true) + ".pcss", getTestName(true) + "_after.pcss", message);
-  }
-
-  protected void doInspectionTest(final String testFile,
-                                  final String resultFile,
-                                  final String quickFixName) {
-    myFixture.configureByFile(testFile);
-    final IntentionAction intentionAction = myFixture.findSingleIntention(quickFixName);
-    myFixture.launchAction(intentionAction);
-    myFixture.checkResultByFile(resultFile);
+    doTest("Delete '&'");
   }
 
   @NotNull

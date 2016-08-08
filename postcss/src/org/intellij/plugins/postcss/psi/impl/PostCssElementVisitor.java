@@ -14,4 +14,8 @@ abstract public class PostCssElementVisitor extends CssElementVisitor {
   public void visitPostCssCustomSelector(final PostCssCustomSelectorImpl postCssCustomSelector) {
     visitElement(postCssCustomSelector);
   }
+
+  public void visitPostCssCustomMediaAtRule(final PostCssCustomMediaAtRuleImpl postCssCustomMediaAtRule) {
+    visitElement(postCssCustomMediaAtRule);
+  }
 }
