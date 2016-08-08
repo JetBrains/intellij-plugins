@@ -11,16 +11,16 @@ import org.junit.Ignore;
  */
 public class LearnProjectTest extends LightPlatformTestCase{
 
-    @Ignore
-    public void testLearnProject(){
-        closeAndDeleteProject();
-
-        final AnAction action = ActionManager.getInstance().getAction("learn.open.lesson");
-
-        final DataContext context = DataContext.EMPTY_CONTEXT;
-        final AnActionEvent event = AnActionEvent.createFromAnAction(action, null, "", context);
-
-        ActionUtil.performActionDumbAware(action, event);
-    }
+//    @Ignore
+//    public void testLearnProject(){
+//        closeAndDeleteProject();
+//
+//        final AnAction action = ActionManager.getInstance().getAction("learn.open.lesson");
+//
+//        final DataContext context = DataContext.EMPTY_CONTEXT;
+//        final AnActionEvent event = AnActionEvent.createFromAnAction(action, null, "", context);
+//
+//        ActionUtil.performActionDumbAware(action, event);
+//    }
 
 }
