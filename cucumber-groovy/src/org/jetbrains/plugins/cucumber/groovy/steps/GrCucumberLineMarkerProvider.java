@@ -29,7 +29,7 @@ public class GrCucumberLineMarkerProvider implements LineMarkerProvider {
         ((GrMethodCall)element),
         element.getTextRange().getStartOffset(),
         CucumberIcons.Cucumber,
-        Pass.UPDATE_ALL,
+        Pass.LINE_MARKERS,
         TOOLTIP_PROVIDER,
         null
       );

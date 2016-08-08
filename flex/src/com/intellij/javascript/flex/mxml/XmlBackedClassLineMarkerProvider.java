@@ -42,7 +42,7 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
         XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)element);
         if (classQuery.findFirst() != null && nameElement != null) {
           result.add(new LineMarkerInfo<>(clazz, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
-                                          Pass.UPDATE_OVERRIDDEN_MARKERS,
+                                          Pass.LINE_MARKERS,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
         }

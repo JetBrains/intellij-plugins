@@ -8,7 +8,6 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Function;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +29,7 @@ public class FlashUIDesignerLineMarkerProvider implements LineMarkerProvider {
     }
 
     //holder.createInfoAnnotation(textRange, null).setGutterIconRenderer(new MyRenderer());
-    return new LineMarkerInfo<>(element, element.getTextRange(), PlatformIcons.UI_FORM_ICON, Pass.UPDATE_ALL,
+    return new LineMarkerInfo<>(element, element.getTextRange(), PlatformIcons.UI_FORM_ICON, Pass.LINE_MARKERS,
                                 element1 -> FlashUIDesignerBundle.message("gutter.open"),
                                 new GutterIconNavigationHandler<PsiElement>() {
                                   @Override

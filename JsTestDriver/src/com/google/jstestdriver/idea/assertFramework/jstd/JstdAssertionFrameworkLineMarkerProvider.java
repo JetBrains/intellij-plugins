@@ -114,7 +114,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       testElement,
       testElement.getTextRange(),
       AllIcons.Vcs.Arrow_right,
-      Pass.UPDATE_ALL,
+      Pass.LINE_MARKERS,
       element -> "Execute '" + displayName + "'",
       new GutterIconNavigationHandler<PsiElement>() {
         @Override

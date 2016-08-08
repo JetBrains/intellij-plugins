@@ -24,7 +24,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.SeparatorPlacement;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -83,7 +82,7 @@ public class DartMethodLineMarkerProvider implements LineMarkerProvider {
       }
 
       // finally, create the marker
-      LineMarkerInfo info = new LineMarkerInfo<>(markerLocation, markerLocation.getTextRange(), null, Pass.UPDATE_ALL,
+      LineMarkerInfo info = new LineMarkerInfo<>(markerLocation, markerLocation.getTextRange(), null, Pass.LINE_MARKERS,
                                                  FunctionUtil.<Object, String>nullConstant(), null,
                                                  GutterIconRenderer.Alignment.RIGHT);
       EditorColorsScheme scheme = myColorsManager.getGlobalScheme();

@@ -27,7 +27,6 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.Function;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.ide.actions.DartInheritorsSearcher;
@@ -90,7 +89,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
   private static LineMarkerInfo createMarkerClass(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     final int nameOffset = name.getTextRange().getStartOffset();
-    return new LineMarkerInfo<>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.UPDATE_ALL,
+    return new LineMarkerInfo<>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
                                 element -> DaemonBundle.message("class.is.subclassed.too.many"),
                                 new GutterIconNavigationHandler<PsiElement>() {
                                   @Override
@@ -117,7 +116,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
   private static LineMarkerInfo createMarkerMember(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     final int nameOffset = name.getTextRange().getStartOffset();
-    return new LineMarkerInfo<>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.UPDATE_ALL,
+    return new LineMarkerInfo<>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
                                 element -> DaemonBundle.message("method.is.overridden.too.many"),
                                 new GutterIconNavigationHandler<PsiElement>() {
                                   @Override

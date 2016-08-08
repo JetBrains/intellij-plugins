@@ -117,7 +117,7 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
       superComponent = interfaceComponents.iterator().next();
     }
     final Icon icon = overrides ? AllIcons.Gutter.OverridingMethod : AllIcons.Gutter.ImplementingMethod;
-    return new LineMarkerInfo<>(componentName, componentName.getTextRange(), icon, Pass.UPDATE_ALL,
+    return new LineMarkerInfo<>(componentName, componentName.getTextRange(), icon, Pass.LINE_MARKERS,
                                 element -> {
                                   final DartClass superClass = PsiTreeUtil.getParentOfType(superComponent, DartClass.class);
                                   if (superClass == null) return "null";
