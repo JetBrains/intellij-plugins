@@ -475,7 +475,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             }
             return false;
           }
-        });
+        }, true);
 
         if (b && hasOverride) {
           final ASTNode astNode = attributeList.getNode().findChildByType(JSTokenTypes.OVERRIDE_KEYWORD);

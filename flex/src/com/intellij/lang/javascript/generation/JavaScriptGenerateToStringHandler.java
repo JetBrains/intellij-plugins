@@ -38,7 +38,7 @@ class JavaScriptGenerateToStringHandler extends BaseJSGenerateHandler {
             needOverride[0] = !"Object".equals(className);
             return false;
           }
-        }, "toString", null, myJsClass);
+        }, "toString", null, myJsClass, true);
 
         @NonNls String functionText = "public " +
                                       (needOverride[0] ? "override " : "") +
