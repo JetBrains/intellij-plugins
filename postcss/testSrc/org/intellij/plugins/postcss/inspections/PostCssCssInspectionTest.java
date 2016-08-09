@@ -1,5 +1,6 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.psi.css.inspections.invalid.CssInvalidAtRuleInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidImportInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidMediaFeatureInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
@@ -14,7 +15,8 @@ public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
     super.setUp();
     myFixture.enableInspections(CssInvalidImportInspection.class,
                                 CssInvalidPseudoSelectorInspection.class,
-                                CssInvalidMediaFeatureInspection.class);
+                                CssInvalidMediaFeatureInspection.class,
+                                CssInvalidAtRuleInspection.class);
   }
 
   public void testImportEverywhere() {
@@ -26,6 +28,10 @@ public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
   }
 
   public void testMediaFeatureInvalid() {
+    doTest();
+  }
+
+  public void testBadAtRule() {
     doTest();
   }
 
