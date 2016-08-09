@@ -1,6 +1,7 @@
 package training.ui;
 
 import com.intellij.ide.ui.UISettings;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.SystemInfo;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
  */
 public class LearnPanel extends JPanel {
 
+    private final BoxLayout boxLayout;
     private int width;
 
     //Lesson panel items
@@ -88,10 +90,12 @@ public class LearnPanel extends JPanel {
     private Color lessonInactiveColor;
     private Font lessonsFont;
     private Font allLessonsFont;
+    private BoxLayout lessonPanelBoxLayout;
 
     LearnPanel(int width) {
         super();
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
+        setLayout(boxLayout);
         setFocusable(false);
         this.width = width;
 
@@ -170,7 +174,8 @@ public class LearnPanel extends JPanel {
 
     private void initLessonPanel() {
         lessonPanel = new JPanel();
-        lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.Y_AXIS));
+        lessonPanelBoxLayout = new BoxLayout(lessonPanel, BoxLayout.Y_AXIS);
+        lessonPanel.setLayout(lessonPanelBoxLayout);
         lessonPanel.setFocusable(false);
         lessonPanel.setOpaque(false);
 
@@ -202,6 +207,7 @@ public class LearnPanel extends JPanel {
         lessonMessagePane.setMargin(new Insets(0, 0, 0, 0));
         lessonMessagePane.setBorder(new EmptyBorder(0, 0, 0, 0));
         lessonMessagePane.setMaximumSize(new Dimension(width, 10000));
+
 
         //Set Next Button UI
         button = new JButton(LearnBundle.message("learn.ui.button.skip"));
@@ -276,15 +282,22 @@ public class LearnPanel extends JPanel {
         }
 
         lessonMessagePane.addMessage(messages);
-        lessonMessagePane.revalidate();
+        lessonMessagePane.invalidate();
         lessonMessagePane.repaint();
 
         //Pack lesson panel
+        this.invalidate();
+        this.repaint();
         lessonPanel.revalidate();
         lessonPanel.repaint();
-        this.revalidate();
-        this.repaint();
-
+        //run to update LessonMessagePane.getMinimumSize and LessonMessagePane.getPreferredSize
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                lessonPanelBoxLayout.invalidateLayout(lessonPanel);
+                lessonPanelBoxLayout.layoutContainer(lessonPanel);
+            }
+        });
     }
 
     public void setPreviousMessagesPassed() {

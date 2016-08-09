@@ -3,7 +3,6 @@ package training.ui;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.JBColor;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -264,6 +263,5 @@ class LessonMessagePane extends JTextPane {
     public AttributeSet getDefaultAttributeSet() {
         return REGULAR;
     }
-
 
 }
