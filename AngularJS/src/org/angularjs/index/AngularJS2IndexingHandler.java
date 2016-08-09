@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.ES7Decorator;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
@@ -86,7 +86,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public JSElementIndexingDataImpl processDecorator(ES7Decorator decorator, JSElementIndexingDataImpl outData) {
+  public JSElementIndexingDataImpl processDecorator(ES6Decorator decorator, JSElementIndexingDataImpl outData) {
     final String name = decorator.getName();
     if (isDirective(name)) {
       return addImplicitElement(decorator, outData, getPropertyName(decorator, SELECTOR));
