@@ -1,14 +1,9 @@
 package org.intellij.plugins.postcss.completion;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.util.Pair;
-import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase {
+public class PostCssCustomSelectorCompletionTest extends PostCssCompletionTest {
 
   public void testCustomSelectorTopLevel() {
     doTest();
@@ -85,27 +80,6 @@ public class PostCssCustomSelectorCompletionTest extends PostCssFixtureTestCase 
 
   public void testTwoColons() {
     assertFalse(myFixture.getCompletionVariants(getTestName(true) + ".pcss").contains("--test"));
-  }
-
-  private void doTestPreferred(String... items) {
-    myFixture.configureByFile(getTestName(true) + ".pcss");
-    myFixture.completeBasic();
-    myFixture.assertPreferredCompletionItems(0, items);
-  }
-
-  private void doTestPreferred(Pair<String, String>... items) {
-    myFixture.configureByFile(getTestName(true) + ".pcss");
-    LookupElement[] lookupElements = myFixture.completeBasic();
-    LookupElementPresentation presentation = new LookupElementPresentation();
-    for (int i = 0; i < items.length; i++) {
-      lookupElements[i].renderElement(presentation);
-      assertEquals(items[i].first, presentation.getItemText());
-      assertEquals(items[i].second, presentation.getTypeText());
-    }
-  }
-
-  private void doTest() {
-    myFixture.testCompletion(getTestName(true) + ".pcss", getTestName(true) + "_after.pcss");
   }
 
   @NotNull

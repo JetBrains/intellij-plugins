@@ -1,9 +1,9 @@
 package org.intellij.plugins.postcss.completion;
 
-import org.intellij.plugins.postcss.PostCssFixtureTestCase;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssCustomMediaCompletionTest extends PostCssFixtureTestCase {
+public class PostCssCustomMediaCompletionTest extends PostCssCompletionTest {
 
   public void testCustomMediaTopLevel() {
     doTest();
@@ -37,8 +37,32 @@ public class PostCssCustomMediaCompletionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
-  private void doTest() {
-    myFixture.testCompletion(getTestName(true) + ".pcss", getTestName(true) + "_after.pcss");
+  public void testCustomMediaTwoDefinitions() {
+    doTestPreferred("--test", "--test2");
+  }
+
+  public void testCustomMediaPriorityWithImport() {
+    myFixture.configureByFile("definition.pcss");
+    doTestPreferred(Pair.create("test", "definition.pcss:1"), Pair.create("z-in-file", "customMediaPriorityWithImport.pcss:3"));
+  }
+
+  public void testCustomMediaPriorityWithoutImport() {
+    myFixture.configureByFile("definition.pcss");
+    doTestPreferred(Pair.create("z-in-file", "customMediaPriorityWithoutImport.pcss:1"), Pair.create("test", "definition.pcss:1"));
+  }
+
+  public void testCustomMediaWithImport() {
+    myFixture.configureByFile("definition.pcss");
+    doTest();
+  }
+
+  public void testCustomMediaWithoutImport() {
+    myFixture.configureByFile("definition.pcss");
+    doTest();
+  }
+
+  public void testCustomMediaInInline() {
+    myFixture.testCompletion(getTestName(true) + ".html", getTestName(true) + "_after.html");
   }
 
   @NotNull
