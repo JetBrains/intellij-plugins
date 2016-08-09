@@ -35,7 +35,6 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name) {
-    if (!StringUtil.startsWith(name, "--") && !StringUtil.containsChar(name, '&')) return Collections.emptyList();
     return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
   }
 
