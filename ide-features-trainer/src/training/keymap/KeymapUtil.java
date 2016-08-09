@@ -1,26 +1,25 @@
 package training.keymap;
 
+import com.intellij.openapi.actionSystem.KeyboardShortcut;
+import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.keymap.KeymapManager;
+import org.jetbrains.annotations.Nullable;
 
-        import com.intellij.openapi.actionSystem.KeyboardShortcut;
-        import com.intellij.openapi.actionSystem.Shortcut;
-        import com.intellij.openapi.keymap.KeymapManager;
-        import org.jetbrains.annotations.Nullable;
-
-        import javax.swing.*;
+import javax.swing.*;
 
 /**
  * Created by karashevich on 18/03/15.
  */
 public class KeymapUtil {
 
-
     /**
-     *
      * @param actionId
      * @return null if actionId is null
      */
     @Nullable
-    public static KeyStroke getShortcutByActionId(@Nullable String actionId){
+    public static KeyStroke getShortcutByActionId(@Nullable String actionId) {
+
+        if (actionId == null) return null;
 
         final Shortcut[] shortcuts = KeymapManager.getInstance().getActiveKeymap().getShortcuts(actionId);
         KeyStroke keyStroke = null;
@@ -28,7 +27,12 @@ public class KeymapUtil {
             if (each instanceof KeyboardShortcut) {
                 KeyboardShortcut keyboardShortcut = (KeyboardShortcut) each;
                 keyStroke = keyboardShortcut.getFirstKeyStroke();
-                if (keyboardShortcut != null && KeymapManager.getInstance().getActiveKeymap().getConflicts(actionId, keyboardShortcut) == null) break;
+                if (!actionId.equals("learn.next.lesson"))
+                    break;
+                else {
+                    if (KeymapManager.getInstance().getActiveKeymap().getConflicts(actionId, keyboardShortcut) == null)
+                        break;
+                }
             }
         }
 
