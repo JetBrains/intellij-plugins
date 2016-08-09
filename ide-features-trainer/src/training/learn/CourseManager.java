@@ -363,6 +363,17 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return result;
     }
 
+    public int calcPassedLessons(){
+        int result = 0;
+        if (getModules() == null) return 0;
+        for (Module module : getModules()) {
+            for (Lesson lesson : module.getLessons()) {
+                if (lesson.getPassed()) result++;
+            }
+        }
+        return result;
+    }
+
     /**
      * @return null if lesson has no module or it is only one lesson in module
      */
