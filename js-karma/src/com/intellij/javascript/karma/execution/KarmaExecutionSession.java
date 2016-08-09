@@ -126,7 +126,7 @@ public class KarmaExecutionSession {
     commandLine.setWorkDirectory(configFile.getParentFile());
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
     commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
-    //commandLine.addParameter("--debug-brk=5858");
+    //NodeCommandLineUtil.addDebugParameters(commandLine, 5858);
     commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());
     commandLine.addParameter("--serverPort=" + serverPort);
