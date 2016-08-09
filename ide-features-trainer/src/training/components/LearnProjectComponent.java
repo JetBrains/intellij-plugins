@@ -98,6 +98,7 @@ public class LearnProjectComponent implements ProjectComponent {
         final Alarm alarm = new Alarm();
         if (CourseManager.getInstance().getLastActivityTime() == -1) return;
         if (CourseManager.getInstance().calcUnpassedLessons() == 0) return;
+        if (CourseManager.getInstance().calcPassedLessons() == 0) return;
         alarm.addRequest(new Runnable() {
             @Override
             public void run() {
