@@ -79,7 +79,6 @@ public class OpenLessonAction extends AnAction implements DumbAware {
 
         try {
             CourseManager.getInstance().setLastActivityTime(System.currentTimeMillis());
-            CourseManager.getInstance().checkEnvironment(project, lesson.getModule());
 
             if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getName() + " is opened");
 
@@ -92,6 +91,7 @@ public class OpenLessonAction extends AnAction implements DumbAware {
             VirtualFile vf = null;
             final Project learnProject = CourseManager.getInstance().getLearnProject();
             if (lesson.getModule().moduleType == Module.ModuleType.SCRATCH) {
+                CourseManager.getInstance().checkEnvironment(project, lesson.getModule());
                 vf = getScratchFile(myProject, lesson, scratchFileName);
             } else {
                 //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
