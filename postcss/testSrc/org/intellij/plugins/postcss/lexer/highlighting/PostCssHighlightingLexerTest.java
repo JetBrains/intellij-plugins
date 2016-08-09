@@ -4,18 +4,11 @@ import com.intellij.lexer.Lexer;
 import com.intellij.psi.css.impl.util.CssHighlighterLexer;
 import com.intellij.testFramework.LexerTestCase;
 import com.intellij.testFramework.TestDataPath;
-import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.postcss.PostCssTestUtils;
 import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
 
-import java.util.Collections;
-import java.util.Set;
-
 @TestDataPath("$CONTENT_ROOT/testData/lexer/highlighting/")
 public class PostCssHighlightingLexerTest extends LexerTestCase {
-  private static final Set<String> DEFAULT_PROPERTY_VALUES =
-    ContainerUtil.union(CssHighlighterLexer.Lazy.DEFAULT_PROPERTY_VALUES, Collections.singleton("all"));
-
   public void testNestedRules() {
     doTest();
   }
@@ -90,7 +83,7 @@ public class PostCssHighlightingLexerTest extends LexerTestCase {
 
   @Override
   protected Lexer createLexer() {
-    return new PostCssHighlightingLexer(DEFAULT_PROPERTY_VALUES);
+    return new PostCssHighlightingLexer(CssHighlighterLexer.Lazy.DEFAULT_PROPERTY_VALUES);
   }
 
   @Override
