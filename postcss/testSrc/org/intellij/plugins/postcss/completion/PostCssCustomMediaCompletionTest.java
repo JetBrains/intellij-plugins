@@ -37,6 +37,10 @@ public class PostCssCustomMediaCompletionTest extends PostCssCompletionTest {
     doTest();
   }
 
+  public void testCustomMediaType() {
+    doTest();
+  }
+
   public void testCustomMediaTwoDefinitions() {
     doTestPreferred("--test", "--test2");
   }
