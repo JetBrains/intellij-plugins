@@ -9,9 +9,12 @@ import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.json.JsonFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
@@ -46,7 +49,26 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   @Override
   public List<? extends DetectedFrameworkDescription> detect(@NotNull Collection<VirtualFile> newFiles,
                                                              @NotNull FrameworkDetectionContext context) {
-    return newFiles.size() > 0 ? Collections.singletonList(new AngularCLIFrameworkDescription(newFiles)) : Collections.emptyList();
+    if (newFiles.size() > 0 && !isConfigured(newFiles, context.getProject())) {
+      return Collections.singletonList(new AngularCLIFrameworkDescription(newFiles));
+    }
+    return Collections.emptyList();
+  }
+
+  private static boolean isConfigured(Collection<VirtualFile> files, Project project) {
+    if (project == null) return false;
+
+    for (VirtualFile file : files) {
+      Module module = ModuleUtilCore.findModuleForFile(file, project);
+      if (module != null) {
+        for (String root : ModuleRootManager.getInstance(module).getExcludeRootUrls()) {
+          if (root.equals(file.getParent().getUrl() + "/tmp")) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   @Override
