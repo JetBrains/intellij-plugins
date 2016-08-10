@@ -16,6 +16,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.impl.LanguageLevelProjectExtensionImpl;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
@@ -23,6 +24,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.pom.java.LanguageLevel;
 import com.intellij.util.JdkBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -345,6 +347,8 @@ public class OpenLessonAction extends AnAction {
                     e.printStackTrace();
                 }
             }
+            //Set language level for LearnProject
+            LanguageLevelProjectExtensionImpl.getInstanceImpl(myLearnProject).setCurrentLevel(LanguageLevel.JDK_1_6);
         }
 
         if (myLearnProject != null) {
