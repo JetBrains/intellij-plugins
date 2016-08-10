@@ -44,7 +44,7 @@ import static training.learn.CourseManager.LEARN_PROJECT_NAME;
 /**
  * Created by karashevich on 20/05/16.
  */
-public class OpenLessonAction extends AnAction implements DumbAware {
+public class OpenLessonAction extends AnAction {
 
 
     public static DataKey<Lesson> LESSON_DATA_KEY = DataKey.create("LESSON_DATA_KEY");
