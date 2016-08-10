@@ -10,13 +10,12 @@ import com.intellij.openapi.application.PermanentInstallationID
 class FeedbackEvent(feedback: Map<String, String>) {
     @Transient var recorderId = "training"
     @Transient var timestamp = System.currentTimeMillis()
-    @Transient var sessionUid: String = "1"
     @Transient var actionType: String = "post.feedback"
     @Transient var userUid: String = PermanentInstallationID.get()
     @Transient var feedback = feedback
 
     override fun toString(): String {
-        return "${timestamp}\t${recorderId}\t${userUid}\t${sessionUid}\t${actionType}\t${map2json(feedback)}"
+        return "${timestamp}\t${recorderId}\t${userUid}\t${actionType}\t${map2json(feedback)}"
     }
 
     fun map2json(feedback: Map<String, String>): String{
