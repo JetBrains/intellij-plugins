@@ -3,12 +3,17 @@ package org.intellij.plugins.postcss.inspections;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.css.CssCustomMixin;
 import com.intellij.psi.css.CssElementFactory;
+import com.intellij.psi.css.CssRuleset;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTokenImpl;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.actions.PostCssAddPrefixQuickFix;
+import org.intellij.plugins.postcss.actions.PostCssPutCustomPropertiesSetInRootQuickFix;
+import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.intellij.plugins.postcss.psi.impl.PostCssApplyAtRuleImpl;
 import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +38,18 @@ public class PostCssCustomPropertiesSetInspection extends PostCssBaseInspection 
                                          psi -> psi.getNode().getElementType() == CssElementTypes.CSS_IDENT,
                                          p -> CssElementFactory.getInstance(p.first).createToken(p.second, PostCssLanguage.INSTANCE));
           holder.registerProblem(identifier, PostCssBundle.message("annotator.custom.properties.set.name.should.start.with"), quickFix);
+        }
+      }
+
+      @Override
+      public void visitCustomMixin(@NotNull CssCustomMixin customMixin) {
+        if (!PostCssPsiUtil.isInsidePostCss(customMixin)) return;
+        CssRuleset parentRuleset = PsiTreeUtil.getParentOfType(customMixin, CssRuleset.class);
+        if (parentRuleset == null ||
+            parentRuleset.getSelectorList() == null ||
+            !parentRuleset.getSelectorList().getText().equals(":root")) {
+          holder.registerProblem(customMixin, PostCssBundle.message("annotator.custom.properties.set.are.only.allowed.on.root.rules"),
+                                 new PostCssPutCustomPropertiesSetInRootQuickFix());
         }
       }
     };

@@ -29,6 +29,18 @@ public class PostCssCustomPropertiesSetInspectionTest extends PostCssFixtureTest
     doTest();
   }
 
+  public void testInsideRoot() {
+    doTest();
+  }
+
+  public void testInsideAtRule() {
+    doTest();
+  }
+
+  public void testOutsideRoot() {
+    doTest();
+  }
+
   private long doTest() {
     return myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
   }

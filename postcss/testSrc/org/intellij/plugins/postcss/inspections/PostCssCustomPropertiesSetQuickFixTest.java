@@ -17,6 +17,10 @@ public class PostCssCustomPropertiesSetQuickFixTest extends PostCssQuickFixTest 
     doTestAddDashes();
   }
 
+  public void testWrapWithRootRule() throws Throwable {
+    doTest("Wrap custom properties set with `:root` rule");
+  }
+
   private void doTestAddDashes() {
     doTest("Add '--' to custom properties set name");
   }
