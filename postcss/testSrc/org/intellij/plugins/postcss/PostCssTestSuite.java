@@ -4,6 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.intellij.plugins.postcss.completion.PostCssCustomMediaCompletionTest;
+import org.intellij.plugins.postcss.completion.PostCssCustomPropertiesSetCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssCustomSelectorCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssNestCompletionTest;
 import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
@@ -75,6 +76,7 @@ public class PostCssTestSuite extends TestCase {
       suite.addTestSuite(PostCssNestCompletionTest.class);
       suite.addTestSuite(PostCssCustomSelectorCompletionTest.class);
       suite.addTestSuite(PostCssCustomMediaCompletionTest.class);
+      suite.addTestSuite(PostCssCustomPropertiesSetCompletionTest.class);
       return suite;
     }
   }

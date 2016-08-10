@@ -17,6 +17,7 @@ import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssDumbAwareCompletionContributor extends CompletionContributor implements DumbAware {
+  private static final PostCssOneLineAtRuleInsertHandler ONE_LINE_STATEMENT_HANDLER = new PostCssOneLineAtRuleInsertHandler();
 
   public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull CompletionResultSet result) {
     result = CssCompletionUtil.fixPrefixForVendorPrefixes(parameters, result);
@@ -24,8 +25,9 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
     if (!result.isStopped()) {
       PsiElement position = parameters.getPosition();
       if (PostCssPsiUtil.isInsidePostCss(position) && position.getNode().getElementType() == CssElementTypes.CSS_ATKEYWORD) {
-        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-selector", new PostCssOneLineAtRuleInsertHandler()));
-        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-media", new PostCssOneLineAtRuleInsertHandler()));
+        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-selector", ONE_LINE_STATEMENT_HANDLER));
+        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-media", ONE_LINE_STATEMENT_HANDLER));
+        result.addElement(CssCompletionUtil.lookupForKeyword("@apply", ONE_LINE_STATEMENT_HANDLER));
         addNest(position, result);
       }
     }
