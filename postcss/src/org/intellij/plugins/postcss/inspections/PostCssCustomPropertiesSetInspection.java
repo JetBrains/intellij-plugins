@@ -19,6 +19,7 @@ import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomPropertiesSetInspection extends PostCssBaseInspection {
+  private static final PostCssPutCustomPropertiesSetInRootQuickFix WRAP_WITH_ROOT = new PostCssPutCustomPropertiesSetInRootQuickFix();
 
   @NotNull
   @Override
@@ -47,9 +48,9 @@ public class PostCssCustomPropertiesSetInspection extends PostCssBaseInspection 
         CssRuleset parentRuleset = PsiTreeUtil.getParentOfType(customMixin, CssRuleset.class);
         if (parentRuleset == null ||
             parentRuleset.getSelectorList() == null ||
-            !parentRuleset.getSelectorList().getText().equals(":root")) {
+            !parentRuleset.getSelectorList().textMatches(":root")) {
           holder.registerProblem(customMixin, PostCssBundle.message("annotator.custom.properties.set.are.only.allowed.on.root.rules"),
-                                 new PostCssPutCustomPropertiesSetInRootQuickFix());
+                                 WRAP_WITH_ROOT);
         }
       }
     };
