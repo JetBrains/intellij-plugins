@@ -96,7 +96,7 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
       }
       if (propertyAnnotation == null) return true;
       if (myForCompletion || !myMethodCall && myReferenceName.equalsIgnoreCase(namedElement.getName())) {
-        addIfNotNull(createResult(namedElement, true), myResult);
+        addIfNotNull(myResult, createResult(namedElement, true));
       }
       final String getterName = PropertyUtil.suggestGetterName(field);
       if (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(getterName)) {
@@ -121,14 +121,14 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
       for (final JavaMethodCandidateInfo methodCandidateInfo : myPropertyAccessors.getMethods()) {
         final BeanProperty property = BeanProperty.createBeanProperty(methodCandidateInfo.getMethod());
         if (property != null) {
-          addIfNotNull(createResult(property.getPsiElement(), true), myResult);
+          addIfNotNull(myResult, createResult(property.getPsiElement(), true));
         }
       }
     }
     if (myMethods != null) {
       for (final JavaMethodCandidateInfo methodCandidateInfo : myMethods.getMethods()) {
         final boolean validResult = myMethods.getResolveError() == JavaMethodResolveHelper.ErrorType.NONE;
-        addIfNotNull(createResult(methodCandidateInfo.getMethod(), validResult), myResult);
+        addIfNotNull(myResult, createResult(methodCandidateInfo.getMethod(), validResult));
       }
     }
     return myResult.toArray(array);
