@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,8 +101,8 @@ public class BundleManifestCache {
   }
 
   @Nullable
-  public BundleManifest getManifest(@NotNull final Module module) {
-    final OsmorcFacet facet = OsmorcFacet.getInstance(module);
+  public BundleManifest getManifest(@NotNull Module module) {
+    OsmorcFacet facet = OsmorcFacet.getInstance(module);
     if (facet == null) return null;
 
     CachedValue<BundleManifest> value = myCache.get(facet);
@@ -111,7 +111,7 @@ public class BundleManifestCache {
       value = myManager.createCachedValue(() -> {
         OsmorcFacetConfiguration configuration = facet.getConfiguration();
         BundleManifest manifest = null;
-        List<Object> dependencies = ContainerUtil.<Object>newSmartList(configuration);
+        List<Object> dependencies = ContainerUtil.newSmartList(configuration);
 
         switch (configuration.getManifestGenerationMode()) {
           case Manually: {
@@ -236,7 +236,7 @@ public class BundleManifestCache {
 
   private static class JdkBundleManifest extends BundleManifest {
     public JdkBundleManifest() {
-      super(Collections.<String, String>emptyMap());
+      super(Collections.emptyMap());
     }
 
     @Override
