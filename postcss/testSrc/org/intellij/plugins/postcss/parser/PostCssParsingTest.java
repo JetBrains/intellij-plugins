@@ -13,11 +13,13 @@ import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.PostCssTestUtils;
 import org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider;
 import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 @TestDataPath("$CONTENT_ROOT/testData/parser/")
-public class PostCssParsingTest extends ParsingTestCase {
-  public PostCssParsingTest() {
-    super("", "pcss", new PostCssParserDefinition(), new CSSParserDefinition());
+public abstract class PostCssParsingTest extends ParsingTestCase {
+  public PostCssParsingTest(@NonNls @NotNull String dataPath) {
+    super(dataPath, "pcss", new PostCssParserDefinition(), new CSSParserDefinition());
   }
 
   @Override
@@ -33,188 +35,7 @@ public class PostCssParsingTest extends ParsingTestCase {
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
   }
 
-  public void testNestingAmpersand() {
-    doTest();
-  }
-  public void testNestingNestRule() {
-    doTest();
-  }
-  public void testSemicolonsCorrect() {
-    doTest();
-  }
-  public void testSemicolonsIncorrect() {
-    doTest();
-  }
-  public void testDirectNestingIncorrect() {
-    doTest();
-  }
-  public void testTopLevelRulesetNesting() {
-    doTest();
-  }
-  public void testNestRulesetInsideAtRule() {
-    doTest();
-  }
-  public void testPartOfNestKeywordTopLevel() {
-    doTest();
-  }
-  public void testPartOfNestKeywordInsideRuleset() {
-    doTest();
-  }
-  public void testPartOfNestKeywordInsideAtRule() {
-    doTest();
-  }
-  public void testPartOfNestKeywordInsidePageAtRule() {
-    doTest();
-  }
-  public void testPartOfNestInsideApplyFunction() {
-    doTest();
-  }
-  public void testNestAtRuleIncorrectSelectorList() {
-    doTest();
-  }
-  public void testCustomSelector() {
-    doTest();
-  }
-  public void testCustomSelectorDefinitionWithoutSemicolon() {
-    doTest();
-  }
-  public void testCustomSelectorDefinitionWithoutColon() {
-    doTest();
-  }
-  public void testCustomSelectorDefinitionWithPseudoClasses() {
-    doTest();
-  }
-  public void testCustomSelectorUsageWithPseudoClasses() {
-    doTest();
-  }
-  public void testCustomSelectorInsideRuleset() {
-    doTest();
-  }
-  public void testCustomSelectorInsideAtRule() {
-    doTest();
-  }
-  public void testCustomSelectorWithWhitespace() {
-    doTest();
-  }
-  public void testCustomSelectorWithoutTwoDashes() {
-    doTest();
-  }
-  public void testAmpersandInSimpleSelector() {
-    doTest();
-  }
-  public void testAmpersandInClass() {
-    doTest();
-  }
-  public void testAmpersandIdSelector() {
-    doTest();
-  }
-  public void testAmpersandInPseudoClasses() {
-    doTest();
-  }
-  public void testAmpersandInPseudoFunction() {
-    doTest();
-  }
-  public void testAmpersandInAttributes() {
-    doTest();
-  }
-  public void testAmpersandWithOperators() {
-    doTest();
-  }
-  public void testAmpersandInDeclaration() {
-    doTest();
-  }
-  public void testAmpersandInPropertyValue() {
-    doTest();
-  }
-  public void testAmpersandBetweenTwoHashes () {
-    doTest();
-  }
-  public void testDeclarationBlockInMedia() {
-    doTest();
-  }
-  public void testDeclarationBlockInDocument() {
-    doTest();
-  }
-  public void testDeclarationBlockInSupports() {
-    doTest();
-  }
-  public void testDeclarationBlockInRegion() {
-    doTest();
-  }
-  public void testDeclarationBlockInScope() {
-    doTest();
-  }
-  public void testDeclarationBlockInBadAtRule() {
-    doTest();
-  }
-  public void testMediaRangeNameValue() {
-    doTest();
-  }
-  public void testMediaRangeValueName() {
-    doTest();
-  }
-  public void testMediaRangeValueNameValue() {
-    doTest();
-  }
-  public void testMediaPlainFeature() {
-    doTest();
-  }
-  public void testMediaRangeAndOtherFeatures() {
-    doTest();
-  }
-  public void testMediaRangeWithoutUnit() {
-    doTest();
-  }
-  public void testMediaRangeWithMinus() {
-    doTest();
-  }
-  public void testMediaRangeIncomplete() {
-    doTest();
-  }
-  public void testMediaRangeTwoValuesIncomplete() {
-    doTest();
-  }
-  public void testMediaRangeValueIncomplete() {
-    doTest();
-  }
-  public void testMediaRangeOperatorExpected() {
-    doTest();
-  }
-  public void testMediaRangeWithIncorrectRParen() {
-    doTest();
-  }
-  public void testCustomMediaEmpty() {
-    doTest();
-  }
-  public void testCustomMediaEmptyWithoutSemicolon() {
-    doTest();
-  }
-  public void testCustomMediaEmptyWithSemicolon() {
-    doTest();
-  }
-  public void testCustomMediaNested() {
-    doTest();
-  }
-  public void testCustomMediaSimple() {
-    doTest();
-  }
-  public void testCustomMediaWithAnd() {
-    doTest();
-  }
-  public void testCustomMediaWithComma() {
-    doTest();
-  }
-  public void testCustomMediaWithFeature() {
-    doTest();
-  }
-  public void testCustomMediaWithFeatureRange() {
-    doTest();
-  }
-  public void testCustomMediaWithoutSemicolon() {
-    doTest();
-  }
-
-  private void doTest() {
+  protected void doTest() {
     super.doTest(true);
   }
 

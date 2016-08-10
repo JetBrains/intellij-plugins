@@ -19,6 +19,9 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
     else if (type == PostCssElementTypes.POST_CSS_CUSTOM_MEDIA_RULE) {
       return new PostCssCustomMediaAtRuleImpl();
     }
+    else if (type == PostCssElementTypes.POST_CSS_APPLY_RULE) {
+      return new PostCssApplyAtRuleImpl();
+    }
     return super.createComposite(type);
   }
 }

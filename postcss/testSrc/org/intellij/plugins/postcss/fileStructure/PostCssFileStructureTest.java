@@ -10,28 +10,28 @@ public class PostCssFileStructureTest extends FileStructureTestBase {
   public void testNestAtRules() {
     checkTree();
   }
-     
   public void testAmpersand() {
     checkTree();
 }
-
   public void testAtRules() {
     checkTree();
   }
-
   public void testCustomSelectors() {
     checkTree();
   }
-
   public void testCustomSelectorsWithNesting() {
     checkTree();
   }
-
   public void testCustomMedia() {
     checkTree();
   }
-
   public void testCustomMediaWithNesting() {
+    checkTree();
+  }
+  public void testApplyAtRule() {
+    checkTree();
+  }
+  public void testApplyAtRuleWithNesting() {
     checkTree();
   }
 

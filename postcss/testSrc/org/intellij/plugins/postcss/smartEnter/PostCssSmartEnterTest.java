@@ -9,8 +9,10 @@ public class PostCssSmartEnterTest extends PostCssFixtureTestCase {
   public void testCompleteCustomSelectorWithSemicolon() {
     doTest();
   }
-
   public void testCompleteCustomMediaWithSemicolon() {
+    doTest();
+  }
+  public void testCompleteApplyWithSemicolon() {
     doTest();
   }
 

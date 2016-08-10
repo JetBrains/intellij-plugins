@@ -10,7 +10,7 @@ import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
 import org.intellij.plugins.postcss.inspections.*;
 import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
 import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerTest;
-import org.intellij.plugins.postcss.parser.PostCssParsingTest;
+import org.intellij.plugins.postcss.parser.*;
 import org.intellij.plugins.postcss.rename.PostCssRenameTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomMediaResolveTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
@@ -42,7 +42,11 @@ public class PostCssTestSuite extends TestCase {
     public static Test suite() {
       TestSuite suite = new TestSuite("Fast PostCSS");
       suite.addTestSuite(PostCssLexerTest.class);
-      suite.addTestSuite(PostCssParsingTest.class);
+      suite.addTestSuite(PostCssParsingNestingTest.class);
+      suite.addTestSuite(PostCssParsingCustomSelectorTest.class);
+      suite.addTestSuite(PostCssParsingCustomMediaTest.class);
+      suite.addTestSuite(PostCssParsingMediaRangesTest.class);
+      suite.addTestSuite(PostCssParsingApplyTest.class);
       suite.addTestSuite(PostCssHighlightingLexerTest.class);
       return suite;
     }
