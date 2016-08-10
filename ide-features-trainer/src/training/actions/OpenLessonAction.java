@@ -1,5 +1,6 @@
 package training.actions;
 
+import com.intellij.CommonBundle;
 import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.scratch.ScratchRootType;
@@ -15,7 +16,9 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -193,7 +196,9 @@ public class OpenLessonAction extends AnAction {
             LessonProcessor.process(project, lesson, textEditor.getEditor(), target);
 
         } catch (NoSdkException | InvalidSdkException noSdkException) {
-            showSdkProblemDialog(project, noSdkException.getMessage());
+            Messages.showMessageDialog(project, LearnBundle.message("dialog.noSdk.message"), LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon());
+            ProjectSettingsService.getInstance(project).chooseAndSetSdk();
+            openLesson(project, lesson);
         } catch (NoJavaModuleException noJavaModuleException) {
             showModuleProblemDialog(project);
         } catch (Exception e) {

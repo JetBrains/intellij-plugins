@@ -4,6 +4,7 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.util.containers.HashMap;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,7 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by karashevich on 18/07/16.
@@ -186,26 +188,25 @@ public class FeedbackFormPanel extends JPanel {
     }
 
     @NotNull
-    private String getFeedbackData() {
-        StringBuilder answer = new StringBuilder();
+    private Map<String, String> getFeedbackData() {
+
+        Map<String, String> answer = new HashMap<>();
         for (RadioButtonRow radioButtonRow : radioButtonRows) {
             String myQuestion = radioButtonRow.myQuestion;
             String rate = radioButtonRow.getRate();
             String myLowRate = radioButtonRow.myLowRate;
             String myMaxRate = radioButtonRow.myMaxRate;
-            answer.
-                    append("question=\"" + myQuestion + "\" ").
-                    append("rate=\"" + myLowRate + "/" + rate + "/" + myMaxRate + "\"");
+            answer.put(myQuestion, radioButtonRow.myRadioButtons.get(0).getName() + "/" + rate + "/" + radioButtonRow.myRadioButtons.get(radioButtonRow.myRadioButtons.size() - 1).getName());
         }
         try {
             Document document = customFeedback.getDocument();
             // we trim user answer if it exceeded 1000 symbols
             int max_length = Math.min(document.getLength(), 1000);
-            answer.append("detailed-feedback=\"" + document.getText(0, max_length) + "\"");
+            answer.put("detailed-feedback", document.getText(0, max_length));
         } catch (BadLocationException e1) {
             e1.printStackTrace();
         }
-        return answer.toString();
+        return answer;
     }
 
 
@@ -344,12 +345,12 @@ public class FeedbackFormPanel extends JPanel {
         else return UIUtil.getPanelBackground();
     }
 
-    Point getButtonPosition(){
+    Point getButtonPosition() {
         Point locationOnScreen = submitFeedbackButton.getLocationOnScreen();
         return new Point(locationOnScreen.x + submitFeedbackButton.getWidth() / 2, locationOnScreen.y);
     }
 
-    void setButtonActive(){
+    void setButtonActive() {
         submitFeedbackButton.setEnabled(true);
     }
 
@@ -450,7 +451,6 @@ public class FeedbackFormPanel extends JPanel {
             Point location = jrb.getLocation();
             g.drawString(label, location.x + jrb.getBounds().height / 2 - width / 2, location.y + jrb.getBounds().height + label_vertical_gap + height / 2);
         }
-
 
 
 //        @Override

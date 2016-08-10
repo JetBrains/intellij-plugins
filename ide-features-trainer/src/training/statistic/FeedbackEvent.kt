@@ -7,7 +7,7 @@ import com.intellij.openapi.application.PermanentInstallationID
  */
 
 
-class FeedbackEvent(feedback: String) {
+class FeedbackEvent(feedback: Map<String, String>) {
     @Transient var recorderId = "training"
     @Transient var timestamp = System.currentTimeMillis()
     @Transient var sessionUid: String = "1"
@@ -16,7 +16,15 @@ class FeedbackEvent(feedback: String) {
     @Transient var feedback = feedback
 
     override fun toString(): String {
-        return "${timestamp}\t${recorderId}\t${userUid}\t${sessionUid}\t${actionType}\t$feedback}"
+        return "${timestamp}\t${recorderId}\t${userUid}\t${sessionUid}\t${actionType}\t${map2json(feedback)}"
+    }
+
+    fun map2json(feedback: Map<String, String>): String{
+        var result = StringBuilder()
+        result.append("{\"feedback\":{")
+        feedback.keys.forEachIndexed { i, s ->  result.append(""); result.append("${if (i == 0) "" else ", "}\"${s}\":\"${feedback.get(s)}\"")}
+        result.append("}}")
+        return result.toString()
     }
 
 }
