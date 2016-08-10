@@ -108,7 +108,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
       if (graph.isSelected(node)) {
         final BasicStrutsNode nodeObject = myBuilder.getNodeObject(node);
         if (nodeObject != null) {
-          ContainerUtil.addIfNotNull(nodeObject.getIdentifyingElement(), selected);
+          ContainerUtil.addIfNotNull(selected, nodeObject.getIdentifyingElement());
         }
       }
     }

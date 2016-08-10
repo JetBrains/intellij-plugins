@@ -45,7 +45,6 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
@@ -673,9 +672,9 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
     children.add(myDependenciesConfigurable);
     children.add(myCompilerOptionsConfigurable);
-    ContainerUtil.addIfNotNull(myAirDesktopPackagingConfigurable, children);
-    ContainerUtil.addIfNotNull(myAndroidPackagingConfigurable, children);
-    ContainerUtil.addIfNotNull(myIOSPackagingConfigurable, children);
+    ContainerUtil.addIfNotNull(children, myAirDesktopPackagingConfigurable);
+    ContainerUtil.addIfNotNull(children, myAndroidPackagingConfigurable);
+    ContainerUtil.addIfNotNull(children, myIOSPackagingConfigurable);
 
     return children;
   }

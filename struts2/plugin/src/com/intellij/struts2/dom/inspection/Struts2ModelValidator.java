@@ -70,7 +70,7 @@ public class Struts2ModelValidator extends ValidatorBase {
           final StrutsModel model = strutsManager.getModelByFile((XmlFile)psiFile);
           if (model != null) {
             for (final XmlFile configFile : model.getConfigFiles()) {
-              ContainerUtil.addIfNotNull(configFile.getVirtualFile(), files);
+              ContainerUtil.addIfNotNull(files, configFile.getVirtualFile());
             }
           }
         }

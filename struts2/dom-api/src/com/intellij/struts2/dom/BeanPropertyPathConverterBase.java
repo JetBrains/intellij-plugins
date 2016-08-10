@@ -67,7 +67,7 @@ public abstract class BeanPropertyPathConverterBase extends Converter<List<BeanP
       if (resolve instanceof PsiMethod) { // can be non-PsiMethod via ParamNameCustomConverter
         final PsiMethod method = (PsiMethod)resolve;
         final BeanProperty beanProperty = BeanProperty.createBeanProperty(method);
-        ContainerUtil.addIfNotNull(beanProperty, list);
+        ContainerUtil.addIfNotNull(list, beanProperty);
       }
     }
     return list;

@@ -207,14 +207,14 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
                                        : context.getDescriptorsWithAllowedDeclaration());
 
       if (JavaScriptSupportLoader.isLanguageNamespace(context.namespace)) {
-        ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.SCRIPT, (XmlTag)null), resultList);
-        ContainerUtil.addIfNotNull(context.getElementDescriptor(CodeContext.REPARENT_TAG_NAME, (XmlTag)null), resultList);
+        ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.SCRIPT, (XmlTag)null));
+        ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(CodeContext.REPARENT_TAG_NAME, (XmlTag)null));
 
         if (contextParent instanceof XmlTag && MxmlLanguageTagsUtil.isComponentTag((XmlTag)contextParent)) {
-          ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.DECLARATIONS, (XmlTag)null), resultList);
-          ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.BINDING, (XmlTag)null), resultList);
-          ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.STYLE, (XmlTag)null), resultList);
-          ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.METADATA, (XmlTag)null), resultList);
+          ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.DECLARATIONS, (XmlTag)null));
+          ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.BINDING, (XmlTag)null));
+          ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.STYLE, (XmlTag)null));
+          ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.METADATA, (XmlTag)null));
         }
       }
     }

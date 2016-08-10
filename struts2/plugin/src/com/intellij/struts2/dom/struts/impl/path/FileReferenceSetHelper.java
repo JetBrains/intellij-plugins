@@ -23,17 +23,14 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.impl.source.jsp.WebDirectoryUtil;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.jsp.WebDirectoryElement;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -102,14 +99,14 @@ public class FileReferenceSetHelper {
             final String webRootPath = webRoot.getRelativePath();
             final WebDirectoryElement webRootBase =
                 directoryUtil.findWebDirectoryElementByPath(webRootPath, webFacet);
-            ContainerUtil.addIfNotNull(webRootBase, basePathRoots);
+            ContainerUtil.addIfNotNull(basePathRoots, webRootBase);
           }
 
           // 2. add parent <package> "namespace" as result prefix directory path if not ROOT
           if (!Comparing.equal(namespace, StrutsPackage.DEFAULT_NAMESPACE)) {
             final WebDirectoryElement packageBase =
                 directoryUtil.findWebDirectoryElementByPath(namespace, webFacet);
-            ContainerUtil.addIfNotNull(packageBase, basePathRoots);
+            ContainerUtil.addIfNotNull(basePathRoots, packageBase);
           }
 
           return basePathRoots;

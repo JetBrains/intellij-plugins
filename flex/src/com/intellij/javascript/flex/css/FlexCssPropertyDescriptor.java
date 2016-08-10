@@ -140,7 +140,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private static Set<String> addValuesFromFormats(@NotNull List<CssValueDescriptor> children, @NotNull Collection<FlexStyleIndexInfo> infos) {
     Set<String> formats = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
-      ContainerUtil.addIfNotNull(info.getFormat(), formats);
+      ContainerUtil.addIfNotNull(formats, info.getFormat());
     }
     
     if (formats.contains(COLOR_FORMAT)) {
@@ -174,7 +174,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private static void addValuesFromTypes2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssValueDescriptor> children) {
     Set<String> types = ContainerUtil.newHashSet();
     for (FlexStyleIndexInfo info : infos) {
-      ContainerUtil.addIfNotNull(info.getType(), types);
+      ContainerUtil.addIfNotNull(types, info.getType());
     }
     if (types.contains(JSCommonTypeNames.NUMBER_CLASS_NAME) && !formats.contains(LENGTH_FORMAT)) {
       children.add(createCssNumberValue());
