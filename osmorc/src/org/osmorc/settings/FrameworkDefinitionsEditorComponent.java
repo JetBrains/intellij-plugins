@@ -32,8 +32,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
@@ -49,12 +47,12 @@ import org.osmorc.util.OsgiUiUtil;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -67,12 +65,12 @@ public class FrameworkDefinitionsEditorComponent {
   private JLabel myHomeDir;
   private JLabel myFrameworkInstanceName;
   private JLabel myVersion;
-  private final DefaultListModel myModel;
+  private final DefaultListModel<FrameworkInstanceDefinition> myModel;
   private final MessageBus myBus;
   private final List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> myModified;
 
   public FrameworkDefinitionsEditorComponent() {
-    myModel = new DefaultListModel();
+    myModel = new DefaultListModel<>();
     myBus = ApplicationManager.getApplication().getMessageBus();
     myModified = ContainerUtil.newArrayList();
 
@@ -80,50 +78,34 @@ public class FrameworkDefinitionsEditorComponent {
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));
     myFrameworkInstances.setCellRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
 
-    final List<AddAction> addActions = ContainerUtil.newArrayList();
-    for (FrameworkIntegrator integrator : FrameworkIntegratorRegistry.getInstance().getFrameworkIntegrators()) {
-      addActions.add(new AddAction(integrator));
-    }
-    Collections.sort(addActions);
+    List<AddAction> addActions = Stream.of(FrameworkIntegratorRegistry.getInstance().getFrameworkIntegrators())
+      .map(AddAction::new)
+      .sorted()
+      .collect(Collectors.toList());
 
     myFrameworkInstancesPanel.add(
       ToolbarDecorator.createDecorator(myFrameworkInstances)
-        .setAddAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            JBPopupFactory.getInstance().createActionGroupPopup(
-              OsmorcBundle.message("frameworks.add.title"),
-              new DefaultActionGroup(addActions),
-              DataManager.getInstance().getDataContext(button.getContextComponent()),
-              false, false, false, null, -1, null
-            ).show(button.getPreferredPopupPoint());
-          }
-        })
-        .setRemoveAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            removeFrameworkInstance();
-          }
-        })
-        .setEditAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            editFrameworkInstance();
-          }
-        })
+        .setAddAction((b) ->
+          JBPopupFactory.getInstance().createActionGroupPopup(
+            OsmorcBundle.message("frameworks.add.title"),
+            new DefaultActionGroup(addActions),
+            DataManager.getInstance().getDataContext(b.getContextComponent()),
+            false, false, false, null, -1, null
+          ).show(ObjectUtils.notNull(b.getPreferredPopupPoint()))
+        )
+        .setRemoveAction((b) -> removeFrameworkInstance())
+        .setEditAction((b) -> editFrameworkInstance())
         .createPanel(), BorderLayout.CENTER
     );
 
-    myFrameworkInstances.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        int index = myFrameworkInstances.getSelectedIndex();
-        if (index != -1) {
-          FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myModel.get(index);
-          myFrameworkIntegrator.setText(instance.getFrameworkIntegratorName());
-          myHomeDir.setText(instance.getBaseFolder());
-          myVersion.setText(ObjectUtils.notNull(instance.getVersion(), ""));
-          myFrameworkInstanceName.setText(instance.getName());
-        }
+    myFrameworkInstances.addListSelectionListener((ListSelectionEvent e) -> {
+      int index = myFrameworkInstances.getSelectedIndex();
+      if (index != -1) {
+        FrameworkInstanceDefinition instance = myModel.get(index);
+        myFrameworkIntegrator.setText(instance.getFrameworkIntegratorName());
+        myHomeDir.setText(instance.getBaseFolder());
+        myVersion.setText(ObjectUtils.notNull(instance.getVersion(), ""));
+        myFrameworkInstanceName.setText(instance.getName());
       }
     });
 
@@ -146,32 +128,30 @@ public class FrameworkDefinitionsEditorComponent {
     dialog.pack();
     if (dialog.showAndGet()) {
       instance = dialog.createDefinition();
-      //noinspection unchecked
       myModel.addElement(instance);
       myFrameworkInstances.setSelectedIndex(myModel.getSize() - 1);
-      myModified.add(Pair.create((FrameworkInstanceDefinition)null, instance));
+      myModified.add(Pair.create(null, instance));
     }
   }
 
   private void removeFrameworkInstance() {
     int index = myFrameworkInstances.getSelectedIndex();
     if (index != -1) {
-      FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myModel.get(index);
+      FrameworkInstanceDefinition instance = myModel.get(index);
       myModel.remove(index);
       myFrameworkInstances.setSelectedIndex(0);
-      myModified.add(Pair.create(instance, (FrameworkInstanceDefinition)null));
+      myModified.add(Pair.create(instance, null));
     }
   }
 
   private void editFrameworkInstance() {
     int index = myFrameworkInstances.getSelectedIndex();
     if (index != -1) {
-      FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myModel.get(index);
+      FrameworkInstanceDefinition instance = myModel.get(index);
       CreateFrameworkInstanceDialog dialog = new CreateFrameworkInstanceDialog(instance, myModel);
       dialog.pack();
       if (dialog.showAndGet()) {
         FrameworkInstanceDefinition newInstance = dialog.createDefinition();
-        //noinspection unchecked
         myModel.set(index, newInstance);
         myModified.add(Pair.create(instance, newInstance));
       }
@@ -185,7 +165,6 @@ public class FrameworkDefinitionsEditorComponent {
   public void resetTo(@NotNull ApplicationSettings settings) {
     myModel.clear();
     for (FrameworkInstanceDefinition instance : settings.getActiveFrameworkInstanceDefinitions()) {
-      //noinspection unchecked
       myModel.addElement(instance);
     }
     myModified.clear();
@@ -195,7 +174,7 @@ public class FrameworkDefinitionsEditorComponent {
     int instances = myModel.getSize();
     List<FrameworkInstanceDefinition> definitions = new ArrayList<>(instances);
     for (int i = 0; i < instances; i++) {
-      definitions.add((FrameworkInstanceDefinition)myModel.get(i));
+      definitions.add(myModel.get(i));
     }
     settings.setFrameworkInstanceDefinitions(definitions);
 

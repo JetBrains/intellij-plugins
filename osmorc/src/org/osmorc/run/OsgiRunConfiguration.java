@@ -136,7 +136,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       defaultStartLevel = 5;
     }
 
-    // noinspection unchecked
     List<Element> children = element.getChildren(BUNDLE_ELEMENT);
     bundlesToDeploy.clear();
     for (Element child : children) {
@@ -188,7 +187,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       additionalProperties = element.getChild("additinalProperties");
     }
     if (additionalProperties != null) {
-      //noinspection unchecked
       List<Attribute> attributes = additionalProperties.getAttributes();
       for (Attribute attribute : attributes) {
         this.additionalProperties.put(attribute.getName(), attribute.getValue());
