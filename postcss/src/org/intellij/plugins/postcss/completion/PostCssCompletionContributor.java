@@ -16,7 +16,6 @@ import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
-import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.util.ObjectUtils;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
@@ -36,24 +35,45 @@ public class PostCssCompletionContributor extends CompletionContributor {
   public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
     if (result.isStopped()) return;
     final PsiElement position = parameters.getPosition();
+    if (!PostCssPsiUtil.isInsidePostCss(position)) return;
+
     PsiElementPattern.Capture<PsiElement> isIdent = psiElement(CssElementTypes.CSS_IDENT);
     boolean isCustomSelector = isIdent.withReference(PostCssCustomSelectorReference.class).accepts(position);
     boolean isCustomMedia = isIdent.withReference(PostCssCustomMediaReference.class).accepts(position);
-    if (!PostCssPsiUtil.isInsidePostCss(position) || !(isCustomSelector || isCustomMedia)) return;
+    if (isCustomSelector) {
+      addVariantsForCustomSelector(parameters, result);
+    }
+    else if (isCustomMedia) {
+      addVariantsForCustomMedia(parameters, result);
+    }
+  }
 
-    final Project project = position.getProject();
+  private static void addVariantsForCustomSelector(@NotNull final CompletionParameters parameters,
+                                                   @NotNull final CompletionResultSet result) {
+    final PsiElement position = parameters.getPosition();
+    Project project = position.getProject();
     final GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(position);
     final Set<VirtualFile> importedFiles = CssUtil.getImportedFiles(parameters.getOriginalFile(), position, false);
-    StubIndexKey<String, ?> key = isCustomSelector ? PostCssCustomSelectorIndex.KEY : PostCssCustomMediaIndex.KEY;
-    for (String name : StubIndex.getInstance().getAllKeys(key, project)) {
+    for (String name : StubIndex.getInstance().getAllKeys(PostCssCustomSelectorIndex.KEY, project)) {
       if (name.isEmpty()) continue;
-      if (isCustomSelector) {
-        StubIndex.getElements(PostCssCustomSelectorIndex.KEY, name, project, scope, PostCssCustomSelector.class).stream()
-          .forEach(e -> result.addElement(createCustomElementLookup(e, importedFiles)));
+      for (PostCssCustomSelector element : StubIndex
+        .getElements(PostCssCustomSelectorIndex.KEY, name, project, scope, PostCssCustomSelector.class)) {
+        result.addElement(createCustomElementLookup(element, importedFiles));
       }
-      else {
-        StubIndex.getElements(PostCssCustomMediaIndex.KEY, name, project, scope, PostCssCustomMedia.class).stream()
-          .forEach(e -> result.addElement(createCustomElementLookup(e, importedFiles)));
+    }
+  }
+
+  private static void addVariantsForCustomMedia(@NotNull final CompletionParameters parameters,
+                                                @NotNull final CompletionResultSet result) {
+    final PsiElement position = parameters.getPosition();
+    Project project = position.getProject();
+    final GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(position);
+    final Set<VirtualFile> importedFiles = CssUtil.getImportedFiles(parameters.getOriginalFile(), position, false);
+    for (String name : StubIndex.getInstance().getAllKeys(PostCssCustomMediaIndex.KEY, project)) {
+      if (name.isEmpty()) continue;
+      for (PostCssCustomMedia element : StubIndex
+        .getElements(PostCssCustomMediaIndex.KEY, name, project, scope, PostCssCustomMedia.class)) {
+        result.addElement(createCustomElementLookup(element, importedFiles));
       }
     }
   }
