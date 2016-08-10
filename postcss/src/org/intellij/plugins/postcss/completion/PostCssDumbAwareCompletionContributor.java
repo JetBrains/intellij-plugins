@@ -3,6 +3,7 @@ package org.intellij.plugins.postcss.completion;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -19,16 +20,20 @@ import org.jetbrains.annotations.NotNull;
 public class PostCssDumbAwareCompletionContributor extends CompletionContributor implements DumbAware {
   private static final PostCssOneLineAtRuleInsertHandler ONE_LINE_STATEMENT_HANDLER = new PostCssOneLineAtRuleInsertHandler();
 
-  public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull CompletionResultSet result) {
-    result = CssCompletionUtil.fixPrefixForVendorPrefixes(parameters, result);
-    super.fillCompletionVariants(parameters, result);
-    if (!result.isStopped()) {
+  public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
+    final CompletionResultSet resultSet = CssCompletionUtil.fixPrefixForVendorPrefixes(parameters, result);
+    super.fillCompletionVariants(parameters, resultSet);
+    if (!resultSet.isStopped()) {
       PsiElement position = parameters.getPosition();
       if (PostCssPsiUtil.isInsidePostCss(position) && position.getNode().getElementType() == CssElementTypes.CSS_ATKEYWORD) {
-        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-selector", ONE_LINE_STATEMENT_HANDLER));
-        result.addElement(CssCompletionUtil.lookupForKeyword("@custom-media", ONE_LINE_STATEMENT_HANDLER));
-        result.addElement(CssCompletionUtil.lookupForKeyword("@apply", ONE_LINE_STATEMENT_HANDLER));
-        addNest(position, result);
+        resultSet.addElement(CssCompletionUtil.lookupForKeyword("@custom-selector", ONE_LINE_STATEMENT_HANDLER));
+        resultSet.addElement(CssCompletionUtil.lookupForKeyword("@custom-media", ONE_LINE_STATEMENT_HANDLER));
+        resultSet.addElement(CssCompletionUtil.lookupForKeyword("@apply", ONE_LINE_STATEMENT_HANDLER));
+        addNest(position, resultSet);
+
+        result.runRemainingContributors(parameters, r -> {
+          if (!r.getLookupElement().getLookupString().equals("@apply")) resultSet.passResult(r);
+        });
       }
     }
   }
