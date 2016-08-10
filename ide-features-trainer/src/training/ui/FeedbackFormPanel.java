@@ -191,13 +191,12 @@ public class FeedbackFormPanel extends JPanel {
     private Map<String, String> getFeedbackData() {
 
         Map<String, String> answer = new HashMap<>();
-        for (RadioButtonRow radioButtonRow : radioButtonRows) {
-            String myQuestion = radioButtonRow.myQuestion;
+        for (int i = 0; i < radioButtonRows.size(); i++) {
+            RadioButtonRow radioButtonRow = radioButtonRows.get(i);
             String rate = radioButtonRow.getRate();
-            String myLowRate = radioButtonRow.myLowRate;
-            String myMaxRate = radioButtonRow.myMaxRate;
-            answer.put(myQuestion, radioButtonRow.myRadioButtons.get(0).getName() + "/" + rate + "/" + radioButtonRow.myRadioButtons.get(radioButtonRow.myRadioButtons.size() - 1).getName());
+            answer.put("rate-" + i, radioButtonRow.myRadioButtons.get(0).getName() + "/" + rate + "/" + radioButtonRow.myRadioButtons.get(radioButtonRow.myRadioButtons.size() - 1).getName());
         }
+
         try {
             Document document = customFeedback.getDocument();
             // we trim user answer if it exceeded 1000 symbols
