@@ -6,11 +6,12 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.css.CssSelectorList;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
-import org.intellij.plugins.postcss.actions.PostCssAddPrefixToCustomSelectorQuickFix;
+import org.intellij.plugins.postcss.actions.PostCssAddPrefixQuickFix;
+import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
+import org.intellij.plugins.postcss.psi.PostCssElementGenerator;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorAtRuleImpl;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorImpl;
@@ -39,8 +40,12 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
           holder.registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.not.be.empty"));
         }
         else if (!StringUtil.startsWith(text, ":--")) {
-          holder.registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.start.with"),
-                                 new PostCssAddPrefixToCustomSelectorQuickFix());
+          PostCssAddPrefixQuickFix quickFix = new PostCssAddPrefixQuickFix("annotator.add.prefix.to.custom.selector.quickfix.name", ":--",
+                                                                           psi -> psi instanceof PostCssCustomSelector,
+                                                                           p -> PostCssElementGenerator
+                                                                             .createCustomSelector(p.first, p.second));
+          holder
+            .registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.start.with"), quickFix);
         }
       }
 

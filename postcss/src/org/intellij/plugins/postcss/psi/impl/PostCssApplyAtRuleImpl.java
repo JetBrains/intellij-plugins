@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.descriptor.CssContextType;
 import com.intellij.psi.css.impl.AtRulePresentation;
 import com.intellij.psi.css.impl.CssAtRuleImpl;
@@ -27,5 +28,15 @@ public class PostCssApplyAtRuleImpl extends CssAtRuleImpl implements PostCssAppl
   public CssTokenImpl getCustomPropertiesSetIdentifier() {
     CssTokenImpl identifier = PsiTreeUtil.getNextSiblingOfType(getFirstChild(), CssTokenImpl.class);
     return identifier != null && identifier.getNode().getElementType() == CssElementTypes.CSS_IDENT ? identifier : null;
+  }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof PostCssElementVisitor) {
+      ((PostCssElementVisitor)visitor).visitPostCssApplyAtRule(this);
+    }
+    else {
+      visitor.visitElement(this);
+    }
   }
 }
