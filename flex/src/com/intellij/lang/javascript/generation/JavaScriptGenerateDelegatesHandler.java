@@ -48,9 +48,9 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
     final JSClass jsClass = findClass(file, editor);
     if (jsClass == null) return;
 
-    Collection<JSVariable> fields = findCandidateFields(jsClass);
+    Collection<JSField> fields = findCandidateFields(jsClass);
 
-    final JSVariable field;
+    final JSField field;
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       LOG.assertTrue(fields.size() == 1);
       field = fields.iterator().next();
@@ -62,7 +62,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
                                                                                             "generate.delegate.target.chooser.title"));
       targetChooser.show();
       if (targetChooser.getExitCode() != DialogWrapper.OK_EXIT_CODE) return;
-      field = (JSVariable)targetChooser.getSelectedElements().get(0).getPsiElement();
+      field = (JSField)targetChooser.getSelectedElements().get(0).getPsiElement();
     }
 
     JSType fieldType = field.getType();
@@ -252,8 +252,8 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
 
   @Override
   protected void collectCandidates(JSClass clazz, Collection<JSNamedElementNode> candidates) {
-    Collection<JSVariable> fields = findCandidateFields(clazz);
-    for (JSVariable field : fields) {
+    Collection<JSField> fields = findCandidateFields(clazz);
+    for (JSField field : fields) {
       candidates.add(new JSNamedElementNode(field));
     }
   }
@@ -263,9 +263,9 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
     return null;
   }
 
-  private static Collection<JSVariable> findCandidateFields(JSClass clazz) {
-    Collection<JSVariable> result = new ArrayList<>();
-    for (JSVariable field : clazz.getFields()) {
+  private static Collection<JSField> findCandidateFields(JSClass clazz) {
+    Collection<JSField> result = new ArrayList<>();
+    for (JSField field : clazz.getFields()) {
       JSType type = field.getType();
       JSClass fieldType = type != null ? type.resolveClass() : null;
       if (fieldType != null &&

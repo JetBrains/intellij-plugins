@@ -4,18 +4,17 @@ import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.*;
-import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
+import com.intellij.lang.javascript.psi.resolve.ImplicitJSFieldImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -62,9 +61,9 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   private static final Logger LOG = Logger.getInstance(MxmlJSClass.class);
 
-  private static Key<CachedValue<List<JSVariable>>> ourSkinComponentPredefinedVarsKey = Key.create("ourskinComponentPredefinedVarsKey");
-  private static JSResolveUtil.ImplicitVariableProvider skinComponentPredefinedVars = new JSResolveUtil.ImplicitVariableProvider() {
-    protected void doComputeVars(final List<JSVariable> vars, final XmlFile xmlFile) {
+  private static Key<CachedValue<List<JSField>>> ourSkinComponentPredefinedFieldsKey = Key.create("ourskinComponentPredefinedVarsKey");
+  private static MxmlResolveUtil.ImplicitFieldProvider skinComponentPredefinedFields = new MxmlResolveUtil.ImplicitFieldProvider() {
+    protected void doComputeVars(final List<JSField> vars, final XmlFile xmlFile) {
       for (XmlTag t : xmlFile.getDocument().getRootTag().findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
         JSResolveUtil.processInjectedFileForTag(t, new JSResolveUtil.JSInjectedFilesVisitor() {
           @Override
@@ -77,7 +76,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
                   JSAttributeNameValuePair valuePair = hostAnnotation[0].getValueByName(null);
 
                   vars.add(
-                    new ImplicitJSVariableImpl(
+                    new ImplicitJSFieldImpl(
                       "hostComponent",
                       valuePair != null ? valuePair.getSimpleValue() : OBJECT_CLASS_NAME,
                       JSAttributeList.AccessType.PUBLIC,
@@ -94,15 +93,15 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     }
   };
 
-  private static JSResolveUtil.ImplicitVariableProvider inlineComponentRenderPredefinedVars = new JSResolveUtil.ImplicitVariableProvider() {
-    protected void doComputeVars(List<JSVariable> vars, XmlFile xmlFile) {
+  private static MxmlResolveUtil.ImplicitFieldProvider inlineComponentRenderPredefinedVars = new MxmlResolveUtil.ImplicitFieldProvider() {
+    protected void doComputeVars(List<JSField> vars, XmlFile xmlFile) {
       JSClass cls = XmlBackedJSClassFactory.getXmlBackedClass(xmlFile);
       final JSType type = JSNamedType.createType(cls.getQualifiedName(), JSTypeSourceFactory.createTypeSource(cls, true), JSContext.INSTANCE);
-      vars.add(new ImplicitJSVariableImpl("outerDocument", type, xmlFile));
+      vars.add(new ImplicitJSFieldImpl("outerDocument", type, xmlFile));
     }
   };
 
-  private static Key<CachedValue<List<JSVariable>>> ourInlineComponentRenderPredefinedVarsKey = Key.create("ourInlineComponentRenderPredefinedVarsKey");
+  private static Key<CachedValue<List<JSField>>> ourInlineComponentRenderPredefinedVarsKey = Key.create("ourInlineComponentRenderPredefinedVarsKey");
 
   private volatile JSReferenceList myImplementsList;
   private final boolean isFxgBackedClass;
@@ -227,14 +226,14 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   @Override
   protected void processImplicitMembers(PsiScopeProcessor processor) {
-    JSResolveUtil.processImplicitVars(processor, getContainingFile(), skinComponentPredefinedVars,
-                                      ourSkinComponentPredefinedVarsKey);
+    MxmlResolveUtil.processImplicitFields(processor, getContainingFile(), skinComponentPredefinedFields,
+                                          ourSkinComponentPredefinedFieldsKey);
   }
 
   @Override
   public boolean processOuterDeclarations(PsiScopeProcessor processor) {
-    return JSResolveUtil.processImplicitVars(processor, getContainingFile(), inlineComponentRenderPredefinedVars,
-                                             ourInlineComponentRenderPredefinedVarsKey);
+    return MxmlResolveUtil.processImplicitFields(processor, getContainingFile(), inlineComponentRenderPredefinedVars,
+                                                 ourInlineComponentRenderPredefinedVarsKey);
   }
 
   public static boolean isFxLibraryTag(final XmlTag tag) {

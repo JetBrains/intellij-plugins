@@ -47,9 +47,9 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
                                                                   NotNullFunction<JSNamedElement, XmlAttributeDescriptor> factory) {
     final JSClass clazz = PsiTreeUtil.getParentOfType(declaration, JSClass.class);
     if (clazz != null) {
-      JSVariable[] fields = clazz.getFields();
+      JSField[] fields = clazz.getFields();
       final List<XmlAttributeDescriptor> result = new ArrayList<>(fields.length);
-      for (JSVariable field : fields) {
+      for (JSField field : fields) {
         if (!hasDecorator(field, decorator)) continue;
         result.add(factory.fun(field));
       }

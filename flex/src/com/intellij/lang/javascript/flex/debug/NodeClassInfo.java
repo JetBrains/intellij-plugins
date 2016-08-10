@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.util.Iconable;
@@ -100,7 +100,7 @@ public class NodeClassInfo {
                                        final Map<String, Icon> staticProperties,
                                        final Map<String, Icon> fields,
                                        final Map<String, Icon> properties) {
-    for (final JSVariable variable : jsClass.getFields()) {
+    for (final JSField variable : jsClass.getFields()) {
       final JSAttributeList varAttributes = variable.getAttributeList();
       if (varAttributes != null && varAttributes.hasModifier(JSAttributeList.ModifierType.STATIC)) {
         staticFields.put(variable.getName(), variable.getIcon(Iconable.ICON_FLAG_VISIBILITY));

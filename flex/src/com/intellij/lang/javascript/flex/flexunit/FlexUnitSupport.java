@@ -5,10 +5,7 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -241,7 +238,7 @@ public class FlexUnitSupport {
     if (!SUITE_RUNNER.equals(getCustomRunner(suiteClass))) return Collections.emptyList();
 
     Collection<JSClass> result = new ArrayList<>();
-    for (JSVariable field : suiteClass.getFields()) {
+    for (JSField field : suiteClass.getFields()) {
       if (field.getAttributeList() == null) continue;
       if (field.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC)) continue;
       if (field.getAttributeList().getAccessType() != JSAttributeList.AccessType.PUBLIC) continue;
