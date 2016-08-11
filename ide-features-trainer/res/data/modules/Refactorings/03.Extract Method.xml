@@ -30,6 +30,6 @@ class Test{
     }
 }</CopyText>
     <SetSelection start-position="12:9" end-position="21:32"/>
-    <Try description="Extract method action allows to encapsulate selected code into a new method with given parameters and returning type. Let's extract some lines of code into a new method &lt;code&gt;init(Dimension myDimension)&lt;/code&gt; by pressing &lt;action=&quot;ExtractMethod&quot;&gt;." trigger="ExtractMethod"/>
+    <Try description="Extract method action allows to encapsulate selected code into a new method with given parameters and returning type. Let's extract some lines of code into a new method &lt;code&gt;init(Dimension myDimension)&lt;/code&gt; by pressing &lt;action=&quot;ExtractMethod&quot;&gt;" trigger="ExtractMethod"/>
     <Win/>
 </xml>

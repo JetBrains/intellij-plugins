@@ -17,10 +17,10 @@
     <ShowLineNumber/>
     <CaretBlock>
         <MoveCaret position="6:9"/>
-        <Try description="You can rearrange lines sequence with one shortcut instead of 3 actions: copy, delete and paste. Pull down the line where cursor stands with &lt;action=&quot;MoveLineDown&quot;&gt;." trigger="MoveLineDown"/>
-        <Try description="It works in a opposite way also &lt;action=&quot;MoveLineUp&quot;&gt;." trigger="MoveLineUp"/>
+        <Try description="You can rearrange lines sequence with one shortcut instead of 3 actions: copy, delete and paste. Pull down the line where cursor stands with &lt;action=&quot;MoveLineDown&quot;&gt;" trigger="MoveLineDown"/>
+        <Try description="It works in a opposite way also &lt;action=&quot;MoveLineUp&quot;&gt;" trigger="MoveLineUp"/>
         <MoveCaret position="10:5"/>
-        <Try description="Now try to move the whole statement up with &lt;action=&quot;MoveStatementUp&quot;&gt;." trigger="MoveStatementUp"/>
+        <Try description="Now try to move the whole statement up with &lt;action=&quot;MoveStatementUp&quot;&gt;" trigger="MoveStatementUp"/>
     </CaretBlock>
     </MouseBlock>
     <Win/>

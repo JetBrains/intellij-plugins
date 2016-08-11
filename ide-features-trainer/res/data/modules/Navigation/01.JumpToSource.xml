@@ -37,9 +37,9 @@ class JumpToSourceDemo {
         <CaretBlock>
         <MoveCaret position="6:59" />
         <Text description="IntelliJ IDEA has imposing list of navigation features."/>
-        <Try description="Basically lets start from one very frequently used feature - Jump to Source. Try calling this action by &lt;action=&quot;EditSource&quot;&gt; to look up the source of &lt;code&gt;Params&lt;/code&gt;." trigger="EditSource"/>
+        <Try description="Basically lets start from one very frequently used feature - Jump to Source. Try calling this action by &lt;action=&quot;EditSource&quot;&gt; to look up the source of &lt;code&gt;Params&lt;/code&gt;" trigger="EditSource"/>
     </CaretBlock>
 </MouseBlock>
-        <Try description="You may also Jump to Source of classes implemented in JDK. Press &lt;action=&quot;EditSource&quot;&gt; when the caret is on &lt;code&gt;String&lt;/code&gt;." trigger="EditSource" check="training.check.CheckJumpFromString"/>
+        <Try description="You may also Jump to Source of classes implemented in JDK. Press &lt;action=&quot;EditSource&quot;&gt; when the caret is on &lt;code&gt;String&lt;/code&gt;" trigger="EditSource" check="training.check.CheckJumpFromString"/>
     <Win/>
 </xml>
