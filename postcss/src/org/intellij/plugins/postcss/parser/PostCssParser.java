@@ -89,7 +89,9 @@ public class PostCssParser extends CssParser2 {
     PsiBuilder.Marker applyAtRule = createCompositeElement();
     addSingleToken();
     addIdentOrError();
-    addSemicolonOrError();
+    if (getTokenType() != CssElementTypes.CSS_RBRACE){
+      addSemicolonOrError();
+    }
     applyAtRule.done(PostCssElementTypes.POST_CSS_APPLY_RULE);
     return true;
   }

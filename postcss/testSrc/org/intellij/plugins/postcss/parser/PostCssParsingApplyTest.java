@@ -23,6 +23,9 @@ public class PostCssParsingApplyTest extends PostCssParsingTest {
   public void testApplyWithoutSemicolon() {
     doTest();
   }
+  public void testApplyWithoutSemicolonBeforeBrace() {
+    doTest();
+  }
   public void testApplyWithParen() {
     doTest();
   }
