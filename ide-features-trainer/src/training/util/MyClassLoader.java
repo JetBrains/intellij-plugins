@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
+ *
  * Created by karashevich on 31/03/15.
  */
 public class MyClassLoader {
