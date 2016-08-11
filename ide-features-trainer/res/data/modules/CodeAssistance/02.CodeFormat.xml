@@ -15,7 +15,7 @@ final static int some_const = 124136; public static int process(int a, int b){ r
 
 }</CopyText>
     <SetSelection start-position="7:1" end-position="7:65" />
-    <Try description="IntelliJ IDEA helps to correct codes format with one action. Try to reformat selected code with &lt;action=&quot;ReformatCode&quot;&gt;" triggers="ReformatCode"/>
+    <Try description="IntelliJ IDEA helps to correct code formatting with one action. Try to reformat selected code with &lt;action=&quot;ReformatCode&quot;&gt;" triggers="ReformatCode"/>
     <Try description="To reformat a whole source file use &lt;action=&quot;ReformatCode&quot;&gt; when no lines are selected" triggers="ReformatCode"/>
     <Win/>
 </xml>
