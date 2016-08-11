@@ -1,5 +1,4 @@
 <xml type="Scenario" name="Extract Method" passed="false" version="0.1" subtype="aimless" projectTree="hide">
-    <MouseBlock>
         <CopyText>import javax.swing.*;
 import java.awt.*;
 
@@ -30,11 +29,7 @@ class Test{
         frame.setVisible(true);
     }
 }</CopyText>
-<CaretBlock>
-    <SetSelection start-position="12:9" end-position="21:32" />
-    <MoveCaret position="21:32" />
+    <SetSelection start-position="12:9" end-position="21:32"/>
     <Try description="Extract method action allows to encapsulate selected code into a new method with given parameters and returning type. Let's extract some lines of code into a new method &lt;code&gt;init(Dimension myDimension)&lt;/code&gt; by pressing &lt;action=&quot;ExtractMethod&quot;&gt;" trigger="ExtractMethod"/>
     <Win/>
-</CaretBlock>
-</MouseBlock>
 </xml>
