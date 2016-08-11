@@ -73,7 +73,7 @@ public class SetSelectionCommand extends Command {
                 final LogicalPosition blockEnd = new LogicalPosition(end_line, end_column);
 
                 int start_position = editor.logicalPositionToOffset(blockStart);
-                int end_position = editor.logicalPositionToOffset(blockStart);
+                int end_position = editor.logicalPositionToOffset(blockEnd);
 
                 editor.getSelectionModel().setSelection(start_position, end_position);
                 park_caret = end_position;
