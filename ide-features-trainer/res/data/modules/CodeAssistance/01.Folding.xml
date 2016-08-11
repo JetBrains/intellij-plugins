@@ -25,13 +25,13 @@ class FoldingDemo {
 }</CopyText>
     <CaretBlock>
         <MoveCaret position="12:27" />
-        <Try description="We start learning the folding basics in &lt;link&gt;Collapse&lt;/link&gt; lesson. Let's look to other folding options. Select any part of code and run folding by pressing &lt;action=&quot;CollapseRegion&quot;&gt;" trigger="CollapseRegion"/>
+        <Try description="We start learning the folding basics in &lt;link&gt;Collapse&lt;/link&gt; lesson. Let's look to other folding options. Select any part of code and run folding by pressing &lt;action=&quot;CollapseRegion&quot;&gt;." trigger="CollapseRegion"/>
     </CaretBlock>
 </MouseBlock>
-        <Try description="Fine! IntelliJ IDEA collapses &lt;code&gt;new Runnable()&lt;/code&gt; to a lambda function. To expand this structure use &lt;action=&quot;ExpandRegion&quot;&gt;" trigger="ExpandRegion" />
+        <Try description="Fine! IntelliJ IDEA collapses &lt;code&gt;new Runnable()&lt;/code&gt; to a lambda function. To expand this structure use &lt;action=&quot;ExpandRegion&quot;&gt;." trigger="ExpandRegion" />
         <SetSelection start-position="7:9" end-position="8:24" />
         <MoveCaret position="8:24" />
-        <Try description="IntelliJ IDEA allows you to fold any sequence of statements or declarations. Try to fold selected region with &lt;action=&quot;CollapseSelection&quot;&gt;" trigger="CollapseSelection"/>
-        <Try description="And &lt;action=&quot;ExpandRegion&quot;&gt; in a back way" trigger="ExpandRegion"/>
+        <Try description="IntelliJ IDEA allows you to fold any sequence of statements or declarations. Try to fold selected region with &lt;action=&quot;CollapseSelection&quot;&gt;." trigger="CollapseSelection"/>
+        <Try description="And &lt;action=&quot;ExpandRegion&quot;&gt; in a back way." trigger="ExpandRegion"/>
     <Win/>
 </xml>
