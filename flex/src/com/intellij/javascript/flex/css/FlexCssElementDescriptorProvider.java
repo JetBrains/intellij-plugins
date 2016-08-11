@@ -259,7 +259,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   @Override
-  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name) {
+  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name, @Nullable PsiElement context) {
     return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
   }
 
