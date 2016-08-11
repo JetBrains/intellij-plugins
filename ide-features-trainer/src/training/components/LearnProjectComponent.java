@@ -49,7 +49,7 @@ public class LearnProjectComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         registerLearnToolWindow(myProject);
-        startTrackActivity(myProject);
+//        startTrackActivity(myProject);
         CourseManager.getInstance().updateToolWindow(myProject);
 
         StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
