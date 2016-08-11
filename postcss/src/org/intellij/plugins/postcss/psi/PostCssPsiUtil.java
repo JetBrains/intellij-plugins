@@ -39,6 +39,12 @@ public class PostCssPsiUtil {
   }
 
   @Contract("null -> false")
+  public static boolean isInsideRulesetWithNestedRulesets(@Nullable PsiElement element) {
+    CssRuleset ruleset = PsiTreeUtil.getParentOfType(element, CssRuleset.class);
+    return ruleset != null && PsiTreeUtil.findChildOfAnyType(ruleset.getBlock(), false, CssRuleset.class) != null;
+  }
+
+  @Contract("null -> false")
   public static boolean isInsideCustomSelector(@Nullable PsiElement element) {
     return PsiTreeUtil.getParentOfType(element, PostCssCustomSelectorAtRule.class) != null;
   }
