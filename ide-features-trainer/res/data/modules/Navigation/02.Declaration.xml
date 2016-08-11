@@ -31,6 +31,6 @@ class DeclarationDemo {
     <MoveCaret position="8:16"/>
     <Try description="Use &lt;action=&quot;GotoDeclaration&quot;&gt; to jump to declaration of a class/interface." triggers="com.intellij.codeInsight.navigation.actions.GotoDeclarationAction"/>
     <MoveCaret position="26:17"/>
-    <Try description="To see implementations of a class/interface use &lt;action=&quot;GotoImplementation&quot;&gt;." triggers="GotoImplementation"/>
+    <Try description="To see implementations of a class/interface use &lt;action=&quot;GotoImplementation&quot;&gt;" triggers="GotoImplementation"/>
     <Win/>
 </xml>

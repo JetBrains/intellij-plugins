@@ -39,9 +39,9 @@
 }</CopyText>
     </MouseBlock>
     <Try description="IntelliJ IDEA allows you to navigate between occurrences. First of all, select &lt;code&gt;cellphone&lt;/code&gt; in the code, and press &lt;action=&quot;Find&quot;&gt; to call the Find action." trigger="Find"/>
-    <Try description="To find next occurrences use &lt;action=&quot;EditorEnter&quot;&gt; or &lt;action=&quot;FindNext&quot;&gt;." trigger="com.intellij.find.editorHeaderActions.NextOccurrenceAction"/>
-    <Try description="For previous occurrences press &lt;action=&quot;FindPrevious&quot;&gt;." trigger="com.intellij.find.editorHeaderActions.PrevOccurrenceAction"/>
-    <Try description="With the search panel closed you can still use these shortcuts to navigate between occurrences of the item being searched for earlier. Close search panel by pressing &lt;action=&quot;EditorEscape&quot;&gt; and try to find next occurrence with &lt;action=&quot;FindNext&quot;&gt;." trigger="FindNext" check="training.check.CheckFindBar"/>
+    <Try description="To find next occurrences use &lt;action=&quot;EditorEnter&quot;&gt; or &lt;action=&quot;FindNext&quot;&gt;" trigger="com.intellij.find.editorHeaderActions.NextOccurrenceAction"/>
+    <Try description="For previous occurrences press &lt;action=&quot;FindPrevious&quot;&gt;" trigger="com.intellij.find.editorHeaderActions.PrevOccurrenceAction"/>
+    <Try description="With the search panel closed you can still use these shortcuts to navigate between occurrences of the item being searched for earlier. Close search panel by pressing &lt;action=&quot;EditorEscape&quot;&gt; and try to find next occurrence with &lt;action=&quot;FindNext&quot;&gt;" trigger="FindNext" check="training.check.CheckFindBar"/>
     <Try description="And &lt;action=&quot;FindPrevious&quot;&gt; in a back way." trigger="FindPrevious"/>
     <Win/>
 </xml>
