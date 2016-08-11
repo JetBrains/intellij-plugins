@@ -23,10 +23,10 @@
 </CopyText>
 </MouseBlock>
         <MoveCaret position="10:18" />
-        <Try description="Press &lt;action=&quot;SelectNextOccurrence&quot;&gt; to select the symbol at the caret" trigger="SelectNextOccurrence"/>
-        <Try description="Again press &lt;action=&quot;SelectNextOccurrence&quot;&gt; to select the next occurrence" trigger="SelectNextOccurrence"/>
-        <Try description="Press &lt;action=&quot;UnselectPreviousOccurrence&quot;&gt; to unselect the last occurrence" trigger="UnselectPreviousOccurrence"/>
-        <Try description="Press &lt;action=&quot;SelectAllOccurrences&quot;&gt; to select all occurrences in the file" trigger="SelectAllOccurrences"/>
-        <Try description="Replace &lt;code&gt;th&lt;/code&gt; with &lt;code&gt;td&lt;/code&gt;" check="training.check.CheckMultipleSelections"/>
+        <Try description="Press &lt;action=&quot;SelectNextOccurrence&quot;&gt; to select the symbol at the caret." trigger="SelectNextOccurrence"/>
+        <Try description="Again press &lt;action=&quot;SelectNextOccurrence&quot;&gt; to select the next occurrence." trigger="SelectNextOccurrence"/>
+        <Try description="Press &lt;action=&quot;UnselectPreviousOccurrence&quot;&gt; to unselect the last occurrence." trigger="UnselectPreviousOccurrence"/>
+        <Try description="Press &lt;action=&quot;SelectAllOccurrences&quot;&gt; to select all occurrences in the file." trigger="SelectAllOccurrences"/>
+        <Try description="Replace &lt;code&gt;th&lt;/code&gt; with &lt;code&gt;td&lt;/code&gt;." check="training.check.CheckMultipleSelections"/>
     <Win/>
 </xml>

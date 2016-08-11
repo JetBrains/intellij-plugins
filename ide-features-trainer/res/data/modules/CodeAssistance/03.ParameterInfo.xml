@@ -13,7 +13,7 @@ class FrameDemo {
 }</CopyText>
 </MouseBlock>
         <MoveCaret position="7:23" />
-        <Try description="Press &lt;action=&quot;ParameterInfo&quot;&gt; to see method signature" trigger="ParameterInfo"/>
-        <Try description="Use &lt;bold&gt;175&lt;/bold&gt; as width and &lt;bold&gt;100&lt;/bold&gt; as height" check="training.check.CheckParameterInfo"/>
+        <Try description="Press &lt;action=&quot;ParameterInfo&quot;&gt; to see method signature." trigger="ParameterInfo"/>
+        <Try description="Use &lt;bold&gt;175&lt;/bold&gt; as width and &lt;bold&gt;100&lt;/bold&gt; as height." check="training.check.CheckParameterInfo"/>
     <Win/>
 </xml>

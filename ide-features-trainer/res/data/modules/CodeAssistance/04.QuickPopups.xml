@@ -20,8 +20,8 @@ class DecimalFormatDemo {
 }</CopyText>
 </MouseBlock>
         <MoveCaret position="5:9" />
-        <Try description="Press &lt;action=&quot;QuickJavaDoc&quot;&gt; to see documentation for the symbol at at caret" trigger="QuickJavaDoc"/>
-        <Try description="Press &lt;action=&quot;EditorEscape&quot;&gt; to close the popup" check="training.check.CheckQuickPopupsQuickDoc"/>
-        <Try description="Press &lt;action=&quot;QuickImplementations&quot;&gt; to see the definition of the symbol at the caret" trigger="QuickImplementations"/>
+        <Try description="Press &lt;action=&quot;QuickJavaDoc&quot;&gt; to see documentation for the symbol at at caret." trigger="QuickJavaDoc"/>
+        <Try description="Press &lt;action=&quot;EditorEscape&quot;&gt; to close the popup." check="training.check.CheckQuickPopupsQuickDoc"/>
+        <Try description="Press &lt;action=&quot;QuickImplementations&quot;&gt; to see the definition of the symbol at the caret." trigger="QuickImplementations"/>
     <Win/>
 </xml>
