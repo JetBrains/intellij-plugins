@@ -576,7 +576,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         final String idAttributeValue = idAttribute.getValue();
         final String type = idAttributeAndItsType.second;
         map.put(idAttributeValue,
-                new AnnotationBackedDescriptorImpl(idAttributeValue, ClassBackedElementDescriptor.this, false, type, null, idAttribute));
+                new AnnotationBackedDescriptorImpl(idAttributeValue, this, false, type, null, idAttribute));
         return true;
       });
     }

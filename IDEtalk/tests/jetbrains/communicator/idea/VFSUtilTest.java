@@ -84,7 +84,7 @@ public class VFSUtilTest extends PlatformTestCase {
   protected void runTest() throws Throwable {
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
-        VFSUtilTest.super.runTest();
+        super.runTest();
       }
       catch (AssertionFailedError e) {
         throw e;

@@ -47,7 +47,7 @@ public class SendToMayaCommand {
 
       new RunContentExecutor(myProject, process)
         .withTitle(getTitle())
-        .withRerun(() -> SendToMayaCommand.this.run())
+        .withRerun(() -> this.run())
         .withStop(() -> process.destroyProcess(), () -> !process.isProcessTerminated()
         )
         .run();

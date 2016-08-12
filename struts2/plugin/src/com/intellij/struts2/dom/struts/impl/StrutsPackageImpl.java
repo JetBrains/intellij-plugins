@@ -83,7 +83,7 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
         () -> {
           final Ref<ResultType> result = new Ref<>();
           final StrutsPackageHierarchyWalker walker =
-            new StrutsPackageHierarchyWalker(StrutsPackageImpl.this, strutsPackage -> {
+            new StrutsPackageHierarchyWalker(this, strutsPackage -> {
               final List<ResultType> resultTypes = strutsPackage.getResultTypes();
               for (final ResultType resultType : resultTypes) {
                 final GenericAttributeValue<Boolean> defaultAttribute = resultType.getDefault();

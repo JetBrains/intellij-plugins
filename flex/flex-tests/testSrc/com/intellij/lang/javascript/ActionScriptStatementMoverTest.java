@@ -35,7 +35,7 @@ public class ActionScriptStatementMoverTest extends JSStatementMoverTestBase {
 
   public void testMoveStatementInMxml() throws Exception {
     doTestWithJSSupport(() -> {
-      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), ActionScriptStatementMoverTest.this.getClass());
+      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass());
       JSTestUtils.initJSIndexes(getProject());
 
       doMoveStatementTest("mxml");

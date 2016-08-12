@@ -106,7 +106,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
       // actually this if-condition is always true because real model doesn't report FlexUnitOutputFolderProblem
       if (!(problem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem)) {
         PlaceInProjectStructure place =
-          new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.locationOnTab);
+          new PlaceInBuildConfiguration(this, problem.tabName, problem.locationOnTab);
         final ProjectStructureProblemType problemType = problem.severity == ProjectStructureProblemType.Severity.ERROR
           ? ProjectStructureProblemType.error(problem.errorId)
           : ProjectStructureProblemType.warning(problem.errorId);

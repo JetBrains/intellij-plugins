@@ -393,10 +393,10 @@ public class FlexDebugProcess extends XDebugProcess {
   private void startCommandProcessingThread() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       myDebuggerManagerThread = Thread.currentThread();
-      synchronized (FlexDebugProcess.this) {
+      synchronized (this) {
         if (!debugSessionInitialized) {
           try {
-            FlexDebugProcess.this.wait();
+            this.wait();
           }
           catch (InterruptedException e) {
             // ignore

@@ -112,7 +112,7 @@ public class VmConnection {
     // Start a reader thread.
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       for (VmListener listener : listeners) {
-        listener.connectionOpened(VmConnection.this);
+        listener.connectionOpened(this);
       }
 
       try {
@@ -137,7 +137,7 @@ public class VmConnection {
       }
 
       for (VmListener listener : listeners) {
-        listener.connectionClosed(VmConnection.this);
+        listener.connectionClosed(this);
       }
 
       handleTerminated();

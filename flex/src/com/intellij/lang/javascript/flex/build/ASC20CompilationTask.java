@@ -83,7 +83,7 @@ public class ASC20CompilationTask extends FlexCompilationTask {
         printPreviousLine(compilationManager);
       }
       catch (IOException e) {
-        compilationManager.addMessage(ASC20CompilationTask.this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
+        compilationManager.addMessage(this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
         myCompilationFailed = true;
       }
       finally {

@@ -130,8 +130,8 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
             formatFixer.fixFormat();
           }
         }
-        CreateConstructorFix.super.applyFix(project, psiElement, myClass.getContainingFile(),
-                                            getEditor(myClass.getProject(), myClass.getContainingFile()));
+        super.applyFix(project, psiElement, myClass.getContainingFile(),
+                       getEditor(myClass.getProject(), myClass.getContainingFile()));
       }
       finally {
         l.finish();

@@ -171,7 +171,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
         () -> {
           final Map<String, List<DartComponent>> nameToMembers = new THashMap<>();
 
-          for (DartComponent component : DartResolveUtil.findNamedSubComponents(false, AbstractDartPsiClass.this)) {
+          for (DartComponent component : DartResolveUtil.findNamedSubComponents(false, this)) {
             final String componentName = component.getName();
 
             final DartClass dartClass = PsiTreeUtil.getParentOfType(component, DartClass.class);

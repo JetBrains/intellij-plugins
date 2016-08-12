@@ -225,7 +225,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
         excludedIds.add(usageToEditIdMap.get(excludedUsage));
       }
 
-      DartRenameDialog.super.doRefactoring(excludedIds);
+      super.doRefactoring(excludedIds);
     };
   }
 }

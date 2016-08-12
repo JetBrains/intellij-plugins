@@ -63,7 +63,7 @@ public class CfmlFile extends PsiFileBase {
   CachedValueProvider<Map<String, CfmlImplicitVariable>> createImplicitVarsProvider() {
     return () -> {
       final Map<String, CfmlImplicitVariable> result = new THashMap<>();
-      CfmlFile.this.accept(new PsiRecursiveElementVisitor() {
+      this.accept(new PsiRecursiveElementVisitor() {
         @Override
         public void visitComment(final PsiComment comment) {
           final String text = comment.getText();
@@ -79,7 +79,7 @@ public class CfmlFile extends PsiFileBase {
           var.setType(nameAndType[1]);
         }
       });
-      return CachedValueProvider.Result.create(result, CfmlFile.this);
+      return CachedValueProvider.Result.create(result, this);
     };
   }
 
