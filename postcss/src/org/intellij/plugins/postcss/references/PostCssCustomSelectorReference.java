@@ -13,6 +13,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<PsiElement> {
   public PostCssCustomSelectorReference(PsiElement psiElement) {
@@ -22,8 +23,9 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
+    String key = getElementName();
+    if (key == null) return ResolveResult.EMPTY_ARRAY;
     GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(myElement);
-    String key = StringUtil.trimStart(myElement.getText(), "--");
     return PsiElementResolveResult.createResults(
       StubIndex.getElements(PostCssCustomSelectorIndex.KEY, key, myElement.getProject(), scope, PostCssCustomSelector.class));
   }
@@ -35,8 +37,13 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    return element instanceof PostCssCustomSelector &&
-           StringUtil.trimStart(getCanonicalText(), "--").equals(((PostCssCustomSelector)element).getName());
+    String name = getElementName();
+    return name != null && element instanceof PostCssCustomSelector && name.equals(((PostCssCustomSelector)element).getName());
+  }
+
+  @Nullable
+  private String getElementName() {
+    return StringUtil.startsWith(getCanonicalText(), "--") ? getCanonicalText().substring(2) : null;
   }
 
   @NotNull

@@ -13,6 +13,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<PsiElement> {
   public PostCssCustomMediaReference(PsiElement psiElement) {
@@ -22,8 +23,9 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
+    String key = getElementName();
+    if (key == null) return ResolveResult.EMPTY_ARRAY;
     GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(myElement);
-    String key = StringUtil.trimStart(myElement.getText(), "--");
     return PsiElementResolveResult.createResults(
       StubIndex.getElements(PostCssCustomMediaIndex.KEY, key, myElement.getProject(), scope, PostCssCustomMedia.class));
   }
@@ -35,8 +37,13 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    return element instanceof PostCssCustomMedia &&
-           StringUtil.trimStart(getCanonicalText(), "--").equals(((PostCssCustomMedia)element).getName());
+    String name = getElementName();
+    return name != null && element instanceof PostCssCustomMedia && name.equals(((PostCssCustomMedia)element).getName());
+  }
+
+  @Nullable
+  private String getElementName() {
+    return StringUtil.startsWith(getCanonicalText(), "--") ? getCanonicalText().substring(2) : null;
   }
 
   @NotNull
