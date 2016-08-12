@@ -20,6 +20,14 @@ public class PostCssFindUsagesTest extends PostCssFixtureTestCase {
     doTest(1);
   }
 
+  public void testCustomPropertySet() {
+    doTest(2);
+  }
+
+  public void testCustomPropertySetDifferentCases() {
+    doTest(1);
+  }
+
   private void doTest(int count) {
     assertEquals(count, myFixture.testFindUsages(getTestName(true) + ".pcss").size());
   }
