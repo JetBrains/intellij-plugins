@@ -31,40 +31,20 @@ import java.awt.event.MouseListener;
  */
 public class MainLearnPanel extends JPanel {
 
-    private int width;
-
-    //UI Preferences
-    private int north_inset;
-    private int west_inset;
-    private int south_inset;
-    private int east_inset;
-    private int check_width;
-    private int check_right_indent;
-
     private static SimpleAttributeSet REGULAR = new SimpleAttributeSet();
     private static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
-    private int headerGap;
-    private int moduleGap;
-    private Font moduleNameFont;
-    private Font descriptionFont;
-    private Font progressLabelFont;
-    private Color descriptionColor;
-    private int fontSize;
-    private String fontFace;
 
     private JPanel lessonPanel;
     private JPanel submitFeedbackPanel;
     private LinkLabel submitFeedback;
-    private int progressGap;
 
     private BidirectionalMap<Module, LinkLabel> module2linklabel;
 
-    MainLearnPanel(int width) {
+    MainLearnPanel() {
         super();
         module2linklabel = new BidirectionalMap<>();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setFocusable(false);
-        this.width = width;
 
         //Obligatory block
         generalizeUI();
@@ -76,8 +56,8 @@ public class MainLearnPanel extends JPanel {
         add(submitFeedbackPanel);
 
         //set LearnPanel UI
-        this.setPreferredSize(new Dimension(width, 100));
-        this.setBorder(new EmptyBorder(north_inset, west_inset, south_inset, east_inset));
+        this.setPreferredSize(new Dimension(LearnUIManager.getInstance().getWidth(), 100));
+        this.setBorder(LearnUIManager.getInstance().getEmptyBorder());
 
         revalidate();
         repaint();
@@ -86,32 +66,10 @@ public class MainLearnPanel extends JPanel {
 
 
     private void generalizeUI() {
-        //generalize fonts, colors and sizes
-        //TODO: change size to UiUtil size
-        west_inset = 13;
-        north_inset = 16;
-        east_inset = 32;
-        south_inset = 32;
-        check_width = LearnIcons.CheckmarkGray.getIconWidth();
-        check_right_indent = 5;
 
-        //UI colors and fonts
-        fontSize = UISettings.getInstance().FONT_SIZE;
-        fontFace = UISettings.getInstance().FONT_FACE;
-
-        moduleNameFont = new Font(fontFace, Font.BOLD, fontSize + 1);
-        progressLabelFont = new Font(fontFace, Font.PLAIN, fontSize);
-        descriptionFont = new Font(fontFace, Font.PLAIN, fontSize);
-        descriptionColor = Gray._128;
-
-        headerGap = 2;
-        moduleGap = 20;
-        progressGap = 12;
-
-
-        StyleConstants.setFontFamily(REGULAR, descriptionFont.getFamily());
-        StyleConstants.setFontSize(REGULAR, descriptionFont.getSize());
-        StyleConstants.setForeground(REGULAR, descriptionColor);
+        StyleConstants.setFontFamily(REGULAR, LearnUIManager.getInstance().getFontFace());
+        StyleConstants.setFontSize(REGULAR, LearnUIManager.getInstance().getFontSize());
+        StyleConstants.setForeground(REGULAR, LearnUIManager.getInstance().getDescriptionColor());
 
         StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0.0f);
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
@@ -138,7 +96,7 @@ public class MainLearnPanel extends JPanel {
             CourseManager.getInstance().setFeedbackView();
         }, null);
         submitFeedbackPanel.add(submitFeedback);
-        submitFeedbackPanel.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
+        submitFeedbackPanel.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
     }
 
     private void initLessonPanel() {
@@ -148,7 +106,7 @@ public class MainLearnPanel extends JPanel {
             JPanel moduleHeader = new JPanel();
             moduleHeader.setFocusable(false);
             moduleHeader.setAlignmentX(LEFT_ALIGNMENT);
-            moduleHeader.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
+            moduleHeader.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
             moduleHeader.setOpaque(false);
             moduleHeader.setLayout(new BoxLayout(moduleHeader, BoxLayout.X_AXIS));
             LinkLabel moduleName = new LinkLabel(module.getName(), null);
@@ -163,7 +121,7 @@ public class MainLearnPanel extends JPanel {
                     e.printStackTrace();
                 }
             }, null);
-            moduleName.setFont(moduleNameFont);
+            moduleName.setFont(LearnUIManager.getInstance().getModuleNameFont());
             moduleName.setAlignmentY(BOTTOM_ALIGNMENT);
             moduleName.setAlignmentX(LEFT_ALIGNMENT);
             String progressStr = calcProgress(module);
@@ -173,14 +131,14 @@ public class MainLearnPanel extends JPanel {
             } else {
                 progressLabel = new JBLabel();
             }
-            progressLabel.setFont(progressLabelFont.deriveFont(Font.ITALIC));
+            progressLabel.setFont(LearnUIManager.getInstance().getItalicFont());
             progressLabel.setForeground(JBColor.BLACK);
             progressLabel.setAlignmentY(BOTTOM_ALIGNMENT);
             moduleHeader.add(moduleName);
-            moduleHeader.add(Box.createRigidArea(new Dimension(progressGap, 0)));
+            moduleHeader.add(Box.createRigidArea(new Dimension(LearnUIManager.getInstance().getProgressGap(), 0)));
             moduleHeader.add(progressLabel);
 
-            MyJTextPane descriptionPane = new MyJTextPane(width);
+            MyJTextPane descriptionPane = new MyJTextPane(LearnUIManager.getInstance().getWidth());
             descriptionPane.setEditable(false);
             descriptionPane.setOpaque(false);
             descriptionPane.setParagraphAttributes(PARAGRAPH_STYLE, true);
@@ -192,13 +150,13 @@ public class MainLearnPanel extends JPanel {
             }
             descriptionPane.setAlignmentX(Component.LEFT_ALIGNMENT);
             descriptionPane.setMargin(new Insets(0, 0, 0, 0));
-            descriptionPane.setBorder(new EmptyBorder(0, check_width + check_right_indent, 0, 0));
+            descriptionPane.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
             descriptionPane.addMouseListener(delegateToLinkLabel(descriptionPane, moduleName));
 
             lessonPanel.add(moduleHeader);
-            lessonPanel.add(Box.createVerticalStrut(headerGap));
+            lessonPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getHeaderGap()));
             lessonPanel.add(descriptionPane);
-            lessonPanel.add(Box.createVerticalStrut(moduleGap));
+            lessonPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getModuleGap()));
         }
         lessonPanel.add(Box.createVerticalGlue());
     }
@@ -274,8 +232,8 @@ public class MainLearnPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + (west_inset + east_inset),
-                (int) lessonPanel.getMinimumSize().getHeight() + (north_inset + south_inset));
+        return new Dimension((int) lessonPanel.getMinimumSize().getWidth() + (LearnUIManager.getInstance().getWestInset() + LearnUIManager.getInstance().getWestInset()),
+                (int) lessonPanel.getMinimumSize().getHeight() + (LearnUIManager.getInstance().getNorthInset() + LearnUIManager.getInstance().getSouthInset()));
     }
 
     @Override
@@ -293,9 +251,9 @@ public class MainLearnPanel extends JPanel {
                     final Point basePoint = this.getLocationOnScreen();
                     int y = point.y + 1 - basePoint.y;
                     if (!SystemInfo.isMac) {
-                        LearnIcons.CheckmarkGray.paintIcon(this, g, west_inset, y + 4);
+                        LearnIcons.CheckmarkGray.paintIcon(this, g, LearnUIManager.getInstance().getWestInset(), y + 4);
                     } else {
-                        LearnIcons.CheckmarkGray.paintIcon(this, g, west_inset, y + 2);
+                        LearnIcons.CheckmarkGray.paintIcon(this, g, LearnUIManager.getInstance().getWestInset(), y + 2);
                     }
                 }
             }
@@ -309,7 +267,7 @@ public class MainLearnPanel extends JPanel {
 
     @Override
     public Color getBackground() {
-        if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
+        if (!UIUtil.isUnderDarcula()) return LearnUIManager.getInstance().getBackgroundColor();
         else return UIUtil.getPanelBackground();
     }
 
