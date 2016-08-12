@@ -25,7 +25,6 @@ public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvid
         myContentPanel = new JPanel();
     }
 
-    public static int preferableWidth = 350;
 
     public LearnToolWindow(boolean vertical) {
         super(vertical);
@@ -38,8 +37,8 @@ public class LearnToolWindow extends SimpleToolWindowPanel implements DataProvid
     public void init(Project project) {
 
         myProject = project;
-        myLearnPanel = new LearnPanel(preferableWidth);
-        mainLearnPanel = new MainLearnPanel(preferableWidth);
+        myLearnPanel = new LearnPanel();
+        mainLearnPanel = new MainLearnPanel();
         CourseManager.getInstance().setMainLearnPanel(mainLearnPanel);
         CourseManager.getInstance().setLearnPanel(myLearnPanel);
         scrollPane = new JBScrollPane(mainLearnPanel);

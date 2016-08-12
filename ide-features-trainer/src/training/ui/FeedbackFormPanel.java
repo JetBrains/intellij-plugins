@@ -1,8 +1,6 @@
 package training.ui;
 
 import com.intellij.ide.ui.UISettings;
-import com.intellij.ui.Gray;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.ui.AsyncProcessIcon;
@@ -15,7 +13,10 @@ import training.statistic.FeedbackEvent;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -26,14 +27,6 @@ import java.util.Map;
  */
 public class FeedbackFormPanel extends JPanel {
 
-    private int left_indent;
-    private int width;
-
-    //UI Preferences
-    private int north_inset;
-    private int west_inset;
-    private int south_inset;
-    private int east_inset;
 
     private JLabel caption;
     private MyJTextPane description;
@@ -41,28 +34,13 @@ public class FeedbackFormPanel extends JPanel {
     private static SimpleAttributeSet REGULAR = new SimpleAttributeSet();
     private static SimpleAttributeSet REGULAR_GRAY = new SimpleAttributeSet();
     private static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
-    private int headerGap;
-    private int afterCaptionGap;
-    private int rateQuestionGap;
-    private int groupGap;
-
-    private Font questionRateLabelFont;
-    private Font questionFont;
-    private Color questionColor;
-    private int fontSize;
-
-    private Font descriptionFont;
-    private Color descriptionColor;
 
     private JPanel mainPanel;
     private JPanel submitFeedbackPanel;
     private LinkLabel backToModules;
 
     private ArrayList<RadioButtonRow> radioButtonRows;
-    private Font radioButtonLabelFont;
     private Color radioButtonLabelColor;
-    private int label_line_gap = 12;
-    private int label_vertical_gap = 5;
 
     private JTextArea customFeedback;
 
@@ -71,14 +49,12 @@ public class FeedbackFormPanel extends JPanel {
     AsyncProcessIcon submitFeedbackAsyncProcessIcon;
 
 
-    public FeedbackFormPanel(int width) {
+    public FeedbackFormPanel() {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setFocusable(false);
-        this.width = width;
 
-        //Obligatory block
-        generalizeUI();
+        init();
         setOpaque(true);
         setBackground(getBackground());
         initMainPanel();
@@ -87,8 +63,8 @@ public class FeedbackFormPanel extends JPanel {
         add(submitFeedbackPanel);
 
         //set LearnPanel UI
-        this.setPreferredSize(new Dimension(width, 100));
-        this.setBorder(new EmptyBorder(north_inset, west_inset, south_inset, east_inset));
+        this.setPreferredSize(new Dimension(LearnUIManager.getInstance().getWidth(), 100));
+        this.setBorder(LearnUIManager.getInstance().getEmptyBorder());
 
         revalidate();
         repaint();
@@ -96,30 +72,13 @@ public class FeedbackFormPanel extends JPanel {
     }
 
 
-    private void generalizeUI() {
-        //generalize fonts, colors and sizes
-        //TODO: change size to UiUtil size
-        west_inset = 13;
-        north_inset = 16;
-        east_inset = 32;
-        south_inset = 32;
-
-        left_indent = 17;
-
-        //UI colors and fonts
-        fontSize = UISettings.getInstance().FONT_SIZE;
-        questionFont = new Font(UISettings.getInstance().FONT_FACE, Font.PLAIN, fontSize);
-        questionColor = new JBColor(new Color(0, 0, 0), Gray._202);
-        descriptionFont = new Font(UISettings.getInstance().FONT_FACE, Font.PLAIN, fontSize);
-        descriptionColor = Gray._128;
-        radioButtonLabelFont = new Font(UISettings.getInstance().FONT_FACE, Font.PLAIN, fontSize - 2);
-        radioButtonLabelColor = Gray._128;
+    private void init() {
 
         caption = new JLabel();
         caption.setOpaque(false);
-        caption.setFont(new Font(UISettings.getInstance().FONT_FACE, Font.BOLD, fontSize + 1));
+        caption.setFont(LearnUIManager.getInstance().getModuleNameFont());
 
-        description = new MyJTextPane(width);
+        description = new MyJTextPane(LearnUIManager.getInstance().getWidth());
         description.setOpaque(false);
         description.setEditable(false);
         description.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -166,19 +125,13 @@ public class FeedbackFormPanel extends JPanel {
         submitFeedbackButtonPanel.add(submitFeedbackAsyncProcessIcon);
         submitFeedbackButtonPanel.setAlignmentX(LEFT_ALIGNMENT);
 
+        StyleConstants.setFontFamily(REGULAR, LearnUIManager.getInstance().getPlainFont().getFamily());
+        StyleConstants.setFontSize(REGULAR, LearnUIManager.getInstance().getFontSize());
+        StyleConstants.setForeground(REGULAR, LearnUIManager.getInstance().getQuestionColor());
 
-        headerGap = 2;
-        afterCaptionGap = 12;
-        rateQuestionGap = 16;
-        groupGap = 24;
-
-        StyleConstants.setFontFamily(REGULAR, questionFont.getFamily());
-        StyleConstants.setFontSize(REGULAR, questionFont.getSize());
-        StyleConstants.setForeground(REGULAR, questionColor);
-
-        StyleConstants.setFontFamily(REGULAR_GRAY, descriptionFont.getFamily());
-        StyleConstants.setFontSize(REGULAR_GRAY, descriptionFont.getSize());
-        StyleConstants.setForeground(REGULAR_GRAY, descriptionColor);
+        StyleConstants.setFontFamily(REGULAR_GRAY, LearnUIManager.getInstance().getPlainFont().getFamily());
+        StyleConstants.setFontSize(REGULAR_GRAY, LearnUIManager.getInstance().getFontSize());
+        StyleConstants.setForeground(REGULAR_GRAY, LearnUIManager.getInstance().getDescriptionColor());
 
         StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0.0f);
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
@@ -211,16 +164,15 @@ public class FeedbackFormPanel extends JPanel {
 
     private void initMainPanel() {
 
-
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
         mainPanel.setOpaque(false);
         mainPanel.setFocusable(false);
 
         mainPanel.add(caption);
-        mainPanel.add(Box.createVerticalStrut(afterCaptionGap));
+        mainPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getAfterCaptionGap()));
         mainPanel.add(description);
-        mainPanel.add(Box.createVerticalStrut(groupGap));
+        mainPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getGroupGap()));
 
         try {
             initRateQuestionsPanel();
@@ -262,12 +214,12 @@ public class FeedbackFormPanel extends JPanel {
             JPanel questionBox = new JPanel();
             questionBox.setFocusable(false);
             questionBox.setAlignmentX(LEFT_ALIGNMENT);
-            questionBox.setBorder(new EmptyBorder(0, left_indent, 0, 0));
+            questionBox.setBorder(new EmptyBorder(0, LearnUIManager.getInstance().getLeftIndent(), 0, 0));
             questionBox.setOpaque(false);
             questionBox.setLayout(new BoxLayout(questionBox, BoxLayout.X_AXIS));
 
             //rate bar
-            MyJTextPane ratePane = new MyJTextPane(width);
+            MyJTextPane ratePane = new MyJTextPane(LearnUIManager.getInstance().getWidth());
             ratePane.getDocument().insertString(0, rateQuestion.question, REGULAR);
             ratePane.setEditable(false);
             ratePane.setOpaque(false);
@@ -282,13 +234,13 @@ public class FeedbackFormPanel extends JPanel {
             ratePane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
             mainPanel.add(ratePane);
-            mainPanel.add(Box.createVerticalStrut(4 * headerGap));
+            mainPanel.add(Box.createVerticalStrut(4 * LearnUIManager.getInstance().getHeaderGap()));
             mainPanel.add(radioButtonRow);
-            mainPanel.add(Box.createVerticalStrut(rateQuestionGap));
+            mainPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getRateQuestionGap()));
         }
-        mainPanel.add(Box.createVerticalStrut(rateQuestionGap));
+        mainPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getRateQuestionGap()));
 
-        MyJTextPane customFeedbackQuestion = new MyJTextPane(width);
+        MyJTextPane customFeedbackQuestion = new MyJTextPane(LearnUIManager.getInstance().getWidth());
 
         customFeedbackQuestion.getDocument().insertString(0, FeedbackManager.getInstance().getCustomQuestion(), REGULAR);
         customFeedbackQuestion.setEditable(false);
@@ -299,10 +251,10 @@ public class FeedbackFormPanel extends JPanel {
         customFeedbackQuestion.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         mainPanel.add(customFeedbackQuestion);
-        mainPanel.add(Box.createVerticalStrut(2 * headerGap));
+        mainPanel.add(Box.createVerticalStrut(2 * LearnUIManager.getInstance().getHeaderGap()));
 
         mainPanel.add(customFeedback);
-        mainPanel.add(Box.createVerticalStrut(rateQuestionGap));
+        mainPanel.add(Box.createVerticalStrut(LearnUIManager.getInstance().getRateQuestionGap()));
 
         mainPanel.add(submitFeedbackButtonPanel);
         mainPanel.add(Box.createVerticalGlue());
@@ -333,14 +285,14 @@ public class FeedbackFormPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension((int) mainPanel.getMinimumSize().getWidth() + (west_inset + east_inset),
-                (int) mainPanel.getMinimumSize().getHeight() + (north_inset + south_inset));
+        return new Dimension((int) mainPanel.getMinimumSize().getWidth() + (LearnUIManager.getInstance().getWestInset() + LearnUIManager.getInstance().getEastInset()),
+                (int) mainPanel.getMinimumSize().getHeight() + (LearnUIManager.getInstance().getNorthInset() + LearnUIManager.getInstance().getSouthInset()));
     }
 
 
     @Override
     public Color getBackground() {
-        if (!UIUtil.isUnderDarcula()) return new Color(245, 245, 245);
+        if (!UIUtil.isUnderDarcula()) return LearnUIManager.getInstance().getBackgroundColor();
         else return UIUtil.getPanelBackground();
     }
 
@@ -376,15 +328,15 @@ public class FeedbackFormPanel extends JPanel {
             //add low rate label
             if (lowRate != null) {
                 myLowRateLabel = new JLabel(lowRate);
-                myLowRateLabel.setForeground(descriptionColor);
+                myLowRateLabel.setForeground(LearnUIManager.getInstance().getDescriptionColor());
                 myLowRateLabel.setOpaque(false);
                 add(myLowRateLabel);
-                add(Box.createHorizontalStrut(label_line_gap));
+                add(Box.createHorizontalStrut(LearnUIManager.getInstance().getLabelLineGap()));
             }
 
             setFocusable(false);
             setAlignmentX(LEFT_ALIGNMENT);
-            setBorder(new EmptyBorder(0, left_indent, label_vertical_gap + UISettings.getInstance().FONT_SIZE, 0));
+            setBorder(new EmptyBorder(0, LearnUIManager.getInstance().getLeftIndent(), LearnUIManager.getInstance().getLabelVerticalGap() + UISettings.getInstance().FONT_SIZE, 0));
             setOpaque(false);
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -392,9 +344,9 @@ public class FeedbackFormPanel extends JPanel {
 
             //add high rate label
             if (highRate != null) {
-                add(Box.createHorizontalStrut(label_line_gap));
+                add(Box.createHorizontalStrut(LearnUIManager.getInstance().getLabelLineGap()));
                 myHighRateLabel = new JLabel(highRate);
-                myHighRateLabel.setForeground(descriptionColor);
+                myHighRateLabel.setForeground(LearnUIManager.getInstance().getDescriptionColor());
                 myHighRateLabel.setOpaque(false);
                 add(myHighRateLabel);
             }
@@ -442,26 +394,12 @@ public class FeedbackFormPanel extends JPanel {
         }
 
         private void paintLabel(Graphics g, String label, JRadioButton jrb) {
-            FontMetrics fontMetrics = g.getFontMetrics();
-            g.setFont(radioButtonLabelFont);
-            g.setColor(radioButtonLabelColor);
+            g.setFont(LearnUIManager.getInstance().getRadioButtonLabelFont());
+            g.setColor(LearnUIManager.getInstance().getRadioButtonLabelColor());
             int height = g.getFontMetrics().getHeight();
             int width = g.getFontMetrics().stringWidth(label);
             Point location = jrb.getLocation();
-            g.drawString(label, location.x + jrb.getBounds().height / 2 - width / 2, location.y + jrb.getBounds().height + label_vertical_gap + height / 2);
+            g.drawString(label, location.x + jrb.getBounds().height / 2 - width / 2, location.y + jrb.getBounds().height + LearnUIManager.getInstance().getLabelVerticalGap() + height / 2);
         }
-
-
-//        @Override
-//        public Dimension getPreferredSize() {
-//            Dimension preferredSize = super.getPreferredSize();
-//            Graphics g = getGraphics();
-//            FontMetrics fontMetrics = g.getFontMetrics();
-//            g.setFont(radioButtonLabelFont);
-//            g.setColor(radioButtonLabelColor);
-//            int height = g.getFontMetrics().getHeight();
-//
-//            return new Dimension(preferredSize.width, preferredSize.height + label_vertical_gap + 2 * height);
-//        }
     }
 }

@@ -29,69 +29,60 @@ class LessonMessagePane extends JTextPane {
     private static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
 
     private ArrayList<LessonMessage> lessonMessages = new ArrayList<>();
-    private Color passedColor = JBColor.GRAY;
+
+    //arc & indent for shortcut back plate
     private static int arc = 4;
     private static int indent = 2;
-//    private JBColor bckshrtct = new JBColor(new Color(218, 226, 237), new Color(39, 43, 46));
-    private JBColor bckShortcutColor;
-    private Icon passedIcon;
-    private int fontSize;
+
     private String fontFamily;
 
-    LessonMessagePane(int fontSize, String fontFace, int leftIndent) {
+    //, fontFace, check_width + check_right_indent
+    LessonMessagePane() {
         super();
-        this.fontSize = fontSize;
-        fontFamily = new Font(fontFace, Font.PLAIN, fontSize).getFamily();
-        initStyleConstants(leftIndent);
+        initStyleConstants();
         setEditable(false);
-        this.setParagraphAttributes(PARAGRAPH_STYLE, true);
-        setFont(new Font(fontFace, Font.PLAIN, fontSize));
     }
 
-    private void initStyleConstants(int leftIndent) {
+    private void initStyleConstants() {
+        fontFamily = new Font(LearnUIManager.getInstance().getFontFace(), Font.PLAIN, LearnUIManager.getInstance().getFontSize()).getFamily();
+        setFont(new Font(LearnUIManager.getInstance().getFontFace(), Font.PLAIN, LearnUIManager.getInstance().getFontSize()));
+
         StyleConstants.setFontFamily(REGULAR, fontFamily);
-        StyleConstants.setFontSize(REGULAR, fontSize);
+        StyleConstants.setFontSize(REGULAR, LearnUIManager.getInstance().getFontSize());
         StyleConstants.setForeground(REGULAR, JBColor.BLACK);
 
         StyleConstants.setFontFamily(BOLD, fontFamily);
-        StyleConstants.setFontSize(BOLD, fontSize);
+        StyleConstants.setFontSize(BOLD, LearnUIManager.getInstance().getFontSize());
         StyleConstants.setBold(BOLD, true);
         StyleConstants.setForeground(BOLD, JBColor.BLACK);
 
         StyleConstants.setFontFamily(SHORTCUT, fontFamily);
-        StyleConstants.setFontSize(SHORTCUT, fontSize);
+        StyleConstants.setFontSize(SHORTCUT, LearnUIManager.getInstance().getFontSize());
         StyleConstants.setBold(SHORTCUT, true);
         StyleConstants.setForeground(SHORTCUT, JBColor.BLACK);
 
         StyleConstants.setForeground(CODE, JBColor.BLUE);
         StyleConstants.setFontFamily(CODE, EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
-        StyleConstants.setFontSize(CODE, fontSize);
+        StyleConstants.setFontSize(CODE, LearnUIManager.getInstance().getFontSize());
 
         StyleConstants.setForeground(LINK, JBColor.BLUE);
         StyleConstants.setFontFamily(LINK, fontFamily);
         StyleConstants.setUnderline(LINK, true);
-        StyleConstants.setFontSize(LINK, fontSize);
+        StyleConstants.setFontSize(LINK, LearnUIManager.getInstance().getFontSize());
 
-        StyleConstants.setLeftIndent(PARAGRAPH_STYLE, leftIndent);
+        StyleConstants.setLeftIndent(PARAGRAPH_STYLE, LearnUIManager.getInstance().getCheckIndent());
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
         StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 16.0f);
         StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f);
         StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.2f);
-    }
 
-    void setUI(Color regularFontColor,
-               Color shortcutColor,
-               Color codeFontColor,
-               Color linkFontColor,
-               Color passedColor,
-               JBColor shortcutBackgroundColor) {
-        StyleConstants.setForeground(REGULAR, regularFontColor);
-        StyleConstants.setForeground(BOLD, shortcutColor);
-        StyleConstants.setForeground(SHORTCUT, shortcutColor);
-        StyleConstants.setForeground(LINK, linkFontColor);
-        StyleConstants.setForeground(CODE, codeFontColor);
-        this.passedColor = passedColor;
-        this.bckShortcutColor = shortcutBackgroundColor;
+        StyleConstants.setForeground(REGULAR, LearnUIManager.getInstance().getDefaultTextColor());
+        StyleConstants.setForeground(BOLD, LearnUIManager.getInstance().getDefaultTextColor());
+        StyleConstants.setForeground(SHORTCUT, LearnUIManager.getInstance().getShortcutTextColor());
+        StyleConstants.setForeground(LINK, LearnUIManager.getInstance().getLessonLinkColor());
+        StyleConstants.setForeground(CODE, LearnUIManager.getInstance().getLessonLinkColor());
+
+        this.setParagraphAttributes(PARAGRAPH_STYLE, true);
     }
 
     void addMessage(String text) {
@@ -168,7 +159,7 @@ class LessonMessagePane extends JTextPane {
 
             //Repaint text with passed style
             Style passedStyle = this.addStyle("PassedStyle", null);
-            StyleConstants.setForeground(passedStyle, passedColor);
+            StyleConstants.setForeground(passedStyle, LearnUIManager.getInstance().getPassedColor());
             final StyledDocument doc = getStyledDocument();
 
             doc.setCharacterAttributes(0, lessonMessage.getEnd(), passedStyle, false);
@@ -247,7 +238,9 @@ class LessonMessagePane extends JTextPane {
                     final Rectangle rectangleStart = modelToView(startOffset);
                     final Rectangle rectangleEnd = modelToView(endOffset - 2);
                     final Color color = g2d.getColor();
-                    g2d.setColor(bckShortcutColor);
+                    final int fontSize = LearnUIManager.getInstance().getFontSize();
+
+                    g2d.setColor(LearnUIManager.getInstance().getShortcutBackgroundColor());
                     RoundRectangle2D r2d;
                     if (!SystemInfo.isMac) r2d = new RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent + 1,
                             (rectangleEnd.getX() - rectangleStart.getX()) + 4 * indent, fontSize + 3 * indent, arc, arc);
@@ -260,8 +253,6 @@ class LessonMessagePane extends JTextPane {
         }
     }
 
-    public AttributeSet getDefaultAttributeSet() {
-        return REGULAR;
-    }
 
 }
+

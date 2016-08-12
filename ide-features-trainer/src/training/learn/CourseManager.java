@@ -342,7 +342,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     public void setFeedbackView(){
-        FeedbackFormPanel feedbackFormPanel = FeedbackManager.getInstance().getFeedbackFormPanel(LearnToolWindow.preferableWidth);
+        FeedbackFormPanel feedbackFormPanel = FeedbackManager.getInstance().getFeedbackFormPanel();
         final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
 
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
