@@ -5,9 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.css.impl.util.CssUtil;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
@@ -25,9 +22,7 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     String key = getElementName();
     if (key == null) return ResolveResult.EMPTY_ARRAY;
-    GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(myElement);
-    return PsiElementResolveResult.createResults(
-      StubIndex.getElements(PostCssCustomMediaIndex.KEY, key, myElement.getProject(), scope, PostCssCustomMedia.class));
+    return PsiElementResolveResult.createResults(PostCssCustomMediaIndex.getCustomMediaFeatures(myElement, key));
   }
 
   @Override

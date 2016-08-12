@@ -1,24 +1,18 @@
 package org.intellij.plugins.postcss.descriptors;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.css.CssElementDescriptorProvider;
-import com.intellij.psi.css.CssMediaFeatureDescriptor;
-import com.intellij.psi.css.CssSimpleSelector;
+import com.intellij.psi.css.*;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
-import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
-import org.intellij.plugins.postcss.references.PostCssCustomMediaReference;
-import org.intellij.plugins.postcss.references.PostCssCustomSelectorReference;
+import org.intellij.plugins.postcss.psi.*;
+import org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex;
+import org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class PostCssElementDescriptorProvider extends CssElementDescriptorProvider {
   @Override
@@ -36,12 +30,21 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
   @Override
   public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name,
                                                                                          @Nullable PsiElement context) {
-    if (context == null || context.getFirstChild() == null) return Collections.emptyList();
-    if (context.textContains('&') || PostCssPsiUtil.isInsideRulesetWithNestedRulesets(context)) {
+    if (context instanceof CssPseudoClass) {
+      if (context.textContains('&') || PostCssPsiUtil.isInsideRulesetWithNestedRulesets(context)) {
+        return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
+      }
+      CssPseudoClass pseudoClass = (CssPseudoClass)context;
+      PsiElement identifier = pseudoClass.getNameIdentifier();
+      if (identifier == null || !StringUtil.startsWith(identifier.getText(), "--")) return Collections.emptyList();
+      Collection<PostCssCustomSelector> customSelectors =
+        PostCssCustomSelectorIndex.getCustomSelectors(identifier, identifier.getText().substring(2));
+      return customSelectors.size() > 0 ? Collections.singletonList(new CssPseudoSelectorDescriptorStub(name)) : Collections.emptyList();
+    }
+    else if (context instanceof PostCssCustomSelectorAtRule) {
       return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
     }
-    return getDescriptorsByReferences(context.getFirstChild().getNextSibling(), r -> r instanceof PostCssCustomSelectorReference,
-                                      () -> new CssPseudoSelectorDescriptorStub(name));
+    return Collections.emptyList();
   }
 
   @Override
@@ -51,22 +54,20 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   @Override
-  public Collection<? extends CssMediaFeatureDescriptor> findMediaFeatureDescriptors(@NotNull String mediaFeatureName,
+  public Collection<? extends CssMediaFeatureDescriptor> findMediaFeatureDescriptors(@NotNull String name,
                                                                                      @Nullable PsiElement context) {
-    if (context == null) return Collections.emptyList();
-    return getDescriptorsByReferences(context.getFirstChild(), r -> r instanceof PostCssCustomMediaReference,
-                                      () -> new CssMediaFeatureDescriptorStub(mediaFeatureName));
-  }
-
-  private static <T> Collection<T> getDescriptorsByReferences(@Nullable final PsiElement element,
-                                                              @NotNull final Predicate<PsiReference> refCondition,
-                                                              @NotNull final Supplier<T> descriptorGenerator) {
-    if (element == null) return Collections.emptyList();
-    for (PsiReference ref : element.getReferences()) {
-      if (ref instanceof PsiPolyVariantReference && refCondition.test(ref)) {
-        ResolveResult[] results = ((PsiPolyVariantReference)ref).multiResolve(false);
-        return results.length > 0 ? Collections.singletonList(descriptorGenerator.get()) : Collections.emptyList();
-      }
+    if (context instanceof CssMediaFeature) {
+      CssMediaFeature mediaFeature = (CssMediaFeature)context;
+      PsiElement identifier = mediaFeature.getNameIdentifier();
+      if (identifier == null) return Collections.emptyList();
+      boolean isNotTheOnly = identifier.getNextSibling() != null || identifier.getPrevSibling() != null;
+      if (isNotTheOnly || !StringUtil.startsWith(identifier.getText(), "--")) return Collections.emptyList();
+      Collection<PostCssCustomMedia> customMediaFeatures =
+        PostCssCustomMediaIndex.getCustomMediaFeatures(identifier, identifier.getText().substring(2));
+      return customMediaFeatures.size() > 0 ? Collections.singletonList(new CssMediaFeatureDescriptorStub(name)) : Collections.emptyList();
+    }
+    else if (context instanceof PostCssCustomMediaAtRule) {
+      return Collections.singletonList(new CssMediaFeatureDescriptorStub(name));
     }
     return Collections.emptyList();
   }
