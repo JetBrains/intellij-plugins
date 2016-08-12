@@ -77,8 +77,8 @@ public class FeedbackManager {
         });
     }
 
-    public FeedbackFormPanel getFeedbackFormPanel(int preferableWidth) {
-        if (myFeedbackFormPanel == null) myFeedbackFormPanel = new FeedbackFormPanel(preferableWidth);
+    public FeedbackFormPanel getFeedbackFormPanel() {
+        if (myFeedbackFormPanel == null) myFeedbackFormPanel = new FeedbackFormPanel();
         return myFeedbackFormPanel;
     }
 
