@@ -1,0 +1,29 @@
+package com.jetbrains.lang.dart.ide.runner;
+
+import com.intellij.execution.filters.ConsoleInputFilterProvider;
+import com.intellij.execution.filters.InputFilter;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
+
+public class DartConsoleInputFilterProvider implements ConsoleInputFilterProvider {
+  @NotNull
+  @Override
+  public InputFilter[] getDefaultFilters(@NotNull Project project) {
+    return new InputFilter[]{new InputFilter() {
+      @Nullable
+      @Override
+      public List<Pair<String, ConsoleViewContentType>> applyFilter(String text, ConsoleViewContentType outputType) {
+        if (text.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
+          return Collections.emptyList();
+        }
+        return Collections.singletonList(Pair.create(text, outputType));
+      }
+    }};
+  }
+}
