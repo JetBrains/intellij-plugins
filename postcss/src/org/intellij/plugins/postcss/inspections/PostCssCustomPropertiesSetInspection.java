@@ -32,12 +32,12 @@ public class PostCssCustomPropertiesSetInspection extends PostCssBaseInspection 
         if (identifier == null) return;
         String text = identifier.getText();
         if (text.equals("--")) {
-          holder.registerProblem(identifier, PostCssBundle.message("annotator.custom.properties.set.name.should.not.be.empty"));
+          holder.registerProblem(identifier, PostCssBundle.message("annotator.custom.property.set.name.should.not.be.empty"));
         }
         else if (!StringUtil.startsWith(text, "--")) {
           PostCssAddPrefixQuickFix quickFix =
-            new PostCssAddPrefixQuickFix("annotator.add.prefix.to.custom.properties.set.quickfix.name", "--", PostCssApplyAtRule.class);
-          String description = PostCssBundle.message("annotator.custom.properties.set.name.should.start.with");
+            new PostCssAddPrefixQuickFix("annotator.add.prefix.to.custom.property.set.quickfix.name", "--", PostCssApplyAtRule.class);
+          String description = PostCssBundle.message("annotator.custom.property.set.name.should.start.with");
           TextRange textRange = TextRange.from(identifier.getStartOffsetInParent(), identifier.getTextLength());
           ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(
             postCssApplyAtRule, textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, quickFix);
@@ -52,7 +52,7 @@ public class PostCssCustomPropertiesSetInspection extends PostCssBaseInspection 
         if (parentRuleset == null ||
             parentRuleset.getSelectorList() == null ||
             !parentRuleset.getSelectorList().textMatches(":root")) {
-          holder.registerProblem(customMixin, PostCssBundle.message("annotator.custom.properties.set.are.only.allowed.on.root.rules"),
+          holder.registerProblem(customMixin, PostCssBundle.message("annotator.custom.property.set.are.only.allowed.on.root.rules"),
                                  WRAP_WITH_ROOT);
         }
       }

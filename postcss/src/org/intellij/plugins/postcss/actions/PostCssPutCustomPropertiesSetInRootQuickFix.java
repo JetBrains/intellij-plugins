@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssPutCustomPropertiesSetInRootQuickFix extends LocalQuickFixBase {
   public PostCssPutCustomPropertiesSetInRootQuickFix() {
-    super(PostCssBundle.message("annotator.wrap.custom.properties.set.with.root.rule.quickfix.name"));
+    super(PostCssBundle.message("annotator.wrap.custom.property.set.with.root.rule.quickfix.name"));
   }
 
   @Override

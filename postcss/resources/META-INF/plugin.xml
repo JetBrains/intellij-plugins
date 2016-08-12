@@ -49,7 +49,7 @@
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomMediaInspection"/>
     <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
-                     key="inspections.custom.properties.set.problems.name"
+                     key="inspections.custom.property.set.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomPropertiesSetInspection"/>
   </extensions>
