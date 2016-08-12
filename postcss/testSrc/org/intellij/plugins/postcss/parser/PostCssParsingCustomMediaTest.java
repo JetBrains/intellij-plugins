@@ -35,4 +35,7 @@ public class PostCssParsingCustomMediaTest extends PostCssParsingTest {
   public void testCustomMediaWithoutSemicolon() {
     doTest();
   }
+  public void testCustomMediaWithoutSemicolonBeforeBrace() {
+    doTest();
+  }
 }

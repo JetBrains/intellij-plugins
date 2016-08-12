@@ -11,6 +11,9 @@ public class PostCssParsingCustomSelectorTest extends PostCssParsingTest {
   public void testCustomSelectorDefinitionWithoutSemicolon() {
     doTest();
   }
+  public void testCustomSelectorWithoutSemicolonBeforeBrace() {
+    doTest();
+  }
   public void testCustomSelectorDefinitionWithoutColon() {
     doTest();
   }

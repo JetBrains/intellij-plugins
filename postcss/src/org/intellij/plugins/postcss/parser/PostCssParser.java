@@ -111,7 +111,9 @@ public class PostCssParser extends CssParser2 {
       createErrorElement(CssBundle.message("expected", CssBundle.message("an.identifier")));
     }
     parseMediumList();
-    addSemicolonOrError();
+    if (getTokenType() != CssElementTypes.CSS_RBRACE) {
+      addSemicolonOrError();
+    }
     customMediaAtRule.done(PostCssElementTypes.POST_CSS_CUSTOM_MEDIA_RULE);
     return true;
   }
@@ -179,7 +181,9 @@ public class PostCssParser extends CssParser2 {
     addSingleToken();
     parseCustomSelector();
     parseSelectorList();
-    addSemicolonOrError();
+    if (getTokenType() != CssElementTypes.CSS_RBRACE) {
+      addSemicolonOrError();
+    }
     customSelectorRule.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR_RULE);
     return true;
   }
