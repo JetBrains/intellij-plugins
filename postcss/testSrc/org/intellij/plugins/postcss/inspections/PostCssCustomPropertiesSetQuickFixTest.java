@@ -17,6 +17,11 @@ public class PostCssCustomPropertiesSetQuickFixTest extends PostCssQuickFixTest 
     doTestAddDashes();
   }
 
+  public void testAddPrefixBeforeBrace() throws Throwable {
+    doTestAddDashes();
+    myFixture.testHighlighting(false, false, false, myFixture.getFile().getVirtualFile());
+  }
+
   public void testWrapWithRootRule() throws Throwable {
     doTest("Wrap custom properties set with `:root` rule");
   }

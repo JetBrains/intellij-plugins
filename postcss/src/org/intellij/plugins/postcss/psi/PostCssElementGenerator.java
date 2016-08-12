@@ -3,9 +3,9 @@ package org.intellij.plugins.postcss.psi;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.css.CssSimpleSelector;
+import com.intellij.util.ObjectUtils;
 import org.intellij.plugins.postcss.PostCssFileType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.psi.util.PsiTreeUtil.findChildOfType;
 
@@ -23,14 +23,10 @@ public class PostCssElementGenerator {
   }
 
   @NotNull
-  public static PostCssCustomSelector createCustomSelector(@NotNull final Project project, String customSelectorName) {
-    //noinspection ConstantConditions
-    return findChildOfType(createFileFromText(project, "@custom-selector " + customSelectorName + " a;"), PostCssCustomSelector.class);
-  }
-
-  @Nullable
-  public static PostCssCustomMedia createCustomMedia(@NotNull final Project project, @NotNull final String customMediaName) {
-    return findChildOfType(createFileFromText(project, "@custom-media " + customMediaName + " all;"), PostCssCustomMedia.class);
+  public static PostCssOneLineAtRule createOneLineAtRule(@NotNull final Project project,
+                                                         @NotNull final String text,
+                                                         @NotNull final Class<? extends PostCssOneLineAtRule> cl) {
+    return ObjectUtils.notNull(findChildOfType(createFileFromText(project, "p {" + text + "}"), cl));
   }
 
   @NotNull

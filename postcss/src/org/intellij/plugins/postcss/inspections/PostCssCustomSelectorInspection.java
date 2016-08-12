@@ -10,8 +10,7 @@ import com.intellij.psi.css.CssSelectorList;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.actions.PostCssAddPrefixQuickFix;
-import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
-import org.intellij.plugins.postcss.psi.PostCssElementGenerator;
+import org.intellij.plugins.postcss.psi.PostCssCustomSelectorAtRule;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorAtRuleImpl;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorImpl;
@@ -41,11 +40,12 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
         }
         else if (!StringUtil.startsWith(text, ":--")) {
           PostCssAddPrefixQuickFix quickFix = new PostCssAddPrefixQuickFix("annotator.add.prefix.to.custom.selector.quickfix.name", ":--",
-                                                                           psi -> psi instanceof PostCssCustomSelector,
-                                                                           p -> PostCssElementGenerator
-                                                                             .createCustomSelector(p.first, p.second));
-          holder
-            .registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.start.with"), quickFix);
+                                                                           PostCssCustomSelectorAtRule.class);
+          String description = PostCssBundle.message("annotator.custom.selector.name.should.start.with");
+          TextRange textRange = TextRange.from(postCssCustomSelector.getStartOffsetInParent(), postCssCustomSelector.getTextLength());
+          ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(
+            postCssCustomSelector.getParent(), textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, quickFix);
+          holder.registerProblem(problemDescriptor);
         }
       }
 

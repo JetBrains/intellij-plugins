@@ -1,12 +1,15 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.actions.PostCssAddPrefixQuickFix;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
-import org.intellij.plugins.postcss.psi.PostCssElementGenerator;
+import org.intellij.plugins.postcss.psi.PostCssCustomMediaAtRule;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomMediaAtRuleImpl;
 import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +29,12 @@ public class PostCssCustomMediaInspection extends PostCssBaseInspection {
         }
         else if (!StringUtil.startsWith(text, "--")) {
           PostCssAddPrefixQuickFix quickFix = new PostCssAddPrefixQuickFix("annotator.add.prefix.to.custom.media.quickfix.name", "--",
-                                                                           psi -> psi instanceof PostCssCustomMedia,
-                                                                           p -> PostCssElementGenerator
-                                                                             .createCustomMedia(p.first, p.second));
-          holder.registerProblem(customMedia, PostCssBundle.message("annotator.custom.media.name.should.start.with"), quickFix);
+                                                                           PostCssCustomMediaAtRule.class);
+          String description = PostCssBundle.message("annotator.custom.media.name.should.start.with");
+          TextRange textRange = TextRange.from(customMedia.getStartOffsetInParent(), customMedia.getTextLength());
+          ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(
+            postCssCustomMediaAtRule, textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, quickFix);
+          holder.registerProblem(problemDescriptor);
         }
       }
     };
