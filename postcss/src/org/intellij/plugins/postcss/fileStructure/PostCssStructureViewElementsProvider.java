@@ -50,9 +50,6 @@ public class PostCssStructureViewElementsProvider extends CssStructureViewElemen
     else if (element instanceof PostCssCustomMediaAtRule) {
       return Collections.singletonList(CssStructureViewElement.create(element, AllIcons.Css.Atrule, "@custom-media"));
     }
-    else if (element instanceof PostCssApplyAtRule) {
-      return Collections.singletonList(CssStructureViewElement.create(element, AllIcons.Css.Atrule, "@apply"));
-    }
     return Collections.emptyList();
   }
 }

@@ -1,5 +1,6 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.psi.css.inspections.invalid.CssUnresolvedCustomPropertySetInspection;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ public class PostCssCustomPropertiesSetInspectionTest extends PostCssFixtureTest
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(PostCssCustomPropertiesSetInspection.class);
+    myFixture.enableInspections(PostCssCustomPropertiesSetInspection.class, CssUnresolvedCustomPropertySetInspection.class);
   }
 
   public void testCorrectApply() {
@@ -38,6 +39,10 @@ public class PostCssCustomPropertiesSetInspectionTest extends PostCssFixtureTest
   }
 
   public void testOutsideRoot() {
+    doTest();
+  }
+
+  public void testUnresolvedApply() {
     doTest();
   }
 

@@ -29,14 +29,4 @@ public class PostCssApplyAtRuleImpl extends CssAtRuleImpl implements PostCssAppl
     CssTokenImpl identifier = PsiTreeUtil.getNextSiblingOfType(getFirstChild(), CssTokenImpl.class);
     return identifier != null && identifier.getNode().getElementType() == CssElementTypes.CSS_IDENT ? identifier : null;
   }
-
-  @Override
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof PostCssElementVisitor) {
-      ((PostCssElementVisitor)visitor).visitPostCssApplyAtRule(this);
-    }
-    else {
-      visitor.visitElement(this);
-    }
-  }
 }

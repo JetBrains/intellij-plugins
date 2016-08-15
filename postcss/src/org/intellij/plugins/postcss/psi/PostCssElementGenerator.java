@@ -23,13 +23,6 @@ public class PostCssElementGenerator {
   }
 
   @NotNull
-  public static PostCssOneLineAtRule createOneLineAtRule(@NotNull final Project project,
-                                                         @NotNull final String text,
-                                                         @NotNull final Class<? extends PostCssOneLineAtRule> cl) {
-    return ObjectUtils.notNull(findChildOfType(createFileFromText(project, "p {" + text + "}"), cl));
-  }
-
-  @NotNull
   private static PostCssFile createFileFromText(@NotNull final Project project, @NotNull final String text) {
     return (PostCssFile)PsiFileFactory.getInstance(project).createFileFromText("foo.pcss", PostCssFileType.POST_CSS, text);
   }

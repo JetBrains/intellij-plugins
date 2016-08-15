@@ -6,8 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.css.inspections.fixes.CssAddPrefixQuickFix;
 import org.intellij.plugins.postcss.PostCssBundle;
-import org.intellij.plugins.postcss.actions.PostCssAddPrefixQuickFix;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.PostCssCustomMediaAtRule;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomMediaAtRuleImpl;
@@ -28,8 +28,9 @@ public class PostCssCustomMediaInspection extends PostCssBaseInspection {
           holder.registerProblem(customMedia, PostCssBundle.message("annotator.custom.media.name.should.not.be.empty"));
         }
         else if (!StringUtil.startsWith(text, "--")) {
-          PostCssAddPrefixQuickFix quickFix = new PostCssAddPrefixQuickFix("annotator.add.prefix.to.custom.media.quickfix.name", "--",
-                                                                           PostCssCustomMediaAtRule.class);
+          CssAddPrefixQuickFix quickFix =
+            new CssAddPrefixQuickFix(PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name"), "--",
+                                     PostCssCustomMediaAtRule.class);
           String description = PostCssBundle.message("annotator.custom.media.name.should.start.with");
           TextRange textRange = TextRange.from(customMedia.getStartOffsetInParent(), customMedia.getTextLength());
           ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(

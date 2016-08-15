@@ -1,12 +1,13 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.psi.css.inspections.invalid.CssUnresolvedCustomPropertySetInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomPropertiesSetQuickFixTest extends PostCssQuickFixTest {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(PostCssCustomPropertiesSetInspection.class);
+    myFixture.enableInspections(PostCssCustomPropertiesSetInspection.class, CssUnresolvedCustomPropertySetInspection.class);
   }
 
   public void testAddPrefixEmpty() throws Throwable {
