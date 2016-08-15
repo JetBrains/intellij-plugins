@@ -65,8 +65,8 @@ public class PostCssTestSuite extends TestCase {
       suite.addTestSuite(PostCssMediaRangeInspectionTest.class);
       suite.addTestSuite(PostCssCustomMediaInspectionTest.class);
       suite.addTestSuite(PostCssCustomMediaQuickFixTest.class);
-      suite.addTestSuite(PostCssCustomPropertiesSetInspectionTest.class);
-      suite.addTestSuite(PostCssCustomPropertiesSetQuickFixTest.class);
+      suite.addTestSuite(PostCssCustomPropertiesInspectionTest.class);
+      suite.addTestSuite(PostCssCustomPropertiesQuickFixTest.class);
       return suite;
     }
   }

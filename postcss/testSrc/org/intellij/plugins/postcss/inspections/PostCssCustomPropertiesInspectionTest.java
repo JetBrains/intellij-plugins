@@ -6,12 +6,12 @@ import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 @TestDataPath("$CONTENT_ROOT/testData/inspections/customPropertiesSet/")
-public class PostCssCustomPropertiesSetInspectionTest extends PostCssFixtureTestCase {
+public class PostCssCustomPropertiesInspectionTest extends PostCssFixtureTestCase {
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(PostCssCustomPropertiesSetInspection.class, CssUnresolvedCustomPropertySetInspection.class);
+    myFixture.enableInspections(PostCssCustomPropertiesInspection.class, CssUnresolvedCustomPropertySetInspection.class);
   }
 
   public void testCorrectApply() {
@@ -39,6 +39,10 @@ public class PostCssCustomPropertiesSetInspectionTest extends PostCssFixtureTest
   }
 
   public void testOutsideRoot() {
+    doTest();
+  }
+
+  public void testOutsideRootProperty() {
     doTest();
   }
 

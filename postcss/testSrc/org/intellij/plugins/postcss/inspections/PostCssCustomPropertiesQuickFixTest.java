@@ -3,11 +3,11 @@ package org.intellij.plugins.postcss.inspections;
 import com.intellij.psi.css.inspections.invalid.CssUnresolvedCustomPropertySetInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssCustomPropertiesSetQuickFixTest extends PostCssQuickFixTest {
+public class PostCssCustomPropertiesQuickFixTest extends PostCssQuickFixTest {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(PostCssCustomPropertiesSetInspection.class, CssUnresolvedCustomPropertySetInspection.class);
+    myFixture.enableInspections(PostCssCustomPropertiesInspection.class, CssUnresolvedCustomPropertySetInspection.class);
   }
 
   public void testAddPrefixEmpty() throws Throwable {
@@ -24,11 +24,19 @@ public class PostCssCustomPropertiesSetQuickFixTest extends PostCssQuickFixTest 
   }
 
   public void testWrapWithRootRule() throws Throwable {
-    doTest("Wrap custom property set with `:root` rule");
+    doTestWrapWithRoot();
+  }
+
+  public void testWrapWithRootRuleSemicolon() throws Throwable {
+    doTestWrapWithRoot();
   }
 
   private void doTestAddDashes() {
     doTest("Add '--' to custom property set name");
+  }
+
+  private void doTestWrapWithRoot() {
+    doTest("Wrap with `:root` rule");
   }
 
   @NotNull
