@@ -96,7 +96,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
 
   @Override
   public void processVariable(SlotInfo info, String indent, String attr) {
-    parents.add(new JSVarStatementStubImpl(parents.getLast()));
+    parents.add(new JSVarStatementStubImpl(parents.getLast(), JSStubElementTypes.VAR_STATEMENT));
     super.processVariable(info, indent, attr);
     String parentName = info.getParentName();
     String qName = getMultinameAsPackageName(info.name, parentName);
