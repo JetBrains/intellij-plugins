@@ -8,6 +8,10 @@ public class PostCssCustomPropertiesSetCompletionTest extends PostCssCompletionT
     doTest();
   }
 
+  public void testVariants() {
+    doTest();
+  }
+
   @NotNull
   @Override
   protected String getTestDataSubdir() {
