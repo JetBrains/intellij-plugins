@@ -3,7 +3,6 @@ package org.intellij.plugins.postcss.psi;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.css.CssSimpleSelector;
-import com.intellij.util.ObjectUtils;
 import org.intellij.plugins.postcss.PostCssFileType;
 import org.jetbrains.annotations.NotNull;
 

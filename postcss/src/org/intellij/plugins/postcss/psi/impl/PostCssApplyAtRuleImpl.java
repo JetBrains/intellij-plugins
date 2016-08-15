@@ -1,7 +1,6 @@
 package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.descriptor.CssContextType;
 import com.intellij.psi.css.impl.AtRulePresentation;
 import com.intellij.psi.css.impl.CssAtRuleImpl;

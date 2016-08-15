@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.structure.CssStructureViewElement;
 import com.intellij.psi.css.impl.structure.CssStructureViewElementsProvider;
 import org.intellij.plugins.postcss.PostCssLanguage;
-import org.intellij.plugins.postcss.psi.PostCssApplyAtRule;
 import org.intellij.plugins.postcss.psi.PostCssCustomMediaAtRule;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelectorAtRule;
 import org.intellij.plugins.postcss.psi.PostCssNest;
