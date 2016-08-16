@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,7 +42,7 @@ public class JSQualifiedElementRenameProcessor extends JSDefaultRenameProcessor 
   @Override
   public PsiElement substituteElementToRename(PsiElement element, Editor editor) {
     if (element instanceof JSFileImpl) {
-      JSNamedElement mainDeclaredElement = JSFileImpl.findMainDeclaredElement((JSFileImpl)element);
+      JSNamedElement mainDeclaredElement = ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)element);
       if (mainDeclaredElement != null) return mainDeclaredElement;
     } else if (element instanceof XmlFile) {
       JSClass jsClass = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
@@ -62,7 +63,7 @@ public class JSQualifiedElementRenameProcessor extends JSDefaultRenameProcessor 
     if (element instanceof JSQualifiedNamedElement) {
       PsiFile containingFile = element.getContainingFile();
       if ((!(containingFile instanceof JSFileImpl) ||
-          JSFileImpl.findMainDeclaredElement((JSFileImpl)containingFile) == element)
+           ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)containingFile) == element)
         && JSInheritedLanguagesHelper.shouldRenameFileWithClass(element)) {
         allRenames.put(containingFile, newName + "." + containingFile.getVirtualFile().getExtension());
       }

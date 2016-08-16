@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.DumbAware;
@@ -97,7 +98,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
     else {
       PsiFile file = ((FlexFileNode)parent).getValue();
       if (file instanceof JSFileImpl) {
-        JSNamedElement element = JSFileImpl.findMainDeclaredElement((JSFileImpl)file);
+        JSNamedElement element = ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)file);
         if (element instanceof JSQualifiedNamedElement) {
           return (JSQualifiedNamedElement)element;
         }
@@ -136,7 +137,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
       if (value instanceof JSFileImpl) {
         VirtualFile file = value.getVirtualFile();
         if (file != null && ProjectRootManager.getInstance(myProject).getFileIndex().getSourceRootForFile(file) != null) {
-          JSNamedElement element = JSFileImpl.findMainDeclaredElement((JSFileImpl)value);
+          JSNamedElement element = ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)value);
           if (element != null) {
             className = element.getName();
             icon = element.getIcon(Iconable.ICON_FLAG_VISIBILITY | Iconable.ICON_FLAG_READ_STATUS);
@@ -165,7 +166,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
       if(sortByType) {
         PsiFile value = getValue();
         if (value instanceof JSFileImpl) {
-          JSNamedElement element = JSFileImpl.findMainDeclaredElement((JSFileImpl)value);
+          JSNamedElement element = ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)value);
           int weight = getElementWeight(element);
           if (weight != -1) {
             return weight;
