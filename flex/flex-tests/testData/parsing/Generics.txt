@@ -151,7 +151,7 @@ JSFile:Generics.js2
         PsiElement(JS:IDENTIFIER)('filter')
       JSArgumentList
         PsiElement(JS:LPAR)('(')
-        JSFunctionExpression
+        ActionScriptFunctionExpression
           PsiElement(JS:FUNCTION_KEYWORD)('function')
           JSParameterList
             PsiElement(JS:LPAR)('(')
