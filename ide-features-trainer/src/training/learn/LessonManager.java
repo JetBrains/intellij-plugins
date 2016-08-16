@@ -165,7 +165,10 @@ public class LessonManager {
         } else {
             Module module = CourseManager.getInstance().giveNextModule(myCurrentLesson);
             if (module == null) {
-            //TODO: check that feedback is not submitted
+                clearLessonPanel();
+                learnPanel.setModuleName("");
+                learnPanel.setLessonName(LearnBundle.message("learn.ui.course.completed.caption"));
+                learnPanel.addMessage(LearnBundle.message("learn.ui.course.completed.description"));
                 learnPanel.setButtonSuggestSubmitFeedback();
             }
             else {

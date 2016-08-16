@@ -396,8 +396,8 @@ public class OpenLessonAction extends AnAction {
                 }
             }
         }
-        //if no predefined jdks -> add bundled jdk to available list and return it
 
+        //if no predefined jdks -> add bundled jdk to available list and return it
         JavaSdk javaSdk = JavaSdk.getInstance();
 
         ArrayList<JdkBundle> bundleList = JdkSetupUtil.findJdkPaths().toArrayList();
