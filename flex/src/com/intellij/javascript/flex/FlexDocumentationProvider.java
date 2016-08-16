@@ -892,7 +892,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     }
     else if (parent instanceof JSFile) {
       if (parent.getContext() != null) {
-        final String mxmlPackage = JSResolveUtil.findPackageForMxml(parent);
+        final String mxmlPackage = ActionScriptResolveUtil.findPackageForMxml(parent);
         if (mxmlPackage != null) {
           builder.append(mxmlPackage).append(mxmlPackage.length() > 0 ? "." : "").append(parent.getContext().getContainingFile().getName())
             .append("\n");
