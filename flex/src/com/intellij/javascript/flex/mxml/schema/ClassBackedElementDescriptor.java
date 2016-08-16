@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotat
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -1163,7 +1164,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   private static boolean doProcess(final PsiElement jsClass, final AttributedItemsProcessor processor) {
-    return JSResolveUtil.processMetaAttributesForClass(jsClass, new JSResolveUtil.MetaDataProcessor() {
+    return ActionScriptResolveUtil.processMetaAttributesForClass(jsClass, new ActionScriptResolveUtil.MetaDataProcessor() {
       @Override
       public boolean process(final @NotNull JSAttribute attr) {
         final String attrName = attr.getName();

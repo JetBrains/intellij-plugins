@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -453,7 +453,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return "yes".equalsIgnoreCase(myInherit) || "true".equals(myInherit);
   }
 
-  private class MyMetaDataProcessor implements JSResolveUtil.MetaDataProcessor {
+  private class MyMetaDataProcessor implements ActionScriptResolveUtil.MetaDataProcessor {
     private JSAttributeNameValuePair myResult;
 
     public boolean process(@NotNull JSAttribute jsAttribute) {

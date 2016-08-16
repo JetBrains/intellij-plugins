@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -313,7 +314,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   private static void fillPropertyDescriptorsDynamically(@NotNull final JSClass jsClass, Set<JSClass> visited, final Set<CssPropertyDescriptor> result) {
     if (!visited.add(jsClass)) return;
-    FlexUtils.processMetaAttributesForClass(jsClass, new JSResolveUtil.MetaDataProcessor() {
+    FlexUtils.processMetaAttributesForClass(jsClass, new ActionScriptResolveUtil.MetaDataProcessor() {
       public boolean process(@NotNull JSAttribute jsAttribute) {
         if (FlexAnnotationNames.STYLE.equals(jsAttribute.getName())) {
           JSAttributeNameValuePair pair = jsAttribute.getValueByName("name");

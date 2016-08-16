@@ -225,7 +225,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     String packageName = place != null ? JSResolveUtil.getPackageNameFromPlace(place) : "";
 
     for (JSClass result : all) {
-      if (JSResolveUtil.hasExcludeClassMetadata(result)) continue;
+      if (ActionScriptResolveUtil.hasExcludeClassMetadata(result)) continue;
       if (!JSResolveUtil.isAccessibleFromCurrentPackage(result, packageName, place)) continue;
       if (!processedCandidateNames.add(result.getQualifiedName())) continue;
       variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(result, result.getName(), JSLookupPriority.SMART_PRIORITY, false, true));
@@ -253,7 +253,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     if (clazzToProcess == null) return Collections.emptyMap();
 
     final Map<String, String> eventsMap = new THashMap<>();
-    class EventsDataCollector extends ResolveProcessor implements JSResolveUtil.MetaDataProcessor {
+    class EventsDataCollector extends ResolveProcessor implements ActionScriptResolveUtil.MetaDataProcessor {
 
       public EventsDataCollector() {
         super(null);
@@ -288,7 +288,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       @Override
       public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
         if (element instanceof JSClass) {
-          JSResolveUtil.processMetaAttributesForClass(element, this, true);
+          ActionScriptResolveUtil.processMetaAttributesForClass(element, this, true);
         }
         return true;
       }
@@ -307,7 +307,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           protected void process(JSFile file) {
             for (PsiElement element : file.getChildren()) {
               if (element instanceof JSAttributeList) {
-                JSResolveUtil.processAttributeList(eventsDataCollector, null, (JSAttributeList)element, true, true);
+                ActionScriptResolveUtil.processAttributeList(eventsDataCollector, null, (JSAttributeList)element, true, true);
               }
             }
           }

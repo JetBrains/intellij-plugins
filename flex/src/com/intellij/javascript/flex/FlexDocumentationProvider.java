@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -31,7 +32,6 @@ import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
-import com.intellij.util.Consumer;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -823,7 +823,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   @Nullable
   private static JSAttributeNameValuePair findNamedAttribute(JSClass clazz, final String type, final String name) {
     final Ref<JSAttributeNameValuePair> attribute = new Ref<>();
-    JSResolveUtil.processMetaAttributesForClass(clazz, new JSResolveUtil.MetaDataProcessor() {
+    ActionScriptResolveUtil.processMetaAttributesForClass(clazz, new ActionScriptResolveUtil.MetaDataProcessor() {
       public boolean process(@NotNull JSAttribute jsAttribute) {
         if (type.equals(jsAttribute.getName())) {
           final JSAttributeNameValuePair jsAttributeNameValuePair = jsAttribute.getValueByName("name");

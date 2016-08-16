@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
@@ -373,8 +374,8 @@ public class FlexUtils {
                     new XmlBackedJSClassImpl.InjectedScriptsVisitor.InjectingProcessor(injectedFilesVisitor, rootTag, isPhysical));
   }
 
-  public static void processMetaAttributesForClass(@NotNull PsiElement jsClass, @NotNull final JSResolveUtil.MetaDataProcessor processor) {
-    JSResolveUtil.processMetaAttributesForClass(jsClass, processor);
+  public static void processMetaAttributesForClass(@NotNull PsiElement jsClass, @NotNull final ActionScriptResolveUtil.MetaDataProcessor processor) {
+    ActionScriptResolveUtil.processMetaAttributesForClass(jsClass, processor);
     if (jsClass instanceof XmlBackedJSClassImpl) {
       PsiElement parent = jsClass.getParent();
       if (parent != null) {
@@ -388,7 +389,7 @@ public class FlexUtils {
                 @Override
                 protected void process(JSFile file) {
                   if (file != null) {
-                    JSResolveUtil.processMetaAttributesForClass(file, processor);
+                    ActionScriptResolveUtil.processMetaAttributesForClass(file, processor);
                   }
                 }
               };
