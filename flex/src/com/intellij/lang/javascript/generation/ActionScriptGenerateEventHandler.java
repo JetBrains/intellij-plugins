@@ -51,7 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.List;
 
-public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
+public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
   protected String getTitleKey() {
     return ""; // not used in this action
