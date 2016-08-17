@@ -13,7 +13,7 @@ JSFile:Complex.js2
     PsiWhiteSpace('\n')
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n\n')
-    JSClass
+    ActionScriptClass
       JSAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')

@@ -42,7 +42,7 @@ JSFile:ConditionalBlocks.js2
           PsiElement(JS:IDENTIFIER)('Company')
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace('\n\n    ')
-    JSClass
+    ActionScriptClass
       JSAttributeList
         JSConditionalCompileVariableReference
           JSReferenceExpression
@@ -139,7 +139,7 @@ JSFile:ConditionalBlocks.js2
       PsiWhiteSpace('\n    ')
       PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n\n    ')
-    JSClass
+    ActionScriptClass
       JSAttributeList
         JSConditionalCompileVariableReference
           JSReferenceExpression

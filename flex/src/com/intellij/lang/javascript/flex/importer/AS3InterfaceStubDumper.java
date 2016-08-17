@@ -116,7 +116,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   @Override
   public void processClass(SlotInfo slotInfo, Abc abc, String attr, String indent) {
     parents.add(
-      new JSClassStubImpl(
+      new ActionScriptClassStubImpl(
         slotInfo.name.name,
         slotInfo.isInterfaceClass(),
         getMultinameAsPackageName(slotInfo.name, null),

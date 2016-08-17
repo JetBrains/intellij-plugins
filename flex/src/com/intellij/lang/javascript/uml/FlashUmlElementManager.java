@@ -26,7 +26,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -35,7 +35,6 @@ import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -163,7 +162,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
       if (elements.isEmpty()) {
         return PsiElement.EMPTY_ARRAY;
       }
-      else if (!(clazz instanceof JSClassImpl) || clazz.getStub() == null) {
+      else if (!(clazz instanceof ActionScriptClassImpl) || clazz.getStub() == null) {
         // this sort causes parsing in order to get ast node offset but
         // when we have class on stub our fields / functions already in natural order
         // TODO once we have stubs for xmlbackedclass we should update the code

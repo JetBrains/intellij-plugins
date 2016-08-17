@@ -1,5 +1,5 @@
 JSFile:XmlDef.js2
-  JSClass
+  ActionScriptClass
     JSAttributeList
       PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')

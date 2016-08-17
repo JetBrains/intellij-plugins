@@ -18,7 +18,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.fileTypes.FileType;
@@ -476,7 +476,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   private static PsiElement getReferencedElement(@NotNull PsiElement element) {
-    if (element instanceof JSClassImpl) {
+    if (element instanceof ActionScriptClassImpl) {
       return element.getNavigationElement();
     }
     else if (element instanceof XmlBackedJSClassImpl) {
