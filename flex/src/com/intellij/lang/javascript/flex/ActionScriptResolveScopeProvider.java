@@ -76,11 +76,11 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
       if (forced != null) return forced;
     }
     final PsiFile containingFile = element.getContainingFile();
-    if (containingFile == null) return JSResolveUtil.getJavaScriptSymbolsResolveScope(element.getProject());
+    if (containingFile == null) return getProjectScopeIncludingPredefines(element.getProject());
     final PsiFile psiFile = containingFile.getOriginalFile();
     VirtualFile file = psiFile.getVirtualFile();
     final Project project = psiFile.getProject();
-    if (file == null) return JSResolveUtil.getJavaScriptSymbolsResolveScope(project);
+    if (file == null) return getProjectScopeIncludingPredefines(project);
 
     final GlobalSearchScope scope = isApplicable(file) ? ResolveScopeManager.getInstance(project).getDefaultResolveScope(file) : null;
     if (scope != null) {
@@ -93,10 +93,11 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
     }
 
     final GlobalSearchScope fileResolveScope = getResolveScope(file, project, false);
-    return fileResolveScope != null ? fileResolveScope : JSResolveUtil.getJavaScriptSymbolsResolveScope(project);
+    return fileResolveScope != null ? fileResolveScope : getProjectScopeIncludingPredefines(project);
   }
 
-  protected boolean isApplicable(final VirtualFile file) {
+  @Override
+  protected boolean isApplicable(@NotNull final VirtualFile file) {
     return file.getFileType() == ActionScriptFileType.INSTANCE || file.getFileType() == FlexApplicationComponent.MXML ||
            file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE;
   }
