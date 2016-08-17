@@ -106,6 +106,7 @@ public class PostCssTestSuite extends TestCase {
       TestSuite suite = new TestSuite("Other PostCSS");
       suite.addTestSuite(PostCssFileStructureTest.class);
       suite.addTestSuite(PostCssSmartEnterTest.class);
+      suite.addTestSuite(PostCssIncrementalParserTest.class);
       return suite;
     }
   }
