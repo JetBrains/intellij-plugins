@@ -22,6 +22,7 @@ import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait
  */
 class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
 
+  @NotNull
   protected LightProjectDescriptor getProjectDescriptor() {
     return new DefaultLightProjectDescriptor() {
       @NotNull
