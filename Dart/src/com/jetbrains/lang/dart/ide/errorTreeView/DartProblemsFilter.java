@@ -15,8 +15,7 @@ import javax.swing.*;
 
 public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Integer> {
 
-  public enum FileFilterMode {All, ContentRoot, Package, File}
-
+  public enum FileFilterMode {All, ContentRoot, Package, Directory, File}
 
   private static final boolean SHOW_ERRORS_DEFAULT = true;
   private static final boolean SHOW_WARNINGS_DEFAULT = true;
@@ -107,6 +106,14 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
 
     if (myFileFilterMode == FileFilterMode.File && (myCurrentFile == null || !myCurrentFile.equals(problem.getFile()))) {
       return false;
+    }
+
+    if (myFileFilterMode == FileFilterMode.Directory && myCurrentFile != null) {
+      VirtualFile parent = myCurrentFile.getParent();
+      VirtualFile child = problem.getFile();
+      if (child != null && parent != null && !child.getPath().startsWith(parent.getPath())) {
+        return false;
+      }
     }
 
     if (myFileFilterMode == FileFilterMode.Package) {

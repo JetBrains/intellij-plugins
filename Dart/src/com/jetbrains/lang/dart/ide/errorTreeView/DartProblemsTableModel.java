@@ -367,6 +367,9 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
         case Package:
           b.append("Filtered by current package");
           break;
+        case Directory:
+          b.append("Filtered by directory");
+          break;
         case File:
           b.append("Filtered by current file");
           break;
