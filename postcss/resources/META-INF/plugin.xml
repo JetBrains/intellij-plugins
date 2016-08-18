@@ -5,19 +5,17 @@
   <vendor>JetBrains</vendor>
   <description>
     <![CDATA[
-      This plugin supports <a href="http://postcss.org">PostCSS</a> dialect of CSS.
-      The following features are available:
-        <ul>
-          <li>Dedicated file type.</li>
-          <li>Dialect mapping in `CSS Dialects` page inside Settings/Preferences dialog.</li>
-          <li>'Code Style' and 'Colors and Fonts' pages in Settings/Preferences dialog.</li>
-          <li>Syntax and error highlighting.</li>
-          <li>Code completion.</li>
-          <li>Go to declaration, find usages and rename actions.</li>
-          <li>Go to symbol action.</li>
-        </ul>
-      The following PostCSS plugins are supported:
-        <ul>
+      <p>This plugin brings support for <a href="http://postcss.org">PostCSS</a>:</p>
+      <ul>
+          <li>The IDE now recognises .pcss files. You can also enable PostCSS support for your .css files in <em>Preferences | Languages & Frameworks | CSS Dialects</em>.</li>
+          <li>Syntax highlighting for PostCSS syntax. You can additionally configure it in <em>Preferences | Editor | Colors & Fonts</em>.</li>
+          <li>Intelligent code completion.</li>
+          <li>Configurable Code style and auto-formatting.</li>
+          <li><em>Go to declaration</em>, <em>Go to symbol</em>, and <em>Find usages</em> actions are available for custom selectors and custom media queries.</li>
+          <li>Rename custom selectors and custom media queries with ease.</li>
+      </ul>
+      <p>The following PostCSS plugins are supported:</p>
+      <ul>
           <li><a href="https://github.com/postcss/postcss-custom-properties">postcss-custom-properties</a></li>
           <li><a href="https://github.com/pascalduez/postcss-apply">postcss-apply</a></li>
           <li><a href="https://github.com/postcss/postcss-custom-media">postcss-custom-media</a></li>
@@ -25,10 +23,9 @@
           <li><a href="https://github.com/postcss/postcss-custom-selectors">postcss-custom-selectors</a></li>
           <li><a href="https://github.com/jonathantneal/postcss-nesting">postcss-nesting</a></li>
           <li><a href="https://github.com/postcss/postcss-nested">postcss-nested</a></li>
-        </ul>
+      </ul>
       ]]>
   </description>
-  <resource-bundle>org.intellij.plugins.postcss.PostCssBundle</resource-bundle>
   <depends>com.intellij.css</depends>
   <depends>com.intellij.modules.lang</depends>
 
