@@ -4,9 +4,13 @@ class GetterSetter4 {
 
   static get foo => _foo;
 
-  static set foo(value) => _foo = value;
+  static set foo(value) {
+    _foo = value;
+  }
 
   static int get bar => _bar;
 
-  static set bar(int value) => _bar = value;
+  static set bar(int value) {
+    _bar = value;
+  }
 }

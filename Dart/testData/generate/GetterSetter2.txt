@@ -8,5 +8,7 @@ class GetterSetter2 {
 
   string get bar => _bar;
 
-  set bar(string value) => _bar = value;
+  set bar(string value) {
+    _bar = value;
+  }
 }

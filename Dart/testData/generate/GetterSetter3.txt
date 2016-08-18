@@ -5,7 +5,9 @@ class GetterSetter3 {
 
   int get foo => _foo;
 
-  set foo(int value) => _foo = value;
+  set foo(int value) {
+    _foo = value;
+  }
 
   bar2() {}
 }
