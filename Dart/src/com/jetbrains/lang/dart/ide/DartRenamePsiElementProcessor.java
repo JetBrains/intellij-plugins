@@ -1,14 +1,12 @@
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.DefinitionsSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -57,7 +55,7 @@ public class DartRenamePsiElementProcessor extends RenamePsiElementProcessor {
 
   @Override
   public PsiElement substituteElementToRename(@NotNull final PsiElement element,
-                                              @NotNull Editor editor) {
+                                              Editor editor) {
     final PsiElement parent = element.getParent();
     if (parent instanceof DartComponent && DartComponentType.typeOf(parent) == DartComponentType.METHOD) {
       final DartClass dartClass = PsiTreeUtil.getParentOfType(parent, DartClass.class, true);

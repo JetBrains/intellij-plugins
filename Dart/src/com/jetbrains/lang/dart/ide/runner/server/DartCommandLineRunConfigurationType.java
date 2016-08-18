@@ -28,8 +28,9 @@ public class DartCommandLineRunConfigurationType extends ConfigurationTypeBase {
         return "Dart Command Line Application"; // compatibility
       }
 
+      @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new DartCommandLineRunConfiguration("Dart", project, DartCommandLineRunConfigurationType.this);
       }
 

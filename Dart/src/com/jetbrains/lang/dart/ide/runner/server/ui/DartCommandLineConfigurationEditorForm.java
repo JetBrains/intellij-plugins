@@ -84,7 +84,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   }
 
   @Override
-  protected void resetEditorFrom(final DartCommandLineRunConfiguration configuration) {
+  protected void resetEditorFrom(@NotNull final DartCommandLineRunConfiguration configuration) {
     final DartCommandLineRunnerParameters parameters = configuration.getRunnerParameters();
 
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
@@ -97,7 +97,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   }
 
   @Override
-  protected void applyEditorTo(final DartCommandLineRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull final DartCommandLineRunConfiguration configuration) throws ConfigurationException {
     final DartCommandLineRunnerParameters parameters = configuration.getRunnerParameters();
 
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));

@@ -44,7 +44,9 @@ public class RefactoringStatusEntry {
     this(severity, message, null);
   }
 
-  public RefactoringStatusEntry(@NotNull RefactoringStatusSeverity severity, @NotNull String message, RefactoringStatusContext ctx) {
+  public RefactoringStatusEntry(@NotNull RefactoringStatusSeverity severity,
+                                @NotNull String message,
+                                @Nullable RefactoringStatusContext ctx) {
     this.severity = severity;
     this.message = message;
     this.context = ctx;

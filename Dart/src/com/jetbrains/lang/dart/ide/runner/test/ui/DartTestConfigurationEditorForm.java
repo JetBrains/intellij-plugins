@@ -93,7 +93,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   }
 
   @Override
-  protected void resetEditorFrom(DartTestRunConfiguration configuration) {
+  protected void resetEditorFrom(@NotNull final DartTestRunConfiguration configuration) {
     final DartTestRunnerParameters parameters = configuration.getRunnerParameters();
 
     myScopeCombo.setSelectedItem(parameters.getScope());
@@ -115,7 +115,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   }
 
   @Override
-  protected void applyEditorTo(DartTestRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull final DartTestRunConfiguration configuration) throws ConfigurationException {
     final DartTestRunnerParameters parameters = configuration.getRunnerParameters();
 
     final DartTestRunnerParameters.Scope scope = (DartTestRunnerParameters.Scope)myScopeCombo.getSelectedItem();
