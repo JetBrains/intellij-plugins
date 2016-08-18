@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelectorAtRule;
+import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,8 @@ final public class PostCssCustomSelectorAtRuleImpl extends CssAtRuleImpl impleme
   @Override
   public ItemPresentation getPresentation() {
     PostCssCustomSelector customSelector = getCustomSelector();
-    return new AtRulePresentation(this, customSelector == null ? "custom-selector" : "custom-selector " + customSelector.getText());
+    return new AtRulePresentation(this, PostCssPsiUtil.isEmptyElement(customSelector)
+                                        ? "custom-selector" : "custom-selector " + customSelector.getText());
   }
 
   @Nullable
