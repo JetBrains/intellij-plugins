@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CssMediaFeatureDescriptorStub extends CssNullValue implements CssMediaFeatureDescriptor {
 
-  private String myName;
+  private final String myName;
 
   protected CssMediaFeatureDescriptorStub(@NotNull final String name) {
     myName = name;

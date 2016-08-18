@@ -133,8 +133,8 @@ public class PostCssNestingInspectionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
-  private long doTest() {
-    return myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
+  private void doTest() {
+    myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
   }
 
   @NotNull

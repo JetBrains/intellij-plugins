@@ -15,7 +15,7 @@ import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerT
 import org.intellij.plugins.postcss.parser.*;
 import org.intellij.plugins.postcss.rename.PostCssRenameTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomMediaResolveTest;
-import org.intellij.plugins.postcss.resolve.PostCssCustomPorpertySetResolveTest;
+import org.intellij.plugins.postcss.resolve.PostCssCustomPropertySetResolveTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
 import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
@@ -88,7 +88,7 @@ public class PostCssTestSuite extends TestCase {
       TestSuite suite = new TestSuite("Resolving PostCSS");
       suite.addTestSuite(PostCssCustomSelectorResolveTest.class);
       suite.addTestSuite(PostCssCustomMediaResolveTest.class);
-      suite.addTestSuite(PostCssCustomPorpertySetResolveTest.class);
+      suite.addTestSuite(PostCssCustomPropertySetResolveTest.class);
       suite.addTestSuite(PostCssFindUsagesTest.class);
       return suite;
     }

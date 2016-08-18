@@ -4,7 +4,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.annotations.NotNull;
 
 @TestDataPath("$CONTENT_ROOT/testData/resolve/customPropertySet")
-public class PostCssCustomPorpertySetResolveTest extends PostCssResolveTest {
+public class PostCssCustomPropertySetResolveTest extends PostCssResolveTest {
 
   public void testResolve() throws Throwable {
     doTest();
