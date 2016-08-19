@@ -92,9 +92,9 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
 
   @Override
   public Sdk getSdk() {
-    final Sdk sdk = IdeaTestUtil.getMockJdk18();
+    Sdk sdk = IdeaTestUtil.getMockJdk18();
     if (webXmlUrl != null) {
-      IdeaTestUtil.addWebJarsTo(sdk);
+      sdk=IdeaTestUtil.addWebJarsTo(sdk);
     }
     return sdk;
   }
