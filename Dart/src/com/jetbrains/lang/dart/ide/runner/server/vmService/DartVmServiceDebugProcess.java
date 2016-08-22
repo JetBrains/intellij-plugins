@@ -160,6 +160,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         }
         LOG.debug(message);
 
+        // TODO: We should find a more reliable way to notify on connection close.
         if (myRemoteDebug && message.equals("VM connection closed: " + getObservatoryUrl("ws", "/ws"))) {
           getSession().stop();
         }
@@ -468,6 +469,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     if (file != null && tokenPosToLineAndColumn != null) {
       final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
+      if (lineAndColumn == null) return XDebuggerUtil.getInstance().createPositionByOffset(file, 0);
       return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
     }
 
@@ -486,6 +488,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
+    if (lineAndColumn == null) return XDebuggerUtil.getInstance().createPositionByOffset(file, 0);
     return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
   }
 
