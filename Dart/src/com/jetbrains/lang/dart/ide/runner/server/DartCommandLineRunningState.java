@@ -136,8 +136,6 @@ public class DartCommandLineRunningState extends CommandLineState {
   private void setupParameters(@NotNull final DartSdk sdk,
                                @NotNull final GeneralCommandLine commandLine,
                                @Nullable final String overriddenMainFilePath) throws ExecutionException {
-    commandLine.addParameter("--ignore-unrecognized-flags");
-
     int customObservatoryPort = -1;
 
     final String vmOptions = myRunnerParameters.getVMOptions();
@@ -202,8 +200,6 @@ public class DartCommandLineRunningState extends CommandLineState {
         commandLine.addParameter("--pause-isolates-on-exit");
       }
     }
-
-    commandLine.addParameter("--trace_service_pause_events");
 
     commandLine.addParameter(FileUtil.toSystemDependentName(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath));
 
