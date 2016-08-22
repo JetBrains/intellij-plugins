@@ -37,6 +37,8 @@ public class DartVmServiceListener implements VmServiceListener {
   public void received(@NotNull final String streamId, @NotNull final Event event) {
     switch (event.getKind()) {
       case BreakpointAdded:
+        // TODO Respond to breakpoints added by the observatory.
+        // myBreakpointHandler.vmBreakpointAdded(null, event.getIsolate().getId(), event.getBreakpoint());
         break;
       case BreakpointRemoved:
         break;
