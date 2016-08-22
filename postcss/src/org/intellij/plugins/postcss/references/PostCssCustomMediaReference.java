@@ -20,9 +20,9 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    String key = getElementName();
-    if (key == null) return ResolveResult.EMPTY_ARRAY;
-    return PsiElementResolveResult.createResults(PostCssCustomMediaIndex.getCustomMediaFeatures(myElement, key));
+    String name = getCustomMediaName();
+    return name != null ? PsiElementResolveResult.createResults(PostCssCustomMediaIndex.getCustomMediaFeatures(name, myElement))
+                        : ResolveResult.EMPTY_ARRAY;
   }
 
   @Override
@@ -32,12 +32,12 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    String name = getElementName();
+    String name = getCustomMediaName();
     return name != null && element instanceof PostCssCustomMedia && name.equals(((PostCssCustomMedia)element).getName());
   }
 
   @Nullable
-  private String getElementName() {
+  private String getCustomMediaName() {
     return StringUtil.startsWith(getCanonicalText(), "--") ? getCanonicalText().substring(2) : null;
   }
 

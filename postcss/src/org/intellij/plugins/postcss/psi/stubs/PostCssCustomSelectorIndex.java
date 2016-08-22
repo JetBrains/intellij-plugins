@@ -20,8 +20,8 @@ public class PostCssCustomSelectorIndex extends StringStubIndexExtension<PostCss
     return KEY;
   }
 
-  public static Collection<PostCssCustomSelector> getCustomSelectors(@NotNull final PsiElement context, @NotNull final String key) {
+  public static Collection<PostCssCustomSelector> getCustomSelectors(@NotNull final String name, @NotNull final PsiElement context) {
     GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(context);
-    return StubIndex.getElements(KEY, key, context.getProject(), scope, PostCssCustomSelector.class);
+    return StubIndex.getElements(KEY, name, context.getProject(), scope, PostCssCustomSelector.class);
   }
 }

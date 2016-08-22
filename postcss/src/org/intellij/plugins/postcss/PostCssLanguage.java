@@ -31,7 +31,7 @@ public class PostCssLanguage extends Language implements CssLanguageProperties {
   }
 
   @Override
-  public boolean isSupportNestedBlocks() {
+  public boolean supportsNestedBlocks() {
     return true;
   }
 }

@@ -1,6 +1,5 @@
 package org.intellij.plugins.postcss.references;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssMediaFeature;
@@ -36,16 +35,15 @@ public class PostCssReferenceContributor extends PsiReferenceContributor {
     private static PsiReference[] getReferences(@NotNull PsiElement element) {
       if (element.getNode().getElementType() == CssElementTypes.CSS_IDENT) {
         PsiElement parent = element.getParent();
-        if (parent instanceof CssPseudoClass && StringUtil.startsWith(parent.getText(), ":--")) {
+        if (parent instanceof CssPseudoClass && parent.getText().startsWith(":--")) {
           return new PsiReference[]{new PostCssCustomSelectorReference(element)};
         }
-        if (parent instanceof CssMediaFeature &&
-            ObjectUtils.notNull(PsiTreeUtil.getChildrenOfType(parent, CssTokenImpl.class)).length == 1 &&
-            StringUtil.startsWith(element.getText(), "--")) {
+        if (parent instanceof CssMediaFeature
+            && element.getText().startsWith("--")
+            && ObjectUtils.notNull(PsiTreeUtil.getChildrenOfType(parent, CssTokenImpl.class)).length == 1) {
           return new PsiReference[]{new PostCssCustomMediaReference(element)};
         }
-        if (parent instanceof PostCssApplyAtRule &&
-            StringUtil.startsWith(element.getText(), "--")) {
+        if (parent instanceof PostCssApplyAtRule && element.getText().startsWith("--")) {
           return new PsiReference[]{new CssCustomMixinReference(element)};
         }
       }

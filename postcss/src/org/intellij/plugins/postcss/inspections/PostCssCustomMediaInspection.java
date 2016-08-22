@@ -15,6 +15,10 @@ import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomMediaInspection extends PostCssBaseInspection {
+  private static final CssAddPrefixQuickFix ADD_PREFIX_QUICK_FIX =
+    new CssAddPrefixQuickFix(PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name"), "--",
+                             PostCssCustomMediaAtRule.class);
+
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
@@ -28,13 +32,10 @@ public class PostCssCustomMediaInspection extends PostCssBaseInspection {
           holder.registerProblem(customMedia, PostCssBundle.message("annotator.custom.media.name.should.not.be.empty"));
         }
         else if (!StringUtil.startsWith(text, "--")) {
-          CssAddPrefixQuickFix quickFix =
-            new CssAddPrefixQuickFix(PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name"), "--",
-                                     PostCssCustomMediaAtRule.class);
           String description = PostCssBundle.message("annotator.custom.media.name.should.start.with");
           TextRange textRange = TextRange.from(customMedia.getStartOffsetInParent(), customMedia.getTextLength());
           ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(
-            postCssCustomMediaAtRule, textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, quickFix);
+            postCssCustomMediaAtRule, textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, ADD_PREFIX_QUICK_FIX);
           holder.registerProblem(problemDescriptor);
         }
       }

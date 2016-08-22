@@ -34,12 +34,16 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
       if (context.textContains('&') || PostCssPsiUtil.isInsideRulesetWithNestedRulesets(context)) {
         return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
       }
-      CssPseudoClass pseudoClass = (CssPseudoClass)context;
-      PsiElement identifier = pseudoClass.getNameIdentifier();
-      if (identifier == null || !StringUtil.startsWith(identifier.getText(), "--")) return Collections.emptyList();
-      Collection<PostCssCustomSelector> customSelectors =
-        PostCssCustomSelectorIndex.getCustomSelectors(identifier, identifier.getText().substring(2));
-      return customSelectors.size() > 0 ? Collections.singletonList(new CssPseudoSelectorDescriptorStub(name)) : Collections.emptyList();
+      PsiElement identifier = ((CssPseudoClass)context).getNameIdentifier();
+      String selectorName = identifier != null ? identifier.getText() : null;
+      if (selectorName == null || selectorName.startsWith("--")) {
+        return Collections.emptyList();
+      }
+      Collection<PostCssCustomSelector> customSelectors = PostCssCustomSelectorIndex.getCustomSelectors(selectorName.substring(2), context);
+      if (customSelectors.isEmpty()) {
+        return Collections.emptyList();
+      }
+      return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
     }
     else if (context instanceof PostCssCustomSelectorAtRule) {
       return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
@@ -61,10 +65,15 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
       PsiElement identifier = mediaFeature.getNameIdentifier();
       if (identifier == null) return Collections.emptyList();
       boolean isNotTheOnly = identifier.getNextSibling() != null || identifier.getPrevSibling() != null;
-      if (isNotTheOnly || !StringUtil.startsWith(identifier.getText(), "--")) return Collections.emptyList();
-      Collection<PostCssCustomMedia> customMediaFeatures =
-        PostCssCustomMediaIndex.getCustomMediaFeatures(identifier, identifier.getText().substring(2));
-      return customMediaFeatures.size() > 0 ? Collections.singletonList(new CssMediaFeatureDescriptorStub(name)) : Collections.emptyList();
+      String featureName = identifier.getText();
+      if (isNotTheOnly || !StringUtil.startsWith(featureName, "--")) {
+        return Collections.emptyList();
+      }
+      Collection<PostCssCustomMedia> features = PostCssCustomMediaIndex.getCustomMediaFeatures(featureName.substring(2), identifier);
+      if (features.isEmpty()) {
+        return Collections.emptyList();
+      }
+      return Collections.singletonList(new CssMediaFeatureDescriptorStub(name));
     }
     else if (context instanceof PostCssCustomMediaAtRule) {
       return Collections.singletonList(new CssMediaFeatureDescriptorStub(name));

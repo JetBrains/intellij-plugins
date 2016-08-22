@@ -20,8 +20,8 @@ public class PostCssCustomMediaIndex extends StringStubIndexExtension<PostCssCus
     return KEY;
   }
 
-  public static Collection<PostCssCustomMedia> getCustomMediaFeatures(@NotNull final PsiElement context, @NotNull final String key) {
+  public static Collection<PostCssCustomMedia> getCustomMediaFeatures(@NotNull final String name, @NotNull final PsiElement context) {
     GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(context);
-    return StubIndex.getElements(KEY, key, context.getProject(), scope, PostCssCustomMedia.class);
+    return StubIndex.getElements(KEY, name, context.getProject(), scope, PostCssCustomMedia.class);
   }
 }

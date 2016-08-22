@@ -20,9 +20,9 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    String key = getElementName();
-    if (key == null) return ResolveResult.EMPTY_ARRAY;
-    return PsiElementResolveResult.createResults(PostCssCustomSelectorIndex.getCustomSelectors(myElement, key));
+    String name = getCustomSelectorName();
+    return name != null ? PsiElementResolveResult.createResults(PostCssCustomSelectorIndex.getCustomSelectors(name, myElement))
+                        : ResolveResult.EMPTY_ARRAY;
   }
 
   @Override
@@ -32,12 +32,12 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    String name = getElementName();
+    String name = getCustomSelectorName();
     return name != null && element instanceof PostCssCustomSelector && name.equals(((PostCssCustomSelector)element).getName());
   }
 
   @Nullable
-  private String getElementName() {
+  private String getCustomSelectorName() {
     return StringUtil.startsWith(getCanonicalText(), "--") ? getCanonicalText().substring(2) : null;
   }
 
