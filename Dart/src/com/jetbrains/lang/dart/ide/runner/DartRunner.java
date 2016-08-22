@@ -89,6 +89,10 @@ public class DartRunner extends DefaultProgramRunner {
     return null;
   }
 
+  protected int getTimeout() {
+    return 5000; // Allow 5 seconds to connect to the observatory.
+  }
+
   private RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
                                                   final @NotNull ExecutionEnvironment env,
                                                   final @Nullable String dasExecutionContextId) throws RuntimeConfigurationError,
@@ -162,7 +166,8 @@ public class DartRunner extends DefaultProgramRunner {
                                                dartUrlResolver,
                                                dasExecutionContextId,
                                                runConfiguration instanceof DartRemoteDebugConfiguration,
-                                               entryPointInLibFolder);
+                                               entryPointInLibFolder,
+                                               getTimeout());
       }
     });
 

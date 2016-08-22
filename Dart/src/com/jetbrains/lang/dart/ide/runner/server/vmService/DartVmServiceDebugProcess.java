@@ -72,6 +72,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @Nullable private final String myDASExecutionContextId;
   private final boolean myRemoteDebug;
   private final boolean myEntryPointInLibFolder;
+  private final int myTimeout;
 
   @Nullable String myRemoteProjectRootUri;
 
@@ -82,7 +83,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                    @NotNull final DartUrlResolver dartUrlResolver,
                                    @Nullable final String dasExecutionContextId,
                                    final boolean remoteDebug,
-                                   final boolean entryPointInLibFolder) {
+                                   final boolean entryPointInLibFolder,
+                                   final int timeout) {
     super(session);
     myDebuggingHost = debuggingHost;
     myObservatoryPort = observatoryPort;
@@ -90,6 +92,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myDartUrlResolver = dartUrlResolver;
     myRemoteDebug = remoteDebug;
     myEntryPointInLibFolder = entryPointInLibFolder;
+    myTimeout = timeout;
 
     myIsolatesInfo = new IsolatesInfo();
     final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
@@ -174,7 +177,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   public void scheduleConnect() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      long timeout = 5000;
+      long timeout = (long)myTimeout;
       long startTime = System.currentTimeMillis();
 
       try {
