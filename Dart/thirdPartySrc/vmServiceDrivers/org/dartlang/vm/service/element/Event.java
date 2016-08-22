@@ -29,8 +29,19 @@ public class Event extends Response {
   }
 
   /**
+   * Is the isolate paused at an await, yield, or yield* statement?
+   *
+   * This is provided for the event kinds:
+   *  - PauseBreakpoint
+   *  - PauseInterrupted
+   */
+  public boolean getAtAsyncSuspension() {
+    return json.get("atAsyncSuspension").getAsBoolean();
+  }
+
+  /**
    * The breakpoint which was added, removed, or resolved.
-   * 
+   *
    * This is provided for the event kinds:
    *  - PauseBreakpoint
    *  - BreakpointAdded
@@ -43,7 +54,7 @@ public class Event extends Response {
 
   /**
    * An array of bytes, encoded as a base64 string.
-   * 
+   *
    * This is provided for the WriteEvent event.
    */
   public String getBytes() {
@@ -58,8 +69,44 @@ public class Event extends Response {
   }
 
   /**
+   * The extension event data.
+   *
+   * This is provided for the Extension event.
+   */
+  public ExtensionData getExtensionData() {
+    return new ExtensionData((JsonObject) json.get("extensionData"));
+  }
+
+  /**
+   * The extension event kind.
+   *
+   * This is provided for the Extension event.
+   */
+  public String getExtensionKind() {
+    return json.get("extensionKind").getAsString();
+  }
+
+  /**
+   * The RPC name of the extension that was added.
+   *
+   * This is provided for the ServiceExtensionAdded event.
+   */
+  public String getExtensionRPC() {
+    return json.get("extensionRPC").getAsString();
+  }
+
+  /**
+   * The argument passed to dart:developer.inspect.
+   *
+   * This is provided for the Inspect event.
+   */
+  public InstanceRef getInspectee() {
+    return new InstanceRef((JsonObject) json.get("inspectee"));
+  }
+
+  /**
    * The isolate with which this event is associated.
-   * 
+   *
    * This is provided for all event kinds except for:
    *  - VMUpdate
    */
@@ -81,13 +128,13 @@ public class Event extends Response {
 
   /**
    * The list of breakpoints at which we are currently paused for a PauseBreakpoint event.
-   * 
+   *
    * This list may be empty. For example, while single-stepping, the VM sends a PauseBreakpoint
    * event with no breakpoints.
-   * 
+   *
    * If there is more than one breakpoint set at the program position, then all of them will be
    * provided.
-   * 
+   *
    * This is provided for the event kinds:
    *  - PauseBreakpoint
    */
@@ -96,6 +143,20 @@ public class Event extends Response {
       @Override
       protected Breakpoint basicGet(JsonArray array, int index) {
         return new Breakpoint(array.get(index).getAsJsonObject());
+      }
+    };
+  }
+
+  /**
+   * An array of TimelineEvents
+   *
+   * This is provided for the TimelineEvents event.
+   */
+  public ElementList<TimelineEvent> getTimelineEvents() {
+    return new ElementList<TimelineEvent>(json.get("timelineEvents").getAsJsonArray()) {
+      @Override
+      protected TimelineEvent basicGet(JsonArray array, int index) {
+        return new TimelineEvent(array.get(index).getAsJsonObject());
       }
     };
   }
@@ -111,15 +172,15 @@ public class Event extends Response {
 
   /**
    * The top stack frame associated with this event, if applicable.
-   * 
+   *
    * This is provided for the event kinds:
    *  - PauseBreakpoint
    *  - PauseInterrupted
    *  - PauseException
-   * 
+   *
    * For PauseInterrupted events, there will be no top frame if the isolate is idle (waiting in the
    * message loop).
-   * 
+   *
    * For the Resume event, the top frame is provided at all times except for the initial resume
    * event that is delivered when an isolate begins execution.
    */
@@ -129,7 +190,7 @@ public class Event extends Response {
 
   /**
    * The vm with which this event is associated.
-   * 
+   *
    * This is provided for the event kind:
    *  - VMUpdate
    */

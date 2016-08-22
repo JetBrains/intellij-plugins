@@ -37,9 +37,19 @@ public enum EventKind {
   BreakpointResolved,
 
   /**
+   * Event from dart:developer.postEvent.
+   */
+  Extension,
+
+  /**
    * A garbage collection event.
    */
   GC,
+
+  /**
+   * Notification from dart:developer.inspect.
+   */
+  Inspect,
 
   /**
    * Notification that an isolate has exited.
@@ -61,6 +71,12 @@ public enum EventKind {
    * changes to the isolate debugging name via setName.
    */
   IsolateUpdate,
+
+  /**
+   * Indicates an isolate is not yet runnable. Only appears in an Isolate's pauseEvent. Never sent
+   * over a stream.
+   */
+  None,
 
   /**
    * An isolate has paused at a breakpoint or due to stepping.
@@ -93,6 +109,11 @@ public enum EventKind {
   Resume,
 
   /**
+   * Notification that an extension RPC was registered on an isolate.
+   */
+  ServiceExtensionAdded,
+
+  /**
    * Notification that VM identifying information has changed. Currently used to notify of changes
    * to the VM debugging name via setVMName.
    */
@@ -106,4 +127,5 @@ public enum EventKind {
   /**
    * Represents a value returned by the VM but unknown to this client
    */
-  Unknown}
+  Unknown
+}

@@ -34,6 +34,14 @@ public class Breakpoint extends Obj {
   }
 
   /**
+   * Is this a breakpoint that was added synthetically as part of a step OverAsyncSuspension resume
+   * command?
+   */
+  public boolean getIsSyntheticAsyncContinuation() {
+    return json.get("isSyntheticAsyncContinuation").getAsBoolean();
+  }
+
+  /**
    * Has this breakpoint been assigned to a specific program location?
    */
   public boolean getResolved() {
