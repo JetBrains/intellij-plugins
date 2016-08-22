@@ -59,7 +59,7 @@ public class VM extends Response {
 
   /**
    * The time that the VM started in milliseconds since the epoch.
-   * 
+   *
    * Suitable to pass to DateTime.fromMillisecondsSinceEpoch.
    */
   public int getStartTime() {

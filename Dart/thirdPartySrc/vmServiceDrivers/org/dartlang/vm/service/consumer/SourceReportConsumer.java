@@ -11,23 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dartlang.vm.service.element;
+package org.dartlang.vm.service.consumer;
 
 // This is a generated file.
 
-/**
- * An {@link ExceptionPauseMode} indicates how the isolate pauses when an exception is thrown.
- */
-public enum ExceptionPauseMode {
+import org.dartlang.vm.service.element.SourceReport;
 
-  All,
+public interface SourceReportConsumer extends Consumer {
 
-  None,
-
-  Unhandled,
-
-  /**
-   * Represents a value returned by the VM but unknown to this client
-   */
-  Unknown
+  public void received(SourceReport response);
 }

@@ -17,6 +17,7 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.util.List;
 
 /**
  * An {@link Isolate} object provides information about one isolate in the VM.
@@ -59,6 +60,13 @@ public class Isolate extends Response {
   }
 
   /**
+   * The list of service extension RPCs that are registered for this isolate, if any.
+   */
+  public List<String> getExtensionRPCs() {
+    return getListString("extensionRPCs");
+  }
+
+  /**
    * The id which is passed to the getIsolate RPC to reload this isolate.
    */
   public String getId() {
@@ -67,7 +75,7 @@ public class Isolate extends Response {
 
   /**
    * A list of all libraries for this isolate.
-   * 
+   *
    * Guaranteed to be initialized when the IsolateRunnable event fires.
    */
   public ElementList<LibraryRef> getLibraries() {
@@ -117,7 +125,7 @@ public class Isolate extends Response {
 
   /**
    * The root library for this isolate.
-   * 
+   *
    * Guaranteed to be initialized when the IsolateRunnable event fires.
    */
   public LibraryRef getRootLib() {
@@ -125,8 +133,15 @@ public class Isolate extends Response {
   }
 
   /**
+   * Is the isolate in a runnable state?
+   */
+  public boolean getRunnable() {
+    return json.get("runnable").getAsBoolean();
+  }
+
+  /**
    * The time that the VM started in milliseconds since the epoch.
-   * 
+   *
    * Suitable to pass to DateTime.fromMillisecondsSinceEpoch.
    */
   public int getStartTime() {

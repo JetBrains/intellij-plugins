@@ -37,7 +37,7 @@ public class TypeArguments extends Obj {
 
   /**
    * A list of types.
-   * 
+   *
    * The value will always be one of the kinds: Type, TypeRef, TypeParameter, BoundedType.
    */
   public ElementList<InstanceRef> getTypes() {
