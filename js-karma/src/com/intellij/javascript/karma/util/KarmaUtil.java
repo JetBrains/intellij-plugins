@@ -43,7 +43,7 @@ public class KarmaUtil {
   private static final String NAME_PART_DELIMITERS = ".-";
   private static final String[] BEFORE_EXT_PARTS = new String[] {"conf", "karma"};
   private static final String[] EXTENSIONS = {"js", "coffee", "es6", "ts"};
-  private static final String[] MOST_RELEVANT_NAMES = {"karma.conf", "karma-conf"};
+  private static final String[] MOST_RELEVANT_NAMES = {"karma.conf", "karma-conf", "karma-js.conf"};
 
   private KarmaUtil() {
   }
