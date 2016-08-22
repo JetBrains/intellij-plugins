@@ -40,6 +40,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.SoftHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -116,8 +117,8 @@ public class BundleManifestCache {
         switch (configuration.getManifestGenerationMode()) {
           case Manually: {
             PsiFile manifestFile = findInModuleRoots(facet.getModule(), configuration.getManifestLocation());
-            if (manifestFile != null) {
-              manifest = readManifest(manifestFile);
+            if (manifestFile instanceof ManifestFile) {
+              manifest = readManifest((ManifestFile)manifestFile);
               dependencies.add(manifestFile);
             }
             else {
@@ -168,7 +169,7 @@ public class BundleManifestCache {
       value = myManager.createCachedValue(() -> {
         VirtualFile manifestFile = libRoot.findFileByRelativePath(JarFile.MANIFEST_NAME);
         PsiFile psiFile = manifestFile != null ? PsiManager.getInstance(myProject).findFile(manifestFile) : null;
-        BundleManifest manifest = manifestFile != null ? readManifest(psiFile) : null;
+        BundleManifest manifest = psiFile instanceof ManifestFile ? readManifest((ManifestFile)psiFile) : null;
         return CachedValueProvider.Result.createSingleDependency(manifest, libRoot);
       }, false);
 
@@ -189,7 +190,7 @@ public class BundleManifestCache {
     return null;
   }
 
-  private static BundleManifest readManifest(PsiFile manifestFile) {
+  private static BundleManifest readManifest(ManifestFile manifestFile) {
     try {
       ByteArrayInputStream stream = new ByteArrayInputStream(manifestFile.getText().getBytes(CharsetToolkit.UTF8));
       Attributes attributes = new Manifest(stream).getMainAttributes();
