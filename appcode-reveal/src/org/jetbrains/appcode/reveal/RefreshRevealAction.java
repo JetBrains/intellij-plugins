@@ -52,8 +52,11 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
     AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
 
-    File lib = Reveal.getRevealLib(sdk);
-    boolean compatible = Reveal.isCompatible();
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle.exists() == false) return;
+
+    File lib = Reveal.getRevealLib(appBundle, sdk);
+    boolean compatible = Reveal.isCompatible(appBundle);
 
     e.getPresentation().setEnabled(lib != null
                                    && compatible
@@ -100,8 +103,11 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
       return;
     }
 
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle.exists() == false) return;
+
     try {
-      Reveal.refreshReveal(myBundleID, myDestination.getDisplayName());
+      Reveal.refreshReveal(appBundle, myBundleID, myDestination.getDisplayName());
     }
     catch (ExecutionException ex) {
       Reveal.LOG.info(ex);

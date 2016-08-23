@@ -26,20 +26,26 @@ public class Reveal {
   public static final Logger LOG = Logger.getInstance("#" + Reveal.class.getPackage().getName());
 
   @NotNull
-  private static List<String> applicationBundleIdentifiers() {
-    List<String> identifiers = new ArrayList<String>() {{
+  private static ArrayList<String> applicationBundleIdentifiers() {
+    ArrayList<String> identifiers = new ArrayList<String>() {{
       add("com.ittybittyapps.Reveal2");
-      add("com.ittybittyapps.dev.Reveal2");
-      add("com.ittybittyapps.dev.Reveal");
-      add("com.ittybottyapps.Reveal");
+      add("com.ittybittyapps.Reveal");
     }};
 
     return identifiers;
   }
 
+  @Nullable
+  public static File getDefaultRevealApplicationBundle() {
+    ArrayList<File> bundles = getRevealApplicationBundles();
+    if (bundles == null || bundles.isEmpty()) return null;
+
+    return bundles.get(0);
+  }
+
   @NotNull
-  private static List<File> getRevealApplicationBundles() {
-    List<File> applicationBundles = new ArrayList<File>();
+  private static ArrayList<File> getRevealApplicationBundles() {
+    ArrayList<File> applicationBundles = new ArrayList<File>();
 
     for (String identifier: applicationBundleIdentifiers()) {
       String path = NSWorkspace.absolutePathForAppBundleWithIdentifier(identifier);
@@ -60,15 +66,25 @@ public class Reveal {
     return result.exists() ? result : null;
   }
 
-  @Nullable
-  public static File getRevealLib(@NotNull File bundle, AppleSdk sdk) {
+  @Contract("null -> null")
+  public static File getRevealLib(@NotNull File bundle, @Nullable AppleSdk sdk) {
+    if (sdk == null) return null;
+
     ApplePlatform platform = sdk.getPlatform();
-    String libraryPath = null;
+    String libraryPath = "/Contents/SharedSupport/";
 
     if (platform.isIOS()) {
-      libraryPath = "/Contents/SharedSupport/iOS-Libraries/RevealServer.framework";
+      libraryPath += "iOS-Libraries/";
     } else if (platform.isTv()) {
-      libraryPath = "/Contents/SharedSupport/tvOS-Libraries/RevealServer.framework";
+      libraryPath += "tvOS-Libraries/";
+    }
+
+    if (isCompatibleWithRevealTwoOrHigher(bundle)) {
+      libraryPath += "RevealServer.framework/RevealServer";
+    } else if (platform.isTv()) {
+      libraryPath += "libReveal-tvOS.dylib";
+    } else {
+      libraryPath += "libReveal.dylib";
     }
 
     if (libraryPath == null) return null;
@@ -85,6 +101,11 @@ public class Reveal {
   public static boolean isCompatibleWithRevealOnePointSixOrHigher(@NotNull File bundle) {
     Version version = getRevealVersion(bundle);
     return version != null && version.isOrGreaterThan(5589);
+  }
+
+  public static boolean isCompatibleWithRevealTwoOrHigher(@NotNull File bundle) {
+    Version version = getRevealVersion(bundle);
+    return version != null && version.isOrGreaterThan(8378);
   }
 
   @Nullable

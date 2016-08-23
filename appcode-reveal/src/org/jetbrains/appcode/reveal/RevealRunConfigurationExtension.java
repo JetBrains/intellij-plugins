@@ -93,7 +93,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @Nullable
   @Override
   protected <P extends AppCodeRunConfiguration> SettingsEditor<P> createEditor(@NotNull P configuration) {
-    return new RevealRunConfigurationEditor<P>();
+    return new MyEditor<P>();
   }
 
   @Nullable
@@ -110,7 +110,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   protected boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
-    if (Reveal.getRevealLib(getSdk(config)) == null) return false;
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle.exists() == false) return false;
+
+    if (Reveal.getRevealLib(appBundle, getSdk(config)) == null) return false;
     return isAvailableForPlatform(config);
   }
 
@@ -125,7 +128,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   @Nullable
-  private static AppleSdk getSdk(@NotNull AppCodeRunConfiguration config) {
+  private static AppleSdk getSdk(@NotNull final AppCodeRunConfiguration config) {
     return ApplicationManager.getApplication().runReadAction(new Computable<AppleSdk>() {
       @Override
       public AppleSdk compute() {
@@ -161,7 +164,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                       @NotNull GeneralCommandLine commandLine) throws ExecutionException {
     super.install(configuration, product, environment, buildConfiguration, mainExecutable, commandLine);
 
-    if (!Reveal.isCompatible()) return;
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle.exists() == false) return;
+
+    if (!Reveal.isCompatible(appBundle)) return;
 
     RevealSettings settings = getRevealSettings(configuration);
     if (!settings.autoInject) return;
@@ -183,7 +189,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                     @NotNull GeneralCommandLine commandLine,
                                     @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
-    File libReveal = Reveal.getRevealLib(getSdk(configuration));
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle.exists() == false) return null;
+
+    File libReveal = Reveal.getRevealLib(appBundle, getSdk(configuration));
     if (libReveal == null || !libReveal.exists()) throw new ExecutionException("Reveal library not found");
 
     Reveal.LOG.info("Reveal lib found at " + libReveal);
@@ -286,7 +295,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       libRevealInTempDir = new File(tempDir, libReveal.getName());
 
       FileUtil.copy(libReveal, libRevealInTempDir);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
 
@@ -327,8 +337,136 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                   @NotNull String runnerId) throws ExecutionException {
   }
 
+  private static class MyEditor<T extends AppCodeRunConfiguration> extends SettingsEditor<T> {
+    private HyperlinkLabel myRevealNotFoundOrIncompatible;
+    private JBLabel myNotAvailable;
+
+    private JBCheckBox myInjectCheckBox;
+    private JBLabel myInjectHint;
+    private JBCheckBox myInstallCheckBox;
+    private JBLabel myInstallHint;
+
+    boolean isFound;
+    boolean isAvailable;
+
+    @Override
+    protected void resetEditorFrom(AppCodeRunConfiguration s) {
+      RevealSettings settings = getRevealSettings(s);
+
+      myInjectCheckBox.setSelected(settings.autoInject);
+      myInstallCheckBox.setSelected(settings.autoInstall);
+
+      File appBundle = Reveal.getDefaultRevealApplicationBundle();
+      if (appBundle.exists() == false) return;
+
+      boolean found = Reveal.getRevealLib(appBundle, getSdk(s)) != null;
+      boolean compatible = Reveal.isCompatible(appBundle);
+
+      String notFoundText = null;
+      if (!found) {
+        notFoundText = "Reveal.app not found. You can install it from ";
+      }
+      else if (!compatible) {
+        notFoundText = "Incompatible version of Reveal.app. You can download the latest one from ";
+      }
+      if (notFoundText != null) {
+        myRevealNotFoundOrIncompatible.setHyperlinkText(notFoundText, "revealapp.com", "");
+      }
+
+      isFound = found && compatible;
+      isAvailable = isAvailableForPlatform(s);
+
+      updateControls();
+    }
+
+    @Override
+    protected void applyEditorTo(AppCodeRunConfiguration s) throws ConfigurationException {
+      RevealSettings settings = getRevealSettings(s);
+
+      settings.autoInject = myInjectCheckBox.isSelected();
+      settings.autoInstall = myInstallCheckBox.isSelected();
+
+      setRevealSettings(s, settings);
+    }
+
+    @NotNull
+    @Override
+    protected JComponent createEditor() {
+      FormBuilder builder = new FormBuilder();
+
+      myRevealNotFoundOrIncompatible = new HyperlinkLabel();
+      myRevealNotFoundOrIncompatible.setIcon(AllIcons.RunConfigurations.ConfigurationWarning);
+      myRevealNotFoundOrIncompatible.setHyperlinkTarget("http://revealapp.com");
+
+      myNotAvailable = new JBLabel("<html>" +
+              "Reveal integration is only available for iOS applications.<br>" +
+              "OS X targets are not yet supported.<br>" +
+              "</html>");
+
+      myInjectCheckBox = new JBCheckBox("Inject Reveal library on launch");
+      myInstallCheckBox = new JBCheckBox("Upload Reveal library on the device if necessary");
+
+      myInjectHint = new JBLabel(UIUtil.ComponentStyle.SMALL);
+      myInstallHint = new JBLabel(UIUtil.ComponentStyle.SMALL);
+
+      myInjectCheckBox.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          updateControls();
+        }
+      });
+
+      builder.addComponent(myNotAvailable);
+      builder.addComponent(myInjectCheckBox, UIUtil.DEFAULT_VGAP * 3);
+      builder.setIndent(UIUtil.DEFAULT_HGAP * 4);
+      builder.addComponent(myInjectHint);
+      builder.setIndent(UIUtil.DEFAULT_HGAP);
+      builder.addComponent(myInstallCheckBox);
+      builder.setIndent(UIUtil.DEFAULT_HGAP * 5);
+      builder.addComponent(myInstallHint);
+
+      JPanel controls = builder.getPanel();
+
+      JPanel panel = new JPanel(new BorderLayout());
+      panel.add(controls, BorderLayout.NORTH);
+      panel.add(Box.createGlue(), BorderLayout.CENTER);
+      panel.add(myRevealNotFoundOrIncompatible, BorderLayout.SOUTH);
+      return panel;
+    }
+
+    private void updateControls() {
+      boolean controlsEnabled = isFound && isAvailable;
+
+      myRevealNotFoundOrIncompatible.setVisible(!isFound);
+      myNotAvailable.setVisible(!isAvailable);
+
+      updateStatusAndHint(myInjectCheckBox, myInjectHint,
+              controlsEnabled,
+              "Library is injected on launch using DYLD_INSERT_LIBRARIES variable");
+
+      boolean installButtonEnabled = controlsEnabled && myInjectCheckBox.isSelected();
+      updateStatusAndHint(myInstallCheckBox, myInstallHint,
+              installButtonEnabled,
+              "It's not necessary to configure the project manually,<br>" +
+                      "library is signed and uploaded automatically"
+      );
+    }
+
+    private static void updateStatusAndHint(JComponent comp, JBLabel label, boolean enabled, String text) {
+      comp.setEnabled(enabled);
+      label.setEnabled(enabled);
+      StringBuilder fontString = new StringBuilder();
+      Color color = enabled ? UIUtil.getLabelForeground() : UIUtil.getLabelDisabledForeground();
+      if (color != null) {
+        fontString.append("<font color=#");
+        UIUtil.appendColor(color, fontString);
+        fontString.append(">");
+      }
+      label.setText("<html>" + fontString + text + "</html>");
+    }
+  }
+
   public static class RevealSettings {
-    public String path;
     public boolean autoInject;
     public boolean autoInstall = true;
     public boolean askToEnableAutoInstall = true;
