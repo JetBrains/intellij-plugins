@@ -33,6 +33,7 @@ import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 import javax.swing.DefaultListModel
 import javax.swing.JComponent
+import javax.swing.JList
 
 /**
  * @author Dennis.Ushakov
@@ -44,6 +45,17 @@ class AngularCliGenerateAction : AnAction() {
     val model = DefaultListModel<Blueprint>()
     val list = JBList(model)
     updateList(list, model, project)
+    list.cellRenderer = object: JBList.StripedListCellRenderer() {
+      override fun getListCellRendererComponent(list: JList<*>?,
+                                                value: Any?,
+                                                index: Int,
+                                                isSelected: Boolean,
+                                                cellHasFocus: Boolean): Component {
+        val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+        icon = JBUI.emptyIcon(5)
+        return component
+      }
+    }
 
     val actionGroup = DefaultActionGroup()
     val refresh: AnAction = object : AnAction(JavaScriptLanguageIcons.BuildTools.Refresh) {
@@ -128,6 +140,7 @@ class AngularCliGenerateAction : AnAction() {
 
       override fun createCenterPanel(): JComponent {
         editor = TextFieldWithAutoCompletion.create(project, blueprint.args, false, null)
+        editor.setPreferredWidth(250)
         return LabeledComponent.create(editor, "Parameters")
       }
 
