@@ -36,7 +36,7 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
       }
       PsiElement identifier = ((CssPseudoClass)context).getNameIdentifier();
       String selectorName = identifier != null ? identifier.getText() : null;
-      if (selectorName == null || selectorName.startsWith("--")) {
+      if (selectorName == null || !selectorName.startsWith("--")) {
         return Collections.emptyList();
       }
       Collection<PostCssCustomSelector> customSelectors = PostCssCustomSelectorIndex.getCustomSelectors(selectorName.substring(2), context);
