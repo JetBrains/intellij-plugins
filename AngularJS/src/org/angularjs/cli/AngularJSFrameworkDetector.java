@@ -7,6 +7,7 @@ import com.intellij.framework.detection.FrameworkDetectionContext;
 import com.intellij.framework.detection.FrameworkDetector;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.json.JsonFileType;
+import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -18,6 +19,8 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
+import com.intellij.patterns.PatternCondition;
+import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +46,12 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   @NotNull
   @Override
   public ElementPattern<FileContent> createSuitableFilePattern() {
-    return FileContentPattern.fileContent().withName("angular-cli.json");
+    return FileContentPattern.fileContent().withName("angular-cli.json").with(new PatternCondition<FileContent>("notLibrary") {
+      @Override
+      public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
+        return !JSLibraryUtil.isProbableLibraryFile(content.getFile());
+      }
+    });
   }
 
   @Override
