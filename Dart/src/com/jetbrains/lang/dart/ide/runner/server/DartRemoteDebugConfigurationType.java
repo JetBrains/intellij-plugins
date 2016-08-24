@@ -23,8 +23,9 @@ public class DartRemoteDebugConfigurationType extends ConfigurationTypeBase {
           DartBundle.message("remote.debug.configuration.description"),
           DartIcons.Dart_16);
     addFactory(new ConfigurationFactory(this) {
+      @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new DartRemoteDebugConfiguration(project, DartRemoteDebugConfigurationType.this, "Dart Remote");
       }
 
