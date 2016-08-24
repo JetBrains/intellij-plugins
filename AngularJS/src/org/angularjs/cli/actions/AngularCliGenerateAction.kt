@@ -90,6 +90,7 @@ class AngularCliGenerateAction : AnAction() {
         setMovable(true).
         setResizable(true).
         setSettingButtons(toolbarComponent).
+        setCancelOnWindowDeactivation(false).
         setCancelOnClickOutside(true).
         setDimensionServiceKey(project, "org.angular.cli.generate", true).
         setMinSize(Dimension(JBUI.scale(200), JBUI.scale(200))).
