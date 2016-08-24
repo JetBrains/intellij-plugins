@@ -122,7 +122,7 @@ public class AnalysisError {
     Location location = Location.fromJson(jsonObject.get("location").getAsJsonObject());
     String message = jsonObject.get("message").getAsString();
     String correction = jsonObject.get("correction") == null ? null : jsonObject.get("correction").getAsString();
-    String code = jsonObject.get("code").getAsString();
+    String code = jsonObject.get("code") == null ? null : jsonObject.get("code").getAsString();
     Boolean hasFix = jsonObject.get("hasFix") == null ? null : jsonObject.get("hasFix").getAsBoolean();
     return new AnalysisError(severity, type, location, message, correction, code, hasFix);
   }
@@ -219,7 +219,9 @@ public class AnalysisError {
     if (correction != null) {
       jsonObject.addProperty("correction", correction);
     }
-    jsonObject.addProperty("code", code);
+    if (code != null) {
+      jsonObject.addProperty("code", code);
+    }
     if (hasFix != null) {
       jsonObject.addProperty("hasFix", hasFix);
     }
