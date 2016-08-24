@@ -26,14 +26,13 @@ import org.angularjs.cli.AngularCLIProjectGenerator
 import org.angularjs.cli.Blueprint
 import org.angularjs.cli.BlueprintsLoader
 import org.angularjs.index.AngularIndexUtil
+import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
-import javax.swing.DefaultListModel
-import javax.swing.JComponent
-import javax.swing.JList
+import javax.swing.*
 
 /**
  * @author Dennis.Ushakov
@@ -117,7 +116,6 @@ class AngularCliGenerateAction : AnAction() {
     list.setPaintBusy(true)
     model.clear()
     ApplicationManager.getApplication().executeOnPooledThread({
-
       val blueprints = BlueprintsLoader.load(project)
       ApplicationManager.getApplication().invokeLater({
                                                         blueprints.forEach {
@@ -138,9 +136,12 @@ class AngularCliGenerateAction : AnAction() {
       }
 
       override fun createCenterPanel(): JComponent {
+        val panel = JPanel(BorderLayout())
+        panel.add(JLabel(blueprint.description), BorderLayout.NORTH)
         editor = TextFieldWithAutoCompletion.create(project, blueprint.args, false, null)
         editor.setPreferredWidth(250)
-        return LabeledComponent.create(editor, "Parameters")
+        panel.add(LabeledComponent.create(editor, "Parameters"), BorderLayout.SOUTH)
+        return panel
       }
 
       override fun getPreferredFocusedComponent(): JComponent {
