@@ -132,11 +132,14 @@ User Guide (API Version 2010-05-15)
                 + AWS::ApiGateway::Resource
                 + AWS::ApiGateway::RestApi
                 + AWS::ApiGateway::Stage
+                + AWS::ApplicationAutoScaling::ScalableTarget
+                + AWS::ApplicationAutoScaling::ScalingPolicy
                 + AWS::AutoScaling::AutoScalingGroup
                 + AWS::AutoScaling::LaunchConfiguration
                 + AWS::AutoScaling::LifecycleHook
                 + AWS::AutoScaling::ScalingPolicy
                 + AWS::AutoScaling::ScheduledAction
+                + AWS::CertificateManager::Certificate
                 + AWS::CloudFormation::Authentication
                 + AWS::CloudFormation::CustomResource
                 + AWS::CloudFormation::Init
@@ -210,6 +213,10 @@ User Guide (API Version 2010-05-15)
                 + AWS::ElasticBeanstalk::ConfigurationTemplate
                 + AWS::ElasticBeanstalk::Environment
                 + AWS::ElasticLoadBalancing::LoadBalancer
+                + AWS::ElasticLoadBalancingV2::Listener
+                + AWS::ElasticLoadBalancingV2::ListenerRule
+                + AWS::ElasticLoadBalancingV2::LoadBalancer
+                + AWS::ElasticLoadBalancingV2::TargetGroup
                 + AWS::Elasticsearch::Domain
                 + AWS::EMR::Cluster
                 + AWS::EMR::InstanceGroupConfig
@@ -293,12 +300,17 @@ User Guide (API Version 2010-05-15)
                 + API Gateway Method MethodResponse
                 + API Gateway RestApi S3Location
                 + API Gateway Stage MethodSetting
+                + Application Auto Scaling ScalingPolicy
+                  StepScalingPolicyConfiguration
+                + Application Auto Scaling ScalingPolicy
+                  StepScalingPolicyConfiguration StepAdjustment
                 + AutoScaling Block Device Mapping
                 + AutoScaling EBS Block Device
                 + Auto Scaling MetricsCollection
                 + Auto Scaling NotificationConfigurations
                 + Auto Scaling ScalingPolicy StepAdjustments
                 + Auto Scaling Tags
+                + ACM Certificate DomainValidationOption
                 + CloudFormation Stack Parameters
                 + AWS CloudFormation Interface Label
                 + AWS CloudFormation Interface ParameterGroup
@@ -310,6 +322,7 @@ User Guide (API Version 2010-05-15)
                 + CloudFront Logging
                 + CloudFront DistributionConfig Origin
                 + CloudFront DistributionConfig Origin CustomOrigin
+                + CloudFront DistributionConfig Origin OriginCustomHeader
                 + CloudFront DistributionConfig Origin S3Origin
                 + CloudFront DistributionConfiguration Restrictions
                 + CloudFront DistributionConfig Restrictions GeoRestriction
@@ -425,6 +438,15 @@ User Guide (API Version 2010-05-15)
                 + LBCookieStickinessPolicy
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
+                + Elastic Load Balancing Listener Certificates
+                + Elastic Load Balancing Listener DefaultActions
+                + Elastic Load Balancing ListenerRule Actions
+                + Elastic Load Balancing ListenerRule Conditions
+                + Elastic Load Balancing LoadBalancer
+                  LoadBalancerAttributes
+                + Elastic Load Balancing TargetGroup Matcher
+                + Elastic Load Balancing TargetGroup TargetDescription
+                + Elastic Load Balancing TargetGroup TargetGroupAttributes
                 + Amazon ES Domain EBSOptions
                 + Amazon ES Domain ElasticsearchClusterConfig
                 + Amazon ES Domain SnapshotOptions
@@ -637,6 +659,81 @@ The following table describes the important changes to the documentation
 since the preceeding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New resources
+
+August 11, 2016
+
+Use the following Elastic Load Balancing Application load balancer 
+resources to distribute incoming application traffic to multiple targets, 
+such as EC2 instances, in multiple Availability Zones:
+
+    * AWS::ElasticLoadBalancingV2::Listener
+
+    * AWS::ElasticLoadBalancingV2::ListenerRule
+
+    * AWS::ElasticLoadBalancingV2::LoadBalancer
+
+    * AWS::ElasticLoadBalancingV2::TargetGroup
+
+2010-05-15
+
+Updated resource
+
+August 11, 2016
+
+AWS::AutoScaling::AutoScalingGroup
+
+    Use the TargetGroupARNs property to associate the Auto Scaling group
+    with one or more Application load balancer target groups.
+
+AWS::ECS::Service
+
+    For the load LoadBalancers property, use the TargetGroupArn property to
+    associate an Amazon EC2 Container Service service with an Application
+    load balancer target group.
+
+2010-05-15
+
+New resources
+
+August 09, 2016
+
+AWS CloudFormation added the following resources:
+
+AWS::ApplicationAutoScaling::ScalableTarget and 
+AWS::ApplicationAutoScaling::ScalingPolicy
+
+    Use an Application Auto Scaling scaling policy to define when and how a
+    target resource scales.
+
+AWS::CertificateManager::Certificate
+
+    Provision an AWS Certificate Manager certificate that you can use with
+    other AWS services to enable secure connections.
+
+2010-05-15
+
+Updated resources
+
+August 09, 2016
+
+AWS CloudFormation updated the following resources:
+
+AWS::CloudFront::Distribution
+
+    For the distribution configuration ViewerCertificate property, you can
+    specify an AWS Certificate Manager certificate. For the distribution
+    configuration Origin property, you can specify custom headers and the
+    SSL protocols for custom origins.
+
+AWS::EFS::FileSystem
+
+    You can specify the performance mode for an Amazon Elastic File System
+    file system.
+
+2010-05-15
+
 New resources 	
 
 July 20, 2016
@@ -749,7 +846,7 @@ server for launching EC2 instances.
 
 2010-05-15
 
-Updated resources 	
+Updated resources
 
 April 25, 2016
 
