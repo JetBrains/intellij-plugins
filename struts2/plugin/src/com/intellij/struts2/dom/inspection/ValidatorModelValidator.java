@@ -40,7 +40,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Validator for validation.xml/validators.xml files when running "Make Project".
+ * Validator for validation.xml/validators.xml files when running "Build Project".
  *
  * @author Yann C&eacute;bron
  */

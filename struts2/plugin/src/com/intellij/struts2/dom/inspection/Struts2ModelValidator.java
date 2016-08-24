@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Validator for struts.xml files when running "Make Project".
+ * Validator for struts.xml files when running "Build Project".
  *
  * @author Yann C&eacute;bron
  */

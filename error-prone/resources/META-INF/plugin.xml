@@ -3,7 +3,7 @@
   <id>Error-prone plugin</id>
   <description>
     <![CDATA[
-        Allows to make project using 'error-prone java compiler' (https://code.google.com/p/error-prone) to catch common Java mistakes at compile-time.
+        Allows to build project using 'error-prone java compiler' (https://code.google.com/p/error-prone) to catch common Java mistakes at compile-time.
         To use the compiler, go to File | Settings | Compiler | 'Java Compiler' and select 'Javac with error-prone' in 'Use compiler' box.
       ]]>
   </description>
