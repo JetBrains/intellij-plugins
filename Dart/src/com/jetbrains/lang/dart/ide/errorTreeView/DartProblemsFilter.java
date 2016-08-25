@@ -108,10 +108,12 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
       return false;
     }
 
-    if (myFileFilterMode == FileFilterMode.Directory && myCurrentFile != null) {
+    if (myFileFilterMode == FileFilterMode.Directory) {
+      if (myCurrentFile == null) return false;
+
       VirtualFile parent = myCurrentFile.getParent();
       VirtualFile child = problem.getFile();
-      if (child != null && parent != null && !child.getPath().startsWith(parent.getPath())) {
+      if (child != null && parent != null && !child.getPath().startsWith(parent.getPath() + "/")) {
         return false;
       }
     }
