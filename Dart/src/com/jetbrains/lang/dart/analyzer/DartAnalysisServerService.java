@@ -70,6 +70,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -126,6 +127,8 @@ public class DartAnalysisServerService {
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
   @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
+
+  @Nullable private Task.Backgroundable myStatusBarTask;
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -227,8 +230,7 @@ public class DartAnalysisServerService {
           for (final Project project : myRootsHandler.getTrackedProjects()) {
             final Runnable delayedRunnable = () -> {
               if (project.isDisposed() || !myServerBusy.get()) return;
-
-              final Task.Backgroundable task =
+              myStatusBarTask =
                 new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
                   @Override
                   public void run(@NotNull ProgressIndicator indicator) {
@@ -243,7 +245,7 @@ public class DartAnalysisServerService {
                   }
                 };
 
-              ProgressManager.getInstance().run(task);
+              ProgressManager.getInstance().run(myStatusBarTask);
             };
 
             // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events
@@ -686,6 +688,10 @@ public class DartAnalysisServerService {
   }
 
   private void onErrorsUpdated(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+    if (myStatusBarTask != null) {
+      String fileName = filePath.substring(filePath.lastIndexOf(File.separatorChar) + 1, filePath.length());
+      myStatusBarTask.setTitle(DartBundle.message("dart.analysis.progress.title.with.file", fileName));
+    }
     ApplicationManager.getApplication().runReadAction(() -> {
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
 
