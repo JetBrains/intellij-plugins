@@ -82,6 +82,7 @@ public class DartServerRootsHandler {
     ProgressManager.getInstance().executeNonCancelableSection(() -> {
       myTrackedProjects.add(project);
       updateRoots();
+      DartAnalysisServerService.getInstance().updateCurrentFile();
       DartAnalysisServerService.getInstance().updateVisibleFiles();
     });
 

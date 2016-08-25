@@ -72,6 +72,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @Nullable private final String myDASExecutionContextId;
   private final boolean myRemoteDebug;
   private final boolean myEntryPointInLibFolder;
+  private final int myTimeout;
 
   @Nullable String myRemoteProjectRootUri;
 
@@ -82,7 +83,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                    @NotNull final DartUrlResolver dartUrlResolver,
                                    @Nullable final String dasExecutionContextId,
                                    final boolean remoteDebug,
-                                   final boolean entryPointInLibFolder) {
+                                   final boolean entryPointInLibFolder,
+                                   final int timeout) {
     super(session);
     myDebuggingHost = debuggingHost;
     myObservatoryPort = observatoryPort;
@@ -90,6 +92,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myDartUrlResolver = dartUrlResolver;
     myRemoteDebug = remoteDebug;
     myEntryPointInLibFolder = entryPointInLibFolder;
+    myTimeout = timeout;
 
     myIsolatesInfo = new IsolatesInfo();
     final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
@@ -160,6 +163,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         }
         LOG.debug(message);
 
+        // TODO: We should find a more reliable way to notify on connection close.
         if (myRemoteDebug && message.equals("VM connection closed: " + getObservatoryUrl("ws", "/ws"))) {
           getSession().stop();
         }
@@ -174,7 +178,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   public void scheduleConnect() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      long timeout = 5000;
+      long timeout = (long)myTimeout;
       long startTime = System.currentTimeMillis();
 
       try {
@@ -468,6 +472,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     if (file != null && tokenPosToLineAndColumn != null) {
       final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
+      if (lineAndColumn == null) return XDebuggerUtil.getInstance().createPositionByOffset(file, 0);
       return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
     }
 
@@ -486,6 +491,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
+    if (lineAndColumn == null) return XDebuggerUtil.getInstance().createPositionByOffset(file, 0);
     return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
   }
 

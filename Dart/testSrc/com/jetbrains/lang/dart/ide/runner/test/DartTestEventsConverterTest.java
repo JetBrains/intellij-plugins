@@ -32,7 +32,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   // Do not reformat this list.
   private static final String[] Sample1Events = {
     // @formatter:off
-    "/usr/local/opt/dart/libexec/bin/dart --ignore-unrecognized-flags --checked --enable-vm-service:51706 --trace_service_pause_events file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json test/formatter_test.dart -n \"line endings\"\n",
+    "/usr/local/opt/dart/libexec/bin/dart --checked --enable-vm-service:51706 file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json test/formatter_test.dart -n \"line endings\"\n",
     "Observatory listening on http://127.0.0.1:51706\n",
     "\n",
     "{\"protocolVersion\":\"0.1.0\",\"runnerVersion\":\"0.12.6\",\"type\":\"start\",\"time\":0}\n",
@@ -109,7 +109,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   // Do not reformat this list.
   private static final String[] Sample2Events = {
     // @formatter:off
-    "/usr/local/opt/dart/libexec/bin/dart --ignore-unrecognized-flags --checked --trace_service_pause_events file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json /Users/messick/src/quiver-dart/test/\n",
+    "/usr/local/opt/dart/libexec/bin/dart --checked file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json /Users/messick/src/quiver-dart/test/\n",
     "{\"protocolVersion\":\"0.1.0\",\"runnerVersion\":\"0.12.9-dev (from ../test-master)\",\"type\":\"start\",\"time\":0}\n",
     "{\"suite\":{\"id\":0,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/collect_test.dart\"},\"type\":\"suite\",\"time\":0}\n",
     "{\"test\":{\"id\":1,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/collect_test.dart\",\"suiteID\":0,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":0}\n",

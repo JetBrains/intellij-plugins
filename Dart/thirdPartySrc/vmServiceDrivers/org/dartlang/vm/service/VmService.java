@@ -48,6 +48,8 @@ public class VmService extends VmServiceBase {
 
   public static final String DEBUG_STREAM_ID = "Debug";
 
+  public static final String EXTENSION_STREAM_ID = "Extension";
+
   public static final String GC_STREAM_ID = "GC";
 
   public static final String ISOLATE_STREAM_ID = "Isolate";
@@ -55,6 +57,8 @@ public class VmService extends VmServiceBase {
   public static final String STDERR_STREAM_ID = "Stderr";
 
   public static final String STDOUT_STREAM_ID = "Stdout";
+
+  public static final String TIMELINE_STREAM_ID = "Timeline";
 
   public static final String VM_STREAM_ID = "VM";
 
@@ -66,7 +70,7 @@ public class VmService extends VmServiceBase {
   /**
    * The minor version number of the protocol supported by this client.
    */
-  public static final int versionMinor = 0;
+  public static final int versionMinor = 5;
 
   /**
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script.
@@ -81,7 +85,7 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script.
-   * 
+   *
    * @param column This parameter is optional and may be null.
    */
   public void addBreakpoint(String isolateId, String scriptId, int line, Integer column, BreakpointConsumer consumer) {
@@ -89,7 +93,7 @@ public class VmService extends VmServiceBase {
     params.addProperty("isolateId", isolateId);
     params.addProperty("scriptId", scriptId);
     params.addProperty("line", line);
-    if (column != null) params.addProperty("column", column.intValue());
+    if (column != null) params.addProperty("column", column);
     request("addBreakpoint", params, consumer);
   }
 
@@ -120,7 +124,7 @@ public class VmService extends VmServiceBase {
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script. This
    * RPC is useful when a script has not yet been assigned an id, for example, if a script is in a
    * deferred library which has not yet been loaded.
-   * 
+   *
    * @param column This parameter is optional and may be null.
    */
   public void addBreakpointWithScriptUri(String isolateId, String scriptUri, int line, Integer column, BreakpointConsumer consumer) {
@@ -128,7 +132,7 @@ public class VmService extends VmServiceBase {
     params.addProperty("isolateId", isolateId);
     params.addProperty("scriptUri", scriptUri);
     params.addProperty("line", line);
-    if (column != null) params.addProperty("column", column.intValue());
+    if (column != null) params.addProperty("column", column);
     request("addBreakpointWithScriptUri", params, consumer);
   }
 
@@ -157,7 +161,7 @@ public class VmService extends VmServiceBase {
   }
 
   /**
-   * The _getFlagList RPC returns a list of all command line flags in the VM along with their
+   * The [getFlagList] RPC returns a list of all command line flags in the VM along with their
    * current values.
    */
   public void getFlagList(FlagListConsumer consumer) {
@@ -186,7 +190,7 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [getObject] RPC is used to lookup an [object] from some isolate by its [id].
-   * 
+   *
    * @param offset This parameter is optional and may be null.
    * @param count This parameter is optional and may be null.
    */
@@ -194,9 +198,45 @@ public class VmService extends VmServiceBase {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     params.addProperty("objectId", objectId);
-    if (offset != null) params.addProperty("offset", offset.intValue());
-    if (count != null) params.addProperty("count", count.intValue());
+    if (offset != null) params.addProperty("offset", offset);
+    if (count != null) params.addProperty("count", count);
     request("getObject", params, consumer);
+  }
+
+  /**
+   * The [getSourceReport] RPC is used to generate a set of reports tied to source locations in an
+   * isolate.
+   *
+   * TODO: reports parameter should be a List<SourceReportKind>.
+   */
+  public void getSourceReport(String isolateId, SourceReportKind reports, SourceReportConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("reports", reports.name());
+    request("getSourceReport", params, consumer);
+  }
+
+  /**
+   * The [getSourceReport] RPC is used to generate a set of reports tied to source locations in an
+   * isolate.
+   *
+   * @param scriptId This parameter is optional and may be null.
+   * @param tokenPos This parameter is optional and may be null.
+   * @param endTokenPos This parameter is optional and may be null.
+   * @param forceCompile This parameter is optional and may be null.
+   *
+   *
+   * TODO: reports parameter should be a List<SourceReportKind>.
+   */
+  public void getSourceReport(String isolateId, SourceReportKind reports, String scriptId, Integer tokenPos, Integer endTokenPos, Boolean forceCompile, SourceReportConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("reports", reports.name());
+    if (scriptId != null) params.addProperty("scriptId", scriptId);
+    if (tokenPos != null) params.addProperty("tokenPos", tokenPos);
+    if (endTokenPos != null) params.addProperty("endTokenPos", endTokenPos);
+    if (forceCompile != null) params.addProperty("forceCompile", forceCompile);
+    request("getSourceReport", params, consumer);
   }
 
   /**
@@ -248,9 +288,8 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [resume] RPC is used to resume execution of a paused isolate.
-   * 
-   * @param step A [StepOption] indicates which form of stepping is requested in a resume RPC. This
-   * parameter is optional and may be null.
+   *
+   * @param step This parameter is optional and may be null.
    */
   public void resume(String isolateId, StepOption step, SuccessConsumer consumer) {
     JsonObject params = new JsonObject();
@@ -270,9 +309,6 @@ public class VmService extends VmServiceBase {
 
   /**
    * The [setExceptionPauseMode] RPC is used to control if an isolate pauses when an exception is
-   * thrown.
-   * 
-   * @param mode An [ExceptionPauseMode] indicates how the isolate pauses when an exception is
    * thrown.
    */
   public void setExceptionPauseMode(String isolateId, ExceptionPauseMode mode, SuccessConsumer consumer) {
@@ -439,6 +475,12 @@ public class VmService extends VmServiceBase {
       }
       if (responseType.equals("TypeArguments")) {
         ((GetObjectConsumer) consumer).received(new TypeArguments(json));
+        return;
+      }
+    }
+    if (consumer instanceof SourceReportConsumer) {
+      if (responseType.equals("SourceReport")) {
+        ((SourceReportConsumer) consumer).received(new SourceReport(json));
         return;
       }
     }

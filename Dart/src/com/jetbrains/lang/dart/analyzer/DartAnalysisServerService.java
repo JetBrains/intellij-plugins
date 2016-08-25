@@ -17,11 +17,9 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -124,6 +122,7 @@ public class DartAnalysisServerService {
 
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
+  @Nullable private Task.Backgroundable myServerProgressTask;
 
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
@@ -138,6 +137,10 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
+      if (myServerProgressTask != null) {
+        myServerProgressTask.setTitle(DartBundle.message("dart.analysis.progress.title.with.file", PathUtil.getFileName(filePathSD)));
+      }
+
       final boolean visible = myVisibleFiles.contains(filePathSD);
       final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
       myServerData.computedErrors(filePathSI, errors, visible);
@@ -229,8 +232,7 @@ public class DartAnalysisServerService {
           for (final Project project : myRootsHandler.getTrackedProjects()) {
             final Runnable delayedRunnable = () -> {
               if (project.isDisposed() || !myServerBusy.get()) return;
-
-              final Task.Backgroundable task =
+              myServerProgressTask =
                 new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
                   @Override
                   public void run(@NotNull ProgressIndicator indicator) {
@@ -245,7 +247,7 @@ public class DartAnalysisServerService {
                   }
                 };
 
-              ProgressManager.getInstance().run(task);
+              ProgressManager.getInstance().run(myServerProgressTask);
             };
 
             // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events
@@ -474,6 +476,8 @@ public class DartAnalysisServerService {
             DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
           }
 
+          updateCurrentFile();
+
           if (isLocalAnalyzableFile(file)) {
             updateVisibleFiles();
           }
@@ -481,6 +485,8 @@ public class DartAnalysisServerService {
 
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+          updateCurrentFile();
+
           if (isLocalAnalyzableFile(event.getOldFile()) || isLocalAnalyzableFile(event.getNewFile())) {
             updateVisibleFiles();
           }
@@ -488,6 +494,8 @@ public class DartAnalysisServerService {
 
         @Override
         public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+          updateCurrentFile();
+
           if (isLocalAnalyzableFile(file)) {
             // file could be opened in more than one editor, so this check is needed
             for (Project project : myRootsHandler.getTrackedProjects()) {
@@ -540,17 +548,18 @@ public class DartAnalysisServerService {
     return myServerData.getImplementedMembers(file);
   }
 
-  void updateVisibleFiles() {
+  void updateCurrentFile() {
     UIUtil.invokeLaterIfNeeded(() -> {
       for (Project project : myRootsHandler.getTrackedProjects()) {
-        // workaround for IDEA-148691
-        final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-        final VirtualFile currentFile = editor instanceof EditorEx ? ((EditorEx)editor).getVirtualFile() : null;
-        DartProblemsView.getInstance(project).setCurrentFile(currentFile);
+        final VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
+        if (files.length > 0) {
+          DartProblemsView.getInstance(project).setCurrentFile(files[0]);
+        }
       }
     });
+  }
 
-
+  void updateVisibleFiles() {
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
       final List<String> newVisibleFiles = new ArrayList<>();
