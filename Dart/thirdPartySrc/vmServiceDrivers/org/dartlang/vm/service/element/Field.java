@@ -28,7 +28,7 @@ public class Field extends Obj {
 
   /**
    * The declared type of this field.
-   * 
+   *
    * The value will always be of one of the kinds: Type, TypeRef, TypeParameter, BoundedType.
    */
   public InstanceRef getDeclaredType() {
