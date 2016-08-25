@@ -8,6 +8,7 @@ import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
+import com.intellij.layout.LayoutKt;
 import com.intellij.openapi.editor.colors.*;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
@@ -86,22 +87,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
     Font font = colorsScheme.getFont(EditorFontType.PLAIN);
     Color background = colorsScheme.getDefaultBackground();
     Color foreground = getTextForeground(colorsScheme);
-
-    JEditorPane pane = new JEditorPane();
-    pane.setContentType(UIUtil.HTML_MIME);
-    pane.setEditable(false);
-    pane.setFont(font);
-    pane.setBackground(background);
-    pane.setForeground(foreground);
-
-    String bodyInnerHtml = getWarningMessage();
-    String html = String.format(
-      "<html><head>%s</head><body>%s</body></html>",
-      UIUtil.getCssFontDeclaration(font, foreground, null, null),
-      bodyInnerHtml
-    );
-    pane.setText(html);
-    return pane;
+    return LayoutKt.htmlComponent(getWarningMessage(), font, background, foreground);
   }
 
   @NotNull

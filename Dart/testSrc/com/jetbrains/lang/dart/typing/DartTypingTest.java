@@ -281,7 +281,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                              "  switch (1) {\n" +
                              "    case 1:\n" +
                              "      break;\n" +
-                             "    <caret>\n" +
+                             "      <caret>\n" +
                              "  }\n" +
                              "}";
 
@@ -290,7 +290,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n', StringUtil.replace(textBefore, "break;", "return 1+1;"), StringUtil.replace(textAfter, "break;", "return 1+1;"));
     doTypingTest('\n', StringUtil.replace(textBefore, "break;", "throw '';"), StringUtil.replace(textAfter, "break;", "throw '';"));
     doTypingTest('\n', StringUtil.replace(textBefore, "break;", "foo;"),
-                 StringUtil.replace(textAfter, "break;\n    <caret>", "foo;\n      <caret>"));
+                 StringUtil.replace(textAfter, "break;\n      <caret>", "foo;\n      <caret>"));
   }
 
   public void testEnterInMapLiteral() throws Throwable {

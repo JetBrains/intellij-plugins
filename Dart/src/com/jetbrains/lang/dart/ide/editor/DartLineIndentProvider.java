@@ -26,8 +26,8 @@ public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
     SYNTAX_MAP.put(DartTokenTypes.LPAREN, LeftParenthesis);
     SYNTAX_MAP.put(DartTokenTypes.RPAREN, RightParenthesis);
     SYNTAX_MAP.put(DartTokenTypes.COLON, Colon);
-    SYNTAX_MAP.put(DartTokenTypes.SWITCH_CASE, SwitchCase);
-    SYNTAX_MAP.put(DartTokenTypes.DEFAULT_CASE, SwitchDefault);
+    SYNTAX_MAP.put(DartTokenTypes.CASE, SwitchCase);
+    SYNTAX_MAP.put(DartTokenTypes.DEFAULT, SwitchDefault);
     SYNTAX_MAP.put(DartTokenTypes.IF, IfKeyword);
     SYNTAX_MAP.put(DartTokenTypes.ELSE, ElseKeyword);
     SYNTAX_MAP.put(DartTokenTypes.FOR, ForKeyword);

@@ -54,6 +54,8 @@ class BlueprintListTest : LightPlatformTestCase() {
         "        --prefix (String) (Default: app)\n" +
         "          aliases: -p <value>\n" +
         "        --mobile (Boolean) (Default: false)\n" +
+        "      model <name> <attr:type>\n" +
+        "        Generates an ng-data model.\n" +
         "      ng2 <name> <options...>\n" +
         "        --source-dir (String) (Default: src)\n" +
         "          aliases: -sd <value>\n" +
@@ -120,8 +122,6 @@ class BlueprintListTest : LightPlatformTestCase() {
         "        Generates a mixin.\n" +
         "      mixin-test <name>\n" +
         "        Generates a mixin unit test.\n" +
-        "      model <name> <attr:type>\n" +
-        "        Generates an ng-data model.\n" +
         "      model-test <name>\n" +
         "        Generates a model unit test.\n" +
         "      resource <name>\n" +

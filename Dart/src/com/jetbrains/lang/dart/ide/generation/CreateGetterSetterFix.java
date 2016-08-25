@@ -111,14 +111,16 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
       template.addTextSegment(" value");
       template.addTextSegment(")");
     }
-    template.addTextSegment(" => ");
     if (isGetter) {
+      template.addTextSegment(" => ");
       template.addTextSegment(name);
       template.addTextSegment("; "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     }
     else {
+      template.addTextSegment("{ ");
       template.addTextSegment(name);
-      template.addTextSegment("=value; "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
+      template.addTextSegment(" = value; "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
+      template.addTextSegment(" } "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     }
   }
 }
