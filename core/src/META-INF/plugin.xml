@@ -8,6 +8,7 @@
 
   <depends>com.intellij.javaee</depends>
   <depends>com.intellij.properties</depends>
+  <depends optional="true" config-file="tapestry-css-support-plugin.xml">com.intellij.css</depends>
   <category>Web/JavaEE Technologies</category>
 
   <!--<helpset file="help.jar" path="/Help.hs"/>-->

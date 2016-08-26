@@ -1,0 +1,5 @@
+<idea-plugin url="https://www.jetbrains.com/idea">
+  <extensions defaultExtensionNs="com.intellij">
+    <css.embeddedCssProvider implementation="com.intellij.tapestry.intellij.TapestryEmbeddedCssProvider"/>
+  </extensions>
+</idea-plugin>

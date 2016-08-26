@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.lang.reference;
 
 import com.intellij.lang.properties.references.PropertyReference;
+import com.intellij.openapi.paths.PathReferenceManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -39,7 +40,7 @@ import java.util.List;
 
 public class TapestryReferenceContributor extends PsiReferenceContributor {
 
-  private final PatternCondition<XmlElement> tapestryFileCondition = new PatternCondition<XmlElement>("tapestryFileCondition") {
+  private static final PatternCondition<XmlElement> tapestryFileCondition = new PatternCondition<XmlElement>("tapestryFileCondition") {
     public boolean accepts(@NotNull XmlElement element, final ProcessingContext context) {
       return element.getContainingFile() instanceof TmlFile;
     }
@@ -51,9 +52,21 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
     registerTypeAttrValueReferenceProvider(registrar, tapestryTemplateNamespaces);
     registerIdAttrValueReferenceProvider(registrar, tapestryTemplateNamespaces);
     registerAttrValueReferenceProvider(registrar);
+    registerLinkHrefReference(registrar);
   }
 
-  private void registerTypeAttrValueReferenceProvider(PsiReferenceRegistrar registrar, String[] tapestryTemplateNamespaces) {
+  private static void registerLinkHrefReference(@NotNull PsiReferenceRegistrar registrar) {
+    registrar.registerReferenceProvider(
+      XmlPatterns.xmlAttributeValue("href").inside(XmlPatterns.xmlTag().withName("link")).with(tapestryFileCondition),
+      new PsiReferenceProvider() {
+        @NotNull
+        public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+          return PathReferenceManager.getInstance().createReferences(element, true, false, true);
+        }
+      });
+  }
+
+  private static void registerTypeAttrValueReferenceProvider(PsiReferenceRegistrar registrar, String[] tapestryTemplateNamespaces) {
     registrar.registerReferenceProvider(
       XmlPatterns.xmlAttributeValue("type").withNamespace(tapestryTemplateNamespaces).with(tapestryFileCondition),
       new PsiReferenceProvider() {
@@ -83,7 +96,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
       });
   }
 
-  private void registerIdAttrValueReferenceProvider(PsiReferenceRegistrar registrar, String[] tapestryTemplateNamespaces) {
+  private static void registerIdAttrValueReferenceProvider(PsiReferenceRegistrar registrar, String[] tapestryTemplateNamespaces) {
     registrar.registerReferenceProvider(
         XmlPatterns.xmlAttributeValue("id").withNamespace(tapestryTemplateNamespaces).with(tapestryFileCondition),
         new PsiReferenceProvider() {

@@ -2,6 +2,7 @@ package com.intellij.tapestry.tests;
 
 import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.psi.*;
+import com.intellij.psi.css.CssClass;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
@@ -312,6 +313,14 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     initByComponent();
     PsiMethod ref = resolveReferenceAtCaretPosition(PsiMethod.class);
     assertEquals("getCurrentTime", ref.getName());
+  }
+
+  public void testCssClass() throws Throwable {
+    myFixture.copyFileToProject("CssClass.css", COMPONENTS_PACKAGE_PATH + "CssClass.css");
+    initByComponent();
+    CssClass cssClass = resolveReferenceAtCaretPosition(CssClass.class);
+    assertEquals("cssClassTapestry", cssClass.getName());
+    assertEquals("CssClass.css", cssClass.getContainingFile().getName());
   }
 
   private void checkReferenceAtCaretPositionUnresolved() {
