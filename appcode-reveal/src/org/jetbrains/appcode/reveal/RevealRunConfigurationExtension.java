@@ -93,7 +93,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @Nullable
   @Override
   protected <P extends AppCodeRunConfiguration> SettingsEditor<P> createEditor(@NotNull P configuration) {
-    return new MyEditor<P>();
+    return new MyEditor<>();
   }
 
   @Nullable
