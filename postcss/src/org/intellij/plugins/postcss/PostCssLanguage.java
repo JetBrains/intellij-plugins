@@ -29,9 +29,4 @@ public class PostCssLanguage extends Language implements CssLanguageProperties {
   public boolean isIndentBased() {
     return false;
   }
-
-  @Override
-  public boolean supportsNestedBlocks() {
-    return true;
-  }
 }

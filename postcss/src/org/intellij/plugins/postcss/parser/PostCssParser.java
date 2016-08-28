@@ -28,7 +28,7 @@ public class PostCssParser extends CssParser2 {
   }
 
   @Override
-  public boolean isSupportNestedBlocks() {
+  public boolean supportsNestedBlocks() {
     return true;
   }
 
