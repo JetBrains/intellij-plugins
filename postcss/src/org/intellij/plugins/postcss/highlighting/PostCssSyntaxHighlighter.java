@@ -3,7 +3,6 @@ package org.intellij.plugins.postcss.highlighting;
 import com.intellij.ide.highlighter.HtmlFileHighlighter;
 import com.intellij.ide.highlighter.XmlFileHighlighter;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.CssHighlighter;
@@ -11,7 +10,6 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -22,10 +20,7 @@ import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAtt
 public class PostCssSyntaxHighlighter extends CssHighlighter {
   private static final Map<IElementType, TextAttributesKey> mapping;
 
-  @NonNls
-  private static final String KEYWORD_ID = "POST_CSS_KEYWORD";
-
-  public static final TextAttributesKey KEYWORD = createTextAttributesKey(KEYWORD_ID, DefaultLanguageHighlighterColors.KEYWORD);
+  public static final TextAttributesKey KEYWORD = createTextAttributesKey("POST_CSS_KEYWORD", CssHighlighter.CSS_KEYWORD);
   public static final TextAttributesKey IDENTIFIER = createTextAttributesKey("POST_CSS_IDENT", CssHighlighter.CSS_IDENT);
   public static final TextAttributesKey STRING = createTextAttributesKey("POST_CSS_STRING", CssHighlighter.CSS_STRING);
   public static final TextAttributesKey IMPORTANT = createTextAttributesKey("POST_CSS_IMPORTANT", CssHighlighter.CSS_IMPORTANT);
