@@ -36,6 +36,10 @@ public class PostCssGotoSymbolTest extends PostCssFixtureTestCase {
     doTest(":--selector", "selector test.html:2", "selector test.pcss:1");
   }
 
+  public void testCustomSelectorAndOtherCustom() {
+    doTest("--selector", "selector test.html:2", "selector test.pcss:1", "selector test.pcss:6", "selector test.pcss:9");
+  }
+
   public void testCustomMedia() {
     doTest("media-query", "media-query test.html:2", "media-query test.pcss:1", "#media-query test.html:4", "#media-query test.pcss:3",
            ".media-query test.html:5", ".media-query test.pcss:4");
