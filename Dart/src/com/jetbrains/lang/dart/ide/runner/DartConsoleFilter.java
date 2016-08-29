@@ -30,7 +30,7 @@ public class DartConsoleFilter implements Filter {
   private final @Nullable DartUrlResolver myDartUrlResolver;
   private Collection<VirtualFile> myAllPubspecYamlFiles;
 
-  private static final String OBSERVATORY_LISTENING_ON = "Observatory listening on ";
+  public static final String OBSERVATORY_LISTENING_ON = "Observatory listening on ";
 
   public DartConsoleFilter(final @NotNull Project project) {
     this(project, null);
