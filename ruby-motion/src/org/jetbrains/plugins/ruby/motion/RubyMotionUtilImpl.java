@@ -477,7 +477,8 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
                       new RubyMotionDeviceDebugProcess(session, state, env.getExecutor(), consoleBuilder, serverProcessHandler) :
                       new RubyMotionSimulatorDebugProcess(session, state, env.getExecutor(), consoleBuilder, serverProcessHandler) {
                         @Override
-                        protected ProcessHandlerWithPID createSimulatorProcessHandler(RunParameters parameters) throws ExecutionException {
+                        protected ProcessHandlerWithPID createSimulatorProcessHandler(@NotNull RunParameters parameters,
+                                                                                      boolean allowConcurrentSessions) throws ExecutionException {
                           final Module module = rubyState.getConfig().getModule();
                           assert module != null;
                           if (!getInstance().isOSX(module)) {
