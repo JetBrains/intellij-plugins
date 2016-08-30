@@ -1,6 +1,7 @@
 package org.angularjs.cli.actions
 
 import com.intellij.execution.configurations.CommandLineTokenizer
+import com.intellij.execution.filters.Filter
 import com.intellij.icons.AllIcons
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
@@ -22,6 +23,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.ui.JBUI
 import icons.JavaScriptLanguageIcons
+import org.angularjs.cli.AngularCLIFilter
 import org.angularjs.cli.AngularCLIProjectGenerator
 import org.angularjs.cli.Blueprint
 import org.angularjs.cli.BlueprintsLoader
@@ -174,7 +176,9 @@ class AngularCliGenerateAction : AnAction() {
 
     val module = modules.firstOrNull() ?: return
 
-    AngularCLIProjectGenerator.generate(node, module.virtualFile?.path!!, project.baseDir, project, null, "generate", blueprint.name, *arguments)
+    val filter = AngularCLIFilter(project, baseDir.path)
+    AngularCLIProjectGenerator.generate(node, AngularCLIProjectGenerator.ng(module.virtualFile?.path!!),
+                                        project.baseDir, project, null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }
 
   override fun update(e: AnActionEvent?) {
