@@ -23,7 +23,6 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
-import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
@@ -105,7 +104,6 @@ public class DartRunner extends DefaultProgramRunner {
     final boolean entryPointInLibFolder;
     final ExecutionResult executionResult;
     final String debuggingHost;
-    final int debuggingPort;
     final int observatoryPort;
 
     if (runConfiguration instanceof DartRunConfigurationBase) {
@@ -120,7 +118,6 @@ public class DartRunner extends DefaultProgramRunner {
       }
 
       debuggingHost = null;
-      debuggingPort = ((DartCommandLineRunningState)state).getDebuggingPort();
       observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
     }
     else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
@@ -134,15 +131,7 @@ public class DartRunner extends DefaultProgramRunner {
       executionResult = null;
 
       debuggingHost = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getHost();
-
-      if (StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0) {
-        debuggingPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
-        observatoryPort = -1;
-      }
-      else {
-        debuggingPort = -1; // not used
-        observatoryPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
-      }
+      observatoryPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
     }
     else {
       LOG.error("Unexpected run configuration: " + runConfiguration.getClass().getName());
@@ -157,9 +146,7 @@ public class DartRunner extends DefaultProgramRunner {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         final DartUrlResolver dartUrlResolver = getDartUrlResolver(env.getProject(), contextFileOrDir);
-        return StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0
-               ? new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver)
-               : new DartVmServiceDebugProcess(session,
+        return new DartVmServiceDebugProcess(session,
                                                StringUtil.notNullize(debuggingHost, "localhost"),
                                                observatoryPort,
                                                executionResult,

@@ -156,14 +156,9 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   }
 
   private void updateVmArgs() {
-    if (mySdk == null || StringUtil.compareVersionNumbers(mySdk.getVersion(), "1.14") >= 0) {
-      final String host = myHostField.getText().trim();
-      final boolean localhost = "localhost".equals(host) || "127.0.0.1".equals(host);
-      myVMArgsArea.setText("--enable-vm-service:" + myPortField.getNumber() + (localhost ? "" : "/0.0.0.0") + " --pause_isolates_on_start");
-    }
-    else {
-      myVMArgsArea.setText("--debug:" + myPortField.getNumber() + " --break-at-isolate-spawn");
-    }
+    final String host = myHostField.getText().trim();
+    final boolean localhost = "localhost".equals(host) || "127.0.0.1".equals(host);
+    myVMArgsArea.setText("--enable-vm-service:" + myPortField.getNumber() + (localhost ? "" : "/0.0.0.0") + " --pause_isolates_on_start");
   }
 
   @Override
