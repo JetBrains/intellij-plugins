@@ -35,7 +35,7 @@ public abstract class RubyMotionSimulatorDebugProcess extends IPhoneSimulatorDeb
                                          Executor executor, TextConsoleBuilder consoleBuilder,
                                          ProcessHandler serverProcessHandler)
     throws ExecutionException {
-    super(new MotionAppRunParameters(false, serverProcessHandler), session, consoleBuilder);
+    super(new MotionAppRunParameters(false, serverProcessHandler), session, consoleBuilder, false);
     myState = state;
     myExecutor = executor;
     myServerProcessHandler = serverProcessHandler;
