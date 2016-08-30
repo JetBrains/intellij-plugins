@@ -1,7 +1,6 @@
 package org.angularjs.cli.actions
 
 import com.intellij.execution.configurations.CommandLineTokenizer
-import com.intellij.execution.filters.Filter
 import com.intellij.icons.AllIcons
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
@@ -11,6 +10,7 @@ import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.keymap.KeymapManager
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.LabeledComponent
@@ -27,7 +27,6 @@ import org.angularjs.cli.AngularCLIFilter
 import org.angularjs.cli.AngularCLIProjectGenerator
 import org.angularjs.cli.Blueprint
 import org.angularjs.cli.BlueprintsLoader
-import org.angularjs.index.AngularIndexUtil
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -39,7 +38,7 @@ import javax.swing.*
 /**
  * @author Dennis.Ushakov
  */
-class AngularCliGenerateAction : AnAction() {
+class AngularCliGenerateAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
 
@@ -183,7 +182,6 @@ class AngularCliGenerateAction : AnAction() {
 
   override fun update(e: AnActionEvent?) {
     val project = e?.project
-    e?.presentation?.isEnabledAndVisible = project != null && AngularIndexUtil.hasAngularJS2(project) &&
-        project.baseDir.findChild("angular-cli.json") != null
+    e?.presentation?.isEnabledAndVisible = project != null && project.baseDir.findChild("angular-cli.json") != null
   }
 }
