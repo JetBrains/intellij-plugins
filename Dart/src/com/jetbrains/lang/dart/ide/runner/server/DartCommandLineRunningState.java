@@ -20,9 +20,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
@@ -33,19 +31,18 @@ import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
-import com.jetbrains.lang.dart.pubServer.PubServerManager;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 public class DartCommandLineRunningState extends CommandLineState {
 
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
-  private int myDebuggingPort = -1;
   private int myObservatoryPort = -1;
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
@@ -179,21 +176,20 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
-      if (StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0) {
-        myDebuggingPort = NetUtils.tryToFindAvailableSocketPort();
-        commandLine.addParameter("--debug:" + myDebuggingPort);
-        commandLine.addParameter("--break-at-isolate-spawn");
-      }
-      else {
-        commandLine.addParameter("--pause_isolates_on_start");
-      }
+      commandLine.addParameter("--pause_isolates_on_start");
     }
 
     if (customObservatoryPort > 0) {
       myObservatoryPort = customObservatoryPort;
     }
     else if (!(myRunnerParameters instanceof DartTestRunnerParameters)) {
-      myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
+      try {
+        myObservatoryPort = NetUtils.findAvailableSocketPort();
+      }
+      catch (IOException e) {
+        throw new ExecutionException(e);
+      }
+
       commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
 
       if (getEnvironment().getRunner() instanceof DartCoverageProgramRunner) {
@@ -216,10 +212,6 @@ public class DartCommandLineRunningState extends CommandLineState {
     // "5858" or "5858/0.0.0.0"
     final int index = s.indexOf('/');
     return Integer.parseInt(index > 0 ? s.substring(0, index) : s);
-  }
-
-  public int getDebuggingPort() {
-    return myDebuggingPort;
   }
 
   public int getObservatoryPort() {

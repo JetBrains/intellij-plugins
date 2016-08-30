@@ -1,71 +1,22 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.ExpressionInfo;
-import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
-import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmCallback;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmResult;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmValue;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DartDebuggerEvaluator extends XDebuggerEvaluator {
+public class DartDebuggerEvaluator {
 
   private static final Pattern ERROR_PATTERN = Pattern.compile("Error:.* line \\d+ pos \\d+: (.+)");
 
-  @NotNull private final DartCommandLineDebugProcess myDebugProcess;
-  @NotNull private final VmCallFrame myVmCallFrame;
-
-  public DartDebuggerEvaluator(final @NotNull DartCommandLineDebugProcess debugProcess, final @NotNull VmCallFrame vmCallFrame) {
-    myDebugProcess = debugProcess;
-    myVmCallFrame = vmCallFrame;
-  }
-
-  public boolean isCodeFragmentEvaluationSupported() {
-    return false;
-  }
-
-  public void evaluate(@NotNull final String expression,
-                       @NotNull final XEvaluationCallback callback,
-                       @Nullable final XSourcePosition expressionPosition) {
-    try {
-      myDebugProcess.getVmConnection()
-        .evaluateOnCallFrame(myVmCallFrame.getIsolate(), myVmCallFrame, expression,
-                             new VmCallback<VmValue>() {
-                               public void handleResult(final VmResult<VmValue> result) {
-                                 if (result.isError()) {
-                                   // expressionPosition is not null only when this evaluation is caused by mouse hover in editor while standing on a breakpoint
-                                   // we do not want to show red popup with the error in this case (WEB-16040)
-                                   if (expressionPosition == null && result.getError() != null) {
-                                     callback.errorOccurred(getPresentableError(result.getError()));
-                                   }
-                                 }
-                                 else {
-                                   final VmValue vmValue = result.getResult();
-                                   callback.evaluated(new DartValue(myDebugProcess, DartValue.NODE_NAME_RESULT, vmValue, false));
-                                 }
-                               }
-                             }
-        );
-    }
-    catch (IOException e) {
-      callback.errorOccurred(e.toString());
-    }
+  private DartDebuggerEvaluator() {
   }
 
   @NotNull
@@ -96,17 +47,6 @@ public class DartDebuggerEvaluator extends XDebuggerEvaluator {
     }
 
     return "Cannot evaluate";
-  }
-
-  @Nullable
-  @Override
-  public ExpressionInfo getExpressionInfoAtOffset(@NotNull final Project project,
-                                                  @NotNull final Document document,
-                                                  final int offset,
-                                                  final boolean sideEffectsAllowed) {
-    final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-    final PsiElement contextElement = psiFile == null ? null : psiFile.findElementAt(offset);
-    return contextElement == null ? null : getExpressionInfo(contextElement);
   }
 
   @Nullable
