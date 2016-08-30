@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.workflow;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ public class DartSimpleTest extends TestCase {
   }
 
   private static void doTestDebuggerErrorText(@NotNull final String rawErrorText, @NotNull final String expected) {
-    assertEquals(expected, DartDebuggerEvaluator.getPresentableError(rawErrorText));
+    assertEquals(expected, DartVmServiceEvaluator.getPresentableError(rawErrorText));
   }
 
   public void testUnquoteDartString() throws Exception {

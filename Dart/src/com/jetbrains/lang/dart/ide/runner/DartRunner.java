@@ -147,14 +147,14 @@ public class DartRunner extends DefaultProgramRunner {
       public XDebugProcess start(@NotNull final XDebugSession session) {
         final DartUrlResolver dartUrlResolver = getDartUrlResolver(env.getProject(), contextFileOrDir);
         return new DartVmServiceDebugProcess(session,
-                                               StringUtil.notNullize(debuggingHost, "localhost"),
-                                               observatoryPort,
-                                               executionResult,
-                                               dartUrlResolver,
-                                               dasExecutionContextId,
-                                               runConfiguration instanceof DartRemoteDebugConfiguration,
-                                               entryPointInLibFolder,
-                                               getTimeout());
+                                             StringUtil.notNullize(debuggingHost, "localhost"),
+                                             observatoryPort,
+                                             executionResult,
+                                             dartUrlResolver,
+                                             dasExecutionContextId,
+                                             runConfiguration instanceof DartRemoteDebugConfiguration,
+                                             entryPointInLibFolder,
+                                             getTimeout());
       }
     });
 
