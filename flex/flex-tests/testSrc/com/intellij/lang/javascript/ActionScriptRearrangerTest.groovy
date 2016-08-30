@@ -45,7 +45,7 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
       public void dispose() {
         ApplicationManager.application.runWriteAction(new Runnable() {
           void run() {
-            def ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+            ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
             projectJdkTable.removeJdk(sdk);
           }
         })
