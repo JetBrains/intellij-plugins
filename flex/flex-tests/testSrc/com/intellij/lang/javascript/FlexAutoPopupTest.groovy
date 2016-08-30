@@ -49,7 +49,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     super.tearDown()
   }
 
-  public void testGenerallyFocusLookup_() {
+  void testGenerallyFocusLookup_() {
     myFixture.configureByText("a.js2", """
         function foo(x,y,z) {}
         foo(<caret>);
@@ -66,7 +66,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup.focused
   }
 
-  public void testGenerallyFocusLookup() {
+  void testGenerallyFocusLookup() {
     myFixture.configureByText("a.js2", """
         function foo(xxxxxx:String):String {
           return f<caret>
@@ -78,7 +78,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup
   }
 
-  public void testNoPopupInVarName() {
+  void testNoPopupInVarName() {
     myFixture.configureByText("a.js2", """
         var <caret>
     """)
@@ -86,7 +86,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup == null
   }
 
-  public void testNoPopupInParamName() {
+  void testNoPopupInParamName() {
     myFixture.configureByText("a.js2", """
         function foo(<caret>
     """)
@@ -94,7 +94,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup == null
   }
 
-  public void testNoPopupInParamName2() {
+  void testNoPopupInParamName2() {
     myFixture.configureByText("a.js2", """
         function foo(<caret>
     """)
@@ -102,7 +102,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup == null
   }
 
-  public void testNoPopupInParamName2_2() {
+  void testNoPopupInParamName2_2() {
     myFixture.configureByText("a.js2", """
         class  C {
           function foo(<caret>) {}
@@ -116,7 +116,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup == null
   }
 
-  public void testTypingGet() {
+  void testTypingGet() {
     myFixture.configureByText("a.js2", """
          function getFoo() {}
         return ge<caret>
@@ -125,7 +125,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup != null
   }
 
-  public void testAutopopupAfterCommaInParameterList() {
+  void testAutopopupAfterCommaInParameterList() {
     myFixture.configureByText("a.js2", """
          function foo(x, y) {}
          foo(x<caret>)
@@ -137,7 +137,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup != null
   }
 
-  public void testAutopopupAfterSpaceInParameterList() {
+  void testAutopopupAfterSpaceInParameterList() {
     myFixture.configureByText("a.js2", """
          function foo(x, y) {}
          foo(x,<caret>)
@@ -149,7 +149,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
   }
 
   @JSTestOptions([JSTestOption.WithFlexFacet])
-  public void testAutoPopupCompletionInsertsImport() {
+  void testAutoPopupCompletionInsertsImport() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     myFixture.configureByText("a.as", """
         package {
@@ -173,7 +173,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
   }
 
   @JSTestOptions([JSTestOption.WithFlexFacet])
-  public void testAutoPopupCompletionInsertsImportInMxml() {
+  void testAutoPopupCompletionInsertsImportInMxml() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     myFixture.configureByText("a.mxml", """
       <?xml version="1.0"?>
