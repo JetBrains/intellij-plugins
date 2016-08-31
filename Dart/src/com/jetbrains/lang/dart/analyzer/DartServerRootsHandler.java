@@ -55,14 +55,6 @@ public class DartServerRootsHandler {
           DartAnalysisServerService.getInstance().updateVisibleFiles();
         }
       }
-
-      @Override
-      public void beforeProjectLoaded(@NotNull Project project) {
-      }
-
-      @Override
-      public void projectComponentsInitialized(@NotNull Project project) {
-      }
     });
   }
 
