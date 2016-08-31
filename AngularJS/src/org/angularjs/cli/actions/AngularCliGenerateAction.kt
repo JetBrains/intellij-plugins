@@ -10,6 +10,7 @@ import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.keymap.KeymapManager
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.LabeledComponent
@@ -22,10 +23,10 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.ui.JBUI
 import icons.JavaScriptLanguageIcons
+import org.angularjs.cli.AngularCLIFilter
 import org.angularjs.cli.AngularCLIProjectGenerator
 import org.angularjs.cli.Blueprint
 import org.angularjs.cli.BlueprintsLoader
-import org.angularjs.index.AngularIndexUtil
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -37,7 +38,7 @@ import javax.swing.*
 /**
  * @author Dennis.Ushakov
  */
-class AngularCliGenerateAction : AnAction() {
+class AngularCliGenerateAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
 
@@ -174,12 +175,13 @@ class AngularCliGenerateAction : AnAction() {
 
     val module = modules.firstOrNull() ?: return
 
-    AngularCLIProjectGenerator.generate(node, module.virtualFile?.path!!, project.baseDir, project, null, "generate", blueprint.name, *arguments)
+    val filter = AngularCLIFilter(project, baseDir.path)
+    AngularCLIProjectGenerator.generate(node, AngularCLIProjectGenerator.ng(module.virtualFile?.path!!),
+                                        project.baseDir, project, null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }
 
   override fun update(e: AnActionEvent?) {
     val project = e?.project
-    e?.presentation?.isEnabledAndVisible = project != null && AngularIndexUtil.hasAngularJS2(project) &&
-        project.baseDir.findChild("angular-cli.json") != null
+    e?.presentation?.isEnabledAndVisible = project != null && project.baseDir.findChild("angular-cli.json") != null
   }
 }

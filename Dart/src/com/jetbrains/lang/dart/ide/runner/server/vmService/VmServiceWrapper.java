@@ -13,7 +13,7 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmService;
@@ -330,7 +330,7 @@ public class VmServiceWrapper implements Disposable {
       @Override
       public void received(ErrorRef errorRef) {
         if (reportIfError) {
-          callback.errorOccurred(DartDebuggerEvaluator.getPresentableError(errorRef.getMessage()));
+          callback.errorOccurred(DartVmServiceEvaluator.getPresentableError(errorRef.getMessage()));
         }
       }
 

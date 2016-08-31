@@ -42,10 +42,10 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
     })
 
     Disposer.register(myModule, new Disposable() {
-      public void dispose() {
+      void dispose() {
         ApplicationManager.application.runWriteAction(new Runnable() {
           void run() {
-            def ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+            ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
             projectJdkTable.removeJdk(sdk);
           }
         })
@@ -58,7 +58,8 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
     super.tearDown()
     clearDeclaredFields(com.intellij.lang.javascript.ActionScriptRearrangerTest.class)
   }
-  public static void clearDeclaredFields(Class aClass) throws IllegalAccessException {
+
+  static void clearDeclaredFields(Class aClass) throws IllegalAccessException {
     for (final Field field : aClass.getDeclaredFields()) {
       @NonNls final String name = field.getDeclaringClass().getName();
       if (!name.startsWith("junit.framework.") && !name.startsWith("com.intellij.testFramework.")) {

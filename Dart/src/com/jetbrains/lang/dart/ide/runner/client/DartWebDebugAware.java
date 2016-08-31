@@ -9,7 +9,7 @@ import com.jetbrains.javascript.debugger.ExpressionInfoFactory;
 import com.jetbrains.javascript.debugger.JavaScriptDebugAware;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
-import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +36,6 @@ final class DartWebDebugAware extends JavaScriptDebugAware {
   public ExpressionInfo getEvaluationInfo(@NotNull PsiElement elementAtOffset,
                                           @NotNull Document document,
                                           @NotNull ExpressionInfoFactory expressionInfoFactory) {
-    return DartDebuggerEvaluator.getExpressionInfo(elementAtOffset);
+    return DartVmServiceEvaluator.getExpressionInfo(elementAtOffset);
   }
 }
