@@ -23,6 +23,7 @@
     <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="built-in-server" />
+    <orderEntry type="module" module-name="script-debugger-ui" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
     <orderEntry type="module" module-name="ChromeConnector" />
     <orderEntry type="module" module-name="yaml" />
@@ -31,10 +32,10 @@
     <orderEntry type="module" module-name="coverage-common" />
     <orderEntry type="module" module-name="idea-tests" scope="TEST" />
     <orderEntry type="module" module-name="WebComponents" scope="TEST" />
-    <orderEntry type="library" name="Netty" level="project" />
-    <orderEntry type="library" name="Guava" level="project" />
-    <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="library" name="markdownj" level="project" />
+    <orderEntry type="library" exported="" name="Netty" level="project" />
+    <orderEntry type="library" exported="" name="Guava" level="project" />
+    <orderEntry type="library" exported="" name="gson" level="project" />
+    <orderEntry type="library" exported="" name="markdownj" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -71,6 +72,5 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="script-debugger-ui" />
   </component>
 </module>
