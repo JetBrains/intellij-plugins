@@ -40,7 +40,7 @@ public class SourceReportRange extends Element {
    * requested and the range has been compiled.
    */
   public SourceReportCoverage getCoverage() {
-    return new SourceReportCoverage((JsonObject) json.get("coverage"));
+    return json.get("coverage") == null ? null : new SourceReportCoverage((JsonObject) json.get("coverage"));
   }
 
   /**
@@ -55,7 +55,7 @@ public class SourceReportRange extends Element {
    * forceCompile=true.
    */
   public ErrorRef getError() {
-    return new ErrorRef((JsonObject) json.get("error"));
+    return json.get("error") == null ? null : new ErrorRef((JsonObject) json.get("error"));
   }
 
   /**

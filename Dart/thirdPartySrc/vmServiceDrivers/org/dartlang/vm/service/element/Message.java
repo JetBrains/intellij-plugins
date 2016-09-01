@@ -31,7 +31,7 @@ public class Message extends Response {
    * A reference to the function that will be invoked to handle this message.
    */
   public FuncRef getHandler() {
-    return new FuncRef((JsonObject) json.get("handler"));
+    return json.get("handler") == null ? null : new FuncRef((JsonObject) json.get("handler"));
   }
 
   /**
@@ -46,7 +46,7 @@ public class Message extends Response {
    * The source location of handler.
    */
   public SourceLocation getLocation() {
-    return new SourceLocation((JsonObject) json.get("location"));
+    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
   }
 
   /**

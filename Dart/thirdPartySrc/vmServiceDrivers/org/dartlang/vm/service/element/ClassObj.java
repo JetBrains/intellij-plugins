@@ -31,7 +31,7 @@ public class ClassObj extends Obj {
    * The error which occurred during class finalization, if it exists.
    */
   public ErrorRef getError() {
-    return new ErrorRef((JsonObject) json.get("error"));
+    return json.get("error") == null ? null : new ErrorRef((JsonObject) json.get("error"));
   }
 
   /**
@@ -83,7 +83,7 @@ public class ClassObj extends Obj {
    * The location of this class in the source code.
    */
   public SourceLocation getLocation() {
-    return new SourceLocation((JsonObject) json.get("location"));
+    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
   }
 
   /**
@@ -92,7 +92,7 @@ public class ClassObj extends Obj {
    * The value will be of the kind: Type.
    */
   public InstanceRef getMixin() {
-    return new InstanceRef((JsonObject) json.get("mixin"));
+    return json.get("mixin") == null ? null : new InstanceRef((JsonObject) json.get("mixin"));
   }
 
   /**
@@ -118,7 +118,7 @@ public class ClassObj extends Obj {
    * The superclass of this class, if any.
    */
   public ClassRef getSuperClass() {
-    return new ClassRef((JsonObject) json.get("super"));
+    return json.get("super") == null ? null : new ClassRef((JsonObject) json.get("super"));
   }
 
   /**
@@ -127,7 +127,7 @@ public class ClassObj extends Obj {
    * The value will be of the kind: Type.
    */
   public InstanceRef getSuperType() {
-    return new InstanceRef((JsonObject) json.get("superType"));
+    return json.get("superType") == null ? null : new InstanceRef((JsonObject) json.get("superType"));
   }
 
   /**
