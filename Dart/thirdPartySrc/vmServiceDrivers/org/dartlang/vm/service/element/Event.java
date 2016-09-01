@@ -36,7 +36,7 @@ public class Event extends Response {
    *  - PauseInterrupted
    */
   public boolean getAtAsyncSuspension() {
-    return json.get("atAsyncSuspension").getAsBoolean();
+    return json.get("atAsyncSuspension") == null ? false : json.get("atAsyncSuspension").getAsBoolean();
   }
 
   /**
@@ -49,7 +49,7 @@ public class Event extends Response {
    *  - BreakpointResolved
    */
   public Breakpoint getBreakpoint() {
-    return new Breakpoint((JsonObject) json.get("breakpoint"));
+    return json.get("breakpoint") == null ? null : new Breakpoint((JsonObject) json.get("breakpoint"));
   }
 
   /**
@@ -65,7 +65,7 @@ public class Event extends Response {
    * The exception associated with this event, if this is a PauseException event.
    */
   public InstanceRef getException() {
-    return new InstanceRef((JsonObject) json.get("exception"));
+    return json.get("exception") == null ? null : new InstanceRef((JsonObject) json.get("exception"));
   }
 
   /**
@@ -74,7 +74,7 @@ public class Event extends Response {
    * This is provided for the Extension event.
    */
   public ExtensionData getExtensionData() {
-    return new ExtensionData((JsonObject) json.get("extensionData"));
+    return json.get("extensionData") == null ? null : new ExtensionData((JsonObject) json.get("extensionData"));
   }
 
   /**
@@ -101,7 +101,7 @@ public class Event extends Response {
    * This is provided for the Inspect event.
    */
   public InstanceRef getInspectee() {
-    return new InstanceRef((JsonObject) json.get("inspectee"));
+    return json.get("inspectee") == null ? null : new InstanceRef((JsonObject) json.get("inspectee"));
   }
 
   /**
@@ -111,7 +111,7 @@ public class Event extends Response {
    *  - VMUpdate
    */
   public IsolateRef getIsolate() {
-    return new IsolateRef((JsonObject) json.get("isolate"));
+    return json.get("isolate") == null ? null : new IsolateRef((JsonObject) json.get("isolate"));
   }
 
   /**
@@ -185,7 +185,7 @@ public class Event extends Response {
    * event that is delivered when an isolate begins execution.
    */
   public Frame getTopFrame() {
-    return new Frame((JsonObject) json.get("topFrame"));
+    return json.get("topFrame") == null ? null : new Frame((JsonObject) json.get("topFrame"));
   }
 
   /**
@@ -195,6 +195,6 @@ public class Event extends Response {
    *  - VMUpdate
    */
   public VMRef getVm() {
-    return new VMRef((JsonObject) json.get("vm"));
+    return json.get("vm") == null ? null : new VMRef((JsonObject) json.get("vm"));
   }
 }

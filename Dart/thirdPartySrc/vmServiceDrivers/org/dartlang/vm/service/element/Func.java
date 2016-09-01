@@ -30,14 +30,14 @@ public class Func extends Obj {
    * The compiled code associated with this function.
    */
   public CodeRef getCode() {
-    return new CodeRef((JsonObject) json.get("code"));
+    return json.get("code") == null ? null : new CodeRef((JsonObject) json.get("code"));
   }
 
   /**
    * The location of this function in the source code.
    */
   public SourceLocation getLocation() {
-    return new SourceLocation((JsonObject) json.get("location"));
+    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
   }
 
   /**
@@ -45,5 +45,20 @@ public class Func extends Obj {
    */
   public String getName() {
     return json.get("name").getAsString();
+  }
+
+  /**
+   * The owner of this function, which can be a Library, Class, or a Function.
+   *
+   * @return one of <code>LibraryRef</code>, <code>ClassRef</code> or <code>FuncRef</code>
+   */
+  public Object getOwner() {
+    JsonObject elem = (JsonObject)json.get("owner");
+    if (elem == null) return null;
+
+    if (elem.get("type").getAsString() == "@Library") return new LibraryRef(elem);
+    if (elem.get("type").getAsString() == "@Class") return new ClassRef(elem);
+    if (elem.get("type").getAsString() == "@Func") return new FuncRef(elem);
+    return null;
   }
 }

@@ -35,7 +35,7 @@ public class Obj extends Response {
    * other than Instance.
    */
   public ClassRef getClassRef() {
-    return new ClassRef((JsonObject) json.get("class"));
+    return json.get("class") == null ? null : new ClassRef((JsonObject) json.get("class"));
   }
 
   /**
