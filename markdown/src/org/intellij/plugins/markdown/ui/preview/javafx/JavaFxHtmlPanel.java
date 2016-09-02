@@ -6,23 +6,15 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.messages.MessageBusConnection;
-import com.sun.javafx.application.PlatformImpl;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker.State;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.text.FontSmoothingType;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import netscape.javascript.JSObject;
-import org.intellij.markdown.html.HtmlGenerator;
-import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
+import com.intellij.util.ui.JBUI;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefMessageRouter;
+import org.cef.callback.CefQueryCallback;
+import org.cef.handler.CefMessageRouterHandlerAdapter;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ui.JCefPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,94 +41,121 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private final JPanel myPanelWrapper;
   @NotNull
   private final List<Runnable> myInitActions = new ArrayList<>();
-  @Nullable
-  private JFXPanel myPanel;
-  @Nullable
-  private WebView myWebView;
+  private final JCefPane myCefPane;
+  //private final Component myUIComponent;
+  //@Nullable
+  //private JFXPanel myPanel;
+  //@Nullable
+  //private WebView myWebView;
   @Nullable
   private String myInlineCss;
   @NotNull
   private String[] myCssUris = ArrayUtil.EMPTY_STRING_ARRAY;
   @NotNull
   private String myLastRawHtml = "";
-  @NotNull
-  private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
-  @NotNull
-  private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
+  //@NotNull
+  //private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
+  //@NotNull
+  //private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
+
+  //private final CefBrowser browser_;
 
   public JavaFxHtmlPanel() {
-    //System.setProperty("prism.lcdtext", "false");
-    //System.setProperty("prism.text", "t2k");
+
     myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
+    myCefPane = new JCefPane("http://picocontainer.com/introduction.html", true, false);
+    myCefPane.getBrowser().setZoomLevel(JBUI.scale(2.f));
+    myPanelWrapper.add(myCefPane, BorderLayout.CENTER);
 
-    ApplicationManager.getApplication().invokeLater(() -> PlatformImpl.startup(() -> {
-      myWebView = new WebView();
-
-      updateFontSmoothingType(myWebView,
-                              MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
-      myWebView.setContextMenuEnabled(false);
-
-      final WebEngine engine = myWebView.getEngine();
-      engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
-      engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
-
-      final Scene scene = new Scene(myWebView);
-
-      ApplicationManager.getApplication().invokeLater(() -> {
-        myPanel = new JFXPanelWrapper();
-        myPanel.setScene(scene);
-
-        setHtml("");
-        for (Runnable action : myInitActions) {
-          Platform.runLater(action);
+    //
+    ////System.setProperty("prism.lcdtext", "false");
+    ////System.setProperty("prism.text", "t2k");
+    //
+    //
+    CefMessageRouter msgRouter = CefMessageRouter.create();
+    msgRouter.addHandler(new CefMessageRouterHandlerAdapter() {
+      @Override
+      public boolean onQuery(CefBrowser browser, long id, String request, boolean persistent, CefQueryCallback callback) {
+        if (request.startsWith("openInExternalBrowser:")) {
+          JavaPanelBridge.openInExternalBrowser(request.substring("openInExternalBrowser:".length()));
+          return false;
         }
-        myInitActions.clear();
+        else {
+          return true;
+        }
+      }
+    }, true);
+    myCefPane.getClient().addMessageRouter(msgRouter);
 
-        myPanelWrapper.add(myPanel, BorderLayout.CENTER);
-        myPanelWrapper.repaint();
-      });
-    }));
+    //ApplicationManager.getApplication().invokeLater(() -> PlatformImpl.startup(() -> {
+    //  myWebView = new WebView();
+    //
+    //  updateFontSmoothingType(myWebView,
+    //                          MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
+    //  myWebView.setContextMenuEnabled(false);
+    //
+    //  final WebEngine engine = myWebView.getEngine();
+    //  engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
+    //  engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
+    //
+    //  final Scene scene = new Scene(myWebView);
+    //
+    //  ApplicationManager.getApplication().invokeLater(() -> {
+    //    myPanel = new JFXPanelWrapper();
+    //    myPanel.setScene(scene);
+    //
+    //    setHtml("");
+    //    for (Runnable action : myInitActions) {
+    //      Platform.runLater(action);
+    //    }
+    //    myInitActions.clear();
+    //
+    //    myPanelWrapper.add(myPanel, BorderLayout.CENTER);
+    //    myPanelWrapper.repaint();
+    //  });
+    //}));
 
-    subscribeForGrayscaleSetting();
+    //subscribeForGrayscaleSetting();
   }
   
   private void runInPlatformWhenAvailable(@NotNull Runnable runnable) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    if (myPanel == null) {
-      myInitActions.add(runnable);
-    }
-    else {
-      Platform.runLater(runnable);
-    }
+    //if (myPanel == null) {
+    //  myInitActions.add(runnable);
+    //}
+    //else {
+      runnable.run();
+      //Platform.runLater(runnable);
+    //}
   }
 
-  private void subscribeForGrayscaleSetting() {
-    MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
-    MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener =
-      new MarkdownApplicationSettings.SettingsChangedListener() {
-        @Override
-        public void onSettingsChange(@NotNull final MarkdownApplicationSettings settings) {
-          runInPlatformWhenAvailable(() -> {
-            if (myWebView != null) {
-              updateFontSmoothingType(myWebView, settings.getMarkdownPreviewSettings().isUseGrayscaleRendering());
-            }
-          });
-        }
-      };
-    settingsConnection.subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
-  }
+  //private void subscribeForGrayscaleSetting() {
+  //  MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
+  //  MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener =
+  //    new MarkdownApplicationSettings.SettingsChangedListener() {
+  //      @Override
+  //      public void onSettingsChange(@NotNull final MarkdownApplicationSettings settings) {
+  //        runInPlatformWhenAvailable(() -> {
+  //          if (myWebView != null) {
+  //            updateFontSmoothingType(myWebView, settings.getMarkdownPreviewSettings().isUseGrayscaleRendering());
+  //          }
+  //        });
+  //      }
+  //    };
+  //  settingsConnection.subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
+  //}
 
-  private static void updateFontSmoothingType(@NotNull WebView view, boolean isGrayscale) {
-    final FontSmoothingType typeToSet;
-    if (isGrayscale) {
-      typeToSet = FontSmoothingType.GRAY;
-    }
-    else {
-      typeToSet = FontSmoothingType.LCD;
-    }
-    view.fontSmoothingTypeProperty().setValue(typeToSet);
-  }
+  //private static void updateFontSmoothingType(@NotNull WebView view, boolean isGrayscale) {
+  //  final FontSmoothingType typeToSet;
+  //  if (isGrayscale) {
+  //    typeToSet = FontSmoothingType.GRAY;
+  //  }
+  //  else {
+  //    typeToSet = FontSmoothingType.LCD;
+  //  }
+  //  view.fontSmoothingTypeProperty().setValue(typeToSet);
+  //}
 
   @NotNull
   @Override
@@ -149,7 +168,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     myLastRawHtml = html;
     final String htmlToRender = prepareHtml(html);
 
-    runInPlatformWhenAvailable(() -> getWebViewGuaranteed().getEngine().loadContent(htmlToRender));
+    runInPlatformWhenAvailable(() -> myCefPane.getBrowser().loadString(htmlToRender, "http://example.com"));
   }
 
   private String prepareHtml(@NotNull String html) {
@@ -168,41 +187,36 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @Override
   public void render() {
     runInPlatformWhenAvailable(() -> {
-      getWebViewGuaranteed().getEngine().reload();
-      ApplicationManager.getApplication().invokeLater(myPanelWrapper::repaint);
+      //myCefPane.getBrowser().reload();
+      myCefPane.repaint();
     });
   }
 
   @Override
   public void scrollToMarkdownSrcOffset(final int offset) {
     runInPlatformWhenAvailable(() -> {
-      getWebViewGuaranteed().getEngine().executeScript(
-        "if ('__IntelliJTools' in window) " +
-        "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');"
-      );
-      final Object result = getWebViewGuaranteed().getEngine().executeScript(
-        "document.documentElement.scrollTop || document.body.scrollTop");
-      if (result instanceof Number) {
-        myScrollPreservingListener.myScrollY = ((Number)result).intValue();
-      }
+      //browser_.executeJavaScript("if ('__IntelliJTools' in window) " +
+      //                           "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');", null, 0);
+
+
     });
   }
 
   @Override
   public void dispose() {
     runInPlatformWhenAvailable(() -> {
-      getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myScrollPreservingListener);
-      getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myBridgeSettingListener);
+      myCefPane.dispose();
+
     });
   }
 
-  @NotNull
-  private WebView getWebViewGuaranteed () {
-    if (myWebView == null) {
-      throw new IllegalStateException("WebView should be initialized by now. Check the caller thread");
-    }
-    return myWebView;
-  }
+  //@NotNull
+  //private WebView getWebViewGuaranteed () {
+  //  if (myWebView == null) {
+  //    throw new IllegalStateException("WebView should be initialized by now. Check the caller thread");
+  //  }
+  //  return myWebView;
+  //}
 
   @NotNull
   private static String getScriptingLines() {
@@ -211,7 +225,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @SuppressWarnings("unused")
   public static class JavaPanelBridge {
-    public void openInExternalBrowser(@NotNull String link) {
+    public static void openInExternalBrowser(@NotNull String link) {
       if (!BrowserUtil.isAbsoluteURL(link)) {
         try {
           link = new URI("http", link, null).toURL().toString();
@@ -228,31 +242,31 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     }
   }
   
-  private class BridgeSettingListener implements ChangeListener<State> {
-    @Override
-    public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-        JSObject win
-          = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
-        win.setMember("JavaPanelBridge", new JavaPanelBridge());
-    }
-  }
-  
-  private class ScrollPreservingListener implements ChangeListener<State> {
-    volatile int myScrollY = 0;
-
-    @Override
-    public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-      if (newValue == State.RUNNING) {
-        final Object result =
-          getWebViewGuaranteed().getEngine().executeScript("document.documentElement.scrollTop || document.body.scrollTop");
-        if (result instanceof Number) {
-          myScrollY = ((Number)result).intValue();
-        }
-      }
-      else if (newValue == State.SUCCEEDED) {
-        getWebViewGuaranteed().getEngine()
-          .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
-      }
-    }
-  } 
+  //private class BridgeSettingListener implements ChangeListener<State> {
+  //  @Override
+  //  public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
+  //      JSObject win
+  //        = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
+  //      win.setMember("JavaPanelBridge", new JavaPanelBridge());
+  //  }
+  //}
+  //
+  //private class ScrollPreservingListener implements ChangeListener<State> {
+  //  volatile int myScrollY = 0;
+  //
+  //  @Override
+  //  public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
+  //    if (newValue == State.RUNNING) {
+  //      final Object result =
+  //        getWebViewGuaranteed().getEngine().executeScript("document.documentElement.scrollTop || document.body.scrollTop");
+  //      if (result instanceof Number) {
+  //        myScrollY = ((Number)result).intValue();
+  //      }
+  //    }
+  //    else if (newValue == State.SUCCEEDED) {
+  //      getWebViewGuaranteed().getEngine()
+  //        .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
+  //    }
+  //  }
+  //}
 }
