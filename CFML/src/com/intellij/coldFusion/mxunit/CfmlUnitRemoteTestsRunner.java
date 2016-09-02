@@ -20,10 +20,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -72,8 +69,7 @@ public class CfmlUnitRemoteTestsRunner {
       }
     };
 
-    ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
-    ApplicationManager.getApplication().invokeAndWait(runnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeAndWait(runnable);
     if (!error.isNull()) {
       //noinspection ThrowableResultOfMethodCallIgnored
       throw new ExecutionException(error.get().getMessage());
@@ -100,8 +96,7 @@ public class CfmlUnitRemoteTestsRunner {
         error.set(e);
       }
     });
-    ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
-    ApplicationManager.getApplication().invokeAndWait(runnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeAndWait(runnable);
 
     if (!error.isNull()) {
       //noinspection ThrowableResultOfMethodCallIgnored

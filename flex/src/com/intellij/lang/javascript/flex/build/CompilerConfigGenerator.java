@@ -24,7 +24,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
@@ -38,7 +37,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SystemProperties;
@@ -820,8 +818,7 @@ public class CompilerConfigGenerator {
       runnable.run();
     }
     else {
-      ApplicationManager.getApplication()
-        .invokeAndWait(runnable, ProgressManager.getInstance().getProgressIndicator().getModalityState());
+      ApplicationManager.getApplication().invokeAndWait(runnable);
     }
 
     if (!error.isNull()) {
