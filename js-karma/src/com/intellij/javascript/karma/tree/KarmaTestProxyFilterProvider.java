@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
 
   private final Project myProject;
@@ -48,6 +45,17 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
       File file = new File(s);
       if (file.isFile() && file.isAbsolute()) {
         return file;
+      }
+      KarmaConfig karmaConfig = myKarmaServer.getKarmaConfig();
+      if (karmaConfig != null) {
+        String basePath = karmaConfig.getBasePath();
+        File baseDir = new File(basePath);
+        if (baseDir.isDirectory()) {
+          file = new File(baseDir, s);
+          if (file.isFile()) {
+            return file;
+          }
+        }
       }
       return null;
     };
