@@ -21,14 +21,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiTypeVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -49,12 +48,12 @@ public class CfmlJavaLoaderClassType extends PsiType {
       super();
       myVirtualFile = file;
       ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
-      myModule = myVirtualFile != null ? fileIndex.getModuleForFile(myVirtualFile) : null;
+      myModule = fileIndex.getModuleForFile(myVirtualFile);
     }
 
     @Override
     public boolean contains(@NotNull VirtualFile file) {
-      return VfsUtil.isAncestor(myVirtualFile, file, true);
+      return VfsUtilCore.isAncestor(myVirtualFile, file, true);
     }
 
     @Override
@@ -101,7 +100,7 @@ public class CfmlJavaLoaderClassType extends PsiType {
   @Override
   @NotNull
   public String getPresentableText() {
-    return "JavaLoader";
+    return getCanonicalText();
   }
 
   @Override
@@ -111,18 +110,12 @@ public class CfmlJavaLoaderClassType extends PsiType {
   }
 
   @Override
-  @NotNull
-  public String getInternalCanonicalText() {
-    return "JavaLoader";
-  }
-
-  @Override
   public boolean isValid() {
     return true;
   }
 
   @Override
-  public boolean equalsToText(@NotNull @NonNls String text) {
+  public boolean equalsToText(@NotNull String text) {
     return false;
   }
 
