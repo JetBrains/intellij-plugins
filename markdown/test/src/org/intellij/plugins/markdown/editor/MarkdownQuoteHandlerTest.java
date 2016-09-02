@@ -59,7 +59,27 @@ public class MarkdownQuoteHandlerTest extends LightCodeInsightFixtureTestCase {
   }
   
   public void testBacktickShouldBeAdded() {
-    doTest("Hello `<caret>` world", '`', "Hello ``<caret>` world");
+    final PsiFile file = myFixture.configureByText("test.md", "Hello <caret> world");
+    assertInstanceOf(file, MarkdownFile.class);
+
+    myFixture.type('`');
+    myFixture.checkResult("Hello `<caret>` world");
+    myFixture.type('`');
+    myFixture.checkResult("Hello ``<caret>`` world");
+    myFixture.type('`');
+    myFixture.checkResult("Hello ```<caret>``` world");
+  }
+
+  public void testBacktickShouldBeAddedStartOfLine() {
+    final PsiFile file = myFixture.configureByText("test.md", "<caret>");
+    assertInstanceOf(file, MarkdownFile.class);
+
+    myFixture.type('`');
+    myFixture.checkResult("`<caret>`");
+    myFixture.type('`');
+    myFixture.checkResult("``<caret>``");
+    myFixture.type('`');
+    myFixture.checkResult("```<caret>```");
   }
 
   public void testBackticksGoodBalance() {
