@@ -1,3 +1,20 @@
+# Dart Plugin for IntelliJ
+
+This plugin provides support for the Dart language.
+
+## Installing and Getting Started
+
+See the
+[plugin documentation](https://www.jetbrains.com/help/idea/2016.2/dart-support.html)
+for help getting started with Dart development and the IntelliJ plugin. 
+
+## Reporting Issues
+
+Please file issues at YouTrack
+[bug tracker](https://youtrack.jetbrains.com/issues/WEB?q=Subsystem:%20Dart).
+
+## Developing the Plugin
+
 How to setup IntelliJ IDEA project for developing Dart Plugin.
 
 Prerequisites:
@@ -59,10 +76,9 @@ Prerequisites:
      - intellij-community/.idea/modules.xml
      - intellij-community/.idea/vcs.xml
 
+---
 
-
-
-===========  Alternative way of the Dart-plugin project setup  ==================
+## Alternative way of the Dart-plugin project setup
 
 1. Install the latest IntelliJ IDEA Ultimate Edition. The latest is either
 official release (https://www.jetbrains.com/idea/download/) or (more likely)
