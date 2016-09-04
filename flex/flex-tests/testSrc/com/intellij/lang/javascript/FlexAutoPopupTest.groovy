@@ -27,7 +27,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     return new DefaultLightProjectDescriptor() {
       @NotNull
       ModuleType getModuleType() {
-        return FlexModuleType.getInstance();
+        return FlexModuleType.getInstance()
       }
     }
   }
@@ -36,7 +36,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
   protected void setUp() {
     VfsRootAccess.allowRootAccess(getTestRootDisposable(),
                                   urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))))
     super.setUp()
     runInEdtAndWait { FlexTestUtils.setupFlexSdk(myModule, getTestName(false), FlexAutoPopupTest.class) }
     CodeInsightSettings.instance.SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS = true
@@ -150,7 +150,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
 
   @JSTestOptions([JSTestOption.WithFlexFacet])
   void testAutoPopupCompletionInsertsImport() {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
+    CamelHumpMatcher.forceStartMatching(getTestRootDisposable())
     myFixture.configureByText("a.as", """
         package {
         public class Foo {
@@ -174,7 +174,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
 
   @JSTestOptions([JSTestOption.WithFlexFacet])
   void testAutoPopupCompletionInsertsImportInMxml() {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
+    CamelHumpMatcher.forceStartMatching(getTestRootDisposable())
     myFixture.configureByText("a.mxml", """
       <?xml version="1.0"?>
       <mx:Application  xmlns:mx="http://www.adobe.com/2006/mxml">

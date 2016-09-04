@@ -36,7 +36,7 @@ class GrCucumberFindUsagesTest extends GrCucumberLightTestCase {
 
     def flags = TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
     final PsiElement targetElement = TargetElementUtil.findTargetElement(myFixture.editor, flags)
-    assert targetElement != null : "Cannot find referenced element";
+    assert targetElement != null : "Cannot find referenced element"
 
     Collection<UsageInfo> usages = myFixture.findUsages(targetElement)
     assertEquals(count, usages.size())

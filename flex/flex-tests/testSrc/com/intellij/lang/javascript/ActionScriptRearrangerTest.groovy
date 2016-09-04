@@ -28,7 +28,7 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
 
   protected void setUp() {
     VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))))
     super.setUp()
 
     def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this))
@@ -45,12 +45,12 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
       void dispose() {
         ApplicationManager.application.runWriteAction(new Runnable() {
           void run() {
-            ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-            projectJdkTable.removeJdk(sdk);
+            ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance()
+            projectJdkTable.removeJdk(sdk)
           }
         })
       }
-    });
+    })
   }
 
   @Override
@@ -61,12 +61,12 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
 
   static void clearDeclaredFields(Class aClass) throws IllegalAccessException {
     for (final Field field : aClass.getDeclaredFields()) {
-      @NonNls final String name = field.getDeclaringClass().getName();
+      @NonNls final String name = field.getDeclaringClass().getName()
       if (!name.startsWith("junit.framework.") && !name.startsWith("com.intellij.testFramework.")) {
-        final int modifiers = field.getModifiers();
+        final int modifiers = field.getModifiers()
         if ((modifiers & Modifier.FINAL) == 0 && (modifiers & Modifier.STATIC) != 0 && !field.getType().isPrimitive()) {
-          field.setAccessible(true);
-          field.set(null, null);
+          field.setAccessible(true)
+          field.set(null, null)
         }
       }
     }
