@@ -95,7 +95,8 @@ public class DartVmServiceListener implements VmServiceListener {
       return;
     }
 
-    final DartVmServiceSuspendContext suspendContext = new DartVmServiceSuspendContext(myDebugProcess, isolateRef, vmTopFrame, exception, atAsyncSuspension);
+    final DartVmServiceSuspendContext suspendContext =
+      new DartVmServiceSuspendContext(myDebugProcess, isolateRef, vmTopFrame, exception, atAsyncSuspension);
     final XStackFrame xTopFrame = suspendContext.getActiveExecutionStack().getTopFrame();
     final XSourcePosition sourcePosition = xTopFrame == null ? null : xTopFrame.getSourcePosition();
 
@@ -120,6 +121,7 @@ public class DartVmServiceListener implements VmServiceListener {
       final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myBreakpointHandler.getXBreakpoint(vmBreakpoints.get(0));
 
       if (xBreakpoint == null) {
+        // breakpoint could be set in the Observatory
         myLatestSourcePosition = sourcePosition;
         myDebugProcess.getSession().positionReached(suspendContext);
         return;
@@ -136,8 +138,6 @@ public class DartVmServiceListener implements VmServiceListener {
       final boolean suspend = myDebugProcess.getSession().breakpointReached(xBreakpoint, logExpression, suspendContext);
       if (!suspend) {
         myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), null);
-      } else {
-        myDebugProcess.getSession().positionReached(suspendContext);
       }
     }
   }
