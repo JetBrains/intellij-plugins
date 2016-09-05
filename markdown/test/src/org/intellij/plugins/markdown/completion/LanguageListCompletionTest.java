@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.completion;
 
-import com.intellij.idea.Bombed;
+import com.intellij.codeInsight.completion.CompletionAutoPopupTestCase;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.fileTypes.PlainTextParserDefinition;
@@ -9,7 +10,7 @@ import org.intellij.plugins.markdown.MarkdownTestingUtil;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Calendar;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
 public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -76,12 +77,24 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
     checkResult();
   }
 
-  @Bombed(user = "valich", month = Calendar.SEPTEMBER, day = 10)
-  public void testAutopopup() {
-    myFixture.configureByText(MarkdownFileType.INSTANCE, "");
-    myFixture.type("```");
-    myFixture.checkResult("```<caret>```");
-    assertNotNull("Lookup should auto-activate", myFixture.getLookup());
-    assertContainsElements(myFixture.getLookupElementStrings(), "js", "javascript");
+  public static class AutopopupTest extends CompletionAutoPopupTestCase {
+
+    @Override
+    protected void setUp() {
+      super.setUp();
+      assert JavascriptLanguage.INSTANCE != null;
+      // Because injector handles the code in the fence and gets parser definition for that lang
+      LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, new PlainTextParserDefinition());
+    }
+
+    public void testAutopopup() {
+      myFixture.configureByText(MarkdownFileType.INSTANCE, "");
+      type("```");
+      assertNotNull("Lookup should auto-activate", getLookup());
+      myFixture.checkResult("```<caret>```");
+      assertContainsElements(getLookup().getItems().stream().map(LookupElement::getLookupString).collect(Collectors.toList()),
+                             "js", "javascript");
+    }
   }
+
 }

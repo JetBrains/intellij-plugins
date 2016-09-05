@@ -63,7 +63,7 @@ public class LanguageListCompletionContributor extends CompletionContributor {
     }
   }
 
-  private static boolean isInMiddleOfUncollapsedFence(@Nullable PsiElement element, int offset) {
+  public static boolean isInMiddleOfUncollapsedFence(@Nullable PsiElement element, int offset) {
     if (element == null) {
       return false;
     }
