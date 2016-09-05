@@ -54,7 +54,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   @NotNull private final DartProblemsFilter myFilter;
 
   // Kind of hack to keep a reference to the live collection used in a super class, but it allows to improve performance greatly.
-  // Having it in hands we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
+  // Having it in hand we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
   private final List<DartProblem> myItems;
 
   private boolean myGroupBySeverity = true;
@@ -348,76 +348,51 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   @NotNull
   public String getStatusText() {
     final StringBuilder b = new StringBuilder();
-    b.append("Total: ");
-    b.append(myErrorCount == 0 ? "no errors, " : myErrorCount == 1 ? "1 error, " : myErrorCount + " errors, ");
-    b.append(myWarningCount == 0 ? "no warnings, " : myWarningCount == 1 ? "1 warning, " : myWarningCount + " warnings, ");
-    b.append(myHintCount == 0 ? "no hints. " : myHintCount == 1 ? "1 hint. " : myHintCount + " hints. ");
+    final List<String> summary = new ArrayList<>();
+
+    if (myFilter.isShowErrors() && myErrorCountAfterFilter > 0) {
+      summary.add(myErrorCountAfterFilter > 1 ? myErrorCountAfterFilter + " errors" : "1 error");
+    }
+    if (myFilter.isShowWarnings() && myWarningCountAfterFilter > 0) {
+      summary.add(myWarningCountAfterFilter > 1 ? myWarningCountAfterFilter + " warnings" : "1 warning");
+    }
+    if (myFilter.isShowHints() && myHintCountAfterFilter > 0) {
+      summary.add(myHintCountAfterFilter > 1 ? myHintCountAfterFilter + " hints" : "1 hint");
+    }
+
+    if (summary.isEmpty()) return "";
+
+    if (summary.size() == 2) {
+      b.append(StringUtil.join(summary, " and "));
+    }
+    else {
+      b.append(StringUtil.join(summary, ", "));
+    }
 
     if (myFilter.areFiltersApplied()) {
+      b.append(" (");
       switch (myFilter.getFileFilterMode()) {
         case All:
-          if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
-            // should be always true
-            b.append("Filtered by severity: ").append(getHiddenSeveritiesText()).append(".");
-          }
           break;
-        case ContentRoot:
-          b.append("Filtered by current content root");
+        case Module:
+          b.append("filtering by current module");
           break;
-        case Package:
-          b.append("Filtered by current package");
+        case DartPackage:
+          b.append("filtering by current package");
           break;
         case Directory:
-          b.append("Filtered by current directory");
+          b.append("filtering by current directory");
           break;
         case File:
-          b.append("Filtered by current file");
+          b.append("filtering by current file");
           break;
       }
 
-      if (myFilter.getFileFilterMode() != DartProblemsFilter.FileFilterMode.All) {
-        if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
-          b.append(" and severity: ");
-
-          if (!myFilter.isShowErrors() && !myFilter.isShowWarnings() && !myFilter.isShowHints()) {
-            b.append(getHiddenSeveritiesText()).append("."); // everything is filtered out
-          }
-          else {
-            b.append(getProblemsCountAfterFilterText()).append(", ").append(getHiddenSeveritiesText()).append(".");
-          }
-        }
-        else {
-          b.append(": ").append(getProblemsCountAfterFilterText()).append(".");
-        }
+      if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
+        b.append(" and severity");
       }
-    }
 
-    return b.toString();
-  }
-
-  private String getHiddenSeveritiesText() {
-    final StringBuilder b = new StringBuilder();
-    if (!myFilter.isShowErrors()) b.append("errors");
-    if (!myFilter.isShowWarnings()) b.append(b.length() == 0 ? "warnings" : " and warnings");
-    if (!myFilter.isShowHints()) b.append(b.length() == 0 ? "hints" : " and hints");
-    b.append(" hidden");
-    return b.toString();
-  }
-
-  private String getProblemsCountAfterFilterText() {
-    final StringBuilder b = new StringBuilder();
-    if (myFilter.isShowErrors()) {
-      b.append(myErrorCountAfterFilter == 0 ? "no errors" : myErrorCountAfterFilter == 1 ? "1 error" : myErrorCountAfterFilter + " errors");
-    }
-    if (myFilter.isShowWarnings()) {
-      if (b.length() > 0) b.append(", ");
-      b.append(myWarningCountAfterFilter == 0
-               ? "no warnings"
-               : myWarningCountAfterFilter == 1 ? "1 warning" : myWarningCountAfterFilter + " warnings");
-    }
-    if (myFilter.isShowHints()) {
-      if (b.length() > 0) b.append(", ");
-      b.append(myHintCountAfterFilter == 0 ? "no hints" : myHintCountAfterFilter == 1 ? "1 hint" : myHintCountAfterFilter + " hints");
+      b.append(")");
     }
 
     return b.toString();

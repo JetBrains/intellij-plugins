@@ -30,8 +30,8 @@ public class DartProblemsFilterForm {
   private JBCheckBox myHintsCheckBox;
 
   private JBRadioButton myWholeProjectRadioButton;
-  private JBRadioButton myCurrentContentRootRadioButton;
-  private JBRadioButton myCurrentPackageRadioButton;
+  private JBRadioButton myCurrentModuleRootRadioButton;
+  private JBRadioButton myCurrentDartPackageRadioButton;
   private JBRadioButton myCurrentDirectoryRadioButton;
   private JBRadioButton myCurrentFileRadioButton;
 
@@ -44,9 +44,7 @@ public class DartProblemsFilterForm {
     myResetFilterHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(final HyperlinkEvent e) {
-        for (FilterListener listener : myListeners) {
-          listener.filtersResetRequested();
-        }
+        myListeners.forEach(FilterListener::filtersResetRequested);
       }
     });
   }
@@ -62,11 +60,11 @@ public class DartProblemsFilterForm {
     else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.Directory) {
       myCurrentDirectoryRadioButton.setSelected(true);
     }
-    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.Package) {
-      myCurrentPackageRadioButton.setSelected(true);
+    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.DartPackage) {
+      myCurrentDartPackageRadioButton.setSelected(true);
     }
-    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.ContentRoot) {
-      myCurrentContentRootRadioButton.setSelected(true);
+    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.Module) {
+      myCurrentModuleRootRadioButton.setSelected(true);
     }
     else {
       myWholeProjectRadioButton.setSelected(true);
@@ -88,8 +86,8 @@ public class DartProblemsFilterForm {
     myHintsCheckBox.addActionListener(listener);
 
     myWholeProjectRadioButton.addActionListener(listener);
-    myCurrentContentRootRadioButton.addActionListener(listener);
-    myCurrentPackageRadioButton.addActionListener(listener);
+    myCurrentModuleRootRadioButton.addActionListener(listener);
+    myCurrentDartPackageRadioButton.addActionListener(listener);
     myCurrentDirectoryRadioButton.addActionListener(listener);
     myCurrentFileRadioButton.addActionListener(listener);
   }
@@ -113,8 +111,8 @@ public class DartProblemsFilterForm {
   public DartProblemsFilter.FileFilterMode getFileFilterMode() {
     if (myCurrentFileRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.File;
     if (myCurrentDirectoryRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.Directory;
-    if (myCurrentPackageRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.Package;
-    if (myCurrentContentRootRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.ContentRoot;
+    if (myCurrentDartPackageRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.DartPackage;
+    if (myCurrentModuleRootRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.Module;
     return DartProblemsFilter.FileFilterMode.All;
   }
 }
