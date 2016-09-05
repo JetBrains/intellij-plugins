@@ -107,6 +107,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     })
     object: DoubleClickListener() {
       override fun onDoubleClick(event: MouseEvent?): Boolean {
+        if (list.selectedValue == null) return true
         askOptions(project, popup, list.selectedValue as Blueprint)
         return true
       }
