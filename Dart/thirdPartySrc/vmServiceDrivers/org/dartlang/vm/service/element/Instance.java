@@ -53,7 +53,7 @@ public class Instance extends Obj {
    *  - TypeParameter
    */
   public InstanceRef getBound() {
-    return new InstanceRef((JsonObject) json.get("bound"));
+    return json.get("bound") == null ? null : new InstanceRef((JsonObject) json.get("bound"));
   }
 
   /**
@@ -95,7 +95,7 @@ public class Instance extends Obj {
    *  - Closure
    */
   public ContextRef getClosureContext() {
-    return new ContextRef((JsonObject) json.get("closureContext"));
+    return json.get("closureContext") == null ? null : new ContextRef((JsonObject) json.get("closureContext"));
   }
 
   /**
@@ -105,7 +105,7 @@ public class Instance extends Obj {
    *  - Closure
    */
   public FuncRef getClosureFunction() {
-    return new FuncRef((JsonObject) json.get("closureFunction"));
+    return json.get("closureFunction") == null ? null : new FuncRef((JsonObject) json.get("closureFunction"));
   }
 
   /**
@@ -171,7 +171,7 @@ public class Instance extends Obj {
    *  - RegExp
    */
   public boolean getIsCaseSensitive() {
-    return json.get("isCaseSensitive").getAsBoolean();
+    return json.get("isCaseSensitive") == null ? false : json.get("isCaseSensitive").getAsBoolean();
   }
 
   /**
@@ -181,7 +181,7 @@ public class Instance extends Obj {
    *  - RegExp
    */
   public boolean getIsMultiLine() {
-    return json.get("isMultiLine").getAsBoolean();
+    return json.get("isMultiLine") == null ? false : json.get("isMultiLine").getAsBoolean();
   }
 
   /**
@@ -230,7 +230,7 @@ public class Instance extends Obj {
    *  - MirrorReference
    */
   public InstanceRef getMirrorReferent() {
-    return new InstanceRef((JsonObject) json.get("mirrorReferent"));
+    return json.get("mirrorReferent") == null ? null : new InstanceRef((JsonObject) json.get("mirrorReferent"));
   }
 
   /**
@@ -287,7 +287,7 @@ public class Instance extends Obj {
    *  - TypeParameter
    */
   public ClassRef getParameterizedClass() {
-    return new ClassRef((JsonObject) json.get("parameterizedClass"));
+    return json.get("parameterizedClass") == null ? null : new ClassRef((JsonObject) json.get("parameterizedClass"));
   }
 
   /**
@@ -307,7 +307,7 @@ public class Instance extends Obj {
    *  - WeakProperty
    */
   public InstanceRef getPropertyKey() {
-    return new InstanceRef((JsonObject) json.get("propertyKey"));
+    return json.get("propertyKey") == null ? null : new InstanceRef((JsonObject) json.get("propertyKey"));
   }
 
   /**
@@ -317,7 +317,7 @@ public class Instance extends Obj {
    *  - WeakProperty
    */
   public InstanceRef getPropertyValue() {
-    return new InstanceRef((JsonObject) json.get("propertyValue"));
+    return json.get("propertyValue") == null ? null : new InstanceRef((JsonObject) json.get("propertyValue"));
   }
 
   /**
@@ -330,7 +330,7 @@ public class Instance extends Obj {
    *  - TypeRef
    */
   public InstanceRef getTargetType() {
-    return new InstanceRef((JsonObject) json.get("targetType"));
+    return json.get("targetType") == null ? null : new InstanceRef((JsonObject) json.get("targetType"));
   }
 
   /**
@@ -340,7 +340,7 @@ public class Instance extends Obj {
    *  - Type
    */
   public TypeArgumentsRef getTypeArguments() {
-    return new TypeArgumentsRef((JsonObject) json.get("typeArguments"));
+    return json.get("typeArguments") == null ? null : new TypeArgumentsRef((JsonObject) json.get("typeArguments"));
   }
 
   /**
@@ -350,7 +350,7 @@ public class Instance extends Obj {
    *  - Type
    */
   public ClassRef getTypeClass() {
-    return new ClassRef((JsonObject) json.get("typeClass"));
+    return json.get("typeClass") == null ? null : new ClassRef((JsonObject) json.get("typeClass"));
   }
 
   /**

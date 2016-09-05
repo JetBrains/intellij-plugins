@@ -44,7 +44,7 @@ public class Isolate extends Response {
    * The error that is causing this isolate to exit, if applicable.
    */
   public ErrorObj getError() {
-    return new ErrorObj((JsonObject) json.get("error"));
+    return json.get("error") == null ? null : new ErrorObj((JsonObject) json.get("error"));
   }
 
   /**
@@ -129,7 +129,7 @@ public class Isolate extends Response {
    * Guaranteed to be initialized when the IsolateRunnable event fires.
    */
   public LibraryRef getRootLib() {
-    return new LibraryRef((JsonObject) json.get("rootLib"));
+    return json.get("rootLib") == null ? null : new LibraryRef((JsonObject) json.get("rootLib"));
   }
 
   /**

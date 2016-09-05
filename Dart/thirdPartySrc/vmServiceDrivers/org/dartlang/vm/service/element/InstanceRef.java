@@ -90,7 +90,7 @@ public class InstanceRef extends ObjRef {
    *  - TypeParameter
    */
   public ClassRef getParameterizedClass() {
-    return new ClassRef((JsonObject) json.get("parameterizedClass"));
+    return json.get("parameterizedClass") == null ? null : new ClassRef((JsonObject) json.get("parameterizedClass"));
   }
 
   /**
@@ -102,7 +102,7 @@ public class InstanceRef extends ObjRef {
    *  - RegExp
    */
   public InstanceRef getPattern() {
-    return new InstanceRef((JsonObject) json.get("pattern"));
+    return json.get("pattern") == null ? null : new InstanceRef((JsonObject) json.get("pattern"));
   }
 
   /**
@@ -112,7 +112,7 @@ public class InstanceRef extends ObjRef {
    *  - Type
    */
   public ClassRef getTypeClass() {
-    return new ClassRef((JsonObject) json.get("typeClass"));
+    return json.get("typeClass") == null ? null : new ClassRef((JsonObject) json.get("typeClass"));
   }
 
   /**
