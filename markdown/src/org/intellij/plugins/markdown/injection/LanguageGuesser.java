@@ -8,10 +8,7 @@ import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public enum LanguageGuesser {
   INSTANCE;
@@ -31,6 +28,10 @@ public enum LanguageGuesser {
     protected Map<String, Language> compute() {
       final HashMap<String, Language> result = new HashMap<>();
       for (Language language : Language.getRegisteredLanguages()) {
+        if (language.getID().isEmpty()) {
+          continue;
+        }
+
         result.put(language.getID().toLowerCase(Locale.US), language);
       }
 
@@ -38,6 +39,11 @@ public enum LanguageGuesser {
       return result;
     }
   };
+
+  @NotNull
+  public Map<String, Language> getLangToLanguageMap() {
+    return Collections.unmodifiableMap(langIdToLanguage.getValue());
+  }
 
   @Nullable
   public Language guessLanguage(@NotNull String languageName) {
