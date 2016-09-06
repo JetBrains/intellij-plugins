@@ -3,6 +3,7 @@ package org.intellij.plugins.postcss.parser;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.impl.CssTreeElementFactory;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
@@ -29,7 +30,7 @@ public abstract class PostCssParsingTest extends ParsingTestCase {
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
     registerExtension(CssElementDescriptorProvider.EP_NAME, new PostCssElementDescriptorProvider());
 
-    registerApplicationService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2("css-parsing-tests.xml"));
+    registerApplicationService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
 
     addExplicitExtension(LanguageASTFactory.INSTANCE, PostCssLanguage.INSTANCE, new PostCssTreeElementFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
