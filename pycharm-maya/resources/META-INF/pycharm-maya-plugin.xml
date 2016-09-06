@@ -8,7 +8,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">
-
+    <pythonFlavorProvider implementation="com.jetbrains.maya.MayaFlavorProvider"/>
   </extensions>
 
   <actions>
