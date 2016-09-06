@@ -37,9 +37,9 @@ public class MarkdownQuoteHandler implements QuoteHandler {
     final CharSequence charsSequence = iterator.getDocument().getCharsSequence();
     final TextRange current = getRangeOfThisType(charsSequence, offset);
 
-    final boolean isBacktick = iterator.getTokenType() == MarkdownTokenTypes.BACKTICK;
+    final boolean isBacktick = charsSequence.charAt(offset) == '`';
     final boolean seekPrev = isBacktick ||
-                             (current.getStartOffset() - 1 >= 0 && 
+                             (current.getStartOffset() - 1 >= 0 &&
                               !Character.isWhitespace(charsSequence.charAt(current.getStartOffset() - 1)));
 
     if (seekPrev) {
@@ -54,13 +54,21 @@ public class MarkdownQuoteHandler implements QuoteHandler {
   @Override
   public boolean isOpeningQuote(HighlighterIterator iterator, int offset) {
     final IElementType tokenType = iterator.getTokenType();
-    
+
     if (!QUOTE_TYPES.contains(tokenType)) {
       return false;
     }
+
     final CharSequence chars = iterator.getDocument().getCharsSequence();
-    return (offset <= 0 || Character.isWhitespace(chars.charAt(offset - 1)))
-      && (offset + 1 >= chars.length() || Character.isWhitespace(chars.charAt(offset + 1)));
+
+    final boolean isBacktick = chars.charAt(offset) == '`';
+    if (isBacktick && isClosingQuote(iterator, offset)) {
+      return false;
+    }
+
+    return getRangeOfThisType(chars, offset).getLength() != 1 ||
+           ((offset <= 0 || Character.isWhitespace(chars.charAt(offset - 1)))
+            && (offset + 1 >= chars.length() || Character.isWhitespace(chars.charAt(offset + 1))));
   }
 
   @Override

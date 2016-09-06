@@ -19,7 +19,7 @@ class TestUtils {
   }
 
   static String getMockGroovyCucumberLibraryHome() {
-    return "$absoluteTestDataPath/mockGroovyCucumberLib-1.0.14";
+    return "$absoluteTestDataPath/mockGroovyCucumberLib-1.0.14"
   }
 
   static List<String> getMockGroovyCucumberLibraryNames() {

@@ -1,16 +1,19 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileReferenceSet;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author Dennis.Ushakov
@@ -35,7 +38,11 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       final Project project = element.getProject();
       if (AngularIndexUtil.hasAngularJS2(project)) {
         final PsiFile file = element.getContainingFile().getOriginalFile();
-        return Collections.singleton(file.getContainingDirectory());
+        final TypeScriptConfig config = TypeScriptCompilerConfigUtil.getConfigForFile(project, file.getVirtualFile());
+        final PsiDirectory directory = config != null ?
+                                       PsiManager.getInstance(project).findDirectory(config.getConfigFile().getParent()) :
+                                       null;
+        return ContainerUtil.skipNulls(Arrays.asList(file.getContainingDirectory(), directory));
       }
 
       return super.getDefaultContexts();

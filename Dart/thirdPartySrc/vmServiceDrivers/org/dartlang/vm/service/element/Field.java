@@ -39,7 +39,7 @@ public class Field extends Obj {
    * The location of this field in the source code.
    */
   public SourceLocation getLocation() {
-    return new SourceLocation((JsonObject) json.get("location"));
+    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
   }
 
   /**
@@ -60,7 +60,7 @@ public class Field extends Obj {
    * The value of this field, if the field is static.
    */
   public InstanceRef getStaticValue() {
-    return new InstanceRef((JsonObject) json.get("staticValue"));
+    return json.get("staticValue") == null ? null : new InstanceRef((JsonObject) json.get("staticValue"));
   }
 
   /**

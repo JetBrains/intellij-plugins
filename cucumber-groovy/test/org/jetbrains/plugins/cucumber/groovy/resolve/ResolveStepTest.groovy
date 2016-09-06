@@ -115,7 +115,7 @@ Given(~'calculator', 1000) {->
 
   void doTest(String feature, String stepDef) {
     myFixture.with {
-      CucumberStepsIndex.getInstance(project).reset();
+      CucumberStepsIndex.getInstance(project).reset()
       configureByText('test.feature', feature)
       addFileToProject('steps.groovy', stepDef)
 

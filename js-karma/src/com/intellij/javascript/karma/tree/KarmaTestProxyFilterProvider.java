@@ -4,19 +4,14 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.testFramework.util.BrowserStacktraceFilter;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
 
   private final Project myProject;
@@ -41,13 +36,21 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
 
   @NotNull
   private Filter getBrowserFilter(@NotNull String browserName) {
-    if (StringUtil.startsWithIgnoreCase(browserName, "PhantomJS")) {
-      return new NodeStackTraceFilter(myProject);
-    }
     Function<String, File> fileFinder = s -> {
       File file = new File(s);
       if (file.isFile() && file.isAbsolute()) {
         return file;
+      }
+      KarmaConfig karmaConfig = myKarmaServer.getKarmaConfig();
+      if (karmaConfig != null) {
+        String basePath = karmaConfig.getBasePath();
+        File baseDir = new File(basePath);
+        if (baseDir.isDirectory()) {
+          file = new File(baseDir, s);
+          if (file.isFile()) {
+            return file;
+          }
+        }
       }
       return null;
     };

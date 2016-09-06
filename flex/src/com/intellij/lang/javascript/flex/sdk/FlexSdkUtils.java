@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfiguration
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -134,7 +133,7 @@ public class FlexSdkUtils {
     }
     else {
       final Ref<Sdk> sdkRef = new Ref<>();
-      ApplicationManager.getApplication().invokeAndWait(() -> sdkRef.set(doCreateSdk(sdkType, sdkHomePath)), ModalityState.defaultModalityState());
+      ApplicationManager.getApplication().invokeAndWait(() -> sdkRef.set(doCreateSdk(sdkType, sdkHomePath)));
       return sdkRef.get();
     }
   }

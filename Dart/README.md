@@ -1,7 +1,24 @@
+# Dart Plugin for IntelliJ IDEA and other JetBrains IDEs
+
+This plugin provides support for the [Dart programming language](https://www.dartlang.org/).
+
+## Installing and Getting Started
+
+See the
+[plugin documentation](https://www.jetbrains.com/help/idea/dart-support.html)
+for help getting started with Dart development and the IntelliJ IDEA plugin. 
+
+## Reporting Issues
+
+Please file issues at YouTrack
+[bug tracker](https://youtrack.jetbrains.com/issues/WEB?q=Subsystem:%20Dart).
+
+## Developing the Plugin
+
 How to setup IntelliJ IDEA project for developing Dart Plugin.
 
 Prerequisites:
-- Oracle JDK 1.6 and 1.8
+- Oracle JDK 1.8
 - Git command line client
 - IntelliJ IDEA Ultimate installed. The following bundled plugins are enabled:
   Git Integration, I18n for Java, IntelliLang, JUnit, Plugin DevKit, Properties Support, UI Designer.
@@ -15,9 +32,9 @@ Prerequisites:
    Run intellij-community/getPlugins.sh (getPlugins.bat on Win). If that fails because the
    repos have already been cloned you can just update both of them using 'get pull'.
 
-2. Start IntelliJ Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
-   click [+] and add JDK 1.6. Add [JDK]/lib/tools.jar to the SDK Classpath if it is not there. Rename SDK to 'IDEA jdk'.
-   Click [+] to add one more JDK and provide path to JDK 1.8. Leave default name "1.8". Make sure it contains [JDK]/lib/tools.jar
+2. Start IntelliJ IDEA Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
+   click [+] and add JDK 1.8. Add [JDK]/lib/tools.jar to the SDK Classpath if it is not there. Rename SDK to 'IDEA jdk'.
+   Click [+] to add one more JDK and provide path to JDK 1.8 once again . Leave default name "1.8". Make sure it contains [JDK]/lib/tools.jar
 
 3. On Welcome screen click Configure | Settings (Preferences), look for Path Variables and add the following vars there:
    - IDEA_ULTIMATE_PLUGINS pointing to [IntelliJ IDEA Ultimate Installation]/Contents/plugins
@@ -59,10 +76,9 @@ Prerequisites:
      - intellij-community/.idea/modules.xml
      - intellij-community/.idea/vcs.xml
 
+---
 
-
-
-===========  Alternative way of the Dart-plugin project setup  ==================
+## Alternative way of the Dart-plugin project setup
 
 1. Install the latest IntelliJ IDEA Ultimate Edition. The latest is either
 official release (https://www.jetbrains.com/idea/download/) or (more likely)
@@ -83,7 +99,7 @@ repositories...', find plugins and install them. Restart IDE.
 4. Configure JDK and Plugin SDK.
 
   4.1. Launch IntelliJ IDEA, on Welcome screen click Configure | Project
-  Defaults | Project Structure | SDKs, click [+] and add JDK (1.6 or 1.7),
+  Defaults | Project Structure | SDKs, click [+] and add JDK 1.8,
   then click [+] again, select 'IntelliJ Platform Plugin SDK' and provide path
   to the current IntelliJ IDEA installation.
 
@@ -116,8 +132,8 @@ repositories...', find plugins and install them. Restart IDE.
 configured: 'All tests' (run it each time before commit) and 'Dart plugin'
 that launches IntelliJ IDEA with the Dart plugin built from sources. Important
 note: to have all tests passing successfully uncomment lines with
-<depends>...</depends> tags in the resources/META-INF/plugin.xml file. Do not
-commit plugin.xml with uncommented <depends/> tags!
+&lt;depends>...&lt;/depends> tags in the resources/META-INF/plugin.xml file. Do not
+commit plugin.xml with uncommented &lt;depends/> tags!
 
 6. [Optional] To enable internal developer actions add "idea.is.internal=true"
 to the [IDE installation]/bin/idea.properties (on Mac: [IDE

@@ -122,7 +122,6 @@ public class DartAnalysisServerService {
 
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
-  @Nullable private Task.Backgroundable myServerProgressTask;
 
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
@@ -137,10 +136,6 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
-      if (myServerProgressTask != null) {
-        myServerProgressTask.setTitle(DartBundle.message("dart.analysis.progress.title.with.file", PathUtil.getFileName(filePathSD)));
-      }
-
       final boolean visible = myVisibleFiles.contains(filePathSD);
       final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
       myServerData.computedErrors(filePathSI, errors, visible);
@@ -232,7 +227,8 @@ public class DartAnalysisServerService {
           for (final Project project : myRootsHandler.getTrackedProjects()) {
             final Runnable delayedRunnable = () -> {
               if (project.isDisposed() || !myServerBusy.get()) return;
-              myServerProgressTask =
+
+              final Task.Backgroundable task =
                 new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
                   @Override
                   public void run(@NotNull ProgressIndicator indicator) {
@@ -247,7 +243,7 @@ public class DartAnalysisServerService {
                   }
                 };
 
-              ProgressManager.getInstance().run(myServerProgressTask);
+              ProgressManager.getInstance().run(task);
             };
 
             // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events

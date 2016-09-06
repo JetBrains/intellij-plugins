@@ -48,7 +48,7 @@ public class UnresolvedSourceLocation extends Response {
    * The script containing the source location if the script has been loaded.
    */
   public ScriptRef getScript() {
-    return new ScriptRef((JsonObject) json.get("script"));
+    return json.get("script") == null ? null : new ScriptRef((JsonObject) json.get("script"));
   }
 
   /**

@@ -31,7 +31,6 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -686,7 +685,7 @@ public class FlexDebugProcess extends XDebugProcess {
         final int answer =
           Messages.showYesNoDialog(project, message, FlexBundle.message("breakpoint.condition.error"), Messages.getQuestionIcon());
         stopRef.set(answer == Messages.YES);
-      }, ModalityState.defaultModalityState());
+      });
 
       return stopRef.get();
     }

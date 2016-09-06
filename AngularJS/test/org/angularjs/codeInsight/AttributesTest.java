@@ -6,6 +6,7 @@ import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSField;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
@@ -371,6 +372,27 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(resolve);
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
+    });
+  }
+
+  public void testBindingAttributeFunctionCompletion2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("attribute_binding.html", "angular2.js", "object_with_function.ts");
+      myFixture.completeBasic();
+      myFixture.checkResultByFile("attribute_binding.after.html");
+    });
+  }
+
+  public void testBindingAttributeFunctionResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("attribute_binding.after.html", "angular2.js", "object_with_function.ts");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("object_with_function.ts", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSFunction.class);
     });
   }
 

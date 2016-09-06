@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -361,7 +360,7 @@ public class FlexCompilationManager {
         outputFile.refresh(false, false);
         return outputFile;
       }
-    })), ModalityState.defaultModalityState());
+    })));
 
     return outputFileRef.get();
   }

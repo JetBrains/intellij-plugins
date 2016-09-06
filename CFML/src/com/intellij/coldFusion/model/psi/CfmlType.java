@@ -19,14 +19,12 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiTypeVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
  */
 public class CfmlType extends PsiType {
-
   private final String myName;
 
   public CfmlType(@NotNull String name) {
@@ -37,18 +35,12 @@ public class CfmlType extends PsiType {
   @NotNull
   @Override
   public String getPresentableText() {
-    return myName;
+    return getCanonicalText();
   }
 
   @NotNull
   @Override
   public String getCanonicalText() {
-    return myName;
-  }
-
-  @NotNull
-  @Override
-  public String getInternalCanonicalText() {
     return myName;
   }
 
@@ -58,7 +50,7 @@ public class CfmlType extends PsiType {
   }
 
   @Override
-  public boolean equalsToText(@NotNull @NonNls String text) {
+  public boolean equalsToText(@NotNull String text) {
     return text.endsWith(myName);
   }
 

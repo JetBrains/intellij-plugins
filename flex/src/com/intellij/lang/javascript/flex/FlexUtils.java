@@ -547,7 +547,7 @@ public class FlexUtils {
     //
     module.putUserData(FlexOrderEnumerationHandler.FORCE_BC, bc);
     try {
-      return new ModuleWithDependenciesScope(module, ModuleWithDependenciesScope.COMPILE |
+      return new ModuleWithDependenciesScope(module, ModuleWithDependenciesScope.COMPILE_ONLY |
                                                      ModuleWithDependenciesScope.MODULES |
                                                      ModuleWithDependenciesScope.LIBRARIES |
                                                      (includeTests ? ModuleWithDependenciesScope.TESTS : 0));

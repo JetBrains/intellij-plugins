@@ -65,10 +65,11 @@ public class DartiumUtil {
 
   @Nullable
   public static String getErrorMessageIfWrongDartiumPath(final @NotNull String dartiumPath) {
-    if (dartiumPath.isEmpty()) return DartBundle.message("warning.dartium.path.not.specified");
+    // Don't warn if Dartium is not configured.
+    if (dartiumPath.isEmpty()) return null;
 
     final File file = new File(dartiumPath);
-    if (SystemInfo.isMac && !file.exists() || !SystemInfo.isMac && !file.isFile()) {
+    if (SystemInfo.isMac && !file.isDirectory() || !SystemInfo.isMac && !file.isFile()) {
       return DartBundle.message("warning.invalid.dartium.path");
     }
 
