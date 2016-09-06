@@ -28,7 +28,6 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.LibraryOrderEntry;
@@ -95,7 +94,7 @@ public class FlexCompilationUtils {
             }
           });
         }
-      }, ProgressManager.getInstance().getProgressIndicator().getModalityState());
+      });
 
       if (!exceptionRef.isNull()) {
         throw exceptionRef.get();
@@ -223,7 +222,7 @@ public class FlexCompilationUtils {
   public static void ensureOutputFileWritable(final Project project, final String filePath) {
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (file != null && !file.isWritable()) {
-      ApplicationManager.getApplication().invokeAndWait(() -> ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(file), ModalityState.defaultModalityState());
+      ApplicationManager.getApplication().invokeAndWait(() -> ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(file));
     }
   }
 
@@ -394,7 +393,7 @@ public class FlexCompilationUtils {
           }
         }));
       }
-    }, ModalityState.any());
+    });
 
     if (!exceptionRef.isNull()) {
       throw exceptionRef.get();
@@ -523,7 +522,7 @@ public class FlexCompilationUtils {
       });
     };
 
-    ApplicationManager.getApplication().invokeAndWait(runnable, ModalityState.any());
+    ApplicationManager.getApplication().invokeAndWait(runnable);
 
     if (!exceptionRef.isNull()) {
       throw exceptionRef.get();
@@ -653,7 +652,7 @@ public class FlexCompilationUtils {
       catch (IOException e) {
         exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.copy.air.descriptor", e.getMessage())));
       }
-    }), ModalityState.any());
+    }));
 
     if (!exceptionRef.isNull()) {
       throw exceptionRef.get();
