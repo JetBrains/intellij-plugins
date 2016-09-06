@@ -30,7 +30,7 @@ public class DartProblemsFilterForm {
   private JBCheckBox myHintsCheckBox;
 
   private JBRadioButton myWholeProjectRadioButton;
-  private JBRadioButton myCurrentModuleRootRadioButton;
+  private JBRadioButton myCurrentContentRootRadioButton;
   private JBRadioButton myCurrentDartPackageRadioButton;
   private JBRadioButton myCurrentDirectoryRadioButton;
   private JBRadioButton myCurrentFileRadioButton;
@@ -63,8 +63,8 @@ public class DartProblemsFilterForm {
     else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.DartPackage) {
       myCurrentDartPackageRadioButton.setSelected(true);
     }
-    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.Module) {
-      myCurrentModuleRootRadioButton.setSelected(true);
+    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.ContentRoot) {
+      myCurrentContentRootRadioButton.setSelected(true);
     }
     else {
       myWholeProjectRadioButton.setSelected(true);
@@ -86,7 +86,7 @@ public class DartProblemsFilterForm {
     myHintsCheckBox.addActionListener(listener);
 
     myWholeProjectRadioButton.addActionListener(listener);
-    myCurrentModuleRootRadioButton.addActionListener(listener);
+    myCurrentContentRootRadioButton.addActionListener(listener);
     myCurrentDartPackageRadioButton.addActionListener(listener);
     myCurrentDirectoryRadioButton.addActionListener(listener);
     myCurrentFileRadioButton.addActionListener(listener);
@@ -112,7 +112,7 @@ public class DartProblemsFilterForm {
     if (myCurrentFileRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.File;
     if (myCurrentDirectoryRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.Directory;
     if (myCurrentDartPackageRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.DartPackage;
-    if (myCurrentModuleRootRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.Module;
+    if (myCurrentContentRootRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.ContentRoot;
     return DartProblemsFilter.FileFilterMode.All;
   }
 }

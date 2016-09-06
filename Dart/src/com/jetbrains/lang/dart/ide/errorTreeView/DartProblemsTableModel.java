@@ -360,7 +360,14 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       summary.add(myHintCountAfterFilter > 1 ? myHintCountAfterFilter + " hints" : "1 hint");
     }
 
-    if (summary.isEmpty()) return "";
+    if (summary.isEmpty()) {
+      if (myFilter.areFiltersApplied()) {
+        return getFilterTypeText();
+      }
+      else {
+        return "";
+      }
+    }
 
     if (summary.size() == 2) {
       b.append(StringUtil.join(summary, " and "));
@@ -371,31 +378,38 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
     if (myFilter.areFiltersApplied()) {
       b.append(" (");
-      switch (myFilter.getFileFilterMode()) {
-        case All:
-          break;
-        case Module:
-          b.append("filtering by current module");
-          break;
-        case DartPackage:
-          b.append("filtering by current package");
-          break;
-        case Directory:
-          b.append("filtering by current directory");
-          break;
-        case File:
-          b.append("filtering by current file");
-          break;
-      }
-
-      if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
-        b.append(" and severity");
-      }
-
+      b.append(getFilterTypeText());
       b.append(")");
     }
 
     return b.toString();
+  }
+
+  private String getFilterTypeText() {
+    final StringBuilder builder = new StringBuilder();
+
+    switch (myFilter.getFileFilterMode()) {
+      case All:
+        break;
+      case ContentRoot:
+        builder.append("filtering by current content root");
+        break;
+      case DartPackage:
+        builder.append("filtering by current Dart package");
+        break;
+      case Directory:
+        builder.append("filtering by current directory");
+        break;
+      case File:
+        builder.append("filtering by current file");
+        break;
+    }
+
+    if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
+      builder.append(" and severity");
+    }
+
+    return builder.toString();
   }
 
   private class DartProblemsComparator implements Comparator<DartProblem> {

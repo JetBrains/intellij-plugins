@@ -15,7 +15,7 @@ import javax.swing.*;
 
 public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Integer> {
 
-  public enum FileFilterMode {All, Module, DartPackage, Directory, File}
+  public enum FileFilterMode {All, ContentRoot, DartPackage, Directory, File}
 
   private static final boolean SHOW_ERRORS_DEFAULT = true;
   private static final boolean SHOW_WARNINGS_DEFAULT = true;
@@ -32,8 +32,8 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
   @Nullable private VirtualFile myCurrentFile;
   private boolean myDartPackageRootUpToDate = false;
   @Nullable private VirtualFile myCurrentDartPackageRoot;
-  private boolean myModuleRootUpToDate = false;
-  @Nullable private VirtualFile myCurrentModuleRoot;
+  private boolean myContentRootUpToDate = false;
+  @Nullable private VirtualFile myCurrentContentRoot;
 
   public DartProblemsFilter(@NotNull final Project project) {
     myProject = project;
@@ -73,7 +73,7 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
     else {
       myCurrentFile = file;
       myDartPackageRootUpToDate = false;
-      myModuleRootUpToDate = false;
+      myContentRootUpToDate = false;
       return true;
     }
   }
@@ -125,9 +125,9 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
       }
     }
 
-    if (myFileFilterMode == FileFilterMode.Module) {
+    if (myFileFilterMode == FileFilterMode.ContentRoot) {
       ensureContentRootUpToDate();
-      if (myCurrentModuleRoot == null || !myCurrentModuleRoot.equals(problem.getModuleRoot())) {
+      if (myCurrentContentRoot == null || !myCurrentContentRoot.equals(problem.getContentRoot())) {
         return false;
       }
     }
@@ -163,11 +163,11 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
   }
 
   private void ensureContentRootUpToDate() {
-    if (myModuleRootUpToDate) return;
+    if (myContentRootUpToDate) return;
 
-    myCurrentModuleRoot = myCurrentFile == null
+    myCurrentContentRoot = myCurrentFile == null
                            ? null
                            : ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myCurrentFile, false);
-    myModuleRootUpToDate = true;
+    myContentRootUpToDate = true;
   }
 }

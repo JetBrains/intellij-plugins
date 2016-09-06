@@ -25,7 +25,7 @@ public class DartProblem {
 
   @Nullable private VirtualFile myFile;
   @Nullable private VirtualFile myPackageRoot;
-  @Nullable private VirtualFile myModuleRoot;
+  @Nullable private VirtualFile myContentRoot;
 
   private String myPresentableLocationWithoutLineNumber;
 
@@ -68,30 +68,30 @@ public class DartProblem {
     final String dartPackageName;
     final String presentableFilePath;
     final VirtualFile packageRoot;
-    final VirtualFile moduleRoot;
+    final VirtualFile contentRoot;
 
     file = LocalFileSystem.getInstance().findFileByPath(getSystemIndependentPath());
     if (file == null) {
       dartPackageName = null;
       packageRoot = null;
-      moduleRoot = null;
+      contentRoot = null;
       presentableFilePath = myAnalysisError.getLocation().getFile();
     }
     else {
-      moduleRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(file, false);
+      contentRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(file, false);
 
       final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
                                   ? DartBuildFileUtil.findPackageRootBuildFile(myProject, file)
                                   : PubspecYamlUtil.findPubspecYamlFile(myProject, file);
       if (pubspec == null) {
         dartPackageName = null;
-        if (moduleRoot == null) {
+        if (contentRoot == null) {
           packageRoot = null;
           presentableFilePath = myAnalysisError.getLocation().getFile();
         }
         else {
-          packageRoot = moduleRoot;
-          final String relativePath = VfsUtilCore.getRelativePath(file, moduleRoot, File.separatorChar);
+          packageRoot = contentRoot;
+          final String relativePath = VfsUtilCore.getRelativePath(file, contentRoot, File.separatorChar);
           presentableFilePath = relativePath != null ? relativePath : myAnalysisError.getLocation().getFile();
         }
       }
@@ -108,7 +108,7 @@ public class DartProblem {
 
     myFile = file;
     myPackageRoot = packageRoot;
-    myModuleRoot = moduleRoot;
+    myContentRoot = contentRoot;
     myPresentableLocationWithoutLineNumber = dartPackageName == null ? presentableFilePath
                                                                      : ("[" + dartPackageName + "] " + presentableFilePath);
   }
@@ -142,8 +142,8 @@ public class DartProblem {
   }
 
   @Nullable
-  public VirtualFile getModuleRoot() {
+  public VirtualFile getContentRoot() {
     ensureInitialized();
-    return myModuleRoot;
+    return myContentRoot;
   }
 }

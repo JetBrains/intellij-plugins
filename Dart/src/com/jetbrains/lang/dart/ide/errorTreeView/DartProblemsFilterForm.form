@@ -30,13 +30,13 @@
           <text value="Wh&amp;ole project"/>
         </properties>
       </component>
-      <component id="5d338" class="com.intellij.ui.components.JBRadioButton" binding="myCurrentModuleRootRadioButton">
+      <component id="5d338" class="com.intellij.ui.components.JBRadioButton" binding="myCurrentContentRootRadioButton">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <margin top="0" left="2" bottom="0" right="2"/>
-          <text value="Current &amp;module"/>
+          <text value="Current &amp;content root"/>
         </properties>
       </component>
       <component id="6d10f" class="com.intellij.ui.components.JBRadioButton" binding="myCurrentDirectoryRadioButton">
