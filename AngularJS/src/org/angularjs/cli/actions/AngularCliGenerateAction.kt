@@ -43,7 +43,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val project = e.project ?: return
 
     val model = DefaultListModel<Blueprint>()
-    val list = JBList(model)
+    val list = JBList<Blueprint>(model)
     updateList(list, model, project)
     list.cellRenderer = object: JBList.StripedListCellRenderer() {
       override fun getListCellRendererComponent(list: JList<*>?,
@@ -115,7 +115,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     popup.showCenteredInCurrentWindow(project)
   }
 
-  private fun updateList(list: JBList, model: DefaultListModel<Blueprint>, project: Project) {
+  private fun updateList(list: JBList<Blueprint>, model: DefaultListModel<Blueprint>, project: Project) {
     list.setPaintBusy(true)
     model.clear()
     ApplicationManager.getApplication().executeOnPooledThread({
