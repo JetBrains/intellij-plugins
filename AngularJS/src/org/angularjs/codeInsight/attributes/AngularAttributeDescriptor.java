@@ -55,9 +55,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       }
       for (JSFunction function : clazz.getFunctions()) {
         if (!hasDecorator(function, decorator)) continue;
-        if (function.isSetProperty()) {
-          result.add(factory.fun(function));
-        }
+        result.add(factory.fun(function));
       }
       return result.toArray(new XmlAttributeDescriptor[result.size()]);
     }
