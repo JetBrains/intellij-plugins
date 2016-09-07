@@ -26,6 +26,7 @@ public class DartProblem {
   @Nullable private VirtualFile myFile;
   @Nullable private VirtualFile myPackageRoot;
   @Nullable private VirtualFile myContentRoot;
+
   private String myPresentableLocationWithoutLineNumber;
 
   public DartProblem(@NotNull final Project project, @NotNull final AnalysisError error) {
@@ -111,7 +112,6 @@ public class DartProblem {
     myPresentableLocationWithoutLineNumber = dartPackageName == null ? presentableFilePath
                                                                      : ("[" + dartPackageName + "] " + presentableFilePath);
   }
-
 
   /**
    * Returns Dart package name in brackets and relative path form Dart package root to the file.
