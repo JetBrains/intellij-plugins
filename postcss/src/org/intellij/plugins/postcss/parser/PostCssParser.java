@@ -18,10 +18,6 @@ public class PostCssParser extends CssParser2 {
   private boolean myAmpersandAllowed;
   private IElementType myAdditionalIdent;
 
-  public PostCssParser(PsiBuilder builder) {
-    super(builder);
-  }
-
   @Override
   protected CssStyleSheetElementType getStyleSheetElementType() {
     return PostCssElementTypes.POST_CSS_STYLESHEET;
