@@ -15,7 +15,7 @@ import javax.swing.*;
 
 public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Integer> {
 
-  public enum FileFilterMode {All, ContentRoot, Package, Directory, File}
+  public enum FileFilterMode {All, ContentRoot, DartPackage, Directory, File}
 
   private static final boolean SHOW_ERRORS_DEFAULT = true;
   private static final boolean SHOW_WARNINGS_DEFAULT = true;
@@ -30,8 +30,8 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
   private FileFilterMode myFileFilterMode;
 
   @Nullable private VirtualFile myCurrentFile;
-  private boolean myPackageRootUpToDate = false;
-  @Nullable private VirtualFile myCurrentPackageRoot;
+  private boolean myDartPackageRootUpToDate = false;
+  @Nullable private VirtualFile myCurrentDartPackageRoot;
   private boolean myContentRootUpToDate = false;
   @Nullable private VirtualFile myCurrentContentRoot;
 
@@ -72,7 +72,7 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
     }
     else {
       myCurrentFile = file;
-      myPackageRootUpToDate = false;
+      myDartPackageRootUpToDate = false;
       myContentRootUpToDate = false;
       return true;
     }
@@ -118,9 +118,9 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
       }
     }
 
-    if (myFileFilterMode == FileFilterMode.Package) {
+    if (myFileFilterMode == FileFilterMode.DartPackage) {
       ensurePackageRootUpToDate();
-      if (myCurrentPackageRoot == null || !myCurrentPackageRoot.equals(problem.getPackageRoot())) {
+      if (myCurrentDartPackageRoot == null || !myCurrentDartPackageRoot.equals(problem.getPackageRoot())) {
         return false;
       }
     }
@@ -136,7 +136,7 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
   }
 
   private void ensurePackageRootUpToDate() {
-    if (myPackageRootUpToDate) return;
+    if (myDartPackageRootUpToDate) return;
 
     // temp var to make sure that value is initialized
     final VirtualFile packageRoot;
@@ -158,8 +158,8 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
       }
     }
 
-    myCurrentPackageRoot = packageRoot;
-    myPackageRootUpToDate = true;
+    myCurrentDartPackageRoot = packageRoot;
+    myDartPackageRootUpToDate = true;
   }
 
   private void ensureContentRootUpToDate() {
