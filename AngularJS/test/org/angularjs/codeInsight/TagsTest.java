@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.intellij.util.ThrowableRunnable;
 import com.intellij.xml.util.CheckValidXmlInScriptBodyInspection;
 import org.angularjs.AngularTestUtil;
 
@@ -58,12 +57,12 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testCustomTagsCompletion20TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom.ts"));
+                                        () -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom.ts"));
   }
 
   public void testCustomTagsCompletion20JavaScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom2.js"));
+                                        () -> myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom2.js"));
   }
 
   public void testCustomTagsViaFunctionCompletion() {
@@ -113,7 +112,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomTagsResolve20TypeScriptComponent() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
       myFixture.configureByFiles("custom.after.html", "angular2.js", "custom.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -131,7 +130,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomTagsResolve20TypeScriptDirective() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
       myFixture.configureByFiles("custom.after.html", "angular2.js", "custom_directive.ts");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -149,7 +148,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomTagsResolve20JavaScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
       myFixture.configureByFiles("custom.after.html", "angular2.js", "custom2.js");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
       PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -238,6 +237,14 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNoCompletionInXml() {
     final List<String> variants = myFixture.getCompletionVariants("standard.xml", "angular.js");
     assertDoesntContain(variants, "ng-form", "form", "script");
+  }
+
+  public void testCustomSpaceSeparated() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        () -> {
+                                          final List<String> variants = myFixture.getCompletionVariants("customSpaceSeparated.html", "customSpaceSeparated.ts", "angular2.js");
+                                          assertContainsElements(variants, "dummy-list", "dummy-nav-list");
+                                        });
   }
 
   public void testUnclosed() {

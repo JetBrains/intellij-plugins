@@ -103,7 +103,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     if (selector == null) return outData;
 
     final Set<String> added = new HashSet<>();
-    final String[] names = selector.split(",");
+    final String[] names = selector.split("\\s*,\\s*");
     for (String selectorName : names) {
       final int not = selectorName.indexOf(":");
       if (not >= 0) {
