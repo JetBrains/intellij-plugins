@@ -41,7 +41,6 @@
     <liveTemplateContext implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.dmarcotte.handlebars.editor.templates.HbsLiveTemplatesProvider"/>
     
-    <idIndexer filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.index.HbIdIndexer"/>
     <lang.syntaxHighlighterFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighterFactory"/>
 
     <localInspection bundle="messages.HbBundle"
