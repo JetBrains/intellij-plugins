@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.psi.PsiElement;
@@ -300,7 +300,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       final PsiFile file = myFixture.getFile();
       final int offset = AngularTestUtil.findOffsetBySignature("user<caret>name,", file);
       final JSReferenceExpression ref = PsiTreeUtil.getParentOfType(file.findElementAt(offset), JSReferenceExpression.class);
-      final BaseJSSymbolProcessor.SimpleTypeProcessor processor = new BaseJSSymbolProcessor.SimpleTypeProcessor();
+      final JSSimpleTypeProcessor processor = new JSSimpleTypeProcessor();
       JSTypeEvaluator.evaluateTypes(ref, file, processor);
       final JSType type = processor.getType();
       assertInstanceOf(type, JSNamedType.class);
