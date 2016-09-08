@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
 import com.intellij.lang.javascript.psi.util.JSUtils;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -131,7 +130,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           isInsideRepeaterTag(xmlTag)) {
         final PsiElement arrayClass = ActionScriptClassResolver.findClassByQNameStatic(ARRAY_CLASS_NAME, xmlToken);
         if (arrayClass != null) {
-          final String arrayType = new BaseJSSymbolProcessor.TagContextBuilder(resolveResult, null).typeName;
+          final String arrayType = new JSTagContextBuilder(resolveResult, null).typeName;
           JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
           JSType type;
           if (arrayType != null) {
@@ -162,7 +161,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
     PsiElement parent = xmlTag;
     while ((parent = parent.getParent()) instanceof XmlTag) {
-      if (REPEATER_CLASS_FQN.equals(new BaseJSSymbolProcessor.TagContextBuilder(parent, "").typeName)) {
+      if (REPEATER_CLASS_FQN.equals(new JSTagContextBuilder(parent, "").typeName)) {
         return true;
       }
     }
