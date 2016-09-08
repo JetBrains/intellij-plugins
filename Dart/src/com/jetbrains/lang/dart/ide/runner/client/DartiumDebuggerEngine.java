@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.client;
 
 import com.intellij.CommonBundle;
-import com.intellij.chromeConnector.debugger.ChromeDebugProcess;
-import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.browsers.WebBrowser;
@@ -18,6 +16,8 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Url;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xml.util.HtmlUtil;
+import com.jetbrains.debugger.wip.debugger.ChromeDebugProcess;
+import com.jetbrains.debugger.wip.debugger.ChromeDebuggerEngine;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
