@@ -93,6 +93,7 @@
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJS2IndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
+    <elementScopeProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSResolveScopeProvider"/>
   </extensions>
 
   <actions>
