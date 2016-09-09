@@ -70,7 +70,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         JSType type = JSAnyType.get(methodExpr, false);
         if (methodExpr instanceof JSReferenceExpression) {
           PsiElement resolve = ((JSReferenceExpression)methodExpr).resolve();
-          if (resolve instanceof JSFunction && ((JSFunction)resolve).isConstructor() && resolve.getParent() instanceof JSClass) {
+          if (JSResolveUtil.isConstructorFunction(resolve) && resolve.getParent() instanceof JSClass) {
             resolve = resolve.getParent();
           }
           if (resolve instanceof JSClass || resolve == null) {
