@@ -34,6 +34,11 @@ public class DartVmServiceListener implements VmServiceListener {
   }
 
   @Override
+  public void connectionOpened() {
+
+  }
+
+  @Override
   public void received(@NotNull final String streamId, @NotNull final Event event) {
     switch (event.getKind()) {
       case BreakpointAdded:
@@ -81,6 +86,13 @@ public class DartVmServiceListener implements VmServiceListener {
         break;
       case Unknown:
         break;
+    }
+  }
+
+  @Override
+  public void connectionClosed() {
+    if (myDebugProcess.isRemoteDebug()) {
+      myDebugProcess.getSession().stop();
     }
   }
 

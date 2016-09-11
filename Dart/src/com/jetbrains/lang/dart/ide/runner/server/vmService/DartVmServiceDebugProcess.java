@@ -163,10 +163,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
           message = message.substring(0, 300) + "..." + message.substring(message.length() - 200);
         }
         LOG.debug(message);
-
-        if (myRemoteDebug && message.equals("VM connection closed: " + getObservatoryUrl("ws", "/ws"))) {
-          getSession().stop();
-        }
       }
 
       @Override
