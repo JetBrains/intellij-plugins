@@ -117,6 +117,9 @@ public class DartVmServiceListener implements VmServiceListener {
         LOG.error(vmBreakpoints.size() + " breakpoints hit in one shot.");
       }
 
+      // Remove any temporary (run to cursor) breakpoints.
+      myBreakpointHandler.removeTemporaryBreakpoints(isolateRef.getId());
+
       final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myBreakpointHandler.getXBreakpoint(vmBreakpoints.get(0));
 
       if (xBreakpoint == null) {

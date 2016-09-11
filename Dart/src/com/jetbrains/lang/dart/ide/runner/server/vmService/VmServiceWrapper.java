@@ -198,6 +198,12 @@ public class VmServiceWrapper implements Disposable {
                             @NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
                             @NotNull final VmServiceConsumers.BreakpointConsumerWrapper consumer) {
     final XSourcePosition position = xBreakpoint.getSourcePosition();
+    addBreakpointFromPosition(isolateId, position, consumer);
+  }
+
+  public void addBreakpointFromPosition(@NotNull final String isolateId,
+                                        @NotNull XSourcePosition position,
+                                        @NotNull final VmServiceConsumers.BreakpointConsumerWrapper consumer) {
     if (position == null || position.getFile().getFileType() != DartFileType.INSTANCE) {
       consumer.sourcePositionNotApplicable();
       return;
@@ -229,6 +235,24 @@ public class VmServiceWrapper implements Disposable {
         }
       });
     }
+  }
+
+  public void addTemporaryBreakpoint(@NotNull final XSourcePosition position,
+                                     @NotNull final String isolateId) {
+    addBreakpointFromPosition(isolateId, position, new VmServiceConsumers.BreakpointConsumerWrapper() {
+      @Override
+      void sourcePositionNotApplicable() {
+      }
+
+      @Override
+      public void received(Breakpoint vmBreakpoint) {
+        myBreakpointHandler.temporaryBreakpointAdded(isolateId, vmBreakpoint);
+      }
+
+      @Override
+      public void onError(RPCError error) {
+      }
+    });
   }
 
   public void removeBreakpoint(@NotNull final String isolateId, @NotNull final String vmBreakpointId) {
