@@ -11,9 +11,7 @@ import gnu.trove.THashSet;
 import org.dartlang.vm.service.element.Breakpoint;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.icons.AllIcons.Debugger.Db_invalid_breakpoint;
 import static com.intellij.icons.AllIcons.Debugger.Db_verified_breakpoint;
@@ -27,6 +25,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
     new THashMap<>();
   private final Map<XLineBreakpoint<XBreakpointProperties>, Collection<Pair<String, String>>> myXBreakpointToIsolateAndVmBreakpointIdsMap =
     new THashMap<>();
+  private final Map<String, List<String>> myIsolateTemporaryBreakpoints = new THashMap<>();
 
   protected DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
     super(DartLineBreakpointType.class);
@@ -36,7 +35,6 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
   @Override
   public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
     myXBreakpoints.add(xBreakpoint);
-
 
     final VmServiceWrapper vmServiceWrapper = myDebugProcess.getVmServiceWrapper();
     if (vmServiceWrapper != null) {
@@ -48,7 +46,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
   public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint, boolean temporary) {
     myXBreakpoints.remove(xBreakpoint);
 
-    final Collection<Pair<String, String>> isolateAndVmBreakpointIds = myXBreakpointToIsolateAndVmBreakpointIdsMap.get(xBreakpoint);
+    final Collection<Pair<String, String>> isolateAndVmBreakpointIds = myXBreakpointToIsolateAndVmBreakpointIdsMap.remove(xBreakpoint);
     if (isolateAndVmBreakpointIds != null) {
       for (Pair<String, String> isolateAndVmBreakpointId : isolateAndVmBreakpointIds) {
         final String isolateId = isolateAndVmBreakpointId.first;
@@ -78,6 +76,25 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
     if (vmBreakpoint.getResolved()) {
       breakpointResolved(vmBreakpoint);
+    }
+  }
+
+  public void temporaryBreakpointAdded(String isolateId, Breakpoint breakpoint) {
+    List<String> breakpoints = myIsolateTemporaryBreakpoints.get(isolateId);
+    if (breakpoints == null) {
+      breakpoints = new ArrayList<String>();
+      myIsolateTemporaryBreakpoints.put(isolateId, breakpoints);
+    }
+    breakpoints.add(breakpoint.getId());
+  }
+
+  public void removeTemporaryBreakpoints(String isolateId) {
+    List<String> breakpoints = myIsolateTemporaryBreakpoints.get(isolateId);
+    if (breakpoints != null) {
+      for (String breakpointId : breakpoints) {
+        myDebugProcess.getVmServiceWrapper().removeBreakpoint(isolateId, breakpointId);
+      }
+      breakpoints.clear();
     }
   }
 
