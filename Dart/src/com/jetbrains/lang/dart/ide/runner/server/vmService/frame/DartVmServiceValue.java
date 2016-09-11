@@ -19,6 +19,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+// TODO: implement some combination of XValue.getEvaluationExpression() /
+// XValue.calculateEvaluationExpression() in order to support evaluate expression in variable values.
+// See https://youtrack.jetbrains.com/issue/WEB-17629.
+
 public class DartVmServiceValue extends XNamedValue {
 
   private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.FinalMark);
