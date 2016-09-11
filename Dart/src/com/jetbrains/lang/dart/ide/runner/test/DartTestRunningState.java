@@ -20,6 +20,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
@@ -37,6 +38,8 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class DartTestRunningState extends DartCommandLineRunningState {
   public static final String DART_FRAMEWORK_NAME = "DartTestRunner";
@@ -71,6 +74,12 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     }
 
     return executionResult;
+  }
+
+  @Override
+  protected void addObservatoryActions(List<AnAction> actions, final ProcessHandler processHandler) {
+    // For now, don't add the Observatory button to the test view; it's currently a no-op.
+    // Until debugging works with package:test, the observatory URL we open here is 'http://127.0.0.1:-1'.
   }
 
   private static ConsoleView createConsole(@NotNull ExecutionEnvironment env) {
