@@ -86,9 +86,7 @@ public class Reveal {
     } else {
       libraryPath += "libReveal.dylib";
     }
-
-    if (libraryPath == null) return null;
-
+    
     File result = new File(bundle, libraryPath);
     return result.exists() ? result : null;
   }
