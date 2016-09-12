@@ -131,7 +131,7 @@ public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
   @Override
   protected Symbol getSpecificSymbol(PsiElement element, RContainer context) {
     if (context instanceof RClass || context instanceof RModule) {
-      final boolean isObject = CoreTypes.Object.equals(context.getFullName());
+      final boolean isObject = CoreTypes.Object.equals(context.getFQN().getFullPath());
       final RubyMotionSymbol symbol = isObject ? new RubyMotionSymbol((RFile)context.getContainingFile()) : null;
       final Symbol nsObject = SymbolUtil.findSymbol(element.getProject(), Type.CLASS, getParentName(context), element);
       final List<Symbol> includes = isObject ? Collections.<Symbol>singletonList(symbol) : Collections.<Symbol>emptyList();
