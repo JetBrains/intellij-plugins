@@ -82,7 +82,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
   public void temporaryBreakpointAdded(String isolateId, Breakpoint breakpoint) {
     List<String> breakpoints = myIsolateTemporaryBreakpoints.get(isolateId);
     if (breakpoints == null) {
-      breakpoints = new ArrayList<String>();
+      breakpoints = new ArrayList<>();
       myIsolateTemporaryBreakpoints.put(isolateId, breakpoints);
     }
     breakpoints.add(breakpoint.getId());

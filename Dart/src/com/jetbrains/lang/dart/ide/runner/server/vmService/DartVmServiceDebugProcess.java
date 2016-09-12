@@ -300,8 +300,9 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   public void startStepOver(@Nullable XSuspendContext context) {
     if (myLatestCurrentIsolateId != null && mySuspendedIsolateIds.contains(myLatestCurrentIsolateId)) {
       DartVmServiceSuspendContext suspendContext = (DartVmServiceSuspendContext)context;
-      myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId,
-                                       suspendContext.getAtAsyncSuspension() ? StepOption.OverAsyncSuspension : StepOption.Over);
+      final StepOption stepOption = suspendContext != null && suspendContext.getAtAsyncSuspension() ? StepOption.OverAsyncSuspension
+                                                                                                    : StepOption.Over;
+      myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId, stepOption);
     }
   }
 
