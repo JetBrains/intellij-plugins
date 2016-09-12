@@ -124,7 +124,7 @@ public class Reveal {
                        parts.size() > 2 ? StringUtil.parseInt(parts.get(2), 0) : 0);
   }
 
-  public static void refreshReveal(@NotNull File revealBundle, @NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+  public static void refreshReveal(@NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
     UsageTrigger.trigger("appcode.reveal.showInReveal");
 
     if (isCompatibleWithRevealOnePointSixOrHigher(revealBundle)) {
@@ -134,20 +134,30 @@ public class Reveal {
     }
   }
 
-  private static void refreshRevealPostOnePointSix(@NotNull File revealBundle, @NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+  private static void refreshRevealPostOnePointSix(@NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
     // Reveal 1.6 and later bundle the refresh script with the application — execute it using osascript
     File inspectionScript = getRevealInspectionScript(revealBundle);
     if (inspectionScript == null) {
       throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found.");
     }
-
+    
     try {
-      ProcessBuilder pb = new ProcessBuilder(
-        ExecUtil.getOsascriptPath(),
-        inspectionScript.toString(),
-        bundleID,
-        deviceName
-      );
+      ProcessBuilder pb;
+
+      if (deviceName != null) {
+        pb = new ProcessBuilder(
+                ExecUtil.getOsascriptPath(),
+                inspectionScript.toString(),
+                bundleID,
+                deviceName
+        );
+      } else {
+        pb = new ProcessBuilder(
+                ExecUtil.getOsascriptPath(),
+                inspectionScript.toString(),
+                bundleID
+        );
+      }
 
       Process p = pb.start();
       p.waitFor();
@@ -157,16 +167,20 @@ public class Reveal {
     }
   }
 
-  private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+  private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
     // Pre Reveal 1.6, the refresh script was not bundled with the application
     String script = "activate\n" +
             "repeat with doc in documents\n" +
             " refresh doc " +
-            "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"" +
-            "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"" +
-            "   when available\n" +
-            "end repeat\n" +
-            "activate\n";
+            "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"";
+
+    if (deviceName != null) {
+      script += "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"";
+    }
+
+    script += "   when available\n" +
+              "end repeat\n" +
+              "activate\n";
 
     try {
       AppleScript.tell("Reveal",
