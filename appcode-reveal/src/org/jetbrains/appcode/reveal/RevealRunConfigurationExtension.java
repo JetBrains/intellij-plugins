@@ -356,13 +356,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       myInjectCheckBox.setSelected(settings.autoInject);
       myInstallCheckBox.setSelected(settings.autoInstall);
 
-      File appBundle = Reveal.getDefaultRevealApplicationBundle();
-      if (appBundle.exists() == false) return;
-
-      boolean found = Reveal.getRevealLib(appBundle, getSdk(s)) != null;
-      boolean compatible = Reveal.isCompatible(appBundle);
-
       String notFoundText = null;
+      boolean found = false;
+      boolean compatible = false;
+
+      File appBundle = Reveal.getDefaultRevealApplicationBundle();
+      if (appBundle.exists()) {
+        found = (Reveal.getRevealLib(appBundle, getSdk(s)) != null);
+        compatible = Reveal.isCompatible(appBundle);
+      }
+
       if (!found) {
         notFoundText = "Reveal.app not found. You can install it from ";
       }

@@ -53,21 +53,24 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
     AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
 
+    File lib = null;
+    boolean compatible = false;
+
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle.exists() == false) return;
+    if (appBundle.exists()) {
+      lib = Reveal.getRevealLib(appBundle, sdk);
+      compatible = Reveal.isCompatible(appBundle);
 
-    File lib = Reveal.getRevealLib(appBundle, sdk);
-    boolean compatible = Reveal.isCompatible(appBundle);
+      e.getPresentation().setEnabled(lib != null
+              && compatible
 
-    e.getPresentation().setEnabled(lib != null
-                                   && compatible
+              && !myDisabled
 
-                                   && !myDisabled
-
-                                   && myProcessHandler.isStartNotified()
-                                   && !myProcessHandler.isProcessTerminating()
-                                   && !myProcessHandler.isProcessTerminated()
-    );
+              && myProcessHandler.isStartNotified()
+              && !myProcessHandler.isProcessTerminating()
+              && !myProcessHandler.isProcessTerminated()
+      );
+    }
 
     if (lib == null) {
       title += " (Reveal library not found)";
