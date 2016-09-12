@@ -17,7 +17,7 @@
     <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider" order="first"/>
     <xml.tagNameProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" />
     <xml.elementDescriptorProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" order="last"/>
-    <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="first"/>
+    <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="first" id="AngularJS"/>
 
     <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
