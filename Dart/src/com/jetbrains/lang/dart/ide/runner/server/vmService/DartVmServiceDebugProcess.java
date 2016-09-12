@@ -345,8 +345,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void runToPosition(@NotNull XSourcePosition position, @Nullable XSuspendContext context) {
-    // todo implement
-    resume(context);
+    if (myLatestCurrentIsolateId != null && mySuspendedIsolateIds.contains(myLatestCurrentIsolateId)) {
+      // Set a temporary breakpoint and resume.
+      myVmServiceWrapper.addTemporaryBreakpoint(position, myLatestCurrentIsolateId);
+      myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId, null);
+    }
   }
 
   public void isolateSuspended(@NotNull final IsolateRef isolateRef) {
@@ -410,7 +413,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       if (myDASExecutionContextId != null && !uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
         final String uriByServer = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, file.getPath(), null);
         if (uriByServer != null) {
-          return mayBeAppendOneMoreUri(file, uriByServer);
+          return maybeAppendOneMoreUri(file, uriByServer);
         }
       }
     }
@@ -424,18 +427,18 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     // fallback
-    return mayBeAppendOneMoreUri(file, threeslashize(uriByIde));
+    return maybeAppendOneMoreUri(file, threeSlashize(uriByIde));
   }
 
   @NotNull
-  private Collection<String> mayBeAppendOneMoreUri(@NotNull final VirtualFile file, @NotNull final String uri) {
+  private Collection<String> maybeAppendOneMoreUri(@NotNull final VirtualFile file, @NotNull final String uri) {
     final SmartList<String> result = new SmartList<>(uri);
 
     final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
     if (myEntryPointInLibFolder &&
         pubspec != null &&
         uri.startsWith(DartUrlResolver.PACKAGE_PREFIX + PubspecYamlUtil.getDartProjectName(pubspec))) {
-      result.add(threeslashize(new File(file.getPath()).toURI().toString()));
+      result.add(threeSlashize(new File(file.getPath()).toURI().toString()));
     }
 
     return result;
@@ -523,7 +526,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @NotNull
-  private static String threeslashize(@NotNull final String uri) {
+  private static String threeSlashize(@NotNull final String uri) {
     if (!uri.startsWith("file:")) return uri;
     if (uri.startsWith("file:///")) return uri;
     if (uri.startsWith("file://")) return "file:///" + uri.substring("file://".length());
