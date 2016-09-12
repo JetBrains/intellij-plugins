@@ -89,6 +89,8 @@ abstract class VmServiceBase implements VmServiceConst {
       @Override
       public void onClose() {
         Logging.getLogger().logInformation("VM connection closed: " + url);
+
+        vmService.connectionClosed();
       }
 
       @Override
@@ -104,6 +106,8 @@ abstract class VmServiceBase implements VmServiceConst {
 
       @Override
       public void onOpen() {
+        vmService.connectionOpened();
+
         Logging.getLogger().logInformation("VM connection open: " + url);
       }
 
@@ -295,12 +299,32 @@ abstract class VmServiceBase implements VmServiceConst {
     requestSink.add(request);
   }
 
+  public void connectionOpened() {
+    for (VmServiceListener listener : vmListeners) {
+      try {
+        listener.connectionOpened();
+      } catch (Exception e) {
+        Logging.getLogger().logError("Exception notifying listener", e);
+      }
+    }
+  }
+
   private void forwardEvent(String streamId, Event event) {
     for (VmServiceListener listener : vmListeners) {
       try {
         listener.received(streamId, event);
       } catch (Exception e) {
         Logging.getLogger().logError("Exception processing event: " + streamId + ", " + event.getJson(), e);
+      }
+    }
+  }
+
+  public void connectionClosed() {
+    for (VmServiceListener listener : vmListeners) {
+      try {
+        listener.connectionClosed();
+      } catch (Exception e) {
+        Logging.getLogger().logError("Exception notifying listener", e);
       }
     }
   }
