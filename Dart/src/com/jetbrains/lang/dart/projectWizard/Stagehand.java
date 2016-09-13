@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.SystemProperties;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -82,7 +83,8 @@ public class Stagehand {
   public void generateInto(@NotNull final String sdkRoot,
                            @NotNull final VirtualFile projectDirectory,
                            @NotNull final String templateId) throws StagehandException {
-    final ProcessOutput output = new PubRunner(projectDirectory).runSync(sdkRoot, 30, "global", "run", "stagehand", templateId);
+    final ProcessOutput output = new PubRunner(projectDirectory)
+      .runSync(sdkRoot, 30, "global", "run", "stagehand", "--author", SystemProperties.getUserName(), templateId);
     if (output.getExitCode() != 0) {
       throw new StagehandException(output.getStderr());
     }
