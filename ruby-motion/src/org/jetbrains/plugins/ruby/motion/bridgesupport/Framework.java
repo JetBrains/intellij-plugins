@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.ruby.motion.bridgesupport;
 
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.FQN;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 
 import java.util.Collection;
 import java.util.HashMap;
