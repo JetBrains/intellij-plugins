@@ -46,6 +46,12 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
 
   @Override
   @NotNull
+  public List<DartStringLiteralExpression> getStringLiteralExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartStringLiteralExpression.class);
+  }
+
+  @Override
+  @NotNull
   public DartUriElement getUriElement() {
     return findNotNullChildByClass(DartUriElement.class);
   }

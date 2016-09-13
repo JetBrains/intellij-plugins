@@ -1491,6 +1491,41 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // <<nonStrictID>> ('.' <<nonStrictID>>)*
+  static boolean dottedName(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dottedName")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = nonStrictID(b, l + 1);
+    r = r && dottedName_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('.' <<nonStrictID>>)*
+  private static boolean dottedName_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dottedName_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!dottedName_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "dottedName_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // '.' <<nonStrictID>>
+  private static boolean dottedName_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dottedName_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, DOT);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // componentName
   public static boolean enumConstantDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumConstantDeclaration")) return false;
@@ -1577,7 +1612,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'export' uriElement combinator* ';'
+  // metadata* 'export' uriElement importConfig* combinator* ';'
   public static boolean exportStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "exportStatement")) return false;
     if (!nextTokenIs(b, "<export statement>", AT, EXPORT)) return false;
@@ -1588,6 +1623,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && uriElement(b, l + 1);
     p = r; // pin = 3
     r = r && report_error_(b, exportStatement_3(b, l + 1));
+    r = p && report_error_(b, exportStatement_4(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -1605,13 +1641,25 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // combinator*
+  // importConfig*
   private static boolean exportStatement_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "exportStatement_3")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!combinator(b, l + 1)) break;
+      if (!importConfig(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "exportStatement_3", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // combinator*
+  private static boolean exportStatement_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "exportStatement_4")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!combinator(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "exportStatement_4", c)) break;
       c = current_position_(b);
     }
     return true;
@@ -3133,7 +3181,42 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'import' uriElement ('deferred'? 'as' componentName )? combinator* ';'
+  // 'if' '(' dottedName ('==' stringLiteralExpression)? ')' stringLiteralExpression
+  static boolean importConfig(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importConfig")) return false;
+    if (!nextTokenIs(b, IF)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IF);
+    r = r && consumeToken(b, LPAREN);
+    r = r && dottedName(b, l + 1);
+    r = r && importConfig_3(b, l + 1);
+    r = r && consumeToken(b, RPAREN);
+    r = r && stringLiteralExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('==' stringLiteralExpression)?
+  private static boolean importConfig_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importConfig_3")) return false;
+    importConfig_3_0(b, l + 1);
+    return true;
+  }
+
+  // '==' stringLiteralExpression
+  private static boolean importConfig_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importConfig_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, EQ_EQ);
+    r = r && stringLiteralExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // metadata* 'import' uriElement importConfig* ('deferred'? 'as' componentName )? combinator* ';'
   public static boolean importStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "importStatement")) return false;
     if (!nextTokenIs(b, "<import statement>", AT, IMPORT)) return false;
@@ -3145,6 +3228,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     p = r; // pin = 3
     r = r && report_error_(b, importStatement_3(b, l + 1));
     r = p && report_error_(b, importStatement_4(b, l + 1)) && r;
+    r = p && report_error_(b, importStatement_5(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -3162,19 +3246,31 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // ('deferred'? 'as' componentName )?
+  // importConfig*
   private static boolean importStatement_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "importStatement_3")) return false;
-    importStatement_3_0(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!importConfig(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "importStatement_3", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ('deferred'? 'as' componentName )?
+  private static boolean importStatement_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_4")) return false;
+    importStatement_4_0(b, l + 1);
     return true;
   }
 
   // 'deferred'? 'as' componentName
-  private static boolean importStatement_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_3_0")) return false;
+  private static boolean importStatement_4_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_4_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = importStatement_3_0_0(b, l + 1);
+    r = importStatement_4_0_0(b, l + 1);
     r = r && consumeToken(b, AS);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
@@ -3182,19 +3278,19 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // 'deferred'?
-  private static boolean importStatement_3_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_3_0_0")) return false;
+  private static boolean importStatement_4_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_4_0_0")) return false;
     consumeToken(b, DEFERRED);
     return true;
   }
 
   // combinator*
-  private static boolean importStatement_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_4")) return false;
+  private static boolean importStatement_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement_5")) return false;
     int c = current_position_(b);
     while (true) {
       if (!combinator(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "importStatement_4", c)) break;
+      if (!empty_element_parsed_guard_(b, "importStatement_5", c)) break;
       c = current_position_(b);
     }
     return true;

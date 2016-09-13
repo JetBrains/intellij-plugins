@@ -180,7 +180,7 @@ libraryNameElement ::= <<nonStrictID>> ('.' <<nonStrictID>>)* {
   methods=[getName]
 }
 
-importStatement ::= metadata* 'import' uriElement ('deferred'? 'as' componentName )? combinator* ';' {
+importStatement ::= metadata* 'import' uriElement importConfig* ('deferred'? 'as' componentName )? combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
@@ -189,11 +189,14 @@ importStatement ::= metadata* 'import' uriElement ('deferred'? 'as' componentNam
   ]
 }
 
-exportStatement ::= metadata* 'export' uriElement combinator* ';' {
+exportStatement ::= metadata* 'export' uriElement importConfig* combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [ getUriString ]
 }
+
+private importConfig ::= 'if' '(' dottedName ('==' stringLiteralExpression)? ')' stringLiteralExpression
+private dottedName ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
 
 private combinator ::= showCombinator | hideCombinator
 

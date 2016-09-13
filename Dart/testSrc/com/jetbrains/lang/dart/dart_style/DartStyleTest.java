@@ -313,7 +313,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/imports.unit:11  split before deferred");
     KNOWN_TO_FAIL.add("splitting/imports.unit:110  force both keywords to split even if first would fit on first line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:116  force split in list");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:124  multiple configurations on one line"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("splitting/imports.unit:128  if configurations don't fit, they all split"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("splitting/imports.unit:134  do not split before uri"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("splitting/imports.unit:139  split before =="); // https://github.com/munificent/dep-interface-libraries
@@ -467,8 +466,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:77  force newline before member"); // Bad test
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:95  multiple annotations before members get own line"); // Bad test
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:211  split between metadata and parameter indents");
-    KNOWN_TO_FAIL.add("whitespace/directives.unit:53  configuration"); // https://github.com/munificent/dep-interface-libraries
-    KNOWN_TO_FAIL.add("whitespace/directives.unit:57  configuration"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:67  long if without curlies"); // NEW 3/16
   }
