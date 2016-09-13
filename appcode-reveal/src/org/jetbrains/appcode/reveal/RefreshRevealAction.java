@@ -110,7 +110,8 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null || appBundle.exists() == false) return;
 
-    String displayName = myDestination.isSimulator() ? null : myDestination.getDisplayName();
+    boolean shouldExcludeDeviceName = myDestination.isSimulator() && Reveal.isCompatibleWithRevealTwoOrHigher(appBundle);
+    String displayName = shouldExcludeDeviceName ? null : myDestination.getDisplayName();
 
     try {
       Reveal.refreshReveal(appBundle, myBundleID, displayName);
