@@ -11,10 +11,13 @@ import com.intellij.openapi.ui.Messages;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.SimulatedBuildDestination;
+import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
+import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
 import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -110,11 +113,8 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null || appBundle.exists() == false) return;
 
-    boolean shouldExcludeDeviceName = myDestination.isSimulator() && Reveal.isCompatibleWithRevealTwoOrHigher(appBundle);
-    String displayName = shouldExcludeDeviceName ? null : myDestination.getDisplayName();
-
     try {
-      Reveal.refreshReveal(appBundle, myBundleID, displayName);
+      Reveal.refreshReveal(appBundle, myBundleID, getDeviceName(myDestination));
     }
     catch (ExecutionException ex) {
       Reveal.LOG.info(ex);
@@ -122,4 +122,30 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
   }
 
+  @Nullable
+  private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
+    if (destination.isDevice()) {
+      return destination.getDeviceSafe().getName();
+    } else if (destination.isSimulator()) {
+      SimulatedBuildDestination.Simulator simulator = destination.getSimulator();
+      if (simulator == null) throw new ExecutionException("Simulator not specified.");
+
+      ApplePlatform platform = destination.getPlatform();
+      if (platform == null) throw new ExecutionException("Platform not available.");
+
+      switch (simulator.getDeviceFamilyID()) {
+        case SimulatorConfiguration.IPHONE_FAMILY:
+          return "iPhone Simulator";
+        case SimulatorConfiguration.IPAD_FAMILY:
+          return "iPad Simulator";
+        case SimulatorConfiguration.TV_FAMILY:
+          return "Apple TV Simulator";
+        case SimulatorConfiguration.WATCH_FAMILY:
+          return "Apple Watch Simulator";
+      }
+
+      throw new ExecutionException("Unknown simulator type: " + simulator);
+    }
+    throw new ExecutionException("Unsupported destination: " + destination);
+  }
 }
