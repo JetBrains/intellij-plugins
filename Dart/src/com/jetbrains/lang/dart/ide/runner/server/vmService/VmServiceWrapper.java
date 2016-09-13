@@ -259,6 +259,12 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
+  public void pauseIsolate(@NotNull final String isolateId) {
+    addRequest(() -> {
+      myVmService.pause(isolateId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+    });
+  }
+
   public void computeStackFrames(@NotNull final String isolateId,
                                  final int firstFrameIndex,
                                  @NotNull final XExecutionStack.XStackFrameContainer container,
