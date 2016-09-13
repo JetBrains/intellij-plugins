@@ -51,7 +51,7 @@ public class Reveal {
       String path = NSWorkspace.absolutePathForAppBundleWithIdentifier(identifier);
       if (path != null) {
         File file = new File(path);
-        if (file.exists()) {
+        if (file != null  && file.exists()) {
           applicationBundles.add(file);
         }
       }
@@ -63,7 +63,7 @@ public class Reveal {
   @Nullable
   private static File getRevealInspectionScript(@NotNull File bundle) {
     File result = new File(bundle, "/Contents/Resources/InspectApplication.scpt");
-    return result.exists() ? result : null;
+    return result != null && result.exists() ? result : null;
   }
 
   @Contract("null -> null")
@@ -88,7 +88,7 @@ public class Reveal {
     }
     
     File result = new File(bundle, libraryPath);
-    return result.exists() ? result : null;
+    return result != null && result.exists() ? result : null;
   }
 
   public static boolean isCompatible(@NotNull File bundle) {

@@ -57,7 +57,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     boolean compatible = false;
 
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle.exists()) {
+    if (appBundle != null && appBundle.exists()) {
       lib = Reveal.getRevealLib(appBundle, sdk);
       compatible = Reveal.isCompatible(appBundle);
 
@@ -108,7 +108,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
 
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle.exists() == false) return;
+    if (appBundle != null && appBundle.exists() == false) return;
 
     String displayName = myDestination.isSimulator() ? null : myDestination.getDisplayName();
 
