@@ -108,7 +108,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
 
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle != null && appBundle.exists() == false) return;
+    if (appBundle == null || appBundle.exists() == false) return;
 
     String displayName = myDestination.isSimulator() ? null : myDestination.getDisplayName();
 

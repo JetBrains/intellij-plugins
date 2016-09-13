@@ -111,7 +111,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @Override
   protected boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle != null && appBundle.exists() == false) return false;
+    if (appBundle == null || !appBundle.exists()) return false;
 
     if (Reveal.getRevealLib(appBundle, getSdk(config)) == null) return false;
     return isAvailableForPlatform(config);
@@ -165,7 +165,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     super.install(configuration, product, environment, buildConfiguration, mainExecutable, commandLine);
 
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle != null && appBundle.exists() == false) return;
+    if (appBundle == null || !appBundle.exists()) return;
 
     if (!Reveal.isCompatible(appBundle)) return;
 
@@ -190,7 +190,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                     @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle != null && appBundle.exists() == false) return null;
+    if (appBundle == null || !appBundle.exists()) throw new ExecutionException("Reveal application bundle not found");;
 
     File libReveal = Reveal.getRevealLib(appBundle, getSdk(configuration));
     if (libReveal == null || !libReveal.exists()) throw new ExecutionException("Reveal library not found");
