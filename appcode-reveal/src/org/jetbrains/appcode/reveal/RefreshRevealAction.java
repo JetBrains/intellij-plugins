@@ -130,9 +130,6 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
       SimulatedBuildDestination.Simulator simulator = destination.getSimulator();
       if (simulator == null) throw new ExecutionException("Simulator not specified.");
 
-      ApplePlatform platform = destination.getPlatform();
-      if (platform == null) throw new ExecutionException("Platform not available.");
-
       switch (simulator.getDeviceFamilyID()) {
         case SimulatorConfiguration.IPHONE_FAMILY:
           return "iPhone Simulator";
