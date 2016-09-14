@@ -12,7 +12,6 @@ import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
-import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
 import icons.AppcodeRevealIcons;
@@ -60,7 +59,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     boolean compatible = false;
 
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle != null && appBundle.exists()) {
+    if (appBundle != null) {
       lib = Reveal.getRevealLib(appBundle, sdk);
       compatible = Reveal.isCompatible(appBundle);
 
@@ -111,7 +110,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
 
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle == null || appBundle.exists() == false) return;
+    if (appBundle == null) return;
 
     try {
       Reveal.refreshReveal(appBundle, myBundleID, getDeviceName(myDestination));

@@ -111,7 +111,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @Override
   protected boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle == null || !appBundle.exists()) return false;
+    if (appBundle == null) return false;
 
     if (Reveal.getRevealLib(appBundle, getSdk(config)) == null) return false;
     return isAvailableForPlatform(config);
@@ -165,7 +165,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     super.install(configuration, product, environment, buildConfiguration, mainExecutable, commandLine);
 
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle == null || !appBundle.exists()) return;
+    if (appBundle == null) return;
 
     if (!Reveal.isCompatible(appBundle)) return;
 
@@ -190,10 +190,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                     @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle == null || !appBundle.exists()) throw new ExecutionException("Reveal application bundle not found");;
+    if (appBundle == null) throw new ExecutionException("Reveal application bundle not found");;
 
     File libReveal = Reveal.getRevealLib(appBundle, getSdk(configuration));
-    if (libReveal == null || !libReveal.exists()) throw new ExecutionException("Reveal library not found");
+    if (libReveal == null) throw new ExecutionException("Reveal library not found");
 
     Reveal.LOG.info("Reveal lib found at " + libReveal);
 
@@ -361,7 +361,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       boolean compatible = false;
 
       File appBundle = Reveal.getDefaultRevealApplicationBundle();
-      if (appBundle != null && appBundle.exists()) {
+      if (appBundle != null) {
         found = (Reveal.getRevealLib(appBundle, getSdk(s)) != null);
         compatible = Reveal.isCompatible(appBundle);
       }

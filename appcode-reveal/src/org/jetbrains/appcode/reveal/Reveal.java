@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.mac.foundation.NSWorkspace;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.cidr.AppleScript;
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
@@ -18,55 +19,36 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.script.IdeScriptException;
 
 import java.io.File;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Reveal {
   public static final Logger LOG = Logger.getInstance("#" + Reveal.class.getPackage().getName());
 
-  @NotNull
-  private static ArrayList<String> applicationBundleIdentifiers() {
-    ArrayList<String> identifiers = new ArrayList<String>() {{
-      add("com.ittybittyapps.Reveal2");
-      add("com.ittybittyapps.Reveal");
-    }};
-
-    return identifiers;
-  }
+  private static final List<String> APPLICATION_BUNDLE_IDENTIFIERS =
+    ContainerUtil.newArrayList("com.ittybittyapps.Reveal2", "com.ittybittyapps.Reveal");
 
   @Nullable
   public static File getDefaultRevealApplicationBundle() {
-    ArrayList<File> bundles = getRevealApplicationBundles();
-    if (bundles == null || bundles.isEmpty()) return null;
-
-    return bundles.get(0);
-  }
-
-  @NotNull
-  private static ArrayList<File> getRevealApplicationBundles() {
-    ArrayList<File> applicationBundles = new ArrayList<File>();
-
-    for (String identifier: applicationBundleIdentifiers()) {
+    for (String identifier: APPLICATION_BUNDLE_IDENTIFIERS) {
       String path = NSWorkspace.absolutePathForAppBundleWithIdentifier(identifier);
       if (path != null) {
         File file = new File(path);
-        if (file != null  && file.exists()) {
-          applicationBundles.add(file);
+        if (file.exists()) {
+          return file;
         }
       }
     }
 
-    return applicationBundles;
+    return null;
   }
 
   @Nullable
   private static File getRevealInspectionScript(@NotNull File bundle) {
     File result = new File(bundle, "/Contents/Resources/InspectApplication.scpt");
-    return result != null && result.exists() ? result : null;
+    return result.exists() ? result : null;
   }
 
-  @Contract("null -> null")
+  @Contract("_, null -> null")
   public static File getRevealLib(@NotNull File bundle, @Nullable AppleSdk sdk) {
     if (sdk == null) return null;
 
@@ -88,7 +70,7 @@ public class Reveal {
     }
     
     File result = new File(bundle, libraryPath);
-    return result != null && result.exists() ? result : null;
+    return result.exists() ? result : null;
   }
 
   public static boolean isCompatible(@NotNull File bundle) {
@@ -140,22 +122,12 @@ public class Reveal {
     }
     
     try {
-      ProcessBuilder pb;
+      List<String> args = ContainerUtil.newArrayList(ExecUtil.getOsascriptPath(),
+                                                     inspectionScript.toString(),
+                                                     bundleID);
+      ContainerUtil.addIfNotNull(args, deviceName);
 
-      if (deviceName != null) {
-        pb = new ProcessBuilder(
-                ExecUtil.getOsascriptPath(),
-                inspectionScript.toString(),
-                bundleID,
-                deviceName
-        );
-      } else {
-        pb = new ProcessBuilder(
-                ExecUtil.getOsascriptPath(),
-                inspectionScript.toString(),
-                bundleID
-        );
-      }
+      ProcessBuilder pb = new ProcessBuilder(args);
 
       Process p = pb.start();
       p.waitFor();
