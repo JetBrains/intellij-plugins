@@ -7,7 +7,7 @@
     <![CDATA[
       <p>This plugin brings support for <a href="http://postcss.org">PostCSS</a>:</p>
       <ul>
-          <li>The IDE now recognises .pcss files. You can also enable PostCSS support for your .css files in <em>Preferences | Languages & Frameworks | CSS Dialects</em>.</li>
+          <li>The IDE now recognises .pcss files. You can also enable PostCSS support for your .css files in <em>Preferences | Languages & Frameworks | Stylesheets | Dialects</em>.</li>
           <li>Syntax highlighting for PostCSS syntax. You can additionally configure it in <em>Preferences | Editor | Colors & Fonts</em>.</li>
           <li>Intelligent code completion.</li>
           <li>Configurable Code style and auto-formatting.</li>
