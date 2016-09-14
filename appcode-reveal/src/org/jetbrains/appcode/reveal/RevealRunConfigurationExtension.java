@@ -61,7 +61,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   protected void readExternal(@NotNull AppCodeRunConfiguration runConfiguration, @NotNull Element element)
-    throws InvalidDataException {
+          throws InvalidDataException {
     Element settingsTag = element.getChild(REVEAL_SETTINGS_TAG);
     RevealSettings settings = null;
     if (settingsTag != null) {
@@ -69,7 +69,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       settings.autoInject = getAttributeValue(settingsTag.getAttributeValue("autoInject"), settings.autoInject);
       settings.autoInstall = getAttributeValue(settingsTag.getAttributeValue("autoInstall"), settings.autoInstall);
       settings.askToEnableAutoInstall =
-        getAttributeValue(settingsTag.getAttributeValue("askToEnableAutoInstall"), settings.askToEnableAutoInstall);
+              getAttributeValue(settingsTag.getAttributeValue("askToEnableAutoInstall"), settings.askToEnableAutoInstall);
     }
     setRevealSettings(runConfiguration, settings);
   }
@@ -80,7 +80,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   protected void writeExternal(@NotNull AppCodeRunConfiguration runConfiguration, @NotNull Element element)
-    throws WriteExternalException {
+          throws WriteExternalException {
     RevealSettings settings = getRevealSettings(runConfiguration);
 
     Element settingsTag = new Element(REVEAL_SETTINGS_TAG);
@@ -110,7 +110,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   protected boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
-    if (Reveal.getRevealLib(getSdk(config)) == null) return false;
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle == null) return false;
+
+    if (Reveal.getRevealLib(appBundle, getSdk(config)) == null) return false;
     return isAvailableForPlatform(config);
   }
 
@@ -125,7 +128,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   @Nullable
-  private static AppleSdk getSdk(@NotNull AppCodeRunConfiguration config) {
+  private static AppleSdk getSdk(@NotNull final AppCodeRunConfiguration config) {
     return ApplicationManager.getApplication().runReadAction(new Computable<AppleSdk>() {
       @Override
       public AppleSdk compute() {
@@ -146,10 +149,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
     actions.add(new RefreshRevealAction(configuration,
-                                        environment,
-                                        processHandler,
-                                        buildConfiguration.getDestination(),
-                                        getBundleID(environment, product)));
+            environment,
+            processHandler,
+            buildConfiguration.getDestination(),
+            getBundleID(environment, product)));
   }
 
   @Override
@@ -161,7 +164,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                       @NotNull GeneralCommandLine commandLine) throws ExecutionException {
     super.install(configuration, product, environment, buildConfiguration, mainExecutable, commandLine);
 
-    if (!Reveal.isCompatible()) return;
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle == null) return;
+
+    if (!Reveal.isCompatible(appBundle)) return;
 
     RevealSettings settings = getRevealSettings(configuration);
     if (!settings.autoInject) return;
@@ -183,8 +189,11 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                     @NotNull GeneralCommandLine commandLine,
                                     @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
-    File libReveal = Reveal.getRevealLib(getSdk(configuration));
-    if (libReveal == null || !libReveal.exists()) throw new ExecutionException("Reveal library not found");
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle == null) throw new ExecutionException("Reveal application bundle not found");;
+
+    File libReveal = Reveal.getRevealLib(appBundle, getSdk(configuration));
+    if (libReveal == null) throw new ExecutionException("Reveal library not found");
 
     Reveal.LOG.info("Reveal lib found at " + libReveal);
 
@@ -206,45 +215,45 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
         @Override
         public void run() {
           response[0] = Messages.showYesNoDialog("Project is not configured with Reveal library.<br><br>" +
-                                                 "Would you like to enable automatic library upload for this run configuration?",
-                                                 "Reveal",
-                                                 Messages.YES_BUTTON,
-                                                 Messages.NO_BUTTON,
-                                                 Messages.getQuestionIcon(),
-                                                 new DialogWrapper.DoNotAskOption() {
-                                                   @Override
-                                                   public boolean isToBeShown() {
-                                                     return true;
-                                                   }
+                          "Would you like to enable automatic library upload for this run configuration?",
+                  "Reveal",
+                  Messages.YES_BUTTON,
+                  Messages.NO_BUTTON,
+                  Messages.getQuestionIcon(),
+                  new DialogWrapper.DoNotAskOption() {
+                    @Override
+                    public boolean isToBeShown() {
+                      return true;
+                    }
 
-                                                   @Override
-                                                   public void setToBeShown(boolean value, int exitCode) {
-                                                     settings.askToEnableAutoInstall = value;
-                                                   }
+                    @Override
+                    public void setToBeShown(boolean value, int exitCode) {
+                      settings.askToEnableAutoInstall = value;
+                    }
 
-                                                   @Override
-                                                   public boolean canBeHidden() {
-                                                     return true;
-                                                   }
+                    @Override
+                    public boolean canBeHidden() {
+                      return true;
+                    }
 
-                                                   @Override
-                                                   public boolean shouldSaveOptionsOnCancel() {
-                                                     return false;
-                                                   }
+                    @Override
+                    public boolean shouldSaveOptionsOnCancel() {
+                      return false;
+                    }
 
-                                                   @NotNull
-                                                   @Override
-                                                   public String getDoNotShowMessage() {
-                                                     return CommonBundle.message("dialog.options.do.not.show");
-                                                   }
-                                                 }
+                    @NotNull
+                    @Override
+                    public String getDoNotShowMessage() {
+                      return CommonBundle.message("dialog.options.do.not.show");
+                    }
+                  }
           );
         }
       });
       if (response[0] != Messages.YES) return null;
 
       settings.autoInstall = true;
-      settings.askToEnableAutoInstall = true; // is user changes autoInstall in future, ask him/her again 
+      settings.askToEnableAutoInstall = true; // is user changes autoInstall in future, ask him/her again
       setRevealSettings(configuration, settings);
     }
 
@@ -252,7 +261,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
     AMDevice device = destination.getDeviceSafe();
     return installOnDevice(libReveal, buildConfiguration, mainExecutable, commandLine, device,
-                           getBundleID(environment, product));
+            getBundleID(environment, product));
   }
 
   private static boolean hasBundledRevealLib(@NotNull final BuildConfiguration buildConfiguration, @NotNull final File libReveal) {
@@ -347,10 +356,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       myInjectCheckBox.setSelected(settings.autoInject);
       myInstallCheckBox.setSelected(settings.autoInstall);
 
-      boolean found = Reveal.getRevealLib(getSdk(s)) != null;
-      boolean compatible = Reveal.isCompatible();
-
       String notFoundText = null;
+      boolean found = false;
+      boolean compatible = false;
+
+      File appBundle = Reveal.getDefaultRevealApplicationBundle();
+      if (appBundle != null) {
+        found = (Reveal.getRevealLib(appBundle, getSdk(s)) != null);
+        compatible = Reveal.isCompatible(appBundle);
+      }
+
       if (!found) {
         notFoundText = "Reveal.app not found. You can install it from ";
       }
@@ -387,9 +402,9 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       myRevealNotFoundOrIncompatible.setHyperlinkTarget("http://revealapp.com");
 
       myNotAvailable = new JBLabel("<html>" +
-                                   "Reveal integration is only available for iOS applications.<br>" +
-                                   "OS X targets are not yet supported.<br>" +
-                                   "</html>");
+              "Reveal integration is only available for iOS applications.<br>" +
+              "OS X targets are not yet supported.<br>" +
+              "</html>");
 
       myInjectCheckBox = new JBCheckBox("Inject Reveal library on launch");
       myInstallCheckBox = new JBCheckBox("Upload Reveal library on the device if necessary");
@@ -429,14 +444,14 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       myNotAvailable.setVisible(!isAvailable);
 
       updateStatusAndHint(myInjectCheckBox, myInjectHint,
-                          controlsEnabled,
-                          "Library is injected on launch using DYLD_INSERT_LIBRARIES variable");
+              controlsEnabled,
+              "Library is injected on launch using DYLD_INSERT_LIBRARIES variable");
 
       boolean installButtonEnabled = controlsEnabled && myInjectCheckBox.isSelected();
       updateStatusAndHint(myInstallCheckBox, myInstallHint,
-                          installButtonEnabled,
-                          "It's not necessary to configure the project manually,<br>" +
-                          "library is signed and uploaded automatically"
+              installButtonEnabled,
+              "It's not necessary to configure the project manually,<br>" +
+                      "library is signed and uploaded automatically"
       );
     }
 
