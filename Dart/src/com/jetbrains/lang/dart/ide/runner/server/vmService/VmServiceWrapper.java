@@ -93,18 +93,17 @@ public class VmServiceWrapper implements Disposable {
             getVm(new VmServiceConsumers.VmConsumerWrapper() {
               @Override
               public void received(final VM vm) {
-                if (vm.getIsolates().size() != 1) {
-                  Logging.getLogger().logError("Unexpected number of isolates after VM start: " + vm.getIsolates().size());
+                if (vm.getIsolates().size() == 0) {
+                  Logging.getLogger().logError("No isolates found after VM start: " + vm.getIsolates().size());
                 }
 
+                // TODO: Handle additional isolates, if more than one.
                 final IsolateRef isolateRef = vm.getIsolates().get(0);
                 getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
                   @Override
                   public void received(final Isolate isolate) {
                     // if event is not PauseStart it means that PauseStart event will follow later and will be handled by listener
-                    if (isolate.getPauseEvent().getKind() == EventKind.PauseStart) {
-                      handleIsolatePausedOnStart(isolateRef);
-                    }
+                    handleIsolate(isolateRef, isolate.getPauseEvent().getKind() == EventKind.PauseStart);
                   }
                 });
               }
@@ -127,7 +126,7 @@ public class VmServiceWrapper implements Disposable {
     addRequest(() -> myVmService.getIsolate(isolateId, consumer));
   }
 
-  public void handleIsolatePausedOnStart(@NotNull final IsolateRef isolateRef) {
+  public void handleIsolate(@NotNull final IsolateRef isolateRef, final boolean isolatePausedStart) {
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (myIsolatesInfo.addIsolate(isolateRef)) {
       addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
@@ -135,32 +134,40 @@ public class VmServiceWrapper implements Disposable {
                                                          new VmServiceConsumers.SuccessConsumerWrapper() {
                                                            @Override
                                                            public void received(Success response) {
-                                                             setInitialBreakpointsAndResume(isolateRef.getId());
+                                                             setInitialBreakpointsAndResume(isolateRef.getId(), isolatePausedStart);
                                                            }
                                                          }));
+    } else if (isolatePausedStart) {
+      resumeIsolate(isolateRef.getId(), null);
     }
   }
 
-  private void setInitialBreakpointsAndResume(@NotNull final String isolateId) {
-    if (myDebugProcess.isRemoteDebug() && myIsolatesInfo.getIsolateInfos().size() == 1) {
-      // need to detect remote project root path before setting breakpoints
-      getIsolate(isolateId, new VmServiceConsumers.GetIsolateConsumerWrapper() {
-        @Override
-        public void received(final Isolate isolate) {
-          myDebugProcess.guessRemoteProjectRoot(isolate.getLibraries());
-          doSetInitialBreakpointsAndResume(isolateId);
-        }
-      });
+  private void setInitialBreakpointsAndResume(@NotNull final String isolateId, final boolean isolatePausedStart) {
+    if (myDebugProcess.isRemoteDebug()) {
+      if (myDebugProcess.myRemoteProjectRootUri == null) {
+        // need to detect remote project root path before setting breakpoints
+        getIsolate(isolateId, new VmServiceConsumers.GetIsolateConsumerWrapper() {
+          @Override
+          public void received(final Isolate isolate) {
+            myDebugProcess.guessRemoteProjectRoot(isolate.getLibraries());
+            doSetInitialBreakpointsAndResume(isolateId, false);
+          }
+        });
+      } else {
+        doSetInitialBreakpointsAndResume(isolateId, false);
+      }
     }
     else {
-      doSetInitialBreakpointsAndResume(isolateId);
+      doSetInitialBreakpointsAndResume(isolateId, isolatePausedStart);
     }
   }
 
-  private void doSetInitialBreakpointsAndResume(@NotNull final String isolateId) {
+  private void doSetInitialBreakpointsAndResume(@NotNull final String isolateId, final boolean resume) {
     final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
     if (xBreakpoints.isEmpty()) {
-      resumeIsolate(isolateId, null);
+      if (resume) {
+        resumeIsolate(isolateId, null);
+      }
       return;
     }
 
@@ -187,7 +194,9 @@ public class VmServiceWrapper implements Disposable {
 
         private void checkDone() {
           if (counter.decrementAndGet() == 0) {
-            resumeIsolate(isolateId, null);
+            if (resume) {
+              resumeIsolate(isolateId, null);
+            }
           }
         }
       });
