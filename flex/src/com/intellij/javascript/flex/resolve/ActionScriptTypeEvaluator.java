@@ -8,6 +8,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.context.JSApplyCallElement;
+import com.intellij.lang.javascript.psi.resolve.context.JSApplyContextElement;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
 import com.intellij.lang.javascript.psi.util.JSUtils;
@@ -103,10 +105,10 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     if (JSTypeUtils.isActionScriptVectorType(type)) {
       type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
     }
-    final JSElement peek = myContext.peekJSElementToApply();
-    if (peek instanceof JSCallExpression) myContext.popJSElementToApply(); // MyClass(anyVar) is cast to MyClass
+    final JSApplyContextElement peek = myContext.peekJSElementToApply();
+    if (peek instanceof JSApplyCallElement) myContext.popJSElementToApply(); // MyClass(anyVar) is cast to MyClass
     addType(type, resolveResult);
-    if (peek instanceof JSCallExpression) myContext.pushJSElementToApply(peek);
+    if (peek instanceof JSApplyCallElement) myContext.pushJSElementToApply(peek);
   }
 
   @Override
