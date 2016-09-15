@@ -55,8 +55,8 @@
     <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
 
-    <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
-    <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first"/>
+    <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector" id="angular"/>
+    <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first" id="angular2"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
                             id="AngularJSCompletionContributor" order="first"/>
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJSDICompletionContributor"
