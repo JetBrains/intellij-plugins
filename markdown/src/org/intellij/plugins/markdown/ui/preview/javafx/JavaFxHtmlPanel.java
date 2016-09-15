@@ -152,10 +152,11 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     runInPlatformWhenAvailable(() -> getWebViewGuaranteed().getEngine().loadContent(htmlToRender));
   }
 
+  @NotNull
   private String prepareHtml(@NotNull String html) {
-    return html
+    return ImageRefreshFix.setStamps(html
       .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris))
-      .replace("</body>", getScriptingLines() + "</body>");
+      .replace("</body>", getScriptingLines() + "</body>"));
   }
 
   @Override
