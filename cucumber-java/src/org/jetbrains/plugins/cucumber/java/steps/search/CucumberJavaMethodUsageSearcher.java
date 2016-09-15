@@ -26,6 +26,11 @@ public class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiRefere
 
   @Override
   public void processQuery(@NotNull final MethodReferencesSearch.SearchParameters p, @NotNull final Processor<PsiReference> consumer) {
+    SearchScope scope = p.getEffectiveSearchScope();
+    if (!(scope instanceof GlobalSearchScope)) {
+      return;
+    }
+
     final PsiMethod method = p.getMethod();
 
     final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
@@ -33,16 +38,13 @@ public class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiRefere
     if (regexp == null) {
       return;
     }
-
     final String word = CucumberUtil.getTheBiggestWordToSearchByIndex(regexp);
     if (StringUtil.isEmpty(word)) {
       return;
     }
 
-    SearchScope scope = p.getEffectiveSearchScope();
-    if (scope instanceof GlobalSearchScope) {
-      GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)scope, GherkinFileType.INSTANCE);
-      ReferencesSearch.search(new ReferencesSearch.SearchParameters(method, restrictedScope, false, p.getOptimizer())).forEach(consumer);
-    }
+    final GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)scope,
+                                                                                              GherkinFileType.INSTANCE);
+    ReferencesSearch.search(new ReferencesSearch.SearchParameters(method, restrictedScope, false, p.getOptimizer())).forEach(consumer);
   }
 }
