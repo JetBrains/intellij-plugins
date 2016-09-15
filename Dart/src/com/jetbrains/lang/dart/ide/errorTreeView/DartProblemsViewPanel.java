@@ -141,14 +141,12 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     addReanalyzeAndRestartActions(group);
     group.addSeparator();
 
-    addAutoScrollToSourceAction(group);
     // may be add 'Scroll from source' or 'Autoscroll from source' action (WEB-15792)
-    group.addSeparator();
-
+    addAutoScrollToSourceAction(group);
     addGroupBySeverityAction(group);
     group.addAction(new FilterProblemsAction());
-
     group.addSeparator();
+
     group.addAction(new ContextHelpAction("reference.toolWindow.DartAnalysis"));
 
     return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
