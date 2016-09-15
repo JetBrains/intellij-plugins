@@ -18,6 +18,10 @@ public class UnusedJavaMethodInspectionTest extends CucumberJavaBaseInspectionTe
     doTest("ShoppingStepdefs.java");
   }
 
+  public void testPrivateMethod() {
+    doTest("PrivateMethod.java");
+  }
+
   public void testHooks() {
     doTest("Hooks.java");
   }

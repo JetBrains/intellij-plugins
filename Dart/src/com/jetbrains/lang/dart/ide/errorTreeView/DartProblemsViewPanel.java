@@ -138,17 +138,14 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   private JComponent createToolbar() {
     final DefaultActionGroup group = new DefaultActionGroup();
 
-    addReanalyzeAndRestartActions(group);
+    addReanalyzeAction(group);
     group.addSeparator();
 
     addAutoScrollToSourceAction(group);
-    // may be add 'Scroll from source' or 'Autoscroll from source' action (WEB-15792)
-    group.addSeparator();
-
     addGroupBySeverityAction(group);
     group.addAction(new FilterProblemsAction());
-
     group.addSeparator();
+
     group.addAction(new ContextHelpAction("reference.toolWindow.DartAnalysis"));
 
     return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
@@ -175,16 +172,17 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     mySummaryLabel.setText(((DartProblemsTableModel)myTable.getModel()).getStatusText());
   }
 
-  private static void addReanalyzeAndRestartActions(@NotNull final DefaultActionGroup group) {
+  private static void addReanalyzeAction(@NotNull final DefaultActionGroup group) {
     final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
     if (reanalyzeAction != null) {
       group.add(reanalyzeAction);
     }
 
-    final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
-    if (restartAction != null) {
-      group.add(restartAction);
-    }
+    // Restart action is now discoverable using Find Action only
+    //final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
+    //if (restartAction != null) {
+    //  group.add(restartAction);
+    //}
   }
 
   private void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group) {
