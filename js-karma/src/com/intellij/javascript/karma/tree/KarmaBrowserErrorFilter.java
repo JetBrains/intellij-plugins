@@ -16,11 +16,11 @@ public class KarmaBrowserErrorFilter extends PatternBasedFileHyperlinkFilter {
     new PatternHyperlinkFormat[] {
       //at http://localhost:9876/base/spec/personSpec.js?1368878723000:22
       new PatternHyperlinkFormat(Pattern.compile("^\\s*at (http://[^:]+:\\d+/base/([^?]+).*(:\\d+))$"),
-                                 true, true,
+                                 false, false,
                                  PatternHyperlinkPart.HYPERLINK, PatternHyperlinkPart.PATH, PatternHyperlinkPart.LINE),
       //at http://localhost:9876/absolute/home/segrey/WebstormProjects/karma-chai-sample/test/test.js?1378466989000:1
       new PatternHyperlinkFormat(Pattern.compile("^\\s*at (http://[^:]+:\\d+/absolute([^?]+).*(:\\d+))$"),
-                                 true, true,
+                                 false, false,
                                  PatternHyperlinkPart.HYPERLINK, PatternHyperlinkPart.PATH, PatternHyperlinkPart.LINE),
     }
   );
