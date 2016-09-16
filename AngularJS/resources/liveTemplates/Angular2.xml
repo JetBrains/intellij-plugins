@@ -100,10 +100,11 @@
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="ng2-routing" value="import { NgModule } from '@angular/core';&#10;import { Routes, RouterModule } from '@angular/router';&#10;&#10;import { $COMPONENT_NAME$Component } from './$NAME$.component';&#10;&#10;const routes: Routes = [&#10;  { path: '$PATH$', component: $COMPONENT_NAME$Component },&#10;];&#10;&#10;@NgModule({&#10;  imports: [RouterModule.forChild|Root(routes)],&#10;  exports: [RouterModule],&#10;})&#10;export class $COMPONENT_NAME$RoutingModule { }&#10;&#10;export const routedComponents = [$COMPONENT_NAME$Component];" description="Angular 2 routing file" toReformat="false" toShortenFQNames="true">
+  <template name="ng2-routing" value="import { NgModule } from '@angular/core';&#10;import { Routes, RouterModule } from '@angular/router';&#10;&#10;import { $COMPONENT_NAME$Component } from './$NAME$.component';&#10;&#10;const routes: Routes = [&#10;  { path: '$PATH$', component: $COMPONENT_NAME$Component },&#10;];&#10;&#10;@NgModule({&#10;  imports: [RouterModule.for$CHILD_OR_ROOT$(routes)],&#10;  exports: [RouterModule],&#10;})&#10;export class $COMPONENT_NAME$RoutingModule { }&#10;&#10;export const routedComponents = [$COMPONENT_NAME$Component];" description="Angular 2 routing file" toReformat="false" toShortenFQNames="true">
     <variable name="COMPONENT_NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="NAME" expression="lowercaseAndDash(COMPONENT_NAME)" defaultValue="" alwaysStopAt="true" />
     <variable name="PATH" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="CHILD_OR_ROOT" expression="complete()" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
