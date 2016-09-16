@@ -4607,7 +4607,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'part' 'of' libraryId ';'
+  // metadata* 'part' 'of' (libraryId | uriElement)';'
   public static boolean partOfStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partOfStatement")) return false;
     if (!nextTokenIs(b, "<part of statement>", AT, PART)) return false;
@@ -4616,7 +4616,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = partOfStatement_0(b, l + 1);
     r = r && consumeToken(b, PART);
     r = r && consumeToken(b, OF);
-    r = r && libraryId(b, l + 1);
+    r = r && partOfStatement_3(b, l + 1);
     p = r; // pin = 4
     r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, p, null);
@@ -4633,6 +4633,17 @@ public class DartParser implements PsiParser, LightPsiParser {
       c = current_position_(b);
     }
     return true;
+  }
+
+  // libraryId | uriElement
+  private static boolean partOfStatement_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "partOfStatement_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = libraryId(b, l + 1);
+    if (!r) r = uriElement(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */

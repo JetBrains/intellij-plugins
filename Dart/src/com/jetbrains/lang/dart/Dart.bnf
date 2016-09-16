@@ -164,7 +164,7 @@ private top_level_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | '
 
 incompleteDeclaration ::= metadata* ('external' | 'static' | 'final' | 'const')* type | metadata+;
 
-partOfStatement ::= metadata* 'part' 'of' libraryId ';' {
+partOfStatement ::= metadata* 'part' 'of' (libraryId | uriElement)';' {
   pin=4
   methods = [ getLibraryName ]
 }
