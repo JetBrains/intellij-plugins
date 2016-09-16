@@ -120,6 +120,7 @@
                 </constraints>
                 <properties>
                   <margin top="2" left="0" bottom="2" right="3"/>
+                  <selected value="true"/>
                   <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="dart.project.generate.sample.content.label"/>
                 </properties>
               </component>
