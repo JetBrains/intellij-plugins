@@ -731,7 +731,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'assert' '(' expressionWithRecoverUntilParen ')' ';'
+  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' ';'
   public static boolean assertStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assertStatement")) return false;
     if (!nextTokenIs(b, ASSERT)) return false;
@@ -740,11 +740,30 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, ASSERT);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
+    r = p && report_error_(b, expressionWithRecoverUntilParenOrComma(b, l + 1)) && r;
+    r = p && report_error_(b, assertStatement_3(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // (',' stringLiteralExpression)?
+  private static boolean assertStatement_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "assertStatement_3")) return false;
+    assertStatement_3_0(b, l + 1);
+    return true;
+  }
+
+  // ',' stringLiteralExpression
+  private static boolean assertStatement_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "assertStatement_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMA);
+    r = r && stringLiteralExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1731,6 +1750,17 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_);
     r = expression(b, l + 1);
     exit_section_(b, l, m, r, false, not_paren_recover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // expression
+  static boolean expressionWithRecoverUntilParenOrComma(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "expressionWithRecoverUntilParenOrComma")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = expression(b, l + 1);
+    exit_section_(b, l, m, r, false, not_paren_or_comma_recover_parser_);
     return r;
   }
 
@@ -4463,6 +4493,28 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // !(')' | ',')
+  static boolean not_paren_or_comma_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "not_paren_or_comma_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !not_paren_or_comma_recover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ')' | ','
+  private static boolean not_paren_or_comma_recover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "not_paren_or_comma_recover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, RPAREN);
+    if (!r) r = consumeToken(b, COMMA);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // !')'
   static boolean not_paren_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "not_paren_recover")) return false;
@@ -6399,6 +6451,11 @@ public class DartParser implements PsiParser, LightPsiParser {
   final static Parser map_literal_entry_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return map_literal_entry_recover(b, l + 1);
+    }
+  };
+  final static Parser not_paren_or_comma_recover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return not_paren_or_comma_recover(b, l + 1);
     }
   };
   final static Parser not_paren_recover_parser_ = new Parser() {

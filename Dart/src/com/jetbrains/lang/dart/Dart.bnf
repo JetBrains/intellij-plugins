@@ -416,13 +416,15 @@ label::= componentName ':'
 }
 
 private expressionWithRecoverUntilParen ::= expression {recoverWhile="not_paren_recover"}
+private expressionWithRecoverUntilParenOrComma ::= expression {recoverWhile="not_paren_or_comma_recover"}
 private not_paren_recover ::= !')'
+private not_paren_or_comma_recover ::= !(')' | ',')
 
 whileStatement ::= 'while' '(' expressionWithRecoverUntilParen ')' statement {pin=1}
 doWhileStatement ::= 'do' statement 'while' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
 forStatement ::= 'await'? 'for' forLoopPartsInBraces statement {pin=2}
 //todo component
-assertStatement ::= 'assert' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
+assertStatement ::= 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' ';' {pin=1}
 yieldEachStatement ::= 'yield' '*' expression ';' {pin=2}
 yieldStatement ::= 'yield' expression ';' {pin=1}
 breakStatement ::= 'break' referenceExpression? ';' {pin=1}
