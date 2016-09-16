@@ -19,8 +19,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
-import com.intellij.util.SmartList;
 import com.intellij.util.TimeoutUtil;
+import com.intellij.util.containers.HashSet;
 import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
@@ -258,7 +258,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     for (LibraryRef library : libraries) {
       final String remoteUri = library.getUri();
-      //if (!remoteUri.startsWith(DartUrlResolver.FILE_PREFIX)) continue;
       if (remoteUri.startsWith("dart:")) continue;
       if (remoteUri.startsWith("package:")) continue;
 
@@ -407,11 +406,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @NotNull
   public Collection<String> getUrisForFile(@NotNull final VirtualFile file) {
-    final SmartList<String> result = new SmartList<>();
-
+    final Set<String> result = new HashSet<>();
     String uriByIde = myDartUrlResolver.getDartUrlForFile(file);
 
-    // dart:
+    // If dart:, short circut the results.
     if (uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
       result.add(uriByIde);
       return result;
@@ -425,7 +423,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       result.add(threeSlashize(new File(file.getPath()).toURI().toString()));
     }
 
-    // straight path
+    // straight path - used by some VM embedders
     result.add(file.getPath());
 
     // package: (if applicable)
@@ -437,29 +435,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     // remote prefix (if applicable)
-    final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
-    if (myRemoteDebug && uriByIde.startsWith(DartUrlResolver.FILE_PREFIX) && myRemoteProjectRootUri != null && pubspec != null) {
-      final String localRootUri = StringUtil.trimEnd(myDartUrlResolver.getDartUrlForFile(pubspec.getParent()), '/');
-      LOG.assertTrue(uriByIde.startsWith(localRootUri), uriByIde + "," + localRootUri);
-      result.add(myRemoteProjectRootUri + uriByIde.substring(localRootUri.length()));
+    if (myRemoteDebug && myRemoteProjectRootUri != null) {
+      final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
+      // TODO: Handle projects with no pubspecs.
+      if (pubspec != null) {
+        final String projectPath = pubspec.getParent().getPath();
+        final String filePath = file.getPath();
+
+        if (filePath.startsWith(projectPath)) {
+          result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
+        }
+      }
     }
 
     return result;
   }
-
-  //@NotNull
-  //private Collection<String> maybeAppendOneMoreUri(@NotNull final VirtualFile file, @NotNull final String uri) {
-  //  final SmartList<String> result = new SmartList<>(uri);
-  //
-  //  final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
-  //  if (myEntryPointInLibFolder &&
-  //      pubspec != null &&
-  //      uri.startsWith(DartUrlResolver.PACKAGE_PREFIX + PubspecYamlUtil.getDartProjectName(pubspec))) {
-  //    result.add(threeSlashize(new File(file.getPath()).toURI().toString()));
-  //  }
-  //
-  //  return result;
-  //}
 
   @Nullable
   public XSourcePosition getSourcePosition(@NotNull final String isolateId, @NotNull final ScriptRef scriptRef, int tokenPos) {

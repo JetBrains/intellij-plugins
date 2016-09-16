@@ -97,15 +97,15 @@ public class VmServiceWrapper implements Disposable {
                   Logging.getLogger().logError("No isolates found after VM start: " + vm.getIsolates().size());
                 }
 
-                // TODO: Handle additional isolates, if more than one.
-                final IsolateRef isolateRef = vm.getIsolates().get(0);
-                getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
-                  @Override
-                  public void received(final Isolate isolate) {
-                    // if event is not PauseStart it means that PauseStart event will follow later and will be handled by listener
-                    handleIsolate(isolateRef, isolate.getPauseEvent().getKind() == EventKind.PauseStart);
-                  }
-                });
+                for (final IsolateRef isolateRef : vm.getIsolates()) {
+                  getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
+                    @Override
+                    public void received(final Isolate isolate) {
+                      // if event is not PauseStart it means that PauseStart event will follow later and will be handled by listener
+                      handleIsolate(isolateRef, isolate.getPauseEvent().getKind() == EventKind.PauseStart);
+                    }
+                  });
+                }
               }
             });
           }
@@ -127,54 +127,68 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void handleIsolate(@NotNull final IsolateRef isolateRef, final boolean isolatePausedStart) {
+    // We should auto-resume on a StartPaused event, if we're not remote debugging, and after breakpoints have been set.
+
+    final boolean newIsolate = myIsolatesInfo.addIsolate(isolateRef);
+
+    if (isolatePausedStart) {
+      myIsolatesInfo.setShouldInitialResume(isolateRef);
+    }
+
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
-    if (myIsolatesInfo.addIsolate(isolateRef)) {
+    if (newIsolate) {
       addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
                                                          ExceptionPauseMode.Unhandled,
                                                          new VmServiceConsumers.SuccessConsumerWrapper() {
                                                            @Override
                                                            public void received(Success response) {
-                                                             setInitialBreakpointsAndResume(isolateRef.getId(), isolatePausedStart);
+                                                             setInitialBreakpointsAndResume(isolateRef);
                                                            }
                                                          }));
-    } else if (isolatePausedStart) {
+    } else {
+      checkInitialResume(isolateRef);
+    }
+  }
+
+  private void checkInitialResume(IsolateRef isolateRef) {
+    if (myIsolatesInfo.getShouldInitialResume(isolateRef)) {
       resumeIsolate(isolateRef.getId(), null);
     }
   }
 
-  private void setInitialBreakpointsAndResume(@NotNull final String isolateId, final boolean isolatePausedStart) {
+  private void setInitialBreakpointsAndResume(@NotNull final IsolateRef isolateRef) {
     if (myDebugProcess.isRemoteDebug()) {
       if (myDebugProcess.myRemoteProjectRootUri == null) {
         // need to detect remote project root path before setting breakpoints
-        getIsolate(isolateId, new VmServiceConsumers.GetIsolateConsumerWrapper() {
+        getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
           @Override
           public void received(final Isolate isolate) {
             myDebugProcess.guessRemoteProjectRoot(isolate.getLibraries());
-            doSetInitialBreakpointsAndResume(isolateId, false);
+            doSetInitialBreakpointsAndResume(isolateRef);
           }
         });
       } else {
-        doSetInitialBreakpointsAndResume(isolateId, false);
+        doSetInitialBreakpointsAndResume(isolateRef);
       }
     }
     else {
-      doSetInitialBreakpointsAndResume(isolateId, isolatePausedStart);
+      doSetInitialBreakpointsAndResume(isolateRef);
     }
   }
 
-  private void doSetInitialBreakpointsAndResume(@NotNull final String isolateId, final boolean resume) {
+  private void doSetInitialBreakpointsAndResume(@NotNull final IsolateRef isolateRef) {
     final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
+
     if (xBreakpoints.isEmpty()) {
-      if (resume) {
-        resumeIsolate(isolateId, null);
-      }
+      myIsolatesInfo.setBreakpointsSet(isolateRef);
+      checkInitialResume(isolateRef);
       return;
     }
 
     final AtomicInteger counter = new AtomicInteger(xBreakpoints.size());
 
     for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
-      addBreakpoint(isolateId, xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
+      addBreakpoint(isolateRef.getId(), xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
           checkDone();
@@ -182,7 +196,7 @@ public class VmServiceWrapper implements Disposable {
 
         @Override
         public void received(Breakpoint vmBreakpoint) {
-          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
+          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateRef.getId(), vmBreakpoint);
           checkDone();
         }
 
@@ -194,9 +208,8 @@ public class VmServiceWrapper implements Disposable {
 
         private void checkDone() {
           if (counter.decrementAndGet() == 0) {
-            if (resume) {
-              resumeIsolate(isolateId, null);
-            }
+            myIsolatesInfo.setBreakpointsSet(isolateRef);
+            checkInitialResume(isolateRef);
           }
         }
       });
