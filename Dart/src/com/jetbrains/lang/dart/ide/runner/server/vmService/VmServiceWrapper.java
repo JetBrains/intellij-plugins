@@ -36,6 +36,7 @@ public class VmServiceWrapper implements Disposable {
 
   private final DartVmServiceDebugProcess myDebugProcess;
   private final VmService myVmService;
+  private final DartVmServiceListener myVmServiceListener;
   private final IsolatesInfo myIsolatesInfo;
   private final DartVmServiceBreakpointHandler myBreakpointHandler;
   private final Alarm myRequestsScheduler;
@@ -46,12 +47,14 @@ public class VmServiceWrapper implements Disposable {
 
   public VmServiceWrapper(@NotNull final DartVmServiceDebugProcess debugProcess,
                           @NotNull final VmService vmService,
+                          @NotNull final DartVmServiceListener vmServiceListener,
                           @NotNull final IsolatesInfo isolatesInfo,
                           @NotNull final DartVmServiceBreakpointHandler breakpointHandler) {
     myDebugProcess = debugProcess;
-    myBreakpointHandler = breakpointHandler;
     myVmService = vmService;
+    myVmServiceListener = vmServiceListener;
     myIsolatesInfo = isolatesInfo;
+    myBreakpointHandler = breakpointHandler;
     myRequestsScheduler = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
   }
 
@@ -97,14 +100,26 @@ public class VmServiceWrapper implements Disposable {
                   Logging.getLogger().logError("No isolates found after VM start: " + vm.getIsolates().size());
                 }
 
-                // TODO: When remote debugging, handle the case that an isolate is paused at a breakpoint when we connect.
-
                 for (final IsolateRef isolateRef : vm.getIsolates()) {
                   getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
                     @Override
                     public void received(final Isolate isolate) {
+                      final Event event = isolate.getPauseEvent();
+                      final EventKind eventKind = event.getKind();
+
                       // if event is not PauseStart it means that PauseStart event will follow later and will be handled by listener
-                      handleIsolate(isolateRef, isolate.getPauseEvent().getKind() == EventKind.PauseStart);
+                      handleIsolate(isolateRef, eventKind == EventKind.PauseStart);
+
+                      // Handle the case of isolates paused when we connect (this can come up in remote debugging).
+                      if (eventKind == EventKind.PauseBreakpoint || eventKind == EventKind.PauseException || eventKind == EventKind.PauseInterrupted) {
+                        myDebugProcess.isolateSuspended(isolateRef);
+
+                        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+                          final ElementList<Breakpoint> breakpoints = eventKind == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
+                          final InstanceRef exception = eventKind == EventKind.PauseException ? event.getException() : null;
+                          myVmServiceListener.onIsolatePaused(isolateRef, breakpoints, exception, event.getTopFrame(), event.getAtAsyncSuspension());
+                        });
+                      }
                     }
                   });
                 }
