@@ -40,8 +40,6 @@ public class DartVmServiceListener implements VmServiceListener {
 
   @Override
   public void received(@NotNull final String streamId, @NotNull final Event event) {
-    //LOG.warn(event.getKind().toString());
-
     switch (event.getKind()) {
       case BreakpointAdded:
         // TODO Respond to breakpoints added by the observatory.
@@ -85,6 +83,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case VMUpdate:
         break;
       case WriteEvent:
+        myDebugProcess.handleWriteEvent(event.getBytes());
         break;
       case Unknown:
         break;
