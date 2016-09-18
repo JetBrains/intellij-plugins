@@ -34,7 +34,7 @@ public abstract class ProfileView extends UserDataHolderBase implements FileEdit
 
     project.getMessageBus().connect().subscribe(UISettingsListener.TOPIC, new UISettingsListener() {
       @Override
-      public void uiSettingsChanged(UISettings source) {
+      public void uiSettingsChanged(UISettings uiSettings) {
         uiSettingsChange();
       }
     });
