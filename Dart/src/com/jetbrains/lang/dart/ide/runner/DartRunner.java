@@ -102,6 +102,7 @@ public class DartRunner extends DefaultProgramRunner {
 
     final RunProfile runConfiguration = env.getRunProfile();
     final VirtualFile contextFileOrDir;
+    VirtualFile currentWorkingDirectory;
     final boolean entryPointInLibFolder;
     final ExecutionResult executionResult;
     final String debuggingHost;
@@ -113,6 +114,10 @@ public class DartRunner extends DefaultProgramRunner {
 
       final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(env.getProject(), contextFileOrDir);
       entryPointInLibFolder = pubspec != null && contextFileOrDir.getPath().startsWith(pubspec.getParent().getPath() + "/lib/");
+
+      final String cwd =
+        ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().computeProcessWorkingDirectory(env.getProject());
+      currentWorkingDirectory = LocalFileSystem.getInstance().findFileByPath((cwd));
 
       executionResult = state.execute(env.getExecutor(), this);
       if (executionResult == null) {
@@ -130,6 +135,8 @@ public class DartRunner extends DefaultProgramRunner {
       if (contextFileOrDir == null) {
         throw new RuntimeConfigurationError("Folder not found: " + FileUtil.toSystemDependentName(path));
       }
+
+      currentWorkingDirectory = contextFileOrDir;
 
       executionResult = null;
 
@@ -167,7 +174,8 @@ public class DartRunner extends DefaultProgramRunner {
                                                dasExecutionContextId,
                                                runConfiguration instanceof DartRemoteDebugConfiguration,
                                                entryPointInLibFolder,
-                                               getTimeout());
+                                               getTimeout(),
+                                               currentWorkingDirectory);
       }
     });
 
