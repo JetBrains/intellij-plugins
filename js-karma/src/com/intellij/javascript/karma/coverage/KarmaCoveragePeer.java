@@ -18,6 +18,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -141,7 +142,7 @@ public class KarmaCoveragePeer {
         KarmaCoverageSession coverageSession = myActiveCoverageSession;
         myActiveCoverageSession = null;
         if (coverageSession != null) {
-          String path = GsonUtil.getAsString(eventBody);
+          String path = JsonUtil.getString(eventBody);
           if (path != null) {
             coverageSession.onCoverageSessionFinished(new File(path));
           }

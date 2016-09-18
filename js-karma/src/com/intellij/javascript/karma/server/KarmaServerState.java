@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -198,8 +199,8 @@ public class KarmaServerState {
     public void handle(@NotNull JsonElement eventBody) {
       if (eventBody.isJsonObject()) {
         JsonObject event = eventBody.getAsJsonObject();
-        String id = GsonUtil.getStringProperty(event, "id");
-        String name = GsonUtil.getStringProperty(event, "name");
+        String id = JsonUtil.getChildAsString(event, "id");
+        String name = JsonUtil.getChildAsString(event, "name");
         Boolean autoCaptured = GsonUtil.getBooleanProperty(event, "isAutoCaptured");
         if (id != null && name != null) {
           handleBrowsersChange(myEventType, id, name, autoCaptured);
