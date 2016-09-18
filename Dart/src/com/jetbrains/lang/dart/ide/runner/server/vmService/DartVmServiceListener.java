@@ -105,11 +105,11 @@ public class DartVmServiceListener implements VmServiceListener {
     }
   }
 
-  private void onIsolatePaused(@NotNull final IsolateRef isolateRef,
-                               @Nullable final ElementList<Breakpoint> vmBreakpoints,
-                               @Nullable final InstanceRef exception,
-                               @Nullable final Frame vmTopFrame,
-                               boolean atAsyncSuspension) {
+  void onIsolatePaused(@NotNull final IsolateRef isolateRef,
+                       @Nullable final ElementList<Breakpoint> vmBreakpoints,
+                       @Nullable final InstanceRef exception,
+                       @Nullable final Frame vmTopFrame,
+                       boolean atAsyncSuspension) {
     if (vmTopFrame == null) {
       myDebugProcess.getSession().positionReached(new XSuspendContext() {
       });

@@ -214,9 +214,13 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   private void connect() throws IOException {
     final VmService vmService = VmService.connect(getObservatoryUrl("ws", "/ws"));
-    vmService.addVmServiceListener(new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]));
+    final DartVmServiceListener vmServiceListener = new DartVmServiceListener(
+      this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
 
-    myVmServiceWrapper = new VmServiceWrapper(this, vmService, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
+    vmService.addVmServiceListener(vmServiceListener);
+
+    myVmServiceWrapper = new VmServiceWrapper(
+      this, vmService, vmServiceListener, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
     myVmServiceWrapper.handleDebuggerConnected();
 
     myVmConnected = true;
