@@ -73,6 +73,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final boolean myRemoteDebug;
   private final boolean myEntryPointInLibFolder;
   private final int myTimeout;
+  private final VirtualFile myCurrentWorkingDirectory;
 
   @Nullable String myRemoteProjectRootUri;
 
@@ -84,7 +85,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                    @Nullable final String dasExecutionContextId,
                                    final boolean remoteDebug,
                                    final boolean entryPointInLibFolder,
-                                   final int timeout) {
+                                   final int timeout,
+                                   final VirtualFile currentWorkingDirectory) {
     super(session);
     myDebuggingHost = debuggingHost;
     myObservatoryPort = observatoryPort;
@@ -93,6 +95,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myRemoteDebug = remoteDebug;
     myEntryPointInLibFolder = entryPointInLibFolder;
     myTimeout = timeout;
+    myCurrentWorkingDirectory = currentWorkingDirectory;
 
     myIsolatesInfo = new IsolatesInfo();
     final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
@@ -437,11 +440,16 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     // remote prefix (if applicable)
     if (myRemoteDebug && myRemoteProjectRootUri != null) {
       final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
-      // TODO: Handle projects with no pubspecs.
       if (pubspec != null) {
         final String projectPath = pubspec.getParent().getPath();
         final String filePath = file.getPath();
-
+        if (filePath.startsWith(projectPath)) {
+          result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
+        }
+      } else {
+        // Handle projects with no pubspecs.
+        final String projectPath = myCurrentWorkingDirectory.getPath();
+        final String filePath = file.getPath();
         if (filePath.startsWith(projectPath)) {
           result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
         }
