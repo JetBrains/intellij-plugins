@@ -97,6 +97,8 @@ public class VmServiceWrapper implements Disposable {
                   Logging.getLogger().logError("No isolates found after VM start: " + vm.getIsolates().size());
                 }
 
+                // TODO: When remote debugging, handle the case that an isolate is paused at a breakpoint when we connect.
+
                 for (final IsolateRef isolateRef : vm.getIsolates()) {
                   getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
                     @Override
@@ -112,6 +114,11 @@ public class VmServiceWrapper implements Disposable {
         });
       }
     });
+
+    if (myDebugProcess.isRemoteDebug()) {
+      streamListen(VmService.STDOUT_STREAM_ID, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+      streamListen(VmService.STDERR_STREAM_ID, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+    }
   }
 
   private void streamListen(@NotNull final String streamId, @NotNull final SuccessConsumer consumer) {
