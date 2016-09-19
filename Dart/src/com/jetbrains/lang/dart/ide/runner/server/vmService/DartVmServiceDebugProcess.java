@@ -146,11 +146,12 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
           return;
         }
 
-        if (myEntryPointInLibFolder && message.contains("\"code\":-32602,")) { // That's expected because we set one breakpoint twice
+        if (message.contains("\"method\":\"removeBreakpoint\"")) { // That's expected because we set one breakpoint twice
           return;
         }
 
-        LOG.warn(message);
+        getSession().getConsoleView().print("Error: " + message + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+        LOG.error(message);
       }
 
       @Override
@@ -292,8 +293,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         }
       }
 
-      if (howManyFilesMatch > 0) {
+      if (howManyFilesMatch == 1) {
         break; // we did the best guess we could
+      } else if (howManyFilesMatch > 0) {
+        // TODO: Look for an additional way to determine `myRemoteProjectRootUri`.
       }
     }
   }
