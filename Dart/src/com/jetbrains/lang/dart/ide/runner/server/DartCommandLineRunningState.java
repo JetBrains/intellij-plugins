@@ -38,6 +38,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class DartCommandLineRunningState extends CommandLineState {
@@ -72,18 +75,17 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   @Override
   protected AnAction[] createActions(final ConsoleView console, final ProcessHandler processHandler, final Executor executor) {
-    // These action is effectively added only to the Run tool window. For Debug see DartCommandLineDebugProcess.registerAdditionalActions()
-    final AnAction[] actions = super.createActions(console, processHandler, executor);
-    final AnAction[] newActions = new AnAction[actions.length + 2];
-    System.arraycopy(actions, 0, newActions, 0, actions.length);
+    // These actions are effectively added only to the Run tool window. For Debug see DartCommandLineDebugProcess.registerAdditionalActions()
+    final List<AnAction> actions = new ArrayList(Arrays.asList(super.createActions(console, processHandler, executor)));
+    addObservatoryActions(actions, processHandler);
+    return actions.toArray(new AnAction[actions.size()]);
+  }
 
-    newActions[newActions.length - 2] = new Separator();
-
-    newActions[newActions.length - 1] =
-      new OpenDartObservatoryUrlAction("http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort,
-                                       () -> !processHandler.isProcessTerminated());
-
-    return newActions;
+  protected void addObservatoryActions(List<AnAction> actions, final ProcessHandler processHandler) {
+    actions.add(new Separator());
+    actions.add(new OpenDartObservatoryUrlAction(
+      "http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort,
+      () -> !processHandler.isProcessTerminated()));
   }
 
   @NotNull

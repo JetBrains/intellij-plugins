@@ -85,7 +85,7 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
     if (accessType == JSAttributeList.AccessType.PACKAGE_LOCAL &&
         attributeList.findAccessTypeElement() == null &&
         attributeList.getNamespaceElement() ==   null &&
-        !(node instanceof JSFunction && ((JSFunction)node).isConstructor())) {
+        !JSResolveUtil.isConstructorFunction(node)) {
       holder.registerProblem(
         nameIdentifier.getPsi(),
         FlexBundle.message("js.implicitly.internal.declaration.problem"),

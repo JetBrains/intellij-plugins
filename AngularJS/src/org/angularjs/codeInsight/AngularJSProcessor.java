@@ -29,7 +29,6 @@ import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +40,8 @@ import java.util.Map;
  */
 public class AngularJSProcessor {
   private static final Map<String, String> NG_REPEAT_IMPLICITS = new HashMap<>();
+  public static final String $EVENT = "$event";
+
   static {
     NG_REPEAT_IMPLICITS.put("$index", "Number");
     NG_REPEAT_IMPLICITS.put("$first", "Boolean");
@@ -94,10 +95,13 @@ public class AngularJSProcessor {
   }
 
   private static boolean scopeMatches(PsiElement element, PsiElement declaration) {
+    final InjectedLanguageManager injector = InjectedLanguageManager.getInstance(element.getProject());
     if (declaration instanceof JSImplicitElement) {
+      if ($EVENT.equals(((JSImplicitElement)declaration).getName())) {
+        return eventScopeMatches(injector, element, declaration.getParent());
+      }
       declaration = declaration.getParent();
     }
-    final InjectedLanguageManager injector = InjectedLanguageManager.getInstance(element.getProject());
     final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
     final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(elementContainer, XmlTag.class, XmlText.class);
     final PsiLanguageInjectionHost declarationContainer = injector.getInjectionHost(declaration);
@@ -109,6 +113,15 @@ public class AngularJSProcessor {
               declarationContainer.getTextOffset() < elementContainer.getTextOffset());
     }
     return true;
+  }
+
+  private static boolean eventScopeMatches(InjectedLanguageManager injector, PsiElement element, PsiElement parent) {
+    XmlAttribute attribute = PsiTreeUtil.getNonStrictParentOfType(element, XmlAttribute.class);
+    if (attribute == null) {
+      final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
+      attribute = PsiTreeUtil.getNonStrictParentOfType(elementContainer, XmlAttribute.class);
+    }
+    return attribute != null && CompletionUtil.getOriginalOrSelf(attribute) == CompletionUtil.getOriginalOrSelf(parent);
   }
 
   public static JSImplicitElementImpl.Builder createVariable(HtmlTag tag, XmlAttribute attribute, String name) {
@@ -157,6 +170,12 @@ public class AngularJSProcessor {
         if (AngularAttributesRegistry.isVariableAttribute(name, element.getProject())) {
           final JSImplicitElementImpl.Builder builder = createVariable((HtmlTag)element.getParent(),
                                                                                                  (XmlAttribute)element, name);
+          myResult.add(builder.toImplicitElement());
+        }
+        if (AngularAttributesRegistry.isEventAttribute(name, element.getProject())) {
+          final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder($EVENT, element).
+            setType(JSImplicitElement.Type.Variable);
+          builder.setTypeString("Event");
           myResult.add(builder.toImplicitElement());
         }
       }

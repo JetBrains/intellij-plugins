@@ -19,7 +19,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
@@ -103,7 +102,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     if (selector == null) return outData;
 
     final Set<String> added = new HashSet<>();
-    final String[] names = selector.split(",");
+    final String[] names = selector.split("\\s*,\\s*");
     for (String selectorName : names) {
       final int not = selectorName.indexOf(":");
       if (not >= 0) {
@@ -236,14 +235,17 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     }
   }
 
+  @Nullable
   private static JSQualifiedName findDirective(PsiElement context) {
+    JSClass clazz = findDirectiveClass(context);
+    return clazz != null ? JSQualifiedNameImpl.buildProvidedNamespace(clazz) : null;
+  }
+
+  @Nullable
+  public static JSClass findDirectiveClass(PsiElement context) {
     final PsiFile file = context.getContainingFile();
     if (file.getLanguage().is(Angular2HTMLLanguage.INSTANCE)) { // inline template
-      final PsiLanguageInjectionHost host = InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file);
-      final JSClass clazz = PsiTreeUtil.getParentOfType(host, JSClass.class);
-      if (clazz != null) {
-        return JSQualifiedNameImpl.buildProvidedNamespace(clazz);
-      }
+      return PsiTreeUtil.getParentOfType(InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file), JSClass.class);
     }
     if (file.getLanguage().is(AngularJSLanguage.INSTANCE)) { // template file with the same name
       final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
@@ -254,12 +256,11 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       if (directiveFile != null) {
         for (PsiElement element : directiveFile.getChildren()) {
           if (element instanceof JSClass) {
-            return JSQualifiedNameImpl.buildProvidedNamespace((JSClass)element);
+            return (JSClass)element;
           }
         }
       }
     }
-
     return null;
   }
 

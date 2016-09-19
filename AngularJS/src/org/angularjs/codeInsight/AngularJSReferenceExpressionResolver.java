@@ -10,8 +10,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularFilterIndex;

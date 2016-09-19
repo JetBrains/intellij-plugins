@@ -34,6 +34,11 @@ public class DartVmServiceListener implements VmServiceListener {
   }
 
   @Override
+  public void connectionOpened() {
+
+  }
+
+  @Override
   public void received(@NotNull final String streamId, @NotNull final Event event) {
     switch (event.getKind()) {
       case BreakpointAdded:
@@ -45,7 +50,11 @@ public class DartVmServiceListener implements VmServiceListener {
       case BreakpointResolved:
         myBreakpointHandler.breakpointResolved(event.getBreakpoint());
         break;
+      case Extension:
+        break;
       case GC:
+        break;
+      case Inspect:
         break;
       case IsolateExit:
         myDebugProcess.isolateExit(event.getIsolate());
@@ -55,6 +64,8 @@ public class DartVmServiceListener implements VmServiceListener {
       case IsolateStart:
         break;
       case IsolateUpdate:
+        break;
+      case None:
         break;
       case PauseBreakpoint:
       case PauseException:
@@ -75,12 +86,21 @@ public class DartVmServiceListener implements VmServiceListener {
       case Resume:
         myDebugProcess.isolateResumed(event.getIsolate());
         break;
+      case ServiceExtensionAdded:
+        break;
       case VMUpdate:
         break;
       case WriteEvent:
         break;
       case Unknown:
         break;
+    }
+  }
+
+  @Override
+  public void connectionClosed() {
+    if (myDebugProcess.isRemoteDebug()) {
+      myDebugProcess.getSession().stop();
     }
   }
 
@@ -117,6 +137,9 @@ public class DartVmServiceListener implements VmServiceListener {
         // Shouldn't happen. IDE doesn't allow to set 2 breakpoints on one line.
         LOG.error(vmBreakpoints.size() + " breakpoints hit in one shot.");
       }
+
+      // Remove any temporary (run to cursor) breakpoints.
+      myBreakpointHandler.removeTemporaryBreakpoints(isolateRef.getId());
 
       final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myBreakpointHandler.getXBreakpoint(vmBreakpoints.get(0));
 

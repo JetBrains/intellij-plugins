@@ -17,7 +17,7 @@ Button:up {
 global {
 }
 
-<error descr="Selector matches unknown element IncorrectSelector">IncorrectSelector</error> {
+<warning descr="Selector matches unknown element IncorrectSelector">IncorrectSelector</warning> {
 }
 
 * {

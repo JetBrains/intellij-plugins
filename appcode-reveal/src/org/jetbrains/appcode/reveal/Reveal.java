@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.mac.foundation.NSWorkspace;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.cidr.AppleScript;
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
@@ -23,62 +24,72 @@ import java.util.List;
 public class Reveal {
   public static final Logger LOG = Logger.getInstance("#" + Reveal.class.getPackage().getName());
 
-  @Nullable
-  private static File getRevealBundle() {
+  private static final List<String> APPLICATION_BUNDLE_IDENTIFIERS =
+    ContainerUtil.newArrayList("com.ittybittyapps.Reveal2", "com.ittybittyapps.Reveal");
 
-    String path = NSWorkspace.absolutePathForAppBundleWithIdentifier("com.ittybittyapps.Reveal");
-    if (path == null) return null;
-    
-    File result = new File(path);
-    return result.exists() ? result : null;
+  @Nullable
+  public static File getDefaultRevealApplicationBundle() {
+    for (String identifier: APPLICATION_BUNDLE_IDENTIFIERS) {
+      String path = NSWorkspace.absolutePathForAppBundleWithIdentifier(identifier);
+      if (path != null) {
+        File file = new File(path);
+        if (file.exists()) {
+          return file;
+        }
+      }
+    }
+
+    return null;
   }
 
   @Nullable
-  private static File getRevealInspectionScript() {
-    File bundle = getRevealBundle();
-    if (bundle == null) return null;
-
+  private static File getRevealInspectionScript(@NotNull File bundle) {
     File result = new File(bundle, "/Contents/Resources/InspectApplication.scpt");
     return result.exists() ? result : null;
   }
 
-  @Contract("null -> null")
-  public static File getRevealLib(@Nullable AppleSdk sdk) {
+  @Contract("_, null -> null")
+  public static File getRevealLib(@NotNull File bundle, @Nullable AppleSdk sdk) {
     if (sdk == null) return null;
 
-    File bundle = getRevealBundle();
-    if (bundle == null) return null;
-
     ApplePlatform platform = sdk.getPlatform();
-    String libraryPath = null;
+    String libraryPath = "/Contents/SharedSupport/";
 
     if (platform.isIOS()) {
-      libraryPath = "/Contents/SharedSupport/iOS-Libraries/libReveal.dylib";
+      libraryPath += "iOS-Libraries/";
     } else if (platform.isTv()) {
-      libraryPath = "/Contents/SharedSupport/tvOS-Libraries/libReveal-tvOS.dylib";
+      libraryPath += "tvOS-Libraries/";
     }
 
-    if (libraryPath == null) return null;
-
+    if (isCompatibleWithRevealTwoOrHigher(bundle)) {
+      libraryPath += "RevealServer.framework/RevealServer";
+    } else if (platform.isTv()) {
+      libraryPath += "libReveal-tvOS.dylib";
+    } else {
+      libraryPath += "libReveal.dylib";
+    }
+    
     File result = new File(bundle, libraryPath);
     return result.exists() ? result : null;
   }
 
-  public static boolean isCompatible() {
-    Version version = getRevealVersion();
+  public static boolean isCompatible(@NotNull File bundle) {
+    Version version = getRevealVersion(bundle);
     return version != null && version.isOrGreaterThan(2299);
   }
 
-  public static boolean isCompatibleWithRevealOnePointSixOrHigher() {
-    Version version = getRevealVersion();
+  public static boolean isCompatibleWithRevealOnePointSixOrHigher(@NotNull File bundle) {
+    Version version = getRevealVersion(bundle);
     return version != null && version.isOrGreaterThan(5589);
   }
 
-  @Nullable
-  public static Version getRevealVersion() {
-    File bundle = getRevealBundle();
-    if (bundle == null) return null;
+  public static boolean isCompatibleWithRevealTwoOrHigher(@NotNull File bundle) {
+    Version version = getRevealVersion(bundle);
+    return version != null && version.isOrGreaterThan(8378);
+  }
 
+  @Nullable
+  public static Version getRevealVersion(@NotNull File bundle) {
     Plist plist = PlistDriver.readAnyFormatSafe(new File(bundle, "Contents/Info.plist"));
     if (plist == null) return null;
 
@@ -93,30 +104,30 @@ public class Reveal {
                        parts.size() > 2 ? StringUtil.parseInt(parts.get(2), 0) : 0);
   }
 
-  public static void refreshReveal(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+  public static void refreshReveal(@NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
     UsageTrigger.trigger("appcode.reveal.showInReveal");
 
-    if (isCompatibleWithRevealOnePointSixOrHigher()) {
-      refreshRevealPostOnePointSix(bundleID, deviceName);
+    if (isCompatibleWithRevealOnePointSixOrHigher(revealBundle)) {
+      refreshRevealPostOnePointSix(revealBundle, bundleID, deviceName);
     } else {
       refreshRevealPreOnePointSix(bundleID, deviceName);
     }
   }
 
-  private static void refreshRevealPostOnePointSix(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
-    // Reveal 1.6 bundles the refresh script with the application — execute it using osascript
-    File inspectionScript = getRevealInspectionScript();
+  private static void refreshRevealPostOnePointSix(@NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
+    // Reveal 1.6 and later bundle the refresh script with the application — execute it using osascript
+    File inspectionScript = getRevealInspectionScript(revealBundle);
     if (inspectionScript == null) {
       throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found.");
     }
-
+    
     try {
-      ProcessBuilder pb = new ProcessBuilder(
-        ExecUtil.getOsascriptPath(),
-        inspectionScript.toString(),
-        bundleID,
-        deviceName
-      );
+      List<String> args = ContainerUtil.newArrayList(ExecUtil.getOsascriptPath(),
+                                                     inspectionScript.toString(),
+                                                     bundleID);
+      ContainerUtil.addIfNotNull(args, deviceName);
+
+      ProcessBuilder pb = new ProcessBuilder(args);
 
       Process p = pb.start();
       p.waitFor();
@@ -126,16 +137,20 @@ public class Reveal {
     }
   }
 
-  private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+  private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
     // Pre Reveal 1.6, the refresh script was not bundled with the application
     String script = "activate\n" +
             "repeat with doc in documents\n" +
             " refresh doc " +
-            "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"" +
-            "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"" +
-            "   when available\n" +
-            "end repeat\n" +
-            "activate\n";
+            "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"";
+
+    if (deviceName != null) {
+      script += "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"";
+    }
+
+    script += "   when available\n" +
+              "end repeat\n" +
+              "activate\n";
 
     try {
       AppleScript.tell("Reveal",

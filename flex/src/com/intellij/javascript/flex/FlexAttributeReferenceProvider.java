@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ProcessingContext;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -107,7 +106,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-  private static PsiReference[] getClassRefs(final JSAttributeNameValuePairImpl element, final @NotNull String baseClassFqns) {
+  private static PsiReference[] getClassRefs(@NotNull final JSAttributeNameValuePairImpl element, final @NotNull String baseClassFqns) {
     final ASTNode valueNode = element.findValueNode();
 
     if (valueNode != null) {

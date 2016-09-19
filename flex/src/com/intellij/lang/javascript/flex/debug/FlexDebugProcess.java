@@ -524,7 +524,7 @@ public class FlexDebugProcess extends XDebugProcess {
       }
       if (commandOutput == null) break;
 
-      if (commandOutput.contains("Player session terminated")) {
+      if (commandOutput.contains("Player session terminated") && !(command instanceof SuspendResumeDebuggerCommand)) {
         handleProbablyUnexpectedStop(commandOutput);
         break;
       }
@@ -1057,7 +1057,7 @@ public class FlexDebugProcess extends XDebugProcess {
       myConsoleView.print(myFdbLaunchCommand + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
     }
 
-    myOutputAlarm = new Alarm(Alarm.ThreadToUse.SHARED_THREAD, myConsoleView);
+    myOutputAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myConsoleView);
 
     scheduleOutputReading();
     scheduleFdbErrorStreamReading();

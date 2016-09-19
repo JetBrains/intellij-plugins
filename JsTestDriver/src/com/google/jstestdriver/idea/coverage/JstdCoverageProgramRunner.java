@@ -2,7 +2,6 @@ package com.google.jstestdriver.idea.coverage;
 
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunProfileState;
-import com.google.jstestdriver.idea.execution.NopProcessHandler;
 import com.google.jstestdriver.idea.server.JstdBrowserInfo;
 import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
@@ -19,6 +18,7 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;

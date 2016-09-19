@@ -8,10 +8,11 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.context.JSApplyCallElement;
+import com.intellij.lang.javascript.psi.resolve.context.JSApplyContextElement;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
 import com.intellij.lang.javascript.psi.util.JSUtils;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -71,7 +72,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         JSType type = JSAnyType.get(methodExpr, false);
         if (methodExpr instanceof JSReferenceExpression) {
           PsiElement resolve = ((JSReferenceExpression)methodExpr).resolve();
-          if (resolve instanceof JSFunction && ((JSFunction)resolve).isConstructor() && resolve.getParent() instanceof JSClass) {
+          if (JSResolveUtil.isConstructorFunction(resolve) && resolve.getParent() instanceof JSClass) {
             resolve = resolve.getParent();
           }
           if (resolve instanceof JSClass || resolve == null) {
@@ -104,10 +105,10 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     if (JSTypeUtils.isActionScriptVectorType(type)) {
       type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
     }
-    final JSElement peek = myContext.peekJSElementToApply();
-    if (peek instanceof JSCallExpression) myContext.popJSElementToApply(); // MyClass(anyVar) is cast to MyClass
+    final JSApplyContextElement peek = myContext.peekJSElementToApply();
+    if (peek instanceof JSApplyCallElement) myContext.popJSElementToApply(); // MyClass(anyVar) is cast to MyClass
     addType(type, resolveResult);
-    if (peek instanceof JSCallExpression) myContext.pushJSElementToApply(peek);
+    if (peek instanceof JSApplyCallElement) myContext.pushJSElementToApply(peek);
   }
 
   @Override
@@ -131,7 +132,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           isInsideRepeaterTag(xmlTag)) {
         final PsiElement arrayClass = ActionScriptClassResolver.findClassByQNameStatic(ARRAY_CLASS_NAME, xmlToken);
         if (arrayClass != null) {
-          final String arrayType = new BaseJSSymbolProcessor.TagContextBuilder(resolveResult, null).typeName;
+          final String arrayType = new JSTagContextBuilder(resolveResult, null).typeName;
           JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
           JSType type;
           if (arrayType != null) {
@@ -162,7 +163,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
     PsiElement parent = xmlTag;
     while ((parent = parent.getParent()) instanceof XmlTag) {
-      if (REPEATER_CLASS_FQN.equals(new BaseJSSymbolProcessor.TagContextBuilder(parent, "").typeName)) {
+      if (REPEATER_CLASS_FQN.equals(new JSTagContextBuilder(parent, "").typeName)) {
         return true;
       }
     }

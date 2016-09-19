@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PlaceProvider;
 import com.intellij.ui.components.labels.LinkLabel;
-import com.intellij.ui.components.labels.LinkListener;
 import jetbrains.communicator.core.users.User;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,21 +113,13 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
       comp.setForeground(contentType.getAttributes().getForegroundColor());
       myPanel.add(comp);
     }
-
   }
 
   @Override
   public void printHyperlink(String s, final HyperlinkInfo info) {
     if (myLength >= MAX_LENGTH) return;
 
-    LinkLabel linkLabel = new LinkLabel(linkText(s), null, new LinkListener() {
-      @Override
-      public void linkSelected(LinkLabel aSource, Object aLinkData) {
-        info.navigate(myProject);
-      }
-    });
-
-    myPanel.add(linkLabel);
+    myPanel.add((LinkLabel)LinkLabel.create(linkText(s), () -> info.navigate(myProject)));
   }
 
   private static String linkText(String s) {
@@ -183,12 +174,9 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
     return null;
   }
 
-  public JComponent getSearchComponent() {
-    return null;
-  }
   @Override
   @NotNull
-public AnAction[] createConsoleActions() {
-  return AnAction.EMPTY_ARRAY;
-}
+  public AnAction[] createConsoleActions() {
+    return AnAction.EMPTY_ARRAY;
+  }
 }

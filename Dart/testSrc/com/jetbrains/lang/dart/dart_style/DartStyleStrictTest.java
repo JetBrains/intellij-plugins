@@ -37,6 +37,9 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:13  adjacent string lines all split together;");
 
     KNOWN_TO_FAIL_STRICT.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations");
+
+    KNOWN_TO_FAIL_STRICT.add("whitespace/directives.unit:53  configuration"); // https://github.com/munificent/dep-interface-libraries
+    KNOWN_TO_FAIL_STRICT.add("whitespace/directives.unit:57  configuration"); // https://github.com/munificent/dep-interface-libraries
   }
 
   /**

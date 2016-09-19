@@ -1,38 +1,38 @@
 package com.intellij.javascript.karma.execution.filter;
 
+import com.intellij.execution.filters.FileHyperlinkRawData;
 import com.intellij.javascript.karma.tree.KarmaBrowserErrorFilter;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
-import org.junit.Assert;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Sergey Simonchik
- */
+import java.util.List;
+
 public class KarmaBrowserErrorFilterTest extends TestCase {
 
   public void testBasePath() throws Exception {
     String s = "at http://localhost:9876/base/spec/personSpec.js?1368878723000:22";
-    KarmaBrowserErrorFilter.LinkInfo actual = KarmaBrowserErrorFilter.createLinkInfo(s);
-    KarmaBrowserErrorFilter.LinkInfo expected = new KarmaBrowserErrorFilter.LinkInfo(
-      3, s.length(), "spec/personSpec.js", 22
-    );
-    Assert.assertEquals(expected, actual);
+    doTest(s, new FileHyperlinkRawData("spec/personSpec.js", 21, -1, 3, s.length()));
   }
 
   public void testAbsolutePath() throws Exception {
-    String s = "at http://localhost:9876/absolute/home/segrey/WebstormProjects/karma-chai-sample/test/test.js?1378466989000:1";
-    KarmaBrowserErrorFilter.LinkInfo actual = KarmaBrowserErrorFilter.createLinkInfo(s);
-    KarmaBrowserErrorFilter.LinkInfo expected = new KarmaBrowserErrorFilter.LinkInfo(
-      3, s.length(), "/home/segrey/WebstormProjects/karma-chai-sample/test/test.js", 1
-    );
-    Assert.assertEquals(expected, actual);
+    String s = "at http://localhost:9876/absolute/home/karma-chai-sample/test/test.js?1378466989000:1";
+    doTest(s, new FileHyperlinkRawData("/home/karma-chai-sample/test/test.js", 0, -1, 3, s.length()));
   }
 
   public void testAbsolutePathWithoutPath() throws Exception {
     String s = "at http://localhost:9876/absoluteC:/Users/User/AppData/Roaming/npm/node_modules/karma-commonjs/client/commonjs_bridge.js?1392838273000:21";
-    KarmaBrowserErrorFilter.LinkInfo actual = KarmaBrowserErrorFilter.createLinkInfo(s);
-    KarmaBrowserErrorFilter.LinkInfo expected = new KarmaBrowserErrorFilter.LinkInfo(
-      3, s.length(), "C:/Users/User/AppData/Roaming/npm/node_modules/karma-commonjs/client/commonjs_bridge.js", 21
+    FileHyperlinkRawData expected = new FileHyperlinkRawData(
+      "C:/Users/User/AppData/Roaming/npm/node_modules/karma-commonjs/client/commonjs_bridge.js",
+      20, -1, 3, s.length()
     );
-    Assert.assertEquals(expected, actual);
+    doTest(s, expected);
+  }
+
+  private static void doTest(@NotNull String line, @Nullable FileHyperlinkRawData expected) {
+    List<FileHyperlinkRawData> actualList = KarmaBrowserErrorFilter.FINDER.find(line);
+    List<FileHyperlinkRawData> expectedList = ContainerUtil.createMaybeSingletonList(expected);
+    assertEquals(expectedList, actualList);
   }
 }

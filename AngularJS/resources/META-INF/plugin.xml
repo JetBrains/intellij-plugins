@@ -17,7 +17,7 @@
     <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider" order="first"/>
     <xml.tagNameProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" />
     <xml.elementDescriptorProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" order="last"/>
-    <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="first"/>
+    <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="first" id="AngularJS"/>
 
     <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
@@ -55,8 +55,8 @@
     <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
 
-    <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
-    <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first"/>
+    <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector" id="angular"/>
+    <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first" id="angular2"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
                             id="AngularJSCompletionContributor" order="first"/>
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJSDICompletionContributor"
@@ -93,6 +93,7 @@
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJS2IndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
+    <elementScopeProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSResolveScopeProvider"/>
   </extensions>
 
   <actions>

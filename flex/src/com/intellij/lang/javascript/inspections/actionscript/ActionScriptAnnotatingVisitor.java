@@ -895,7 +895,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           annotation.registerFix(new RemoveASTNodeFix(fixMessageKey, astNode));
         }
       }
-      else if (element instanceof JSFunction && ((JSFunction)element).isConstructor()) {
+      else if (JSResolveUtil.isConstructorFunction(element)) {
         JSAttributeList.AccessType accessType = attributeList.getAccessType();
 
         if (accessType != JSAttributeList.AccessType.PUBLIC) {
@@ -940,7 +940,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
           annotation.registerFix(new RemoveASTNodeFix("javascript.fix.remove.static.modifier", modifierElement.getNode()));
         }
-        else if (element instanceof JSFunction && ((JSFunction)element).isConstructor()) {
+        else if (JSResolveUtil.isConstructorFunction(element)) {
           modifierProblem(attributeList, JSAttributeList.ModifierType.STATIC,
                           "javascript.validation.message.constructor.cannot.be.static",
                           "javascript.fix.remove.static.modifier");
@@ -1404,7 +1404,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   @Override
   protected boolean processMethodExpressionResolveResult(JSCallExpression callExpression, JSReferenceExpression methodExpression, PsiElement resolveResult, JSType type) {
     if (callExpression instanceof JSNewExpression) {
-      if (resolveResult instanceof JSFunction && ((JSFunction)resolveResult).isConstructor()) {
+      if (JSResolveUtil.isConstructorFunction(resolveResult)) {
         resolveResult = resolveResult.getParent(); // TODO: there is no need once our stubs for interface will lose constructors for interfaces
       }
 

@@ -13,8 +13,8 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.components.ComponentsKt;
 import com.intellij.ui.content.Content;
-import com.intellij.ui.layout.LayoutKt;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +87,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
     Font font = colorsScheme.getFont(EditorFontType.PLAIN);
     Color background = colorsScheme.getDefaultBackground();
     Color foreground = getTextForeground(colorsScheme);
-    return LayoutKt.htmlComponent(getWarningMessage(), font, background, foreground);
+    return ComponentsKt.htmlComponent(getWarningMessage(), font, background, foreground);
   }
 
   @NotNull

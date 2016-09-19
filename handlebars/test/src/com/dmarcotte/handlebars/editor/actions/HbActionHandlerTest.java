@@ -2,7 +2,6 @@ package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.file.HbFileType;
 import com.intellij.codeInsight.generation.CommentByBlockCommentHandler;
-import com.intellij.codeInsight.generation.actions.CommentByLineCommentAction;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -11,6 +10,7 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.actionSystem.TypedAction;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +62,7 @@ public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtur
    */
   void doLineCommentTest(@NotNull String before, @NotNull String expected) {
     doExecuteActionTest(before, expected,
-                        () -> new CommentByLineCommentAction().actionPerformedImpl(myFixture.getProject(), myFixture.getEditor()));
+                        () -> PlatformTestUtil.invokeNamedAction(IdeActions.ACTION_COMMENT_LINE));
   }
 
   /**

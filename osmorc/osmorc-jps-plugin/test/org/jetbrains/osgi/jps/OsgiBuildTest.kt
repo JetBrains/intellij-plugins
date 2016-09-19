@@ -32,7 +32,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     createFile("main/res/skipped.txt", "(empty)")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
@@ -43,7 +43,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     createFile("main/res/skipped.txt", "(empty)")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0"))
@@ -54,7 +54,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("cnf/build.bnd", "src=src\nbin=out")
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "OSGI-OPT/src/main/Main.java"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
@@ -66,7 +66,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("main/src/main/Main.java", "package main;\n\npublic class Main { public void main() { util.Util.util(); } }")
     createFile("main/src/util/Util.java", "package util;\n\npublic class Util { public static void util() { } }")
     createFile("main/res/skipped.txt", "(empty)")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
@@ -77,7 +77,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("main/src/main/Main.java", "package main;\n\npublic class Main { public void main() { util.Util.util(); } }")
     createFile("main/src/util/Util.java", "package util;\n\npublic class Util { public static void util() { } }")
     createFile("main/res/skipped.txt", "(empty)")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0",
@@ -89,7 +89,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     extension(myModule).properties.myAdditionalJARContents.add(OsmorcJarContentEntry(getAbsolutePath("content/readme.txt"), "readme.txt"))
     createFile("content/readme.txt", "Hiya there.")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "readme.txt"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
@@ -101,7 +101,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     createFile("main/res/included.txt", "")
     createFile("main/res/excluded.txt", "")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "included.txt"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
@@ -115,7 +115,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nPrivate-Package: main,util")
     createFile("main/src/main/Main.java", "package main;\n\npublic class Main { String greeting() { return util.Util.GREET; } }")
     createFile("util/src/util/Util.java", "package util;\n\npublic interface Util { String GREET = \"Hello\"; }")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Private-Package=main,util"))
@@ -125,24 +125,24 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     bndBuild(myModule)
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
-    makeAll().assertBundleCompiled(myModule)
+    buildAllModules().assertBundleCompiled(myModule)
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
-    makeAll().assertUpToDate()
+    buildAllModules().assertUpToDate()
 
     changeFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }\n")
-    makeAll().assertBundleCompiled(myModule)
-    makeAll().assertUpToDate()
+    buildAllModules().assertBundleCompiled(myModule)
+    buildAllModules().assertUpToDate()
 
     changeFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.1\nExport-Package: main")
-    makeAll().assertBundleCompiled(myModule)
-    makeAll().assertUpToDate()
+    buildAllModules().assertBundleCompiled(myModule)
+    buildAllModules().assertUpToDate()
 
-    rebuildAll()
-    makeAll().assertUpToDate()
+    rebuildAllModules()
+    buildAllModules().assertUpToDate()
 
     extension(myModule).properties.myAlwaysRebuildBundleJar = true
-    makeAll().assertBundleCompiled(myModule)
-    makeAll().assertBundleCompiled(myModule)
+    buildAllModules().assertBundleCompiled(myModule)
+    buildAllModules().assertBundleCompiled(myModule)
   }
 
   fun testRebuildOnDependencyChange() {
@@ -153,19 +153,19 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main;-split-package:=merge-first")
     createFile("main/src/main/Main.java", "package main;\n\npublic class Main { String greeting() { return Sub.GREET; } }")
     createFile("sub/src/main/Sub.java", "package main;\n\npublic interface Sub { String GREET = \"Hello\"; }")
-    makeAll().assertBundleCompiled(myModule)
-    makeAll().assertUpToDate()
+    buildAllModules().assertBundleCompiled(myModule)
+    buildAllModules().assertUpToDate()
 
     changeFile("sub/src/main/Sub.java", "package main;\n\npublic interface Sub { String GREET = \"Hi\"; }")
-    makeAll().assertBundleCompiled(myModule)
-    makeAll().assertUpToDate()
+    buildAllModules().assertBundleCompiled(myModule)
+    buildAllModules().assertUpToDate()
   }
 
   fun testUnusedImport() {
     ideaBuild(myModule)
     extension(myModule).properties.myAdditionalProperties = mapOf("Import-Package" to "org.osgi.*")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
@@ -180,7 +180,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createFile("main/src/util/Util.java", "package util;\n\npublic class Util { public static void util() { } }")
     createFile("main/META-INF/MANIFEST.MF",
         "Manifest-Version: 1.0\nBundle-Name: main\nBundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main;version=\"1.0.0\"\n")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
@@ -189,7 +189,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
   fun testEmptyProject() {
     bndBuild(myModule)
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nImport-Package: *\nExport-Package: !*")
-    makeAll().assertSuccessful()
+    buildAllModules().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0"))

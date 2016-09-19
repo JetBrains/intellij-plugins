@@ -8,7 +8,6 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 
 public class HbTodoIndexTest extends LightPlatformCodeInsightTestCase {
-
   @Override
   @NotNull
   protected String getTestDataPath() {
@@ -23,6 +22,9 @@ public class HbTodoIndexTest extends LightPlatformCodeInsightTestCase {
     checkTodoCount(2);
   }
 
+  public void testHtmlTodoOnly() {
+    checkTodoCount(1);
+  }
 
   private void checkTodoCount(int expectedTodoCount) {
     configureByFile(getTestName(true) + ".hbs");

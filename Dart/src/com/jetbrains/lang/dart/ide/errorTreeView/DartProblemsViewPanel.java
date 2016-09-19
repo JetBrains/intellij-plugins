@@ -29,7 +29,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
-import com.intellij.ui.*;
+import com.intellij.ui.AutoScrollToSourceHandler;
+import com.intellij.ui.PopupHandler;
+import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.TableSpeedSearch;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
@@ -42,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import java.awt.*;
@@ -58,9 +60,8 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
   @NotNull private JBLabel mySummaryLabel = new JBLabel();
-  @NotNull private HoverHyperlinkLabel myResetFilterHyperlink = new HoverHyperlinkLabel(DartBundle.message("reset.filter") + ".");
 
-  // may be remember settings and filters in workspace.xml? (see ErrorTreeViewConfiguration)
+  // TODO: Remember settings and filters in workspace.xml. (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
 
   @NotNull private final DartProblemsFilter myFilter;
@@ -137,17 +138,14 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   private JComponent createToolbar() {
     final DefaultActionGroup group = new DefaultActionGroup();
 
-    addReanalyzeAndRestartActions(group);
+    addReanalyzeAction(group);
     group.addSeparator();
 
     addAutoScrollToSourceAction(group);
-    // may be add 'Scroll from source' or 'Autoscroll from source' action (WEB-15792)
-    group.addSeparator();
-
     addGroupBySeverityAction(group);
     group.addAction(new FilterProblemsAction());
-
     group.addSeparator();
+
     group.addAction(new ContextHelpAction("reference.toolWindow.DartAnalysis"));
 
     return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
@@ -165,36 +163,26 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   private JPanel createStatusBar() {
     final JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(mySummaryLabel);
-    panel.add(myResetFilterHyperlink);
-    myResetFilterHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
-      @Override
-      protected void hyperlinkActivated(HyperlinkEvent e) {
-        myFilter.resetAllFilters();
-        fireGroupingOrFilterChanged();
-      }
-    });
-
     mySummaryLabel.setText("");
-    myResetFilterHyperlink.setVisible(false);
 
     return panel;
   }
 
   private void updateStatusBar() {
     mySummaryLabel.setText(((DartProblemsTableModel)myTable.getModel()).getStatusText());
-    myResetFilterHyperlink.setVisible(myFilter.areFiltersApplied());
   }
 
-  private static void addReanalyzeAndRestartActions(@NotNull final DefaultActionGroup group) {
+  private static void addReanalyzeAction(@NotNull final DefaultActionGroup group) {
     final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
     if (reanalyzeAction != null) {
       group.add(reanalyzeAction);
     }
 
-    final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
-    if (restartAction != null) {
-      group.add(restartAction);
-    }
+    // Restart action is now discoverable using Find Action only
+    //final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
+    //if (restartAction != null) {
+    //  group.add(restartAction);
+    //}
   }
 
   private void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group) {

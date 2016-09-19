@@ -4,13 +4,10 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.testFramework.util.BrowserStacktraceFilter;
+import com.intellij.javascript.testFramework.util.BrowserStacktraceFilters;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
 
 public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
 
@@ -25,36 +22,15 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
   @Nullable
   @Override
   public Filter getFilter(@NotNull String nodeType, @NotNull String nodeName, @Nullable String nodeArguments) {
+    KarmaConfig config = myKarmaServer.getKarmaConfig();
+    String baseDir = config != null ? config.getBasePath() : null;
     if ("browser".equals(nodeType)) {
-      return getBrowserFilter(nodeName);
+      return BrowserStacktraceFilters.createFilter(nodeName, myProject, baseDir);
     }
     if ("browserError".equals(nodeType)) {
       return getBrowserErrorFilter();
     }
     return null;
-  }
-
-  @NotNull
-  private Filter getBrowserFilter(@NotNull String browserName) {
-    Function<String, File> fileFinder = s -> {
-      File file = new File(s);
-      if (file.isFile() && file.isAbsolute()) {
-        return file;
-      }
-      KarmaConfig karmaConfig = myKarmaServer.getKarmaConfig();
-      if (karmaConfig != null) {
-        String basePath = karmaConfig.getBasePath();
-        File baseDir = new File(basePath);
-        if (baseDir.isDirectory()) {
-          file = new File(baseDir, s);
-          if (file.isFile()) {
-            return file;
-          }
-        }
-      }
-      return null;
-    };
-    return new BrowserStacktraceFilter(myProject, browserName, fileFinder);
   }
 
   @Nullable

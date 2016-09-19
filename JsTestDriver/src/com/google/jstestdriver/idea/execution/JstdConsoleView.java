@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.execution;
 import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;

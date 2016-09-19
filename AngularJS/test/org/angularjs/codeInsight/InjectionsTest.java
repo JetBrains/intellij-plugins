@@ -232,6 +232,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals(CSSLanguage.INSTANCE, element.getLanguage());
     });
   }
+
   public void testUnterminated() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.enableInspections(UnterminatedStatementJSInspection.class);
@@ -263,4 +264,15 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSDefinitionExpression.class);
     });
   }
+
+  public void test$EventExternalCompletion() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(),
+                                        () -> myFixture.testCompletion("$event.html", "$event.after.html", "angular2.js"));
+  }
+
+  public void test$EventInlineCompletion() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(),
+                                        () -> myFixture.testCompletion("$event.ts", "$event.after.ts", "angular2.js"));
+  }
+
 }
