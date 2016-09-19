@@ -1,8 +1,11 @@
 package com.intellij.javascript.karma.tree;
 
+import com.intellij.execution.filters.AbstractFileHyperlinkFilter;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.javascript.karma.KarmaConfig;
+import com.intellij.javascript.karma.filter.KarmaBrowserErrorFilter;
+import com.intellij.javascript.karma.filter.KarmaSourceMapStacktraceFilter;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.testFramework.util.BrowserStacktraceFilters;
 import com.intellij.openapi.project.Project;
@@ -25,7 +28,10 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
     KarmaConfig config = myKarmaServer.getKarmaConfig();
     String baseDir = config != null ? config.getBasePath() : null;
     if ("browser".equals(nodeType)) {
-      return BrowserStacktraceFilters.createFilter(nodeName, myProject, baseDir);
+      AbstractFileHyperlinkFilter browserFilter = BrowserStacktraceFilters.createFilter(nodeName, myProject, baseDir);
+      if (browserFilter != null) {
+        return new KarmaSourceMapStacktraceFilter(myProject, baseDir, browserFilter);
+      }
     }
     if ("browserError".equals(nodeType)) {
       return getBrowserErrorFilter();

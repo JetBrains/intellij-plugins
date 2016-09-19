@@ -1,4 +1,4 @@
-package com.intellij.javascript.karma.tree;
+package com.intellij.javascript.karma.filter;
 
 import com.intellij.execution.filters.PatternBasedFileHyperlinkFilter;
 import com.intellij.execution.filters.PatternBasedFileHyperlinkRawDataFinder;
