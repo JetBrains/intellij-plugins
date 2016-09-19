@@ -74,7 +74,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final boolean myRemoteDebug;
   private final boolean myEntryPointInLibFolder;
   private final int myTimeout;
-  private final VirtualFile myCurrentWorkingDirectory;
+  @Nullable private final VirtualFile myCurrentWorkingDirectory;
 
   @Nullable String myRemoteProjectRootUri;
 
@@ -87,7 +87,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                    final boolean remoteDebug,
                                    final boolean entryPointInLibFolder,
                                    final int timeout,
-                                   final VirtualFile currentWorkingDirectory) {
+                                   @Nullable final VirtualFile currentWorkingDirectory) {
     super(session);
     myDebuggingHost = debuggingHost;
     myObservatoryPort = observatoryPort;
@@ -286,7 +286,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
         LOG.assertTrue(file.getPath().startsWith(localProjectRoot.getPath() + "/"), file.getPath() + "," + localProjectRoot.getPath());
         final String relPath = file.getPath().substring(localProjectRoot.getPath().length()); // starts with slash
-        if (relPath.startsWith("/lib/") && remoteUri.endsWith(relPath)) {
+        if (remoteUri.endsWith(relPath)) {
           howManyFilesMatch++;
           myRemoteProjectRootUri = remoteUri.substring(0, remoteUri.length() - relPath.length());
         }
@@ -456,7 +456,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         if (filePath.startsWith(projectPath)) {
           result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
         }
-      } else {
+      } else  if (myCurrentWorkingDirectory != null) {
         // Handle projects with no pubspecs.
         final String projectPath = myCurrentWorkingDirectory.getPath();
         final String filePath = file.getPath();
