@@ -172,8 +172,9 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     myCreateSampleProjectCheckBox.setEnabled(true);
     myTemplatesList.setEnabled(true);
 
-    final String selectedTemplateName = PropertiesComponent.getInstance().getValue(DART_PROJECT_TEMPLATE);
-    myCreateSampleProjectCheckBox.setSelected(selectedTemplateName != null);
+    final PropertiesComponent properties = PropertiesComponent.getInstance();
+    final String selectedTemplateName = properties.getValue(DART_PROJECT_TEMPLATE);
+    myCreateSampleProjectCheckBox.setSelected(selectedTemplateName != null || !properties.isValueSet(DART_PROJECT_TEMPLATE));
     myTemplatesList.setEnabled(myCreateSampleProjectCheckBox.isSelected());
 
     DartProjectTemplate selectedTemplate = null;
