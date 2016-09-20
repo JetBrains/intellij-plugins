@@ -762,6 +762,32 @@ Dart File
                       ASSERT_STATEMENT
                         PsiElement(assert)('assert')
                         PsiElement(()('(')
+                        ASSIGN_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('x')
+                          ASSIGNMENT_OPERATOR
+                            PsiElement(=)('=')
+                          MULTIPLICATIVE_EXPRESSION
+                            LITERAL_EXPRESSION
+                              PsiElement(NUMBER)('12')
+                            MULTIPLICATIVE_OPERATOR
+                              PsiElement(*)('*')
+                            PARENTHESIZED_EXPRESSION
+                              PsiElement(()('(')
+                              ADDITIVE_EXPRESSION
+                                LITERAL_EXPRESSION
+                                  PsiElement(NUMBER)('2')
+                                ADDITIVE_OPERATOR
+                                  PsiElement(-)('-')
+                                LITERAL_EXPRESSION
+                                  PsiElement(NUMBER)('1')
+                              PsiElement())(')')
+                        PsiElement())(')')
+                        PsiElement(;)(';')
+                      ASSERT_STATEMENT
+                        PsiElement(assert)('assert')
+                        PsiElement(()('(')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('a')
