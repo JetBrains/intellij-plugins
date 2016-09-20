@@ -4531,15 +4531,44 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // optionalPositionalFormalParameters | namedFormalParameters
+  // optionalPositionalFormalParameters (',' namedFormalParameters)? | namedFormalParameters
   public static boolean optionalFormalParameters(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "optionalFormalParameters")) return false;
     if (!nextTokenIs(b, "<optional formal parameters>", LBRACKET, LBRACE)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, OPTIONAL_FORMAL_PARAMETERS, "<optional formal parameters>");
-    r = optionalPositionalFormalParameters(b, l + 1);
+    r = optionalFormalParameters_0(b, l + 1);
     if (!r) r = namedFormalParameters(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // optionalPositionalFormalParameters (',' namedFormalParameters)?
+  private static boolean optionalFormalParameters_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "optionalFormalParameters_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = optionalPositionalFormalParameters(b, l + 1);
+    r = r && optionalFormalParameters_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (',' namedFormalParameters)?
+  private static boolean optionalFormalParameters_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "optionalFormalParameters_0_1")) return false;
+    optionalFormalParameters_0_1_0(b, l + 1);
+    return true;
+  }
+
+  // ',' namedFormalParameters
+  private static boolean optionalFormalParameters_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "optionalFormalParameters_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMA);
+    r = r && namedFormalParameters(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 

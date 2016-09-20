@@ -31,6 +31,8 @@ class Foo {
     var now1 = DateTime();
     var elm1 = Element.html('<u>54</u>');
   }
+
+  int parse(String int, [int start, int end], {int radix, void onError(String source)});
 }
 
 void get _process

@@ -342,7 +342,7 @@ private normalFormalParameters ::= normalFormalParameter (',' normalFormalParame
 
 fieldFormalParameter ::= metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
 
-optionalFormalParameters ::= optionalPositionalFormalParameters | namedFormalParameters
+optionalFormalParameters ::= optionalPositionalFormalParameters (',' namedFormalParameters)? | namedFormalParameters
 private optionalPositionalFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']'
 private namedFormalParameters ::= '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? '}'
 
