@@ -12,6 +12,26 @@ main(){
   }
 }
 
+class Foo {
+  @Foo(parameters: [[1, 1], [2, 4]])
+  foo() {
+    bar( themes: const {
+      "Default": const Theme(const {LoginForm: const _LoginForm("pure-form")}),
+      "Stacked": const Theme(const {LoginForm: const _LoginForm("pure-form pure-form-stacked")})
+    });
+
+    bar( themes: {
+      "Default": Theme({LoginForm: _LoginForm("pure-form")}),
+      "Stacked": Theme({LoginForm: _LoginForm("pure-form pure-form-stacked")})
+    });
+
+    var now = new DateTime();
+    var elm = new Element.html('<u>54</u>');
+
+    var now1 = DateTime();
+    var elm1 = Element.html('<u>54</u>');
+  }
+}
 
 void get _process
   native "return process;";
