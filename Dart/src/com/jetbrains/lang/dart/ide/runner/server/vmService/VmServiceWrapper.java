@@ -111,13 +111,17 @@ public class VmServiceWrapper implements Disposable {
                       handleIsolate(isolateRef, eventKind == EventKind.PauseStart);
 
                       // Handle the case of isolates paused when we connect (this can come up in remote debugging).
-                      if (eventKind == EventKind.PauseBreakpoint || eventKind == EventKind.PauseException || eventKind == EventKind.PauseInterrupted) {
+                      if (eventKind == EventKind.PauseBreakpoint ||
+                          eventKind == EventKind.PauseException ||
+                          eventKind == EventKind.PauseInterrupted) {
                         myDebugProcess.isolateSuspended(isolateRef);
 
                         ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                          final ElementList<Breakpoint> breakpoints = eventKind == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
+                          final ElementList<Breakpoint> breakpoints =
+                            eventKind == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
                           final InstanceRef exception = eventKind == EventKind.PauseException ? event.getException() : null;
-                          myVmServiceListener.onIsolatePaused(isolateRef, breakpoints, exception, event.getTopFrame(), event.getAtAsyncSuspension());
+                          myVmServiceListener
+                            .onIsolatePaused(isolateRef, breakpoints, exception, event.getTopFrame(), event.getAtAsyncSuspension());
                         });
                       }
                     }
@@ -167,7 +171,8 @@ public class VmServiceWrapper implements Disposable {
                                                              setInitialBreakpointsAndResume(isolateRef);
                                                            }
                                                          }));
-    } else {
+    }
+    else {
       checkInitialResume(isolateRef);
     }
   }
@@ -189,7 +194,8 @@ public class VmServiceWrapper implements Disposable {
             doSetInitialBreakpointsAndResume(isolateRef);
           }
         });
-      } else {
+      }
+      else {
         doSetInitialBreakpointsAndResume(isolateRef);
       }
     }
@@ -304,9 +310,7 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void pauseIsolate(@NotNull final String isolateId) {
-    addRequest(() -> {
-      myVmService.pause(isolateId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
-    });
+    addRequest(() -> myVmService.pause(isolateId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
   }
 
   public void computeStackFrames(@NotNull final String isolateId,
