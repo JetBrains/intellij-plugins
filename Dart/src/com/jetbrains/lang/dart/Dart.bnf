@@ -335,13 +335,16 @@ bitwiseOperator ::= '&' | '^' | '|'
 assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|=' | '??='
 equalityOperator ::= '==' | '!='
 
-formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ','? ')'
-                      | '(' namedFormalParameters? ')'
+formalParameterList ::= '(' ')' |
+                        '(' normalFormalParameters (',' optionalFormalParameters)? ','? ')' |
+                        '(' optionalFormalParameters ')'
+private normalFormalParameters ::= normalFormalParameter (',' normalFormalParameter)*
 
 fieldFormalParameter ::= metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
 
-namedFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']' |
-                          '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? '}'
+optionalFormalParameters ::= optionalPositionalFormalParameters | namedFormalParameters
+private optionalPositionalFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']'
+private namedFormalParameters ::= '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? '}'
 
 defaultFormalNamedParameter ::= normalFormalParameter (('=' | ':') expression)? {recoverWhile="default_formal_parameter_recover"}
 private default_formal_parameter_recover ::= !(')' | ',' | ']' | '}')

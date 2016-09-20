@@ -670,7 +670,7 @@ Dart File
                   ID
                     PsiElement(IDENTIFIER)('iterable')
             PsiElement(,)(',')
-            NAMED_FORMAL_PARAMETERS
+            OPTIONAL_FORMAL_PARAMETERS
               PsiElement({)('{')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
@@ -1149,7 +1149,7 @@ Dart File
               PsiElement(IDENTIFIER)('Exception')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
-            NAMED_FORMAL_PARAMETERS
+            OPTIONAL_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER

@@ -27,15 +27,15 @@ public class DartFormalParameterListImpl extends DartPsiCompositeElementImpl imp
   }
 
   @Override
-  @Nullable
-  public DartNamedFormalParameters getNamedFormalParameters() {
-    return findChildByClass(DartNamedFormalParameters.class);
-  }
-
-  @Override
   @NotNull
   public List<DartNormalFormalParameter> getNormalFormalParameterList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNormalFormalParameter.class);
+  }
+
+  @Override
+  @Nullable
+  public DartOptionalFormalParameters getOptionalFormalParameters() {
+    return findChildByClass(DartOptionalFormalParameters.class);
   }
 
 }

@@ -715,7 +715,7 @@ Dart File
         PsiElement(IDENTIFIER)('enableFlags1')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
-      NAMED_FORMAL_PARAMETERS
+      OPTIONAL_FORMAL_PARAMETERS
         PsiElement([)('[')
         DEFAULT_FORMAL_NAMED_PARAMETER
           NORMAL_FORMAL_PARAMETER
@@ -763,7 +763,7 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('test')
       PsiElement(,)(',')
-      NAMED_FORMAL_PARAMETERS
+      OPTIONAL_FORMAL_PARAMETERS
         PsiElement({)('{')
         DEFAULT_FORMAL_NAMED_PARAMETER
           NORMAL_FORMAL_PARAMETER

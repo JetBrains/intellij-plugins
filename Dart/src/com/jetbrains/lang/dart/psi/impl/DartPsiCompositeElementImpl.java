@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -10,7 +9,6 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.DartUseScope;
@@ -80,10 +78,10 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
       if (child instanceof DartFormalParameterList) {
         final DartFormalParameterList formalParameterList = (DartFormalParameterList)child;
         final List<DartNormalFormalParameter> normalFormalParameterList = formalParameterList.getNormalFormalParameterList();
-        final DartNamedFormalParameters namedFormalParameters = formalParameterList.getNamedFormalParameters();
-        if (namedFormalParameters != null) {
+        final DartOptionalFormalParameters optionalFormalParameters = formalParameterList.getOptionalFormalParameters();
+        if (optionalFormalParameters != null) {
           normalFormalParameterList.addAll(
-            ContainerUtil.map(namedFormalParameters.getDefaultFormalNamedParameterList(),
+            ContainerUtil.map(optionalFormalParameters.getDefaultFormalNamedParameterList(),
                               parameter -> parameter.getNormalFormalParameter())
           );
         }
