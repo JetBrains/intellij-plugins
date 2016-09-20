@@ -55,7 +55,8 @@ public class IsolatesInfo {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
     if (info != null) {
       return info.breakpointsSet && info.shouldInitialResume;
-    } else {
+    }
+    else {
       return false;
     }
   }

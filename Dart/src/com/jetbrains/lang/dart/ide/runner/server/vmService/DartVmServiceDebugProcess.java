@@ -72,7 +72,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Nullable private final String myDASExecutionContextId;
   private final boolean myRemoteDebug;
-  private final boolean myEntryPointInLibFolder;
   private final int myTimeout;
   @Nullable private final VirtualFile myCurrentWorkingDirectory;
 
@@ -85,7 +84,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                    @NotNull final DartUrlResolver dartUrlResolver,
                                    @Nullable final String dasExecutionContextId,
                                    final boolean remoteDebug,
-                                   final boolean entryPointInLibFolder,
                                    final int timeout,
                                    @Nullable final VirtualFile currentWorkingDirectory) {
     super(session);
@@ -94,7 +92,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myExecutionResult = executionResult;
     myDartUrlResolver = dartUrlResolver;
     myRemoteDebug = remoteDebug;
-    myEntryPointInLibFolder = entryPointInLibFolder;
     myTimeout = timeout;
     myCurrentWorkingDirectory = currentWorkingDirectory;
 
@@ -215,13 +212,13 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   private void connect() throws IOException {
     final VmService vmService = VmService.connect(getObservatoryUrl("ws", "/ws"));
-    final DartVmServiceListener vmServiceListener = new DartVmServiceListener(
-      this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
+    final DartVmServiceListener vmServiceListener =
+      new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
 
     vmService.addVmServiceListener(vmServiceListener);
 
-    myVmServiceWrapper = new VmServiceWrapper(
-      this, vmService, vmServiceListener, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
+    myVmServiceWrapper =
+      new VmServiceWrapper(this, vmService, vmServiceListener, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
     myVmServiceWrapper.handleDebuggerConnected();
 
     myVmConnected = true;
@@ -267,16 +264,13 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     for (LibraryRef library : libraries) {
       final String remoteUri = library.getUri();
-      if (remoteUri.startsWith("dart:")) continue;
-      if (remoteUri.startsWith("package:")) continue;
+      if (remoteUri.startsWith(DartUrlResolver.DART_PREFIX)) continue;
+      if (remoteUri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) continue;
 
-      final PsiFile[] localFilesWithSameName = ApplicationManager.getApplication().runReadAction(new Computable<PsiFile[]>() {
-        @Override
-        public PsiFile[] compute() {
-          final String remoteFileName = PathUtil.getFileName(remoteUri);
-          final GlobalSearchScope scope = GlobalSearchScopesCore.directoryScope(getSession().getProject(), localProjectRoot, true);
-          return FilenameIndex.getFilesByName(getSession().getProject(), remoteFileName, scope);
-        }
+      final PsiFile[] localFilesWithSameName = ApplicationManager.getApplication().runReadAction((Computable<PsiFile[]>)() -> {
+        final String remoteFileName = PathUtil.getFileName(remoteUri);
+        final GlobalSearchScope scope = GlobalSearchScopesCore.directoryScope(getSession().getProject(), localProjectRoot, true);
+        return FilenameIndex.getFilesByName(getSession().getProject(), remoteFileName, scope);
       });
 
       int howManyFilesMatch = 0;
@@ -295,8 +289,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
       if (howManyFilesMatch == 1) {
         break; // we did the best guess we could
-      } else if (howManyFilesMatch > 0) {
-        // TODO: Look for an additional way to determine `myRemoteProjectRootUri`.
       }
     }
   }
@@ -434,7 +426,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     // file:
     if (uriByIde.startsWith(DartUrlResolver.FILE_PREFIX)) {
       result.add(threeSlashize(uriByIde));
-    } else {
+    }
+    else {
       result.add(uriByIde);
       result.add(threeSlashize(new File(file.getPath()).toURI().toString()));
     }
@@ -459,7 +452,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         if (filePath.startsWith(projectPath)) {
           result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
         }
-      } else  if (myCurrentWorkingDirectory != null) {
+      }
+      else if (myCurrentWorkingDirectory != null) {
         // Handle projects with no pubspecs.
         final String projectPath = myCurrentWorkingDirectory.getPath();
         final String filePath = file.getPath();
@@ -474,28 +468,25 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Nullable
   public XSourcePosition getSourcePosition(@NotNull final String isolateId, @NotNull final ScriptRef scriptRef, int tokenPos) {
-    VirtualFile file = ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
-      @Override
-      public VirtualFile compute() {
-        String uri = scriptRef.getUri();
+    VirtualFile file = ApplicationManager.getApplication().runReadAction((Computable<VirtualFile>)() -> {
+      String uri = scriptRef.getUri();
 
-        if (myDASExecutionContextId != null && !isDartPatchUri(uri)) {
-          final String path = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, null, uri);
-          if (path != null) {
-            return LocalFileSystem.getInstance().findFileByPath(path);
-          }
+      if (myDASExecutionContextId != null && !isDartPatchUri(uri)) {
+        final String path = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, null, uri);
+        if (path != null) {
+          return LocalFileSystem.getInstance().findFileByPath(path);
         }
-
-        final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
-        if (myRemoteDebug && myRemoteProjectRootUri != null && uri.startsWith(myRemoteProjectRootUri) && pubspec != null) {
-          final String localRootUri = StringUtil.trimEnd(myDartUrlResolver.getDartUrlForFile(pubspec.getParent()), '/');
-          LOG.assertTrue(localRootUri.startsWith(DartUrlResolver.FILE_PREFIX), localRootUri);
-
-          uri = localRootUri + uri.substring(myRemoteProjectRootUri.length());
-        }
-
-        return myDartUrlResolver.findFileByDartUrl(uri);
       }
+
+      final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
+      if (myRemoteDebug && myRemoteProjectRootUri != null && uri.startsWith(myRemoteProjectRootUri) && pubspec != null) {
+        final String localRootUri = StringUtil.trimEnd(myDartUrlResolver.getDartUrlForFile(pubspec.getParent()), '/');
+        LOG.assertTrue(localRootUri.startsWith(DartUrlResolver.FILE_PREFIX), localRootUri);
+
+        uri = localRootUri + uri.substring(myRemoteProjectRootUri.length());
+      }
+
+      return myDartUrlResolver.findFileByDartUrl(uri);
     });
 
     if (file == null) {

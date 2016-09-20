@@ -30,7 +30,6 @@ import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugPro
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,7 +101,6 @@ public class DartRunner extends DefaultProgramRunner {
     final RunProfile runConfiguration = env.getRunProfile();
     final VirtualFile contextFileOrDir;
     VirtualFile currentWorkingDirectory;
-    final boolean entryPointInLibFolder;
     final ExecutionResult executionResult;
     final String debuggingHost;
     final int observatoryPort;
@@ -110,10 +108,8 @@ public class DartRunner extends DefaultProgramRunner {
     if (runConfiguration instanceof DartRunConfigurationBase) {
       contextFileOrDir = ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().getDartFile();
 
-      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(env.getProject(), contextFileOrDir);
-      entryPointInLibFolder = pubspec != null && contextFileOrDir.getPath().startsWith(pubspec.getParent().getPath() + "/lib/");
-
-      final String cwd = ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().computeProcessWorkingDirectory(env.getProject());
+      final String cwd =
+        ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().computeProcessWorkingDirectory(env.getProject());
       currentWorkingDirectory = LocalFileSystem.getInstance().findFileByPath((cwd));
 
       executionResult = state.execute(env.getExecutor(), this);
@@ -125,7 +121,6 @@ public class DartRunner extends DefaultProgramRunner {
       observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
     }
     else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
-      entryPointInLibFolder = false;
       final String path = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getDartProjectPath();
       contextFileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
       if (contextFileOrDir == null) {
@@ -159,7 +154,6 @@ public class DartRunner extends DefaultProgramRunner {
                                              dartUrlResolver,
                                              dasExecutionContextId,
                                              runConfiguration instanceof DartRemoteDebugConfiguration,
-                                             entryPointInLibFolder,
                                              getTimeout(),
                                              currentWorkingDirectory);
       }
