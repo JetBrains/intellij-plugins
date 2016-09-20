@@ -18,6 +18,7 @@ import org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Class;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.*;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.RTypedSyntheticSymbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.Context;
@@ -27,7 +28,6 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RTypeFactory;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.collections.RArrayType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.REmptyType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.RSymbolTypeImpl;
-import org.jetbrains.plugins.ruby.ruby.lang.psi.impl.RNameUtilCore;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -116,7 +116,7 @@ public class MotionSymbolUtil {
     }
     final Collection<Framework> frameworks = ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).getFrameworks(module);
     if (!typeName.endsWith("*")) {
-      final Symbol symbol = RubyMotionSymbolProvider.findClassOrStruct(module, frameworks, RNameUtilCore.getPath(typeName));
+      final Symbol symbol = RubyMotionSymbolProvider.findClassOrStruct(module, frameworks, FQN.Builder.fromString(typeName).asList());
       return symbol instanceof StructSymbol || (symbol != null && RubyMotionUtil.getInstance().isAndroid(module)) ?
              new RSymbolTypeImpl(symbol, Context.INSTANCE) : REmptyType.INSTANCE;
     }
