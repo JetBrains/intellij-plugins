@@ -14,10 +14,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 
 public class DartConsoleFolding extends ConsoleFolding {
 
   public static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
+  private static final String TEST_RUNNER_MARKER = "pub.dart.snapshot run test:test -r json "; // see DartTestRunningState.startProcess()
 
   @Override
   public boolean shouldFoldLine(@NotNull final String line) {
@@ -41,6 +43,10 @@ public class DartConsoleFolding extends ConsoleFolding {
 
     if (lines.size() == 1 && lines.get(0).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
       return " [Observatory: " + lines.get(0).substring(DartConsoleFilter.OBSERVATORY_LISTENING_ON.length()) + "]";
+    }
+
+    if (lines.size() == 1 && lines.get(0).contains(TEST_RUNNER_MARKER)) {
+      return foldTestRunnerCommand(lines.get(0));
     }
 
     final String fullText = StringUtil.join(lines, "\n");
@@ -80,5 +86,20 @@ public class DartConsoleFolding extends ConsoleFolding {
     }
 
     return b.toString();
+  }
+
+  private static String foldTestRunnerCommand(@NotNull final String line) {
+    // C:\dart-sdk\bin\dart.exe --checked file:\\\C:\dart-sdk\bin\snapshots\pub.dart.snapshot run test:test -r json --concurrency=4 C:/MyProject/test/main_test.dart -n "group1 test21|group1 test22"
+    // folded to
+    // pub run test main_test.dart -n "group1 test21|group1 test22"
+    int index = line.indexOf(TEST_RUNNER_MARKER);
+    index += TEST_RUNNER_MARKER.length();
+    index = line.toLowerCase(Locale.US).indexOf(".dart", index);
+    if (index < 0) return line;
+
+    index = FileUtil.toSystemIndependentName(line.substring(0, index)).lastIndexOf('/');
+    if (index < 0) return line;
+
+    return "pub run test " + line.substring(index + 1);
   }
 }

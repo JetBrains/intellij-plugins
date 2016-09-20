@@ -1,7 +1,7 @@
 package com.intellij.javascript.karma.execution.filter;
 
 import com.intellij.execution.filters.FileHyperlinkRawData;
-import com.intellij.javascript.karma.tree.KarmaBrowserErrorFilter;
+import com.intellij.javascript.karma.filter.KarmaBrowserErrorFilter;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;

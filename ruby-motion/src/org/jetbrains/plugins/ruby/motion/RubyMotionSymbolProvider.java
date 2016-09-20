@@ -12,6 +12,7 @@ import org.jetbrains.plugins.ruby.motion.symbols.*;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.RubySymbolProviderBase;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.TypeSet;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.CoreTypes;
@@ -31,7 +32,7 @@ import java.util.List;
 public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
   @Override
   public Symbol findSymbol(@NotNull Symbol anchor,
-                           @NotNull List<String> path,
+                           @NotNull FQN fqn,
                            TypeSet types,
                            @Nullable PsiElement invocationPoint) {
     if (!RubyMotionUtil.getInstance().hasMacRubySupport(invocationPoint)) return null;
@@ -40,11 +41,15 @@ public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
     if (module == null) return null;
 
     final Collection<Framework> frameworks = ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).getFrameworks(module);
-    final String name = path.get(0);
+    final List<String> nameAsList = fqn.asList();
+    if (nameAsList.isEmpty()) {
+      return null;
+    }
+    final String name = nameAsList.get(0);
     if (name.isEmpty()) return null;
 
     if (types.contains(Type.CLASS)) {
-      Symbol result = findClassOrStruct(module, frameworks, path);
+      Symbol result = findClassOrStruct(module, frameworks, nameAsList);
       if (result != null) {
         return result;
       }
@@ -109,7 +114,7 @@ public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
 
   @Override
   public Symbol createSymbolByContainer(@NotNull RContainer container,
-                                        @NotNull List<String> fqn,
+                                        @NotNull FQN fqn,
                                         @Nullable Symbol parent) {
     if (!RubyMotionUtil.getInstance().hasMacRubySupport(container)) return null;
     final Module module = getModule(container);
@@ -126,7 +131,7 @@ public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
   @Override
   protected Symbol getSpecificSymbol(PsiElement element, RContainer context) {
     if (context instanceof RClass || context instanceof RModule) {
-      final boolean isObject = CoreTypes.Object.equals(context.getFullName());
+      final boolean isObject = CoreTypes.Object.equals(context.getFQN().getFullPath());
       final RubyMotionSymbol symbol = isObject ? new RubyMotionSymbol((RFile)context.getContainingFile()) : null;
       final Symbol nsObject = SymbolUtil.findSymbol(element.getProject(), Type.CLASS, getParentName(context), element);
       final List<Symbol> includes = isObject ? Collections.<Symbol>singletonList(symbol) : Collections.<Symbol>emptyList();
