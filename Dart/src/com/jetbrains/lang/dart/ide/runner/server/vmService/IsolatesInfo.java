@@ -14,6 +14,8 @@ public class IsolatesInfo {
   public static class IsolateInfo {
     private final String myIsolateId;
     private final String myIsolateName;
+    private boolean breakpointsSet = false;
+    private boolean shouldInitialResume = false;
 
     public IsolateInfo(@NotNull final String isolateId, @NotNull final String isolateName) {
       myIsolateId = isolateId;
@@ -33,6 +35,29 @@ public class IsolatesInfo {
 
   public boolean addIsolate(@NotNull final IsolateRef isolateRef) {
     return myIsolateIdToInfoMap.put(isolateRef.getId(), new IsolateInfo(isolateRef.getId(), isolateRef.getName())) == null;
+  }
+
+  public void setBreakpointsSet(@NotNull final IsolateRef isolateRef) {
+    IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
+    if (info != null) {
+      info.breakpointsSet = true;
+    }
+  }
+
+  public void setShouldInitialResume(@NotNull final IsolateRef isolateRef) {
+    IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
+    if (info != null) {
+      info.shouldInitialResume = true;
+    }
+  }
+
+  public boolean getShouldInitialResume(@NotNull final IsolateRef isolateRef) {
+    IsolateInfo info = myIsolateIdToInfoMap.get(isolateRef.getId());
+    if (info != null) {
+      return info.breakpointsSet && info.shouldInitialResume;
+    } else {
+      return false;
+    }
   }
 
   public void deleteIsolate(@NotNull final IsolateRef isolateRef) {
