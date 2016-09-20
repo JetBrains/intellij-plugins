@@ -80,7 +80,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
   }
 
   public static boolean isParentClass(JSClass clazz, String className, boolean strict) {
-    final PsiElement parentClass = JSResolveUtil.unwrapProxy(findClassByQNameStatic(className, clazz.getResolveScope()));
+    final PsiElement parentClass = findClassByQNameStatic(className, clazz.getResolveScope());
     if (!(parentClass instanceof JSClass)) return false;
 
     return JSInheritanceUtil.isParentClass(clazz, (JSClass)parentClass, strict);

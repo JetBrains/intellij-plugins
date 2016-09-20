@@ -24,7 +24,6 @@ import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -33,7 +32,6 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.*;
@@ -305,15 +303,11 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
     boolean b = jsClass == null || ClassBackedElementDescriptor.processAttributes(jsClass, itemsProcessor);
 
-    if (b && jsClass != null) {
-      final PsiElement _clazz = JSResolveUtil.unwrapProxy(jsClass);
-      final JSClass clazz = _clazz instanceof JSClass ? (JSClass)_clazz : null;
-
-      if (clazz != null) {
-        final JSClass[] classes = clazz.getSuperClasses();
-        if (classes.length > 0 && clazz.getName().equals(classes[0].getName()) && clazz != classes[0]) {
-          b = ClassBackedElementDescriptor.processAttributes(classes[0], itemsProcessor);
-        }
+    if (b && jsClass instanceof JSClass) {
+      final JSClass clazz = (JSClass)jsClass;
+      final JSClass[] classes = clazz.getSuperClasses();
+      if (classes.length > 0 && clazz.getName().equals(classes[0].getName()) && clazz != classes[0]) {
+        b = ClassBackedElementDescriptor.processAttributes(classes[0], itemsProcessor);
       }
     }
 
@@ -669,8 +663,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     final PsiElement iStyleClient = ActionScriptClassResolver.findClassByQNameStatic(I_STYLE_CLIENT_CLASS, attributeOrTag);
 
     if (!(declaration instanceof JSClass) || !(iStyleClient instanceof JSClass)
-        || !JSInheritanceUtil.isParentClass((JSClass)JSResolveUtil.unwrapProxy(declaration),
-                                            (JSClass)JSResolveUtil.unwrapProxy(iStyleClient))) {
+        || !JSInheritanceUtil.isParentClass((JSClass)declaration,
+                                            (JSClass)iStyleClient)) {
       return FlexBundle.message("clear.directive.IStyleClient.error");
     }
     return null;
@@ -763,7 +757,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     }
 
     if (descriptor == null) {
-      PsiElement element = JSResolveUtil.unwrapProxy(getDeclaration());
+      PsiElement element = getDeclaration();
       if (element instanceof JSNamedElement) {
         element = new ClassBackedElementDescriptor(ClassBackedElementDescriptor.getPropertyType((JSNamedElement)element),
                                                    parentDescriptor.context, parentDescriptor.project, true).getDeclaration();
