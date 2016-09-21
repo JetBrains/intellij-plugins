@@ -245,6 +245,26 @@ Dart File
                     ID
                       PsiElement(IDENTIFIER)('c')
                 PsiElement(;)(';')
+                ASSIGN_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(||=)('||=')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('c')
+                PsiElement(;)(';')
+                ASSIGN_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(&&=)('&&=')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('c')
+                PsiElement(;)(';')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     THIS_EXPRESSION

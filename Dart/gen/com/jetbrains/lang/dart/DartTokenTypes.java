@@ -141,6 +141,7 @@ public interface DartTokenTypes {
   IElementType ABSTRACT = new DartElementType("abstract");
   IElementType AND = new DartElementType("&");
   IElementType AND_AND = new DartElementType("&&");
+  IElementType AND_AND_EQ = new DartElementType("&&=");
   IElementType AND_EQ = new DartElementType("&=");
   IElementType AS = new DartElementType("as");
   IElementType ASSERT = new DartElementType("assert");
@@ -221,6 +222,7 @@ public interface DartTokenTypes {
   IElementType OR = new DartElementType("|");
   IElementType OR_EQ = new DartElementType("|=");
   IElementType OR_OR = new DartElementType("||");
+  IElementType OR_OR_EQ = new DartElementType("||=");
   IElementType PART = new DartElementType("part");
   IElementType PLUS = new DartElementType("+");
   IElementType PLUS_EQ = new DartElementType("+=");

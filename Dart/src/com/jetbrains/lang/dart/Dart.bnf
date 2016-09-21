@@ -130,6 +130,7 @@
   OR="|"
   OR_EQ="|="
   OR_OR="||"
+  OR_OR_EQ="||="
   QUEST="?"
   QUEST_DOT="?."
   QUEST_QUEST="??"
@@ -139,6 +140,7 @@
   AND="&"
   AND_EQ="&="
   AND_AND="&&"
+  AND_AND_EQ="&&="
   HASH="#"
   AT="@"
   ]
@@ -332,7 +334,7 @@ shiftOperator ::= '<<' | <<gtGt>>
 relationalOperator ::= <<gtEq>> | '>' | '<=' | '<'
 bitwiseOperator ::= '&' | '^' | '|'
 
-assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|=' | '??='
+assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '&&=' | '^=' | '|=' | '||=' | '??='
 equalityOperator ::= '==' | '!='
 
 formalParameterList ::= '(' ')' |
@@ -478,14 +480,14 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 
 expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-                                 '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
+                                 '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
-                                 'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
+                                 'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '||=' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
                                   FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
                                   SHORT_TEMPLATE_ENTRY_START | TRUE)
