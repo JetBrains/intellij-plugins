@@ -1169,6 +1169,19 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".mxml", "mybundle.properties", "mybundle3.properties");
   }
 
+  @JSTestOptions(JSTestOption.WithFlexFacet)
+  public void testResourceReferencesWithPackages() throws Exception {
+    String testName = getTestName(false);
+    Collection<HighlightInfo> infoCollection = doTestFor(true, new File(getTestDataPath() + BASE_PATH + "/" + testName), (Runnable)null,
+                                                         testName + "/" + testName + ".mxml",
+                                                         testName + "/resourcepackage/mybundle4.properties");
+    findAndInvokeIntentionAction(infoCollection, PropertiesBundle.message("create.property.quickfix.text"), myEditor, myFile);
+
+    List<HighlightInfo> infoList = filterUnwantedInfos(doHighlighting(), this);
+    assertEquals(infoCollection.size(), infoList.size());
+  }
+
+
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testResolveWithInclude() throws Exception {
     String testName = getTestName(false);
