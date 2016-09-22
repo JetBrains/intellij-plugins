@@ -59,9 +59,9 @@ public class DartMethodParametersMacro extends DartMacroBase {
       findAndAddName(results, parameter);
     }
 
-    final DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
-    if (namedFormalParameters != null) {
-      for (DartDefaultFormalNamedParameter parameter : namedFormalParameters.getDefaultFormalNamedParameterList()) {
+    final DartOptionalFormalParameters optionalFormalParameters = parameterList.getOptionalFormalParameters();
+    if (optionalFormalParameters != null) {
+      for (DartDefaultFormalNamedParameter parameter : optionalFormalParameters.getDefaultFormalNamedParameterList()) {
         findAndAddName(results, parameter.getNormalFormalParameter());
       }
     }

@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartNamedFormalParametersImpl extends DartPsiCompositeElementImpl implements DartNamedFormalParameters {
+public class DartOptionalFormalParametersImpl extends DartPsiCompositeElementImpl implements DartOptionalFormalParameters {
 
-  public DartNamedFormalParametersImpl(ASTNode node) {
+  public DartOptionalFormalParametersImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitNamedFormalParameters(this);
+    visitor.visitOptionalFormalParameters(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

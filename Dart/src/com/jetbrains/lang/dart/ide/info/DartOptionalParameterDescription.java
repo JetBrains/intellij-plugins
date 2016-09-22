@@ -5,7 +5,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartDefaultFormalNamedParameter;
 import com.jetbrains.lang.dart.psi.DartFormalParameterList;
-import com.jetbrains.lang.dart.psi.DartNamedFormalParameters;
+import com.jetbrains.lang.dart.psi.DartOptionalFormalParameters;
 import com.jetbrains.lang.dart.util.DartGenericSpecialization;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.jetbrains.annotations.NotNull;
@@ -13,43 +13,41 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartNamedParameterDescription {
+public class DartOptionalParameterDescription {
   private final String myText;
   @Nullable
   private final String myValue;
   private boolean myIsPositional;
 
-  public DartNamedParameterDescription(@NotNull String text, @Nullable String value, boolean isPositional) {
+  public DartOptionalParameterDescription(@NotNull String text, @Nullable String value, boolean isPositional) {
     myText = text;
     myValue = value;
     myIsPositional = isPositional;
   }
 
-  public static DartNamedParameterDescription[] getParameters(DartComponent element, DartGenericSpecialization specialization) {
+  public static DartOptionalParameterDescription[] getParameters(DartComponent element, DartGenericSpecialization specialization) {
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
-    final DartNamedFormalParameters namedFormalParameters = parameterList == null ? null : parameterList.getNamedFormalParameters();
-    if (namedFormalParameters == null) {
-      return new DartNamedParameterDescription[0];
+    final DartOptionalFormalParameters optionalFormalParameters =
+      parameterList == null ? null : parameterList.getOptionalFormalParameters();
+    if (optionalFormalParameters == null) {
+      return new DartOptionalParameterDescription[0];
     }
-    final List<DartDefaultFormalNamedParameter> list = namedFormalParameters.getDefaultFormalNamedParameterList();
-    final DartNamedParameterDescription[] result = new DartNamedParameterDescription[list.size()];
+    final List<DartDefaultFormalNamedParameter> list = optionalFormalParameters.getDefaultFormalNamedParameterList();
+    final DartOptionalParameterDescription[] result = new DartOptionalParameterDescription[list.size()];
     for (int i = 0, size = list.size(); i < size; i++) {
       final DartDefaultFormalNamedParameter formalNamedParameter = list.get(i);
       final String normalFormalParameter =
         DartPresentableUtil.getPresentableNormalFormalParameter(formalNamedParameter.getNormalFormalParameter(), specialization);
       final PsiElement valueElement = formalNamedParameter.getExpression();
       result[i] =
-        new DartNamedParameterDescription(normalFormalParameter, valueElement == null ? null : valueElement.getText(), isPositional(
+        new DartOptionalParameterDescription(normalFormalParameter, valueElement == null ? null : valueElement.getText(), isPositional(
           formalNamedParameter));
     }
     return result;
   }
 
   private static boolean isPositional(final DartDefaultFormalNamedParameter parameter) {
-    final DartNamedFormalParameters formalParameters = PsiTreeUtil.getParentOfType(parameter, DartNamedFormalParameters.class);
+    final DartOptionalFormalParameters formalParameters = PsiTreeUtil.getParentOfType(parameter, DartOptionalFormalParameters.class);
     if (formalParameters == null) {
       return false;
     }
@@ -69,7 +67,7 @@ public class DartNamedParameterDescription {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    DartNamedParameterDescription that = (DartNamedParameterDescription)o;
+    DartOptionalParameterDescription that = (DartOptionalParameterDescription)o;
 
     if (myText.equals(that.myText)) return false;
 

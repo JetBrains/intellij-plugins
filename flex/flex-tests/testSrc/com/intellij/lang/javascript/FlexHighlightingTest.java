@@ -30,7 +30,6 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompil
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flexunit.FlexUnitLibs;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
@@ -65,7 +64,6 @@ import com.intellij.openapi.project.DumbServiceImpl;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -99,8 +97,6 @@ import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -1167,6 +1163,14 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testResourceReferences2() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", "mybundle.properties", "mybundle3.properties");
+  }
+
+  @JSTestOptions(JSTestOption.WithFlexFacet)
+  public void testResourceReferencesWithPackages() throws Exception {
+    String testName = getTestName(false);
+    doTestFor(true, getDefaultProjectRoot(testName), (Runnable)null,
+              testName + "/" + testName + ".mxml",
+              testName + "/resourcepackage/mybundle4.properties");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})

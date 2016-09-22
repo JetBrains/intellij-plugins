@@ -1828,7 +1828,7 @@ Dart File
         PsiElement(IDENTIFIER)('CSSMatrix')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
-      NAMED_FORMAL_PARAMETERS
+      OPTIONAL_FORMAL_PARAMETERS
         PsiElement([)('[')
         DEFAULT_FORMAL_NAMED_PARAMETER
           NORMAL_FORMAL_PARAMETER
@@ -2107,7 +2107,7 @@ Dart File
                   ID
                     PsiElement(IDENTIFIER)('array')
             PsiElement(,)(',')
-            NAMED_FORMAL_PARAMETERS
+            OPTIONAL_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER

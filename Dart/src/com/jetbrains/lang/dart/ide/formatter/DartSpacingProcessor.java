@@ -588,7 +588,7 @@ public class DartSpacingProcessor {
       if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) return noSpace();
     }
     boolean isBraces = type1 == LBRACE || type2 == RBRACE;
-    if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS && elementType != MAP_LITERAL_EXPRESSION) ||
+    if ((isBraces && elementType != OPTIONAL_FORMAL_PARAMETERS && elementType != MAP_LITERAL_EXPRESSION) ||
         BLOCKS_EXT.contains(type1) ||
         FUNCTION_DEFINITION.contains(type1)) {
       return addLineBreak();
@@ -602,7 +602,7 @@ public class DartSpacingProcessor {
           !(type1 == MULTI_LINE_COMMENT && type2 == COMPONENT_NAME)) {
         return addLineBreak();
       }
-      if (type2 == RBRACKET && elementType != NAMED_FORMAL_PARAMETERS) {
+      if (type2 == RBRACKET && elementType != OPTIONAL_FORMAL_PARAMETERS) {
         return addLineBreak();
       }
       if (type2 == ARGUMENT_LIST || type2 == COMPONENT_NAME) {

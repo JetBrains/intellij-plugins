@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartNamedFormalParameters extends DartPsiCompositeElement {
+public interface DartOptionalFormalParameters extends DartPsiCompositeElement {
 
   @NotNull
   List<DartDefaultFormalNamedParameter> getDefaultFormalNamedParameterList();

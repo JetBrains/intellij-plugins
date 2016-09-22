@@ -198,13 +198,13 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
   }
 
   public static boolean isEventClass(final JSClass jsClass) {
-    final PsiElement eventClass = JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic(FlexCommonTypeNames.FLASH_EVENT_FQN, jsClass));
+    final PsiElement eventClass = ActionScriptClassResolver.findClassByQNameStatic(FlexCommonTypeNames.FLASH_EVENT_FQN, jsClass);
     if ((eventClass instanceof JSClass) && JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass)) {
       return true;
     }
 
     final PsiElement eventClass2 =
-      JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic(FlexCommonTypeNames.STARLING_EVENT_FQN, jsClass));
+      ActionScriptClassResolver.findClassByQNameStatic(FlexCommonTypeNames.STARLING_EVENT_FQN, jsClass);
     if ((eventClass2 instanceof JSClass) && JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass2)) {
       return true;
     }
@@ -426,9 +426,8 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
     @Nullable
     private JSClass getEventBaseClass() {
-      final PsiElement eventClass = JSResolveUtil
-        .unwrapProxy(JSDialectSpecificHandlersFactory.forElement(myJsClass).getClassResolver()
-                       .findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, myJsClass));
+      final PsiElement eventClass = JSDialectSpecificHandlersFactory.forElement(myJsClass).getClassResolver()
+        .findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, myJsClass);
       if (eventClass instanceof JSClass) return (JSClass)eventClass;
       return null;
     }
