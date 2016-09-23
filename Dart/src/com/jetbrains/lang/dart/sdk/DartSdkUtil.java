@@ -14,7 +14,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.BooleanFunction;
@@ -83,7 +82,6 @@ public class DartSdkUtil {
                                                    final @NotNull ComboboxWithBrowseButton dartiumPathComponent,
                                                    final @NotNull Computable<ChromeSettings> currentDartiumSettingsRetriever,
                                                    final @NotNull JButton dartiumSettingsButton,
-                                                   final @NotNull JBCheckBox checkedModeCheckBox,
                                                    final @NotNull Computable<Boolean> isResettingControlsComputable) {
     dartSdkPathComponent.getComboBox().setEditable(true);
     addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, path -> isDartSdkHome(path));
@@ -148,11 +146,12 @@ public class DartSdkUtil {
       }
     });
 
-    checkedModeCheckBox.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        DartiumUtil.setCheckedMode(currentDartiumSettingsRetriever.compute().getEnvironmentVariables(), checkedModeCheckBox.isSelected());
-      }
-    });
+    // we decided to save one line in settings and always use Dartium in checked mode
+    //checkedModeCheckBox.addActionListener(new ActionListener() {
+    //  public void actionPerformed(final ActionEvent e) {
+    //    DartiumUtil.setCheckedMode(currentDartiumSettingsRetriever.compute().getEnvironmentVariables(), checkedModeCheckBox.isSelected());
+    //  }
+    //});
   }
 
   private static void addKnownPathsToCombo(@NotNull final JComboBox combo,
