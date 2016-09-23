@@ -2398,4 +2398,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testPercentProxyInOverridden() throws Exception {
     defaultTest();
   }
+
+  public void testCreateMethodAfterCallExpression() throws Exception {
+    doHighlightingWithInvokeFixAndCheckResult("Create Method 'bar'", "as");
+  }
 }
