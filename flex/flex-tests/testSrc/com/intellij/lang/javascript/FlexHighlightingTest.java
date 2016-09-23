@@ -670,7 +670,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
-  @NeedsJavaModule
+  @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testFlex2() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
