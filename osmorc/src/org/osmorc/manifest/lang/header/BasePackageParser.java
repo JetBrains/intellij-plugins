@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageReference;
@@ -32,9 +33,10 @@ import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.Clause;
-import org.osmorc.manifest.resolve.reference.providers.ManifestPackageReferenceSet;
 import org.osmorc.util.OsgiPsiUtil;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,32 +48,7 @@ public class BasePackageParser extends OsgiHeaderParser {
   @NotNull
   @Override
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-    if (headerValuePart.getParent() instanceof Clause) {
-      return getPackageReferences(headerValuePart);
-    }
-
-    return PsiReference.EMPTY_ARRAY;
-  }
-
-  protected static PsiReference[] getPackageReferences(PsiElement psiElement) {
-    String packageName = psiElement.getText();
-    if (StringUtil.isEmptyOrSpaces(packageName) ) {
-      return PsiReference.EMPTY_ARRAY;
-    }
-
-    int offset = 0;
-    if (packageName.charAt(0) == '!') {
-      packageName = packageName.substring(1);
-      offset = 1;
-    }
-
-    int size = packageName.length() - 1;
-    if (packageName.charAt(size) == '?') {
-      packageName = packageName.substring(0, size);
-    }
-
-    PackageReferenceSet referenceSet = new ManifestPackageReferenceSet(packageName, psiElement, offset);
-    return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
+    return headerValuePart.getParent() instanceof Clause ? getPackageReferences(headerValuePart) : PsiReference.EMPTY_ARRAY;
   }
 
   @Override
@@ -93,8 +70,7 @@ public class BasePackageParser extends OsgiHeaderParser {
 
           PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
           if (directories.length == 0) {
-            holder
-              .createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorMessages.message("cannot.resolve.package", packageName));
+            holder.createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorMessages.message("cannot.resolve.package", packageName));
             annotated = true;
           }
         }
@@ -113,13 +89,40 @@ public class BasePackageParser extends OsgiHeaderParser {
       for (HeaderValue headerValue : headerValues) {
         HeaderValuePart valuePart = ((Clause)headerValue).getValue();
         if (valuePart != null) {
-          String packageName = valuePart.getText().replaceAll("\\s+", "");
-          packages.add(packageName);
+          packages.add(valuePart.getText().replaceAll("\\s+", ""));
         }
       }
       return packages;
     }
 
     return null;
+  }
+
+  protected static PsiReference[] getPackageReferences(PsiElement psiElement) {
+    String packageName = psiElement.getText();
+    if (StringUtil.isEmptyOrSpaces(packageName) ) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+
+    int offset = 0;
+    if (packageName.charAt(0) == '!') {
+      packageName = packageName.substring(1);
+      offset = 1;
+    }
+
+    int size = packageName.length() - 1;
+    if (packageName.charAt(size) == '?') {
+      packageName = packageName.substring(0, size);
+    }
+
+    PackageReferenceSet refSet = new PackageReferenceSet(packageName, psiElement, offset) {
+      @Override
+      public Collection<PsiPackage> resolvePackageName(@Nullable PsiPackage context, String packageName) {
+        if (context == null) return Collections.emptyList();
+        String unwrappedPackageName = packageName.replaceAll("\\s+", "");
+        return ContainerUtil.filter(context.getSubPackages(), pkg -> unwrappedPackageName.equals(pkg.getName()));
+      }
+    };
+    return refSet.getReferences().toArray(new PsiPackageReference[0]);
   }
 }
