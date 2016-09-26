@@ -167,7 +167,7 @@ public class VmServiceWrapper implements Disposable {
     final AtomicInteger counter = new AtomicInteger(xBreakpoints.size());
 
     for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
-      addBreakpoint(isolateId, xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
+      addBreakpoint(isolateId, xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
           checkDone();
@@ -195,15 +195,8 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void addBreakpoint(@NotNull final String isolateId,
-                            @NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
+                            @Nullable final XSourcePosition position,
                             @NotNull final VmServiceConsumers.BreakpointConsumerWrapper consumer) {
-    final XSourcePosition position = xBreakpoint.getSourcePosition();
-    addBreakpointFromPosition(isolateId, position, consumer);
-  }
-
-  public void addBreakpointFromPosition(@NotNull final String isolateId,
-                                        @NotNull XSourcePosition position,
-                                        @NotNull final VmServiceConsumers.BreakpointConsumerWrapper consumer) {
     if (position == null || position.getFile().getFileType() != DartFileType.INSTANCE) {
       consumer.sourcePositionNotApplicable();
       return;
@@ -220,7 +213,7 @@ public class VmServiceWrapper implements Disposable {
   public void addBreakpointForIsolates(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
                                        @NotNull final Collection<IsolatesInfo.IsolateInfo> isolateInfos) {
     for (final IsolatesInfo.IsolateInfo isolateInfo : isolateInfos) {
-      addBreakpoint(isolateInfo.getIsolateId(), xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
+      addBreakpoint(isolateInfo.getIsolateId(), xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
         }
@@ -239,7 +232,7 @@ public class VmServiceWrapper implements Disposable {
 
   public void addTemporaryBreakpoint(@NotNull final XSourcePosition position,
                                      @NotNull final String isolateId) {
-    addBreakpointFromPosition(isolateId, position, new VmServiceConsumers.BreakpointConsumerWrapper() {
+    addBreakpoint(isolateId, position, new VmServiceConsumers.BreakpointConsumerWrapper() {
       @Override
       void sourcePositionNotApplicable() {
       }
