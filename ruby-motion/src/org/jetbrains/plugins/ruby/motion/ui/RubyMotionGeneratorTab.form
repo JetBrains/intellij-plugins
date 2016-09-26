@@ -6,7 +6,9 @@
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties/>
-    <border type="none"/>
+    <border type="empty">
+      <size top="10" left="0" bottom="0" right="0"/>
+    </border>
     <children>
       <component id="c206e" class="com.intellij.openapi.ui.ComboBox" binding="myRubyInterpreterComboBox" custom-create="true">
         <constraints>
