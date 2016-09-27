@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
@@ -85,16 +84,15 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
               }
             }
             if (bundleExpression instanceof JSLiteralExpression) {
-              final Object myValue = ((JSLiteralExpression)bundleExpression).getValue();
-              if (myValue instanceof String) {
-                final String myText = (String)myValue;
+              final Object expressionValue = ((JSLiteralExpression)bundleExpression).getValue();
+              if (expressionValue instanceof String) {
                 provider = new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
                   public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
                     return getValueRange(element);
                   }
 
                   public String getBundleName(JSLiteralExpressionImpl element) {
-                    return myText;
+                    return (String)expressionValue;
                   }
 
                   public boolean isSoft(JSLiteralExpressionImpl element) {
