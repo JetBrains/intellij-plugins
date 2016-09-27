@@ -25,6 +25,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -249,8 +250,10 @@ public class DartAnalysisServerService {
                     else {
                       try {
                         myProgressIndicators.add(indicator);
-                        waitWhileServerBusy();
-                      } finally {
+                        waitWhileServerBusy(indicator);
+                      }
+                      catch (ProcessCanceledException e) {/* happens when project is closed */ }
+                      finally {
                         myProgressIndicators.remove(indicator);
                       }
                     }
@@ -1470,13 +1473,13 @@ public class DartAnalysisServerService {
     assert latch.getCount() == 0 : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
   }
 
-  private void waitWhileServerBusy() {
+  private void waitWhileServerBusy(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
     if (myServerBusy.get()) {
       try {
         synchronized (myServerBusy) {
-          if (myServerBusy.get()) {
-            //noinspection WaitNotInLoop
-            myServerBusy.wait();
+          while (myServerBusy.get()) {
+            indicator.checkCanceled();
+            myServerBusy.wait(100);
           }
         }
       }
