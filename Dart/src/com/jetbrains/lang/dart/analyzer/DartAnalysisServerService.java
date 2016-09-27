@@ -123,6 +123,8 @@ public class DartAnalysisServerService {
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
 
+  @NotNull private final Set<ProgressIndicator> myProgressIndicators = new THashSet<>();
+
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
   @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
@@ -140,6 +142,11 @@ public class DartAnalysisServerService {
       final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
       myServerData.computedErrors(filePathSI, errors, visible);
       onErrorsUpdated(filePathSI, errors);
+
+      String fileName = PathUtil.getFileName(filePathSD);
+      for (ProgressIndicator indicator : myProgressIndicators) {
+        indicator.setText(DartBundle.message("dart.analysis.progress.with.file", fileName));
+      }
     }
 
     @Override
@@ -232,13 +239,20 @@ public class DartAnalysisServerService {
                 new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
                   @Override
                   public void run(@NotNull ProgressIndicator indicator) {
+                    indicator.setText(DartBundle.message("dart.analysis.progress.title"));
+
                     if (ApplicationManager.getApplication().isDispatchThread()) {
                       if (!ApplicationManager.getApplication().isUnitTestMode()) {
                         LOG.error("wait() in EDT");
                       }
                     }
                     else {
-                      waitWhileServerBusy();
+                      try {
+                        myProgressIndicators.add(indicator);
+                        waitWhileServerBusy();
+                      } finally {
+                        myProgressIndicators.remove(indicator);
+                      }
                     }
                   }
                 };
@@ -1477,6 +1491,8 @@ public class DartAnalysisServerService {
       myServerBusy.set(false);
       myServerBusy.notifyAll();
     }
+
+    myProgressIndicators.clear();
   }
 
   public boolean isFileWithErrors(@NotNull final VirtualFile file) {
