@@ -76,22 +76,33 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
           FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> provider =
             isSoft ? ourSoftPropertyInfoProvider : ourPropertyInfoProvider;
 
-          if (args.length > 1 && !isSoft && args[0] instanceof JSLiteralExpression) {
-            final String myText = args[0].getText();
-
-            provider = new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
-              public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
-                return getValueRange(element);
+          if (args.length > 1 && !isSoft) {
+            JSExpression bundleExpression = args[0];
+            if (bundleExpression instanceof JSReferenceExpression) {
+              PsiElement resolved = ((JSReferenceExpression)bundleExpression).resolve();
+              if (resolved instanceof JSVariable) {
+                bundleExpression = ((JSVariable)resolved).getInitializer();
               }
+            }
+            if (bundleExpression instanceof JSLiteralExpression) {
+              final Object myValue = ((JSLiteralExpression)bundleExpression).getValue();
+              if (myValue instanceof String) {
+                final String myText = (String)myValue;
+                provider = new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+                  public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
+                    return getValueRange(element);
+                  }
 
-              public String getBundleName(JSLiteralExpressionImpl element) {
-                return StringUtil.stripQuotesAroundValue(myText);
-              }
+                  public String getBundleName(JSLiteralExpressionImpl element) {
+                    return myText;
+                  }
 
-              public boolean isSoft(JSLiteralExpressionImpl element) {
-                return false;
+                  public boolean isSoft(JSLiteralExpressionImpl element) {
+                    return false;
+                  }
+                };
               }
-            };
+            }
           }
           Collections.addAll(result, FlexPropertiesSupport.getPropertyReferences((JSLiteralExpressionImpl)element, provider));
         }

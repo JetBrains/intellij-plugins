@@ -25,7 +25,12 @@
     resourceManager.getResourceBundle('ru', '<error>mybundle2</error>')
     resourceManager.findResourceBundleWithResource('<error>mybundle2</error>', '<error>prompt1</error>')
     resourceManager.findResourceBundleWithResource('mybundle3', '<error>prompt2</error>')
-  }
+
+    resourceManager.getString('mybundle', '<error>prompt4</error>')
+    resourceManager.getString(MY_BUNDLE2, '<error>prompt4</error>')
+    }
+
+    private static const MY_BUNDLE2:String = "mybundle2";
 
     import mypackage.ResourceManager
     ResourceManager.getInstance().getString('<error>mybundle2</error>', '<error>prompt1</error>')
