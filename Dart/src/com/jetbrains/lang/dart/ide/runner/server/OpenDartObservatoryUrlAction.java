@@ -7,8 +7,6 @@ import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Condition;
-import com.intellij.util.net.NetUtils;
 import com.jetbrains.browserConnection.BrowserConnectionManager;
 import com.jetbrains.lang.dart.DartBundle;
 import icons.DartIcons;
