@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <idea-plugin version="2">
-  <id>cucumber</id>
+  <id>gherkin</id>
   <name>Gherkin</name>
   <description>Provides support of Gherkin language</description>
   <version>999.999</version>
