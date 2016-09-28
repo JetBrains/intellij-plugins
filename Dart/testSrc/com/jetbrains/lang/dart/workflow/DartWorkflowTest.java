@@ -1,8 +1,10 @@
 package com.jetbrains.lang.dart.workflow;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartProjectComponent;
@@ -73,8 +75,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                          rootUrl + "/dir1/web/packages",
                          rootUrl + "/dir2/.pub",
                          rootUrl + "/dir2/build",
-                         rootUrl + "/dir2/packages/project2",
-                         rootUrl + "/dir2/packages/project1",
+                         rootUrl + "/dir2/packages",
                          rootUrl + "/dir2/someFolder",
                          rootUrl + "/dir2/lib/someFolder",
                          rootUrl + "/dir2/bin/packages",
@@ -86,6 +87,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                          rootUrl + "/dir2/tool/sub/packages",
                          rootUrl + "/dir2/web/packages",
                          rootUrl + "/dir2/web/sub/packages",
+                         rootUrl + "/dir2/example/packages",
                          rootUrl + "/dir2/example/lib/packages",
                          rootUrl + "/dir2/example/lib/sub/packages",
                          rootUrl + "/dir2/example/web/packages",
@@ -101,8 +103,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                          rootUrl + "/dir1/web/packages",
                          rootUrl + "/dir2/.pub",
                          rootUrl + "/dir2/build",
-                         rootUrl + "/dir2/packages/project2",
-                         rootUrl + "/dir2/packages/project1",
+                         rootUrl + "/dir2/packages",
                          rootUrl + "/dir2/someFolder",
                          rootUrl + "/dir2/lib/someFolder",
                          rootUrl + "/dir2/bin/packages",
@@ -115,12 +116,10 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                          rootUrl + "/dir2/web/packages",
                          rootUrl + "/dir2/web/sub/packages",
                          rootUrl + "/dir2/example/lib/packages",
+                         rootUrl + "/dir2/example/packages",
                          rootUrl + "/dir2/example/lib/sub/packages",
                          rootUrl + "/dir2/example/web/packages",
-                         rootUrl + "/dir2/example/web/sub/packages",
-                         rootUrl + "/dir2/example/packages/project3",
-                         rootUrl + "/dir2/example/packages/project2",
-                         rootUrl + "/dir2/example/packages/project1"
+                         rootUrl + "/dir2/example/web/sub/packages"
       );
     }
     finally {
@@ -130,6 +129,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
 
   public void testDartUrlResolver() throws Exception {
     final String rootPath = ModuleRootManager.getInstance(myModule).getContentRoots()[0].getPath();
+    final String rootUrl = "file:///" + StringUtil.trimLeading(rootPath, '/');
 
     myFixture.addFileToProject("pubspec.yaml", "name: RootProject");
     myFixture.addFileToProject("lib/rootlib.dart", "");
@@ -140,9 +140,11 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("example/lib/src/nestedlib.dart", "");
     myFixture.addFileToProject("example/packages/NestedProject/nestedlib.dart", "");
     myFixture.addFileToProject("example/packages/RootProject/rootlib.dart", "");
-    myFixture.addFileToProject("example/packages/SomePackage/somepack.dart", "");
-    final VirtualFile customPack =
-      myFixture.addFileToProject("custom_pack/RootProject/rootlib.dart", "").getVirtualFile().getParent().getParent();
+    myFixture.addFileToProject("pub/global/cache/SomePackage/lib/somepack.dart", "");
+    myFixture.saveText(myFixture.addFileToProject("example/.packages", "").getVirtualFile(),
+                       "RootProject:../lib/\n" +
+                       "NestedProject:lib/\n" +
+                       "SomePackage:" + rootUrl + "/pub/global/cache/SomePackage/lib/");
 
     DartUrlResolver resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
     VirtualFile file;
@@ -169,49 +171,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
 
     file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
     assertNotNull(file);
-    assertEquals(rootPath + "/example/packages/SomePackage/somepack.dart", file.getPath());
+    assertEquals(rootPath + "/pub/global/cache/SomePackage/lib/somepack.dart", file.getPath());
     assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
-
-
-    try {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        try {
-          final Library library = modifiableModel.getModuleLibraryTable().createLibrary("Dart custom package root");
-          final Library.ModifiableModel libModel = library.getModifiableModel();
-          libModel.addRoot(customPack.getUrl(), OrderRootType.CLASSES);
-          libModel.commit();
-          modifiableModel.commit();
-        }
-        catch (Exception e) {
-          if (!modifiableModel.isDisposed()) modifiableModel.dispose();
-        }
-      });
-
-      resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
-
-      file = resolver.findFileByDartUrl("package:NestedProject/src/nestedlib.dart");
-      assertNull(file);
-
-      file = resolver.findFileByDartUrl("package:RootProject/rootlib.dart");
-      assertNotNull(file);
-      assertEquals(rootPath + "/custom_pack/RootProject/rootlib.dart", file.getPath());
-      assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
-    }
-    finally {
-      ApplicationManager.getApplication().runWriteAction(
-        () -> {
-          final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-          for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
-            if (entry instanceof LibraryOrderEntry && "Dart custom package root".equals(((LibraryOrderEntry)entry).getLibraryName())) {
-              modifiableModel.removeOrderEntry(entry);
-              break;
-            }
-          }
-
-          modifiableModel.commit();
-        }
-      );
-    }
   }
 }

@@ -40,9 +40,6 @@ public abstract class DartUrlResolver {
   @Nullable
   public abstract VirtualFile getPubspecYamlFile();
 
-  @Nullable
-  public abstract VirtualFile getPackageRoot();
-
   /**
    * Process 'Path Packages' (https://www.dartlang.org/tools/pub/dependencies.html#path-packages) and this package itself (symlink to local 'lib' folder)
    */
