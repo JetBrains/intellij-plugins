@@ -4,6 +4,7 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.javascript.flex.maven.Flexmojos4Configurator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,7 +28,10 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
     super.setUp();
 
     myInitialMavenHome = getMavenGeneralSettings().getMavenHome();
-    getMavenGeneralSettings().setMavenHome(MavenServerManager.BUNDLED_MAVEN_3);
+    // Flexmojos4 config generator can't run on IDEA's default Maven 3.3.9 because of https://issues.apache.org/jira/browse/MNG-5958
+    final File maven3Home = MavenServerManager.getMavenHomeFile(MavenServerManager.BUNDLED_MAVEN_3); // 3.3.9
+    // switch to Maven 3.0.5
+    getMavenGeneralSettings().setMavenHome(StringUtil.replace(maven3Home.getPath(), "maven3-server-impl", "maven30-server-impl"));
   }
 
   @Override

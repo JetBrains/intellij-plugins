@@ -57,6 +57,6 @@ class MotionAppRunParameters extends RunParameters {
   @NotNull
   @Override
   public DebuggerDriverConfiguration getDebuggerDriverConfiguration() {
-    return new XcodeLLDBDriverConfiguration();
+    return new XcodeLLDBDriverConfiguration(null);
   }
 }

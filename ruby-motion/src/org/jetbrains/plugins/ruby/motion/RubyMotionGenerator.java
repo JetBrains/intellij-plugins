@@ -63,7 +63,7 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
 
   @NotNull
   @Override
-  public ValidationResult validate(@NotNull String baseDirPath) {
+  public ValidationResult doValidate(@NotNull String baseDirPath) {
     return RubyMotionUtil.getInstance().rubyMotionPresent() ? ValidationResult.OK : new ValidationResult("RubyMotion is not installed");
   }
 

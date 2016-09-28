@@ -6,7 +6,9 @@
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties/>
-    <border type="none"/>
+    <border type="empty">
+      <size top="10" left="0" bottom="0" right="0"/>
+    </border>
     <children>
       <component id="c206e" class="com.intellij.openapi.ui.ComboBox" binding="myRubyInterpreterComboBox" custom-create="true">
         <constraints>
@@ -21,7 +23,10 @@
       </vspacer>
       <component id="c0cc" class="javax.swing.JLabel" binding="myRubyLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="120" height="26"/>
+            <preferred-size width="120" height="26"/>
+          </grid>
         </constraints>
         <properties>
           <labelFor value="c206e"/>
@@ -36,7 +41,10 @@
       </component>
       <component id="5eb70" class="javax.swing.JLabel" binding="myProjectTypeLabel">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="26"/>
+            <preferred-size width="-1" height="26"/>
+          </grid>
         </constraints>
         <properties>
           <horizontalAlignment value="10"/>

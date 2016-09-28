@@ -45,7 +45,6 @@ public class LanguageListCompletionContributor extends CompletionContributor {
     for (Map.Entry<String, Language> entry : LanguageGuesser.INSTANCE.getLangToLanguageMap().entrySet()) {
       final Language language = entry.getValue();
 
-
       final LookupElementBuilder lookupElementBuilder =
         LookupElementBuilder.create(entry.getKey()).withIcon(new DeferredIconImpl<>(null, language, true, language1 -> {
           final LanguageFileType fileType = language1.getAssociatedFileType();

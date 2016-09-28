@@ -81,7 +81,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
       ensureCorrectDartSdkLibName();
       updateDependenciesOnDartSdkLib();
 
-      DartiumUtil.removeUnsupportedAsyncFlag();
+      DartiumUtil.resetDartiumFlags();
 
       final Collection<VirtualFile> pubspecYamlFiles =
         FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));

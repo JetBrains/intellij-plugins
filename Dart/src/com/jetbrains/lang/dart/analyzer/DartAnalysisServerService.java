@@ -25,6 +25,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -73,7 +74,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DartAnalysisServerService {
 
@@ -120,8 +120,10 @@ public class DartAnalysisServerService {
 
   @NotNull private final DartServerData myServerData = new DartServerData(myRootsHandler);
 
-  @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
+  private volatile boolean myAnalysisInProgress;
+  private volatile boolean myPubListInProgress;
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
+  @NotNull private final Set<ProgressIndicator> myProgressIndicators = new THashSet<>(); // also used to wait/notify
 
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
@@ -140,6 +142,11 @@ public class DartAnalysisServerService {
       final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
       myServerData.computedErrors(filePathSI, errors, visible);
       onErrorsUpdated(filePathSI, errors);
+
+      String fileName = PathUtil.getFileName(filePathSD);
+      for (ProgressIndicator indicator : myProgressIndicators) {
+        indicator.setText(DartBundle.message("dart.analysis.progress.with.file", fileName));
+      }
     }
 
     @Override
@@ -222,42 +229,60 @@ public class DartAnalysisServerService {
 
     @Override
     public void serverStatus(@Nullable final AnalysisStatus analysisStatus, @Nullable final PubStatus pubStatus) {
-      if (analysisStatus != null && analysisStatus.isAnalyzing() || pubStatus != null && pubStatus.isListingPackageDirs()) {
-        if (myServerBusy.compareAndSet(false, true)) {
-          for (final Project project : myRootsHandler.getTrackedProjects()) {
-            final Runnable delayedRunnable = () -> {
-              if (project.isDisposed() || !myServerBusy.get()) return;
+      final boolean wasBusy = myAnalysisInProgress || myPubListInProgress;
 
-              final Task.Backgroundable task =
-                new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
-                  @Override
-                  public void run(@NotNull ProgressIndicator indicator) {
-                    if (ApplicationManager.getApplication().isDispatchThread()) {
-                      if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                        LOG.error("wait() in EDT");
-                      }
-                    }
-                    else {
-                      waitWhileServerBusy();
-                    }
-                  }
-                };
+      if (analysisStatus != null) myAnalysisInProgress = analysisStatus.isAnalyzing();
+      if (pubStatus != null) myPubListInProgress = pubStatus.isListingPackageDirs();
 
-              ProgressManager.getInstance().run(task);
-            };
+      if (!wasBusy && (myAnalysisInProgress || myPubListInProgress)) {
+        for (final Project project : myRootsHandler.getTrackedProjects()) {
+          final Runnable delayedRunnable = () -> {
+            if (!project.isDisposed() && (myAnalysisInProgress || myPubListInProgress)) {
+              startShowingServerProgress(project);
+            }
+          };
 
-            // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events
-            // 300ms delay to avoid showing progress for very fast analysis start-stop cycle that happens with analysisStatus events
-            final int delay = pubStatus != null && pubStatus.isListingPackageDirs() ? 50 : 300;
-            myShowServerProgressAlarm.addRequest(delayedRunnable, delay, ModalityState.any());
-          }
+          // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events
+          // 300ms delay to avoid showing progress for very fast analysis start-stop cycle that happens with analysisStatus events
+          final int delay = pubStatus != null && pubStatus.isListingPackageDirs() ? 50 : 300;
+          myShowServerProgressAlarm.addRequest(delayedRunnable, delay, ModalityState.any());
         }
       }
-      else {
+
+      if (!myAnalysisInProgress && !myPubListInProgress) {
         stopShowingServerProgress();
       }
     }
   };
+
+  private void startShowingServerProgress(final Project project) {
+    final Task.Backgroundable task = new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
+      @Override
+      public void run(@NotNull final ProgressIndicator indicator) {
+        if (project.isDisposed()) return;
+        if (!myAnalysisInProgress && !myPubListInProgress) return;
+
+        indicator.setText(DartBundle.message("dart.analysis.progress.title"));
+
+        if (ApplicationManager.getApplication().isDispatchThread()) {
+          if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            LOG.error("wait() in EDT");
+          }
+        }
+        else {
+          try {
+            myProgressIndicators.add(indicator);
+            waitWhileServerBusy(indicator);
+          }
+          finally {
+            myProgressIndicators.remove(indicator);
+          }
+        }
+      }
+    };
+
+    ProgressManager.getInstance().run(task);
+  }
 
   private DocumentAdapter myDocumentListener = new DocumentAdapter() {
     @Override
@@ -664,9 +689,7 @@ public class DartAnalysisServerService {
     }
   }
 
-  public boolean updateRoots(@NotNull final List<String> includedRoots,
-                             @NotNull final List<String> excludedRoots,
-                             @Nullable final Map<String, String> packageRoots) {
+  public boolean updateRoots(@NotNull final List<String> includedRoots, @NotNull final List<String> excludedRoots) {
     if (includedRoots.isEmpty()) {
       stopShowingServerProgress();
     }
@@ -681,7 +704,7 @@ public class DartAnalysisServerService {
                 "\nexcluded:\n" + StringUtil.join(excludedRoots, ",\n"));
     }
 
-    server.analysis_setAnalysisRoots(includedRoots, excludedRoots, packageRoots);
+    server.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
     return true;
   }
 
@@ -1378,7 +1401,12 @@ public class DartAnalysisServerService {
       }
 
       if (myServer != null) {
+        if ((myAnalysisInProgress || myPubListInProgress) && !myRootsHandler.getTrackedProjects().contains(project)) {
+          startShowingServerProgress(project);
+        }
+
         myRootsHandler.ensureProjectServed(project);
+
         return true;
       }
 
@@ -1456,27 +1484,29 @@ public class DartAnalysisServerService {
     assert latch.getCount() == 0 : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
   }
 
-  private void waitWhileServerBusy() {
-    if (myServerBusy.get()) {
-      try {
-        synchronized (myServerBusy) {
-          if (myServerBusy.get()) {
-            //noinspection WaitNotInLoop
-            myServerBusy.wait();
-          }
+  private void waitWhileServerBusy(@NotNull final ProgressIndicator indicator) {
+    try {
+      synchronized (myProgressIndicators) {
+        while (myAnalysisInProgress || myPubListInProgress) {
+          indicator.checkCanceled();
+          myProgressIndicators.wait(100);
         }
       }
-      catch (InterruptedException e) {/* unlucky */}
     }
+    catch (ProcessCanceledException e) {/* happens when project is closed */ }
+    catch (InterruptedException e) {/* unlucky */}
   }
 
   private void stopShowingServerProgress() {
     myShowServerProgressAlarm.cancelAllRequests();
 
-    synchronized (myServerBusy) {
-      myServerBusy.set(false);
-      myServerBusy.notifyAll();
+    synchronized (myProgressIndicators) {
+      myAnalysisInProgress = false;
+      myPubListInProgress = false;
+      myProgressIndicators.notifyAll();
     }
+
+    myProgressIndicators.clear();
   }
 
   public boolean isFileWithErrors(@NotNull final VirtualFile file) {

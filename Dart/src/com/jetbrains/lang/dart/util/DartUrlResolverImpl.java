@@ -19,7 +19,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.ex.temp.TempFileSystem;
 import com.intellij.util.PairConsumer;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
-import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -241,12 +240,6 @@ public class DartUrlResolverImpl extends DartUrlResolver {
     final Module module = ModuleUtilCore.findModuleForFile(contextFile, myProject);
     if (module == null) return null;
 
-    final VirtualFile customPackageRoot = DartConfigurable.getCustomPackageRoot(module);
-    if (customPackageRoot != null) {
-      myPackageRoot = customPackageRoot;
-      return null;
-    }
-
     final VirtualFile pubspecYamlFile = PubspecYamlUtil.findPubspecYamlFile(myProject, contextFile);
 
     if (myDartSdk == null || StringUtil.compareVersionNumbers(myDartSdk.getVersion(), "1.12") < 0) {
@@ -289,8 +282,9 @@ public class DartUrlResolverImpl extends DartUrlResolver {
         myLivePackageNameToDirMap.put(name, libFolder);
       }
 
-      PubspecYamlUtil.processInProjectPathPackagesRecursively(myProject, myPubspecYamlFile,
-                                                              (packageName, packageDir) -> myLivePackageNameToDirMap.put(packageName, packageDir));
+      PubspecYamlUtil
+        .processInProjectPathPackagesRecursively(myProject, myPubspecYamlFile,
+                                                 (packageName, packageDir) -> myLivePackageNameToDirMap.put(packageName, packageDir));
     }
   }
 

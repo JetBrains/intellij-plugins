@@ -30,10 +30,6 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
     doTestQuickNavigateInfo("int <b>x</b>", "class A { int <caret>x; foo() => x; }");
   }
 
-  public void _testTypeRef() throws Exception {
-    doTestQuickNavigateInfo("abstract class <b>int</b><br/>extends num", "class A { <caret>int x; }");
-  }
-
   public void testFunctionRef() throws Exception {
     doTestQuickNavigateInfo("<b>f</b>() " + RIGHT_ARROW + " dynamic", "<caret>f(); g() => f();");
   }

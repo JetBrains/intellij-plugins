@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-/**
- * @author: Fedor.Korotkov
- */
 public abstract class DartIntroduceTestBase extends LightPlatformCodeInsightFixtureTestCase {
   protected void doTestSuggestions(Class<? extends DartExpression> parentClass, String... expectedNames) {
     final Collection<String> names = buildSuggestions(parentClass);
@@ -27,7 +24,6 @@ public abstract class DartIntroduceTestBase extends LightPlatformCodeInsightFixt
 
   protected Collection<String> buildSuggestions(Class<? extends DartExpression> parentClass) {
     myFixture.configureByFile(getTestName(false) + getFileExtension());
-    DartIntroduceHandler handler = createHandler();
     DartExpression expr = PsiTreeUtil.getParentOfType(
       myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset()),
       parentClass
