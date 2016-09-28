@@ -35,7 +35,10 @@ public enum LanguageGuesser {
         result.put(language.getID().toLowerCase(Locale.US), language);
       }
 
-      result.put("js", result.get("javascript"));
+      final Language javascriptLanguage = result.get("javascript");
+      if (javascriptLanguage != null) {
+        result.put("js", javascriptLanguage);
+      }
       return result;
     }
   };
