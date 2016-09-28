@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.util;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -45,7 +46,14 @@ public class DotPackagesFileUtil {
   @Nullable
   private static Map<String, String> loadPackagesMap(@NotNull final VirtualFile dotPackagesFile) {
     try {
-      final List<String> lines = FileUtil.loadLines(dotPackagesFile.getPath(), "UTF-8");
+      final List<String> lines;
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        lines = StringUtil.split(new String(dotPackagesFile.contentsToByteArray(), "UTF-8"), "\n");
+      }
+      else {
+        lines = FileUtil.loadLines(dotPackagesFile.getPath(), "UTF-8");
+      }
+
       final Map<String, String> result = new THashMap<>();
 
       for (String line : lines) {
@@ -76,7 +84,7 @@ public class DotPackagesFileUtil {
   private static String getAbsolutePackageRootPath(@NotNull final VirtualFile baseDir, @NotNull final String uri) {
     if (uri.startsWith("file:/")) {
       final String pathAfterSlashes = StringUtil.trimEnd(StringUtil.trimLeading(StringUtil.trimStart(uri, "file:/"), '/'), "/");
-      if (SystemInfo.isWindows) {
+      if (SystemInfo.isWindows && !ApplicationManager.getApplication().isUnitTestMode()) {
         if (pathAfterSlashes.length() > 2 && Character.isLetter(pathAfterSlashes.charAt(0)) && ':' == pathAfterSlashes.charAt(1)) {
           return pathAfterSlashes;
         }

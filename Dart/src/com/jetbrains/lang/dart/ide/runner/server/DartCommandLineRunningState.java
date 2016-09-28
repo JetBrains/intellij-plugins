@@ -171,12 +171,6 @@ public class DartCommandLineRunningState extends CommandLineState {
       throw new ExecutionException(e);
     }
 
-    final VirtualFile packageRoot = DartUrlResolver.getInstance(getEnvironment().getProject(), dartFile).getPackageRoot();
-    if (packageRoot != null) {
-      // more than one package root is not supported by the [SDK]/bin/dart tool
-      commandLine.addParameter("--package-root=" + FileUtil.toSystemDependentName(packageRoot.getPath()));
-    }
-
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
       commandLine.addParameter("--pause_isolates_on_start");
     }

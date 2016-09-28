@@ -75,12 +75,6 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
         }
       }
 
-      final String relPath = uri.substring(DartUrlResolver.PACKAGE_PREFIX.length());
-      final VirtualFile packageRoot = dartUrlResolver.getPackageRoot();
-      if (packageRoot != null) {
-        return getPackageReferences(file, packageRoot, relPath, uriOffset + DartUrlResolver.PACKAGE_PREFIX.length());
-      }
-
       return PsiReference.EMPTY_ARRAY;
     }
 
