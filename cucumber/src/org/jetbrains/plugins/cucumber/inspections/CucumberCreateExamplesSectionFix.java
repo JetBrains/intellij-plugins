@@ -27,13 +27,8 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
   private static final Logger LOG = Logger.getInstance(CucumberCreateExamplesSectionFix.class.getName());
 
   @NotNull
-  public String getName() {
-    return "Create Examples Section";
-  }
-
-  @NotNull
   public String getFamilyName() {
-    return getName();
+    return "Create Examples Section";
   }
 
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {

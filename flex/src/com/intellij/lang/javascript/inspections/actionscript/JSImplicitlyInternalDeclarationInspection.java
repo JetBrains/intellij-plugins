@@ -92,14 +92,8 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
         new LocalQuickFix() {
           @NotNull
           @Override
-          public String getName() {
-            return FlexBundle.message("js.implicitly.internal.declaration.problem.add.internal.fix");
-          }
-
-          @NotNull
-          @Override
           public String getFamilyName() {
-            return getName();
+            return FlexBundle.message("js.implicitly.internal.declaration.problem.add.internal.fix");
           }
 
           @Override

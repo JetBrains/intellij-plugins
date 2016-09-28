@@ -58,18 +58,13 @@ public class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspect
     }
 
     @NotNull
-    public String getName() {
+    public String getFamilyName() {
       return getText();
     }
 
     @NotNull
     public String getText() {
       return "Move class";
-    }
-
-    @NotNull
-    public String getFamilyName() {
-      return getName();
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
