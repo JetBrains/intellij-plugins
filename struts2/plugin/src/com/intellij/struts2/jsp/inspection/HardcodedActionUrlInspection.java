@@ -107,13 +107,6 @@ public class HardcodedActionUrlInspection extends XmlSuppressableInspectionTool 
     @SuppressWarnings("DialogTitleCapitalization")
     @NotNull
     @Override
-    public String getName() {
-      return "Wrap with Struts <url> tag";
-    }
-
-    @SuppressWarnings("DialogTitleCapitalization")
-    @NotNull
-    @Override
     public String getFamilyName() {
       return "Wrap with Struts <url> tag";
     }
