@@ -689,9 +689,7 @@ public class DartAnalysisServerService {
     }
   }
 
-  public boolean updateRoots(@NotNull final List<String> includedRoots,
-                             @NotNull final List<String> excludedRoots,
-                             @Nullable final Map<String, String> packageRoots) {
+  public boolean updateRoots(@NotNull final List<String> includedRoots, @NotNull final List<String> excludedRoots) {
     if (includedRoots.isEmpty()) {
       stopShowingServerProgress();
     }
@@ -706,7 +704,7 @@ public class DartAnalysisServerService {
                 "\nexcluded:\n" + StringUtil.join(excludedRoots, ",\n"));
     }
 
-    server.analysis_setAnalysisRoots(includedRoots, excludedRoots, packageRoots);
+    server.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
     return true;
   }
 

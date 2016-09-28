@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.ProjectTopics;
-import com.intellij.codeInspection.SmartHashMap;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
@@ -21,16 +20,13 @@ import com.intellij.util.SmartList;
 import com.intellij.util.io.URLUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.lang.dart.DartProjectComponent;
-import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
@@ -39,7 +35,6 @@ public class DartServerRootsHandler {
   private final Set<Project> myTrackedProjects = new THashSet<>();
   private final List<String> myIncludedRoots = new SmartList<>();
   private final List<String> myExcludedRoots = new SmartList<>();
-  private final Map<String, String> myPackageRoots = new THashMap<>();
 
   public DartServerRootsHandler() {
     // ProjectManagerListener.projectClosed() is not called in unittest mode, that's why ProjectLifecycleListener is used - it is called always
@@ -98,7 +93,6 @@ public class DartServerRootsHandler {
 
     final List<String> newIncludedRoots = new SmartList<>();
     final List<String> newExcludedRoots = new SmartList<>();
-    final Map<String, String> newPackageRoots = new SmartHashMap<>();
 
     if (sdk != null) {
       for (Project project : myTrackedProjects) {
@@ -109,8 +103,6 @@ public class DartServerRootsHandler {
         }
 
         for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkEnabled(project)) {
-          newPackageRoots.putAll(DartConfigurable.getContentRootPathToCustomPackageRootMap(module));
-
           final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);
 
           for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
@@ -129,15 +121,13 @@ public class DartServerRootsHandler {
       }
     }
 
-    if (!myIncludedRoots.equals(newIncludedRoots) || !myExcludedRoots.equals(newExcludedRoots) || !myPackageRoots.equals(newPackageRoots)) {
+    if (!myIncludedRoots.equals(newIncludedRoots) || !myExcludedRoots.equals(newExcludedRoots)) {
       myIncludedRoots.clear();
       myExcludedRoots.clear();
-      myPackageRoots.clear();
 
-      if (DartAnalysisServerService.getInstance().updateRoots(newIncludedRoots, newExcludedRoots, newPackageRoots)) {
+      if (DartAnalysisServerService.getInstance().updateRoots(newIncludedRoots, newExcludedRoots)) {
         myIncludedRoots.addAll(newIncludedRoots);
         myExcludedRoots.addAll(newExcludedRoots);
-        myPackageRoots.putAll(newPackageRoots);
       }
     }
   }
