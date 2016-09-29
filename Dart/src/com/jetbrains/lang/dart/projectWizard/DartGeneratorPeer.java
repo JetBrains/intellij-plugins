@@ -173,10 +173,11 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     myLoadingTemplatesPanel.setVisible(false);
     myLoadedTemplatesPanel.setVisible(true);
     myCreateSampleProjectCheckBox.setEnabled(true);
-    myTemplatesList.setEnabled(true);
 
     final String selectedTemplateName = PropertiesComponent.getInstance().getValue(DART_PROJECT_TEMPLATE);
     myCreateSampleProjectCheckBox.setSelected(!CREATE_SAMPLE_UNCHECKED.equals(selectedTemplateName));
+
+    myTemplatesList.setVisibleRowCount(Math.min(8, templates.size()));
     myTemplatesList.setEnabled(myCreateSampleProjectCheckBox.isSelected());
 
     DartProjectTemplate selectedTemplate = null;

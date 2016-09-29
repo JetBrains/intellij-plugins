@@ -109,7 +109,6 @@
                     <constraints/>
                     <properties>
                       <selectionMode value="0"/>
-                      <visibleRowCount value="8"/>
                     </properties>
                   </component>
                 </children>
