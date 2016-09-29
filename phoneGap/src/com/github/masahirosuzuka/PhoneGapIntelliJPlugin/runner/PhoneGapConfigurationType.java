@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -15,6 +16,8 @@ import javax.swing.*;
  * Created by Masahiro Suzuka on 2014/04/04.
  */
 public class PhoneGapConfigurationType implements ConfigurationType {
+  public static final String RUN_CONFIGURATION_ID = "PhoneGap";
+
   public PhoneGapConfigurationFactory myConfigurationFactory;
 
   public PhoneGapConfigurationType() {
@@ -23,12 +26,12 @@ public class PhoneGapConfigurationType implements ConfigurationType {
 
   @Override
   public String getDisplayName() {
-    return "PhoneGap/Cordova";
+    return PhoneGapBundle.message("phonegap.run.configuration.title");
   }
 
   @Override
   public String getConfigurationTypeDescription() {
-    return "PhoneGap/Cordova Application";
+    return PhoneGapBundle.message("phonegap.run.configuration.description");
   }
 
   @Override
@@ -39,7 +42,7 @@ public class PhoneGapConfigurationType implements ConfigurationType {
   @NotNull
   @Override
   public String getId() {
-    return "PhoneGap";
+    return RUN_CONFIGURATION_ID;
   }
 
   @Override
@@ -55,7 +58,7 @@ public class PhoneGapConfigurationType implements ConfigurationType {
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-      return new PhoneGapRunConfiguration(project, myConfigurationFactory, "PhoneGap");
+      return new PhoneGapRunConfiguration(project, myConfigurationFactory, RUN_CONFIGURATION_ID);
     }
 
     @Override

@@ -143,17 +143,17 @@ public class PhoneGapUtil {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       PsiFile[] files = FilenameIndex.getFilesByName(project, "config.xml", GlobalSearchScope.projectScope(project));
 
-      PsiFile file = ContainerUtil.find(files, file1 -> {
-        if (!(file1 instanceof XmlFile)) return false;
+      PsiFile matchedFile = ContainerUtil.find(files, psiFile -> {
+        if (!(psiFile instanceof XmlFile)) return false;
 
-        XmlTag root = ((XmlFile)file1).getRootTag();
+        XmlTag root = ((XmlFile)psiFile).getRootTag();
         if (root == null) return false;
 
         return root.getName().equals("widget");
       });
 
-      if (file != null) {
-        return CachedValueProvider.Result.create(true, file);
+      if (matchedFile != null) {
+        return CachedValueProvider.Result.create(true, matchedFile);
       }
 
       if (files.length > 0) {
