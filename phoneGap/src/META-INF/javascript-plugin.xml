@@ -1,7 +1,7 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="JavaScript"
-                            implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion.PhoneGapCodeCompletion"/>
+                            implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion.PhoneGapEventLiteralsCompletionContributor"/>
     <projectConfigurable id="settings.phonegap" bundle="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle"
                          key="phonegap.conf.name"
                          parentId="Settings.JavaScript"

@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
  * <p/>
  * Created by Masahiro Suzuka on 2014/05/25.
  */
-public class PhoneGapCodeCompletion extends CompletionContributor {
+public class PhoneGapEventLiteralsCompletionContributor extends CompletionContributor {
 
-  public PhoneGapCodeCompletion() {
+  public PhoneGapEventLiteralsCompletionContributor() {
 
     extend(CompletionType.BASIC, PlatformPatterns.psiElement(JSTokenTypes.STRING_LITERAL), getProvider());
   }

@@ -36,7 +36,7 @@ public class PhoneGapConfigurable implements Configurable {
   private final PhoneGapSettings mySettings = PhoneGapSettings.getInstance();
   private UIController myUIController;
   private PhoneGapPluginsView phoneGapPluginsView;
-  private Project myProject;
+  private final Project myProject;
   private JPanel myWrapper;
   private JBLabel myVersion;
   private RepositoryStore myRepositoryStore;

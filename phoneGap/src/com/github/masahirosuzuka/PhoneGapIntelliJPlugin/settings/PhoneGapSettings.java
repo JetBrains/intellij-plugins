@@ -19,8 +19,6 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
 
   public static String PHONEGAP_WORK_DIRECTORY = "js.phonegap.settings.workdir";
 
-  // External tools PATH
-  public static final String NODEJS_PATH = "/usr/local/bin/node";
   public static final String ANDROID_SDK = "android";
   public static final String IOS_SIM = "ios-sim";
 
