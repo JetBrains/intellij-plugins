@@ -31,6 +31,7 @@ import com.intellij.util.containers.ContainerUtil;
 import icons.PhoneGapIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -65,13 +66,13 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
           ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
           indicator.setText("Creating...");
           File tempProject = createTemp();
-          PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath());
+          PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath(), settings.getOptions());
 
           if (!commandLine.isCorrectExecutable()) {
             showErrorMessage("Incorrect path");
             return;
           }
-          commandLine.createNewProject(settings.name());
+          commandLine.createNewProject(settings.name(), indicator);
 
           File[] array = tempProject.listFiles();
           if (array != null && array.length != 0) {
@@ -162,16 +163,30 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   }
 
   final static class PhoneGapProjectSettings {
-    private String name = "example";
+    private final String name = "example";
+    @Nullable
     private String executable;
+    @Nullable
+    private String options;
 
-    public void setExecutable(String executable) {
+    public void setExecutable(@Nullable String executable) {
       this.executable = executable;
     }
 
+    public void setOptions(@Nullable String options) {
+      this.options = options;
+    }
+
+    @Nullable
     public String getExecutable() {
       return executable;
     }
+
+    @Nullable
+    public String getOptions() {
+      return StringUtil.nullize(options, true);
+    }
+
 
     public String name() {
       return name;
