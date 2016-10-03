@@ -21,7 +21,6 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import gnu.trove.THashMap;
-import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +32,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
   private static final Logger LOG = Logger.getInstance(DartStyleAction.class.getName());
 
   public DartStyleAction() {
-    super(DartBundle.message("dart.style.action.name"), DartBundle.message("dart.style.action.description"), DartIcons.Dart_16);
+    super(DartBundle.message("dart.style.action.name"), DartBundle.message("dart.style.action.description"), null);
   }
 
   @NotNull
