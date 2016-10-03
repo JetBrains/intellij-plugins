@@ -11,7 +11,6 @@ import com.intellij.psi.css.resolve.CssInclusionContext;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ import java.util.List;
  * @author Dennis.Ushakov
  */
 public class AngularJSCssInclusionContext extends CssInclusionContext {
-  @Nullable
+  @NotNull
   @Override
   public PsiFile[] getContextFiles(@NotNull PsiFile current) {
     final PsiElement context = current.getContext();
