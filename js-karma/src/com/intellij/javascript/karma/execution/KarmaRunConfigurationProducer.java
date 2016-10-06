@@ -7,6 +7,7 @@ import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -104,6 +105,13 @@ public class KarmaRunConfigurationProducer extends RunConfigurationProducer<Karm
 
   @Override
   public boolean isPreferredConfiguration(ConfigurationFromContext self, ConfigurationFromContext other) {
+    PsiFile psiFile = self.getSourceElement().getContainingFile();
+    if (psiFile != null && other != null) {
+      PreferableRunConfiguration otherRc = ObjectUtils.tryCast(other.getConfiguration(), PreferableRunConfiguration.class);
+      if (otherRc != null && otherRc.isPreferredOver(self.getConfiguration(), psiFile)) {
+        return false;
+      }
+    }
     return true;
   }
 }
