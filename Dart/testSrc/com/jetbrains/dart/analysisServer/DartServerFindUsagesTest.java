@@ -16,7 +16,6 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandler;
 import com.jetbrains.lang.dart.psi.impl.DartFileReference;
@@ -65,7 +64,7 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
     assertSameElements(actualResult, expected);
   }
 
-  public void testBoolUsagesWithScope() {
+  public void testBoolUsagesWithScope() throws Exception {
     final PsiFile psiFile1 = myFixture.configureByText("file.dart", "/// [bool]\n" +
                                                                     "<caret>bool foo() {\n" +
                                                                     "  var bool = #bool;\n" +
@@ -73,6 +72,9 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
     final PsiFile psiFile2 = myFixture.addFileToProject("file1.dart", "bool x;");
 
     myFixture.doHighlighting(); // warm up
+
+    DartTestUtils.letAnalyzerSmellCoreFile(myFixture, "iterable.dart");
+    myFixture.openFileInEditor(psiFile1.getVirtualFile());
 
     final String[] allProjectUsages = {"PsiCommentImpl in " + psiFile1.getName() + "@5:9 (non-code usage)",
       "DartReferenceExpressionImpl in " + psiFile1.getName() + "@11:15",
@@ -92,7 +94,7 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
                 allProjectUsages);
     checkUsages(GlobalSearchScope.projectScope(getProject()), allProjectUsages);
     final Collection<UsageInfo> usages = findUsages(GlobalSearchScope.allScope(getProject()));
-    assertTrue(String.valueOf(usages.size()), usages.size() > 620);
+    assertTrue(String.valueOf(usages.size()), usages.size() > 15);
   }
 
   public void testDynamicAndNonCodeUsage() {
