@@ -14,7 +14,9 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartTestUtils;
+import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -73,14 +75,10 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     myFixture.doHighlighting();
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
-    final VirtualFile iterableFile = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/iterable.dart");
-    assertNotNull(iterableFile);
-    myFixture.openFileInEditor(iterableFile);
-
-    // let's keep updateVisibleFiles() method package-local, but here we need to invoke it because FileEditorManagerListener is not notified in test environment
-    final Method method = DartAnalysisServerService.class.getDeclaredMethod("updateVisibleFiles");
-    method.setAccessible(true);
-    method.invoke(DartAnalysisServerService.getInstance());
+    letAnalyzerSmellCoreFile(sdk, "set.dart");
+    letAnalyzerSmellCoreFile(sdk, "string.dart");
+    letAnalyzerSmellCoreFile(sdk, "list.dart");
+    letAnalyzerSmellCoreFile(sdk, "iterable.dart");
 
     final DartClass iterableClass = PsiTreeUtil.findChildOfType(getFile(), DartClass.class);
     assertNotNull(iterableClass);
@@ -94,5 +92,17 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
                                                                 : psiElement.toString());
 
     assertSameElements(actual, "List", "Set", "Runes"); // only subclasses from dart:core are known to analyzer at this point
+  }
+
+  private void letAnalyzerSmellCoreFile(@NotNull final DartSdk sdk, @NotNull final String fileName)
+    throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    final VirtualFile iterableFile = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/" + fileName);
+    assertNotNull(iterableFile);
+    myFixture.openFileInEditor(iterableFile);
+
+    // let's keep updateVisibleFiles() method package-local, but here we need to invoke it because FileEditorManagerListener is not notified in test environment
+    final Method method = DartAnalysisServerService.class.getDeclaredMethod("updateVisibleFiles");
+    method.setAccessible(true);
+    method.invoke(DartAnalysisServerService.getInstance());
   }
 }
