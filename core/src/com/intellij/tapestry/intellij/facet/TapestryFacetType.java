@@ -64,6 +64,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
       super("tapestry");
     }
 
+    @NotNull
     @Override
     public FacetType<TapestryFacet, TapestryFacetConfiguration> getFacetType() {
       return TapestryFacetType.getInstance();
