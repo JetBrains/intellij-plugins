@@ -35,6 +35,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
     super("osmorc");
   }
 
+  @NotNull
   @Override
   public FacetType<OsmorcFacet, OsmorcFacetConfiguration> getFacetType() {
     return OsmorcFacetType.getInstance();
