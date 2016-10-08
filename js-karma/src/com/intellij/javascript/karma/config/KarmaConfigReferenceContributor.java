@@ -19,7 +19,6 @@ import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -148,14 +147,14 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
         }
         String basePath = KarmaBasePathFinder.getInstance().fetchBasePath((JSFile) file);
         if (StringUtil.isEmpty(basePath)) {
-          return Collections.<PsiFileSystemItem>singletonList(psiDirectory);
+          return Collections.singletonList(psiDirectory);
         }
         VirtualFile vDirectory = psiDirectory.getVirtualFile();
         VirtualFile vChildDirectory = vDirectory.findFileByRelativePath(basePath);
         if (vChildDirectory != null) {
           PsiDirectory psiChildDirectory = psiDirectory.getManager().findDirectory(vChildDirectory);
           if (psiChildDirectory != null) {
-            return Collections.<PsiFileSystemItem>singletonList(psiChildDirectory);
+            return Collections.singletonList(psiChildDirectory);
           }
         }
         return Collections.emptyList();

@@ -17,9 +17,6 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaBasePathFinder {
 
   private static final String BASE_PATH_VAR_NAME = "basePath";
@@ -57,7 +54,7 @@ public class KarmaBasePathFinder {
         if (BASE_PATH_VAR_NAME.equals(name)) {
           JSLiteralExpression value = ObjectUtils.tryCast(property.getValue(), JSLiteralExpression.class);
           if (value != null && value.isQuotedLiteral()) {
-            basePathRef.set(StringUtil.stripQuotesAroundValue(value.getText()));
+            basePathRef.set(StringUtil.unquoteString(value.getText()));
           }
         }
       }
