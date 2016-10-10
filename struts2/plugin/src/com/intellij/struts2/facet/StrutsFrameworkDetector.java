@@ -39,6 +39,7 @@ public class StrutsFrameworkDetector extends FacetBasedFrameworkDetector<StrutsF
     super("struts2");
   }
 
+  @NotNull
   @Override
   public FacetType<StrutsFacet, StrutsFacetConfiguration> getFacetType() {
     return StrutsFacetType.getInstance();

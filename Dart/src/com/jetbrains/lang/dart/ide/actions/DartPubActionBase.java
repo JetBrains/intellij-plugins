@@ -49,7 +49,6 @@ import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
-import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,10 +62,6 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   private static final Key<PubToolWindowContentInfo> PUB_TOOL_WINDOW_CONTENT_INFO_KEY = Key.create("PUB_TOOL_WINDOW_CONTENT_INFO_KEY");
 
   private static final AtomicBoolean ourInProgress = new AtomicBoolean(false);
-
-  public DartPubActionBase() {
-    super(DartIcons.Dart_16);
-  }
 
   public static boolean isInProgress() {
     return ourInProgress.get();

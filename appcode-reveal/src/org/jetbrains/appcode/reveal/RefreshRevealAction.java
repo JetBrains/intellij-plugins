@@ -1,9 +1,11 @@
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
+import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -12,6 +14,7 @@ import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
+import com.jetbrains.cidr.xcode.Xcode;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
 import icons.AppcodeRevealIcons;
@@ -123,7 +126,10 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
   @Nullable
   private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
-    if (destination.isDevice()) {
+    if (Xcode.getVersion().isOrGreaterThan(8)) {
+      // Xcode 8's simulators use the host computer's name
+      return ExecUtil.execAndReadLine(new GeneralCommandLine("scutil", "--get", "ComputerName"));
+    } else if (destination.isDevice()) {
       return destination.getDeviceSafe().getName();
     } else if (destination.isSimulator()) {
       SimulatedBuildDestination.Simulator simulator = destination.getSimulator();

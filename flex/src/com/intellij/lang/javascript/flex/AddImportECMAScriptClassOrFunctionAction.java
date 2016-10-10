@@ -78,11 +78,6 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
   }
 
   @NotNull
-  public String getName() {
-    return getText();
-  }
-
-  @NotNull
   public String getFamilyName() {
     return getText();
   }

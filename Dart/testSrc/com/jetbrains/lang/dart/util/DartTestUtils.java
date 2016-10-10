@@ -13,11 +13,13 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.PsiTestCase;
 import com.intellij.testFramework.ThreadTracker;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -30,6 +32,8 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -214,5 +218,18 @@ public class DartTestUtils {
     // A little cargo-cult programming: some tests fail without the next line.
     DartAnalysisServerService.getInstance().waitForAnalysisToComplete_TESTS_ONLY(test.getFile().getVirtualFile());
     return testRoot;
+  }
+
+  public static void letAnalyzerSmellCoreFile(@NotNull final CodeInsightTestFixture fixture, @NotNull final String fileName)
+    throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    final DartSdk sdk = DartSdk.getDartSdk(fixture.getProject());
+    final VirtualFile iterableFile = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/" + fileName);
+    TestCase.assertNotNull(iterableFile);
+    fixture.openFileInEditor(iterableFile);
+
+    // let's keep updateVisibleFiles() method package-local, but here we need to invoke it because FileEditorManagerListener is not notified in test environment
+    final Method method = DartAnalysisServerService.class.getDeclaredMethod("updateVisibleFiles");
+    method.setAccessible(true);
+    method.invoke(DartAnalysisServerService.getInstance());
   }
 }

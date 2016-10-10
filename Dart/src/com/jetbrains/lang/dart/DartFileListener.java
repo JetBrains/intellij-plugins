@@ -87,7 +87,8 @@ public class DartFileListener extends VirtualFileAdapter {
 
   private static void fileChanged(@NotNull final Project project, @NotNull final VirtualFile file) {
     if (!DotPackagesFileUtil.DOT_PACKAGES.equals(file.getName())) return;
-    if (LocalFileSystem.getInstance() != file.getFileSystem()) return;
+    if (LocalFileSystem.getInstance() != file.getFileSystem() && !ApplicationManager.getApplication().isUnitTestMode()) return;
+
     final VirtualFile parent = file.getParent();
     final VirtualFile pubspec = parent == null ? null : parent.findChild(PUBSPEC_YAML);
 
@@ -122,7 +123,7 @@ public class DartFileListener extends VirtualFileAdapter {
 
     setDartPackageRootUpdateScheduledOrInProgress(project, Boolean.TRUE);
 
-    DumbService.getInstance(project).smartInvokeLater(() -> {
+    final Runnable runnable = () -> {
       try {
         final DartSdk sdk = DartSdk.getDartSdk(project);
         final Library library = actualizePackagesLibrary(project, sdk);
@@ -139,7 +140,14 @@ public class DartFileListener extends VirtualFileAdapter {
       finally {
         setDartPackageRootUpdateScheduledOrInProgress(project, false);
       }
-    }, ModalityState.NON_MODAL);
+    };
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      runnable.run();
+    }
+    else {
+      DumbService.getInstance(project).smartInvokeLater(runnable, ModalityState.NON_MODAL);
+    }
   }
 
   @Nullable
@@ -315,6 +323,10 @@ public class DartFileListener extends VirtualFileAdapter {
   }
 
   private static boolean isPathOutsideProjectContent(@NotNull final ProjectFileIndex fileIndex, @NotNull String path) {
+    if (ApplicationManager.getApplication().isUnitTestMode() && path.contains("/pub/global/cache/")) {
+      return true;
+    }
+
     while (!path.isEmpty()) {
       final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
       if (file == null) {

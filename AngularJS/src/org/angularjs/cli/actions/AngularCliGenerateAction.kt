@@ -183,6 +183,6 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
   override fun update(e: AnActionEvent?) {
     val project = e?.project
-    e?.presentation?.isEnabledAndVisible = project != null && project.baseDir.findChild("angular-cli.json") != null
+    e?.presentation?.isEnabledAndVisible = project != null && project.baseDir?.findChild("angular-cli.json") != null
   }
 }

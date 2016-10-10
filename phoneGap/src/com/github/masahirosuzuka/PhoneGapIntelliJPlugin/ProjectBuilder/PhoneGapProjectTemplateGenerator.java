@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectComponent;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -30,6 +31,7 @@ import com.intellij.util.containers.ContainerUtil;
 import icons.PhoneGapIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -43,12 +45,12 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   @NotNull
   @Override
   public String getName() {
-    return "PhoneGap/Cordova App";
+    return PhoneGapBundle.message("phonegap.app.name");
   }
 
   @Override
   public String getDescription() {
-    return "<html>PhoneGap/Cordova application skeleton</html>";
+    return PhoneGapBundle.message("phonegap.app.name.titile");
   }
 
   @Override
@@ -64,13 +66,13 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
           ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
           indicator.setText("Creating...");
           File tempProject = createTemp();
-          PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath());
+          PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath(), settings.getOptions());
 
           if (!commandLine.isCorrectExecutable()) {
             showErrorMessage("Incorrect path");
             return;
           }
-          commandLine.createNewProject(settings.name());
+          commandLine.createNewProject(settings.name(), indicator);
 
           File[] array = tempProject.listFiles();
           if (array != null && array.length != 0) {
@@ -80,13 +82,15 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
             deleteTemp(tempProject);
           }
           else {
-            showErrorMessage("Cannot find files in the directory " + tempProject.getAbsolutePath());
+            showErrorMessage(PhoneGapBundle.message("phonegap.project.template.create.no.files") +
+                             " " +
+                             tempProject.getAbsolutePath());
           }
         }
         catch (Exception e) {
           throw new RuntimeException(e.getMessage(), e);
         }
-      }, "Creating Phonegap/Cordova project", false, project);
+      }, PhoneGapBundle.message("phonegap.project.template.create.title"), false, project);
 
       ApplicationManager.getApplication().runWriteAction(() -> {
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
@@ -117,11 +121,12 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   }
 
   private static void createRunConfiguration(@NotNull Project project,
-                                        @NotNull PhoneGapProjectSettings settings) {
+                                             @NotNull PhoneGapProjectSettings settings) {
     final RunManager runManager = RunManager.getInstance(project);
     PhoneGapConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(PhoneGapConfigurationType.class);
     RunnerAndConfigurationSettings configuration =
-      runManager.createRunConfiguration("Phonegap/Cordova run", configurationType.getConfigurationFactories()[0]);
+      runManager.createRunConfiguration(PhoneGapBundle.message("phonegap.project.template.create.run.configuration.title"),
+                                        configurationType.getConfigurationFactories()[0]);
 
     PhoneGapRunConfiguration runConfiguration = (PhoneGapRunConfiguration)configuration.getConfiguration();
     runConfiguration.setExecutable(settings.executable);
@@ -146,7 +151,6 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
     }
   }
 
-
   @NotNull
   @Override
   public PhoneGapProjectPeer createPeer() {
@@ -159,16 +163,30 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   }
 
   final static class PhoneGapProjectSettings {
-    private String name = "example";
+    private final String name = "example";
+    @Nullable
     private String executable;
+    @Nullable
+    private String options;
 
-    public void setExecutable(String executable) {
+    public void setExecutable(@Nullable String executable) {
       this.executable = executable;
     }
 
+    public void setOptions(@Nullable String options) {
+      this.options = options;
+    }
+
+    @Nullable
     public String getExecutable() {
       return executable;
     }
+
+    @Nullable
+    public String getOptions() {
+      return StringUtil.nullize(options, true);
+    }
+
 
     public String name() {
       return name;
@@ -176,10 +194,10 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   }
 
   private static void showErrorMessage(@NotNull String message) {
-    String fullMessage = "Error creating PhoneGap/Cordova App. " + message;
-    String title = "Create PhoneGap/Cordova Project";
+    String fullMessage = PhoneGapBundle.message("phonegap.project.template.error.text", message);
+    String title = PhoneGapBundle.message("phonegap.project.template.error.notification.title");
     Notifications.Bus.notify(
-      new Notification("PhoneGap/Cordova Generator", title, fullMessage, NotificationType.ERROR)
+      new Notification(PhoneGapBundle.message("phonegap.project.template.error.notification"), title, fullMessage, NotificationType.ERROR)
     );
   }
 }

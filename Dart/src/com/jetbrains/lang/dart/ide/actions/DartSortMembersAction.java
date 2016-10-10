@@ -34,7 +34,6 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
-import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
@@ -47,8 +46,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
   private static final Logger LOG = Logger.getInstance(DartSortMembersAction.class.getName());
 
   public DartSortMembersAction() {
-    super(DartBundle.message("dart.sort.members.action.name"), DartBundle.message("dart.sort.members.action.description"),
-          DartIcons.Dart_16);
+    super(DartBundle.message("dart.sort.members.action.name"), DartBundle.message("dart.sort.members.action.description"), null);
   }
 
   @NotNull

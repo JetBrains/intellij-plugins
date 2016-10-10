@@ -39,14 +39,8 @@ public class ConvertToLocalFix implements LocalQuickFix {
 
   @NotNull
   @Override
-  public String getName() {
-    return FlexBundle.message("js.convert.to.local.quick.fix");
-  }
-
-  @NotNull
-  @Override
   public String getFamilyName() {
-    return getName();
+    return FlexBundle.message("js.convert.to.local.quick.fix");
   }
 
   @Override

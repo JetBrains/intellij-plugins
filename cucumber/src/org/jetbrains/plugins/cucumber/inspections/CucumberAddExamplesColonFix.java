@@ -15,13 +15,8 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementFactory;
 public class CucumberAddExamplesColonFix implements LocalQuickFix {
 
   @NotNull
-  public String getName() {
-    return "Add missing ':' after examples keyword";
-  }
-
-  @NotNull
   public String getFamilyName() {
-    return getName();
+    return "Add missing ':' after examples keyword";
   }
 
 

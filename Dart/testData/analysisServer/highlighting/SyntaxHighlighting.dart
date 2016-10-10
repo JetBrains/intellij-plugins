@@ -7,7 +7,7 @@
     <weak_warning descr="The name document is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info></weak_warning>,
     <weak_warning descr="The name EventListener is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info></weak_warning>,
     <warning descr="'convertNativeObjectToDartMap' is deprecated" textAttributesKey="DEPRECATED_ATTRIBUTES"><weak_warning descr="The name convertNativeObjectToDartMap is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">convertNativeObjectToDartMap</info></weak_warning></warning>,
-    <weak_warning descr="The library 'dart:html' doesn't export a member with the shown name 'incorrect'" textAttributesKey="DART_HINT"><weak_warning descr="The name incorrect is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_IDENTIFIER">incorrect</info></weak_warning></weak_warning>;
+    <weak_warning descr="The library 'dart:html' doesn't export a member with the shown name 'incorrect'" textAttributesKey="DART_HINT"><info textAttributesKey="DART_IDENTIFIER">incorrect</info></weak_warning>;
 
 <info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_DECLARATION">topLevelGetter</info> {
   return <info textAttributesKey="DART_TOP_LEVEL_GETTER_REFERENCE">topLevelGetter</info>;

@@ -98,13 +98,8 @@ public class JSUntypedDeclarationInspection extends JSInspection {
   private static class AddTypeToDclFix implements LocalQuickFix {
 
     @NotNull
-    public String getName() {
-      return FlexBundle.message("js.untyped.declaration.problem.addtype.fix");
-    }
-
-    @NotNull
     public String getFamilyName() {
-      return getName();
+      return FlexBundle.message("js.untyped.declaration.problem.addtype.fix");
     }
 
     public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {

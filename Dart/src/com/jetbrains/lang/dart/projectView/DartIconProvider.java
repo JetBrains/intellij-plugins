@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
-import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,10 +34,6 @@ public class DartIconProvider extends IconProvider {
       if (isFolderNearPubspecYaml(folder, "web")) return AllIcons.Nodes.WebFolder;
       if (isFolderNearPubspecYaml(folder, "test")) return AllIcons.Modules.TestSourceFolder;
       if (isFolderNearPubspecYaml(folder, "tool")) return AllIcons.Nodes.KeymapTools;
-      if (isFolderNearPubspecYaml(folder, "packages") &&
-          !ProjectRootManager.getInstance(element.getProject()).getFileIndex().isExcluded(folder)) {
-        return DartIcons.Package_root;
-      }
       if (isFolderNearPubspecYaml(folder.getParent(), "packages")) {
         final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex();
         return fileIndex.isExcluded(folder) ? EXCLUDED_FOLDER_SYMLINK_ICON

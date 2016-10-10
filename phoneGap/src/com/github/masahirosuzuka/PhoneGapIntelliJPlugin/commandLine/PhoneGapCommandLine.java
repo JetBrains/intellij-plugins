@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.GeneralCommandLine.ParentEnvironmentType;
 import com.intellij.execution.process.*;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
@@ -36,6 +37,7 @@ public class PhoneGapCommandLine {
   public static final String COMMAND_SERVE = "serve";
   public static final String COMMAND_REMOTE_RUN = "remote run";
   public static final String COMMAND_REMOTE_BUILD = "remote build";
+  public static final long PROCESS_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
 
   @Nullable
   private final String myWorkDir;
@@ -76,7 +78,7 @@ public class PhoneGapCommandLine {
 
   private boolean myPassParentEnv = true;
   private Map<String, String> myEnv = ContainerUtil.newHashMap();
-
+  private final String myOptions;
   public static final Function<String, String> REMOVE_QUOTE_AND_TRIM = s -> s.replace("'", "").trim();
 
   public PhoneGapCommandLine(@NotNull String path, @Nullable String dir, boolean isPassEnv, Map<String, String> env) {
@@ -84,6 +86,21 @@ public class PhoneGapCommandLine {
     myPath = path;
     myEnv = env;
     myPassParentEnv = isPassEnv;
+    myOptions = null;
+    try {
+      version = getInnerVersion(myPath, "--version").replace("\"", "").trim();
+    }
+    catch (Exception e) {
+      version = null;
+      LOGGER.debug(e.getMessage(), e);
+      myIsCorrect = false;
+    }
+  }
+
+  public PhoneGapCommandLine(@NotNull String path, @Nullable String dir, @Nullable String options) {
+    myWorkDir = dir;
+    myPath = path;
+    myOptions = options;
     try {
       version = getInnerVersion(myPath, "--version").replace("\"", "").trim();
     }
@@ -95,16 +112,7 @@ public class PhoneGapCommandLine {
   }
 
   public PhoneGapCommandLine(@NotNull String path, @Nullable String dir) {
-    myWorkDir = dir;
-    myPath = path;
-    try {
-      version = getInnerVersion(myPath, "--version").replace("\"", "").trim();
-    }
-    catch (Exception e) {
-      version = null;
-      LOGGER.debug(e.getMessage(), e);
-      myIsCorrect = false;
-    }
+    this(path, dir, null);
   }
 
   public ProcessOutput platformAdd(@NotNull String platform) throws ExecutionException {
@@ -267,8 +275,15 @@ public class PhoneGapCommandLine {
     return StringUtil.compareVersionNumbers(version, "3.6.3") >= 0;
   }
 
-  public void createNewProject(String name) throws Exception {
-    executeVoidCommand(myPath, (isIonic() ? "start" : "create"), name);
+  public void createNewProject(String name, @Nullable ProgressIndicator indicator) throws Exception {
+    String command = isIonic() ? "start" : "create";
+    if (myOptions == null) {
+      executeVoidCommand(indicator, myPath, command, name);
+    }
+    else {
+      String[] resultCommand = ArrayUtil.mergeArrays(new String[]{myPath, command, name, myOptions});
+      executeVoidCommand(indicator, resultCommand);
+    }
   }
 
   private boolean isPhoneGap() {
@@ -333,10 +348,13 @@ public class PhoneGapCommandLine {
     return plugins;
   }
 
-
   private void executeVoidCommand(final String... command) {
+    executeVoidCommand(null, command);
+  }
+
+  private void executeVoidCommand(ProgressIndicator indicator, final String... command) {
     try {
-      ProcessOutput output = executeAndGetOut(command);
+      ProcessOutput output = executeAndGetOut(indicator, command);
 
       if (output.getExitCode() > 0) {
         throw new RuntimeException("Command error: " + output.getStderr());
@@ -386,6 +404,10 @@ public class PhoneGapCommandLine {
   }
 
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
+    return executeAndGetOut(null, command);
+  }
+
+  private ProcessOutput executeAndGetOut(@Nullable ProgressIndicator indicator, String[] command) throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.withWorkDirectory(myWorkDir);
     commandLine.withParentEnvironmentType(myPassParentEnv ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
@@ -397,6 +419,13 @@ public class PhoneGapCommandLine {
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void onTextAvailable(ProcessEvent event, Key outputType) {
+        if (indicator != null ) {
+          String s = StringUtil.trim(event.getText());
+          if (!StringUtil.isEmpty(s)) {
+            indicator.setText2(s);
+          }
+        }
+
         if (outputType == ProcessOutputTypes.STDERR) {
           output.appendStderr(event.getText());
         }
@@ -406,7 +435,7 @@ public class PhoneGapCommandLine {
       }
     });
     processHandler.startNotify();
-    if (processHandler.waitFor(TimeUnit.SECONDS.toMillis(120))) {
+    if (processHandler.waitFor(PROCESS_TIMEOUT)) {
       output.setExitCode(processHandler.getProcess().exitValue());
     }
     else {

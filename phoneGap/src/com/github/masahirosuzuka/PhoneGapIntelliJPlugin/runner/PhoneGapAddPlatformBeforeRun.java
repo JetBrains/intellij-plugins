@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.execution.BeforeRunTask;
 import com.intellij.execution.BeforeRunTaskProvider;
@@ -38,12 +39,12 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
   @Override
   public String getName() {
-    return "Init PhoneGap/Cordova platform";
+    return PhoneGapBundle.message("phonegap.before.task.init.title");
   }
 
   @Override
   public String getDescription(PhoneGapAddPlatformTask task) {
-    return "Init PhoneGap/Cordova platform";
+    return PhoneGapBundle.message("phonegap.before.task.init.title");
   }
 
   @Override
@@ -96,7 +97,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
       FileDocumentManager.getInstance().saveAllDocuments();
       targetDone.down();
 
-      new Task.Backgroundable(project, "Init PhoneGap/Cordova platform", true) {
+      new Task.Backgroundable(project, PhoneGapBundle.message("phonegap.before.task.init.title"), true) {
 
         public boolean shouldStartInBackground() {
           return true;
@@ -108,7 +109,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
             assert platform != null;
             ProcessOutput output = line.platformAdd(platform);
             if (output.getExitCode() != 0) {
-              ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, true);
+              ExecutionHelper.showOutput(project, output, PhoneGapBundle.message("phonegap.before.task.init.title"), null, true);
               result.set(false);
             }
           }
@@ -125,10 +126,11 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
     if (!targetDone.waitFor(TimeUnit.MINUTES.toMillis(2))) {
       ExecutionHelper
-        .showErrors(project, ContainerUtil.createMaybeSingletonList(new RuntimeException("Timeout")), "Cannot Init Platform", null);
+        .showErrors(project, ContainerUtil.createMaybeSingletonList(new RuntimeException("Timeout")),
+                    PhoneGapBundle.message("phonegap.before.task.init.error"), null);
     }
     else if (!exceptions.isEmpty()) {
-      ExecutionHelper.showErrors(project, exceptions, "Cannot Init Platform", null);
+      ExecutionHelper.showErrors(project, exceptions, PhoneGapBundle.message("phonegap.before.task.init.error"), null);
     }
 
 

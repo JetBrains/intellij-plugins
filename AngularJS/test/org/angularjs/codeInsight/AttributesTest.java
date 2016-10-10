@@ -704,4 +704,15 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(resolve);
     });
   }
+
+  public void testCssInternalReferenceWithHtmlTag20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("cssIntRefHtmlTag.ts", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("inDa<caret>Class", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+    });
+  }
 }

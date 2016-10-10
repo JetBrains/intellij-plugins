@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.ide.util.projectWizard.SettingsStep;
@@ -32,7 +33,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   public JComponent getComponent() {
     setFields();
     JPanel panel = FormBuilder.createFormBuilder()
-      .addLabeledComponent("PhoneGap/Cordova:", myExecutablePathField)
+      .addLabeledComponent(PhoneGapBundle.message("phonegap.project.builder.label"), myExecutablePathField)
       .getPanel();
 
     panel.setPreferredSize(JBUI.size(600, 40));
@@ -42,7 +43,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   @Override
   public void buildUI(@NotNull SettingsStep settingsStep) {
     setFields();
-    settingsStep.addSettingsField("PhoneGap/Cordova:", myExecutablePathField);
+    settingsStep.addSettingsField(PhoneGapBundle.message("phonegap.project.builder.label"), myExecutablePathField);
   }
 
   @NotNull
@@ -71,7 +72,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
     else {
       try {
         if (StringUtil.isEmpty(path)) {
-          return new ValidationInfo("Please select path to executable");
+          return new ValidationInfo(PhoneGapBundle.message("phonegap.incorrect.path.executable"));
         }
 
         new PhoneGapCommandLine(path, null).version();
@@ -82,7 +83,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
       }
       myValidateCache.put(path, error);
     }
-    return error ? new ValidationInfo("Incorrect PhoneGap/Cordova executable") : null;
+    return error ? new ValidationInfo(PhoneGapBundle.message("phonegap.incorrect.path.error")) : null;
   }
 
   @Override
