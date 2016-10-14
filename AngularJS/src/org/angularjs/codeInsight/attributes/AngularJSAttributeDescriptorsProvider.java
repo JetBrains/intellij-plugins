@@ -143,6 +143,8 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       if (attributeAvailable == ThreeState.YES) {
         return createDescriptor(project, attributeName);
       }
+      if (!AngularIndexUtil.hasAngularJS2(project)) return null;
+
       for (XmlAttribute attribute : xmlTag.getAttributes()) {
         if (isAngular2Attribute(attribute.getName(), project) || attribute.getName().equals(attrName)) continue;
         final PsiElement declaration = AngularIndexUtil.resolve(project, AngularDirectivesIndex.KEY, attribute.getName());
