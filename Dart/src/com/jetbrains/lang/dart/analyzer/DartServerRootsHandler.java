@@ -11,7 +11,6 @@ import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
@@ -138,10 +137,8 @@ public class DartServerRootsHandler {
     final Collection<VirtualFile> pubspecYamlFiles =
       FilenameIndex.getVirtualFilesByName(module.getProject(), PUBSPEC_YAML, module.getModuleContentScope());
 
-    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
-    boolean withRootPackagesFolder = sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "1.12") >= 0;
     for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
-      result.addAll(DartProjectComponent.collectFolderUrlsToExclude(module, pubspecYamlFile, false, withRootPackagesFolder));
+      result.addAll(DartProjectComponent.collectFolderUrlsToExclude(module, pubspecYamlFile, false));
     }
 
     return result;
