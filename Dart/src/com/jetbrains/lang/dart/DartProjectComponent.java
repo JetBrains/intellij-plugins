@@ -34,7 +34,6 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -297,16 +296,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final VirtualFile root = pubspecYamlFile.getParent();
 
     if (withDotPubAndBuild) {
-      // java.io.File is used here because exclusion is done before FS refresh (in order not to trigger indexing of files that are going to be excluded)
-      final File pubFolder = new File(root.getPath() + "/.pub");
-      if (pubFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild(".pub") != null) {
-        newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
-      }
-
-      final File buildFolder = new File(root.getPath() + "/build");
-      if (buildFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild("build") != null) {
-        newExcludedPackagesUrls.add(root.getUrl() + "/build");
-      }
+      newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
+      newExcludedPackagesUrls.add(root.getUrl() + "/build");
     }
 
     newExcludedPackagesUrls.add(root.getUrl() + "/packages");
