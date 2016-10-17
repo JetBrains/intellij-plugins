@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.inspections.actionscript.JSFieldCanBeLocalIn
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -39,6 +40,7 @@ public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
     return "/convertToLocal";
   }
 
+  @NotNull
   @Override
   public String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");

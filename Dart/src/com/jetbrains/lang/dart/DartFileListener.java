@@ -19,7 +19,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -27,7 +26,6 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -125,8 +123,7 @@ public class DartFileListener extends VirtualFileAdapter {
 
     final Runnable runnable = () -> {
       try {
-        final DartSdk sdk = DartSdk.getDartSdk(project);
-        final Library library = actualizePackagesLibrary(project, sdk);
+        final Library library = actualizePackagesLibrary(project);
 
         if (library == null) {
           removeDartPackagesLibraryAndDependencies(project);
@@ -151,10 +148,8 @@ public class DartFileListener extends VirtualFileAdapter {
   }
 
   @Nullable
-  private static Library actualizePackagesLibrary(@NotNull final Project project, @Nullable final DartSdk sdk) {
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.12") < 0) return null;
-
-    final DartLibInfo libInfo = collectPackagesLibraryRoots(project, sdk);
+  private static Library actualizePackagesLibrary(@NotNull final Project project) {
+    final DartLibInfo libInfo = collectPackagesLibraryRoots(project);
 
     if (libInfo.getLibRootUrls().isEmpty()) {
       return null;
@@ -165,7 +160,7 @@ public class DartFileListener extends VirtualFileAdapter {
   }
 
   @NotNull
-  private static DartLibInfo collectPackagesLibraryRoots(@NotNull final Project project, @NotNull final DartSdk sdk) {
+  private static DartLibInfo collectPackagesLibraryRoots(@NotNull final Project project) {
     final DartLibInfo libInfo = new DartLibInfo(false);
 
     final Collection<VirtualFile> pubspecYamlFiles =
@@ -200,19 +195,16 @@ public class DartFileListener extends VirtualFileAdapter {
   public static Library updatePackagesLibraryRoots(@NotNull final Project project, @NotNull final DartLibInfo libInfo) {
     final LibraryTable projectLibraryTable = ProjectLibraryTable.getInstance(project);
     final Library existingLibrary = projectLibraryTable.getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
-    final Library library = existingLibrary != null
-                            ? existingLibrary
-                            : ApplicationManager.getApplication().runWriteAction(new Computable<Library>() {
-                              @Override
-                              public Library compute() {
+    final Library library =
+      existingLibrary != null ? existingLibrary
+                              : ApplicationManager.getApplication().runWriteAction((Computable<Library>)() -> {
                                 final LibraryTableBase.ModifiableModel libTableModel =
                                   ProjectLibraryTable.getInstance(project).getModifiableModel();
                                 final Library lib = libTableModel
                                   .createLibrary(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME, DartPackagesLibraryType.LIBRARY_KIND);
                                 libTableModel.commit();
                                 return lib;
-                              }
-                            });
+                              });
 
     final String[] existingUrls = library.getUrls(OrderRootType.CLASSES);
 
