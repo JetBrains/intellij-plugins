@@ -33,7 +33,7 @@ public class UnresolvedSourceLocation extends Response {
    * resolved.
    */
   public int getColumn() {
-    return json.get("column").getAsInt();
+    return json.get("column") == null ? -1 : json.get("column").getAsInt();
   }
 
   /**
@@ -41,7 +41,7 @@ public class UnresolvedSourceLocation extends Response {
    * resolved.
    */
   public int getLine() {
-    return json.get("line").getAsInt();
+    return json.get("line") == null ? -1 : json.get("line").getAsInt();
   }
 
   /**
@@ -63,6 +63,6 @@ public class UnresolvedSourceLocation extends Response {
    * resolved.
    */
   public int getTokenPos() {
-    return json.get("tokenPos").getAsInt();
+    return json.get("tokenPos") == null ? -1 : json.get("tokenPos").getAsInt();
   }
 }

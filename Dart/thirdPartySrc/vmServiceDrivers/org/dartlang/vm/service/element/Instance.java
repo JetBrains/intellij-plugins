@@ -132,7 +132,7 @@ public class Instance extends Obj {
    *  - Float64x2List
    */
   public int getCount() {
-    return json.get("count").getAsInt();
+    return json.get("count") == null ? -1 : json.get("count").getAsInt();
   }
 
   /**
@@ -220,7 +220,7 @@ public class Instance extends Obj {
    *  - Float64x2List
    */
   public int getLength() {
-    return json.get("length").getAsInt();
+    return json.get("length") == null ? -1 : json.get("length").getAsInt();
   }
 
   /**
@@ -267,7 +267,7 @@ public class Instance extends Obj {
    *  - Float64x2List
    */
   public int getOffset() {
-    return json.get("offset").getAsInt();
+    return json.get("offset") == null ? -1 : json.get("offset").getAsInt();
   }
 
   /**
@@ -277,7 +277,7 @@ public class Instance extends Obj {
    *  - TypeParameter
    */
   public int getParameterIndex() {
-    return json.get("parameterIndex").getAsInt();
+    return json.get("parameterIndex") == null ? -1 : json.get("parameterIndex").getAsInt();
   }
 
   /**

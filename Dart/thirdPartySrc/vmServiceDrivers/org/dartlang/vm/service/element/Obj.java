@@ -56,6 +56,6 @@ public class Obj extends Response {
    * for small integers, which are stored entirely within their object pointers.
    */
   public int getSize() {
-    return json.get("size").getAsInt();
+    return json.get("size") == null ? -1 : json.get("size").getAsInt();
   }
 }
