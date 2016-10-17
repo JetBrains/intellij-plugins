@@ -44,6 +44,7 @@ import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.content.MessageView;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -147,6 +148,14 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     if (pubParameters != null) {
       final GeneralCommandLine command = new GeneralCommandLine().withWorkDirectory(pubspecYamlFile.getParent().getPath());
+
+      if (FlutterUtil.isFlutterModule(module)) {
+        final String flutterRoot = FlutterUtil.getFlutterRoot(sdk);
+        if (flutterRoot != null) {
+          command.getEnvironment().put("FLUTTER_ROOT", flutterRoot);
+        }
+      }
+
       command.setExePath(pubFile.getPath());
       command.addParameters(pubParameters);
 
