@@ -70,7 +70,7 @@ public class InstanceRef extends ObjRef {
    *  - Float64x2List
    */
   public int getLength() {
-    return json.get("length").getAsInt();
+    return json.get("length") == null ? -1 : json.get("length").getAsInt();
   }
 
   /**
