@@ -44,6 +44,7 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
     return "/createfunction_as";
   }
 
+  @NotNull
   @Override
   public String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");

@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -33,6 +34,7 @@ public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
     return "/createvariable_as";
   }
 
+  @NotNull
   @Override
   public String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
