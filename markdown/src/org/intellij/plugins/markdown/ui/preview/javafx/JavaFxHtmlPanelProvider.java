@@ -148,7 +148,7 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
 
       Class<?> loadedClass = findLoadedClass(s);
       if (loadedClass == null) {
-        if (!s.contains("JavaFxHtmlPanel$") && !s.endsWith("JavaFxHtmlPanel")) {
+        if (!s.contains("JavaFxHtmlPanel$") && !s.endsWith("JavaFxHtmlPanel") && !s.endsWith("JFXPanelWrapper")) {
           try {
             loadedClass = getParent().loadClass(s);
           }
