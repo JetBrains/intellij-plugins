@@ -50,12 +50,12 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @NotNull
   public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
-    RevealSettings settings = config.getCopyableUserData(REVEAL_SETTINGS_KEY);
+    RevealSettings settings = config.getUserData(REVEAL_SETTINGS_KEY);
     return settings == null ? new RevealSettings() : settings;
   }
 
   public static void setRevealSettings(@NotNull AppCodeRunConfiguration runConfiguration, @Nullable RevealSettings settings) {
-    runConfiguration.putCopyableUserData(REVEAL_SETTINGS_KEY, settings);
+    runConfiguration.putUserData(REVEAL_SETTINGS_KEY, settings);
   }
 
   @Override
@@ -87,6 +87,12 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     settingsTag.setAttribute("autoInstall", String.valueOf(settings.autoInstall));
     settingsTag.setAttribute("askToEnableAutoInstall", String.valueOf(settings.askToEnableAutoInstall));
     element.addContent(settingsTag);
+  }
+
+  @Override
+  public void copyConfiguration(@NotNull AppCodeRunConfiguration from, @NotNull AppCodeRunConfiguration to) {
+    RevealSettings settings = getRevealSettings(from);
+    setRevealSettings(to, settings.clone());
   }
 
   @Nullable
@@ -457,9 +463,19 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
   }
 
-  public static class RevealSettings {
+  public static class RevealSettings implements Cloneable {
     public boolean autoInject;
     public boolean autoInstall = true;
     public boolean askToEnableAutoInstall = true;
+
+    @Override
+    public RevealSettings clone() {
+      try {
+        return (RevealSettings)super.clone();
+      }
+      catch (CloneNotSupportedException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }
