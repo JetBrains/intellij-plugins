@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
@@ -48,6 +49,10 @@ public class MarkdownHighlightingAnnotator implements Annotator, DumbAware {
                                      ? MarkdownHighlighterColors.ITALIC_MARKER_ATTR_KEY
                                      : MarkdownHighlighterColors.BOLD_MARKER_ATTR_KEY);
       }
+      return;
+    }
+
+    if (element instanceof LeafPsiElement) {
       return;
     }
 
