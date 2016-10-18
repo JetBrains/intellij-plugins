@@ -123,9 +123,6 @@ public interface OgnlTypes {
       else if (type == CONDITIONAL_EXPRESSION) {
         return new OgnlConditionalExpressionImpl(node);
       }
-      else if (type == EXPRESSION) {
-        return new OgnlExpressionImpl(node);
-      }
       else if (type == FQN_TYPE_EXPRESSION) {
         return new OgnlFqnTypeExpressionImpl(node);
       }
