@@ -106,13 +106,13 @@ repositories...', find plugins and install them. Restart IDE.
   4.2. Rename Plugin SDK to 'IDEA Ultimate'.
 
   4.3. Add some jars to the Plugin SDK Classpath:
-         [IDEA Installation]/plugins/copyright/lib/*.jar
-         [IDEA Installation]/plugins/JavaScriptDebugger/lib/*.jar
-         [IDEA Installation]/plugins/CSS/lib/*.jar
-         [IDEA Installation]/plugins/yaml/lib/*.jar
-         [IDEA Plugins folder]/WebComponents/lib/*.jar
-         (see here how to locate [IDEA Plugins folder]:
-         https://intellij-support.jetbrains.com/entries/23358108)
+* [IDEA Installation]/plugins/coverage/lib/\*.jar
+* [IDEA Installation]/plugins/copyright/lib/\*.jar
+* [IDEA Installation]/plugins/JavaScriptDebugger/lib/\*.jar
+* [IDEA Installation]/plugins/JavaScriptLanguage/lib/\*.jar
+* [IDEA Installation]/plugins/CSS/lib/\*.jar
+* [IDEA Installation]/plugins/yaml/lib/\*.jar
+* [IDEA Plugins folder]/WebComponents/lib/\*.jar (see [here](https://intellij-support.jetbrains.com/entries/23358108) how to locate [IDEA Plugins folder])
 
   4.4. Clone IntelliJ IDEA Community Edition repo (git clone
   https://github.com/JetBrains/intellij-community) anywhere on the computer
@@ -128,12 +128,9 @@ repositories...', find plugins and install them. Restart IDE.
 
 5. Clone IntelliJ IDEA plugins source code
 (https://github.com/JetBrains/intellij-plugins) and open the project in the
-'Dart' folder. It is ready to use. Two run configurations are already
-configured: 'All tests' (run it each time before commit) and 'Dart plugin'
-that launches IntelliJ IDEA with the Dart plugin built from sources. Important
-note: to have all tests passing successfully uncomment lines with
-&lt;depends>...&lt;/depends> tags in the resources/META-INF/plugin.xml file. Do not
-commit plugin.xml with uncommented &lt;depends/> tags!
+'Dart' folder. It is ready to use. Four run configurations are already
+configured: 3 ones for running tests and 'Dart plugin' that launches IntelliJ
+IDEA with the Dart plugin built from sources.
 
 6. [Optional] To enable internal developer actions add "idea.is.internal=true"
 to the [IDE installation]/bin/idea.properties (on Mac: [IDE
