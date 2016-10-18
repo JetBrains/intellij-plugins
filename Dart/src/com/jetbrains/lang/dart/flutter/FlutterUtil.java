@@ -4,14 +4,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.jetbrains.annotations.Nullable;
 
 public class FlutterUtil {
 
-  private static final String FLUTTER_MODULE_TYPE_NAME = "Flutter";
+  private static final String FLUTTER_MODULE_TYPE_ID = "FLUTTER_MODULE_TYPE";
 
   /**
    * Test if the given module is a Flutter module.
@@ -21,7 +18,7 @@ public class FlutterUtil {
    */
   public static boolean isFlutterModule(@NotNull Module module) {
     final ModuleType moduleType = ModuleType.get(module);
-    return FLUTTER_MODULE_TYPE_NAME.equals(moduleType.getName());
+    return FLUTTER_MODULE_TYPE_ID.equals(moduleType.getId());
   }
 
   /**
@@ -30,18 +27,10 @@ public class FlutterUtil {
    * @param dartSdk the Dart SDK
    * @return the relative Flutter root, or null if this SDK is not relative to one
    */
+  @Nullable
   public static String getFlutterRoot(@NotNull DartSdk dartSdk) {
-    // Navigate up from `bin/cache/dart-sdk/lib/`.
-    final File flutterRoot = new File(dartSdk.getHomePath() + "/../../..");
-    if (flutterRoot.exists()) {
-      try {
-        final URI uri = new URI(flutterRoot.getAbsolutePath()).normalize();
-        return uri.getPath();
-      }
-      catch (URISyntaxException e) {
-        // Ignored
-      }
-    }
-    return null;
+    final String dartPath = dartSdk.getHomePath();
+    final String suffix = "/bin/cache/dart-sdk";
+    return dartPath.endsWith(suffix) ? dartPath.substring(0, dartPath.length() - suffix.length()) : null;
   }
 }
