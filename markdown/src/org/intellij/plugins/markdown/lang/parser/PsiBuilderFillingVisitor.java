@@ -1,6 +1,8 @@
 package org.intellij.plugins.markdown.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
+import org.intellij.markdown.IElementType;
+import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.ast.LeafASTNode;
 import org.intellij.markdown.ast.visitors.RecursiveVisitor;
@@ -18,7 +20,14 @@ public class PsiBuilderFillingVisitor extends RecursiveVisitor {
   @Override
   public void visitNode(@NotNull ASTNode node) {
     if (node instanceof LeafASTNode) {
-      return;
+      /* a hack for the link reference definitions:
+       * they are being parsed independent from link references and
+       * the link titles and urls are tokens instead of composite elements
+       */
+      final IElementType type = node.getType();
+      if (type != MarkdownElementTypes.LINK_LABEL && type != MarkdownElementTypes.LINK_DESTINATION) {
+        return;
+      }
     }
 
     ensureBuilderInPosition(node.getStartOffset());
