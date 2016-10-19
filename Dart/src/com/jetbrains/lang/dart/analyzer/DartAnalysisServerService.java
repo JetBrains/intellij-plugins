@@ -88,8 +88,8 @@ public class DartAnalysisServerService {
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
