@@ -15,18 +15,18 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.cidr.execution.*;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
+import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames;
 import com.jetbrains.cidr.xcode.model.*;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
@@ -47,6 +47,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   private static final Key<RevealSettings> REVEAL_SETTINGS_KEY = Key.create(REVEAL_SETTINGS_TAG);
   private static final Key<String> BUNDLE_ID_KEY = Key.create("BUNDLE_INFO");
   private static final Key<File> FILE_TO_INJECT = Key.create("reveal.library.to.inject");
+  private static final List<String> KNOWN_FRAMEWORK_NAMES = ContainerUtil.newArrayList("RevealServer", "Reveal");
 
   @NotNull
   public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
@@ -164,8 +165,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   public void installIntoApplicationBundle(@NotNull AppCodeRunConfiguration configuration,
                                            @NotNull ExecutionEnvironment environment,
                                            @NotNull BuildConfiguration buildConfiguration,
-                                           @NotNull File mainExecutable,
-                                           @NotNull GeneralCommandLine commandLine) throws ExecutionException {
+                                           @NotNull File mainExecutable) throws ExecutionException {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) return;
 
@@ -174,7 +174,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     RevealSettings settings = getRevealSettings(configuration);
     if (!settings.autoInject) return;
 
-    File toInject = installReveal(configuration, buildConfiguration, commandLine, mainExecutable, settings);
+    File toInject = installReveal(configuration, buildConfiguration, mainExecutable, settings);
     if (toInject == null) return;
 
     UsageTrigger.trigger("appcode.reveal.inject");
@@ -185,7 +185,6 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @Nullable
   private static File installReveal(@NotNull final AppCodeRunConfiguration configuration,
                                     @NotNull BuildConfiguration buildConfiguration,
-                                    @NotNull GeneralCommandLine commandLine,
                                     @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
@@ -197,7 +196,11 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     Reveal.LOG.info("Reveal lib found at " + libReveal);
 
     if (hasBundledRevealLib(buildConfiguration, libReveal)) {
-      return new File(commandLine.getExePath(), libReveal.getName());
+      return new File(libReveal.getName());
+    }
+
+    if (hasRevealFramework(buildConfiguration)) {
+      return null;
     }
 
     BuildDestination destination = buildConfiguration.getDestination();
@@ -275,6 +278,13 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
         }
         return false;
       }
+    });
+  }
+
+  private static boolean hasRevealFramework(@NotNull BuildConfiguration buildConfiguration) {
+    return ApplicationManager.getApplication().runReadAction((Computable<Boolean>)() -> {
+      List<String> flags = buildConfiguration.getBuildSetting(BuildSettingNames.OTHER_LDFLAGS).getStringList();
+      return flags.stream().anyMatch(flag -> KNOWN_FRAMEWORK_NAMES.contains(StringUtil.unquoteString(flag)));
     });
   }
 
