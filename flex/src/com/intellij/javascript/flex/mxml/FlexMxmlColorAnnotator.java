@@ -22,6 +22,7 @@ import com.intellij.psi.css.impl.util.CssPsiColorUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.ui.ColorChooser;
 import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.JBUI;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.util.ColorIconCache;
 import com.intellij.xml.util.ColorMap;
@@ -123,9 +124,9 @@ public class FlexMxmlColorAnnotator implements Annotator {
     public Icon getIcon() {
       Color color = getColor(myColorValue);
       if (color != null) {
-        return new ColorIconCache.ColorIcon(ICON_SIZE, color);
+        return JBUI.scale(new ColorIconCache.ColorIcon(ICON_SIZE, color));
       }
-      return EmptyIcon.create(ICON_SIZE);
+      return JBUI.scale(EmptyIcon.create(ICON_SIZE));
     }
 
     @Override
