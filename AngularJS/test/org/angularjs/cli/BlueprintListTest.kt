@@ -10,145 +10,140 @@ import java.util.*
  */
 class BlueprintListTest : LightPlatformTestCase() {
   fun testList() {
-    val output = "(node:113) fs: re-evaluating native module sources is not supported. If you are using the graceful-fs module, please update it to a more recent version.\n" +
-        "Could not start watchman; falling back to NodeWatcher for file system events.\n" +
-        "Visit http://ember-cli.com/user-guide/#watchman for more info.\n" +
-        "Requested ember-cli commands:\n" +
-        "\n" +
-        "ng generate <blueprint> <options...>\n" +
-        "  Generates new code from blueprints.\n" +
-        "  aliases: g\n" +
-        "  --dry-run (Boolean) (Default: false)\n" +
-        "    aliases: -d\n" +
-        "  --verbose (Boolean) (Default: false)\n" +
-        "    aliases: -v\n" +
-        "  --pod (Boolean) (Default: false)\n" +
-        "    aliases: -p\n" +
-        "  --classic (Boolean) (Default: false)\n" +
-        "    aliases: -c\n" +
-        "  --dummy (Boolean) (Default: false)\n" +
-        "    aliases: -dum, -id\n" +
-        "  --in-repo-addon (String) (Default: null)\n" +
-        "    aliases: --in-repo <value>, -ir <value>\n" +
-        "\n" +
-        "\n" +
-        "  Available blueprints:\n" +
-        "    ng2:\n" +
-        "      class <class-type>\n" +
-        "      component <name> <options...>\n" +
-        "        --flat (Boolean) (Default: false)\n" +
-        "        --route (Boolean) (Default: false)\n" +
-        "        --inline-template (Boolean) (Default: false)\n" +
-        "          aliases: -it\n" +
-        "        --inline-style (Boolean) (Default: false)\n" +
-        "          aliases: -is\n" +
-        "        --prefix (Boolean) (Default: true)\n" +
-        "      component-test <name>\n" +
-        "      directive <name> <options...>\n" +
-        "        --flat (Boolean) (Default: true)\n" +
-        "      enum <name>\n" +
-        "      interface <interface-type>\n" +
-        "      mobile <name> <options...>\n" +
-        "        --source-dir (String) (Default: src)\n" +
-        "          aliases: -sd <value>\n" +
-        "        --prefix (String) (Default: app)\n" +
-        "          aliases: -p <value>\n" +
-        "        --mobile (Boolean) (Default: false)\n" +
-        "      model <name> <attr:type>\n" +
-        "        Generates an ng-data model.\n" +
-        "      ng2 <name> <options...>\n" +
-        "        --source-dir (String) (Default: src)\n" +
-        "          aliases: -sd <value>\n" +
-        "        --prefix (String) (Default: app)\n" +
-        "          aliases: -p <value>\n" +
-        "        --style (String) (Default: css)\n" +
-        "        --mobile (Boolean) (Default: false)\n" +
-        "      pipe <name> <options...>\n" +
-        "        --flat (Boolean) (Default: true)\n" +
-        "      route <name>\n" +
-        "      route-test <name>\n" +
-        "      service <name> <options...>\n" +
-        "        --flat (Boolean) (Default: true)\n" +
-        "      service-test <name>\n" +
-        "    angular-cli:\n" +
-        "      acceptance-test <name>\n" +
-        "        Generates an acceptance test for a feature.\n" +
-        "      adapter <name> <options...>\n" +
-        "        Generates an ng-data adapter.\n" +
-        "        --base-class (String)\n" +
-        "      adapter-test <name>\n" +
-        "        Generates an ng-data adapter unit test\n" +
-        "      addon <name>\n" +
-        "        The default blueprint for angular-cli addons.\n" +
-        "      addon-import <name>\n" +
-        "        Generates an import wrapper.\n" +
-        "      app <name>\n" +
-        "        The default blueprint for angular-cli projects.\n" +
-        "      blueprint <name>\n" +
-        "        Generates a blueprint and definition.\n" +
-        "      component-addon <name>\n" +
-        "        Generates a component. Name must contain a hyphen.\n" +
-        "      controller <name>\n" +
-        "        Generates a controller.\n" +
-        "      controller-test <name>\n" +
-        "        Generates a controller unit test.\n" +
-        "      helper <name>\n" +
-        "        Generates a helper function.\n" +
-        "      helper-addon <name>\n" +
-        "        Generates an import wrapper.\n" +
-        "      helper-test <name>\n" +
-        "        Generates a helper unit test.\n" +
-        "      http-mock <endpoint-path>\n" +
-        "        Generates a mock api endpoint in /api prefix.\n" +
-        "      http-proxy <local-path> <remote-url>\n" +
-        "        Generates a relative proxy to another server.\n" +
-        "      in-repo-addon <name>\n" +
-        "        The blueprint for addon in repo angular-cli addons.\n" +
-        "      initializer <name>\n" +
-        "        Generates an initializer.\n" +
-        "      initializer-addon <name>\n" +
-        "        Generates an import wrapper.\n" +
-        "      initializer-test <name>\n" +
-        "        Generates an initializer unit test.\n" +
-        "      instance-initializer <name>\n" +
-        "        Generates an instance initializer.\n" +
-        "      instance-initializer-addon <name>\n" +
-        "        Generates an import wrapper.\n" +
-        "      instance-initializer-test <name>\n" +
-        "        Generates an instance initializer unit test.\n" +
-        "      lib <name>\n" +
-        "        Generates a lib directory for in-repo addons.\n" +
-        "      mixin <name>\n" +
-        "        Generates a mixin.\n" +
-        "      mixin-test <name>\n" +
-        "        Generates a mixin unit test.\n" +
-        "      model-test <name>\n" +
-        "        Generates a model unit test.\n" +
-        "      resource <name>\n" +
-        "        Generates a model, template, route, and registers the route with the router.\n" +
-        "      route-addon <name>\n" +
-        "        Generates import wrappers for a route and its template.\n" +
-        "      serializer <name>\n" +
-        "        Generates an ng-data serializer.\n" +
-        "      serializer-test <name>\n" +
-        "        Generates a serializer unit test.\n" +
-        "      server <name>\n" +
-        "        Generates a server directory for mocks and proxies.\n" +
-        "      template <name>\n" +
-        "        Generates a template.\n" +
-        "      test-helper <name>\n" +
-        "        Generates a test helper.\n" +
-        "      transform <name>\n" +
-        "        Generates an ng-data value transform.\n" +
-        "      transform-test <name>\n" +
-        "        Generates a transform unit test.\n" +
-        "      util <name>\n" +
-        "        Generates a simple utility module/function.\n" +
-        "      util-test <name>\n" +
-        "        Generates a util unit test.\n" +
-        "      vendor-shim <name>\n" +
-        "        Generates an ES6 module shim for global libraries.\n" +
-        "\n"
+    val output = """
+  Available blueprints:
+    angular-cli:
+      class <name> <options...>
+        --spec (Boolean)
+      component <name> <options...>
+        --flat (Boolean) (Default: false)
+        --inline-template (Boolean)
+          aliases: -it
+        --inline-style (Boolean)
+          aliases: -is
+        --prefix (Boolean) (Default: true)
+        --spec (Boolean)
+      component-test <name>
+      directive <name> <options...>
+        --flat (Boolean) (Default: true)
+        --prefix (Boolean) (Default: true)
+        --spec (Boolean)
+      enum <name>
+      interface <interface-type>
+      mobile <name> <options...>
+        --source-dir (String) (Default: src)
+          aliases: -sd <value>
+        --prefix (String) (Default: app)
+          aliases: -p <value>
+        --mobile (Boolean) (Default: false)
+      model <name> <attr:type>
+        Generates an ng-data model.
+      module <name> <options...>
+        --spec (Boolean)
+        --routing (Boolean) (Default: false)
+      ng2 <name> <options...>
+        --source-dir (String) (Default: src)
+          aliases: -sd <value>
+        --prefix (String) (Default: app)
+          aliases: -p <value>
+        --style (String) (Default: css)
+        --mobile (Boolean) (Default: false)
+        --routing (Boolean) (Default: false)
+        --inline-style (Boolean) (Default: false)
+          aliases: -is
+        --inline-template (Boolean) (Default: false)
+          aliases: -it
+      pipe <name> <options...>
+        --flat (Boolean) (Default: true)
+        --spec (Boolean)
+      route <name>
+      route-test <name>
+      service <name> <options...>
+        --flat (Boolean) (Default: true)
+        --spec (Boolean)
+      service-test <name>
+    angular-cli:
+      acceptance-test <name>
+        Generates an acceptance test for a feature.
+      adapter <name> <options...>
+        Generates an ng-data adapter.
+        --base-class (String)
+      adapter-test <name>
+        Generates an ng-data adapter unit test
+      addon <name>
+        The default blueprint for angular-cli addons.
+      addon-import <name>
+        Generates an import wrapper.
+      app <name>
+        The default blueprint for angular-cli projects.
+      blueprint <name>
+        Generates a blueprint and definition.
+      component-addon <name>
+        Generates a component. Name must contain a hyphen.
+      controller <name>
+        Generates a controller.
+      controller-test <name>
+        Generates a controller unit test.
+      helper <name>
+        Generates a helper function.
+      helper-addon <name>
+        Generates an import wrapper.
+      helper-test <name>
+        Generates a helper unit test.
+      http-mock <endpoint-path>
+        Generates a mock api endpoint in /api prefix.
+      http-proxy <local-path> <remote-url>
+        Generates a relative proxy to another server.
+      in-repo-addon <name>
+        The blueprint for addon in repo angular-cli addons.
+      initializer <name>
+        Generates an initializer.
+      initializer-addon <name>
+        Generates an import wrapper.
+      initializer-test <name>
+        Generates an initializer unit test.
+      instance-initializer <name>
+        Generates an instance initializer.
+      instance-initializer-addon <name>
+        Generates an import wrapper.
+      instance-initializer-test <name>
+        Generates an instance initializer unit test.
+      lib <name>
+        Generates a lib directory for in-repo addons.
+      mixin <name>
+        Generates a mixin.
+      mixin-test <name>
+        Generates a mixin unit test.
+      model-test <name>
+        Generates a model unit test.
+      resource <name>
+        Generates a model, template, route, and registers the route with the router.
+      route-addon <name>
+        Generates import wrappers for a route and its template.
+      serializer <name>
+        Generates an ng-data serializer.
+      serializer-test <name>
+        Generates a serializer unit test.
+      server <name>
+        Generates a server directory for mocks and proxies.
+      template <name>
+        Generates a template.
+      test-helper <name>
+        Generates a test helper.
+      transform <name>
+        Generates an ng-data value transform.
+      transform-test <name>
+        Generates a transform unit test.
+      util <name>
+        Generates a simple utility module/function.
+      util-test <name>
+        Generates a util unit test.
+      vendor-shim <name>
+        Generates an ES6 module shim for global libraries.
+
+undefined
+
+    """
 
     val blueprints = BlueprintParser().parse(output)
     val requiredBlueprints = Arrays.asList("class", "component", "model")
