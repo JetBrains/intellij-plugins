@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.injection;
 
 import com.intellij.lang.Language;
+import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
@@ -25,7 +26,7 @@ public class CodeFenceInjector implements MultiHostInjector {
     }
 
     final Language language = findLangForInjection(((MarkdownCodeFenceImpl)context));
-    if (language == null) {
+    if (language == null || LanguageParserDefinitions.INSTANCE.forLanguage(language) == null) {
       return;
     }
 
