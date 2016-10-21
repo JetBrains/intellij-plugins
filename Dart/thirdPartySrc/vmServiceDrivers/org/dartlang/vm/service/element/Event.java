@@ -167,7 +167,7 @@ public class Event extends Response {
    * timestamp is from when the event was created.
    */
   public int getTimestamp() {
-    return json.get("timestamp").getAsInt();
+    return json.get("timestamp") == null ? -1 : json.get("timestamp").getAsInt();
   }
 
   /**

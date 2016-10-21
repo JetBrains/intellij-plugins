@@ -32,8 +32,12 @@ public class OgnlUnaryExpressionImpl extends OgnlExpressionImpl implements OgnlU
     super(node);
   }
 
+  public void accept(@NotNull OgnlVisitor visitor) {
+    visitor.visitUnaryExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitUnaryExpression(this);
+    if (visitor instanceof OgnlVisitor) accept((OgnlVisitor)visitor);
     else super.accept(visitor);
   }
 

@@ -32,8 +32,12 @@ public class OgnlNewArrayExpressionImpl extends OgnlExpressionImpl implements Og
     super(node);
   }
 
+  public void accept(@NotNull OgnlVisitor visitor) {
+    visitor.visitNewArrayExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitNewArrayExpression(this);
+    if (visitor instanceof OgnlVisitor) accept((OgnlVisitor)visitor);
     else super.accept(visitor);
   }
 

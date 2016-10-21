@@ -39,7 +39,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
   private static final Icon ICON_ACTIVE = PlatformIcons.CHECK_ICON;
   private static final Icon ICON_ACTIVE_SELECTED = PlatformIcons.CHECK_ICON_SELECTED;
-  private static final Icon ICON_EMPTY = new EmptyIcon(ICON_ACTIVE.getIconWidth(), ICON_ACTIVE.getIconHeight());
+  private static final Icon ICON_EMPTY = EmptyIcon.create(ICON_ACTIVE);
 
   public void update(final AnActionEvent e) {
     boolean enabled = isEnabled(e.getDataContext());

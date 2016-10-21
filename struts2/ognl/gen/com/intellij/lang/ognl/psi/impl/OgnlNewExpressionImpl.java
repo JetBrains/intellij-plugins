@@ -32,8 +32,12 @@ public class OgnlNewExpressionImpl extends OgnlExpressionImpl implements OgnlNew
     super(node);
   }
 
+  public void accept(@NotNull OgnlVisitor visitor) {
+    visitor.visitNewExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitNewExpression(this);
+    if (visitor instanceof OgnlVisitor) accept((OgnlVisitor)visitor);
     else super.accept(visitor);
   }
 

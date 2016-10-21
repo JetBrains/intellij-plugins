@@ -32,8 +32,12 @@ public class OgnlVariableExpressionImpl extends OgnlVariableExpressionBase imple
     super(node);
   }
 
+  public void accept(@NotNull OgnlVisitor visitor) {
+    visitor.visitVariableExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitVariableExpression(this);
+    if (visitor instanceof OgnlVisitor) accept((OgnlVisitor)visitor);
     else super.accept(visitor);
   }
 

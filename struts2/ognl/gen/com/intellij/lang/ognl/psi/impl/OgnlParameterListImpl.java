@@ -32,8 +32,12 @@ public class OgnlParameterListImpl extends OgnlPsiCompositeElementBase implement
     super(node);
   }
 
+  public void accept(@NotNull OgnlVisitor visitor) {
+    visitor.visitParameterList(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitParameterList(this);
+    if (visitor instanceof OgnlVisitor) accept((OgnlVisitor)visitor);
     else super.accept(visitor);
   }
 

@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
+import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import icons.JavaScriptLanguageIcons
 import org.angularjs.cli.AngularCLIFilter
@@ -52,7 +53,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
                                                 isSelected: Boolean,
                                                 cellHasFocus: Boolean): Component {
         val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
-        icon = JBUI.emptyIcon(5)
+        icon = JBUI.scale(EmptyIcon.create(5))
         return component
       }
     }

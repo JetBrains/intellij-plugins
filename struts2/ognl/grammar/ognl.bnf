@@ -182,7 +182,7 @@ variableAssignmentExpression ::= '#' IDENTIFIER '=' expression {
 
 parameterList ::= expression? (',' expression)* {
   methods=[
-    parameters="expression"
+    parametersList="expression"
     getParameterCount
   ]
 }
@@ -196,7 +196,7 @@ methodCallExpression ::= referenceExpression '(' parameterList ')'  {
 private expressionSequenceRequired ::= expression (',' expression)+  { pin(".*")=1 }
 sequenceExpression ::= '{' expressionSequenceRequired '}' {
   methods=[
-    elements="expression"
+    elementsList="expression"
   ]
   pin=1
 }

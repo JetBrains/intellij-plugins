@@ -27,14 +27,18 @@ import static com.intellij.lang.ognl.OgnlTypes.*;
 import com.intellij.lang.ognl.psi.*;
 import com.intellij.psi.PsiType;
 
-public class OgnlExpressionImpl extends OgnlPsiCompositeElementBase implements OgnlExpression {
+public abstract class OgnlExpressionImpl extends OgnlPsiCompositeElementBase implements OgnlExpression {
 
   public OgnlExpressionImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull OgnlVisitor visitor) {
+    visitor.visitExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitExpression(this);
+    if (visitor instanceof OgnlVisitor) accept((OgnlVisitor)visitor);
     else super.accept(visitor);
   }
 

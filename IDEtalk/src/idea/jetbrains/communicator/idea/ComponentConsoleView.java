@@ -58,7 +58,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   }
 
   @Override
-  public void addMessageFilter(Filter filter) {
+  public void addMessageFilter(@NotNull Filter filter) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
@@ -97,7 +97,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   }
 
   @Override
-  public void performWhenNoDeferredOutput(Runnable runnable) {
+  public void performWhenNoDeferredOutput(@NotNull Runnable runnable) {
     runnable.run();
   }
 
@@ -116,7 +116,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   }
 
   @Override
-  public void printHyperlink(String s, final HyperlinkInfo info) {
+  public void printHyperlink(@NotNull String s, final HyperlinkInfo info) {
     if (myLength >= MAX_LENGTH) return;
 
     myPanel.add((LinkLabel)LinkLabel.create(linkText(s), () -> info.navigate(myProject)));
