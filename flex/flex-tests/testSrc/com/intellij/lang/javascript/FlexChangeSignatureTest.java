@@ -6,7 +6,6 @@ import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -267,19 +266,13 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
   }
 
   public void testAnonymousFunction6() throws Exception {
-    myAfterCommitRunnable = () -> {
-      AccessToken l = WriteAction.start();
-      try {
-        String root = getTestRoot() + getTestName(false) + "/module2";
-        Module module2 = ModuleManager.getInstance(myProject).newModule(getTestDataPath() + root, getModuleType().getId());
-        myModulesToDispose.add(module2);
-        PsiTestUtil.addSourceRoot(module2, getVirtualFile(root));
-        FlexTestUtils.addFlexModuleDependency(module2, myModule);
-      }
-      finally {
-        l.finish();
-      }
-    };
+    myAfterCommitRunnable = () -> WriteAction.run(() -> {
+      String root = getTestRoot() + getTestName(false) + "/module2";
+      Module module2 = ModuleManager.getInstance(myProject).newModule(getTestDataPath() + root, getModuleType().getId());
+      myModulesToDispose.add(module2);
+      PsiTestUtil.addSourceRoot(module2, getVirtualFile(root));
+      FlexTestUtils.addFlexModuleDependency(module2, myModule);
+    });
     doTestInaccessible();
   }
 

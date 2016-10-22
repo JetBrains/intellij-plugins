@@ -9,7 +9,6 @@ import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveInnerClassProc
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.ModuleType;
@@ -91,25 +90,20 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
     assertNotNull("No caret specified", editorInfo.caretState.carets.get(0).position);
     final Document doc = PsiDocumentManager.getInstance(myProject).getDocument(sourceFile);
 
-    final PsiDirectory targetDirectory;
-    final AccessToken accessToken = WriteAction.start();
-    try {
+    final PsiDirectory targetDirectory = WriteAction.compute(() -> {
       doc.setText(editorInfo.getNewFileText());
       PsiDocumentManager.getInstance(myProject).commitDocument(doc);
 
       final VirtualFile srcRootFile = ModuleRootManager.getInstance(myModule).getSourceRoots()[0];
       final VirtualFile file = VfsUtil.findRelativeFile(targetPackage.replace('.', File.separatorChar), srcRootFile);
       if (file != null) {
-        targetDirectory = myPsiManager.findDirectory(file);
+        return myPsiManager.findDirectory(file);
       }
       else {
         PsiDirectory srcRoot = myPsiManager.findDirectory(srcRootFile);
-        targetDirectory = DirectoryUtil.createSubdirectories(targetPackage, srcRoot, ".");
+        return DirectoryUtil.createSubdirectories(targetPackage, srcRoot, ".");
       }
-    }
-    finally {
-      accessToken.finish();
-    }
+    });
 
     PsiElement element = sourceFile.findElementAt(editorInfo.caretState.carets.get(0).getCaretOffset(doc));
 
