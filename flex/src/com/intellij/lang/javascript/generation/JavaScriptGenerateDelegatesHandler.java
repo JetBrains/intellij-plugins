@@ -219,8 +219,8 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
             anchor = doAddOneMethod(project, buildFunctionText(e, types), anchor);
           }
           else {
-            anchor = doAddOneMethod(project, generateGetterFix.buildFunctionText((JSVariable)e, types), anchor);
-            anchor = doAddOneMethod(project, generateSetterFix.buildFunctionText((JSVariable)e, types), anchor);
+            anchor = doAddOneMethod(project, generateGetterFix.buildFunctionText(e, types), anchor);
+            anchor = doAddOneMethod(project, generateSetterFix.buildFunctionText(e, types), anchor);
           }
         }
       }
