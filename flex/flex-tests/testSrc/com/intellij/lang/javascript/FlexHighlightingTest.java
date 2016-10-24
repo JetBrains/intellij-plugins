@@ -1197,7 +1197,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     int offset = myEditor.getCaretModel().getOffset();
     PsiElement source = InjectedLanguageUtil.findElementAtNoCommit(myFile, offset);
     source = PsiTreeUtil.getParentOfType(source, JSFunction.class);
-    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, offset, true, true);
+    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, true, true);
     assertEquals(3, functions.length);
     Collection<String> classNames = new ArrayList<>();
     for (PsiElement function : functions) {
@@ -1219,7 +1219,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     int offset = myEditor.getCaretModel().getOffset();
     PsiElement source = myFile.findElementAt(offset);
     source = PsiTreeUtil.getParentOfType(source, JSFunction.class);
-    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, offset, true, true);
+    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, true, true);
     assertEquals(2, functions.length);
     //assertEquals(3, functions.length); IDEADEV-34319
     Collection<String> classNames = new ArrayList<>();
