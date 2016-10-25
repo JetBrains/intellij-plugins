@@ -8,7 +8,6 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.openapi.application.ApplicationManager;
@@ -462,9 +461,9 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
   }
 
   @Override
-  public RunContentDescriptor createMotionDebugSession(final RunProfileState state,
-                                                       final ExecutionEnvironment env,
-                                                       final ProcessHandler serverProcessHandler) throws ExecutionException {
+  public XDebugSession createMotionDebugSession(final RunProfileState state,
+                                                final ExecutionEnvironment env,
+                                                final ProcessHandler serverProcessHandler) throws ExecutionException {
     final XDebugSession session = XDebuggerManager.getInstance(env.getProject()).
       startSession(env, new XDebugProcessStarter() {
         @NotNull
@@ -495,7 +494,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
           return process;
         }
       });
-    return session.getRunContentDescriptor();
+    return session;
   }
 
   public boolean isMotionSymbol(@Nullable Symbol targetSymbol) {
