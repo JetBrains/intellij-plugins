@@ -36,7 +36,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.io.IdPool;
 
@@ -295,13 +294,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
     
     ApplicationManager.getApplication().invokeLater(() -> {
-      final AccessToken token1 = WriteAction.start();
-      try {
-        tag.setAttribute(name, value);
-      }
-      finally {
-        token1.finish();
-      }
+      WriteAction.run(() -> tag.setAttribute(name, value));
 
       info.documentModificationStamp = document.getModificationStamp();
     });

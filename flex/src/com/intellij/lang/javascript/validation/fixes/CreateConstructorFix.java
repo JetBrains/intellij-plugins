@@ -19,7 +19,6 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.changeSignature.*;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -34,7 +33,6 @@ import com.intellij.refactoring.changeSignature.MethodNodeBase;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Consumer;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,8 +120,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
         }
       }
 
-      AccessToken l = WriteAction.start();
-      try {
+      WriteAction.run(() -> {
         if (!toImport.isEmpty()) {
           FormatFixer formatFixer = ImportUtils.insertImportStatements(myClass, toImport);
           if (formatFixer != null) {
@@ -132,10 +129,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
         }
         super.applyFix(project, psiElement, myClass.getContainingFile(),
                        getEditor(myClass.getProject(), myClass.getContainingFile()));
-      }
-      finally {
-        l.finish();
-      }
+      });
     }
     else {
       String text = "function " + myClass.getName() + "(){}";

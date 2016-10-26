@@ -116,7 +116,7 @@ public class DartSdkUtil {
       new ComponentWithBrowseButton.BrowseFolderActionListener<>("Select Dart SDK path", null, dartSdkPathComponent, project,
                                                                  FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                                                                  textComponentAccessor);
-    dartSdkPathComponent.addBrowseFolderListener(project, browseFolderListener);
+    dartSdkPathComponent.addActionListener(browseFolderListener);
 
     dartiumPathComponent.addBrowseFolderListener("Select Dartium browser path", null, project,
                                                  FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor(),

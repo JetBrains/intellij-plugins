@@ -10,9 +10,9 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
@@ -29,7 +29,6 @@ import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
@@ -305,8 +304,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     @Override
     public void run() {
-      final AccessToken token = WriteAction.start();
-      try {
+      WriteAction.run(() -> {
         // need to refresh externally created file
         final VirtualFile p = LocalFileSystem.getInstance().refreshAndFindFileByPath(Flexmojos4Configurator.getCompilerConfigsDir(project));
         if (p == null) {
@@ -340,10 +338,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             return true;
           }
         });
-      }
-      finally {
-        token.finish();
-      }
+      });
     }
   }
 

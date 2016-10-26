@@ -20,6 +20,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.ui.LayeredIcon;
+import com.intellij.util.ui.JBUI;
 import icons.OgnlIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,7 @@ public class OgnlFileType extends LanguageFileType {
       final LayeredIcon icon = new LayeredIcon(2);
       icon.setIcon(FileTypes.PLAIN_TEXT.getIcon(), 0);
       icon.setIcon(OgnlIcons.Action_small, 1, 0, 6);
-      return icon;
+      return JBUI.scale(icon);
     }
   };
 

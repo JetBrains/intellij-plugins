@@ -1197,7 +1197,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     int offset = myEditor.getCaretModel().getOffset();
     PsiElement source = InjectedLanguageUtil.findElementAtNoCommit(myFile, offset);
     source = PsiTreeUtil.getParentOfType(source, JSFunction.class);
-    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, offset, true, true);
+    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, true, true);
     assertEquals(3, functions.length);
     Collection<String> classNames = new ArrayList<>();
     for (PsiElement function : functions) {
@@ -1219,7 +1219,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     int offset = myEditor.getCaretModel().getOffset();
     PsiElement source = myFile.findElementAt(offset);
     source = PsiTreeUtil.getParentOfType(source, JSFunction.class);
-    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, offset, true, true);
+    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, true, true);
     assertEquals(2, functions.length);
     //assertEquals(3, functions.length); IDEADEV-34319
     Collection<String> classNames = new ArrayList<>();
@@ -2247,21 +2247,15 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testBadResolveOfSuperClass() throws Exception {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
 
-    AccessToken writeAction = WriteAction.start();
-    try {
-      FlexTestUtils.modifyConfigs(myProject, editor -> {
-        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        FlexTestUtils.setSdk(bc1, sdk);
+    WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      FlexTestUtils.setSdk(bc1, sdk);
 
-        final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
-        bc2.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
-        bc2.setName("2");
-        FlexTestUtils.setSdk(bc2, sdk);
-      });
-    }
-    finally {
-      writeAction.finish();
-    }
+      final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+      bc2.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
+      bc2.setName("2");
+      FlexTestUtils.setSdk(bc2, sdk);
+    }));
 
     doTestFor(true, getTestName(false) + ".mxml");
   }
@@ -2303,13 +2297,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   public void testFontFaceProperties() throws Throwable {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    AccessToken writeAction = WriteAction.start();
-    try {
-      FlexTestUtils.modifyBuildConfiguration(myModule, bc -> FlexTestUtils.setSdk(bc, sdk));
-    }
-    finally {
-      writeAction.finish();
-    }
+    WriteAction.run(() -> FlexTestUtils.modifyBuildConfiguration(myModule, bc -> FlexTestUtils.setSdk(bc, sdk)));
+
     enableInspectionTool(new CssUnknownPropertyInspection());
     defaultTest();
   }

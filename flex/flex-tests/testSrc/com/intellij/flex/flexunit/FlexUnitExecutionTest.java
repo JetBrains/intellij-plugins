@@ -31,10 +31,8 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flexunit.FlexUnitLibs;
 import com.intellij.lang.javascript.flexunit.FlexUnitTestRunner;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModuleType;
@@ -45,7 +43,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.ui.UIUtil;
@@ -252,39 +249,20 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
                                    String... files) throws Exception {
     configureByFiles(projectRoot, files);
     final Ref<IXMLElement> expected = new Ref<>();
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        AccessToken l = WriteAction.start();
-
-        try {
-          Collection<IXMLElement> collection = JSTestUtils.extractXml(myEditor.getDocument(), "testResults");
-          assertEquals("Invalid expected structure", 1, collection.size());
-          expected.set(collection.iterator().next());
-        }
-        catch (Exception e) {
-          e.printStackTrace();
-          fail(e.getMessage());
-        }
-        finally {
-          l.finish();
-        }
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> WriteAction.run(() -> {
+      try {
+        Collection<IXMLElement> collection = JSTestUtils.extractXml(myEditor.getDocument(), "testResults");
+        assertEquals("Invalid expected structure", 1, collection.size());
+        expected.set(collection.iterator().next());
       }
-    });
-
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        AccessToken l = WriteAction.start();
-
-        try {
-          FlexTestUtils.modifyBuildConfiguration(myModule, configuration -> configuration.setTargetPlatform(myTargetPlatform));
-        }
-        finally {
-          l.finish();
-        }
+      catch (Exception e) {
+        e.printStackTrace();
+        fail(e.getMessage());
       }
-    });
+    }));
+
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> WriteAction.run(
+      () -> FlexTestUtils.modifyBuildConfiguration(myModule, configuration -> configuration.setTargetPlatform(myTargetPlatform))));
 
     final RunnerAndConfigurationSettings runnerAndConfigurationSettings =
       RunManager.getInstance(myProject).createRunConfiguration("test", FlexUnitRunConfigurationType.getFactory());
