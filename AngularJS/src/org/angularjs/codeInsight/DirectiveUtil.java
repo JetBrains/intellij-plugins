@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
@@ -116,6 +117,17 @@ public class DirectiveUtil {
     return null;
   }
 
+  @NotNull
+  public static String[] getTemplateUrls(@NotNull  JSImplicitElement directive){
+      final String typeString = directive.getTypeString();
+      if(typeString != null){
+          final String[] split = typeString.split(";", -1);
+          if(split.length > 4){
+              return split[4].split(",", -1);
+          }
+      }
+    return ArrayUtil.EMPTY_STRING_ARRAY;
+  }
   @Nullable
   private static JSImplicitElement getDirective(@NotNull PsiElement element, final String name) {
     final String directiveName = getAttributeName(name);

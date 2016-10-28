@@ -463,6 +463,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static String calculateRestrictions(PsiElement element, String defaultRestrictions) {
     final Ref<String> restrict = Ref.create(defaultRestrictions);
     final Ref<String> scope = Ref.create("");
+    final Ref<String> templateUrl = Ref.create("");
     final PsiElement function = findFunction(element);
     if (function != null) {
       function.accept(new JSRecursiveElementVisitor() {
@@ -479,11 +480,27 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
             if (value instanceof JSObjectLiteralExpression) {
               scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), PsiNamedElement::getName, ","));
             }
+          } else if("templateUrl".equals(name)){
+            if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()){
+              final String unquoted = unquote(value);
+              if (unquoted != null) templateUrl.set(unquoted);
+            }
+            else if(value instanceof JSFunction){
+              Collection<String> templateUrls = new ArrayList<>();
+              PsiTreeUtil.findChildrenOfType(value, JSReturnStatement.class).forEach(returnStatement ->{
+                final JSExpression expression = returnStatement.getExpression();
+                if(expression instanceof JSLiteralExpression  && ((JSLiteralExpression)expression).isQuotedLiteral()){
+                  final String unquoted = unquote(expression);
+                  if (unquoted != null) templateUrls.add(unquoted);
+                 }
+              });
+              templateUrl.set(StringUtil.join(templateUrls,","));
+            }
           }
         }
       });
     }
-    return restrict.get().trim() + ";;;" + scope.get();
+    return restrict.get().trim() + ";;;" + scope.get() + ";" + templateUrl;
   }
 
   private static PsiElement findFunction(PsiElement element) {
