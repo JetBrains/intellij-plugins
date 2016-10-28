@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.RBundle;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl;
-import org.jetbrains.plugins.ruby.rails.facet.ui.wizard.ui.TabbedSettingsEditorTab;
+import org.jetbrains.plugins.ruby.rails.facet.ui.wizard.ui.RubyFacetEditorTab;
 import org.jetbrains.plugins.ruby.remote.RubyRemoteInterpreterManager;
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType;
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkUtil;
@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
+public class RubyMotionGeneratorTab extends RubyFacetEditorTab {
   private static final String ADD_RUBY_SDK = "Add Ruby SDK...";
   private static final int COMBO_WIDTH = PlatformUtils.isRubyMine() ? 320 : 150;
 
