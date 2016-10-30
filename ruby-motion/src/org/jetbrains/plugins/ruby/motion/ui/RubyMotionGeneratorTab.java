@@ -45,7 +45,7 @@ public class RubyMotionGeneratorTab extends RubyFacetEditorTab {
 
   static class SdkPanel extends RubySdkPanel{
     @Override
-    protected Sdk[] getSdks() {
+    protected List<Sdk> getSdks() {
       List<Sdk> sdkList = new ArrayList<>();
       for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(RubySdkType.getInstance())) {
         final RubyRemoteInterpreterManager manager = RubyRemoteInterpreterManager.getInstance();
@@ -53,7 +53,7 @@ public class RubyMotionGeneratorTab extends RubyFacetEditorTab {
           sdkList.add(sdk);
         }
       }
-      return sdkList.toArray(new Sdk[0]);
+      return sdkList;
     }
   }
 
