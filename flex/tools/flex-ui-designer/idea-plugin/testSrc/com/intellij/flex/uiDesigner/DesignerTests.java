@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
@@ -36,9 +35,7 @@ public final class DesignerTests {
                                                Module module,
                                                @Nullable TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void> moduleInitializer)
     throws Exception {
-    AccessToken token = WriteAction.start();
-    VirtualFile[] toFiles;
-    try {
+    return WriteAction.compute(() -> {
       VirtualFile dummyRoot = VirtualFileManager.getInstance().findFileByUrl("temp:///");
       //noinspection ConstantConditions
       dummyRoot.refresh(false, false);
@@ -82,7 +79,7 @@ public final class DesignerTests {
 
       final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
 
-      toFiles = copyFiles(files, sourceDir, rawProjectRoot);
+      VirtualFile[] toFiles = copyFiles(files, sourceDir, rawProjectRoot);
       if (auxiliaryFiles != null) {
         copyFiles(auxiliaryFiles, sourceDir, rawProjectRoot);
       }
@@ -98,12 +95,8 @@ public final class DesignerTests {
         VirtualFile virtualFile = path.charAt(0) != '/' ? getFile("lib", path) : getFile(path);
         FlexTestUtils.addLibrary(module, path, virtualFile.getParent().getPath(), virtualFile.getName(), null, null);
       }
-    }
-    finally {
-      token.finish();
-    }
-
-    return toFiles;
+      return toFiles;
+    });
   }
 
   private static VirtualFile[] copyFiles(final VirtualFile[] fromFiles, final VirtualFile toDir, VirtualFile rawProjectRoot)

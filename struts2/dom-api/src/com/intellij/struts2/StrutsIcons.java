@@ -18,6 +18,7 @@ package com.intellij.struts2;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.ui.LayeredIcon;
+import com.intellij.util.ui.JBUI;
 import icons.Struts2Icons;
 
 import javax.swing.*;
@@ -48,12 +49,12 @@ public final class StrutsIcons {
   /**
    * Vertical offset for small overlay icons.
    */
-  static final int OVERLAY_Y_OFFSET = 7;
+  static final int OVERLAY_Y_OFFSET = JBUI.scale(7);
 
   /**
    * Horizontal offset for small overlay icons.
    */
-  static final int OVERLAY_X_OFFSET = 8;
+  static final int OVERLAY_X_OFFSET = JBUI.scale(8);
 
   private StrutsIcons() {
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2016 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -129,7 +129,8 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
           fileSet.addFile(((XmlFile)psiElement).getVirtualFile());
 
           final StrutsConfigsSearcher searcher = new StrutsConfigsSearcher(module);
-          searcher.search();
+          DumbService.getInstance(module.getProject()).runWhenSmart(() -> searcher.search());
+
           final MultiMap<VirtualFile, PsiFile> jarConfigFiles = searcher.getJars();
           for (final VirtualFile virtualFile : jarConfigFiles.keySet()) {
             final Collection<PsiFile> psiFiles = jarConfigFiles.get(virtualFile);

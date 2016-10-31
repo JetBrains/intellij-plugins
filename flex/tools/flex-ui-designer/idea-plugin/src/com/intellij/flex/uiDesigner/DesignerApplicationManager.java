@@ -151,15 +151,7 @@ public class DesignerApplicationManager {
         return false;
       }
 
-      final AccessToken token = WriteAction.start();
-      try {
-        SdkModificator modificator = sdk.getSdkModificator();
-        modificator.setVersionString(version);
-        modificator.commitChanges();
-      }
-      finally {
-        token.finish();
-      }
+      setVersionString(sdk, version);
     }
 
     if (StringUtil.compareVersionNumbers(version, "4.5.1") >= 0) {
@@ -184,6 +176,14 @@ public class DesignerApplicationManager {
     }
 
     return true;
+  }
+
+  private static void setVersionString(Sdk sdk, String version) {
+    WriteAction.run(() -> {
+      SdkModificator modificator = sdk.getSdkModificator();
+      modificator.setVersionString(version);
+      modificator.commitChanges();
+    });
   }
 
   public void renderIfNeed(@NotNull XmlFile psiFile, @Nullable Consumer<DocumentInfo> handler) {

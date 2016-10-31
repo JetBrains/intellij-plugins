@@ -105,7 +105,7 @@ public class CfmlColorSettingPage implements ColorSettingsPage {
            "<cfoutput>\n" +
            "\tThis is a test\n" +
            "</cfoutput>\n" +
-           "<cfsciprt>\n" +
+           "<cfscript>\n" +
            "\tif(find(\"some text\", agent ) and not find(\"some other\", agent ))\n" +
            "\t{\n" +
            "\t\t// comment string\n" +

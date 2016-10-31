@@ -10,7 +10,6 @@ import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
@@ -109,19 +108,14 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     doHighlightingTest("_1");
 
     // now add bc-to-bc dependency, highlighting should not change because app-on-app dependency is ignored
-    AccessToken writeAction = WriteAction.start();
-    try {
-      FlexTestUtils.modifyConfigs(myProject, editor -> {
-        final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(myModule)[0];
-        final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(module2)[0];
-        final ModifiableBuildConfigurationEntry dependencyEntry =
-          editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
-        dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
-      });
-    }
-    finally {
-      writeAction.finish();
-    }
+    WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(myModule)[0];
+      final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(module2)[0];
+      final ModifiableBuildConfigurationEntry dependencyEntry =
+        editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
+      dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
+    }));
+
     doHighlightingTest("_1");
 
     // dependency with linkage type "Loaded" doesn't change highlighting as well
@@ -159,22 +153,16 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testBcDependencyInSameModule() throws Exception {
-    AccessToken writeAction = WriteAction.start();
-    try {
-      FlexTestUtils.modifyConfigs(myProject, editor -> {
-        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+    WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
 
-        final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
-        bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Library));
-        bc2.setName("2");
+      final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+      bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Library));
+      bc2.setName("2");
 
-        final ModifiableBuildConfigurationEntry entry = editor.createBcEntry(bc1.getDependencies(), bc2, null);
-        bc1.getDependencies().getModifiableEntries().add(entry);
-      });
-    }
-    finally {
-      writeAction.finish();
-    }
+      final ModifiableBuildConfigurationEntry entry = editor.createBcEntry(bc1.getDependencies(), bc2, null);
+      bc1.getDependencies().getModifiableEntries().add(entry);
+    }));
 
     doHighlightingTest("");
   }
@@ -228,42 +216,28 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     final Sdk sdk1 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     final Sdk sdk2 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
 
-    AccessToken writeAction = WriteAction.start();
-    try {
-      FlexTestUtils.modifyConfigs(myProject, editor -> {
-        final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        bc1.setName("1");
-        FlexTestUtils.setSdk(bc1, sdk1);
-        final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
-        bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
-        bc2.setName("2");
-        FlexTestUtils.setSdk(bc2, sdk2);
-      });
-    }
-    finally {
-      writeAction.finish();
-    }
+    WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      bc1.setName("1");
+      FlexTestUtils.setSdk(bc1, sdk1);
+      final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+      bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
+      bc2.setName("2");
+      FlexTestUtils.setSdk(bc2, sdk2);
+    }));
     return Pair.create(sdk1, sdk2);
   }
 
   public void testCircularDependency() throws Exception {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true);
-    final Module module2;
-    AccessToken writeAction = WriteAction.start();
-    try {
+    WriteAction.run(() -> {
       final ModifiableModuleModel m1 = ModuleManager.getInstance(myProject).getModifiableModel();
       final VirtualFile moduleDir = myProject.getBaseDir().createChildDirectory(this, "module2");
-      module2 = m1.newModule(moduleDir.getPath(), FlexModuleType.getInstance().getId());
+      final Module module2 = m1.newModule(moduleDir.getPath(), FlexModuleType.getInstance().getId());
       m1.commit();
 
       PsiTestUtil.addSourceRoot(module2, moduleDir);
-    }
-    finally {
-      writeAction.finish();
-    }
 
-    writeAction = WriteAction.start();
-    try {
       FlexTestUtils.modifyConfigs(myProject, editor -> {
         final ModifiableFlexBuildConfiguration app1 = editor.getConfigurations(myModule)[0];
         app1.setName("app1");
@@ -284,10 +258,8 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
         final ModifiableBuildConfigurationEntry dep2 = editor.createBcEntry(lib1.getDependencies(), lib2, null);
         lib1.getDependencies().getModifiableEntries().add(dep2);
       });
-    }
-    finally {
-      writeAction.finish();
-    }
+    });
+
     doHighlightingTest("");
   }
 

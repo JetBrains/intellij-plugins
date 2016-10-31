@@ -19,7 +19,6 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -333,7 +332,6 @@ public class Flexmojos3Configurator {
           if (kind == null) {
             final LibraryEx.ModifiableModelEx libraryModel = (LibraryEx.ModifiableModelEx)myModelsProvider.getModifiableLibraryModel(library);
             libraryModel.setKind(FlexLibraryType.FLEX_LIBRARY);
-            libraryModel.setProperties(FlexLibraryType.FLEX_LIBRARY.createDefaultProperties());
           }
         }
 

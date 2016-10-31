@@ -13,8 +13,10 @@ class BlueprintParser {
     var name:String? = null
     var description:String? = null
     var arguments:MutableList<String> = mutableListOf()
+    var seenCli = false
     for (line in converted.split('\n')) {
-      if (line.startsWith("    angular-cli:")) return result
+      if (line.startsWith("    angular-cli:") && seenCli) return result
+      if (line.startsWith("    angular-cli:")) seenCli = true
       if (line.startsWith("      ")) {
         var text = line.substring(6)
         if (text.isBlank()) continue

@@ -11,9 +11,7 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationState;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -24,10 +22,8 @@ import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
@@ -139,15 +135,11 @@ public class ConversionParams {
       homePathToNewSdk.put(homePath, newSdk);
     }
 
-    final AccessToken l = WriteAction.start();
-    try {
+    WriteAction.run(() -> {
       for (Sdk sdk : sdksToAdd) {
         sdkTable.addJdk(sdk);
       }
-    }
-    finally {
-      l.finish();
-    }
+    });
   }
 
   private static boolean isApplicableLibrary(final LibraryEx library) {
@@ -159,7 +151,6 @@ public class ConversionParams {
       final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(libraryName);
       final LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
       model.setKind(FlexLibraryType.FLEX_LIBRARY);
-      model.setProperties(FlexLibraryType.FLEX_LIBRARY.createDefaultProperties());
       ApplicationManager.getApplication().runWriteAction(() -> model.commit());
     }
     else {
