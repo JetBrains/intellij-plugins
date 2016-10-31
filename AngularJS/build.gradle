@@ -1,0 +1,52 @@
+buildscript {
+  ext.kotlin_version = '1.0.3'
+
+  repositories {
+    mavenCentral()
+    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+  }
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
+
+plugins {
+  id "org.jetbrains.intellij" version "0.1.10"
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs 'src'
+      srcDirs 'gen'
+    }
+    resources {
+      srcDirs 'resources'
+    }
+  }
+  test {
+    java {
+      srcDirs 'test'
+    }
+  }
+}
+
+apply plugin: "kotlin"
+
+version="163.7000"
+intellij {
+  version 'IU-LATEST-TRUNK-SNAPSHOT'
+  pluginName 'AngularJS'
+  downloadSources false
+  updateSinceUntilBuild false
+  plugins = ['JavaScriptLanguage', 'CSS', 'uml']
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
