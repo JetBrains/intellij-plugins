@@ -3,7 +3,6 @@ package org.jetbrains.plugins.ruby.motion.ui;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.Nls;
@@ -29,18 +28,29 @@ public class RubyMotionGeneratorTab extends RubyFacetEditorTab {
   private static final int COMBO_WIDTH = PlatformUtils.isRubyMine() ? 320 : 150;
   private final RubyMotionSettingsHolder mySettingsHolder;
   private JPanel mySettingsPane;
-  private JPanel myContentPane;
   private ComboBox myProjectType;
   private JLabel myProjectTypeLabel;
 
   public RubyMotionGeneratorTab(final RubyMotionSettingsHolder settingsHolder) {
+    super(settingsHolder);
     mySettingsHolder = settingsHolder;
+    init();
   }
 
   @Nls
   @Override
   public String getDisplayName() {
     return RBundle.message("ruby.motion.wizard.tab.project.generator.title");
+  }
+
+  @Override
+  protected JComponent getSettingsComp() {
+    return mySettingsPane;
+  }
+
+  @Override
+  protected RubySdkPanel getSdkComboPanel() {
+    return new SdkPanel();
   }
 
   static class SdkPanel extends RubySdkPanel{
@@ -60,10 +70,6 @@ public class RubyMotionGeneratorTab extends RubyFacetEditorTab {
   @NotNull
   @Override
   public JComponent createComponent() {
-    final JPanel sdkPanel = new SdkPanel().getSettingsPanel(mySettingsHolder);
-    myContentPane.add(sdkPanel);
-    myContentPane.add(mySettingsPane);
-
     myProjectTypeLabel.setDisplayedMnemonic('T');
     myProjectType.setModel(new EnumComboBoxModel<>(RubyMotionUtilImpl.ProjectType.class));
     myProjectType.addActionListener(new ActionListener() {
@@ -74,7 +80,7 @@ public class RubyMotionGeneratorTab extends RubyFacetEditorTab {
       }
     });
     myProjectType.setSelectedIndex(0);
-    return myContentPane;
+    return getMainPanel();
   }
 
   @Override
@@ -90,7 +96,6 @@ public class RubyMotionGeneratorTab extends RubyFacetEditorTab {
   }
 
   private void createUIComponents() {
-    myContentPane = new JPanel(new VerticalFlowLayout());
     myProjectType = new ComboBox(COMBO_WIDTH);
   }
 }
