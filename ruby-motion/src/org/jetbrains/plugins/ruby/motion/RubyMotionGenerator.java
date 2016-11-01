@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.RBundle;
 import org.jetbrains.plugins.ruby.RubyFrameworkProjectGenerator;
-import org.jetbrains.plugins.ruby.motion.ui.RubyMotionGeneratorTab;
+import org.jetbrains.plugins.ruby.motion.ui.RubyMotionGeneratorTabBase;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionSettingsHolder;
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil;
 
@@ -81,7 +81,7 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
   @NotNull
   @Override
   public JPanel createSettingsPanel(RubyMotionSettingsHolder settings) {
-    final RubyMotionGeneratorTab generatorTab = new RubyMotionGeneratorTab(settings);
+    final RubyMotionGeneratorTabBase generatorTab = new RubyMotionGeneratorTabBase(settings);
     mySettings = settings;
     final JComponent generatorTabComponent = generatorTab.createComponent();
     return (JPanel)generatorTabComponent;
