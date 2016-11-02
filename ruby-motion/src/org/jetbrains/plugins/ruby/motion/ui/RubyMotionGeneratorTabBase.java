@@ -35,6 +35,17 @@ public class RubyMotionGeneratorTabBase extends RubyFacetEditorTab {
   public RubyMotionGeneratorTabBase(final RubyMotionSettingsHolder settingsHolder) {
     super(settingsHolder);
     mySettingsHolder = settingsHolder;
+    myProjectTypeLabel.setDisplayedMnemonic('T');
+    myProjectType.setModel(new EnumComboBoxModel<>(RubyMotionUtilImpl.ProjectType.class));
+    myProjectType.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent event) {
+        final RubyMotionUtilImpl.ProjectType projectType = (RubyMotionUtilImpl.ProjectType)myProjectType.getSelectedItem();
+        mySettingsHolder.setProjectType(projectType);
+      }
+    });
+    myProjectType.setSelectedIndex(0);
+    mySdkPanel = new SdkPanel();
     init();
   }
 
@@ -57,20 +68,6 @@ public class RubyMotionGeneratorTabBase extends RubyFacetEditorTab {
   @NotNull
   @Override
   public JComponent createComponent() {
-    myProjectTypeLabel.setDisplayedMnemonic('T');
-    myProjectType.setModel(new EnumComboBoxModel<>(RubyMotionUtilImpl.ProjectType.class));
-    myProjectType.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent event) {
-        final RubyMotionUtilImpl.ProjectType projectType = (RubyMotionUtilImpl.ProjectType)myProjectType.getSelectedItem();
-        mySettingsHolder.setProjectType(projectType);
-      }
-    });
-    myProjectType.setSelectedIndex(0);
-
-    mySdkPanel = new SdkPanel();
-    init();
-
     return getMainPanel();
   }
 
