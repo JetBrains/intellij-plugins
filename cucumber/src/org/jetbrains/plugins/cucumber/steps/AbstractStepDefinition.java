@@ -33,9 +33,9 @@ public abstract class AbstractStepDefinition {
 
   private final SmartPsiElementPointer<PsiElement> myElementPointer;
 
-  private String myRegexText;
+  private volatile String myRegexText;
 
-  private Pattern myRegex;
+  private volatile Pattern myRegex;
 
   public AbstractStepDefinition(@NotNull final PsiElement element) {
     myElementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
@@ -62,7 +62,6 @@ public abstract class AbstractStepDefinition {
       final String cucumberRegex = getCucumberRegex();
       if (cucumberRegex == null) return null;
       if (myRegexText == null || !cucumberRegex.equals(myRegexText)) {
-        myRegexText = cucumberRegex;
         final StringBuilder patternText = new StringBuilder(ESCAPE_PATTERN.matcher(cucumberRegex).replaceAll("(.*)"));
         if (patternText.toString().startsWith(CUCUMBER_START_PREFIX)) {
           patternText.replace(0, CUCUMBER_START_PREFIX.length(), "^");
@@ -73,6 +72,7 @@ public abstract class AbstractStepDefinition {
         }
 
         myRegex = new Perl5Compiler().compile(patternText.toString(), Perl5Compiler.CASE_INSENSITIVE_MASK);
+        myRegexText = cucumberRegex;
       }
       return myRegex;
     }

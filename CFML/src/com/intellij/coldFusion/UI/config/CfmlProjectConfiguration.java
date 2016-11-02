@@ -40,11 +40,13 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
     return ServiceManager.getService(project, CfmlProjectConfiguration.class);
   }
 
+  @Override
   @Nullable
   public State getState() {
     return myState;
   }
 
+  @Override
   public void loadState(State state) {
     myState = state;
     if (state == null) {
