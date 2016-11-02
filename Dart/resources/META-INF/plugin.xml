@@ -25,6 +25,8 @@
     </component>
   </project-components>
 
+  <resource-bundle>com.jetbrains.lang.dart.DartBundle</resource-bundle>
+
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
     <psi.treeChangePreprocessor implementation="com.jetbrains.lang.dart.DartPsiTreeChangePreprocessor"/>
@@ -177,7 +179,6 @@
 
     <applicationService serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"
                         serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
-    <exportable serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
     <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.folding.DartCodeFoldingOptionsProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
