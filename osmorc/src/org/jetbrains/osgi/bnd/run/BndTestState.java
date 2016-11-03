@@ -17,6 +17,7 @@ package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
 import aQute.bnd.build.ProjectTester;
+import aQute.bnd.build.Run;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.service.EclipseJUnitTester;
 import com.intellij.execution.CantRunException;
@@ -89,7 +90,9 @@ public class BndTestState extends JavaCommandLineState {
         @Override
         protected ProjectTester compute(@NotNull ProgressIndicator indicator) throws Exception {
           indicator.setIndeterminate(true);
-          return Workspace.getRun(runFile).getProjectTester();
+          Run run = Workspace.getRun(runFile);
+          if (run == null) throw new IllegalStateException("Failed to locate Bnd workspace at " + runFile.getParentFile().getParent());
+          return run.getProjectTester();
         }
       });
     }
