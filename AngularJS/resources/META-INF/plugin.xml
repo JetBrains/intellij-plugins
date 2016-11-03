@@ -9,6 +9,8 @@
   <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <codeInsight.lineMarkerProvider language="HTML" implementationClass="org.angularjs.codeInsight.AngularJSLineMarkerProvider"></codeInsight.lineMarkerProvider>
+
     <codeInsight.template.postfixTemplateProvider language="AngularJS"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
 
