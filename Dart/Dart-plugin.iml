@@ -10,9 +10,17 @@
       <sourceFolder url="file://$MODULE_DIR$/testSrc" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/thirdPartySrc/vmServiceDrivers" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/thirdPartySrc/analysisServer" isTestSource="false" generated="true" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/build" />
       <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/packages" />
       <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/web/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/build" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project/build" />
       <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project_2/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project_2/build" />
       <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project_2/packages" />
       <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/packages" />
     </content>
