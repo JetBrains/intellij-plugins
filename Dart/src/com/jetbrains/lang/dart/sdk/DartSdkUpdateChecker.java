@@ -14,6 +14,7 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.io.HttpRequests;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
@@ -47,6 +48,8 @@ public class DartSdkUpdateChecker {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) return;
 
+    if (FlutterUtil.getFlutterRoot(sdk) != null) return; // Dart SDK inside Flutter SDK is updated using another mechanism
+
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       if (!project.isDisposed()) {
         PropertiesComponent.getInstance().setValue(DART_LAST_SDK_CHECK_KEY, String.valueOf(System.currentTimeMillis()));
@@ -56,7 +59,10 @@ public class DartSdkUpdateChecker {
 
         if (sdkUpdateInfo != null && compareDartSdkVersions(sdkUpdateInfo.myVersion, currentSdkVersion) > 0) {
           ApplicationManager.getApplication().invokeLater(
-            () -> notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl), ModalityState.NON_MODAL, project.getDisposed());
+            () -> notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl),
+            ModalityState.NON_MODAL,
+            project.getDisposed()
+          );
         }
       }
     });
