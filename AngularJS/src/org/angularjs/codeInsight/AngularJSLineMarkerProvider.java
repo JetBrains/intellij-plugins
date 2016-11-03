@@ -41,6 +41,8 @@ public class AngularJSLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
                     final Project project = element.getProject();
                     Stream.of(templateUrls).forEach(templateUrl -> {
+                        final String message = AngularBundle.message("navigation.directiveTemplate",
+                                templateUrl);
                         final String fileName = PathUtil.getFileName(templateUrl);
                         final PsiFile[] files = FilenameIndex
                                 .getFilesByName(project, fileName, GlobalSearchScope.projectScope(project));
@@ -48,17 +50,13 @@ public class AngularJSLineMarkerProvider extends RelatedItemLineMarkerProvider {
                         for (PsiFile file : files) {
                             final VirtualFile virtualFile = file.getVirtualFile();
                             if (virtualFile.getPath().endsWith(templateUrl)) {
-                                String message;
                                 Icon icon;
-
                                 final ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-                                if(projectFileIndex.isInSource(virtualFile) &&
+                                if(projectFileIndex.isInContent(virtualFile) &&
                                         virtualFile.getCanonicalPath().equals(projectFileIndex.getSourceRootForFile(virtualFile).getCanonicalPath() + templateUrl)){
                                     icon = AllIcons.FileTypes.Html;
-                                    message = AngularBundle.message("navigation.directiveTemplate", templateUrl);
                                 }
                                 else{
-                                    message = AngularBundle.message("navigation.directiveTemplateGuess", templateUrl);
                                     icon = IconUtil.desaturate(AllIcons.FileTypes.Html);
 
                                 }
