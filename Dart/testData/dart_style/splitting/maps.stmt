@@ -74,11 +74,13 @@ var map = const {
   "foo": "bar",
   "fuz": null
 };
->>> dangling comma
+>>> trailing comma forces split
 var map = {"foo": "bar" , };
 <<<
-var map = {"foo": "bar",};
->>> dangling comma multiline
+var map = {
+  "foo": "bar",
+};
+>>> trailing comma multiline
 var map = {"foo": "bar", "fuzzy": null , };
 <<<
 var map = {

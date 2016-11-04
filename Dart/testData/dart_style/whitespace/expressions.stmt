@@ -115,3 +115,23 @@ receiver?.method()?.getter;
 variableName??=argument;
 <<<
 variableName ??= argument;
+>>> trailing comma in single argument list
+function(argument   ,   );
+<<<
+function(
+  argument,
+);
+>>> trailing comma in argument list
+function(argument,argument  ,  );
+<<<
+function(
+  argument,
+  argument,
+);
+>>> trailing comma in named argument list
+function(named: arg,another:arg,  );
+<<<
+function(
+  named: arg,
+  another: arg,
+);

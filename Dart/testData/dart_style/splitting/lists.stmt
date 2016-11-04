@@ -73,11 +73,13 @@
 [1,2,3,4];
 <<<
 [1, 2, 3, 4];
->>> dangling comma
+>>> trailing comma forces split
 [1 , ];
 <<<
-[1,];
->>> dangling comma multiline
+[
+  1,
+];
+>>> trailing comma multiline
 [first, second, third, fourth, fifth, sixth  , ];
 <<<
 [
