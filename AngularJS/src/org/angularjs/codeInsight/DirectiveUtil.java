@@ -118,11 +118,30 @@ public class DirectiveUtil {
   }
 
   @NotNull
+  /**
+   * Returns a list of templateUrls for directive.
+   * The reason it returns a list instead of a single string, is that templateUrl of directives can be a
+   * function and in this cases {@link org.angularjs.index.AngularJSIndexingHandler} tries to inspect
+   * return statements and extract all possible templateUrls.
+   * So if you have a directive with the following definition object:
+   * {
+   *     ...
+   *     templateUtl: function(elem, attrs){
+   *        if(attrs.type === 'foo'){
+   *            return '/components/foobar/foo.html';
+   *        }
+   *        else{
+   *            return '/components/foobar/bar.html';
+   *        }
+   *     }
+   * }
+   * You will receive both **foo.html** and **bar.html** as templateUrls of the directive.
+   */
   public static String[] getTemplateUrls(@NotNull  JSImplicitElement directive){
       final String typeString = directive.getTypeString();
       if(typeString != null){
           final String[] split = typeString.split(";", -1);
-          if(split.length > 4){
+          if(split.length > 4 && StringUtil.isNotEmpty(split[4])){
               return split[4].split(",", -1);
           }
       }

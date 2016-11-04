@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
 import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider;
+import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -29,10 +30,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubIndexKey;
@@ -481,26 +479,63 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
               scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), PsiNamedElement::getName, ","));
             }
           } else if("templateUrl".equals(name)){
-            if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()){
-              final String unquoted = unquote(value);
-              if (unquoted != null) templateUrl.set(unquoted);
-            }
-            else if(value instanceof JSFunction){
-              Collection<String> templateUrls = new ArrayList<>();
-              PsiTreeUtil.findChildrenOfType(value, JSReturnStatement.class).forEach(returnStatement ->{
-                final JSExpression expression = returnStatement.getExpression();
-                if(expression instanceof JSLiteralExpression  && ((JSLiteralExpression)expression).isQuotedLiteral()){
-                  final String unquoted = unquote(expression);
-                  if (unquoted != null) templateUrls.add(unquoted);
-                 }
-              });
-              templateUrl.set(StringUtil.join(templateUrls,","));
-            }
+            templateUrl.set(extractTemplateUrls(value));
           }
         }
       });
     }
     return restrict.get().trim() + ";;;" + scope.get() + ";" + templateUrl;
+  }
+
+  private static String extractTemplateUrls(JSExpression value){
+    PsiElement psiElement = resolveReference(value);
+    if (psiElement instanceof JSLiteralExpression && ((JSLiteralExpression)psiElement).isQuotedLiteral()){
+      final String unquoted = unquote(psiElement);
+      if (unquoted != null)
+        return unquoted;
+    }
+    else if(psiElement instanceof JSFunction){
+      /*
+        Try to extract templateUrls from return statements of the templateUrl function
+        Only simple case of returning string (literal or via variable reference initialized by a literal string) is
+        handled.
+      */
+      Collection<String> templateUrls = new ArrayList<>();
+      PsiTreeUtil.findChildrenOfType(psiElement, JSReturnStatement.class).forEach(returnStatement ->{
+        PsiElement returnExpression = resolveReference(returnStatement.getExpression());
+        if(returnExpression instanceof JSLiteralExpression  && ((JSLiteralExpression)returnExpression).isQuotedLiteral()){
+          final String unquoted = unquote(returnExpression);
+          if (unquoted != null) templateUrls.add(unquoted);
+        }
+      });
+      return StringUtil.join(templateUrls,",");
+    }
+    return "";
+  }
+
+  /**
+   * If psiElement is a JsReferenceExpression, returns what it refers to. Moreover, if the referred PsiElement is a variable,
+   * returns its initializer.
+   * If it's not a jsReferenceExpression returns the input itself.
+   * @param psiElement
+   * @return
+   */
+  @Nullable
+  private static PsiElement resolveReference(PsiElement psiElement){
+    if (psiElement instanceof JSReferenceExpression) {
+      final ResolveResult[] resolveResults = new JSReferenceExpressionResolver((JSReferenceExpressionImpl) psiElement,
+              psiElement.getContainingFile()).doResolve();
+      for (ResolveResult resolveResult : resolveResults) {
+        if(resolveResult.isValidResult()){
+          psiElement = resolveResult.getElement();
+          break;
+        }
+      }
+    }
+    if(psiElement instanceof JSVariable){
+      psiElement = ((JSVariable) psiElement).getInitializer();
+    }
+    return psiElement;
   }
 
   private static PsiElement findFunction(PsiElement element) {

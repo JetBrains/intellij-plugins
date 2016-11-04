@@ -1,14 +1,17 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
-import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.codeHighlighting.Pass;
+import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
+import com.intellij.codeInsight.daemon.LineMarkerInfo;
+import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.navigation.GotoRelatedItem;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -16,60 +19,58 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.IconUtil;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.ConstantFunction;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.HashSet;
 import org.angularjs.AngularBundle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * Created by alireza on 10/19/2016.
  */
-public class AngularJSLineMarkerProvider extends RelatedItemLineMarkerProvider {
+public class AngularJSLineMarkerProvider implements LineMarkerProvider {
+
+    @Nullable
     @Override
-    protected void collectNavigationMarkers(@NotNull PsiElement element, Collection<? super RelatedItemLineMarkerInfo> result) {
+    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement psiElement) {
+        return null;
+    }
+
+    @Override
+    public void collectSlowLineMarkers(@NotNull List<PsiElement> list, @NotNull Collection<LineMarkerInfo> collection) {
+        for (PsiElement psiElement : list) {
+            collectSlowLineMarkers(psiElement, collection);
+        }
+    }
+
+    private void collectSlowLineMarkers(@NotNull PsiElement element, @NotNull Collection<LineMarkerInfo> result){
         if (element instanceof HtmlTag) {
-            final JSImplicitElement tagDirective = DirectiveUtil.getTagDirective(((HtmlTag) element).getName(), element.getProject());
-            if (tagDirective != null) {
-                String [] templateUrls = getTemplateUrls(tagDirective);
+            final JSImplicitElement directive = DirectiveUtil.getTagDirective(((HtmlTag) element).getName(), element.getProject());
+            if (directive != null) {
+                String [] templateUrls = getTemplateUrls(directive);
 
-                if (templateUrls.length > 0) {
+                if(templateUrls.length > 0){
+                    final String tooltip = AngularBundle.message("navigation.directiveTemplates") + " (" +
+                            ((HtmlTag) element).getName() + ")";
 
-                    final Project project = element.getProject();
-                    Stream.of(templateUrls).forEach(templateUrl -> {
-                        final String message = AngularBundle.message("navigation.directiveTemplate",
-                                templateUrl);
-                        final String fileName = PathUtil.getFileName(templateUrl);
-                        final PsiFile[] files = FilenameIndex
-                                .getFilesByName(project, fileName, GlobalSearchScope.projectScope(project));
-
-                        for (PsiFile file : files) {
-                            final VirtualFile virtualFile = file.getVirtualFile();
-                            if (virtualFile.getPath().endsWith(templateUrl)) {
-                                Icon icon;
-                                final ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-                                if(projectFileIndex.isInContent(virtualFile) &&
-                                        virtualFile.getCanonicalPath().equals(projectFileIndex.getSourceRootForFile(virtualFile).getCanonicalPath() + templateUrl)){
-                                    icon = AllIcons.FileTypes.Html;
-                                }
-                                else{
-                                    icon = IconUtil.desaturate(AllIcons.FileTypes.Html);
-
-                                }
-                                NavigationGutterIconBuilder<PsiElement> builder =  NavigationGutterIconBuilder
-                                        .create(icon)
-                                        .setTooltipText(message);
-                                builder.setTarget(file);
-                                result.add(builder.createLineMarkerInfo(element));
-                            }
-                        }
-                    });
-                    // TODO: handle template cache
+                    result.add(new LineMarkerInfo<PsiElement>(
+                            element,element.getTextRange(),
+                            AllIcons.FileTypes.Html,
+                            Pass.UPDATE_FOLDING,
+                            new ConstantFunction<>(tooltip),
+                            new MyNavigationHandler(directive),
+                            GutterIconRenderer.Alignment.RIGHT)
+                    );
                 }
+
             }
         }
     }
@@ -78,46 +79,47 @@ public class AngularJSLineMarkerProvider extends RelatedItemLineMarkerProvider {
     private String[] getTemplateUrls(JSImplicitElement directive){
         return DirectiveUtil.getTemplateUrls(directive);
     }
-    @NotNull String[] getTemplateUrls2(JSImplicitElement directive){
-        Collection<String> result = new HashSet<>();
-                directive.getName();
-                if(directive.getParent() instanceof JSDocComment){
-                    directive.getName();
-                }
-                else if (directive.getParent().getParent() instanceof JSArgumentList){
-                    final JSExpression[] arguments = ((JSArgumentList) directive.getParent().getParent()).getArguments();
-                    PsiElement directiveDefinition = arguments[arguments.length - 1];
-                    directiveDefinition = resolveReference(directiveDefinition);
-                    if(directiveDefinition instanceof JSFunction){
-                        final JSSourceElement[] sourceElements = ((JSFunction) directiveDefinition).getBody();
-                        if(sourceElements.length > 0){
-                            for (PsiElement psiElement : sourceElements[0].getChildren()) {
-                                if(psiElement instanceof JSReturnStatement){
-                                    final PsiElement[] returnChilds = psiElement.getChildren();
-                                    if(returnChilds.length > 0){
-                                        final PsiElement directiveDefObject = resolveReference(returnChilds[0]);
-                                        if(directiveDefObject instanceof JSObjectLiteralExpression){
-                                            for (JSProperty property : ((JSObjectLiteralExpression) directiveDefObject).getProperties()) {
-                                                if(StringUtil.equals(property.getName(), "templateUrl")){
-                                                    if(property.getValue() instanceof JSLiteralExpression){
-                                                        result.add((String) ((JSLiteralExpression) property.getValue()).getValue());
-                                                    }
-                                                }
-                                            }
-                                        }
 
-                                    }
-                                }
-                            }
-                        }
+    private class MyNavigationHandler implements GutterIconNavigationHandler<PsiElement> {
+        private JSImplicitElement directive;
+
+        public MyNavigationHandler(JSImplicitElement directive) {
+            this.directive = directive;
+        }
+
+        @Override
+        public void navigate(MouseEvent mouseEvent, PsiElement psiElement) {
+            final List<GotoRelatedItem> items = getItems();
+            if(items.size() == 1){
+                items.get(0).navigate();
+            }
+            else{
+                final String name = AngularBundle.message("navigation.directiveTemplates");
+                NavigationUtil.getRelatedItemsPopup(items, name).show(new RelativePoint(mouseEvent));
+            }
+        }
+
+        private List<GotoRelatedItem> getItems(){
+            List<GotoRelatedItem> items = new ArrayList<>();
+            final Project project = directive.getProject();
+            String [] templateUrls = getTemplateUrls(directive);
+            Arrays.stream(templateUrls).forEach(templateUrl -> {
+                final String fileName = PathUtil.getFileName(templateUrl);
+                final PsiFile[] files = FilenameIndex
+                        .getFilesByName(project, fileName, GlobalSearchScope.projectScope(project));
+
+                for (PsiFile file : files) {
+                    // TODO: is there a more optimized way?
+                    // NOTE: Usually templateUrl fields are relative to a source folder inside directory hierarchy of
+                    // the project and possibly this folder is not marked as a source or resource **root**.
+                    final VirtualFile virtualFile = file.getVirtualFile();
+                    if (virtualFile.getPath().endsWith(templateUrl)) {
+                        items.add(new GotoRelatedItem(file, directive.getName()));
                     }
                 }
-        return (String[]) result.toArray();
-    }
-    private PsiElement resolveReference(PsiElement psiElement) {
-        if (psiElement instanceof JSReferenceExpression) {
-            psiElement = ((JSReferenceExpression) psiElement).resolve();
+            });
+            // TODO: handle template cache
+            return items;
         }
-        return psiElement;
     }
 }
