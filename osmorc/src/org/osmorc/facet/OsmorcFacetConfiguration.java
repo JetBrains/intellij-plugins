@@ -32,12 +32,10 @@ import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
@@ -127,9 +125,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
   }
 
   @Override
-  public void readExternal(Element element) throws InvalidDataException {
-    PathMacroManager.getInstance(ApplicationManager.getApplication()).expandPaths(element);
-
+  public void readExternal(Element element) {
     if (element.getAttributeValue(MANIFEST_GENERATION_MODE) == null) {
       // the new attribute is not there, so we got an old file, to be converted.
       // legacy files containing boolean values
