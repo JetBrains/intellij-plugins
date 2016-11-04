@@ -7,7 +7,7 @@
     <option name="TARGET_PLAYER_VERSION" value="10.2" />
     <option name="VERSION" value="3" />
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/../bin" />
     <output-test url="file://$MODULE_DIR$/.." />
     <exclude-output />
