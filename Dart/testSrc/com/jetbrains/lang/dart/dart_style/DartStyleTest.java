@@ -284,9 +284,9 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:39  arguments, nested");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:53  force all arguments to split if an argument splits");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:67  do force named single-argument list to split if argument splits"); // NEW 11/16
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:77  do split empty argument list if it contains a comment"); // NEW 11/16
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:86  move just named to second line even though all fit on second"); // NEW 11/16
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:92  split named and keep positional on first"); // NEW 11/16
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:77  do split empty argument list if it contains a comment");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:86  move just named to second line even though all fit on second");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:92  split named and keep positional on first");
     KNOWN_TO_FAIL.add("splitting/arrows.stmt:7  newline before fn expression should not force => to split");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:8  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/classes.unit:7");
