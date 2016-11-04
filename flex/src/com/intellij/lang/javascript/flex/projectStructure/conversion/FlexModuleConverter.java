@@ -50,6 +50,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
+import org.jetbrains.jps.model.serialization.java.JpsJavaModelSerializerExtension;
 
 import java.io.File;
 import java.util.*;
@@ -260,7 +261,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
         Element libraryProperties;
         if (!usedModuleLibrariesEntries.add(orderEntry)) {
           // this library is already used by another build configuration, create new entry with new library
-          Element newEntry = (Element)orderEntry.clone();
+          Element newEntry = orderEntry.clone();
           orderEntriesToAdd.add(newEntry);
           library = orderEntry.getChild(LibraryImpl.ELEMENT);
           libraryProperties = library.getChild(LibraryImpl.PROPERTIES_ELEMENT);
@@ -484,7 +485,8 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
   private static String getOutputFolder(final ModuleSettings moduleSettings) {
     final Element rootManagerElement = moduleSettings.getComponentElement(ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
     if (rootManagerElement != null) {
-      final boolean inheritOutput = "true".equals(rootManagerElement.getAttributeValue("inherit-compiler-output"));
+      final boolean inheritOutput = "true".equals(rootManagerElement.getAttributeValue(
+        JpsJavaModelSerializerExtension.INHERIT_COMPILER_OUTPUT_ATTRIBUTE));
       if (!inheritOutput) {
         final Element outputElement = rootManagerElement.getChild("output");
         final String outputUrl = outputElement == null ? null : outputElement.getAttributeValue("url");
@@ -560,10 +562,10 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
   private static void addContent(Element source, Element target) {
     final List attributes = source.getAttributes();
     for (Object attribute : attributes) {
-      target.setAttribute((Attribute)((Attribute)attribute).clone());
+      target.setAttribute(((Attribute)attribute).clone());
     }
     for (Object child : source.getChildren()) {
-      target.addContent((Element)((Element)child).clone());
+      target.addContent(((Element)child).clone());
     }
   }
 
@@ -620,7 +622,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     final Element cssFilesListElement = element.getChild(CSS_FILES_LIST_ELEMENT_NAME);
     if (cssFilesListElement != null) {
       //noinspection unchecked
-      for (Element conditionalCompilerDefinitionElement : (Iterable<Element>)cssFilesListElement.getChildren(FILE_PATH_ELEMENT_NAME)) {
+      for (Element conditionalCompilerDefinitionElement : cssFilesListElement.getChildren(FILE_PATH_ELEMENT_NAME)) {
         cssFilesList.add(conditionalCompilerDefinitionElement.getValue());
       }
     }

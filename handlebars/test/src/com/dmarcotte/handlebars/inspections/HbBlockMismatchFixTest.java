@@ -1,8 +1,6 @@
 package com.dmarcotte.handlebars.inspections;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,13 +28,7 @@ public class HbBlockMismatchFixTest extends LightPlatformCodeInsightFixtureTestC
 
   private void doTest(String intentionHint) {
     myFixture.configureByFile("inspections/before" + getTestName(false) + ".hbs");
-    final IntentionAction intention = myFixture.findSingleIntention(intentionHint);
-    new WriteCommandAction.Simple(myFixture.getProject()) {
-      @Override
-      protected void run() throws Throwable {
-        myFixture.launchAction(intention);
-      }
-    }.execute();
+    myFixture.launchAction(myFixture.findSingleIntention(intentionHint));
     myFixture.checkResultByFile("inspections/after" + getTestName(false) + ".hbs");
   }
 
