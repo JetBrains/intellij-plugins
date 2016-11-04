@@ -64,11 +64,12 @@ foo(inner(veryLongArgument, veryLongArgument));
 <<<
 foo(inner(veryLongArgument,
     veryLongArgument));
->>> do not force named single-argument list to split if argument splits
+>>> do force named single-argument list to split if argument splits
 foo(named:inner(veryLongArgument, veryLongArgument));
 <<<
-foo(named: inner(veryLongArgument,
-    veryLongArgument));
+foo(
+    named: inner(veryLongArgument,
+        veryLongArgument));
 >>> do not split empty argument list
 foo___________________________________();
 <<<
@@ -200,3 +201,18 @@ function(
     }, () {
   ;
 });
+>>> trailing comma
+fn(argument,argument  ,argument  ,  );
+<<<
+fn(
+  argument,
+  argument,
+  argument,
+);
+>>> trailing comma in named argument list
+fn(named: argument,another:argument,  );
+<<<
+fn(
+  named: argument,
+  another: argument,
+);

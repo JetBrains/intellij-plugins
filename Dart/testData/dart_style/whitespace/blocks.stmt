@@ -55,3 +55,43 @@
   ;
   ;
 }
+>>> force blank line after non-empty local function
+{
+  a() {;}
+  b();
+
+
+  c() {;}d(){;}
+
+
+}
+<<<
+{
+  a() {
+    ;
+  }
+
+  b();
+
+  c() {
+    ;
+  }
+
+  d() {
+    ;
+  }
+}
+>>> do not force blank line after empty local function
+{ a() {} b() {} }
+<<<
+{
+  a() {}
+  b() {}
+}
+>>> do not force blank line after => body local function
+{ a() => null; b() => null; }
+<<<
+{
+  a() => null;
+  b() => null;
+}

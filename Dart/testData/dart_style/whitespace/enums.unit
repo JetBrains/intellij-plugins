@@ -7,10 +7,13 @@ enum Unity { ONE }
 enum Primate{BONOBO,CHIMP,GORILLA}
 <<<
 enum Primate { BONOBO, CHIMP, GORILLA }
->>> single line trailing comma
+>>> trailing comma always splits
 enum Primate{BONOBO,CHIMP,}
 <<<
-enum Primate { BONOBO, CHIMP, }
+enum Primate {
+  BONOBO,
+  CHIMP,
+}
 >>> metadata
 @Awesome @Fierce("really")
 enum Primate{BONOBO,CHIMP,GORILLA}

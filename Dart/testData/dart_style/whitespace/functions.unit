@@ -76,3 +76,89 @@ main()sync  *{var lambda = ()sync *{};}
 main() sync* {
   var lambda = () sync* {};
 }
+>>> trailing comma in single parameter list
+function(parameter   ,   ) {;}
+<<<
+function(
+  parameter,
+) {
+  ;
+}
+>>> trailing comma in parameter list
+function(parameter,parameter  ,  ) {;}
+<<<
+function(
+  parameter,
+  parameter,
+) {
+  ;
+}
+>>> trailing comma in all optional parameter list
+function([parameter,parameter  ,  ]) {;}
+<<<
+function([
+  parameter,
+  parameter,
+]) {
+  ;
+}
+>>> trailing comma in all named parameter list
+function({parameter,parameter  ,  }) {;}
+<<<
+function({
+  parameter,
+  parameter,
+}) {
+  ;
+}
+>>> trailing comma in mixed optional parameter list
+function(parameter,[parameter,parameter  ,  ]) {;}
+<<<
+function(
+  parameter, [
+  parameter,
+  parameter,
+]) {
+  ;
+}
+>>> trailing comma in mixed named parameter list
+function(parameter,{parameter,parameter  ,  }) {;}
+<<<
+function(
+  parameter, {
+  parameter,
+  parameter,
+}) {
+  ;
+}
+>>> trailing comma with => function containing split
+function(parameter,parameter,) => veryLongBodyThatWraps(argument, argument, argument, argument);
+<<<
+function(
+  parameter,
+  parameter,
+) =>
+    veryLongBodyThatWraps(argument,
+        argument, argument, argument);
+>>> trailing comma with wrap at =>
+function(parameter,parameter,) /* comment */ => "a very very long string";
+<<<
+function(
+  parameter,
+  parameter,
+) /* comment */ =>
+    "a very very long string";
+>>> trailing comma function nested in expression
+main() {
+  someVeryLongFunction(argument, argument, (parameter, parameter,) {;});
+}
+<<< (this looks weird, but it should rare and at least we test it)
+main() {
+  someVeryLongFunction(
+      argument, argument, (
+    parameter,
+    parameter,
+  ) {
+    ;
+  });
+}

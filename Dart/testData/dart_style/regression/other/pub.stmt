@@ -59,7 +59,9 @@
           d.dir('packages', [
             d.dir('foo', [
               d.file('foo.txt', 'foo'),
-              d.dir('sub', [d.file('bar.txt', 'bar'),]),
+              d.dir('sub', [
+                d.file('bar.txt', 'bar'),
+              ]),
             ])
           ])
         ]),
@@ -68,7 +70,9 @@
           d.dir('packages', [
             d.dir('foo', [
               d.file('foo.txt', 'foo'),
-              d.dir('sub', [d.file('bar.txt', 'bar'),]),
+              d.dir('sub', [
+                d.file('bar.txt', 'bar'),
+              ]),
             ])
           ]),
           d.dir("sub", [
