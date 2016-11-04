@@ -50,6 +50,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
+import org.jetbrains.jps.model.serialization.java.JpsJavaModelSerializerExtension;
 
 import java.io.File;
 import java.util.*;
@@ -484,7 +485,8 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
   private static String getOutputFolder(final ModuleSettings moduleSettings) {
     final Element rootManagerElement = moduleSettings.getComponentElement(ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
     if (rootManagerElement != null) {
-      final boolean inheritOutput = "true".equals(rootManagerElement.getAttributeValue("inherit-compiler-output"));
+      final boolean inheritOutput = "true".equals(rootManagerElement.getAttributeValue(
+        JpsJavaModelSerializerExtension.INHERIT_COMPILER_OUTPUT_ATTRIBUTE));
       if (!inheritOutput) {
         final Element outputElement = rootManagerElement.getChild("output");
         final String outputUrl = outputElement == null ? null : outputElement.getAttributeValue("url");
