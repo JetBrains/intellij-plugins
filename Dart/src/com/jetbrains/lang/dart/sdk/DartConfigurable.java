@@ -31,6 +31,7 @@ import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nls;
@@ -61,6 +62,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private ComboboxWithBrowseButton mySdkPathComboWithBrowse;
   private JBLabel myVersionLabel;
   private JBCheckBox myCheckSdkUpdateCheckBox;
+  // disabled and unchecked, shown in UI instead of myCheckSdkUpdateCheckBox if selected Dart SDK is a part of a Flutter SDK
+  private JBCheckBox myCheckSdkUpdateCheckBoxFake;
   private ComboBox mySdkUpdateChannelCombo;
   private JButton myCheckSdkUpdateButton;
 
@@ -115,7 +118,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     final JTextComponent sdkEditor = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
     sdkEditor.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
-        final String sdkHomePath = mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim();
+        final String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
         if (!sdkHomePath.isEmpty()) {
           final String version = DartSdkUtil.getSdkVersion(sdkHomePath);
           if (version != null && (version.contains("-dev.") || version.contains("-edge."))) {
@@ -123,6 +126,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
           }
         }
 
+        updateControlsEnabledState();
         updateErrorLabel();
       }
     });
@@ -179,7 +183,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       }
       else {
         final String message;
-        if (currentSdkVersion.isEmpty()) {
+        if (currentSdkVersion == null || currentSdkVersion.isEmpty()) {
           message = DartBundle.message("dart.sdk.0.available.for.download", sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
         }
         else if (DartSdkUpdateChecker.compareDartSdkVersions(currentSdkVersion, sdkUpdateInfo.myVersion) >= 0) {
@@ -242,8 +246,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   @Override
   public boolean isModified() {
-    final String sdkHomePath =
-      FileUtilRt.toSystemIndependentName(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
+    final String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
     final boolean sdkSelected = DartSdkUtil.isDartSdkHome(sdkHomePath);
 
     // was disabled, now disabled (or no sdk selected) => not modified, do not care about other controls
@@ -255,13 +258,15 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     final String initialSdkHomePath = mySdkInitial == null ? "" : mySdkInitial.getHomePath();
     if (sdkSelected && !sdkHomePath.equals(initialSdkHomePath)) return true;
 
-    final DartSdkUpdateOption sdkUpdateOption = myCheckSdkUpdateCheckBox.isSelected()
-                                                ? (DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem()
-                                                : DartSdkUpdateOption.DoNotCheck;
-    if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
+    final boolean flutter = FlutterUtil.getFlutterRoot(sdkHomePath) != null;
+    if (!flutter) {
+      final DartSdkUpdateOption sdkUpdateOption = myCheckSdkUpdateCheckBox.isSelected()
+                                                  ? (DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem()
+                                                  : DartSdkUpdateOption.DoNotCheck;
+      if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
+    }
 
-    final String dartiumPath =
-      FileUtilRt.toSystemIndependentName(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
+    final String dartiumPath = getTextFromCombo(myDartiumPathComboWithBrowse);
     final String dartiumPathInitial = myDartiumInitial == null ? null : myDartiumInitial.getPath();
     if (!dartiumPath.isEmpty() && new File(dartiumPath).exists() && !dartiumPath.equals(dartiumPathInitial)) return true;
 
@@ -280,6 +285,11 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     }
 
     return false;
+  }
+
+  @NotNull
+  private static String getTextFromCombo(@NotNull final ComboboxWithBrowseButton combo) {
+    return FileUtilRt.toSystemIndependentName(combo.getComboBox().getEditor().getItem().toString().trim());
   }
 
   @Override
@@ -369,8 +379,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     // similar to DartModuleBuilder.setupSdkAndDartium()
     final Runnable runnable = () -> {
       if (myEnableDartSupportCheckBox.isSelected()) {
-        final String sdkHomePath =
-          FileUtilRt.toSystemIndependentName(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
+        final String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
 
         if (DartSdkUtil.isDartSdkHome(sdkHomePath)) {
           DartSdkUtil.updateKnownSdkPaths(myProject, sdkHomePath);
@@ -384,13 +393,15 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
           DartSdkGlobalLibUtil.enableDartSdkForSpecifiedModulesAndDisableForOthers(myProject, modules);
         }
 
-        final DartSdkUpdateOption sdkUpdateOption = myCheckSdkUpdateCheckBox.isSelected()
-                                                    ? (DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem()
-                                                    : DartSdkUpdateOption.DoNotCheck;
-        DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
+        final boolean flutter = FlutterUtil.getFlutterRoot(sdkHomePath) != null;
+        if (!flutter) {
+          final DartSdkUpdateOption sdkUpdateOption = myCheckSdkUpdateCheckBox.isSelected()
+                                                      ? (DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem()
+                                                      : DartSdkUpdateOption.DoNotCheck;
+          DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
+        }
 
-        final String dartiumPath =
-          FileUtilRt.toSystemIndependentName(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
+        final String dartiumPath = getTextFromCombo(myDartiumPathComboWithBrowse);
         DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
       }
       else {
@@ -415,7 +426,17 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private void updateControlsEnabledState() {
     UIUtil.setEnabled(mySettingsPanel, myEnableDartSupportCheckBox.isSelected(), true);
-    mySdkUpdateChannelCombo.setEnabled(myCheckSdkUpdateCheckBox.isEnabled() && myCheckSdkUpdateCheckBox.isSelected());
+
+    final boolean flutter = FlutterUtil.getFlutterRoot(getTextFromCombo(mySdkPathComboWithBrowse)) != null;
+    myCheckSdkUpdateCheckBox.setVisible(!flutter);
+    final boolean enabled = myCheckSdkUpdateCheckBox.isVisible() &&
+                            myCheckSdkUpdateCheckBox.isEnabled() &&
+                            myCheckSdkUpdateCheckBox.isSelected();
+    mySdkUpdateChannelCombo.setEnabled(enabled);
+    myCheckSdkUpdateButton.setEnabled(enabled);
+
+    myCheckSdkUpdateCheckBoxFake.setVisible(flutter);
+    myCheckSdkUpdateCheckBoxFake.setEnabled(false);
   }
 
   private void updateErrorLabel() {
@@ -431,12 +452,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       return null;
     }
 
-    String message =
-      DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
+    String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(getTextFromCombo(mySdkPathComboWithBrowse));
     if (message != null) return message;
 
-    message =
-      DartiumUtil.getErrorMessageIfWrongDartiumPath(myDartiumPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
+    message = DartiumUtil.getErrorMessageIfWrongDartiumPath(getTextFromCombo(myDartiumPathComboWithBrowse));
     if (message != null) return message;
 
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {

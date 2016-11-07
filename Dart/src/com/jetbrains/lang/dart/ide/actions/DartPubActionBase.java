@@ -150,7 +150,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
       final GeneralCommandLine command = new GeneralCommandLine().withWorkDirectory(pubspecYamlFile.getParent().getPath());
 
       if (FlutterUtil.isFlutterModule(module)) {
-        final String flutterRoot = FlutterUtil.getFlutterRoot(sdk);
+        final String flutterRoot = FlutterUtil.getFlutterRoot(sdk.getHomePath());
         if (flutterRoot != null) {
           command.getEnvironment().put("FLUTTER_ROOT", FileUtil.toSystemDependentName(flutterRoot));
         }
