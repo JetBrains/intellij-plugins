@@ -48,7 +48,7 @@ public class DartSdkUpdateChecker {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) return;
 
-    if (FlutterUtil.getFlutterRoot(sdk) != null) return; // Dart SDK inside Flutter SDK is updated using another mechanism
+    if (FlutterUtil.getFlutterRoot(sdk.getHomePath()) != null) return; // Dart SDK inside Flutter SDK is updated using another mechanism
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       if (!project.isDisposed()) {
