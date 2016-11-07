@@ -80,6 +80,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0000/0037.stmt:19");
     KNOWN_TO_FAIL.add("regression/0000/0040.stmt:10  (indent 6)");
     KNOWN_TO_FAIL.add("regression/0000/0042.unit:2");
+    KNOWN_TO_FAIL.add("regression/0000/0043.stmt:1"); // NEW 11/16
     KNOWN_TO_FAIL.add("regression/0000/0044.stmt:10");
     KNOWN_TO_FAIL.add("regression/0000/0044.stmt:50");
     KNOWN_TO_FAIL.add("regression/0000/0046.stmt:1");
@@ -170,7 +171,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0200/0221.unit:87"); // NEW 3/16
     KNOWN_TO_FAIL.add("regression/0200/0222.stmt:1");
     KNOWN_TO_FAIL.add("regression/0200/0222.stmt:7  (indent 4)");
-    KNOWN_TO_FAIL.add("regression/0200/0223.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0200/0223.stmt:1"); // Changed 11/16
     KNOWN_TO_FAIL.add("regression/0200/0224.stmt:1  (indent 4)");
     KNOWN_TO_FAIL.add("regression/0200/0224.stmt:47  (indent 22)");
     KNOWN_TO_FAIL.add("regression/0200/0229.unit:1");
@@ -243,6 +244,16 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0400/0478.stmt:1  (indent 10)"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0478.stmt:28  (indent 8)"); // NEW 3/26
     KNOWN_TO_FAIL.add("regression/0400/0480.unit:1"); // NEW 3/26
+    KNOWN_TO_FAIL.add("regression/0400/0497.unit:1"); // NEW 11/16
+
+    KNOWN_TO_FAIL.add("regression/0500/0503.unit:1"); // NEW 11/16
+    KNOWN_TO_FAIL.add("regression/0500/0506.unit:1"); // NEW 11/16
+    KNOWN_TO_FAIL.add("regression/0500/0506.unit:27  (indent 6)"); // NEW 11/16
+    KNOWN_TO_FAIL.add("regression/0500/0506.unit:51  (indent 4)"); // NEW 11/16
+    KNOWN_TO_FAIL.add("regression/0500/0506.unit:77  (indent 2)"); // NEW 11/16
+    KNOWN_TO_FAIL.add("regression/0500/0511.unit:1"); // NEW 11/16
+    KNOWN_TO_FAIL.add("regression/0500/0514.unit:1"); // NEW 11/16
+    KNOWN_TO_FAIL.add("regression/0500/0520.unit:1"); // NEW 11/16
 
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:11");
@@ -260,19 +271,22 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/other/pub.stmt:1  (indent 6)");
     KNOWN_TO_FAIL.add("regression/other/pub.stmt:22  (indent 4) was slow");
 
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:103  only named arguments and split");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:110  if split before first positional, split before first named too");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:117  if split before other positional, split before first named too");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:138  avoid splitting before single positional argument");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:143  multiple nested collections");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:155  trailing collections are not indented");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:171  all trailing collections");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:184  non-collection non-preceding argument forces all collections to indent");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:104  only named arguments and split");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:111  if split before first positional, split before first named too");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:118  if split before other positional, split before first named too");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:139  avoid splitting before single positional argument");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:144  multiple nested collections");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:156  trailing collections are not indented");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:172  all trailing collections");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:185  non-collection non-preceding argument forces all collections to indent");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:204  trailing comma"); // NEW 11/16
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:212  trailing comma in named argument list"); // NEW 11/16
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:39  arguments, nested");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:53  force all arguments to split if an argument splits");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:76  do split empty argument list if it contains a comment");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:85  move just named to second line even though all fit on second");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:91  split named and keep positional on first");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:67  do force named single-argument list to split if argument splits"); // NEW 11/16
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:77  do split empty argument list if it contains a comment");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:86  move just named to second line even though all fit on second");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:92  split named and keep positional on first");
     KNOWN_TO_FAIL.add("splitting/arrows.stmt:7  newline before fn expression should not force => to split");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:8  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/classes.unit:7");
@@ -288,21 +302,20 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/exports.unit:52  multiline first");
     KNOWN_TO_FAIL.add("splitting/exports.unit:64  multiline second");
     KNOWN_TO_FAIL.add("splitting/exports.unit:76  multiline both");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:103  index expressions can split after \'[\'");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:108  index arguments nest");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:114  successive index arguments");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:120  is");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:125  as");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:130  null coalescing operator");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:32  conditions, same operator");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:55  indent previous line farther because later line is nested deeper");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:59  split operator chain around block");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:69  indent previous line farther because later line is nested deeper");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:100  nested parenthesized are indented more");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:107  conditional operands are nested");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:117  index expressions can split after '['");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:122  index arguments nest");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:128  successive index arguments");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:134  is");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:139  as");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:144  null coalescing operator");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:7  space-separated adjacent strings are split if they don't fit");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:79  conditional operands are nested");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:86  nested parenthesized are indented more");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:89  index expressions can split after '['");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:93  conditional operands are nested");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:32  conditions, same operator");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:47  split conditional because condition doesn't fit"); // NEW 11/16
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:54  split conditional because condition splits"); // NEW 11/16
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:73  split operator chain around block");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:83  indent previous line farther because later line is nested deeper");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:171  args before and after functions split independently");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:182  all named args with leading non-function forces functions to indent"); // NEW 3/16
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:193  all named args with trailing non-function forces functions to indent"); // NEW 1/26
@@ -371,14 +384,14 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/list_arguments.stmt:80  unsplit leading args");
     KNOWN_TO_FAIL.add("splitting/list_arguments.stmt:89  split before leading args");
     KNOWN_TO_FAIL.add("splitting/list_arguments.stmt:99  split in middle of leading args");
-    KNOWN_TO_FAIL.add("splitting/lists.stmt:108  preserve newlines in lists containing a line comment");
-    KNOWN_TO_FAIL.add("splitting/lists.stmt:120  wrap between elements even when newlines are preserved");
-    KNOWN_TO_FAIL.add("splitting/lists.stmt:134  ignore line comment after the ']'");
-    KNOWN_TO_FAIL.add("splitting/lists.stmt:143  preserves one blank line between elements");
+    KNOWN_TO_FAIL.add("splitting/lists.stmt:110  preserve newlines in lists containing a line comment");
+    KNOWN_TO_FAIL.add("splitting/lists.stmt:122  wrap between elements even when newlines are preserved");
+    KNOWN_TO_FAIL.add("splitting/lists.stmt:145  preserves one blank line between elements");
     KNOWN_TO_FAIL.add("splitting/lists.stmt:21  splits outer lists even if they fit");
     KNOWN_TO_FAIL.add("splitting/lists.stmt:34  split indirect outer");
     KNOWN_TO_FAIL.add("splitting/lists.stmt:61  force multi-line because of contained block");
-    KNOWN_TO_FAIL.add("splitting/lists.stmt:91  nested lists are forced to split");
+    KNOWN_TO_FAIL.add("splitting/lists.stmt:76  trailing comma forces split"); // NEW 11/16
+    KNOWN_TO_FAIL.add("splitting/lists.stmt:93  nested lists are forced to split");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:14  split after second clause");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:2  do not split before first clause");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:24  split multiple variable declarations");
@@ -402,14 +415,15 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/map_arguments.stmt:50  arg between maps forces nesting");
     KNOWN_TO_FAIL.add("splitting/map_arguments.stmt:79  split in middle of leading args");
     KNOWN_TO_FAIL.add("splitting/map_arguments.stmt:88  split before all leading args");
-    KNOWN_TO_FAIL.add("splitting/maps.stmt:100  wrap between elements even when newlines are preserved");
-    KNOWN_TO_FAIL.add("splitting/maps.stmt:116  ignore line comment after the ']'");
-    KNOWN_TO_FAIL.add("splitting/maps.stmt:125  preserves one blank line between elements");
-    KNOWN_TO_FAIL.add("splitting/maps.stmt:151  ignore newlines between keys and values");
+    KNOWN_TO_FAIL.add("splitting/maps.stmt:102  wrap between elements even when newlines are preserved");
+    KNOWN_TO_FAIL.add("splitting/maps.stmt:118  ignore line comment after the ']'");
+    KNOWN_TO_FAIL.add("splitting/maps.stmt:127  preserves one blank line between elements");
+    KNOWN_TO_FAIL.add("splitting/maps.stmt:153  ignore newlines between keys and values");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:18  splits outer maps even if they fit");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:29  split indirect outer");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:53  force multi-line because of contained block");
-    KNOWN_TO_FAIL.add("splitting/maps.stmt:88  preserve newlines in maps containing a line comment");
+    KNOWN_TO_FAIL.add("splitting/maps.stmt:77  trailing comma forces split"); // NEW 11/16
+    KNOWN_TO_FAIL.add("splitting/maps.stmt:90  preserve newlines in maps containing a line comment");
     KNOWN_TO_FAIL.add("splitting/members.unit:11  can split on getter"); // NEW 3/16
     KNOWN_TO_FAIL.add("splitting/members.unit:20  can split on setter"); // NEW 3/16
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:101  wrap after =>");
@@ -461,13 +475,29 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:37  lots of variables with no initializers");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:44  multiple variables stay on one line if they fit");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:48");
-    KNOWN_TO_FAIL.add("splitting/variables.stmt:62  dartbug.com/16379");
+    KNOWN_TO_FAIL.add("splitting/variables.stmt:62  initializers get extra indentation if there are multiple variables"); // NEW 11/16
+    KNOWN_TO_FAIL.add("splitting/variables.stmt:70  dartbug.com/16379");
 
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:77  force newline before member"); // Bad test
+    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
+    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:118  trailing comma in single argument list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:124  trailing comma in argument list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:131  trailing comma in named argument list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:79  trailing comma in single parameter list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:87  trailing comma in parameter list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:96  trailing comma in all optional parameter list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:105  trailing comma in all named parameter list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:114  trailing comma in mixed optional parameter list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:124  trailing comma in mixed named parameter list"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:134  trailing comma with => function containing split"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:143  trailing comma with wrap at =>"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/functions.unit:151  trailing comma function nested in expression"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/if.stmt:67  long if without curlies"); // NEW 3/16
+    KNOWN_TO_FAIL.add("whitespace/metadata.unit:77  force newline before member"); // NEW 11/16
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:95  multiple annotations before members get own line"); // Bad test
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:211  split between metadata and parameter indents");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
-    KNOWN_TO_FAIL.add("whitespace/if.stmt:67  long if without curlies"); // NEW 3/16
+    KNOWN_TO_FAIL.add("whitespace/metadata.unit:218  unsplit with trailing commas"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/metadata.unit:225  split with trailing commas"); // NEW 11/16
+    KNOWN_TO_FAIL.add("whitespace/switch.stmt:168  labeled cases"); // NEW 11/16
   }
 
   protected String getFileExtension() {
@@ -682,6 +712,10 @@ public abstract class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("whitespace");
   }
 
+  public void testStatements3() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
   public void testSwitch() throws Exception {
     runTestInDirectory("whitespace");
   }
@@ -796,6 +830,10 @@ public abstract class DartStyleTest extends FormatterTestCase {
   }
 
   public void test0042() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0043() throws Exception {
     runTestInDirectory("regression/0000");
   }
 
@@ -1489,6 +1527,58 @@ public abstract class DartStyleTest extends FormatterTestCase {
 
   public void test0484() throws Exception {
     runTestInDirectory("regression/0400");
+  }
+
+  public void test0488() throws Exception {
+    runTestInDirectory("regression/0400");
+  }
+
+  public void test0489() throws Exception {
+    runTestInDirectory("regression/0400");
+  }
+
+  public void test0494() throws Exception {
+    runTestInDirectory("regression/0400");
+  }
+
+  public void test0497() throws Exception {
+    runTestInDirectory("regression/0400");
+  }
+
+  public void test0503() throws Exception {
+    runTestInDirectory("regression/0500");
+  }
+
+  public void test0506() throws Exception {
+    runTestInDirectory("regression/0500");
+  }
+
+  public void test0511() throws Exception {
+    runTestInDirectory("regression/0500");
+  }
+
+  public void test0513() throws Exception {
+    runTestInDirectory("regression/0500");
+  }
+
+  public void test0514() throws Exception {
+    runTestInDirectory("regression/0500");
+  }
+
+  public void test0519() throws Exception {
+    runTestInDirectory("regression/0500");
+  }
+
+  public void test0527() throws Exception {
+    runTestInDirectory("regression/0500");
+  }
+
+  public void test0529() throws Exception {
+    runTestInDirectory("regression/0500");
+  }
+
+  public void test0520() throws Exception {
+    runTestInDirectory("regression/0500");
   }
 
   public void testAnalysis_server() throws Exception {

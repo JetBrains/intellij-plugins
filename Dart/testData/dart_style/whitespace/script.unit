@@ -13,7 +13,6 @@ library foo;
 library foo;
 <<<
 #!script
-
 library foo;
 >>> one line between script and import
 #!script
@@ -29,7 +28,6 @@ import 'foo';
 import 'foo';
 <<<
 #!script
-
 import 'foo';
 >>> one line between script and line comment
 #!script
@@ -45,7 +43,6 @@ import 'foo';
 // comment
 <<<
 #!script
-
 // comment
 >>> one line between script and block comment
 #!script
@@ -61,5 +58,4 @@ import 'foo';
 /* comment */
 <<<
 #!script
-
 /* comment */

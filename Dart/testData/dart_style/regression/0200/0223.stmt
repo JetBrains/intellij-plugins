@@ -14,7 +14,9 @@ Foo barBaz() => new Quux({
         }, {
           'toil': {
             'trouble': {
-              'fireBurn': {'cauldronBubble': EYE_OF_NEWT,}
+              'fireBurn': {
+                'cauldronBubble': EYE_OF_NEWT,
+              }
             }
           }
         })

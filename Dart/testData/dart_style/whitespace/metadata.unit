@@ -209,8 +209,26 @@ named({@foo bar}) {}
 positional([@foo bar]) {}
 named({@foo bar}) {}
 >>> split between metadata and parameter indents
-function(@VeryLongMetadataAnnotation longParameter) {}
+function(@Annotation @VeryLongMetadataAnnotation longParameter) {}
 <<<
 function(
+    @Annotation
     @VeryLongMetadataAnnotation
         longParameter) {}
+>>> unsplit with trailing commas
+function(@Annotation longParameter,@Annotation @Other longParameter2,) {}
+<<<
+function(
+  @Annotation longParameter,
+  @Annotation @Other longParameter2,
+) {}
+>>> split with trailing commas
+function(@Annotation longParameter,@Annotation @Other @Third longParameter2,) {}
+<<<
+function(
+  @Annotation longParameter,
+  @Annotation
+  @Other
+  @Third
+      longParameter2,
+) {}

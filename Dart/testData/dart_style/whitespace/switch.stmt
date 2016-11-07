@@ -165,3 +165,27 @@ switch (fruit) {
     print("bleh");
     break;
 }
+>>> labeled cases
+switch (fruit) {
+  case "apple":
+    print("delish");
+    break;
+  label:case "fig":
+    print("bleh");
+    break;
+  other:default:
+    break;
+}
+<<<
+switch (fruit) {
+  case "apple":
+    print("delish");
+    break;
+  label:
+  case "fig":
+    print("bleh");
+    break;
+  other:
+  default:
+    break;
+}
