@@ -26,7 +26,7 @@
 <idea-plugin version="2">
   <id>Osmorc</id>
   <name>Osmorc</name>
-  <version>1.4.8</version>
+  <version>1.4.9</version>
   <description>This plugin adds support for the development of OSGi-based applications to IDEA</description>
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
@@ -34,6 +34,11 @@
 
   <change-notes>
     <![CDATA[
+      <b>Version 1.4.9</b>
+      <ul>
+        <li>Bndlib 3.3.0</li>
+      </ul>
+
       <b>Version 1.4.8</b>
       <ul>
         <li>Bug fixes</li>
@@ -143,7 +148,7 @@
 
     <standardResourceProvider implementation="org.jetbrains.osgi.xml.OsgiResourceProvider"/>
 
-    <compileServer.plugin classpath="osmorc-jps-plugin.jar;bndlib-3.0.0.jar;bndlib-plugins-3.0.0.jar;plexus-utils-3.0.10.jar;bundlor-all.jar"/>
+    <compileServer.plugin classpath="osmorc-jps-plugin.jar;bndlib-3.3.0.jar;bnd-repository-3.3.0.jar;bnd-resolve-3.3.0.jar;plexus-utils-3.0.10.jar;bundlor-all.jar"/>
 
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 
