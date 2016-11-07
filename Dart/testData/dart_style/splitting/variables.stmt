@@ -59,6 +59,14 @@ var x = initializer, y = initializer, z = initializer;
 var x = initializer,
     y = initializer,
     z = initializer;
+>>> initializers get extra indentation if there are multiple variables
+var xVeryLongVariable = longishInitializer,
+    xVeryLongVariable = longishInitializer;
+<<<
+var xVeryLongVariable =
+        longishInitializer,
+    xVeryLongVariable =
+        longishInitializer;
 >>> dartbug.com/16379
 var x = new XXXXXXXXXXXXXXXXXXXXXXXXXXXXX();
 <<<

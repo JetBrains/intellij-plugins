@@ -44,6 +44,20 @@ if (identifier && identifier || identifier
 <<<
 if (identifier && identifier ||
     identifier && identifier) {}
+>>> split conditional because condition doesn't fit
+var kind = longElement != otherLongElement ? longArgument : arg;
+<<<
+var kind =
+    longElement != otherLongElement
+        ? longArgument
+        : arg;
+>>> split conditional because condition splits
+var kind = longElement != otherReallyLongElement ? longArgument : arg;
+<<<
+var kind = longElement !=
+        otherReallyLongElement
+    ? longArgument
+    : arg;
 >>> split conditional because then doesn't fit
 var kind = element != null ? longArgument : arg;
 <<<

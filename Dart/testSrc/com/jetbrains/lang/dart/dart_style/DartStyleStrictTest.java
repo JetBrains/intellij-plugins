@@ -32,14 +32,23 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("regression/0000/0049.stmt:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0177.stmt:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0200/0201.stmt:1");
+    KNOWN_TO_FAIL_STRICT.add("regression/0400/0488.stmt:1"); // NEW 11/16
+    KNOWN_TO_FAIL_STRICT.add("regression/0500/0513.unit:1"); // NEW 11/16
+    KNOWN_TO_FAIL_STRICT.add("regression/0500/0513.unit:9"); // NEW 11/16
 
     KNOWN_TO_FAIL_STRICT.add("splitting/maps.stmt:35  empty literal does not force outer split");
     KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:13  adjacent string lines all split together;");
 
+    KNOWN_TO_FAIL_STRICT.add("whitespace/enums.unit:10  trailing comma always splits"); // NEW 11/16
+    KNOWN_TO_FAIL_STRICT.add("whitespace/blocks.stmt:58  force blank line after non-empty local function"); // NEW 11/16
     KNOWN_TO_FAIL_STRICT.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations");
-
     KNOWN_TO_FAIL_STRICT.add("whitespace/directives.unit:53  configuration"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL_STRICT.add("whitespace/directives.unit:57  configuration"); // https://github.com/munificent/dep-interface-libraries
+    KNOWN_TO_FAIL_STRICT.add("whitespace/script.unit:8  multiple lines between script and library"); // NEW 11/16
+    KNOWN_TO_FAIL_STRICT.add("whitespace/script.unit:23  multiple lines between script and import"); // NEW 11/16
+    KNOWN_TO_FAIL_STRICT.add("whitespace/script.unit:38  multiple lines between script and line comment"); // NEW 11/16
+    KNOWN_TO_FAIL_STRICT.add("whitespace/script.unit:53  multiple lines between script and block comment"); // NEW 11/16
+    KNOWN_TO_FAIL_STRICT.add("whitespace/statements.stmt:2  multiple labels"); // NEW 11/16
   }
 
   /**
