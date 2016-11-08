@@ -25,8 +25,9 @@ import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.execution.runners.DefaultProgramRunner;
+import com.intellij.execution.runners.DefaultProgramRunnerKt;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -40,7 +41,7 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartCoverageProgramRunner extends DefaultProgramRunner {
+public class DartCoverageProgramRunner extends GenericProgramRunner {
   private static final Logger LOG = Logger.getInstance(DartCoverageProgramRunner.class.getName());
 
   private static final String ID = "DartCoverageProgramRunner";
@@ -79,7 +80,7 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
     DartCoverageEnabledConfiguration config = (DartCoverageEnabledConfiguration)CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     String coverageFilePath = config.getCoverageFilePath();
 
-    RunContentDescriptor result = super.doExecute(state, env);
+    RunContentDescriptor result = DefaultProgramRunnerKt.executeState(state, env, this);
     if (result == null) {
       return null;
     }

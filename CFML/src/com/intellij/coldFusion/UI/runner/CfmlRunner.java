@@ -23,8 +23,9 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.execution.runners.DefaultProgramRunner;
+import com.intellij.execution.runners.DefaultProgramRunnerKt;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowserLauncher;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -36,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class CfmlRunner extends DefaultProgramRunner {
+public class CfmlRunner extends GenericProgramRunner {
   @Override
   protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final RunProfile runProfileRaw = env.getRunProfile();
@@ -46,7 +47,7 @@ public class CfmlRunner extends DefaultProgramRunner {
 
       //check if CfmlRunConfiguration generated from default server http://localhost:8500/
       if (runProfile.isFromDefaultHost()) {
-        showDefaultRunConfigWarn(state, env, runProfile);
+        showDefaultRunConfigWarn(env, runProfile);
       } else {
         final CfmlRunnerParameters params = runProfile.getRunnerParameters();
         BrowserLauncher.getInstance().browse(params.getUrl(), params.getCustomBrowser(), env.getProject());
@@ -54,7 +55,7 @@ public class CfmlRunner extends DefaultProgramRunner {
       return null;
     }
     else {
-      return super.doExecute(state, env);
+      return DefaultProgramRunnerKt.executeState(state, env, this);
     }
   }
 
@@ -70,9 +71,7 @@ public class CfmlRunner extends DefaultProgramRunner {
            (profile instanceof CfmlRunConfiguration || profile instanceof CfmlUnitRunConfiguration);
   }
 
-  private static void showDefaultRunConfigWarn(@NotNull RunProfileState state,
-                                               @NotNull ExecutionEnvironment env,
-                                               CfmlRunConfiguration runProfile) {
+  private static void showDefaultRunConfigWarn(@NotNull ExecutionEnvironment env, CfmlRunConfiguration runProfile) {
     DialogBuilder db = new DialogBuilder(env.getProject());
     JLabel info = new JLabel(CfmlBundle.message("cfml.runconfig.dialog.template.label"));
     info.setMaximumSize(new Dimension(400, 500));

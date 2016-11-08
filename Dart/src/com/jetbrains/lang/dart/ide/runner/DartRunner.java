@@ -6,9 +6,8 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.executors.DefaultDebugExecutor;
-import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -27,13 +26,12 @@ import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
-import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartRunner extends DefaultProgramRunner {
+public class DartRunner extends GenericProgramRunner {
 
   private static final Logger LOG = Logger.getInstance(DartRunner.class.getName());
 
@@ -45,46 +43,37 @@ public class DartRunner extends DefaultProgramRunner {
 
   @Override
   public boolean canRun(final @NotNull String executorId, final @NotNull RunProfile profile) {
-    return (profile instanceof DartCommandLineRunConfiguration && (DefaultRunExecutor.EXECUTOR_ID.equals(executorId) ||
-                                                                   DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)))
-           ||
-           (profile instanceof DartTestRunnerParameters && DefaultRunExecutor.EXECUTOR_ID.equals(executorId))
-           ||
-           (profile instanceof DartRemoteDebugConfiguration && DefaultDebugExecutor.EXECUTOR_ID.equals(executorId));
+    return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
+           (profile instanceof DartCommandLineRunConfiguration || profile instanceof DartRemoteDebugConfiguration);
   }
 
   @Override
   protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final String executorId = env.getExecutor().getId();
-
-    if (DefaultRunExecutor.EXECUTOR_ID.equals(executorId)) {
-      return super.doExecute(state, env);
+    if (!DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
+      LOG.error("Unexpected executor id: " + executorId);
+      return null;
     }
 
-    if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
-      try {
-        final String dasExecutionContextId;
+    try {
+      final String dasExecutionContextId;
 
-        final RunProfile runConfig = env.getRunProfile();
-        if (runConfig instanceof DartRunConfigurationBase &&
-            DartAnalysisServerService.getInstance().serverReadyForRequest(env.getProject())) {
-          final String path = ((DartRunConfigurationBase)runConfig).getRunnerParameters().getFilePath();
-          assert path != null; // already checked
-          dasExecutionContextId = DartAnalysisServerService.getInstance().execution_createContext(path);
-        }
-        else {
-          dasExecutionContextId = null; // remote debug or can't start DAS
-        }
+      final RunProfile runConfig = env.getRunProfile();
+      if (runConfig instanceof DartRunConfigurationBase &&
+          DartAnalysisServerService.getInstance().serverReadyForRequest(env.getProject())) {
+        final String path = ((DartRunConfigurationBase)runConfig).getRunnerParameters().getFilePath();
+        assert path != null; // already checked
+        dasExecutionContextId = DartAnalysisServerService.getInstance().execution_createContext(path);
+      }
+      else {
+        dasExecutionContextId = null; // remote debug or can't start DAS
+      }
 
-        return doExecuteDartDebug(state, env, dasExecutionContextId);
-      }
-      catch (RuntimeConfigurationError e) {
-        throw new ExecutionException(e);
-      }
+      return doExecuteDartDebug(state, env, dasExecutionContextId);
     }
-
-    LOG.error("Unexpected executor id: " + executorId);
-    return null;
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e);
+    }
   }
 
   protected int getTimeout() {
