@@ -18,6 +18,7 @@ import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.AsyncGenericProgramRunner
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.runners.runProfileStarter
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.ide.browsers.BrowserFamily
 import com.intellij.openapi.application.ApplicationManager
@@ -27,7 +28,6 @@ import com.intellij.util.Url
 import com.intellij.util.Urls
 import com.intellij.xdebugger.XDebuggerManager
 import com.jetbrains.javascript.debugger.JavaScriptDebugProcess
-import com.jetbrains.javascript.debugger.execution.runProfileStarter
 import com.jetbrains.javascript.debugger.execution.xDebugProcessStarter
 import org.jetbrains.concurrency.Promise
 import org.jetbrains.concurrency.resolvedPromise
