@@ -8,24 +8,23 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescript
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.changeSignature.ChangeInfo;
-import com.intellij.refactoring.changeSignature.LanguageChangeSignatureDetector;
+import com.intellij.refactoring.changeSignature.inplace.LanguageChangeSignatureDetector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class JSChangeSignatureDetector implements LanguageChangeSignatureDetector {
+public class JSChangeSignatureDetector implements LanguageChangeSignatureDetector<JSChangeInfo> {
 
+  @NotNull
   @Override
-  public ChangeInfo createInitialChangeInfo(@NotNull PsiElement element) {
+  public JSChangeInfo createInitialChangeInfo(@NotNull PsiElement element) {
     JSFunction method = PsiTreeUtil.getParentOfType(element, JSFunction.class, false);
     if (method == null || !isInsideMethodSignature(element, method)) {
       return null;
@@ -55,8 +54,8 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   }
 
   @Override
-  public boolean performChange(ChangeInfo changeInfo, ChangeInfo initialChangeInfo, @NotNull final String oldText, boolean silently) {
-    final JSChangeInfo jsChangeInfo = (JSChangeInfo)changeInfo;
+  public void performChange(JSChangeInfo changeInfo, @NotNull final String oldText) {
+    final JSChangeInfo jsChangeInfo = changeInfo;
     JSMethodDescriptor descriptor = new JSMethodDescriptor(jsChangeInfo.getMethod(), false) {
       @Override
       public String getName() {
@@ -90,7 +89,7 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
         super.invokeRefactoring(processor);
       }
     };
-    return d.showAndGet();
+    d.showAndGet();
   }
 
   // TODO generalize
@@ -109,12 +108,9 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   }
 
   @Override
-  public boolean isChangeSignatureAvailableOnElement(PsiElement element, ChangeInfo currentInfo) {
-    if (currentInfo instanceof JSChangeInfo) {
-      return element.getNode().getElementType() == JSTokenTypes.IDENTIFIER &&
-             Comparing.equal(currentInfo.getMethod(), element.getParent().getParent());
-    }
-    return false;
+  public boolean isChangeSignatureAvailableOnElement(PsiElement element, JSChangeInfo currentInfo) {
+    return element.getNode().getElementType() == JSTokenTypes.IDENTIFIER &&
+           Comparing.equal(currentInfo.getMethod(), element.getParent().getParent());
   }
 
 
@@ -141,32 +137,17 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   }
 
   @Override
-  public boolean isMoveParameterAvailable(PsiElement parameter, boolean left) {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public void moveParameter(PsiElement parameter, Editor editor, boolean left) {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
   public boolean ignoreChanges(PsiElement element) {
     return false;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
-  public TextRange getHighlightingRange(ChangeInfo changeInfo) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  public TextRange getHighlightingRange(@NotNull JSChangeInfo changeInfo) {
+    return getRange(changeInfo.getMethod());
   }
 
   @Override
-  public String extractSignature(PsiElement child, @NotNull ChangeInfo initialChangeInfo) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public ChangeInfo createNextChangeInfo(String signature, @NotNull ChangeInfo currentInfo, String initialName) {
+  public JSChangeInfo createNextChangeInfo(String signature, @NotNull JSChangeInfo currentInfo, boolean delegate) {
     return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
 }
