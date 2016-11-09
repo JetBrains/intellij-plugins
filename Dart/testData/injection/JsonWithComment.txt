@@ -210,18 +210,18 @@ Dart File
               PsiElement(IDENTIFIER)('a')
               JsonFile: JsonWithComment.dart
                 JsonReferenceExpression
-                  PsiElement(INDENTIFIER)('a')
+                  PsiElement(IDENTIFIER)('a')
             JsonFile: JsonWithComment.dart
               JsonReferenceExpression
-                PsiElement(INDENTIFIER)('a')
+                PsiElement(IDENTIFIER)('a')
           JsonFile: JsonWithComment.dart
             JsonReferenceExpression
-              PsiElement(INDENTIFIER)('a')
+              PsiElement(IDENTIFIER)('a')
         PsiElement(REGULAR_STRING_PART)(' b')
         PsiElement(CLOSING_QUOTE)('"')
         JsonFile: JsonWithComment.dart
           JsonReferenceExpression
-            PsiElement(INDENTIFIER)('a')
+            PsiElement(IDENTIFIER)('a')
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
