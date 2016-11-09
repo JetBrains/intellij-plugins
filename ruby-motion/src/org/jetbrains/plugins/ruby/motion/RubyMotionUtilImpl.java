@@ -72,11 +72,10 @@ import org.jetbrains.plugins.ruby.ruby.lang.psi.RPsiElement;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.expressions.RArray;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.expressions.RAssignmentExpression;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.expressions.RBinaryExpression;
+import org.jetbrains.plugins.ruby.ruby.lang.psi.holders.RequireInfo;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.impl.expressions.RAssignmentExpressionNavigator;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.impl.expressions.RSelfAssignmentExpressionNavigator;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.impl.expressions.RShiftExpressionNavigator;
-import org.jetbrains.plugins.ruby.ruby.lang.psi.impl.holders.utils.RFileUtil;
-import org.jetbrains.plugins.ruby.ruby.lang.psi.methodCall.RCall;
 import org.jetbrains.plugins.ruby.ruby.run.ConsoleRunner;
 import org.jetbrains.plugins.ruby.ruby.run.MergingCommandLineArgumentsProvider;
 import org.jetbrains.plugins.ruby.ruby.run.configuration.RubyAbstractCommandLineState;
@@ -354,16 +353,14 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
   }
 
   private static ProjectType calculateProjectType(RFile file) {
-    final List<RCall> requires = file.getRequires();
-    for (RCall require : requires) {
-      if (require.getArguments().size() > 0) {
-        final String path = RFileUtil.evaluateRequirement(file.getVirtualFile(), require.getArguments().get(0));
-        if (path != null && (path.endsWith("template/osx") || path.endsWith("template/osx.rb"))) {
-          return ProjectType.OSX;
-        }
-        if (path != null && (path.endsWith("template/android") || path.endsWith("template/android.rb"))) {
-          return ProjectType.ANDROID;
-        }
+    final List<RequireInfo> requires = file.getRequires();
+    for (RequireInfo require : requires) {
+      final String path = require.getPath();
+      if (path.endsWith("template/osx") || path.endsWith("template/osx.rb")) {
+        return ProjectType.OSX;
+      }
+      if (path.endsWith("template/android") || path.endsWith("template/android.rb")) {
+        return ProjectType.ANDROID;
       }
     }
     return ProjectType.IOS;
