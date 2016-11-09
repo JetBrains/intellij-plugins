@@ -241,4 +241,8 @@ public class DartFormatterTest extends FormatterTestCase {
     settings.BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED;
     doTest();
   }
+
+  public void testArguments() throws Exception {
+    doTest();
+  }
 }

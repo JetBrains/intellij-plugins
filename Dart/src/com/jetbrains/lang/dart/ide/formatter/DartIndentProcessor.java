@@ -122,27 +122,14 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
     if (elementType == LPAREN && (superParentType == METADATA || parentType == ARGUMENTS)) {
-      return Indent.getContinuationIndent();
+      return Indent.getNormalIndent();
     }
-    if (elementType == RPAREN && parentType == ARGUMENTS) {
-      if (prevSiblingType == ARGUMENT_LIST) {
-        if (prevSibling.getLastChildNode().getElementType() == COMMA) {
-          return Indent.getContinuationIndent();
-        }
-      }
+    if (parentType == ARGUMENTS) {
+      return Indent.getNoneIndent();
     }
     if (parentType == ARGUMENT_LIST) {
-      // TODO In order to handle some dart_style examples we need to set indent for each arg.
-      // The formatter does not appear to honor indent on individual argument expressions
-      // when KEEP_LINE_BREAKS==true. That means two DartFormatterTest tests fail. Those tests
-      // have been changed since the recommended setting for Dart programming is
-      // KEEP_LINE_BREAKS==false. The two tests are testAlignment() and testWrappingMeth().
-      if (EXPRESSIONS.contains(elementType) && elementType != FUNCTION_EXPRESSION) {
-        return Indent.getContinuationIndent();
-      }
-      if (elementType == NAMED_ARGUMENT) {
-        return Indent.getContinuationIndent();
-      }
+      // see https://github.com/dart-lang/dart_style/issues/551
+      return parent.getLastChildNode().getElementType() == COMMA ? Indent.getNormalIndent() : Indent.getContinuationIndent();
     }
     if (parentType == FORMAL_PARAMETER_LIST) {
       return Indent.getContinuationIndent();
@@ -181,9 +168,6 @@ public class DartIndentProcessor {
       return Indent.getContinuationIndent();
     }
     if (elementType == COLON || parentType == TERNARY_EXPRESSION && elementType == QUEST) {
-      return Indent.getContinuationIndent();
-    }
-    if (elementType == NAMED_ARGUMENT) {
       return Indent.getContinuationIndent();
     }
     if (elementType == HIDE_COMBINATOR || elementType == SHOW_COMBINATOR) {
