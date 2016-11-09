@@ -24,8 +24,9 @@ public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
     SYNTAX_MAP.put(DartTokenTypes.RBRACE, BlockClosingBrace);
     SYNTAX_MAP.put(DartTokenTypes.LBRACKET, ArrayOpeningBracket);
     SYNTAX_MAP.put(DartTokenTypes.RBRACKET, ArrayClosingBracket);
-    SYNTAX_MAP.put(DartTokenTypes.LPAREN, LeftParenthesis);
-    SYNTAX_MAP.put(DartTokenTypes.RPAREN, RightParenthesis);
+    // Unfortunately there may be different indents inside parentheses, see https://github.com/dart-lang/dart_style/issues/551
+    //SYNTAX_MAP.put(DartTokenTypes.LPAREN, LeftParenthesis);
+    //SYNTAX_MAP.put(DartTokenTypes.RPAREN, RightParenthesis);
     SYNTAX_MAP.put(DartTokenTypes.COLON, Colon);
     SYNTAX_MAP.put(DartTokenTypes.CASE, SwitchCase);
     SYNTAX_MAP.put(DartTokenTypes.DEFAULT, SwitchDefault);

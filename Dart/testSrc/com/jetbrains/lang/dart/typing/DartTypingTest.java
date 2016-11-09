@@ -546,7 +546,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n',
                  "@Component(<caret>)",
                  "@Component(\n" +
-                 "    <caret>\n" +
+                 "  <caret>\n" +
                  ")");
   }
 
@@ -577,7 +577,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}",
                  "m(l) {\n" +
                  "  List p = new List(l,\n" +
-                 "      <caret>);\n" +
+                 "  <caret>);\n" + // not sure it's the best possible behavior
                  "}");
   }
 
@@ -588,7 +588,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}",
                  "m(l) {\n" +
                  "  List p = new List(\n" +
-                 "      <caret>\n" +
+                 "    <caret>\n" +
                  "  );\n" +
                  "}");
   }
