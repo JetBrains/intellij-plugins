@@ -7,7 +7,6 @@ import org.jetbrains.jps.builders.java.JavaCompilingTool;
 
 import javax.tools.*;
 import java.io.File;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,9 +46,5 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
   @Override
   public List<File> getAdditionalClasspath() {
     return Collections.emptyList();
-  }
-
-  @Override
-  public void prepareCompilationTask(@NotNull JavaCompiler.CompilationTask task, @NotNull Collection<String> options) {
   }
 }
