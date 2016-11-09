@@ -30,13 +30,14 @@
   <description>This plugin adds support for the development of OSGi-based applications to IDEA</description>
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="145.0"/>
+  <idea-version since-build="163.0"/>
 
   <change-notes>
     <![CDATA[
       <b>Version 1.4.9</b>
       <ul>
         <li>Bndlib 3.3.0</li>
+        <li>Bug fixes</li>
       </ul>
 
       <b>Version 1.4.8</b>
