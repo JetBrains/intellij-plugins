@@ -49,7 +49,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSFunctionsSearch;
 import com.intellij.lang.properties.PropertiesBundle;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -130,8 +129,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       Arrays.asList("Flex", "Flex2", "FlexWithLocalCss", "DuplicatedIdsInMxml", "PathesInMxml", "ReferencingClass", "EnumeratedValues"));
 
     myTestsWithCssLoader.addAll(Arrays.asList("Flex", "FlexWithLocalCss"));
-
-    ContainerUtil.addAll(myTestsWithLoadingSavingCaches, "AsSpecific");
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -779,7 +776,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".as");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithLoadingAndSavingCaches})
   public void testAsSpecific() throws Exception {
     disableInspectionTool(JSUnusedLocalSymbolsInspection.SHORT_NAME);
     final String testName = getTestName(false);
