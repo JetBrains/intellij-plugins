@@ -1,6 +1,6 @@
 {
   "name": "karma-intellij",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A Karma plugin. Reporter for WebStorm and other IntelliJ IDEs.",
   "main": "lib/fakePlugin.js",
   "repository": {
