@@ -217,7 +217,10 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
 
   this.onSpecComplete = function (browser, result) {
     if (result.skipped) {
-      return;
+      // the test is either pending or disabled
+      if (!result.pending) {
+        return;
+      }
     }
     var suiteNames = filterSuiteNames(result.suite)
       , specName = result.description;
@@ -240,7 +243,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     }
     var suiteNode = getOrCreateLowerSuiteNode(browserNode, suiteNames, write);
     var specNode = createSpecNode(suiteNode, suiteNames, specName);
-    var status = result.success ? 0 : 2;
+    var status = result.pending ? 1 : result.success ? 0 : 2;
     var failureMsg = '';
     result.log.forEach(function (log) {
       failureMsg += formatError(log, '\t');
