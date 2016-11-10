@@ -178,11 +178,10 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       group.add(reanalyzeAction);
     }
 
-    // Restart action is now discoverable using Find Action only
-    //final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
-    //if (restartAction != null) {
-    //  group.add(restartAction);
-    //}
+    final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
+    if (restartAction != null) {
+      group.add(restartAction);
+    }
   }
 
   private void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group) {
