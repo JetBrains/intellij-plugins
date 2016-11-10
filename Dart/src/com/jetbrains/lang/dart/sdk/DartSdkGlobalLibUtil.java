@@ -88,7 +88,8 @@ public class DartSdkGlobalLibUtil {
 
         libRoot.refresh(false, true);
         for (final VirtualFile subFolder : libRoot.getChildren()) {
-          if (subFolder.getName().startsWith("_")) {
+          // dev_compiler folder contains Megabytes of JavaScript that is used by SDK tools but not needed for the IDE
+          if (subFolder.getName().startsWith("_") || subFolder.getName().equals("dev_compiler")) {
             libModifiableModel.addExcludedRoot(subFolder.getUrl());
           }
         }
