@@ -36,7 +36,16 @@ public class ReanalyzeDartSourcesAction extends AnAction implements DumbAware {
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
     if (isApplicable(e.getProject())) {
-      DartAnalysisServerService.getInstance().analysis_reanalyze(null);
+      DartAnalysisServerService das = DartAnalysisServerService.getInstance();
+      if (das.isServerProcessActive()) {
+        das.analysis_reanalyze(null);
+      }
+      else {
+        // Ensure the server is properly stopped.
+        das.restartServer();
+        // The list of projects was probably lost when the server crashed. Prime it with the current project to get the server restarted.
+        das.serverReadyForRequest(e.getProject());
+      }
     }
   }
 

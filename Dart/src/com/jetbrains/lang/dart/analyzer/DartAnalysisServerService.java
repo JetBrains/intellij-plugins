@@ -1386,6 +1386,12 @@ public class DartAnalysisServerService {
     }
   }
 
+  public boolean isServerProcessActive() {
+    synchronized (myLock) {
+      return myServer != null && myServer.isSocketOpen();
+    }
+  }
+
   public boolean serverReadyForRequest(@NotNull final Project project) {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null || !isDartSdkVersionSufficient(sdk)) {
