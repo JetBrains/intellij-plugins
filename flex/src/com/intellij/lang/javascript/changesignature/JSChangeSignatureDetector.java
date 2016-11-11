@@ -2,12 +2,14 @@ package com.intellij.lang.javascript.changesignature;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureDialog;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -144,6 +146,11 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   @Override
   public TextRange getHighlightingRange(@NotNull JSChangeInfo changeInfo) {
     return getRange(changeInfo.getMethod());
+  }
+
+  @Override
+  public FileType getFileType() {
+    return JavaScriptFileType.INSTANCE;
   }
 
   @Override
