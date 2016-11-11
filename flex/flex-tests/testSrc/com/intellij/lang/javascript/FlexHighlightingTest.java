@@ -49,6 +49,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSFunctionsSearch;
 import com.intellij.lang.properties.PropertiesBundle;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
