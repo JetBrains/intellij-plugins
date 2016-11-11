@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="path.package.reference.inspection.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING" language="yaml"

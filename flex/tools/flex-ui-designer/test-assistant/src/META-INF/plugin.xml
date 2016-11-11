@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <name>Flex UI Designer Test Assistant</name>
   <description>Assists in writing and maintaining tests for Flex UI Designer's code</description>
   <version>0.1</version>

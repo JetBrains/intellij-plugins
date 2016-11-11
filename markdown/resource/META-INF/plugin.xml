@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <id>org.intellij.plugins.markdown</id>
   <name>Markdown support</name>
   <version>VERSION</version>

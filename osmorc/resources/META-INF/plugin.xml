@@ -23,7 +23,7 @@
   ~ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<idea-plugin version="2">
+<idea-plugin>
   <id>Osmorc</id>
   <name>Osmorc</name>
   <version>1.4.9</version>

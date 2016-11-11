@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <name>MXML Design Preview</name>
   <description>Provides instant preview of MXML components (Flex or Flash). Properties and style inspector.</description>
   <id>com.intellij.flex.uiDesigner</id>

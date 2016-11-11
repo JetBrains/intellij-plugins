@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <name>RubyMotion support</name>
   <id>org.jetbrains.plugins.ruby.motion</id>
   <description><![CDATA[

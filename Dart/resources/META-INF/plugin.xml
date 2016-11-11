@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <name>Dart</name>
   <description>Support for the Dart programming language.</description>
   <vendor>JetBrains</vendor>

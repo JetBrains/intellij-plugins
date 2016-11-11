@@ -1,4 +1,4 @@
-<idea-plugin url="https://www.jetbrains.com" version="2">
+<idea-plugin url="https://www.jetbrains.com">
   <name>IDETalk</name>
   <description><![CDATA[
   A plugin for code-related communications between developers.

@@ -1,5 +1,5 @@
 <!--suppress XmlUnboundNsPrefix -->
-<idea-plugin version="2" url="https://github.com/dmarcotte/idea-handlebars">
+<idea-plugin url="https://github.com/dmarcotte/idea-handlebars">
   <id>com.dmarcotte.handlebars</id>
   <name>Handlebars/Mustache</name>
 

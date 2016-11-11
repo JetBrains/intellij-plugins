@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
 
   <extensions defaultExtensionNs="com.intellij">
     <programRunner implementation="com.intellij.javascript.karma.coverage.KarmaCoverageProgramRunner"/>

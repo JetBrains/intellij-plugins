@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <name>ActionScript Profiler</name>
   <description><![CDATA[The plugin allows you to profile your Flash and Flex applications.<br>
   CPU profiling: self and cumulative execution time, caller and callee hierarchy, sorting, navigation to source code and scope filtering.<br/>

@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
   <name>PhoneGap/Cordova Plugin</name>
   <vendor email="masahiro.suzuka@gmail.com">masahirosuzuka, JetBrains</vendor>

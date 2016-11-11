@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin url="https://confluence.jetbrains.com/display/IDEADEV/Struts+2+Plugin+for+IntelliJ+IDEA" version="2"
+<idea-plugin url="https://confluence.jetbrains.com/display/IDEADEV/Struts+2+Plugin+for+IntelliJ+IDEA"
              xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <id>com.intellij.struts2</id>
