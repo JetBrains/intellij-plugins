@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <name>PostCSS support</name>
   <id>org.intellij.plugins.postcss</id>
   <category>HTML/JavaScript Development</category>
