@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescript
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
@@ -56,7 +57,7 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
   }
 
   @Override
-  public void performChange(JSChangeInfo changeInfo, @NotNull final String oldText) {
+  public void performChange(JSChangeInfo changeInfo, Editor editor, @NotNull final String oldText) {
     final JSChangeInfo jsChangeInfo = changeInfo;
     JSMethodDescriptor descriptor = new JSMethodDescriptor(jsChangeInfo.getMethod(), false) {
       @Override
