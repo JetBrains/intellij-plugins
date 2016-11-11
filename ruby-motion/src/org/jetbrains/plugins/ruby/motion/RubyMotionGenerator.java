@@ -87,7 +87,7 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
     return (JPanel)generatorTabComponent;
   }
 
-  @Nullable
+  @NotNull
   @Override
   public String getParentGroupName() {
     return "Mobile";
