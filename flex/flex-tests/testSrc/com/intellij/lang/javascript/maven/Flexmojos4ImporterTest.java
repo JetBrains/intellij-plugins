@@ -36,8 +36,13 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
 
   @Override
   protected void tearDown() throws Exception {
-    getMavenGeneralSettings().setMavenHome(myInitialMavenHome);
-    super.tearDown();
+    try {
+      getMavenGeneralSettings().setMavenHome(myInitialMavenHome);
+      MavenServerManager.getInstance().shutdown(true);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   @Override
