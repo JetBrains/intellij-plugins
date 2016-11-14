@@ -808,6 +808,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     }
   }
 
+  public long getLastResponseMillis() {
+    long millis = lastResponseTime.get();
+    if (millis == 0L) {
+      // If the first request comes before the first response set the time to give the UI meaningful data in next request.
+      lastResponseTime.set(System.currentTimeMillis());
+    }
+    return millis;
+  }
+
   private static RequestError processErrorResponse(JsonObject errorObject) throws Exception {
     String errorCode = errorObject.get("code").getAsString();
     String errorMessage = errorObject.get("message").getAsString();
