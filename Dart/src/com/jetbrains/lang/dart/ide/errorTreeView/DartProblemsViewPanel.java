@@ -19,6 +19,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.CopyProvider;
 import com.intellij.ide.actions.ContextHelpAction;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ide.CopyPasteManager;
@@ -37,8 +38,10 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.Convertor;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +60,15 @@ import java.util.Map;
 
 public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyProvider {
 
+  private static final Icon STATUS_GOOD = AllIcons.Process.State.GreenOK;
+  private static final Icon STATUS_UNKNOWN = AllIcons.Process.State.YellowStr;
+  private static final Icon STATUS_BAD = AllIcons.Process.State.RedExcl;
+  private static final long DEFAULT_SERVER_WAIT_MILLIS = 5000L; // Switch to UNKNOWN after 5s with no response.
+
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
   @NotNull private JBLabel mySummaryLabel = new JBLabel();
+  @NotNull private JButton myStatusButton = new JButton();
 
   // TODO: Remember settings and filters in workspace.xml. (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
@@ -161,10 +170,15 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
 
   @NotNull
   private JPanel createStatusBar() {
-    final JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    final JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
     panel.add(mySummaryLabel);
     mySummaryLabel.setText("");
-
+    panel.add(Box.createHorizontalGlue());
+    myStatusButton.setIcon(STATUS_GOOD);
+    panel.add(myStatusButton);
+    DartAnalysisServerService.getInstance().maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
+    startMonitor();
     return panel;
   }
 
@@ -351,6 +365,31 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       showFiltersPopup();
     }
   }
+
+  private void startMonitor() {
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      TimeoutUtil.sleep(1000L);
+      DartAnalysisServerService das = DartAnalysisServerService.getInstance();
+      Icon statusIcon;
+      String statusText;
+      if (das.isServerProcessActive()) {
+        if (das.isServerResponsive()) {
+          statusIcon = STATUS_GOOD;
+          statusText = DartBundle.message("analysis.server.status.good");
+        } else {
+          statusIcon = STATUS_UNKNOWN;
+          statusText = DartBundle.message("analysis.server.status.unknown");
+        }
+      }
+      else {
+        statusIcon = STATUS_BAD;
+        statusText = DartBundle.message("analysis.server.status.bad");
+      }
+      ApplicationManager.getApplication().invokeLater(() -> {
+        myStatusButton.setIcon(statusIcon);
+        myStatusButton.setToolTipText(statusText);
+      });
+      startMonitor();
+    });
+  }
 }
-
-
