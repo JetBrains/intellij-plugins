@@ -2,7 +2,10 @@ package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.formatting.Indent;
 import com.intellij.lang.Language;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.impl.source.codeStyle.SemanticEditorPosition;
+import com.intellij.psi.impl.source.codeStyle.lineIndent.IndentCalculator;
 import com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLineIndentProvider;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.HashMap;
@@ -17,6 +20,7 @@ import static com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLine
 public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
 
   static HashMap<IElementType, SemanticEditorPosition.SyntaxElement> SYNTAX_MAP = new HashMap<>();
+
   static {
     SYNTAX_MAP.put(DartTokenTypesSets.WHITE_SPACE, Whitespace);
     SYNTAX_MAP.put(DartTokenTypes.SEMICOLON, Semicolon);
@@ -24,9 +28,8 @@ public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
     SYNTAX_MAP.put(DartTokenTypes.RBRACE, BlockClosingBrace);
     SYNTAX_MAP.put(DartTokenTypes.LBRACKET, ArrayOpeningBracket);
     SYNTAX_MAP.put(DartTokenTypes.RBRACKET, ArrayClosingBracket);
-    // Unfortunately there may be different indents inside parentheses, see https://github.com/dart-lang/dart_style/issues/551
-    //SYNTAX_MAP.put(DartTokenTypes.LPAREN, LeftParenthesis);
-    //SYNTAX_MAP.put(DartTokenTypes.RPAREN, RightParenthesis);
+    SYNTAX_MAP.put(DartTokenTypes.LPAREN, LeftParenthesis);
+    SYNTAX_MAP.put(DartTokenTypes.RPAREN, RightParenthesis);
     SYNTAX_MAP.put(DartTokenTypes.COLON, Colon);
     SYNTAX_MAP.put(DartTokenTypes.CASE, SwitchCase);
     SYNTAX_MAP.put(DartTokenTypes.DEFAULT, SwitchDefault);
@@ -55,5 +58,16 @@ public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
   @Override
   protected Indent.Type getIndentTypeInBrackets() {
     return Indent.Type.NORMAL;
+  }
+
+  @Nullable
+  @Override
+  protected IndentCalculator getIndent(@NotNull Project project, @NotNull Editor editor, @Nullable Language language, int offset) {
+    if (getPosition(editor, offset).matchesRule(position -> position.before().isAt(LeftParenthesis))) {
+      // Need to skip a common logic and force formatter-based line indent provider to work, because
+      // there may be different indents inside parentheses, see https://github.com/dart-lang/dart_style/issues/551
+      return null;
+    }
+    return super.getIndent(project, editor, language, offset);
   }
 }
