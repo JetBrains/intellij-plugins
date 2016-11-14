@@ -74,8 +74,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final boolean myRemoteDebug;
   private final int myTimeout;
   @Nullable private final VirtualFile myCurrentWorkingDirectory;
-
-  @Nullable String myRemoteProjectRootUri;
+  @Nullable protected String myRemoteProjectRootUri;
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @NotNull final String debuggingHost,
@@ -335,6 +334,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     for (String isolateId : new ArrayList<>(mySuspendedIsolateIds)) {
       myVmServiceWrapper.resumeIsolate(isolateId, null);
     }
+  }
+
+  public void resumeIsolate(@NotNull final String isolateId, @Nullable final StepOption stepOption) {
+    myVmServiceWrapper.resumeIsolate(isolateId, stepOption);
   }
 
   @Override
