@@ -99,6 +99,11 @@ public enum EventKind {
   PauseInterrupted,
 
   /**
+   * An isolate has paused after a service protocol request.
+   */
+  PausePostRequest,
+
+  /**
    * An isolate has paused at start, before executing code.
    */
   PauseStart,
