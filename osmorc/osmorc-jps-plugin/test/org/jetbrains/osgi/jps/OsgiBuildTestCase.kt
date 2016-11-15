@@ -90,4 +90,9 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
       assertEquals(expected, actual)
     }
   }
+
+  // Kotlin still have troubles with mapping JarFile to Closeable
+  private fun JarFile.use(block: (JarFile) -> Unit) {
+    try { block(this) } finally { close() }
+  }
 }
