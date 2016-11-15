@@ -336,10 +336,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
   }
 
-  public void resumeIsolate(@NotNull final String isolateId, @Nullable final StepOption stepOption) {
-    myVmServiceWrapper.resumeIsolate(isolateId, stepOption);
-  }
-
   @Override
   public void startPausing() {
     for (IsolatesInfo.IsolateInfo info : getIsolateInfos()) {
