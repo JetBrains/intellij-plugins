@@ -3,18 +3,15 @@ package com.google.jstestdriver.idea.assertFramework.support;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.assertFramework.library.JsLibraryHelper;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.DumbModePermission;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
@@ -148,10 +145,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
 
   @Override
   protected void doOKAction() {
-    final Ref<ErrorMessage> errorMessageRef = Ref.create();
-    ApplicationManager.getApplication().runWriteAction(() -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
-                                                                                                   () -> errorMessageRef.set(createLibraryAndAssociate())));
-    ErrorMessage errorMessage = errorMessageRef.get();
+    ErrorMessage errorMessage = WriteAction.compute(() -> createLibraryAndAssociate());
     if (errorMessage != null) {
       Messages.showErrorDialog(errorMessage.getDescription(), "Adding " + myLibraryHelper.getJsLibraryName());
       LOG.warn(errorMessage.getDescription(), errorMessage.getThrowable());
