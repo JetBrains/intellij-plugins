@@ -81,7 +81,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case PausePostRequest:
         // We get this event after an isolate reload call, when pause after reload has been requested.
         // TODO: Set current breakpoints; resume the isolate.
-        myDebugProcess.resumeIsolate(event.getIsolate().getId(), null);
+        myDebugProcess.getVmServiceWrapper().resumeIsolate(event.getIsolate().getId(), null);
         break;
       case PauseExit:
         break;
