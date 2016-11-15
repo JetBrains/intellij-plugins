@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@ import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties
 import java.util.jar.JarFile
 
 abstract class OsgiBuildTestCase : JpsBuildTestCase() {
+  private val instrumental = setOf("Bnd-LastModified", "Tool", "Created-By", "Bundle-ManifestVersion", "Require-Capability")
+  private val needSorting = setOf("Export-Package", "Import-Package")
+
   fun module(name: String, osgi: Boolean = true): JpsModule {
     val module = addModule(name)
 
@@ -76,27 +79,15 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     }
   }
 
-  fun assertManifest(module: JpsModule, expected: Set<String>) {
-    val instrumental = setOf("Bnd-LastModified", "Tool", "Created-By")
-    val required = setOf("Manifest-Version", "Bundle-ManifestVersion", "Require-Capability")
-    val sorting = setOf("Export-Package", "Import-Package")
-
+  fun assertManifest(module: JpsModule, toCheck: Set<String>) {
     JarFile(extension(module).jarFileLocation).use {
-      val actual = it.manifest!!.mainAttributes!!
-          .map { Pair(it.key.toString(), it.value.toString()) }
-          .filter {
-            if (it.first in instrumental) false
-            else if (it.first in required) { assertNotNull(it.second); false }
-            else true
-          }
-          .map { "${it.first}=${if (it.first in sorting) it.second.split(',').sorted().joinToString(",") else it.second}" }
+      val expected = toCheck + "Manifest-Version=1.0"
+      val actual = it.manifest!!.mainAttributes!!.asSequence()
+          .map { it.key.toString() to it.value.toString() }
+          .filter { it.first !in instrumental }
+          .map { "${it.first}=${if (it.first in needSorting) it.second.split(',').sorted().joinToString(",") else it.second}" }
           .toSet()
       assertEquals(expected, actual)
     }
-  }
-
-  // in Java 6, JarFile does not inherit Closeable, so stdlib extension is not applicable
-  private fun JarFile.use(block: (JarFile) -> Unit) {
-    try { block(this) } finally { close() }
   }
 }
