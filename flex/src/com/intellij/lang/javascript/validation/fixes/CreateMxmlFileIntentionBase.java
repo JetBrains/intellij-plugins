@@ -53,10 +53,6 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
     return myIdentifierIsValid && myElement.isValid();
   }
 
-  public boolean startInWriteAction() {
-    return false;
-  }
-
   public void setCreatedClassFqnConsumer(final Consumer<String> consumer) {
     myCreatedClassFqnConsumer = consumer;
   }
