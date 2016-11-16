@@ -21,28 +21,16 @@ import static com.intellij.flex.model.bc.TargetPlatform.Web;
 
 public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
 
-  private String myInitialMavenHome;
-
   @Override
   protected void setUp() throws Exception {
     super.setUp();
 
-    myInitialMavenHome = getMavenGeneralSettings().getMavenHome();
+    MavenServerManager.getInstance().shutdown(true);
+
     // Flexmojos4 config generator can't run on IDEA's default Maven 3.3.9 because of https://issues.apache.org/jira/browse/MNG-5958
     final File maven3Home = MavenServerManager.getMavenHomeFile(MavenServerManager.BUNDLED_MAVEN_3); // 3.3.9
     // switch to Maven 3.0.5
     getMavenGeneralSettings().setMavenHome(StringUtil.replace(maven3Home.getPath(), "maven3-server-impl", "maven30-server-impl"));
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      getMavenGeneralSettings().setMavenHome(myInitialMavenHome);
-      MavenServerManager.getInstance().shutdown(true);
-    }
-    finally {
-      super.tearDown();
-    }
   }
 
   @Override
