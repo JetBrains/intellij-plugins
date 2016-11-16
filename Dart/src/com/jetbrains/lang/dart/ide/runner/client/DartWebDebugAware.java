@@ -1,11 +1,11 @@
 package com.jetbrains.lang.dart.ide.runner.client;
 
+import com.intellij.javascript.debugger.ExpressionInfoFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.psi.PsiElement;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.intellij.xdebugger.evaluation.ExpressionInfo;
-import com.jetbrains.javascript.debugger.ExpressionInfoFactory;
 import com.jetbrains.javascript.debugger.JavaScriptDebugAware;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
