@@ -40,6 +40,11 @@ public abstract class AbstractOsgiQuickFix implements LocalQuickFix {
     return OsmorcBundle.message("inspection.group");
   }
 
+  @Override
+  public boolean startInWriteAction() {
+    return false;
+  }
+
   @Nullable
   protected ManifestFile getVerifiedManifestFile(@NotNull PsiElement element) {
     Module module = ModuleUtilCore.findModuleForPsiElement(element);

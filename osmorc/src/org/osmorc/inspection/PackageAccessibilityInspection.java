@@ -28,6 +28,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.AnnotationsHighlightUtil;
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
 import com.intellij.ide.projectView.impl.ProjectRootsUtil;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -197,7 +198,12 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getPsiElement());
       if (manifestFile != null) {
-        OsgiPsiUtil.appendToHeader(manifestFile, Constants.IMPORT_PACKAGE, myPackageToImport);
+        new WriteCommandAction.Simple(project, manifestFile) {
+          @Override
+          protected void run() throws Throwable {
+            OsgiPsiUtil.appendToHeader(manifestFile, Constants.IMPORT_PACKAGE, myPackageToImport);
+          }
+        }.execute();
       }
     }
   }

@@ -27,6 +27,7 @@ package org.osmorc.inspection;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +99,12 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getEndElement());
       if (manifestFile != null) {
-        OsgiPsiUtil.setHeader(manifestFile, Constants.BUNDLE_ACTIVATOR, myActivatorClass);
+        new WriteCommandAction.Simple(project, manifestFile) {
+          @Override
+          protected void run() throws Throwable {
+            OsgiPsiUtil.setHeader(manifestFile, Constants.BUNDLE_ACTIVATOR, myActivatorClass);
+          }
+        }.execute();
       }
     }
   }
