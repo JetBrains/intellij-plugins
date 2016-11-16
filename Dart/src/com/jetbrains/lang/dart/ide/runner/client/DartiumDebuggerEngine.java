@@ -4,7 +4,7 @@ import com.intellij.CommonBundle;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
+import com.intellij.javascript.debugger.DebuggableFileFinder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
