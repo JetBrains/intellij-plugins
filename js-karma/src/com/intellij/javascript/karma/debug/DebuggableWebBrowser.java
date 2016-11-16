@@ -1,7 +1,7 @@
 package com.intellij.javascript.karma.debug;
 
 import com.intellij.ide.browsers.WebBrowser;
-import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
+import com.intellij.javascript.debugger.JavaScriptDebugEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

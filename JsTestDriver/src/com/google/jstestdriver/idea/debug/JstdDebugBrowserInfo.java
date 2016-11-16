@@ -7,12 +7,12 @@ import com.google.jstestdriver.idea.server.JstdServerSettings;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.javascript.debugger.JavaScriptDebugEngine;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.SmartList;
 import com.intellij.util.TimeoutUtil;
-import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class JstdDebugBrowserInfo {
-
   private static final Logger LOG = Logger.getInstance(JstdDebugBrowserInfo.class);
 
   private final JavaScriptDebugEngine myDebugEngine;
