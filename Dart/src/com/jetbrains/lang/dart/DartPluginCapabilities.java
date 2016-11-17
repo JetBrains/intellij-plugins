@@ -1,21 +1,21 @@
 package com.jetbrains.lang.dart;
 
-import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A queryable class about the capabilities of the Dart plugin.
  */
 public class DartPluginCapabilities {
-  public static Map<String, Boolean> capabilities = new HashMap<>();
+  private static Set<String> capabilities = new HashSet<>();
 
   static {
     // TODO: set up capabilities here
   }
 
   public static boolean isSupported(@NotNull String featureKey) {
-    return capabilities.getOrDefault(featureKey, Boolean.FALSE).booleanValue();
+    return capabilities.contains(featureKey);
   }
 }
