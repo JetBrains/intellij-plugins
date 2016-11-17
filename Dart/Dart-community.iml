@@ -35,6 +35,15 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
+          <root url="jar://$MODULE_DIR$/JavaScriptPluginStub.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library>
+        <CLASSES>
           <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/JavaScriptDebugger.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -63,15 +72,6 @@
       <library>
         <CLASSES>
           <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/resources_en.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/JavaScriptPluginStub.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
