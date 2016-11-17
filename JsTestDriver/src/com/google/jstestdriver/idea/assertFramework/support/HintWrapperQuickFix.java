@@ -92,6 +92,12 @@ public class HintWrapperQuickFix implements LocalQuickFix, HintAction {
     myDelegate.invoke(project, editor, file);
   }
 
+  @NotNull
+  @Override
+  public boolean shouldMakeCurrentFileWritable() {
+    return myDelegate.shouldMakeCurrentFileWritable();
+  }
+
   @Override
   public boolean startInWriteAction() {
     return myDelegate.startInWriteAction();
