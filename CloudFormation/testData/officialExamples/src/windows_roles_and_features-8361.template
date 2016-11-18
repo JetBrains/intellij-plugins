@@ -41,17 +41,19 @@
 
   "Mappings" : {
     "AWSRegion2AMI" : {
-      "us-east-1"        : {"Windows2008r2" : "ami-44015c2e", "Windows2012r2" : "ami-9a0558f0"},
-      "us-west-2"        : {"Windows2008r2" : "ami-c5a7bea4", "Windows2012r2" : "ami-83a5bce2"},
-      "us-west-1"        : {"Windows2008r2" : "ami-abe68ccb", "Windows2012r2" : "ami-e7e78d87"},
-      "eu-west-1"        : {"Windows2008r2" : "ami-8642edf5", "Windows2012r2" : "ami-7943ec0a"},
-      "eu-central-1"     : {"Windows2008r2" : "ami-58918e34", "Windows2012r2" : "ami-8a918ee6"},
-      "ap-northeast-1"   : {"Windows2008r2" : "ami-9e1120f0", "Windows2012r2" : "ami-482a1b26"},
-      "ap-northeast-2"   : {"Windows2008r2" : "ami-3fa16f51", "Windows2012r2" : "ami-a2a06ecc"},
-      "ap-southeast-1"   : {"Windows2008r2" : "ami-3e69ab5d", "Windows2012r2" : "ami-5869ab3b"},
-      "ap-southeast-2"   : {"Windows2008r2" : "ami-c54f15a6", "Windows2012r2" : "ami-9b4f15f8"},
-      "sa-east-1"        : {"Windows2008r2" : "ami-f99d1b95", "Windows2012r2" : "ami-6a981e06"},
-      "cn-north-1"       : {"Windows2008r2" : "ami-6a9a5207", "Windows2012r2" : "ami-8a9a52e7"}
+      "us-east-1"        : {"Windows2008r2" : "ami-5ff6bd48", "Windows2012r2" : "ami-3f0c4628"},
+      "us-west-2"        : {"Windows2008r2" : "ami-ce76adae", "Windows2012r2" : "ami-b871aad8"},
+      "us-west-1"        : {"Windows2008r2" : "ami-5d3f773d", "Windows2012r2" : "ami-123c7472"},
+      "eu-west-1"        : {"Windows2008r2" : "ami-d60b46a5", "Windows2012r2" : "ami-55084526"},
+      "eu-central-1"     : {"Windows2008r2" : "ami-0735cb68", "Windows2012r2" : "ami-0c34ca63"},
+      "ap-northeast-1"   : {"Windows2008r2" : "ami-ec409a8d", "Windows2012r2" : "ami-7c449e1d"},
+      "ap-northeast-2"   : {"Windows2008r2" : "ami-4dd20623", "Windows2012r2" : "ami-4fd30721"},
+      "ap-southeast-1"   : {"Windows2008r2" : "ami-913394f2", "Windows2012r2" : "ami-2b309748"},
+      "ap-southeast-2"   : {"Windows2008r2" : "ami-f806349b", "Windows2012r2" : "ami-74043617"},
+      "ap-south-1"       : {"Windows2008r2" : "ami-4b007424", "Windows2012r2" : "ami-f90f7b96"},
+      "us-east-2"        : {"Windows2008r2" : "ami-900a50f5", "Windows2012r2" : "ami-de164cbb"},
+      "sa-east-1"        : {"Windows2008r2" : "ami-9dec71f1", "Windows2012r2" : "ami-42ee732e"},
+      "cn-north-1"       : {"Windows2008r2" : "ami-0dda0e60", "Windows2012r2" : "ami-13de0a7e"}
     }
 
   },
