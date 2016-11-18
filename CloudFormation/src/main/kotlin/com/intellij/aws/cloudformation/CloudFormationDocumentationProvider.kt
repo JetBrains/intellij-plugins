@@ -47,9 +47,8 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
 
     val propertyText = (if (property.value != null) property.value!!.text else "").replace("\"", "")
 
-    val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(propertyText)
-
-    return resourceType?.description ?: ""
+    val resourceType = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[propertyText] ?: return ""
+    return resourceType.description
   }
 
   private fun createPropertyDescription(element: PsiElement): String {
@@ -70,11 +69,13 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
 
     val type = CloudFormationResolve.getTargetName(typeValue)
 
-    val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(type) ?: return ""
+    val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.resourceTypes[type] ?: return ""
+    val propertyMetadata = resourceTypeMetadata.properties[property.name] ?: return ""
 
-    val propertyMetadata = resourceTypeMetadata.findProperty(property.name) ?: return ""
+    val resourceTypeDescription = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[type] ?: return ""
+    val propertyDescription = resourceTypeDescription.properties[property.name] ?: return ""
 
-    val document = "<p>" + propertyMetadata.description + "</p><br>" +
+    val document = "<p>" + propertyDescription + "</p><br>" +
         "<p><i>Required:</i> " + propertyMetadata.required + "</p>" +
         propertyMetadata.type +
         propertyMetadata.updateRequires

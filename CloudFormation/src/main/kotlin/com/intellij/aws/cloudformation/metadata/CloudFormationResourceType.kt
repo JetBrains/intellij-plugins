@@ -2,7 +2,6 @@ package com.intellij.aws.cloudformation.metadata
 
 data class CloudFormationResourceType(
     val name: String,
-    val description: String,
     val properties: Map<String, CloudFormationResourceProperty>,
     val attributes: Map<String, CloudFormationResourceAttribute>) {
 

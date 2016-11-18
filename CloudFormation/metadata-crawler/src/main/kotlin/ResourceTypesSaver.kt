@@ -3,6 +3,8 @@ import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceAttribute
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceProperty
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypeDescription
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypesDescription
 import com.intellij.aws.cloudformation.metadata.MetadataSerializer
 import org.apache.commons.io.IOUtils
 import org.jsoup.Jsoup
@@ -35,15 +37,20 @@ object ResourceTypesSaver {
     }.toMap()
 
     val metadata = CloudFormationMetadata(
-        resourceTypes = resourceTypes,
+        resourceTypes = resourceTypes.mapValues { it.value.first },
         predefinedParameters = predefinedParameters,
         limits = limits
     )
 
+    val descriptions = CloudFormationResourceTypesDescription(
+        resourceTypes = resourceTypes.mapValues { it.value.second }
+    )
+
     FileOutputStream(File("src/main/resources/cloudformation-metadata.xml")).use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
+    FileOutputStream(File("src/main/resources/cloudformation-descriptions.xml")).use { outputStream -> MetadataSerializer.toXML(descriptions, outputStream) }
   }
 
-  private fun fetchResourceAttributes(): Map<String, Map<String, CloudFormationResourceAttribute>> {
+  private fun fetchResourceAttributes(): Map<String, Map<String, Pair<CloudFormationResourceAttribute, String>>> {
     val fnGetAttrDocUrl = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html")
     val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
@@ -51,7 +58,7 @@ object ResourceTypesSaver {
 
     val table = parseTable(tableElement)
 
-    val result: MutableMap<String, MutableMap<String, CloudFormationResourceAttribute>> = hashMapOf()
+    val result: MutableMap<String, MutableMap<String, Pair<CloudFormationResourceAttribute, String>>> = hashMapOf()
 
     for (row in table) {
       if (row.size != 3) {
@@ -77,7 +84,7 @@ object ResourceTypesSaver {
 
       fun addAttribute(resourceTypeName: String, attribute: String, description: String) {
         val attributesList = result.getOrPut(resourceTypeName, { mutableMapOf() })
-        attributesList[attribute] = CloudFormationResourceAttribute(attribute, description)
+        attributesList[attribute] = Pair(CloudFormationResourceAttribute(attribute), description)
       }
 
       if (resourceTypeName == "AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD") {
@@ -106,7 +113,7 @@ object ResourceTypesSaver {
     throw RuntimeException("Could not download from " + url)
   }
 
-  private fun fetchResourceType(resourceTypeName: String, docLocation: URL, resourceAttributes: Map<String, CloudFormationResourceAttribute>): CloudFormationResourceType {
+  private fun fetchResourceType(resourceTypeName: String, docLocation: URL, resourceAttributes: Map<String, Pair<CloudFormationResourceAttribute, String>>): Pair<CloudFormationResourceType, CloudFormationResourceTypeDescription> {
     println(resourceTypeName)
 
     val doc = getDocumentFromUrl(docLocation)
@@ -116,7 +123,7 @@ object ResourceTypesSaver {
 
     val vlists = doc.select("div.variablelist")
 
-    val properties: MutableMap<String, CloudFormationResourceProperty> = mutableMapOf()
+    val properties: MutableMap<String, Pair<CloudFormationResourceProperty, String>> = mutableMapOf()
 
     if (!vlists.isEmpty()) {
       for (vlist in vlists) {
@@ -222,11 +229,11 @@ object ResourceTypesSaver {
           }
 
           if (resourceTypeName == "AWS::AutoScaling::AutoScalingGroup" && name == "NotificationConfigurations") {
-            val additionalProperty = CloudFormationResourceProperty("NotificationConfiguration", descriptionValue, type, required, updateValue)
-            properties[additionalProperty.name] = additionalProperty
+            val additionalProperty = CloudFormationResourceProperty("NotificationConfiguration", type, required, updateValue)
+            properties[additionalProperty.name] = Pair(additionalProperty, descriptionValue)
           }
 
-          properties[name] = CloudFormationResourceProperty(name, descriptionValue, type, required, updateValue)
+          properties[name] = Pair(CloudFormationResourceProperty(name, type, required, updateValue), descriptionValue)
         }
       }
     } else {
@@ -254,7 +261,7 @@ object ResourceTypesSaver {
             throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredString")
           }
 
-          properties[name] = CloudFormationResourceProperty(name, "", type, required, "")
+          properties[name] = Pair(CloudFormationResourceProperty(name, type, required, ""), "")
         }
       } else {
         if (resourceTypeName != "AWS::CloudFormation::WaitConditionHandle" &&
@@ -270,13 +277,13 @@ object ResourceTypesSaver {
 
     fun changeProperty(name: String, converter: (CloudFormationResourceProperty) -> CloudFormationResourceProperty) {
       val value = properties[name] ?: error("Property $name is not found in resource type $resourceTypeName")
-      properties[name] = converter(value)
+      properties[name] = Pair(converter(value.first), "")
     }
 
     if (resourceTypeName == "AWS::ElasticBeanstalk::Application") {
       // Not in official documentation yet, found in examples
-      properties["ConfigurationTemplates"] = CloudFormationResourceProperty("ConfigurationTemplates", "", "Unknown", false, "")
-      properties["ApplicationVersions"] = CloudFormationResourceProperty("ApplicationVersions", "", "Unknown", false, "")
+      properties["ConfigurationTemplates"] = Pair(CloudFormationResourceProperty("ConfigurationTemplates", "Unknown", false, ""), "")
+      properties["ApplicationVersions"] = Pair(CloudFormationResourceProperty("ApplicationVersions", "Unknown", false, ""), "")
     }
 
     if (resourceTypeName == "AWS::IAM::AccessKey") {
@@ -293,7 +300,19 @@ object ResourceTypesSaver {
       changeProperty("FromPort", { it.copy(required = false) })
     }
 
-    return CloudFormationResourceType(resourceTypeName, description, properties, resourceAttributes)
+    return Pair(
+        CloudFormationResourceType(
+            resourceTypeName,
+            properties.mapValues { it.value.first },
+            resourceAttributes.mapValues { it.value.first }
+        ),
+
+        CloudFormationResourceTypeDescription(
+            description,
+            properties = properties.mapValues { it.value.second },
+            attributes = resourceAttributes.mapValues { it.value.second }
+        )
+    )
   }
 
   private val cleanElementIdPattern = Regex(" ?id=\\\"[0-9a-f]{8}\\\"")
@@ -354,7 +373,7 @@ object ResourceTypesSaver {
     val doc = getDocumentFromUrl(url)
 
     val vlist = doc.select("div.variablelist").first()
-    return vlist.select("span.term").map { it.text() }.sorted().toList()
+    return vlist.select("span.term").map { it.text() }.sorted()
   }
 
   private fun fetchLimits(): CloudFormationLimits {
