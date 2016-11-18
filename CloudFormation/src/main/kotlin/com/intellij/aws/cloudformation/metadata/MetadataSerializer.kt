@@ -55,8 +55,6 @@ object MetadataSerializer {
     xstream.alias("ResourceTypeDescription", CloudFormationResourceTypeDescription::class.java)
     xstream.alias("ResourceTypesDescription", CloudFormationResourceTypesDescription::class.java)
 
-    xstream.alias("Limits", CloudFormationLimits::class.java)
-
     return xstream
   }
 }

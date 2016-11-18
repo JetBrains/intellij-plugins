@@ -214,7 +214,8 @@ object ResourceTypesSaver {
                 requiredValue == "Yes, for ICMP and any protocol that uses ports" ||
                 requiredValue == "If your cache cluster isn't in a VPC, you must specify this property" ||
                 requiredValue == "If your cache cluster is in a VPC, you must specify this property" ||
-                requiredValue == "Yes. If you specify the AuthorizerId property, specify CUSTOM for this property") {
+                requiredValue == "Yes. If you specify the AuthorizerId property, specify CUSTOM for this property" ||
+                requiredValue == "Yes, for VPC security groups without a default VPC") {
               required = false
             } else {
               throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredValue")
@@ -371,9 +372,7 @@ object ResourceTypesSaver {
   private fun fetchPredefinedParameters(): List<String> {
     val url = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html")
     val doc = getDocumentFromUrl(url)
-
-    val vlist = doc.select("div.variablelist").first()
-    return vlist.select("span.term").map { it.text() }.sorted()
+    return doc.select("h2").filter { it.attr("id").startsWith("cfn-pseudo-param") }.map { it.text() }.sorted().toList()
   }
 
   private fun fetchLimits(): CloudFormationLimits {
