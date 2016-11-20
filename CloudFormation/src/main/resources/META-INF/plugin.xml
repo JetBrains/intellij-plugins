@@ -28,7 +28,7 @@
   ]]></description>
 
   <!-- IDEA 2016.1 -->
-  <idea-version since-build="145.1" until-build="163.*"/>
+  <idea-version since-build="145.1" until-build="171.*"/>
 
   <depends>com.intellij.modules.lang</depends>
 
