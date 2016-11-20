@@ -16,5 +16,6 @@ object CloudFormationSections {
   val OutputsSingletonList = listOf(Outputs)
 
   val FormatVersion = "AWSTemplateFormatVersion"
+  val Transform = "Transform"
   val Description = "Description"
 }

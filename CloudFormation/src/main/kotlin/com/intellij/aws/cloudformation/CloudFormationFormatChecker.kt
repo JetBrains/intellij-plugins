@@ -47,6 +47,8 @@ class CloudFormationFormatChecker(private val myInspectionManager: InspectionMan
 
       if (CloudFormationSections.FormatVersion == name) {
         formatVersion(value)
+      } else if (CloudFormationSections.Transform == name) {
+        checkAndGetQuotedStringText(value)
       } else if (CloudFormationSections.Description == name) {
         description(value)
       } else if (CloudFormationSections.Parameters == name) {
