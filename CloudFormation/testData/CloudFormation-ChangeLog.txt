@@ -12,20 +12,30 @@ User Guide (API Version 2010-05-15)
     * What is AWS CloudFormation?
           o AWS CloudFormation Concepts
           o How Does AWS CloudFormation Work?
+    * Setting Up
+          o Signing Up for an AWS Account and Pricing
+          o Controlling Access with IAM
+                + AWS CloudFormation Service Role
+          o Logging API Calls
+          o Limits
+          o Endpoints
+          o AWS CloudFormation and VPC Endpoints
     * Getting Started
-          o Signing Up for an AWS Account
           o Get Started
           o Learn Template Basics
           o Walkthrough: Updating a Stack
-          o Using CloudFormer to Create Templates
-          o AWS CloudFormation Endpoints
-          o AWS CloudFormation and VPC Endpoints
     * Best Practices
-    * Controlling Access with IAM
+    * Continuous Delivery
+          o Walkthrough: Building a Pipeline for Test and Production Stacks
+          o Configuration Properties Reference
+          o AWS CloudFormation Artifacts
+          o Using Parameter Override Functions with AWS CodePipeline
+            Pipelines
     * Working with Stacks
           o Using the Console
                 + Logging In to the Console
                 + Creating a Stack
+                      # Creating Stacks Using Change Sets
                       # Selecting a Stack Template
                       # Specifying Stack Name and Parameters
                       # Setting Stack Options
@@ -42,6 +52,8 @@ User Guide (API Version 2010-05-15)
                 + Listing Resources
                 + Retrieving a Template
                 + Validating a Template
+                + Uploading Local Artifacts to an S3 Bucket
+                + Quickly Deploying Templates with Transforms
                 + Deleting a Stack
           o Stack Updates
                 + Update Behaviors of Stack Resources
@@ -57,10 +69,12 @@ User Guide (API Version 2010-05-15)
                 + Canceling a Stack Update
                 + Prevent Updates to Stack Resources
                 + Continue Rolling Back an Update
+          o Exporting Stack Output Values
           o Working with Windows Stacks
                 + Windows AMIs and Templates
                 + Bootstrapping Windows Stacks
     * Working with Templates
+          o Template Formats
           o Template Anatomy
                 + Format Version
                 + Description
@@ -68,6 +82,7 @@ User Guide (API Version 2010-05-15)
                 + Parameters
                 + Mappings
                 + Conditions
+                + Transform
                 + Resources
                 + Outputs
           o What Is AWS CloudFormation Designer?
@@ -81,6 +96,8 @@ User Guide (API Version 2010-05-15)
                   Basic Web Server
                 + Walkthrough: Use AWS CloudFormation Designer to Modify a
                   Stack's Template
+                + Walkthrough: Refer to Resource Outputs in Another AWS
+                  CloudFormation Stack
                 + Create a Scalable, Load-balancing Web Server
                 + Deploying Applications
                 + Creating Wait Conditions
@@ -109,7 +126,6 @@ User Guide (API Version 2010-05-15)
                 + Amazon Simple Notification Service-backed Custom
                   Resources
                 + AWS Lambda-backed Custom Resources
-                      # Walkthrough: Refer to Resources in Another Stack
                       # Walkthrough: Looking Up Amazon Machine Image IDs
                 + Custom Resource Reference
                       # Request Objects
@@ -119,6 +135,7 @@ User Guide (API Version 2010-05-15)
                             * Delete
                             * Update
           o Using Regular Expressions
+          o Using CloudFormer to Create Templates
     * Template Reference
           o AWS Resource Types
                 + AWS::ApiGateway::Account
@@ -132,6 +149,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::ApiGateway::Resource
                 + AWS::ApiGateway::RestApi
                 + AWS::ApiGateway::Stage
+                + AWS::ApiGateway::UsagePlan
                 + AWS::ApplicationAutoScaling::ScalableTarget
                 + AWS::ApplicationAutoScaling::ScalingPolicy
                 + AWS::AutoScaling::AutoScalingGroup
@@ -150,6 +168,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::CloudFront::Distribution
                 + AWS::CloudTrail::Trail
                 + AWS::CloudWatch::Alarm
+                + AWS::CodeCommit::Repository
                 + AWS::CodeDeploy::Application
                 + AWS::CodeDeploy::DeploymentConfig
                 + AWS::CodeDeploy::DeploymentGroup
@@ -241,6 +260,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::IoT::TopicRule
                 + AWS::Kinesis::Stream
                 + AWS::KinesisFirehose::DeliveryStream
+                + AWS::KMS::Alias
                 + AWS::KMS::Key
                 + AWS::Lambda::EventSourceMapping
                 + AWS::Lambda::Alias
@@ -278,6 +298,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::S3::Bucket
                 + AWS::S3::BucketPolicy
                 + AWS::SDB::Domain
+                + AWS::SNS::Subscription
                 + AWS::SNS::Topic
                 + AWS::SNS::TopicPolicy
                 + AWS::SQS::Queue
@@ -300,6 +321,9 @@ User Guide (API Version 2010-05-15)
                 + API Gateway Method MethodResponse
                 + API Gateway RestApi S3Location
                 + API Gateway Stage MethodSetting
+                + API Gateway UsagePlan ApiStage
+                + API Gateway UsagePlan QuotaSettings
+                + API Gateway UsagePlan ThrottleSettings
                 + Application Auto Scaling ScalingPolicy
                   StepScalingPolicyConfiguration
                 + Application Auto Scaling ScalingPolicy
@@ -333,6 +357,7 @@ User Guide (API Version 2010-05-15)
                 + CloudWatch Events Rule Target
                 + CloudWatch Logs MetricFilter MetricTransformation
                   Property
+                + AWS CodeCommit Repository Trigger
                 + AWS CodeDeploy DeploymentConfig MinimumHealthyHosts
                 + AWS CodeDeploy DeploymentGroup Deployment
                 + AWS CodeDeploy DeploymentGroup Deployment Revision
@@ -378,16 +403,13 @@ User Guide (API Version 2010-05-15)
                 + DynamoDB Table StreamSpecification
                 + Amazon EC2 Block Device Mapping Property
                 + Amazon Elastic Block Store Block Device Property
-                + EC2 ICMP
                 + Amazon EC2 Instance SsmAssociations
                 + Amazon EC2 Instance SsmAssociations AssociationParameters
                 + EC2 MountPoint
                 + EC2 Network Interface
-                + EC2 Network Interface Association
-                + EC2 Network Interface Attachment
-                + EC2 Network Interface Group Item
+                + EC2 NetworkAclEntry Icmp
+                + EC2 NetworkAclEntry PortRange
                 + EC2 Network Interface Private IP Specification
-                + EC2 PortRange
                 + EC2 Security Group Rule
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
@@ -430,6 +452,7 @@ User Guide (API Version 2010-05-15)
                 + Elastic Beanstalk OptionSettings Property Type
                 + Elastic Beanstalk SourceBundle Property Type
                 + Elastic Beanstalk SourceConfiguration Property Type
+                + ElastiCache ReplicationGroup NodeGroupConfiguration
                 + Elastic Load Balancing AccessLoggingPolicy
                 + AppCookieStickinessPolicy
                 + Elastic Load Balancing ConnectionDrainingPolicy
@@ -502,6 +525,7 @@ User Guide (API Version 2010-05-15)
                   EncryptionConfiguration KMSEncryptionConfig
                 + Firehose DeliveryStream S3DestinationConfiguration
                   EncryptionConfiguration
+                + AWS Lambda Function Environment
                 + AWS Lambda Function Code
                 + AWS Lambda Function VPCConfig
                 + Name Type
@@ -586,8 +610,10 @@ User Guide (API Version 2010-05-15)
                 + Fn::FindInMap
                 + Fn::GetAtt
                 + Fn::GetAZs
+                + Fn::ImportValue
                 + Fn::Join
                 + Fn::Select
+                + Fn::Sub
                 + Ref
           o Pseudo Parameters
           o CloudFormation Helper Scripts
@@ -633,6 +659,10 @@ User Guide (API Version 2010-05-15)
                 + Sample Solutions
                 + Application Frameworks
                 + Services
+          o US East (Ohio) Region
+                + Sample Solutions
+                + Application Frameworks
+                + Services
           o US West (Northern California) Region
                 + Sample Solutions
                 + Application Frameworks
@@ -641,8 +671,6 @@ User Guide (API Version 2010-05-15)
                 + Sample Solutions
                 + Application Frameworks
                 + Services
-    * AWS CloudFormation Limits
-    * Logging API Calls
     * Troubleshooting
     * Release History
           o Supported AWS Services
@@ -656,9 +684,265 @@ User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/>
 Release History
 
 The following table describes the important changes to the documentation 
-since the preceeding release of AWS CloudFormation.
+since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+Transforms
+
+November 17, 2016
+
+Specify the AWS Serverless Application Model (AWS SAM) that AWS 
+CloudFormation uses to process AWS SAM syntax for serverless applications. 
+For more information, see Transform.
+
+2010-05-15
+
+New resource
+
+November 17, 2016
+
+AWS::SNS::Subscription
+
+    Use the AWS::SNS::Subscription resource to subscribe an endpoint to an
+    Amazon Simple Notification Service topic.
+
+2010-05-15
+
+Updated resource
+
+November 17, 2016
+
+AWS::Lambda::Function
+
+    Use the Environment property to specify key-value pairs (environment
+    variables) that your AWS Lambda function can access.
+
+    Use the KmsKeyArn property to specify an AWS Key Management Service key
+    that AWS Lambda uses to encrypt and decrypt environment variables.
+
+2010-05-15
+
+New CLI commands
+
+November 17, 2016
+
+Uploading Local Artifacts to an S3 Bucket
+
+    Use the aws cloudformation package command to upload local artifacts
+    that are referenced in an AWS CloudFormation template to an S3 bucket.
+
+Quickly Deploying Templates with Transforms
+
+    Use the aws cloudformation deploy command to combine the create and
+    execute change set actions into a single command. This command is
+    useful for quickly creating or updating stacks that contain transforms.
+
+2010-05-15
+
+Updated resource
+
+November 03, 2016
+
+AWS::CloudFront::Distribution
+
+    For the CloudFront DistributionConfig property, use the HttpVersion 
+    property to specify the latest HTTP version that viewers can use to
+    communicate with Amazon CloudFront.
+
+    For the CloudFront ForwardedValues property, use the 
+    QueryStringCacheKeys property to specify the query string parameters
+    that CloudFront uses to determine which content to cache.
+
+2010-05-15
+
+List stack exports
+
+November 03, 2016
+
+Use the AWS CloudFormation console, API, or AWS CLI to see a list of all 
+the exported output values for a region. For more information, see 
+Exporting Stack Output Values.
+
+2010-05-15
+
+Continuous delivery with stacks
+
+November 03, 2016
+
+Use AWS CodePipeline to build continuous delivery workflows with AWS 
+CloudFormation stacks. For more information, see Continuous Delivery with 
+AWS CodePipeline.
+
+2010-05-15
+
+Skip resources during rollback
+
+November 03, 2016
+
+If you have a stack in the UPDATE_ROLLBACK_FAILED state, use the 
+ResourcesToSkip parameter for the ContinueUpdateRollback action to skip 
+resources that AWS CloudFormation can't rollback. For more information, see 
+the Troubleshooting section in Update Rollback Failed.
+
+2010-05-15
+
+Change sets enhancement
+
+November 03, 2016
+
+You can create a new stack using a change set.
+
+2010-05-15
+
+Updated resource
+
+October 12, 2016
+
+AWS::ElastiCache::CacheCluster
+
+    Update the CacheNodeType property without replacing the cluster.
+
+AWS::ElastiCache::ReplicationGroup
+
+    You can create a Redis (cluster mode enabled) replication group that
+    can contain multiple node groups (shards), each with a primary cluster
+    and read replicas.
+
+AWS::ElastiCache::SubnetGroup
+
+    Use the CacheSubnetGroupName property to specify a name for an Amazon
+    ElastiCache subnet group.
+
+2010-05-15
+
+New resources
+
+October 06, 2016
+
+AWS::ApiGateway::UsagePlan
+
+    Use the AWS::ApiGateway::UsagePlan resource to specify a usage plan for
+    deployed Amazon API Gateway APIs.
+
+AWS::CodeCommit::Repository
+
+    Use the AWS::CodeCommit::Repository resource to create an AWS
+    CodeCommit repository that is hosted by Amazon Web Services.
+
+2010-05-15
+
+Updated resources
+
+October 06, 2016
+
+AWS::ApiGateway::Authorizer
+
+    Use the ProviderARNs property to use Amazon Cognito user pools as
+    Amazon API Gateway API authorizers.
+
+AWS::ApiGateway::Deployment
+
+    The StageName property is no longer required.
+
+AWS::ElasticLoadBalancingV2::TargetGroup
+
+    For the GetAtt function, use the LoadBalancerArns attribute to retrieve
+    the Amazon Resource Names (ARNs) of the load balancers that route
+    traffic to the target group.
+
+AWS::RDS::DBInstance
+
+    Use the Domain and DomainIAMRoleName properties to use Windows
+    Authentication when users connect to the RDS DB instance.
+
+AWS::EC2::SecurityGroupEgress
+
+    Use the DestinationPrefixListId property to specify the AWS service
+    prefix of an Amazon VPC endpoint.
+
+2010-05-15
+
+Cross-stack reference enhancement
+
+October 06, 2016
+
+Use intrinsic functions to customize the Name value of an export or to 
+refer to a value in the ImportValue function. 	
+
+2010-05-15
+
+AWS CloudFormation service role
+
+September 26, 2016
+
+Use an AWS Identity and Access Management (IAM) service role for AWS 
+CloudFormation stack operations. AWS CloudFormation uses the role's 
+credentials to make calls to stack resources on your behalf. For more 
+information, see AWS CloudFormation Service Role.
+
+2010-05-15
+
+New feature
+
+September 19, 2016
+
+You can use the Export output field and the Fn::ImportValue intrinsic 
+function to have one stack refer to resource outputs in another stack. For 
+more information, see Outputs, Fn::ImportValue, and Walkthrough: Refer to 
+Resource Outputs in Another AWS CloudFormation Stack.
+
+2010-05-15
+
+YAML support
+
+September 19, 2016
+
+You can use the YAML format to author AWS CloudFormation templates. For 
+more information, see AWS CloudFormation Template Formats.
+
+2010-05-15
+
+New resources
+
+September 19, 2016
+
+AWS::KMS::Alias
+
+    Use the AWS::KMS::Alias resource to create an alias for an AWS Key
+    Management Service customer master key.
+
+ 
+
+Updated resources
+
+September 19, 2016
+
+AWS::EC2::SpotFleet
+
+    For the LaunchSpecifications property, use the SpotPrice property to
+    specify a bid price for a specific instance type.
+
+AWS::ECS::Cluster
+
+    Use the ClusterName property to specify a name for an Amazon EC2
+    Container Service cluster.
+
+AWS::ECS::TaskDefinition
+
+    Use the TaskRoleArn property to specify an AWS Identity and Access
+    Management role that Amazon EC2 Container Service containers use to
+    make AWS calls on your behalf.
+
+    Use the Family property to register a task definition to a specific
+    family.
+
+AWS::Elasticsearch::Domain
+
+    Use the ElasticsearchVersion property to specify which version of
+    Elasticsearch to use.
+
+2010-05-15
 
 New resources
 
@@ -953,9 +1237,9 @@ AWS::Lambda::Function
 
 AWS::S3::Bucket
 
-    For the Amazon Simple Storage Service life cycle rules, you can now
-    specify multiple transition rules that specify when objects transition
-    to a specified storage class.
+    For the Amazon Simple Storage Service life cycle rules, you can specify
+    multiple transition rules that specify when objects transition to a
+    specified storage class.
 
 2010-05-15
 

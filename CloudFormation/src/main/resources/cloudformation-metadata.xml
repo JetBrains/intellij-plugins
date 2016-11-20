@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <Metadata>
   <resourceTypes class="linked-hash-map">
     <entry>
@@ -92,7 +91,7 @@
             <ResourceProperty>
               <name>AuthorizerUri</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>true</required>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -120,6 +119,15 @@
               <name>Name</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ProviderARNs</string>
+            <ResourceProperty>
+              <name>ProviderARNs</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -245,7 +253,7 @@
             <ResourceProperty>
               <name>StageName</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>true</required>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -603,6 +611,60 @@
             <ResourceProperty>
               <name>Variables</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Mapping of key-value pairs&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::ApiGateway::UsagePlan</string>
+      <ResourceType>
+        <name>AWS::ApiGateway::UsagePlan</name>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>ApiStages</string>
+            <ResourceProperty>
+              <name>ApiStages</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-apigateway-usageplan-apistage.html&quot; title=&quot;Amazon API Gateway UsagePlan ApiStage&quot;&gt;Amazon API Gateway UsagePlan ApiStage&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Description</string>
+            <ResourceProperty>
+              <name>Description</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Quota</string>
+            <ResourceProperty>
+              <name>Quota</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-apigateway-usageplan-quotasettings.html&quot; title=&quot;Amazon API Gateway UsagePlan QuotaSettings&quot;&gt;Amazon API Gateway UsagePlan QuotaSettings&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Throttle</string>
+            <ResourceProperty>
+              <name>Throttle</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-apigateway-usageplan-throttlesettings.html&quot; title=&quot;Amazon API Gateway UsagePlan ThrottleSettings&quot;&gt;Amazon API Gateway UsagePlan ThrottleSettings&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>UsagePlanName</string>
+            <ResourceProperty>
+              <name>UsagePlanName</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -1134,7 +1196,7 @@
             <ResourceProperty>
               <name>NotificationTargetARN</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>true</required>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -1143,7 +1205,7 @@
             <ResourceProperty>
               <name>RoleARN</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>true</required>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -1345,6 +1407,15 @@
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
+          <entry>
+            <string>Tags</string>
+            <ResourceProperty>
+              <name>Tags</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
         </properties>
         <attributes class="linked-hash-map"/>
       </ResourceType>
@@ -1360,7 +1431,7 @@
               <name>accessKeyId</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -1369,7 +1440,7 @@
               <name>buckets</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -1378,7 +1449,7 @@
               <name>password</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -1387,16 +1458,16 @@
               <name>secretKey</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>type</string>
             <ResourceProperty>
               <name>type</name>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String Valid values are "basic" or "S3"&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String Valid values are &quot;basic&quot; or &quot;S3&quot;&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -1405,7 +1476,7 @@
               <name>uris</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -1414,7 +1485,7 @@
               <name>username</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -1423,7 +1494,7 @@
               <name>roleName</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String.&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -1855,6 +1926,55 @@
           </entry>
         </properties>
         <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::CodeCommit::Repository</string>
+      <ResourceType>
+        <name>AWS::CodeCommit::Repository</name>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>RepositoryDescription</string>
+            <ResourceProperty>
+              <name>RepositoryDescription</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>RepositoryName</string>
+            <ResourceProperty>
+              <name>RepositoryName</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Triggers</string>
+            <ResourceProperty>
+              <name>Triggers</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-codecommit-repository-triggers.html&quot; title=&quot;AWS CodeCommit Repository Trigger&quot;&gt;AWS CodeCommit Repository Trigger&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>CloneUrlHttp</string>
+            <ResourceAttribute>
+              <name>CloneUrlHttp</name>
+            </ResourceAttribute>
+          </entry>
+          <entry>
+            <string>CloneUrlSsh</string>
+            <ResourceAttribute>
+              <name>CloneUrlSsh</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -2346,7 +2466,7 @@
               <name>PipelineObjects</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: A list of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-datapipeline-pipeline-pipelineobjects.html&quot; title=&quot;AWS Data Pipeline PipelineObjects&quot;&gt;AWS Data Pipeline PipelineObjects&lt;/a&gt;&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;Some interruptions&lt;/a&gt;. Not all objects, fields, and values can be updated. Restrictions on what can be updated are documented in &lt;a class="ulink" href=&quot;http://docs.aws.amazon.com/datapipeline/latest/DeveloperGuide/dp-manage-pipeline-modify-console.html&quot; target="_blank"&gt;Editing Your Pipelines&lt;/a&gt; in the &lt;em class="citetitle"&gt;AWS Data Pipeline Developer Guide&lt;/em&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;Some interruptions&lt;/a&gt;. Not all objects, fields, and values can be updated. Restrictions on what can be updated are documented in &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/datapipeline/latest/DeveloperGuide/dp-manage-pipeline-modify-console.html&quot; target=&quot;_blank&quot;&gt;Editing Your Pipelines&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS Data Pipeline Developer Guide&lt;/em&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -3279,7 +3399,7 @@
             <string>Icmp</string>
             <ResourceProperty>
               <name>Icmp</name>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-ec2-icmp.html&quot; title=&quot;EC2 ICMP Property Type&quot;&gt;EC2 ICMP Property Type&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-ec2-networkaclentry-icmp.html&quot; title=&quot;EC2 NetworkAclEntry Icmp&quot;&gt;EC2 NetworkAclEntry Icmp&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -3297,7 +3417,7 @@
             <string>PortRange</string>
             <ResourceProperty>
               <name>PortRange</name>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-ec2-port-range.html&quot; title=&quot;EC2 PortRange Property Type&quot;&gt;EC2 PortRange Property Type&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-ec2-networkaclentry-portrange.html&quot; title=&quot;EC2 NetworkAclEntry PortRange&quot;&gt;EC2 NetworkAclEntry PortRange&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -3665,6 +3785,15 @@
             </ResourceProperty>
           </entry>
           <entry>
+            <string>DestinationPrefixListId</string>
+            <ResourceProperty>
+              <name>DestinationPrefixListId</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
             <string>DestinationSecurityGroupId</string>
             <ResourceProperty>
               <name>DestinationSecurityGroupId</name>
@@ -3891,18 +4020,18 @@
             <string>SubnetId</string>
             <ResourceProperty>
               <name>SubnetId</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>NetworkAclId</string>
             <ResourceProperty>
               <name>NetworkAclId</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -3952,9 +4081,9 @@
             <string>CidrBlock</string>
             <ResourceProperty>
               <name>CidrBlock</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -3979,9 +4108,9 @@
             <string>InstanceTenancy</string>
             <ResourceProperty>
               <name>InstanceTenancy</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -4180,7 +4309,7 @@
               <name>CustomerGatewayId</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -4207,7 +4336,7 @@
               <name>VpnGatewayId</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -4452,7 +4581,17 @@
       <string>AWS::ECS::Cluster</string>
       <ResourceType>
         <name>AWS::ECS::Cluster</name>
-        <properties class="linked-hash-map"/>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>ClusterName</string>
+            <ResourceProperty>
+              <name>ClusterName</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
         <attributes class="linked-hash-map"/>
       </ResourceType>
     </entry>
@@ -4483,7 +4622,7 @@
             <string>DesiredCount</string>
             <ResourceProperty>
               <name>DesiredCount</name>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -4541,6 +4680,24 @@
             </ResourceProperty>
           </entry>
           <entry>
+            <string>Family</string>
+            <ResourceProperty>
+              <name>Family</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>TaskRoleArn</string>
+            <ResourceProperty>
+              <name>TaskRoleArn</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
             <string>Volumes</string>
             <ResourceProperty>
               <name>Volumes</name>
@@ -4591,7 +4748,7 @@
               <name>FileSystemId</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;. Before updating this property, stop EC2 instances that are using this mount target, and then restart them after the update is complete. This allows the instances to unmount the file system before the mount target is replaced. If you don't stop and restart them, instances or applications that are using those mounts might be disrupted when the mount target is deleted (uncommitted writes might be lost).&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -4600,7 +4757,7 @@
               <name>IpAddress</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;. Before updating this property, stop EC2 instances that are using this mount target, and then restart them after the update is complete. This allows the instances to unmount the file system before the mount target is replaced. If you don't stop and restart them, instances or applications that are using those mounts might be disrupted when the mount target is deleted (uncommitted writes might be lost).&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -4618,7 +4775,7 @@
               <name>SubnetId</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;. Before updating this property, stop EC2 instances that are using this mount target and then restart them after the update is complete. That way the instances can unmount the file system before the mount target is replaced. If you don't stop and restart them, instances or applications that are using those mounts might be disrupted when the mount target is deleted (uncommitted writes might be lost).&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -4913,7 +5070,7 @@
               <name>CacheNodeType</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;Some interruptions&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -4985,7 +5142,7 @@
               <name>NumCacheNodes</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;. However, if the &lt;code class=&quot;code&quot;&gt;PreferredAvailabilityZone&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;PreferredAvailabilityZones&lt;/code&gt; properties were not previously specified and you don't specify any new values, an update requires &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;. However, if the &lt;code class=&quot;code&quot;&gt;PreferredAvailabilityZone&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;PreferredAvailabilityZones&lt;/code&gt; properties were not previously specified and you don&apos;t specify any new values, an update requires &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -5012,7 +5169,7 @@
               <name>PreferredAvailabilityZones</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -5171,8 +5328,8 @@
             <ResourceProperty>
               <name>CacheNodeType</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-              <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -5181,7 +5338,7 @@
               <name>CacheParameterGroupName</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;Some interruptions&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -5208,7 +5365,7 @@
               <name>Engine</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -5218,6 +5375,15 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>NodeGroupConfiguration</string>
+            <ResourceProperty>
+              <name>NodeGroupConfiguration</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticache-replicationgroup-nodegroupconfiguration.html&quot; title=&quot;Amazon ElastiCache ReplicationGroup NodeGroupConfiguration&quot;&gt;Amazon ElastiCache ReplicationGroup NodeGroupConfiguration&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -5234,7 +5400,16 @@
             <ResourceProperty>
               <name>NumCacheClusters</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
-              <required>true</required>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>NumNodeGroups</string>
+            <ResourceProperty>
+              <name>NumNodeGroups</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -5266,12 +5441,39 @@
             </ResourceProperty>
           </entry>
           <entry>
+            <string>PrimaryClusterId</string>
+            <ResourceProperty>
+              <name>PrimaryClusterId</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ReplicasPerNodeGroup</string>
+            <ResourceProperty>
+              <name>ReplicasPerNodeGroup</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
             <string>ReplicationGroupDescription</string>
             <ResourceProperty>
               <name>ReplicationGroupDescription</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ReplicationGroupId</string>
+            <ResourceProperty>
+              <name>ReplicationGroupId</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -5293,10 +5495,28 @@
             </ResourceProperty>
           </entry>
           <entry>
+            <string>SnapshotName</string>
+            <ResourceProperty>
+              <name>SnapshotName</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
             <string>SnapshotRetentionLimit</string>
             <ResourceProperty>
               <name>SnapshotRetentionLimit</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>SnapshottingClusterId</string>
+            <ResourceProperty>
+              <name>SnapshottingClusterId</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -5308,6 +5528,15 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Tags</string>
+            <ResourceProperty>
+              <name>Tags</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -5411,6 +5640,15 @@
         <name>AWS::ElastiCache::SubnetGroup</name>
         <properties class="linked-hash-map">
           <entry>
+            <string>CacheSubnetGroupName</string>
+            <ResourceProperty>
+              <name>CacheSubnetGroupName</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
             <string>Description</string>
             <ResourceProperty>
               <name>Description</name>
@@ -5461,7 +5699,7 @@
               <name>ConfigurationTemplates</name>
               <type>Unknown</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -5470,7 +5708,7 @@
               <name>ApplicationVersions</name>
               <type>Unknown</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -5983,7 +6221,7 @@
             <string>LoadBalancerAttributes</string>
             <ResourceProperty>
               <name>LoadBalancerAttributes</name>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticloadbalancingv2-loadbalancer-loadbalancerattributes.html&quot; title=&quot;Elastic Load Balancing LoadBalancer LoadBalancerAttributes&quot;&gt;Elastic Load Balancing LoadBalancer LoadBalancerAttributes&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: A list of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticloadbalancingv2-loadbalancer-loadbalancerattributes.html&quot; title=&quot;Elastic Load Balancing LoadBalancer LoadBalancerAttributes&quot;&gt;Elastic Load Balancing LoadBalancer LoadBalancerAttributes&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -6209,7 +6447,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>LoadBalancerArns</string>
+            <ResourceAttribute>
+              <name>LoadBalancerArns</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -6260,6 +6505,15 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticsearch-domain-elasticsearchclusterconfig.html&quot; title=&quot;Amazon Elasticsearch Service Domain ElasticsearchClusterConfig&quot;&gt;Amazon Elasticsearch Service Domain ElasticsearchClusterConfig&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ElasticsearchVersion</string>
+            <ResourceProperty>
+              <name>ElasticsearchVersion</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -6342,7 +6596,7 @@
             <string>ScheduleExpression</string>
             <ResourceProperty>
               <name>ScheduleExpression</name>
-              <type/>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -6628,16 +6882,16 @@
               <name>Path</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>Policies</string>
             <ResourceProperty>
               <name>Policies</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-iam-policy.html&quot; title=&quot;IAM Policies&quot;&gt;IAM Policies&lt;/a&gt;&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-iam-policy.html&quot; title=&quot;IAM Policies&quot;&gt;IAM Policies&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -6660,18 +6914,18 @@
             <string>Path</string>
             <ResourceProperty>
               <name>Path</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>Roles</string>
             <ResourceProperty>
               <name>Roles</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of references to &lt;span class="type"&gt;AWS::IAM::Role&lt;/span&gt;s. Currently, a maximum of one role can be assigned to an instance profile.&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of references to &lt;span class=&quot;type&quot;&gt;AWS::IAM::Role&lt;/span&gt;s. Currently, a maximum of one role can be assigned to an instance profile.&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -6942,18 +7196,18 @@
             <string>GroupName</string>
             <ResourceProperty>
               <name>GroupName</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>Users</string>
             <ResourceProperty>
               <name>Users</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of users&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of users&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -7130,6 +7384,33 @@
       </ResourceType>
     </entry>
     <entry>
+      <string>AWS::KMS::Alias</string>
+      <ResourceType>
+        <name>AWS::KMS::Alias</name>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>AliasName</string>
+            <ResourceProperty>
+              <name>AliasName</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>TargetKeyId</string>
+            <ResourceProperty>
+              <name>TargetKeyId</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
       <string>AWS::KMS::Key</string>
       <ResourceType>
         <name>AWS::KMS::Key</name>
@@ -7171,7 +7452,14 @@
             </ResourceProperty>
           </entry>
         </properties>
-        <attributes class="linked-hash-map"/>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>Arn</string>
+            <ResourceAttribute>
+              <name>Arn</name>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
       </ResourceType>
     </entry>
     <entry>
@@ -7385,6 +7673,15 @@
             </ResourceProperty>
           </entry>
           <entry>
+            <string>Environment</string>
+            <ResourceProperty>
+              <name>Environment</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-lambda-function-environment.html&quot; title=&quot;AWS Lambda Function Environment&quot;&gt;AWS Lambda Function Environment&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
             <string>FunctionName</string>
             <ResourceProperty>
               <name>FunctionName</name>
@@ -7399,6 +7696,15 @@
               <name>Handler</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>KmsKeyArn</string>
+            <ResourceProperty>
+              <name>KmsKeyArn</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -7606,6 +7912,15 @@
         <name>AWS::Logs::LogGroup</name>
         <properties class="linked-hash-map">
           <entry>
+            <string>LogGroupName</string>
+            <ResourceProperty>
+              <name>LogGroupName</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
             <string>RetentionInDays</string>
             <ResourceProperty>
               <name>RetentionInDays</name>
@@ -7661,7 +7976,7 @@
             <string>FilterPattern</string>
             <ResourceProperty>
               <name>FilterPattern</name>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -8347,7 +8662,7 @@
               <name>BackupRetentionPeriod</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class="ulink" href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target="_blank"&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class="citetitle"&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target=&quot;_blank&quot;&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8446,7 +8761,7 @@
               <name>PreferredMaintenanceWindow</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class="ulink" href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target="_blank"&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class="citetitle"&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target=&quot;_blank&quot;&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8576,7 +8891,7 @@
               <name>AutoMinorVersionUpgrade</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class="ulink" href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target="_blank"&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class="citetitle"&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target=&quot;_blank&quot;&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8594,7 +8909,7 @@
               <name>BackupRetentionPeriod</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class="ulink" href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target="_blank"&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class="citetitle"&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target=&quot;_blank&quot;&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8648,7 +8963,7 @@
               <name>DBParameterGroupName</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. If any of the data members of the referenced parameter group are changed during an update, the database instance might need to be restarted, causing some interruption. If the parameter group contains static parameters, whether they were changed or not, an update triggers a reboot.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. If any of the data members of the referenced parameter group are changed during an update, the DB instance might need to be restarted, causing some interruption. If the parameter group contains static parameters, whether they were changed or not, an update triggers a reboot.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8676,6 +8991,24 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Domain</string>
+            <ResourceProperty>
+              <name>Domain</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>DomainIAMRoleName</string>
+            <ResourceProperty>
+              <name>DomainIAMRoleName</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8711,7 +9044,7 @@
               <name>KmsKeyId</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8720,7 +9053,7 @@
               <name>LicenseModel</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8729,7 +9062,7 @@
               <name>MasterUsername</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8738,7 +9071,25 @@
               <name>MasterUserPassword</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>MonitoringInterval</string>
+            <ResourceProperty>
+              <name>MonitoringInterval</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target=&quot;_blank&quot;&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>MonitoringRoleArn</string>
+            <ResourceProperty>
+              <name>MonitoringRoleArn</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8747,7 +9098,7 @@
               <name>MultiAZ</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8756,7 +9107,7 @@
               <name>OptionGroupName</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8765,7 +9116,7 @@
               <name>Port</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8774,7 +9125,7 @@
               <name>PreferredBackupWindow</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8783,7 +9134,7 @@
               <name>PreferredMaintenanceWindow</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class="ulink" href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target="_blank"&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class="citetitle"&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target=&quot;_blank&quot;&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8792,7 +9143,7 @@
               <name>PubliclyAccessible</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8801,7 +9152,7 @@
               <name>SourceDBInstanceIdentifier</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8810,7 +9161,7 @@
               <name>StorageEncrypted</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8828,7 +9179,7 @@
               <name>Tags</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8837,7 +9188,7 @@
               <name>VPCSecurityGroups</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -8911,27 +9262,27 @@
             <string>EC2VpcId</string>
             <ResourceProperty>
               <name>EC2VpcId</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>DBSecurityGroupIngress</string>
             <ResourceProperty>
               <name>DBSecurityGroupIngress</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-rds-security-group-rule.html&quot; title=&quot;Amazon RDS Security Group Rule&quot;&gt;RDS Security Group Rules&lt;/a&gt;.&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;link&quot; href=&quot;aws-properties-rds-security-group-rule.html&quot; title=&quot;Amazon RDS Security Group Rule&quot;&gt;RDS Security Group Rules&lt;/a&gt;.&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>GroupDescription</string>
             <ResourceProperty>
               <name>GroupDescription</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -8956,7 +9307,7 @@
             <string>CIDRIP</string>
             <ResourceProperty>
               <name>CIDRIP</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -8965,7 +9316,7 @@
             <string>DBSecurityGroupName</string>
             <ResourceProperty>
               <name>DBSecurityGroupName</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -8974,7 +9325,7 @@
             <string>EC2SecurityGroupId</string>
             <ResourceProperty>
               <name>EC2SecurityGroupId</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -8983,7 +9334,7 @@
             <string>EC2SecurityGroupName</string>
             <ResourceProperty>
               <name>EC2SecurityGroupName</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -8992,7 +9343,7 @@
             <string>EC2SecurityGroupOwnerId</string>
             <ResourceProperty>
               <name>EC2SecurityGroupOwnerId</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -9028,7 +9379,7 @@
             <string>Tags</string>
             <ResourceProperty>
               <name>Tags</name>
-              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: A list of &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;resource tags&lt;/a&gt;.&lt;/p&gt;</type>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: A list of &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;resource tags&lt;/a&gt; in key-value format.&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
@@ -9084,7 +9435,7 @@
               <name>SourceType</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; if you're removing this property after it was previously specified. All other updates require &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;no interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt; if you&apos;re removing this property after it was previously specified. All other updates require &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;no interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -9583,7 +9934,7 @@
               <name>VPCs</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-resource-route53-hostedzone-hostedzonevpcs.html&quot; title=&quot;Amazon Route&amp;nbsp;53 HostedZoneVPCs&quot;&gt;Amazon Route&amp;nbsp;53 HostedZoneVPCs&lt;/a&gt;&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -9664,16 +10015,16 @@
               <name>Name</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>Region</string>
             <ResourceProperty>
               <name>Region</name>
-              <type/>
+              <type></type>
               <required>false</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -9734,27 +10085,27 @@
             <string>Comment</string>
             <ResourceProperty>
               <name>Comment</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>HostedZoneId</string>
             <ResourceProperty>
               <name>HostedZoneId</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
             <string>HostedZoneName</string>
             <ResourceProperty>
               <name>HostedZoneName</name>
-              <type>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
-              <updateRequires>&lt;p class="simpara"&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+              <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -9893,7 +10244,7 @@
               <name>Bucket</name>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
-              <updateRequires/>
+              <updateRequires></updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -9913,7 +10264,53 @@
       <string>AWS::SDB::Domain</string>
       <ResourceType>
         <name>AWS::SDB::Domain</name>
-        <properties class="linked-hash-map"/>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>Description</string>
+            <ResourceProperty>
+              <name>Description</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: Updates are not supported.&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::SNS::Subscription</string>
+      <ResourceType>
+        <name>AWS::SNS::Subscription</name>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>Endpoint</string>
+            <ResourceProperty>
+              <name>Endpoint</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Protocol</string>
+            <ResourceProperty>
+              <name>Protocol</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>TopicArn</string>
+            <ResourceProperty>
+              <name>TopicArn</name>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks-update-behaviors.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
         <attributes class="linked-hash-map"/>
       </ResourceType>
     </entry>
