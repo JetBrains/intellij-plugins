@@ -11,15 +11,13 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.filters.UrlFilter;
-import com.intellij.execution.process.ColoredProcessHandler;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
+import com.intellij.execution.process.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,7 +31,6 @@ import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
-import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +44,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
   private int myObservatoryPort = -1;
+  private OpenDartObservatoryUrlAction myOpenObservatoryAction;
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);
@@ -83,9 +81,8 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   protected void addObservatoryActions(List<AnAction> actions, final ProcessHandler processHandler) {
     actions.add(new Separator());
-    actions.add(new OpenDartObservatoryUrlAction(
-      "http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort,
-      () -> !processHandler.isProcessTerminated()));
+    myOpenObservatoryAction = new OpenDartObservatoryUrlAction(null, () -> !processHandler.isProcessTerminated());
+    actions.add(myOpenObservatoryAction);
   }
 
   @NotNull
@@ -97,6 +94,17 @@ public class DartCommandLineRunningState extends CommandLineState {
   protected ProcessHandler doStartProcess(final @Nullable String overriddenMainFilePath) throws ExecutionException {
     final GeneralCommandLine commandLine = createCommandLine(overriddenMainFilePath);
     final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
+
+    processHandler.addProcessListener(new ProcessAdapter() {
+      @Override
+      public void onTextAvailable(final ProcessEvent event, final Key outputType) {
+        final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
+        if (event.getText().startsWith(prefix)) {
+          processHandler.removeProcessListener(this);
+          myOpenObservatoryAction.setUrl("http://" + event.getText().substring(prefix.length()));
+        }
+      }
+    });
 
     // Commented out code is a workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
     // The problem is not actual at the moment because Observatory is not turned on for tests
