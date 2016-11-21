@@ -27,7 +27,6 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.PsiSearchScopeUtil;
 import com.intellij.psi.search.SearchScope;
@@ -71,8 +70,7 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
         final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(location.getFile()));
         if (vFile == null) return;
 
-        if (scope instanceof LocalSearchScope && !((LocalSearchScope)scope).isInScope(vFile)) return;
-        if (scope instanceof GlobalSearchScope && !((GlobalSearchScope)scope).contains(vFile)) return;
+        if (!scope.contains(vFile)) return;
 
         final PsiFile psiFile = elementToSearch.getManager().findFile(vFile);
         if (psiFile == null) return;

@@ -7,8 +7,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.DefinitionsScopedSearch;
 import com.intellij.util.Processor;
@@ -158,7 +156,6 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
   private static boolean isInScope(@NotNull final SearchScope scope, @NotNull final PsiElement element) {
     final VirtualFile file = element.getContainingFile().getVirtualFile();
     if (file == null) return false;
-    return scope instanceof LocalSearchScope ? ((LocalSearchScope)scope).isInScope(file)
-                                             : ((GlobalSearchScope)scope).contains(file);
+    return scope.contains(file);
   }
 }
