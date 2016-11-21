@@ -60,6 +60,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -742,7 +743,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (parent instanceof JSClass) {
           final JSClass jsClass = (JSClass)parent;
           final JSFunction constructor = jsClass.getConstructor();
-          if (constructor == null) checkMissedSuperCall(null, jsClass);
+          if (constructor == null) checkMissedConstructor(jsClass);
 
           PsiElement clazzParent = jsClass.getParent();
           final PsiElement context = clazzParent.getContext();
@@ -1569,5 +1570,46 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   @Override
   protected boolean isConstNeedInitializer(JSVariable var) {
     return true;
+  }
+
+  private void checkMissedConstructor(@NotNull JSClass jsClass){
+    if (jsClass.isInterface()) return;
+    final JSFunction nontrivialSuperClassConstructor = getNontrivialSuperClassConstructor(jsClass);
+
+    if (nontrivialSuperClassConstructor == null) {
+      return;
+    }
+
+    final PsiElement place = getPlaceForNamedElementProblem(jsClass);
+    Annotation annotation = myProblemReporter.registerGenericError(place, JSBundle.message("javascript.validation.message.missed.super.constructor.call"));
+
+    annotation.registerFix(JSFixFactory.getInstance().addConstructorAndSuperInvocationFix(jsClass, nontrivialSuperClassConstructor));
+  }
+
+  @Contract("null -> null")
+  protected JSCallExpression findBaseConstructorCall(@Nullable JSFunction jsFunction) {
+    if (jsFunction == null) return null;
+    final JSSourceElement[] body = jsFunction.getBody();
+    return body.length > 0 ? findBaseConstructorCall(((JSBlockStatement)body[0])) : null;
+  }
+
+  private static JSCallExpression findBaseConstructorCall(final JSBlockStatement blockStatement) {
+    for (JSStatement statement : blockStatement.getStatements()) {
+      JSExpression expr;
+      if (statement instanceof JSExpressionStatement &&
+          (expr = ((JSExpressionStatement)statement).getExpression()) instanceof JSCallExpression &&
+          ((JSCallExpression)expr).getMethodExpression() instanceof JSSuperExpression) {
+        return (JSCallExpression)expr;
+      }
+      else if (statement instanceof JSIfStatement) {
+        // awful compiler somehow allows to call super() only in one branch of 'if' statement. Example in Starling framework sources: class starling.display.Image
+        final JSStatement then = ((JSIfStatement)statement).getThen();
+        if (then instanceof JSBlockStatement) {
+          return findBaseConstructorCall((JSBlockStatement)then);
+        }
+      }
+    }
+
+    return null;
   }
 }
