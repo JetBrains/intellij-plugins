@@ -2,6 +2,8 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.base.Charsets;
 import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
@@ -10,6 +12,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -30,6 +33,7 @@ import com.intellij.xdebugger.frame.XSuspendContext;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
@@ -76,6 +80,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @Nullable private final VirtualFile myCurrentWorkingDirectory;
   @Nullable protected String myRemoteProjectRootUri;
 
+  @NotNull private final OpenDartObservatoryUrlAction myOpenObservatoryAction =
+    new OpenDartObservatoryUrlAction(null, () -> myVmConnected && !getSession().isStopped());
+
+
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @NotNull final String debuggingHost,
                                    final int observatoryPort,
@@ -116,7 +124,25 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     myDASExecutionContextId = dasExecutionContextId;
 
-    scheduleConnect();
+    if (remoteDebug) {
+      // TODO won't work since Dart SDK 1.22 because auth token in URL is required
+      scheduleConnect(getObservatoryUrl("ws", "/ws"));
+    }
+    else {
+      getProcessHandler().addProcessListener(new ProcessAdapter() {
+        @Override
+        public void onTextAvailable(final ProcessEvent event, final Key outputType) {
+          final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
+          if (event.getText().startsWith(prefix)) {
+            getProcessHandler().removeProcessListener(this);
+
+            final String urlBase = event.getText().substring(prefix.length());
+            scheduleConnect("ws://" + StringUtil.trimTrailing(urlBase.trim(), '/') + "/ws");
+            myOpenObservatoryAction.setUrl("http://" + urlBase);
+          }
+        }
+      });
+    }
 
     if (remoteDebug) {
       LOG.assertTrue(myExecutionResult == null && myDASExecutionContextId == null, myDASExecutionContextId + myExecutionResult);
@@ -171,7 +197,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     });
   }
 
-  public void scheduleConnect() {
+  private void scheduleConnect(@NotNull final String url) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       long timeout = (long)myTimeout;
       long startTime = System.currentTimeMillis();
@@ -179,7 +205,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       try {
         while (true) {
           try {
-            connect();
+            connect(url);
             break;
           }
           catch (IOException e) {
@@ -209,8 +235,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     });
   }
 
-  private void connect() throws IOException {
-    final VmService vmService = VmService.connect(getObservatoryUrl("ws", "/ws"));
+  private void connect(@NotNull final String url) throws IOException {
+    final VmService vmService = VmService.connect(url);
     final DartVmServiceListener vmServiceListener =
       new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
 
@@ -224,6 +250,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @NotNull
+  @Deprecated // returns incorrect URL for Dart SDK 1.22+ because returned URL doesn't contain auth token
   private String getObservatoryUrl(@NotNull final String scheme, @Nullable final String path) {
     return scheme + "://" + myDebuggingHost + ":" + myObservatoryPort + StringUtil.notNullize(path);
   }
@@ -404,11 +431,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                         @NotNull final DefaultActionGroup settings) {
     // For Run tool window this action is added in DartCommandLineRunningState.createActions()
     topToolbar.addSeparator();
-
-    if (myObservatoryPort > 0) {
-      topToolbar.addAction(new OpenDartObservatoryUrlAction(getObservatoryUrl("http", null),
-                                                            () -> myVmConnected && !getSession().isStopped()));
-    }
+    topToolbar.addAction(myOpenObservatoryAction);
   }
 
   @NotNull

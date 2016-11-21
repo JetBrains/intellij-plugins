@@ -11,28 +11,38 @@ import com.intellij.openapi.util.Computable;
 import com.jetbrains.lang.dart.DartBundle;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.jsonRpc.Client;
 
 import java.util.List;
 
 public class OpenDartObservatoryUrlAction extends DumbAwareAction {
-  private final String myUrl;
+  @Nullable private String myUrl;
   private final Computable<Boolean> myIsApplicable;
 
-  public OpenDartObservatoryUrlAction(@NotNull final String url, @NotNull final Computable<Boolean> isApplicable) {
+  /**
+   * @param url <code>null</code> if URL is not known at the moment of the action instantiation; use {@link #setUrl(String)} afterwards
+   */
+  public OpenDartObservatoryUrlAction(@Nullable final String url, @NotNull final Computable<Boolean> isApplicable) {
     super(DartBundle.message("open.observatory.action.text"), DartBundle.message("open.observatory.action.description"), DartIcons.Dart_16);
     myUrl = url;
     myIsApplicable = isApplicable;
   }
 
+  public void setUrl(@NotNull final String url) {
+    myUrl = url;
+  }
+
   @Override
   public void update(@NotNull final AnActionEvent e) {
-    e.getPresentation().setEnabled(myIsApplicable.compute());
+    e.getPresentation().setEnabled(myUrl != null && myIsApplicable.compute());
   }
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
-    openUrlInChromeFamilyBrowser(myUrl);
+    if (myUrl != null) {
+      openUrlInChromeFamilyBrowser(myUrl);
+    }
   }
 
   /**
@@ -62,7 +72,6 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
   private static void openInAnyChromeFamilyBrowser(@NotNull final String url) {
     final List<WebBrowser> chromeBrowsers = WebBrowserManager.getInstance().getBrowsers(
       browser -> browser.getFamily() == BrowserFamily.CHROME, true);
-
 
     BrowserLauncher.getInstance().browse(url, chromeBrowsers.isEmpty() ? null : chromeBrowsers.get(0));
   }
