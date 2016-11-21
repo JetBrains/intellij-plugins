@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
+import com.intellij.lang.javascript.inspections.actionscript.fixes.ActionScriptConstructorChecker;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
@@ -60,7 +61,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -81,9 +81,19 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     JavaScriptSupportLoader.MXML_FILE_EXTENSION,
     JavaScriptSupportLoader.FXG_FILE_EXTENSION
   };
+  
+  private ActionScriptConstructorChecker myConstructorChecker;
 
   public ActionScriptAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+
     super(psiElement, holder);
+  }
+
+  @Override
+  protected JSConstructorChecker createConstructorChecker() {
+    ActionScriptConstructorChecker constructorChecker = new ActionScriptConstructorChecker(myProblemReporter);
+    myConstructorChecker = constructorChecker;
+    return constructorChecker;
   }
 
   protected static SignatureMatchResult checkCompatibleSignature(final JSFunction fun, final JSFunction override) {
@@ -743,7 +753,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (parent instanceof JSClass) {
           final JSClass jsClass = (JSClass)parent;
           final JSFunction constructor = jsClass.getConstructor();
-          if (constructor == null) checkMissedConstructor(jsClass);
+          if (constructor == null) myConstructorChecker.checkMissedConstructor(jsClass);
 
           PsiElement clazzParent = jsClass.getParent();
           final PsiElement context = clazzParent.getContext();
@@ -1572,44 +1582,4 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return true;
   }
 
-  private void checkMissedConstructor(@NotNull JSClass jsClass){
-    if (jsClass.isInterface()) return;
-    final JSFunction nontrivialSuperClassConstructor = getNontrivialSuperClassConstructor(jsClass);
-
-    if (nontrivialSuperClassConstructor == null) {
-      return;
-    }
-
-    final PsiElement place = getPlaceForNamedElementProblem(jsClass);
-    Annotation annotation = myProblemReporter.registerGenericError(place, JSBundle.message("javascript.validation.message.missed.super.constructor.call"));
-
-    annotation.registerFix(JSFixFactory.getInstance().addConstructorAndSuperInvocationFix(jsClass, nontrivialSuperClassConstructor));
-  }
-
-  @Contract("null -> null")
-  protected JSCallExpression findBaseConstructorCall(@Nullable JSFunction jsFunction) {
-    if (jsFunction == null) return null;
-    final JSSourceElement[] body = jsFunction.getBody();
-    return body.length > 0 ? findBaseConstructorCall(((JSBlockStatement)body[0])) : null;
-  }
-
-  private static JSCallExpression findBaseConstructorCall(final JSBlockStatement blockStatement) {
-    for (JSStatement statement : blockStatement.getStatements()) {
-      JSExpression expr;
-      if (statement instanceof JSExpressionStatement &&
-          (expr = ((JSExpressionStatement)statement).getExpression()) instanceof JSCallExpression &&
-          ((JSCallExpression)expr).getMethodExpression() instanceof JSSuperExpression) {
-        return (JSCallExpression)expr;
-      }
-      else if (statement instanceof JSIfStatement) {
-        // awful compiler somehow allows to call super() only in one branch of 'if' statement. Example in Starling framework sources: class starling.display.Image
-        final JSStatement then = ((JSIfStatement)statement).getThen();
-        if (then instanceof JSBlockStatement) {
-          return findBaseConstructorCall((JSBlockStatement)then);
-        }
-      }
-    }
-
-    return null;
-  }
 }
