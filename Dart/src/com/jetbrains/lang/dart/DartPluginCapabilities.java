@@ -8,6 +8,7 @@ import java.util.Set;
 /**
  * A queryable class about the capabilities of the Dart plugin.
  */
+@SuppressWarnings("unused")
 public class DartPluginCapabilities {
   private static Set<String> capabilities = new HashSet<>();
 
