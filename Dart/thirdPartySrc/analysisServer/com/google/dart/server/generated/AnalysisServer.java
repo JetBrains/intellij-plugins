@@ -581,4 +581,9 @@ public interface AnalysisServer {
    */
   public void start() throws Exception;
 
+  /**
+   * Return the number of milliseconds that have passed since the last response was received
+   * from the analysis server.
+   */
+  public long getLastResponseMillis();
 }

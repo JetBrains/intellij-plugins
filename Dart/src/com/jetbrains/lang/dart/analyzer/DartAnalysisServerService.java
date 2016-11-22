@@ -129,6 +129,8 @@ public class DartAnalysisServerService {
   // how many files with errors are in this folder (recursively)
   @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
 
+  public long maxMillisToWaitForServerResponse = 0L;
+
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
@@ -1390,6 +1392,19 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       return myServer != null && myServer.isSocketOpen();
     }
+  }
+
+  public boolean isServerResponsive() {
+    // TODO(messick): Make this adaptive.
+    if (maxMillisToWaitForServerResponse == 0L) return true; // UI has not finished initialization yet.
+    long millis;
+    synchronized (myLock) {
+      if (myServer == null) return false;
+      millis = myServer.getLastResponseMillis();
+    }
+    if (millis == 0L) return true; // Allow UI to start in good state even if it becomes unknown later.
+    long delta = System.currentTimeMillis() - millis;
+    return delta > maxMillisToWaitForServerResponse;
   }
 
   public boolean serverReadyForRequest(@NotNull final Project project) {

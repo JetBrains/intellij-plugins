@@ -27,6 +27,14 @@
 
   <resource-bundle>com.jetbrains.lang.dart.DartBundle</resource-bundle>
 
+  <extensionPoints>
+    <extensionPoint name="feedbackBuilder" interface="com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder" />
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="Dart">
+    <feedbackBuilder implementation="com.jetbrains.lang.dart.ide.errorTreeView.DefaultDartFeedbackBuilder"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
     <psi.treeChangePreprocessor implementation="com.jetbrains.lang.dart.DartPsiTreeChangePreprocessor"/>
