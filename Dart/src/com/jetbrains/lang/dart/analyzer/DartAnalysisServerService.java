@@ -1395,15 +1395,17 @@ public class DartAnalysisServerService {
   }
 
   public boolean isServerResponsive() {
-    // TODO(messick): Make this adaptive.
     if (maxMillisToWaitForServerResponse == 0L) return true; // UI has not finished initialization yet.
-    long millis;
+    if (!(myAnalysisInProgress || myPubListInProgress)) return true;
+    long responseMillis, requestMillis;
     synchronized (myLock) {
       if (myServer == null) return false;
-      millis = myServer.getLastResponseMillis();
+      responseMillis = myServer.getLastResponseMillis();
+      requestMillis = myServer.getLastRequestMillis();
     }
-    if (millis == 0L) return true; // Allow UI to start in good state even if it becomes unknown later.
-    long delta = System.currentTimeMillis() - millis;
+    if (responseMillis == 0L) return true; // Allow UI to start in good state even if it becomes unknown later.
+    if (requestMillis <= responseMillis) return true;
+    long delta = System.currentTimeMillis() - requestMillis;
     return delta > maxMillisToWaitForServerResponse;
   }
 
