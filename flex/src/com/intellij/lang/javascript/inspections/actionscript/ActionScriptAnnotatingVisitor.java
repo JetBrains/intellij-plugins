@@ -82,18 +82,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     JavaScriptSupportLoader.FXG_FILE_EXTENSION
   };
   
-  private ActionScriptConstructorChecker myConstructorChecker;
-
   public ActionScriptAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
-
     super(psiElement, holder);
   }
 
-  @Override
-  protected JSConstructorChecker createConstructorChecker() {
-    ActionScriptConstructorChecker constructorChecker = new ActionScriptConstructorChecker(myProblemReporter);
-    myConstructorChecker = constructorChecker;
-    return constructorChecker;
+  @NotNull
+  @Override 
+  protected ActionScriptConstructorChecker createConstructorChecker() {
+    return new ActionScriptConstructorChecker(myProblemReporter);
   }
 
   protected static SignatureMatchResult checkCompatibleSignature(final JSFunction fun, final JSFunction override) {
@@ -753,7 +749,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (parent instanceof JSClass) {
           final JSClass jsClass = (JSClass)parent;
           final JSFunction constructor = jsClass.getConstructor();
-          if (constructor == null) myConstructorChecker.checkMissedConstructor(jsClass);
+          if (constructor == null) createConstructorChecker().checkMissedConstructor(jsClass);
 
           PsiElement clazzParent = jsClass.getParent();
           final PsiElement context = clazzParent.getContext();
