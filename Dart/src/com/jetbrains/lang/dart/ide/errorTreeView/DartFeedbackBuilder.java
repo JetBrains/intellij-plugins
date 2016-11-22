@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -9,6 +11,14 @@ import org.jetbrains.annotations.Nullable;
  * send issues to the flutter project on github.
  */
 public interface DartFeedbackBuilder {
+  ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
+
+  @NotNull
+  static DartFeedbackBuilder getFeedbackBuilder() {
+    final DartFeedbackBuilder[] builders = EP_NAME.getExtensions();
+    assert builders.length > 0;
+    return builders[0];
+  }
 
   /**
    * The title should indicate what sort of action will occur (eg open a browser).

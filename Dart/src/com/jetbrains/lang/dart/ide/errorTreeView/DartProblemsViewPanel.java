@@ -18,7 +18,6 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CopyProvider;
 import com.intellij.ide.actions.ContextHelpAction;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -26,7 +25,6 @@ import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,7 +36,6 @@ import com.intellij.ui.TableSpeedSearch;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
-import com.intellij.util.Alarm;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -56,7 +53,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyProvider, Disposable {
+public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyProvider {
 
   private static final long DEFAULT_SERVER_WAIT_MILLIS = 5000L; // Switch to UNKNOWN after 5s with no response.
 
@@ -64,19 +61,15 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   @NotNull private final TableView<DartProblem> myTable;
   @NotNull private JBLabel mySummaryLabel = new JBLabel();
 
-  @NotNull private AnalysisServerStatusAction myServerStatusAction = new AnalysisServerStatusAction();
-
   // TODO: Remember settings and filters in workspace.xml. (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
 
   @NotNull private final DartProblemsFilter myFilter;
-  @NotNull private final Disposable myDisposable; // Never disposed but required for Alarm.
 
   public DartProblemsViewPanel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
     super(new BorderLayout());
     myProject = project;
     myFilter = filter;
-    myDisposable = Disposer.newDisposable(getClass().getName());
 
     myTable = createTable();
     add(createToolbar(), BorderLayout.WEST);
@@ -129,7 +122,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
 
     group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
 
-    final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.COMPILER_MESSAGES_POPUP, group);
+    final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.TOOLBAR, group);
     menu.getComponent().show(component, x, y);
   }
 
@@ -147,7 +140,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
 
     group.addAction(new ContextHelpAction("reference.toolWindow.DartAnalysis"));
 
-    return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
+    return ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, group, false).getComponent();
   }
 
   @NotNull
@@ -166,12 +159,13 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     mySummaryLabel.setText("");
 
     final JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-    DefaultActionGroup group = new DefaultActionGroup(myServerStatusAction);
-    ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, group, true);
+    DefaultActionGroup group = new DefaultActionGroup(new AnalysisServerStatusAction());
+    ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, group, true);
     p.add(actionToolbar.getComponent());
     panel.add(p);
 
-    startMonitor();
+    DartAnalysisServerService.getInstance().maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
+
     return panel;
   }
 
@@ -343,11 +337,6 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     updateStatusBar();
   }
 
-  @Override
-  public void dispose() {
-    Disposer.dispose(myDisposable);
-  }
-
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
     public FilterProblemsAction() {
       super(DartBundle.message("filter.problems"), DartBundle.message("filter.problems.description"), AllIcons.General.Filter);
@@ -363,19 +352,5 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     public void actionPerformed(final AnActionEvent e) {
       showFiltersPopup();
     }
-  }
-
-  private void startMonitor() {
-    DartAnalysisServerService.getInstance().maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
-    final Alarm alarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myDisposable);
-    final Runnable drill = new Runnable() {
-      public void run() {
-        myServerStatusAction.updateStatus();
-        if (!alarm.isDisposed()) {
-          alarm.addRequest(this, DEFAULT_SERVER_WAIT_MILLIS);
-        }
-      }
-    };
-    alarm.addRequest(drill, DEFAULT_SERVER_WAIT_MILLIS);
   }
 }

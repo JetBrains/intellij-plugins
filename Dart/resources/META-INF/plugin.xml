@@ -32,7 +32,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="Dart">
-    <feedbackBuilder implementation="com.jetbrains.lang.dart.ide.errorTreeView.DefaultDartFeedbackBuilder"/>
+    <feedbackBuilder implementation="com.jetbrains.lang.dart.ide.errorTreeView.DefaultDartFeedbackBuilder" order="last"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
