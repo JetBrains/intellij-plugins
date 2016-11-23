@@ -88,6 +88,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   private ResponseStream responseStream;
   private LineReaderStream errorStream;
   private final AtomicLong lastResponseTime = new AtomicLong(0);
+  private final AtomicLong lastRequestTime = new AtomicLong(0);
 
   /**
    * The listener that will receive notification when new analysis results become available.
@@ -648,6 +649,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     synchronized (consumerMapLock) {
       consumerMap.put(id, consumer);
     }
+    lastRequestTime.set(System.currentTimeMillis());
     synchronized (requestSinkLock) {
       requestSink.add(request);
     }
@@ -806,6 +808,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 //        sleep(millisToRestart);
       }
     }
+  }
+
+  public long getLastRequestMillis() {
+    return lastRequestTime.get();
   }
 
   public long getLastResponseMillis() {
