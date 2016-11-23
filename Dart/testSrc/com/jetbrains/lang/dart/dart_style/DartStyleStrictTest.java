@@ -29,14 +29,12 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("comments/top_level.unit:8");
 
     KNOWN_TO_FAIL_STRICT.add("regression/0000/0041.stmt:1  (indent 8)");
-    KNOWN_TO_FAIL_STRICT.add("regression/0000/0049.stmt:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0177.stmt:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0200/0201.stmt:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0400/0488.stmt:1"); // NEW 11/16
     KNOWN_TO_FAIL_STRICT.add("regression/0500/0513.unit:1"); // NEW 11/16
     KNOWN_TO_FAIL_STRICT.add("regression/0500/0513.unit:9"); // NEW 11/16
 
-    KNOWN_TO_FAIL_STRICT.add("splitting/maps.stmt:35  empty literal does not force outer split");
     KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:13  adjacent string lines all split together;");
 
     KNOWN_TO_FAIL_STRICT.add("whitespace/enums.unit:10  trailing comma always splits"); // NEW 11/16
