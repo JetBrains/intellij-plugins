@@ -331,7 +331,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.addFileToProject("main_part.dart", "class A{}");
     myFixture.configureByText("main.dart",
                               "library test;\n" +
-                              "part <error descr=\"The included part ''main_part.dart'' must have a part-of directive\">'main_part.dart'</error>;\n" +
+                              "part <error descr=\"The included part ''main_part.dart'' must have a part-of directive.\">'main_part.dart'</error>;\n" +
                               "class A {}");
     myFixture.checkHighlighting();
   }
