@@ -38,18 +38,20 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     final TextRange fileHeaderRange = foldFileHeader(descriptors, dartFile, document); // 1. File header
     foldConsequentStatements(descriptors, dartFile, DartImportOrExportStatement.class);// 2. Import and export statements
     foldConsequentStatements(descriptors, dartFile, DartPartStatement.class);          // 3. Part statements
-    final Collection<PsiElement> psiElements = PsiTreeUtil.<PsiElement>collectElementsOfType(
+    final Collection<PsiElement> psiElements = PsiTreeUtil.collectElementsOfType(
       root,
       new Class[]{
         DartComponent.class,
         DartTypeArguments.class,
         PsiComment.class,
-        DartStringLiteralExpression.class});
+        DartStringLiteralExpression.class,
+        DartMapLiteralExpression.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
+    foldMapLiterals(descriptors, psiElements);                                         // 9. Map literals
   }
 
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
@@ -71,6 +73,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (psiElement instanceof DartStringLiteralExpression) {
       return multilineStringPlaceholder(node);                                       // 8.   Multi-line strings
     }
+    if (psiElement instanceof DartMapLiteralExpression) return "{...}";              // 9.   Map literals
 
     return "...";
   }
@@ -295,5 +298,24 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       return quotes + "..." + quotes;
     }
     return "...";
+  }
+
+  private static void foldMapLiterals(@NotNull final List<FoldingDescriptor> descriptors,
+                                      @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement psiElement : psiElements) {
+      if (psiElement instanceof DartMapLiteralExpression) {
+        final ASTNode node = psiElement.getNode();
+        final ASTNode lBrace = node.findChildByType(DartTokenTypes.LBRACE);
+        final ASTNode rBrace = lBrace == null ? null : node.findChildByType(DartTokenTypes.RBRACE, lBrace);
+        if (lBrace != null && rBrace != null) {
+          final String text =
+            node.getText().substring(lBrace.getStartOffset() - node.getStartOffset(), rBrace.getStartOffset() - node.getStartOffset());
+          if (text.contains("\n")) {
+            descriptors.add(new FoldingDescriptor(psiElement, TextRange.create(lBrace.getStartOffset(),
+                                                                               rBrace.getStartOffset() + rBrace.getTextLength())));
+          }
+        }
+      }
+    }
   }
 }
