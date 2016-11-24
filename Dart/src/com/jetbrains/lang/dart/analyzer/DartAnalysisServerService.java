@@ -84,7 +84,7 @@ public class DartAnalysisServerService {
   private static final long CHECK_CANCELLED_PERIOD = 10;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-  private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+  private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(300);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -1130,7 +1130,8 @@ public class DartAnalysisServerService {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, EDIT_ORGANIZE_DIRECTIVES_TIMEOUT);
+    // runnable returned by DartImportOptimizer.processFile() is called under write lock, so we have to skip the check unfortunately
+    awaitForLatchCheckingCanceled(server, latch, EDIT_ORGANIZE_DIRECTIVES_TIMEOUT, false);
 
     if (latch.getCount() > 0) {
       LOG.info("edit_organizeDirectives() took too long for file " + filePath);
@@ -1553,7 +1554,21 @@ public class DartAnalysisServerService {
            ", error code = " + error.getCode() + ": " + error.getMessage();
   }
 
-  private static boolean awaitForLatchCheckingCanceled(AnalysisServer server, CountDownLatch latch, long timeoutInMillis) {
+  private static boolean awaitForLatchCheckingCanceled(@NotNull final AnalysisServer server,
+                                                       @NotNull final CountDownLatch latch,
+                                                       final long timeoutInMillis) {
+    return awaitForLatchCheckingCanceled(server, latch, timeoutInMillis, true);
+  }
+
+  private static boolean awaitForLatchCheckingCanceled(@NotNull final AnalysisServer server,
+                                                       @NotNull final CountDownLatch latch,
+                                                       final long timeoutInMillis,
+                                                       final boolean checkWriteLock) {
+    if (checkWriteLock) {
+      // waiting under write action blocks server notifications handling that require read action
+      LOG.assertTrue(!ApplicationManager.getApplication().isWriteAccessAllowed());
+    }
+
     long startTime = System.currentTimeMillis();
     while (true) {
       ProgressManager.checkCanceled();
