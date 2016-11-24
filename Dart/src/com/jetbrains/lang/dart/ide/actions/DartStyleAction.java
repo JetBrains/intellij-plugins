@@ -51,20 +51,20 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
+    final int caretOffset = editor.getCaretModel().getOffset();
+    final int lineLength = getRightMargin(project);
+
+    DartAnalysisServerService.getInstance().updateFilesContent();
+    DartAnalysisServerService.FormatResult formatResult =
+      DartAnalysisServerService.getInstance().edit_format(psiFile.getVirtualFile(), caretOffset, 0, lineLength);
+
+    if (formatResult == null) {
+      showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
+      LOG.warn("Unexpected response from edit_format, formatResult is null");
+      return;
+    }
+
     final Runnable runnable = () -> {
-      final int caretOffset = editor.getCaretModel().getOffset();
-      final int lineLength = getRightMargin(project);
-
-      DartAnalysisServerService.getInstance().updateFilesContent();
-      DartAnalysisServerService.FormatResult formatResult =
-        DartAnalysisServerService.getInstance().edit_format(psiFile.getVirtualFile(), caretOffset, 0, lineLength);
-
-      if (formatResult == null) {
-        showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
-        LOG.warn("Unexpected response from edit_format, formatResult is null");
-        return;
-      }
-
       final List<SourceEdit> edits = formatResult.getEdits();
       if (edits == null || edits.size() == 0) {
         showHintLater(editor, DartBundle.message("dart.style.hint.already.good"), false);

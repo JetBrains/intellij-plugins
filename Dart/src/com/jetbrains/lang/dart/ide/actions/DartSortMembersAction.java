@@ -65,27 +65,27 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
+    final String path = psiFile.getVirtualFile().getPath();
+
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    service.updateFilesContent();
+    final SourceFileEdit fileEdit = service.edit_sortMembers(path);
+
+    if (fileEdit == null) {
+      showHintLater(editor, DartBundle.message("dart.sort.members.hint.failed"), true);
+      LOG.warn("Unexpected response from edit_sortMembers, fileEdit is null");
+      return;
+    }
+
+    final List<SourceEdit> edits = fileEdit.getEdits();
+    if (edits == null || edits.size() == 0) {
+      showHintLater(editor, DartBundle.message("dart.sort.members.hint.already.good"), false);
+      return;
+    }
+
     final Runnable runnable = () -> {
-      final String path = psiFile.getVirtualFile().getPath();
-
-      final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
-      service.updateFilesContent();
-      final SourceFileEdit fileEdit = service.edit_sortMembers(path);
-
-      if (fileEdit == null) {
-        showHintLater(editor, DartBundle.message("dart.sort.members.hint.failed"), true);
-        LOG.warn("Unexpected response from edit_sortMembers, fileEdit is null");
-        return;
-      }
-
-      final List<SourceEdit> edits = fileEdit.getEdits();
-      if (edits == null || edits.size() == 0) {
-        showHintLater(editor, DartBundle.message("dart.sort.members.hint.already.good"), false);
-      }
-      else {
-        AssistUtils.applySourceEdits(psiFile.getVirtualFile(), document, edits);
-        showHintLater(editor, DartBundle.message("dart.sort.members.hint.success"), false);
-      }
+      AssistUtils.applySourceEdits(psiFile.getVirtualFile(), document, edits);
+      showHintLater(editor, DartBundle.message("dart.sort.members.hint.success"), false);
     };
 
     ApplicationManager.getApplication().runWriteAction(
