@@ -13,7 +13,7 @@ public class DartPluginCapabilities {
   private static Set<String> capabilities = new HashSet<>();
 
   static {
-    // TODO: set up capabilities here
+    capabilities.add("supports.pausePostRequest");
   }
 
   public static boolean isSupported(@NotNull String featureKey) {

@@ -280,6 +280,42 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
+  /**
+   * Re-loaded scripts need to have their breakpoints re-applied. Re-set all existing breakpoints.
+   */
+  public void restoreBreakpointsForIsolate(@NotNull final String isolateId) {
+    // Set current breakpoints.
+    final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
+
+    if (xBreakpoints.isEmpty()) {
+      return;
+    }
+
+    for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
+      addBreakpoint(isolateId, xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
+        @Override
+        void sourcePositionNotApplicable() {
+          checkDone();
+        }
+
+        @Override
+        public void received(Breakpoint vmBreakpoint) {
+          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
+          checkDone();
+        }
+
+        @Override
+        public void onError(RPCError error) {
+          myBreakpointHandler.breakpointFailed(xBreakpoint);
+          checkDone();
+        }
+
+        private void checkDone() {
+        }
+      });
+    }
+  }
+
   public void addTemporaryBreakpoint(@NotNull final XSourcePosition position,
                                      @NotNull final String isolateId) {
     addBreakpoint(isolateId, position, new VmServiceConsumers.BreakpointConsumerWrapper() {
