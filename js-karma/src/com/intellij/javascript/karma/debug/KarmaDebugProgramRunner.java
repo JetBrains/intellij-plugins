@@ -22,11 +22,11 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
@@ -106,7 +106,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
       });
     }
     else {
-      return Promise.<RunProfileStarter>resolve(new RunProfileStarter() {
+      return Promise.resolve(new RunProfileStarter() {
         @Nullable
         @Override
         public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
@@ -122,11 +122,18 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     BiMap<String, VirtualFile> mappings = HashBiMap.create();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null) {
-      String systemDependentBasePath = FileUtil.toSystemDependentName(karmaConfig.getBasePath());
-      VirtualFile basePath = LocalFileSystem.getInstance().findFileByPath(systemDependentBasePath);
+      VirtualFile basePath = LocalFileSystem.getInstance().findFileByPath(karmaConfig.getBasePath());
       if (basePath != null && basePath.isValid()) {
-        String baseUrl = karmaConfig.isWebpack() ? "webpack:///." : karmaServer.formatUrlWithoutUrlRoot("/base");
-        mappings.put(baseUrl, basePath);
+        if (karmaConfig.isWebpack()) {
+          mappings.put("webpack:///" + basePath.getPath(), basePath);
+          VirtualFile nodeModulesDir = basePath.findChild(NodeModuleUtil.NODE_MODULES);
+          if (nodeModulesDir != null && nodeModulesDir.isValid() && nodeModulesDir.isDirectory()) {
+            mappings.put(karmaServer.formatUrlWithoutUrlRoot("/base/" + NodeModuleUtil.NODE_MODULES), nodeModulesDir);
+          }
+        }
+        else {
+          mappings.put(karmaServer.formatUrlWithoutUrlRoot("/base"), basePath);
+        }
       }
     }
     if (SystemInfo.isWindows) {
