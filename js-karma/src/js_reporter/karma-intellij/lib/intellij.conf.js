@@ -66,7 +66,8 @@ module.exports = function(config) {
       browsers: config.browsers || [],
       hostname: config.hostname || 'localhost',
       urlRoot: config.urlRoot || '/',
-      webpack: intellijUtil.isPreprocessorSpecified(config.preprocessors, 'webpack')
+      webpack: intellijUtil.isPreprocessorSpecified(config.preprocessors, 'webpack') ||
+               intellijUtil.isPreprocessorSpecified(config.preprocessors, 'angular-cli')
     }
   );
 };
