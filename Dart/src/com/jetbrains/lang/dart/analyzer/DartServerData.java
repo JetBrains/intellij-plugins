@@ -172,37 +172,37 @@ public class DartServerData {
   @NotNull
   List<DartError> getErrors(@NotNull final VirtualFile file) {
     final List<DartError> errors = myErrorData.get(file.getPath());
-    return errors != null ? errors : Collections.<DartError>emptyList();
+    return errors != null ? errors : Collections.emptyList();
   }
 
   @NotNull
   List<DartHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
     final List<DartHighlightRegion> regions = myHighlightData.get(file.getPath());
-    return regions != null ? regions : Collections.<DartHighlightRegion>emptyList();
+    return regions != null ? regions : Collections.emptyList();
   }
 
   @NotNull
   List<DartNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
     final List<DartNavigationRegion> regions = myNavigationData.get(file.getPath());
-    return regions != null ? regions : Collections.<DartNavigationRegion>emptyList();
+    return regions != null ? regions : Collections.emptyList();
   }
 
   @NotNull
   List<DartOverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
     final List<DartOverrideMember> regions = myOverrideData.get(file.getPath());
-    return regions != null ? regions : Collections.<DartOverrideMember>emptyList();
+    return regions != null ? regions : Collections.emptyList();
   }
 
   @NotNull
   List<DartRegion> getImplementedClasses(@NotNull final VirtualFile file) {
     final List<DartRegion> classes = myImplementedClassData.get(file.getPath());
-    return classes != null ? classes : Collections.<DartRegion>emptyList();
+    return classes != null ? classes : Collections.emptyList();
   }
 
   @NotNull
   List<DartRegion> getImplementedMembers(@NotNull final VirtualFile file) {
     final List<DartRegion> classes = myImplementedMemberData.get(file.getPath());
-    return classes != null ? classes : Collections.<DartRegion>emptyList();
+    return classes != null ? classes : Collections.emptyList();
   }
 
   private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
