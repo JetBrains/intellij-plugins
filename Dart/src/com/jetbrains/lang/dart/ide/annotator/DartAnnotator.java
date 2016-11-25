@@ -34,7 +34,6 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
-import org.dartlang.analysis.server.protocol.AnalysisErrorType;
 import org.dartlang.analysis.server.protocol.HighlightRegionType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -164,11 +163,7 @@ public class DartAnnotator implements Annotator {
   }
 
   public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath,
-                                                            @NotNull final String errorType,
                                                             @NotNull final String analysisErrorFileSD) {
-    // already done using IDE engine
-    if (AnalysisErrorType.TODO.equals(errorType)) return true;
-
     // workaround for https://github.com/dart-lang/sdk/issues/25034
     if (!filePath.equals(FileUtil.toSystemIndependentName(analysisErrorFileSD))) return true;
 
@@ -234,7 +229,7 @@ public class DartAnnotator implements Annotator {
     final PsiFile psiFile = holder.getCurrentAnnotationSession().getFile();
 
     for (DartServerData.DartError error : DartAnalysisServerService.getInstance().getErrors(file)) {
-      if (shouldIgnoreMessageFromDartAnalyzer(file.getPath(), error.getType(), error.getAnalysisErrorFileSD())) continue;
+      if (shouldIgnoreMessageFromDartAnalyzer(file.getPath(), error.getAnalysisErrorFileSD())) continue;
 
       final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
 

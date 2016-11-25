@@ -417,7 +417,6 @@ public class DartServerData {
   public static class DartError extends DartRegion {
     private final String myAnalysisErrorFileSD;
     private final String mySeverity;
-    private final String myType;
     @Nullable private final String myCode;
     private final String myMessage;
 
@@ -425,7 +424,6 @@ public class DartServerData {
       super(correctedOffset, correctedLength);
       myAnalysisErrorFileSD = error.getLocation().getFile().intern();
       mySeverity = error.getSeverity().intern();
-      myType = error.getType().intern();
       myCode = error.getCode() == null ? null : error.getCode().intern();
       myMessage = error.getMessage();
     }
@@ -436,10 +434,6 @@ public class DartServerData {
 
     public String getSeverity() {
       return mySeverity;
-    }
-
-    public String getType() {
-      return myType;
     }
 
     @Nullable

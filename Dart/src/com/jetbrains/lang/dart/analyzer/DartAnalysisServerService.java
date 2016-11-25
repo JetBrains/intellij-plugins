@@ -140,10 +140,22 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
+      final List<AnalysisError> errorsWithoutTodo = errors.isEmpty() ? Collections.emptyList() : new ArrayList<>(errors.size());
+      boolean hasProblems = false;
+
+      for (AnalysisError error : errors) {
+        if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity()) || AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
+          hasProblems = true;
+        }
+        if (!AnalysisErrorType.TODO.equals(error.getType())) {
+          errorsWithoutTodo.add(error);
+        }
+      }
+
       final boolean visible = myVisibleFiles.contains(filePathSD);
       final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
-      myServerData.computedErrors(filePathSI, errors, visible);
-      onErrorsUpdated(filePathSI, errors);
+      myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible);
+      onErrorsUpdated(filePathSI, errorsWithoutTodo, hasProblems);
 
       String fileName = PathUtil.getFileName(filePathSD);
       for (ProgressIndicator indicator : myProgressIndicators) {
@@ -183,7 +195,7 @@ public class DartAnalysisServerService {
       myServerData.onFlushedResults(filePaths);
 
       for (String filePath : filePaths) {
-        onErrorsUpdated(filePath, AnalysisError.EMPTY_LIST);
+        onErrorsUpdated(filePath, AnalysisError.EMPTY_LIST, false);
       }
     }
 
@@ -710,7 +722,7 @@ public class DartAnalysisServerService {
     return true;
   }
 
-  private void onErrorsUpdated(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+  private void onErrorsUpdated(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean hasProblems) {
     ApplicationManager.getApplication().runReadAction(() -> {
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
 
@@ -719,25 +731,17 @@ public class DartAnalysisServerService {
 
         if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
           DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
-          updateFilesWithErrorsSet(filePath, errors);
+          updateFilesWithErrorsSet(filePath, hasProblems);
         }
         else {
           DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
-          updateFilesWithErrorsSet(filePath, AnalysisError.EMPTY_LIST);
+          updateFilesWithErrorsSet(filePath, false);
         }
       }
     });
   }
 
-  private void updateFilesWithErrorsSet(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-    boolean hasProblems = false;
-    for (AnalysisError error : errors) {
-      if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity()) || AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
-        hasProblems = true;
-        break;
-      }
-    }
-
+  private void updateFilesWithErrorsSet(@NotNull final String filePath, final boolean hasProblems) {
     synchronized (myFilePathsWithErrors) {
       if (hasProblems) {
         if (myFilePathsWithErrors.add(filePath)) {
