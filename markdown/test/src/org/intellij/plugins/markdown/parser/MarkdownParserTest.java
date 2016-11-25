@@ -15,10 +15,13 @@
  */
 package org.intellij.plugins.markdown.parser;
 
+import com.intellij.lang.LanguageASTFactory;
 import com.intellij.testFramework.ParsingTestCase;
 import org.intellij.plugins.markdown.MarkdownTestingUtil;
 import org.intellij.plugins.markdown.highlighting.MarkdownColorSettingsPage;
+import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.intellij.plugins.markdown.lang.parser.MarkdownParserDefinition;
+import org.intellij.plugins.markdown.lang.psi.MarkdownASTFactory;
 
 import java.io.IOException;
 
@@ -26,6 +29,12 @@ public class MarkdownParserTest extends ParsingTestCase {
 
   public MarkdownParserTest() {
     super("parser", "md", true, new MarkdownParserDefinition());
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    addExplicitExtension(LanguageASTFactory.INSTANCE, MarkdownLanguage.INSTANCE, new MarkdownASTFactory());
   }
 
   @Override
