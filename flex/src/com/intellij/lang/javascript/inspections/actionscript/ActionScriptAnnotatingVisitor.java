@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameElementFix;
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameFileFix;
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
@@ -606,8 +605,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
 
     public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
-
       JSAttributeListWrapper w = new JSAttributeListWrapper(myNode.getAttributeList());
       w.overrideModifier(JSAttributeList.ModifierType.OVERRIDE, true);
       w.applyTo(myNode);

@@ -16,7 +16,6 @@
 
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -34,7 +33,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.JSChangeVisibilityUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,9 +97,6 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
           @Override
           public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             PsiElement anchor = descriptor.getPsiElement();
-            PsiFile containingFile = anchor.getContainingFile();
-            if (!FileModificationService.getInstance().prepareFileForWrite(containingFile)) return;
-
             JSChangeVisibilityUtil.setVisibility((JSAttributeListOwner)anchor.getParent(), JSAttributeList.AccessType.PACKAGE_LOCAL);
           }
         }

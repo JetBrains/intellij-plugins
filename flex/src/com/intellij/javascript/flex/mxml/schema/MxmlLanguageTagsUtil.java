@@ -1,6 +1,5 @@
 package com.intellij.javascript.flex.mxml.schema;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.IdeValidationHost;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.codeInsight.daemon.XmlErrorMessages;
@@ -326,7 +325,6 @@ public class MxmlLanguageTagsUtil {
     }
 
     public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
       final int offset = removeXmlAttribute(myAttribute);
       if (offset != -1) {
         editor.getCaretModel().moveToOffset(offset);
@@ -412,7 +410,7 @@ public class MxmlLanguageTagsUtil {
     }
 
     public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      if (!myRootTag.isValid() || !FileModificationService.getInstance().prepareFileForWrite(file)) return;
+      if (!myRootTag.isValid()) return;
 
       final Set<String> usedPrefixes = myRootTag.getLocalNamespaceDeclarations().keySet();
       int postfix = 1;
