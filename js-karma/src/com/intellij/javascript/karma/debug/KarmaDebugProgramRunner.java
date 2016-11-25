@@ -28,18 +28,27 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
+import com.intellij.util.Alarm;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import com.jetbrains.javascript.debugger.JavaScriptDebugProcess;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.debugger.connection.VmConnection;
+import org.jetbrains.wip.WipVm;
+import org.jetbrains.wip.protocol.runtime.CallFrameValue;
+import org.jetbrains.wip.protocol.runtime.ConsoleAPICalledEventData;
+import org.jetbrains.wip.protocol.runtime.ConsoleAPICalledEventDataType;
+import org.jetbrains.wip.protocol.runtime.StackTraceValue;
 
 public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
@@ -93,9 +102,11 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
               public XDebugProcess start(@NotNull XDebugSession session) {
                 JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
                 WebBrowser browser = debuggableWebBrowser.getWebBrowser();
-                JavaScriptDebugProcess<? extends VmConnection> debugProcess = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
+                JavaScriptDebugProcess<? extends VmConnection>
+                  debugProcess = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
                 debugProcess.setElementsInspectorEnabled(false);
                 debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
+                listenForCompletedMessage(debugProcess, karmaServer);
                 return debugProcess;
               }
             }
@@ -115,6 +126,31 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
         }
       });
     }
+  }
+
+  private static void listenForCompletedMessage(@NotNull JavaScriptDebugProcess<? extends VmConnection> debugProcess,
+                                                @NotNull KarmaServer karmaServer) {
+    String debugJsFileUrl = karmaServer.formatUrl("/debug.js");
+    debugProcess.getConnection().stateChanged(state -> {
+      WipVm vm = ObjectUtils.tryCast(debugProcess.getVm(), WipVm.class);
+      if (vm != null) {
+        vm.getCommandProcessor().getEventMap().add(ConsoleAPICalledEventData.TYPE, data -> {
+          if (data.type() == ConsoleAPICalledEventDataType.LOG) {
+            StackTraceValue trace = data.getStackTrace();
+            if (trace != null) {
+              CallFrameValue frame = ContainerUtil.getFirstItem(trace.callFrames());
+              if (frame != null && "window.__karma__.complete".equals(frame.functionName()) &&
+                  debugJsFileUrl.equals(frame.url())) {
+                // postpone closing connection to let "Skipped <N> test" message be printed in console
+                new Alarm(Alarm.ThreadToUse.SWING_THREAD).addRequest(() -> debugProcess.getConnection().detachAndClose(), 500);
+              }
+            }
+          }
+          return Unit.INSTANCE;
+        });
+      }
+      return Unit.INSTANCE;
+    });
   }
 
   private static DebuggableFileFinder getDebuggableFileFinder(@NotNull KarmaServer karmaServer) {

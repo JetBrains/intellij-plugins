@@ -20,7 +20,9 @@
     <orderEntry type="module" module-name="coverage-common" />
     <orderEntry type="module" module-name="webide-impl" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="module" module-name="wip-backend" />
+    <orderEntry type="module" module-name="wip-protocol" />
     <orderEntry type="module" module-name="script-debugger-ui" />
+    <orderEntry type="module" module-name="script-debugger-backend" />
   </component>
 </module>
-
