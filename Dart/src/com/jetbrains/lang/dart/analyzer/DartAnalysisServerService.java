@@ -125,7 +125,8 @@ public class DartAnalysisServerService {
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
   @NotNull private final Set<ProgressIndicator> myProgressIndicators = new THashSet<>(); // also used to wait/notify
 
-  @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
+  // errors hash is tracked to optimize error notification listener: do not handle equal notifications more than once
+  @NotNull private final TObjectIntHashMap<String> myFilePathsWithErrorsToErrorsHash = new TObjectIntHashMap<>();
   // how many files with errors are in this folder (recursively)
   @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
 
@@ -152,10 +153,17 @@ public class DartAnalysisServerService {
         }
       }
 
-      final boolean visible = myVisibleFiles.contains(filePathSD);
       final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
+
+      // TObjectIntHashMap returns 0 if there's no such entry, it's equivalent to empty error set for this file
+      final int oldHash = myFilePathsWithErrorsToErrorsHash.get(filePathSI);
+      final int newHash = errorsWithoutTodo.isEmpty() ? 0 : ensureNotZero(errorsWithoutTodo.hashCode());
+      // do nothing if errors are the same as were already handled previously
+      if (oldHash == newHash) return;
+
+      final boolean visible = myVisibleFiles.contains(filePathSD);
       myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible);
-      onErrorsUpdated(filePathSI, errorsWithoutTodo, hasProblems);
+      onErrorsUpdated(filePathSI, errorsWithoutTodo, hasProblems, newHash);
 
       String fileName = PathUtil.getFileName(filePathSD);
       for (ProgressIndicator indicator : myProgressIndicators) {
@@ -195,7 +203,7 @@ public class DartAnalysisServerService {
       myServerData.onFlushedResults(filePaths);
 
       for (String filePath : filePaths) {
-        onErrorsUpdated(filePath, AnalysisError.EMPTY_LIST, false);
+        onErrorsUpdated(filePath, AnalysisError.EMPTY_LIST, false, 0);
       }
     }
 
@@ -268,6 +276,10 @@ public class DartAnalysisServerService {
       }
     }
   };
+
+  private static int ensureNotZero(int i) {
+    return i == 0 ? Integer.MAX_VALUE : i;
+  }
 
   private void startShowingServerProgress(final Project project) {
     final Task.Backgroundable task = new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
@@ -722,7 +734,10 @@ public class DartAnalysisServerService {
     return true;
   }
 
-  private void onErrorsUpdated(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean hasProblems) {
+  private void onErrorsUpdated(@NotNull final String filePath,
+                               @NotNull final List<AnalysisError> errors,
+                               final boolean hasProblems,
+                               final int errorsHash) {
     ApplicationManager.getApplication().runReadAction(() -> {
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
 
@@ -731,20 +746,21 @@ public class DartAnalysisServerService {
 
         if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
           DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
-          updateFilesWithErrorsSet(filePath, hasProblems);
+          updateFilesWithErrorsSet(filePath, hasProblems, errorsHash);
         }
         else {
           DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
-          updateFilesWithErrorsSet(filePath, false);
+          updateFilesWithErrorsSet(filePath, false, errorsHash);
         }
       }
     });
   }
 
-  private void updateFilesWithErrorsSet(@NotNull final String filePath, final boolean hasProblems) {
-    synchronized (myFilePathsWithErrors) {
+  private void updateFilesWithErrorsSet(@NotNull final String filePath, final boolean hasProblems, final int errorsHash) {
+    synchronized (myFilePathsWithErrorsToErrorsHash) {
       if (hasProblems) {
-        if (myFilePathsWithErrors.add(filePath)) {
+        // if this file had no problems previously then increase error files counter for containing folders
+        if (myFilePathsWithErrorsToErrorsHash.put(filePath, errorsHash) == 0) {
           String parentPath = PathUtil.getParentPath(filePath);
           while (!parentPath.isEmpty()) {
             final int count = myFolderPathsWithErrors.get(parentPath); // returns zero if there were no path in the map
@@ -754,10 +770,11 @@ public class DartAnalysisServerService {
         }
       }
       else {
-        if (myFilePathsWithErrors.remove(filePath)) {
+        // if this file had problems previously, but not any more then decrease error files counter for containing folders
+        if (myFilePathsWithErrorsToErrorsHash.remove(filePath) != 0) {
           String parentPath = PathUtil.getParentPath(filePath);
           while (!parentPath.isEmpty()) {
-            final int count = myFolderPathsWithErrors.remove(parentPath); // returns zero if there were no path in the map
+            final int count = myFolderPathsWithErrors.remove(parentPath); // returns zero if there was no path in the map
             if (count > 1) {
               myFolderPathsWithErrors.put(parentPath, count - 1);
             }
@@ -770,7 +787,7 @@ public class DartAnalysisServerService {
 
   private void clearAllErrors(@NotNull final Collection<Project> projects) {
     synchronized (myFolderPathsWithErrors) {
-      myFilePathsWithErrors.clear();
+      myFilePathsWithErrorsToErrorsHash.clear();
       myFolderPathsWithErrors.clear();
     }
 
@@ -1538,8 +1555,10 @@ public class DartAnalysisServerService {
   }
 
   public boolean isFileWithErrors(@NotNull final VirtualFile file) {
-    synchronized (myFilePathsWithErrors) {
-      return file.isDirectory() ? myFolderPathsWithErrors.get(file.getPath()) > 0 : myFilePathsWithErrors.contains(file.getPath());
+    synchronized (myFilePathsWithErrorsToErrorsHash) {
+      return file.isDirectory()
+             ? myFolderPathsWithErrors.get(file.getPath()) > 0
+             : myFilePathsWithErrorsToErrorsHash.contains(file.getPath());
     }
   }
 
