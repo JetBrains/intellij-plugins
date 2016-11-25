@@ -1,10 +1,8 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -24,7 +22,6 @@ import java.util.List;
  * @author Roman.Chernyatchik
  */
 public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
-  private static final Logger LOG = Logger.getInstance(CucumberCreateExamplesSectionFix.class.getName());
 
   @NotNull
   public String getFamilyName() {
@@ -35,10 +32,6 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     final GherkinScenarioOutlineImpl outline = (GherkinScenarioOutlineImpl) descriptor.getPsiElement();
 
     final PsiFile featureFile = outline.getContainingFile();
-
-    if (!FileModificationService.getInstance().prepareFileForWrite(featureFile)) {
-      return;
-    }
 
     final String language = GherkinKeywordTable.getFeatureLanguage(featureFile);
     final GherkinKeywordTable keywordsTable = GherkinKeywordTable.getKeywordsTable(featureFile, project);
