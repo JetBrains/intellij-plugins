@@ -1,8 +1,12 @@
 package com.intellij.aws.cloudformation.model
 
-open class CfnNode()
+open class CfnNode() {
+  abstract fun dump(writer: Indent)
+}
 
-class CfnNameNode(val id: String) : CfnNode()
+class CfnNameNode(val id: String) : CfnNode() {
+
+}
 
 class CfnRootNode(
     val resourcesNode: CfnResourcesNode?

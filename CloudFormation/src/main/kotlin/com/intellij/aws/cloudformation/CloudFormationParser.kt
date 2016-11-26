@@ -359,12 +359,11 @@ class CloudFormationParser(private val myInspectionManager: InspectionManager, p
     return StringUtil.stripQuotesAroundValue(quoted)
   }
 
-  fun file(psiFile: PsiFile) {
+  fun file(psiFile: PsiFile): CfnRootNode {
     assert(CloudFormationPsiUtils.isCloudFormationFile(psiFile)) { psiFile.name + " is not a cfn file" }
 
-    val root = CloudFormationPsiUtils.getRootExpression(psiFile) ?: return
-
-    root(root)
+    val root = CloudFormationPsiUtils.getRootExpression(psiFile) ?: error("Could not get root expression")
+    return root(root)
   }
 
   companion object {
