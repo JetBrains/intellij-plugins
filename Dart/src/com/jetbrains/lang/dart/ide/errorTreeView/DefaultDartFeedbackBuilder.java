@@ -11,6 +11,8 @@ import static com.intellij.ide.actions.SendFeedbackAction.getDescription;
 
 public class DefaultDartFeedbackBuilder implements DartFeedbackBuilder {
 
+  public boolean isPromptRequired() { return false; }
+
   public String prompt() {
     return "Create issue on github?";
   }

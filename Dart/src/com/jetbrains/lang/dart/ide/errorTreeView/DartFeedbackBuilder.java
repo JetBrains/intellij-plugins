@@ -30,6 +30,11 @@ public interface DartFeedbackBuilder {
   }
 
   /**
+   * Whether it's necessary to prompt the user before submitting for this feedback provider.
+   */
+  default boolean isPromptRequired() { return true; }
+
+  /**
    * The prompt should indicate to the user where the issue report will be opened (eg github).
    *
    * @return The string to display in the confirmation dialog.

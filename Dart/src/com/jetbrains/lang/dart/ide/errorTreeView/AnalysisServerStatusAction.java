@@ -28,12 +28,16 @@ public class AnalysisServerStatusAction extends DumbAwareAction {
   public void actionPerformed(AnActionEvent e) {
     DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
 
-    if (MessageDialogBuilder.yesNo(builder.title(), builder.prompt())
-          .icon(Messages.getQuestionIcon())
-          .yesText(builder.label())
-          .show() == Messages.YES) {
-      builder.sendFeedback(e.getProject());
+    if (builder.isPromptRequired()) {
+      if (MessageDialogBuilder.yesNo(builder.title(), builder.prompt())
+            .icon(Messages.getQuestionIcon())
+            .yesText(builder.label())
+            .show() != Messages.YES) {
+        return;
+      }
     }
+
+    builder.sendFeedback(e.getProject());
   }
 
   public void update(AnActionEvent e) {
