@@ -1,23 +1,17 @@
 package com.intellij.lang.javascript.flex.flexunit.inspections;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.ide.DataManager;
-import com.intellij.lang.ASTNode;
+import com.intellij.codeInspection.RefactoringQuickFix;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.RefactoringActionHandlerFactory;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,47 +35,27 @@ public class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspect
     }
 
     if (!ProjectRootManager.getInstance(aClass.getProject()).getFileIndex().isInTestSourceContent(file)) {
-      final ASTNode nameIdentifier = aClass.findNameIdentifier();
+      final PsiElement nameIdentifier = aClass.getNameIdentifier();
       if (nameIdentifier != null) {
-        LocalQuickFix[] fixes = holder.isOnTheFly() ? new LocalQuickFix[]{new MoveClassFix(aClass)} : LocalQuickFix.EMPTY_ARRAY;
-        holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testclassinproductsource.message"),
+        final LocalQuickFix[] fixes = holder.isOnTheFly() ? new LocalQuickFix[]{new MoveClassFix()} : LocalQuickFix.EMPTY_ARRAY;
+        holder.registerProblem(nameIdentifier, FlexBundle.message("flexunit.inspection.testclassinproductsource.message"),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);
       }
     }
   }
 
-  private class MoveClassFix implements LocalQuickFix, IntentionAction {
-    private final JSClass myClass;
+  private static class MoveClassFix implements RefactoringQuickFix {
 
-    public MoveClassFix(JSClass aClass) {
-      myClass = aClass;
-    }
-
+    @Override
     @NotNull
     public String getFamilyName() {
-      return getText();
-    }
-
-    @NotNull
-    public String getText() {
       return "Move class";
     }
 
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-      return myClass.isValid();
-    }
-
-    public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      ApplicationManager.getApplication().invokeLater(() -> RefactoringActionHandlerFactory.getInstance().createMoveHandler()
-        .invoke(project, editor, file, DataManager.getInstance().getDataContext()));
-    }
-
-    public boolean startInWriteAction() {
-      return false;
-    }
-
-    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      invoke(project, null, descriptor.getPsiElement().getContainingFile());
+    @NotNull
+    @Override
+    public RefactoringActionHandler getHandler() {
+      return RefactoringActionHandlerFactory.getInstance().createMoveHandler();
     }
   }
 }
