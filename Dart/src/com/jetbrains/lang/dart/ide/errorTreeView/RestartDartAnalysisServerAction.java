@@ -14,7 +14,7 @@ public class RestartDartAnalysisServerAction extends DumbAwareAction {
   public RestartDartAnalysisServerAction() {
     super(DartBundle.message("dart.restart.server.action.name"),
           DartBundle.message("dart.restart.server.action.name"),
-          AllIcons.Actions.ForceRefresh); // AllIcons.Actions.Restart, AllIcons.Actions.ForceRefresh
+          AllIcons.Actions.Restart); // AllIcons.Actions.Restart, AllIcons.Actions.ForceRefresh
   }
 
   @Override
