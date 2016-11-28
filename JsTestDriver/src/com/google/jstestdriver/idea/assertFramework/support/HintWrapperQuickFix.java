@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Sergey Simonchik
@@ -92,10 +93,10 @@ public class HintWrapperQuickFix implements LocalQuickFix, HintAction {
     myDelegate.invoke(project, editor, file);
   }
 
-  @NotNull
+  @Nullable
   @Override
-  public boolean shouldMakeCurrentFileWritable() {
-    return myDelegate.shouldMakeCurrentFileWritable();
+  public PsiElement getElementToMakeWritable(@NotNull PsiFile file) {
+    return myDelegate.getElementToMakeWritable(file);
   }
 
   @Override
