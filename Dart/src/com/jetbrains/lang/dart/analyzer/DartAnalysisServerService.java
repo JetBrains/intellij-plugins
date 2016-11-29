@@ -141,6 +141,11 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
+      final String fileName = PathUtil.getFileName(filePathSD);
+      for (ProgressIndicator indicator : myProgressIndicators) {
+        indicator.setText(DartBundle.message("dart.analysis.progress.with.file", fileName));
+      }
+
       final List<AnalysisError> errorsWithoutTodo = errors.isEmpty() ? Collections.emptyList() : new ArrayList<>(errors.size());
       boolean hasProblems = false;
 
@@ -164,11 +169,6 @@ public class DartAnalysisServerService {
       final boolean visible = myVisibleFiles.contains(filePathSD);
       myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible);
       onErrorsUpdated(filePathSI, errorsWithoutTodo, hasProblems, newHash);
-
-      String fileName = PathUtil.getFileName(filePathSD);
-      for (ProgressIndicator indicator : myProgressIndicators) {
-        indicator.setText(DartBundle.message("dart.analysis.progress.with.file", fileName));
-      }
     }
 
     @Override
