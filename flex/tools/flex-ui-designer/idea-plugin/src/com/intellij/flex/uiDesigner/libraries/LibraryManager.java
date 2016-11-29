@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.AttachmentFactory;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
@@ -15,6 +14,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -167,10 +167,6 @@ public class LibraryManager implements Disposable {
     client.fillAssetClassPoolIfNeed(flexLibrarySet);
 
     module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-      @Override
-      public void beforeRootsChange(ModuleRootEvent event) {
-      }
-
       @Override
       public void rootsChanged(ModuleRootEvent event) {
         new Notification(FlashUIDesignerBundle.message("plugin.name"), FlashUIDesignerBundle.message("plugin.name"),
