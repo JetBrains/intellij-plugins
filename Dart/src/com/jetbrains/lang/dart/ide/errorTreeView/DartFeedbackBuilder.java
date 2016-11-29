@@ -2,6 +2,8 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageDialogBuilder;
+import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
  * send issues to the flutter project on github.
  */
 public interface DartFeedbackBuilder {
+  int MAX_URL_LENGTH = 4000;
+
   ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
 
   @NotNull
@@ -46,9 +50,28 @@ public interface DartFeedbackBuilder {
   }
 
   /**
+   * Set the text of the message to be optionally included in the report.
+   *
+   * @param message
+   */
+  default void setMessage(String message) {
+  }
+
+  /**
    * Perform the action required to send feedback.
    *
    * @param project the current project
    */
   void sendFeedback(@Nullable Project project);
+
+  /**
+   * Display a standard query dialog and return the user's response.
+   */
+  default boolean showQuery(String message) {
+    return
+      (MessageDialogBuilder.yesNo(title(), message == null ? prompt() : message + "\n" + prompt())
+         .icon(Messages.getQuestionIcon())
+         .yesText(label())
+         .show() == Messages.YES);
+  }
 }

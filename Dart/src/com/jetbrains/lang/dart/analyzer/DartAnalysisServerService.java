@@ -49,6 +49,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.HtmlUtil;
@@ -58,6 +59,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
@@ -99,6 +101,9 @@ public class DartAnalysisServerService {
 
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
+  private static final String STACK_TRACE_MARKER = "#0";
+  private static final long MIN_DISRUPTION_TIME = 10000L; // 10 seconds minimum between error report queries
+  private static final int MAX_DISRUPTIONS_PER_SESSION = 5; // Do not annoy the user too many times
 
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
@@ -131,6 +136,7 @@ public class DartAnalysisServerService {
   @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
 
   public long maxMillisToWaitForServerResponse = 0L;
+  @NotNull private final InteractiveErrorReporter myErrorReporter = new InteractiveErrorReporter();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -240,9 +246,11 @@ public class DartAnalysisServerService {
         return;
       }
 
-      LOG.error("Dart analysis server, SDK version " + mySdkVersion +
-                ", server version " + myServerVersion +
-                ", " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace);
+      String errorMessage =
+        "Dart analysis server, SDK version " + mySdkVersion +
+        ", server version " + myServerVersion +
+        ", " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace;
+      myErrorReporter.report(errorMessage); // TODO(messick): Collect server request/response traffic and add to error message.
 
       if (isFatal) {
         stopServer();
@@ -1645,6 +1653,63 @@ public class DartAnalysisServerService {
       this.id = id;
       this.results = results;
       this.isLast = isLast;
+    }
+  }
+
+  /**
+   * Ask the user to report an error in the analysis server, subject to these constraints:
+   * - The same message is not reported twice in a row
+   * - The user is not interrupted too often
+   */
+  private static class InteractiveErrorReporter {
+
+    @NotNull private QueueProcessor<Runnable> myErrorReporter = QueueProcessor.createRunnableQueueProcessor();
+    private long myPreviousTime;
+    @NotNull private String myPreviousMessage = "";
+    private int myDisruptionCount = 0;
+
+    public void report(@NotNull String errorMessage) {
+      if (myDisruptionCount > MAX_DISRUPTIONS_PER_SESSION) return;
+      long timeStamp = System.currentTimeMillis();
+      if (timeStamp - myPreviousTime < MIN_DISRUPTION_TIME) {
+        if (messageDiffers(errorMessage)) {
+          LOG.error(errorMessage);
+          if (myDisruptionCount > 0) {
+            myDisruptionCount++; // The red flashing icon is somewhat disruptive, but we only count if the user has already been queried.
+          }
+        }
+        return;
+      }
+      myPreviousTime = timeStamp;
+      if (messageDiffers(errorMessage)) {
+        myErrorReporter.add(() -> {
+          DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
+          builder.setMessage(errorMessage);
+
+          final boolean[] reportIt = new boolean[1];
+          myDisruptionCount++;
+          ApplicationManager.getApplication().invokeAndWait(() -> {
+            reportIt[0] = builder.showQuery(DartBundle.message("dart.analysis.server.error"));
+            myPreviousTime = System.currentTimeMillis();
+          });
+          if (reportIt[0]) {
+            builder.sendFeedback(null);
+          }
+          else {
+            LOG.error(errorMessage);
+          }
+        });
+      }
+      myPreviousMessage = errorMessage;
+    }
+
+    private boolean messageDiffers(@NotNull String errorMessage) {
+      int prevIdx = myPreviousMessage.indexOf(STACK_TRACE_MARKER);
+      if (prevIdx < 0) return !errorMessage.equals(myPreviousMessage);
+      int errIdx = errorMessage.indexOf(STACK_TRACE_MARKER);
+      if (errIdx < 0) return !errorMessage.equals(myPreviousMessage);
+      // Compare Dart stack traces
+      return !errorMessage.substring(errIdx).equals(myPreviousMessage.substring(prevIdx));
     }
   }
 }

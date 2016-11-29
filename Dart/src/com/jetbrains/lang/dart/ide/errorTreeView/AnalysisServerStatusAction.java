@@ -27,11 +27,7 @@ public class AnalysisServerStatusAction extends DumbAwareAction {
   @Override
   public void actionPerformed(AnActionEvent e) {
     DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
-
-    if (MessageDialogBuilder.yesNo(builder.title(), builder.prompt())
-          .icon(Messages.getQuestionIcon())
-          .yesText(builder.label())
-          .show() == Messages.YES) {
+    if (builder.showQuery(null)) {
       builder.sendFeedback(e.getProject());
     }
   }
