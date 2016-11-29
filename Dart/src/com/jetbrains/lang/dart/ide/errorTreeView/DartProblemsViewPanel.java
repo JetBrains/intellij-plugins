@@ -53,6 +53,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Should we subclass from SimpleToolWindowPanel (like the TodoPanel)?
+
+// TODO: We have a double border in this view - other panels (todo, console) don't.
+
 public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyProvider {
 
   private static final long DEFAULT_SERVER_WAIT_MILLIS = 5000L; // Switch to UNKNOWN after 5s with no response.
@@ -175,11 +179,6 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   }
 
   private static void addReanalyzeActions(@NotNull final DefaultActionGroup group) {
-    final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
-    if (reanalyzeAction != null) {
-      group.add(reanalyzeAction);
-    }
-
     final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
     if (restartAction != null) {
       group.add(restartAction);
