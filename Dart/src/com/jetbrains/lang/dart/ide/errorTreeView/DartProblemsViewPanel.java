@@ -175,11 +175,6 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   }
 
   private static void addReanalyzeActions(@NotNull final DefaultActionGroup group) {
-    final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
-    if (reanalyzeAction != null) {
-      group.add(reanalyzeAction);
-    }
-
     final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
     if (restartAction != null) {
       group.add(restartAction);
