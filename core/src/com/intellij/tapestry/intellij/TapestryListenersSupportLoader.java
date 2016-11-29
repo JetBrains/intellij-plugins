@@ -6,8 +6,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.psi.*;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
@@ -118,7 +118,7 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     });
 
     MessageBusConnection connection = myProject.getMessageBus().connect(myProject);
-    connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+    connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       public void rootsChanged(ModuleRootEvent event) {
         for (Module module : ModuleManager.getInstance((Project)event.getSource()).getModules()) {
           if (!TapestryUtils.isTapestryModule(module)) {
