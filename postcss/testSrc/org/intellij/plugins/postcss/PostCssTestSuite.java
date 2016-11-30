@@ -7,6 +7,7 @@ import org.intellij.plugins.postcss.completion.PostCssCustomMediaCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssCustomPropertiesSetCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssCustomSelectorCompletionTest;
 import org.intellij.plugins.postcss.completion.PostCssNestCompletionTest;
+import org.intellij.plugins.postcss.editor.PostCssCopyrightTest;
 import org.intellij.plugins.postcss.editor.breadcrumbs.PostCssBreadcrumbsTest;
 import org.intellij.plugins.postcss.fileStructure.PostCssFileStructureTest;
 import org.intellij.plugins.postcss.inspections.*;
@@ -112,6 +113,7 @@ public class PostCssTestSuite extends TestCase {
       suite.addTestSuite(PostCssSmartEnterTest.class);
       suite.addTestSuite(PostCssIncrementalParserTest.class);
       suite.addTestSuite(PostCssGotoSymbolTest.class);
+      suite.addTestSuite(PostCssCopyrightTest.class);
       return suite;
     }
   }

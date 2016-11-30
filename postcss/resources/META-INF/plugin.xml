@@ -28,6 +28,7 @@
   </description>
   <depends>com.intellij.css</depends>
   <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="postcss-copyright.xml">com.intellij.copyright</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <css.dialect implementation="org.intellij.plugins.postcss.PostCssDialect"/>

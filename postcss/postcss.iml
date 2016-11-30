@@ -20,5 +20,6 @@
     <orderEntry type="module" module-name="xml" exported="" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
     <orderEntry type="module" module-name="CSS" scope="TEST" />
+    <orderEntry type="module" module-name="copyright" scope="TEST" />
   </component>
 </module>
