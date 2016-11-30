@@ -1,0 +1,7 @@
+// SplitDeclarationAndInitialization:false
+class Dummy {
+    private var some<caret>String:String = "foobar";
+
+    function Dummy() {
+    }
+}

@@ -13,5 +13,6 @@
     <orderEntry type="module" module-name="flex" />
     <orderEntry type="module" module-name="flex-shared" />
     <orderEntry type="module" module-name="util-tests" scope="TEST" />
+    <orderEntry type="module" module-name="JSIntentionPowerPack" />
   </component>
 </module>

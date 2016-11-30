@@ -1,0 +1,2 @@
+/** Doc comment */
+var va<caret>l:int = 1
