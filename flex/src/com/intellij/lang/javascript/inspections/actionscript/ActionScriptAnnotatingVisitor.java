@@ -607,7 +607,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
       JSAttributeListWrapper w = new JSAttributeListWrapper(myNode.getAttributeList());
       w.overrideModifier(JSAttributeList.ModifierType.OVERRIDE, true);
-      w.applyTo(myNode);
+      w.applyTo(myNode, myNode.getAttributeList());
     }
 
     public boolean startInWriteAction() {
