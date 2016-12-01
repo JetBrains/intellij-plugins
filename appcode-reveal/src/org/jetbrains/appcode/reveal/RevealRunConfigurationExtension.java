@@ -15,7 +15,10 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
@@ -354,7 +357,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     boolean isAvailable;
 
     @Override
-    protected void resetEditorFrom(AppCodeRunConfiguration s) {
+    protected void resetEditorFrom(@NotNull AppCodeRunConfiguration s) {
       RevealSettings settings = getRevealSettings(s);
 
       myInjectCheckBox.setSelected(settings.autoInject);
@@ -387,7 +390,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
 
     @Override
-    protected void applyEditorTo(AppCodeRunConfiguration s) throws ConfigurationException {
+    protected void applyEditorTo(@NotNull AppCodeRunConfiguration s) throws ConfigurationException {
       RevealSettings settings = getRevealSettings(s);
 
       settings.autoInject = myInjectCheckBox.isSelected();

@@ -70,7 +70,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   }
 
   @Override
-  protected void resetEditorFrom(PhoneGapRunConfiguration s) {
+  protected void resetEditorFrom(@NotNull PhoneGapRunConfiguration s) {
 
     String executable = s.getExecutable();
     PhoneGapUtil.setFieldWithHistoryWithBrowseButtonPath(myExecutablePathField,
@@ -123,7 +123,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   }
 
   @Override
-  protected void applyEditorTo(PhoneGapRunConfiguration persistentSettings) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull PhoneGapRunConfiguration persistentSettings) throws ConfigurationException {
     persistentSettings.setExecutable(myExecutablePathField.getText());
     String item = (String)myPlatformField.getSelectedItem();
     persistentSettings.setPlatform(item);

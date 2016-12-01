@@ -122,11 +122,11 @@ public class AnyApplication implements ConfigurationType {
     }
 
     @Override
-    protected void resetEditorFrom(final AnyApplicationConfiguration s) {
+    protected void resetEditorFrom(@NotNull final AnyApplicationConfiguration s) {
     }
 
     @Override
-    protected void applyEditorTo(final AnyApplicationConfiguration s) throws ConfigurationException {
+    protected void applyEditorTo(@NotNull final AnyApplicationConfiguration s) throws ConfigurationException {
     }
 
     @Override
