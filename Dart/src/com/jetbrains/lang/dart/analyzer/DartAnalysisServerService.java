@@ -1684,8 +1684,6 @@ public class DartAnalysisServerService {
       if (messageDiffers(errorMessage)) {
         myErrorReporter.add(() -> {
           DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
-          builder.setMessage(errorMessage);
-
           final boolean[] reportIt = new boolean[1];
           myDisruptionCount++;
           ApplicationManager.getApplication().invokeAndWait(() -> {
@@ -1693,7 +1691,7 @@ public class DartAnalysisServerService {
             myPreviousTime = System.currentTimeMillis();
           });
           if (reportIt[0]) {
-            builder.sendFeedback(null);
+            builder.sendFeedback(null, errorMessage);
           }
           else {
             LOG.error(errorMessage);
