@@ -28,4 +28,7 @@ public interface DartMethodDeclaration extends DartComponent {
   @Nullable
   DartStringLiteralExpression getStringLiteralExpression();
 
+  @Nullable
+  DartTypeParameters getTypeParameters();
+
 }

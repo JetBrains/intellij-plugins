@@ -289,7 +289,7 @@ private functionNative ::= 'native' (stringLiteralExpression ';' | ';' | stringL
 
 methodDeclaration ::= metadata* ('external' | 'static' | 'const')* methodDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartMethodDeclarationImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-private methodDeclarationPrivate ::= returnType <<methodNameWrapper>> formalParameterList | <<methodNameWrapper>> formalParameterList // todo remove, use functionSignature as in spec
+private methodDeclarationPrivate ::= returnType <<methodNameWrapper>> typeParameters? formalParameterList | <<methodNameWrapper>> typeParameters? formalParameterList // todo remove, use functionSignature as in spec
 
 namedConstructorDeclaration ::= metadata* ('external' | 'const')* componentName '.' componentName formalParameterList initializers? (';' | functionBodyOrNative | redirection)?
 {pin=6 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent" methods = [getComponentName]}
@@ -342,7 +342,7 @@ formalParameterList ::= '(' ')' |
                         '(' optionalFormalParameters ')'
 private normalFormalParameters ::= normalFormalParameter (',' normalFormalParameter)*
 
-fieldFormalParameter ::= metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
+fieldFormalParameter ::= metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression typeParameters? formalParameterList?
 
 optionalFormalParameters ::= optionalPositionalFormalParameters (',' namedFormalParameters)? | namedFormalParameters
 private optionalPositionalFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']'
@@ -561,7 +561,7 @@ private callOrArrayAccessOrQualifiedRefExpression ::= (callExpression | arrayAcc
 
 private refOrThisOrSuperOrParenExpression ::= (referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>)
 
-left callExpression ::= <<argumentsWrapper>>
+left callExpression ::= typeArguments? <<argumentsWrapper>>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference" methods = [getArguments]}
 left arrayAccessExpression ::= arrayAccess
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
@@ -615,14 +615,14 @@ mapLiteralExpression ::= 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLi
 mapLiteralEntry ::= expression ':' expression {recoverWhile="map_literal_entry_recover"}
 private map_literal_entry_recover ::= !(',' | '}')
 
-functionExpression ::= formalParameterList functionExpressionBody
+functionExpression ::= typeParameters? formalParameterList functionExpressionBody
 {mixin="com.jetbrains.lang.dart.psi.impl.DartFunctionExpressionBase"}
 functionSignature ::= metadata* functionDeclarationPrivate
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-private functionDeclarationPrivate ::= returnType componentName formalParameterList | componentName formalParameterList // todo remove, use functionSignature as in spec
-functionDeclarationWithBodyOrNative ::= metadata* 'external'? (returnType componentName formalParameterList | componentName formalParameterList) ( ';' | functionBodyOrNative)
+private functionDeclarationPrivate ::= returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList // todo remove, use functionSignature as in spec
+functionDeclarationWithBodyOrNative ::= metadata* 'external'? (returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList) ( ';' | functionBodyOrNative)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-functionDeclarationWithBody ::= metadata*  (returnType componentName formalParameterList | componentName formalParameterList) functionBody // todo merge with functionDeclarationWithBodyOrNative
+functionDeclarationWithBody ::= metadata*  (returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList) functionBody // todo merge with functionDeclarationWithBodyOrNative
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 functionBody ::= arrowBodyWithSemi | <<blockBodyWrapper>> {methods=[getBlock]}

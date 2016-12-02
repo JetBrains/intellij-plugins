@@ -19,4 +19,7 @@ public interface DartFunctionSignature extends DartComponent {
   @Nullable
   DartReturnType getReturnType();
 
+  @Nullable
+  DartTypeParameters getTypeParameters();
+
 }
