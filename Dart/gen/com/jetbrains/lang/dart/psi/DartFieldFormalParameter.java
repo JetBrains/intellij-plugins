@@ -19,4 +19,7 @@ public interface DartFieldFormalParameter extends DartPsiCompositeElement {
   @Nullable
   DartType getType();
 
+  @Nullable
+  DartTypeParameters getTypeParameters();
+
 }

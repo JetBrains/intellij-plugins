@@ -50,4 +50,10 @@ public class DartFunctionSignatureImpl extends AbstractDartComponentImpl impleme
     return findChildByClass(DartReturnType.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
+  }
+
 }
