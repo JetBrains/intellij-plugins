@@ -1,7 +1,6 @@
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.CommandLineBuilder;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.SimpleJavaParameters;
@@ -183,7 +182,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     params.setMainClass("com.intellij.flex.maven.GeneratorServer");
 
-    final GeneralCommandLine commandLine = CommandLineBuilder.createFromJavaParameters(params);
+    final GeneralCommandLine commandLine = params.toCommandLine();
     commandLine.setRedirectErrorStream(true);
     LOG.info("Generate Flex Configs Task:" + commandLine.getCommandLineString());
 
