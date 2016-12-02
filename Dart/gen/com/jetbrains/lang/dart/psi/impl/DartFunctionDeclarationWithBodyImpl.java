@@ -56,4 +56,10 @@ public class DartFunctionDeclarationWithBodyImpl extends AbstractDartComponentIm
     return findChildByClass(DartReturnType.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
+  }
+
 }
