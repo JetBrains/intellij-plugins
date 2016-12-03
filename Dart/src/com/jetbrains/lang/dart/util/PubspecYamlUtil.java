@@ -13,9 +13,7 @@ import com.intellij.util.PairConsumer;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Dumper;
 import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Loader;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -158,12 +156,12 @@ public class PubspecYamlUtil {
     // see com.google.dart.tools.core.utilities.yaml.PubYamlUtils#parsePubspecYamlToMap()
     // deprecated constructor used to be compatible with old snakeyaml version in testng.jar (it wins when running from sources or tests)
     //noinspection deprecation
-    final Yaml yaml = new Yaml(new Loader(new Constructor()), new Dumper(new Representer(), new DumperOptions()), new Resolver() {
+    final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new Resolver() {
       @Override
       protected void addImplicitResolvers() {
         addImplicitResolver(Tag.NULL, NULL, "~nN\0");
         addImplicitResolver(Tag.NULL, EMPTY, null);
-        addImplicitResolver(Tag.VALUE, VALUE, "=");
+        addImplicitResolver(new Tag(Tag.PREFIX + "value"), VALUE, "=");
         addImplicitResolver(Tag.MERGE, MERGE, "<");
       }
     });
