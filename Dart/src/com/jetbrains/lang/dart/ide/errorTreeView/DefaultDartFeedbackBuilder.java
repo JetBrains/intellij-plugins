@@ -24,10 +24,10 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     boolean eap = appInfo.isEAP();
     String ijBuild = eap ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
     String sdkVsn = getSdkVersion(project);
-    String platDescr = getDescription().replaceAll(";", " ");
+    String platDescr = getDescription().replaceAll(";", " ").trim();
     String template = DartBundle.message("dart.feedback.url.template", ijBuild, sdkVsn, platDescr);
     if (errorMessage != null) {
-      errorMessage = "```dart\n" + errorMessage + "```";
+      errorMessage = "```\n" + errorMessage + "```";
       String potentialTemplate = template + "\n\n" + errorMessage;
       if (potentialTemplate.length() <= MAX_URL_LENGTH) {
         template = potentialTemplate;
