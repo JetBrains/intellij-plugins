@@ -16,7 +16,7 @@ import static com.intellij.ide.actions.SendFeedbackAction.getDescription;
 public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
 
   public String prompt() {
-    return "Create issue on github?";
+    return "Create an issue on GitHub?";
   }
 
   public void sendFeedback(@Nullable Project project, @Nullable String errorMessage) {
