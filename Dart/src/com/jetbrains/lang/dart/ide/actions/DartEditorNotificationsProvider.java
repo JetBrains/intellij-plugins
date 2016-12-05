@@ -109,7 +109,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       createActionLabel(DartBundle.message("get.dependencies"), "Dart.pub.get");
       createActionLabel(DartBundle.message("upgrade.dependencies"), "Dart.pub.upgrade");
       createActionLabel("Build...", "Dart.pub.build");
-      myLinksPanel.add(new JLabel("        "));
+      myLinksPanel.add(new JSeparator(SwingConstants.VERTICAL));
       createActionLabel("Repair cache...", "Dart.pub.cache.repair");
     }
   }
