@@ -34,7 +34,7 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TableSpeedSearch;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.content.Content;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.jetbrains.lang.dart.DartBundle;
@@ -59,12 +59,12 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
 
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
-  @NotNull private JBLabel mySummaryLabel = new JBLabel();
 
   // TODO: Remember settings and filters in workspace.xml. (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
 
   @NotNull private final DartProblemsFilter myFilter;
+  private Content myContent;
 
   public DartProblemsViewPanel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
     super(new BorderLayout());
@@ -74,6 +74,8 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     myTable = createTable();
     add(createToolbar(), BorderLayout.WEST);
     add(createCenterPanel(), BorderLayout.CENTER);
+
+    DartAnalysisServerService.getInstance().maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
   }
 
   @NotNull
@@ -147,31 +149,13 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   private JPanel createCenterPanel() {
     final JPanel panel = new JPanel(new BorderLayout());
     panel.add(ScrollPaneFactory.createScrollPane(myTable), BorderLayout.CENTER);
-    panel.add(createStatusBar(), BorderLayout.SOUTH);
     return panel;
   }
 
-  @NotNull
-  private JPanel createStatusBar() {
-    final JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-    panel.add(mySummaryLabel);
-    mySummaryLabel.setText("");
-
-    final JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-    DefaultActionGroup group = new DefaultActionGroup(new AnalysisServerStatusAction());
-    ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, group, true);
-    p.add(actionToolbar.getComponent());
-    panel.add(p);
-
-    DartAnalysisServerService.getInstance().maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
-
-    return panel;
-  }
-
-  private void updateStatusBar() {
-    mySummaryLabel.setText(((DartProblemsTableModel)myTable.getModel()).getStatusText());
-    mySummaryLabel.setCopyable(true);
+  private void updateStatusDescription() {
+    if (myContent != null) {
+      myContent.setDisplayName(((DartProblemsTableModel)myTable.getModel()).getStatusText());
+    }
   }
 
   private static void addReanalyzeActions(@NotNull final DefaultActionGroup group) {
@@ -220,7 +204,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   void fireGroupingOrFilterChanged() {
     myTable.getRowSorter().allRowsChanged();
     ((DartProblemsTableModel)myTable.getModel()).onFilterChanged();
-    updateStatusBar();
+    updateStatusDescription();
   }
 
   private void showFiltersPopup() {
@@ -324,12 +308,16 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       myTable.setSelection(Collections.singletonList(updatedSelectedProblem));
     }
 
-    updateStatusBar();
+    updateStatusDescription();
   }
 
   public void clearAll() {
     ((DartProblemsTableModel)myTable.getModel()).removeAll();
-    updateStatusBar();
+    updateStatusDescription();
+  }
+
+  public void setContent(Content content) {
+    myContent = content;
   }
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
