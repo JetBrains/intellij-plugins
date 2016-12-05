@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
@@ -153,12 +153,11 @@ public class PubspecYamlUtil {
 
   @Nullable
   private static Map<String, Object> loadPubspecYamlInfo(final @NotNull String pubspecYamlFileContents) {
-    // see com.google.dart.tools.core.utilities.yaml.PubYamlUtils#parsePubspecYamlToMap()
-    // deprecated constructor used to be compatible with old snakeyaml version in testng.jar (it wins when running from sources or tests)
-    //noinspection deprecation
-    final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new Resolver() {
+    // see com.google.dart.tools.core.utilities.yaml.PubYamlUtils#parsePubspecYamlToMap() [https://github.com/dart-lang/eclipse3]
+    final Yaml yaml = new Yaml(new SafeConstructor(), new Representer(), new DumperOptions(), new Resolver() {
       @Override
       protected void addImplicitResolvers() {
+        addImplicitResolver(Tag.BOOL, BOOL, "yYnNtTfFoO");
         addImplicitResolver(Tag.NULL, NULL, "~nN\0");
         addImplicitResolver(Tag.NULL, EMPTY, null);
         addImplicitResolver(new Tag(Tag.PREFIX + "value"), VALUE, "=");
