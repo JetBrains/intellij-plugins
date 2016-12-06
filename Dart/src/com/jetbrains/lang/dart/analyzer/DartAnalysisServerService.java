@@ -166,8 +166,12 @@ public class DartAnalysisServerService {
 
       final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
 
-      // TObjectIntHashMap returns 0 if there's no such entry, it's equivalent to empty error set for this file
-      final int oldHash = myFilePathsWithErrorsToErrorsHash.get(filePathSI);
+      final int oldHash;
+      synchronized (myFilePathsWithErrorsToErrorsHash) {
+        // TObjectIntHashMap returns 0 if there's no such entry, it's equivalent to empty error set for this file
+        oldHash = myFilePathsWithErrorsToErrorsHash.get(filePathSI);
+      }
+
       final int newHash = errorsWithoutTodo.isEmpty() ? 0 : ensureNotZero(errorsWithoutTodo.hashCode());
       // do nothing if errors are the same as were already handled previously
       if (oldHash == newHash) return;
@@ -747,6 +751,8 @@ public class DartAnalysisServerService {
                                final boolean hasProblems,
                                final int errorsHash) {
     ApplicationManager.getApplication().runReadAction(() -> {
+      updateFilesWithErrorsSet(filePath, hasProblems, errorsHash);
+
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
 
       for (final Project project : myRootsHandler.getTrackedProjects()) {
@@ -754,11 +760,9 @@ public class DartAnalysisServerService {
 
         if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
           DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
-          updateFilesWithErrorsSet(filePath, hasProblems, errorsHash);
         }
         else {
           DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
-          updateFilesWithErrorsSet(filePath, false, errorsHash);
         }
       }
     });
