@@ -39,7 +39,7 @@ module.exports = function(config) {
   // https://github.com/karma-runner/karma-intellij/issues/9
   config.exclude = config.exclude || [];
   config.exclude.push(originalConfigPath);
-
+  require('./karma-intellij-debug').initCustomDebugFile(config);
 
   // remove 'logLevel' changing as soon as
   // https://github.com/karma-runner/karma/issues/614 is ready
