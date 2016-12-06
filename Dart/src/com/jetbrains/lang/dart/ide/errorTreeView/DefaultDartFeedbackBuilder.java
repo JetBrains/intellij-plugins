@@ -16,7 +16,7 @@ import static com.intellij.ide.actions.SendFeedbackAction.getDescription;
 public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
 
   public String prompt() {
-    return "Create issue on github?";
+    return "Create an issue on GitHub?";
   }
 
   public void sendFeedback(@Nullable Project project, @Nullable String errorMessage) {
@@ -24,10 +24,10 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     boolean eap = appInfo.isEAP();
     String ijBuild = eap ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
     String sdkVsn = getSdkVersion(project);
-    String platDescr = getDescription().replaceAll(";", " ");
+    String platDescr = getDescription().replaceAll(";", " ").trim();
     String template = DartBundle.message("dart.feedback.url.template", ijBuild, sdkVsn, platDescr);
     if (errorMessage != null) {
-      errorMessage = "```dart\n" + errorMessage + "```";
+      errorMessage = "```\n" + errorMessage + "```";
       String potentialTemplate = template + "\n\n" + errorMessage;
       if (potentialTemplate.length() <= MAX_URL_LENGTH) {
         template = potentialTemplate;
