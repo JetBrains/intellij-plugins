@@ -92,8 +92,11 @@
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler"/>
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJS2IndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
-    <inheritedLanguagesConfigurableProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
+    <inheritedLanguagesConfigurableProvider language="AngularJS"
+                                            implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
     <elementScopeProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSResolveScopeProvider"/>
+    <LanguageServiceProvider implementation="org.angularjs.service.Angular2LanguageServiceProvider"/>
+    <LanguageServiceFilter implementation="org.angularjs.service.Angular2LanguageServiceFilter"/>
   </extensions>
 
   <actions>
@@ -103,4 +106,10 @@
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
   </actions>
+
+  <project-components>
+    <component>
+      <implementation-class>org.angularjs.service.Angular2HighlightingPassFactory</implementation-class>
+    </component>
+  </project-components>
 </idea-plugin>

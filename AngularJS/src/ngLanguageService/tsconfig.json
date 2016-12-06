@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "outDir": "../../gen/ngLanguageService"
+  },
+  "compileOnSave": false,
+  "include": [
+    "**/*.ts"
+  ]
+}
