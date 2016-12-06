@@ -25,7 +25,6 @@ public class FlexIcons {
     public static final Icon Flexunit = load("/images/flex/flexunit.png"); // 16x16
     
     public static class Sdk {
-      public static final Icon Air = load("/images/flex/sdk/air.png"); // 16x16
       public static final Icon Flex_sdk = load("/images/flex/sdk/flex_sdk.png"); // 16x16
       public static final Icon MavenFlex = load("/images/flex/sdk/mavenFlex.png"); // 16x16
 
