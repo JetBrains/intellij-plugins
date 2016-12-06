@@ -25,8 +25,6 @@ var AngularLanguagePluginFactory = (function () {
                 if (typeof requiredObject == "function") {
                     pluginEntryPoint = requiredObject();
                 }
-                console.error("Kinds: " + JSON.stringify(ts_impl.SyntaxKind));
-                console.error("text:" + JSON.stringify(pluginEntryPoint));
                 var PluginClass = pluginEntryPoint.default;
                 extendEx(ts_impl, "createLanguageService", function (oldFunction, args) {
                     var languageService = oldFunction.apply(_this, args);

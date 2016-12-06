@@ -1,9 +1,10 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
+import {TypeScriptLanguagePlugin} from "./typings/typescript/ts-plugin";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: any): {languagePlugin: LanguagePlugin, readyMessage?: any } {
         let fixedPath = state.typescriptPluginPath;
-        const TypeScriptLanguagePluginImpl: {new(state): LanguagePlugin} = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin
+        const TypeScriptLanguagePluginImpl: {new(state): TypeScriptLanguagePlugin} = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin
         const getSession = require(fixedPath + "ts-session-provider.js").getSession
         const createSessionClass = require(fixedPath + "ts-session.js").createSessionClass
 
@@ -13,7 +14,7 @@ class AngularLanguagePluginFactory implements LanguagePluginFactory {
                 super(state);
             }
 
-            protected getSession(ts_impl: any,
+            protected getSession(ts_impl: typeof ts,
                                  loggerImpl: any,
                                  commonDefaultOptions: any,
                                  pathProcessor: any,
@@ -27,11 +28,7 @@ class AngularLanguagePluginFactory implements LanguagePluginFactory {
                     pluginEntryPoint = requiredObject();
                 }
 
-                console.error("Kinds: " + JSON.stringify(ts_impl.SyntaxKind));
-
-                console.error("text:" + JSON.stringify(pluginEntryPoint))
                 let PluginClass: typeof LanguageServicePlugin = pluginEntryPoint.default;
-
 
                 extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
                     let languageService = oldFunction.apply(this, args);
@@ -52,7 +49,7 @@ class AngularLanguagePluginFactory implements LanguagePluginFactory {
 
                 abstract class AngularSession extends sessionClass {
 
-                    appendPluginDiagnostics(project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] {
+                    appendPluginDiagnostics(project: ts.server.Project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] {
                         let languageService = project != null ? this.getLanguageService(project) : null;
                         if (!languageService) {
                             return diags;
@@ -78,8 +75,8 @@ class AngularLanguagePluginFactory implements LanguagePluginFactory {
                                 code: -1,
                                 messageText: "Angular Language Service internal error: " + err.message,
                                 start: 0,
-                                length:0,
-                                category:ts_impl.DiagnosticCategory.Error
+                                length: 0,
+                                category: ts_impl.DiagnosticCategory.Error
                             })
                         }
 
