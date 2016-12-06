@@ -35,6 +35,7 @@ import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.lang.javascript.inspections.actionscript.JSFieldCanBeLocalInspection;
 import com.intellij.lang.javascript.inspections.actionscript.JSUntypedDeclarationInspection;
 import com.intellij.lang.javascript.psi.*;
@@ -691,7 +692,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testEmbedInNodes() throws Exception {
-    enableInspectionTool(new com.sixrr.inspectjs.style.UnterminatedStatementJSInspection());
+    enableInspectionTool(new UnterminatedStatementJSInspection());
     final String testName = getTestName(false);
     final Collection<HighlightInfo> infoCollection = doTestFor(true, testName + ".mxml");
     findAndInvokeIntentionAction(infoCollection, "Terminate statement", myEditor, myFile);
