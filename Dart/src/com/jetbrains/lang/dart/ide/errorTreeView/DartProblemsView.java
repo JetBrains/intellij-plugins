@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.Alarm;
@@ -94,6 +95,8 @@ public class DartProblemsView {
 
       final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
       toolWindow.getContentManager().addContent(content);
+      ((ToolWindowEx)toolWindow).setTitleActions(new AnalysisServerStatusAction());
+      myPanel.setContent(content);
 
       if (PropertiesComponent.getInstance(project).getBoolean("dart.analysis.tool.window.force.activate", true)) {
         PropertiesComponent.getInstance(project).setValue("dart.analysis.tool.window.force.activate", false, true);
