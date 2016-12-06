@@ -1,5 +1,6 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
 import {TypeScriptLanguagePlugin} from "./typings/typescript/ts-plugin";
+import {init} from "./syntax-kind";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: any): {languagePlugin: LanguagePlugin, readyMessage?: any } {
@@ -29,6 +30,8 @@ class AngularLanguagePluginFactory implements LanguagePluginFactory {
                 }
 
                 let PluginClass: typeof LanguageServicePlugin = pluginEntryPoint.default;
+
+                init(ts_impl);
 
                 extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
                     let languageService = oldFunction.apply(this, args);
