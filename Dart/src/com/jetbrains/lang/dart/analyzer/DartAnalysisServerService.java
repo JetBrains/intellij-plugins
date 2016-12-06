@@ -201,7 +201,7 @@ public class DartAnalysisServerService {
 
     @Override
     public void flushedResults(@NotNull final List<String> _filePaths) {
-      final List<String> filePaths = new ArrayList<>(_filePaths);
+      final List<String> filePaths = new ArrayList<>(_filePaths.size());
       for (String path : _filePaths) {
         filePaths.add(FileUtil.toSystemIndependentName(path));
       }
