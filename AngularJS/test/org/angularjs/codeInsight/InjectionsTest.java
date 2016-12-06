@@ -15,7 +15,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
-import com.sixrr.inspectjs.style.UnterminatedStatementJSInspection;
+import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.lang.AngularJSLanguage;
