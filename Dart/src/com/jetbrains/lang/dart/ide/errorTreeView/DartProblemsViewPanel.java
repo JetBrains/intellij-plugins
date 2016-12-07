@@ -24,6 +24,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -53,7 +54,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyProvider {
+public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
 
   private static final long DEFAULT_SERVER_WAIT_MILLIS = 5000L; // Switch to UNKNOWN after 5s with no response.
 
@@ -67,13 +68,13 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   private Content myContent;
 
   public DartProblemsViewPanel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
-    super(new BorderLayout());
+    super(false, true);
     myProject = project;
     myFilter = filter;
 
     myTable = createTable();
-    add(createToolbar(), BorderLayout.WEST);
-    add(createCenterPanel(), BorderLayout.CENTER);
+    setToolbar(createToolbar());
+    setContent(createCenterPanel());
 
     DartAnalysisServerService.getInstance().maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
   }
@@ -113,6 +114,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
                                           ? ((DartProblem)object).getErrorMessage() + " " + ((DartProblem)object).getPresentableLocation()
                                           : "");
 
+    table.setShowVerticalLines(false);
     return table;
   }
 
@@ -316,7 +318,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     updateStatusDescription();
   }
 
-  public void setContent(Content content) {
+  void setContent(Content content) {
     myContent = content;
   }
 
