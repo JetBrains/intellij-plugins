@@ -20,10 +20,10 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 //error
                 return diags;
             }
-            if (!diags) {
-                diags = [];
-            }
             try {
+                if (!diags) {
+                    diags = [];
+                }
                 var semanticDiagnosticsFilter = plugin.getSemanticDiagnosticsFilter(normalizedFileName, diags);
                 return semanticDiagnosticsFilter;
             }

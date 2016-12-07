@@ -4,7 +4,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var syntax_kind_1 = require("./syntax-kind");
 var angular_session_1 = require("./angular-session");
 var AngularLanguagePluginFactory = (function () {
     function AngularLanguagePluginFactory() {
@@ -28,7 +27,6 @@ var AngularLanguagePluginFactory = (function () {
                     pluginEntryPoint = requiredObject();
                 }
                 var PluginClass = pluginEntryPoint.default;
-                syntax_kind_1.init(ts_impl);
                 extendEx(ts_impl, "createLanguageService", function (oldFunction, args) {
                     var languageService = oldFunction.apply(_this, args);
                     var host = args[0];

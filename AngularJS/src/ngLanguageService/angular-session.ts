@@ -16,11 +16,10 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                 return diags;
             }
 
-            if (!diags) {
-                diags = [];
-            }
-
             try {
+                if (!diags) {
+                    diags = [];
+                }
                 let semanticDiagnosticsFilter = plugin.getSemanticDiagnosticsFilter(normalizedFileName, diags);
                 return semanticDiagnosticsFilter;
             } catch (err) {
