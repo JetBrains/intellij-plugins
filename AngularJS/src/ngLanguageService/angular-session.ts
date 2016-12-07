@@ -1,6 +1,6 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
 
-export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new(state): IDETypeScriptSession}) {
+export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new(state: TypeScriptPluginState): IDETypeScriptSession}) {
 
     abstract class AngularSession extends sessionClass {
 
