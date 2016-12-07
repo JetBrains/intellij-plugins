@@ -9,6 +9,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.DefinitionsScopedSearch;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -39,10 +42,13 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
 
     if (fileRef.isNull() || offsetRef.isNull() || componentTypeRef.isNull()) return;
 
-    final List<TypeHierarchyItem> hierarchyItems =
-      DartAnalysisServerService.getInstance().search_getTypeHierarchy(fileRef.get(), offsetRef.get(), false);
-
     ApplicationManager.getApplication().runReadAction(() -> {
+      final List<TypeHierarchyItem> hierarchyItems = CachedValuesManager.getCachedValue(parameters.getElement(), () -> {
+        final List<TypeHierarchyItem> items =
+          DartAnalysisServerService.getInstance().search_getTypeHierarchy(fileRef.get(), offsetRef.get(), false);
+        return new CachedValueProvider.Result<>(items, PsiModificationTracker.MODIFICATION_COUNT);
+      });
+
       final List<DartComponent> components = componentTypeRef.get() == DartComponentType.CLASS
                                              ? getSubClasses(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems)
                                              : getSubMembers(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems);
