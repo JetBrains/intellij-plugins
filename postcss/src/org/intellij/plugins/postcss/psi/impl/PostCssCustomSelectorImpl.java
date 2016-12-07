@@ -1,7 +1,6 @@
 package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.css.util.CssPsiUtil;
-import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
@@ -13,6 +12,7 @@ import com.intellij.psi.css.impl.stubs.base.CssNamedStub;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElement;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElementType;
 import com.intellij.util.IncorrectOperationException;
+import icons.PostcssIcons;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +63,7 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
   @Nullable
   @Override
   public Icon getIcon(int flags) {
-    return AllIcons.Css.Pseudo_class;
+    return PostcssIcons.Custom_selectors;
   }
 
   @Override

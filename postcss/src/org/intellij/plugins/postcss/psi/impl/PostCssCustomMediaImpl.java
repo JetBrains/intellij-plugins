@@ -10,9 +10,13 @@ import com.intellij.psi.css.impl.stubs.base.CssNamedStub;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElement;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElementType;
 import com.intellij.util.IncorrectOperationException;
+import icons.PostcssIcons;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class PostCssCustomMediaImpl extends CssNamedStubElement<CssNamedStub<PostCssCustomMedia>> implements PostCssCustomMedia {
   public PostCssCustomMediaImpl(@NotNull CssNamedStub<PostCssCustomMedia> stub, @NotNull CssNamedStubElementType nodeType) {
@@ -46,5 +50,11 @@ public class PostCssCustomMediaImpl extends CssNamedStubElement<CssNamedStub<Pos
   @Override
   public ItemPresentation getPresentation() {
     return new CssNamedItemPresentation(this);
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon(int flags) {
+    return PostcssIcons.Custom_media;
   }
 }
