@@ -30,7 +30,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     messageText: "Angular Language Service internal error: " + err.message,
                     start: 0,
                     length: 0,
-                    category: ts_impl.DiagnosticCategory.Warning
+                    category: 0
                 })
             }
 
