@@ -1,6 +1,7 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
 import {TypeScriptLanguagePlugin} from "./typings/typescript/ts-plugin";
 import {init} from "./syntax-kind";
+import {createAngularSessionClass} from "./angular-session";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: any): {languagePlugin: LanguagePlugin, readyMessage?: any } {
@@ -50,44 +51,9 @@ class AngularLanguagePluginFactory implements LanguagePluginFactory {
                 });
 
 
-                abstract class AngularSession extends sessionClass {
+                let angularSession = createAngularSessionClass(ts_impl, sessionClass);
 
-                    appendPluginDiagnostics(project: ts.server.Project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] {
-                        let languageService = project != null ? this.getLanguageService(project) : null;
-                        if (!languageService) {
-                            return diags;
-                        }
-                        let plugin: LanguageServicePlugin = languageService["angular-plugin"];
-                        if (!plugin) {
-                            //error
-
-                            return diags;
-                        }
-
-                        if (!diags) {
-                            diags = [];
-                        }
-
-                        try {
-                            let semanticDiagnosticsFilter = plugin.getSemanticDiagnosticsFilter(normalizedFileName, diags);
-                            return semanticDiagnosticsFilter;
-                        } catch (err) {
-                            console.log('Error processing angular templates ' + err.message + '\n' + err.stack);
-                            diags.push({
-                                file: null,
-                                code: -1,
-                                messageText: "Angular Language Service internal error: " + err.message,
-                                start: 0,
-                                length: 0,
-                                category: ts_impl.DiagnosticCategory.Error
-                            })
-                        }
-
-                        return diags;
-                    }
-                }
-
-                return getSession(ts_impl, loggerImpl, commonDefaultOptions, mainFile, projectEmittedWithAllFiles, AngularSession);
+                return getSession(ts_impl, loggerImpl, commonDefaultOptions, mainFile, projectEmittedWithAllFiles, angularSession);
             }
         }
 

@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var syntax_kind_1 = require("./syntax-kind");
+var angular_session_1 = require("./angular-session");
 var AngularLanguagePluginFactory = (function () {
     function AngularLanguagePluginFactory() {
     }
@@ -40,44 +41,8 @@ var AngularLanguagePluginFactory = (function () {
                     });
                     return languageService;
                 });
-                var AngularSession = (function (_super) {
-                    __extends(AngularSession, _super);
-                    function AngularSession() {
-                        _super.apply(this, arguments);
-                    }
-                    AngularSession.prototype.appendPluginDiagnostics = function (project, diags, normalizedFileName) {
-                        var languageService = project != null ? this.getLanguageService(project) : null;
-                        if (!languageService) {
-                            return diags;
-                        }
-                        var plugin = languageService["angular-plugin"];
-                        if (!plugin) {
-                            //error
-                            return diags;
-                        }
-                        if (!diags) {
-                            diags = [];
-                        }
-                        try {
-                            var semanticDiagnosticsFilter = plugin.getSemanticDiagnosticsFilter(normalizedFileName, diags);
-                            return semanticDiagnosticsFilter;
-                        }
-                        catch (err) {
-                            console.log('Error processing angular templates ' + err.message + '\n' + err.stack);
-                            diags.push({
-                                file: null,
-                                code: -1,
-                                messageText: "Angular Language Service internal error: " + err.message,
-                                start: 0,
-                                length: 0,
-                                category: ts_impl.DiagnosticCategory.Error
-                            });
-                        }
-                        return diags;
-                    };
-                    return AngularSession;
-                }(sessionClass));
-                return getSession(ts_impl, loggerImpl, commonDefaultOptions, mainFile, projectEmittedWithAllFiles, AngularSession);
+                var angularSession = angular_session_1.createAngularSessionClass(ts_impl, sessionClass);
+                return getSession(ts_impl, loggerImpl, commonDefaultOptions, mainFile, projectEmittedWithAllFiles, angularSession);
             };
             return AngularLanguagePlugin;
         }(TypeScriptLanguagePluginImpl));
