@@ -6,6 +6,9 @@ import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.injected.editor.VirtualFileWindow;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -24,6 +27,7 @@ import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -40,16 +44,25 @@ public class DartServerCompletionContributor extends CompletionContributor {
   public DartServerCompletionContributor() {
     extend(CompletionType.BASIC,
            or(psiElement().withLanguage(DartLanguage.INSTANCE),
+              psiElement().inFile(psiFile().withLanguage(HTMLLanguage.INSTANCE)),
               psiElement().inFile(psiFile().withName(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS))),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters parameters,
                                            @NotNull final ProcessingContext context,
                                            @NotNull final CompletionResultSet originalResultSet) {
-               final VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
+               VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
+               if (file instanceof VirtualFileWindow) {
+                 file = ((VirtualFileWindow)file).getDelegate();
+               }
+
                if (file == null) return;
 
                final Project project = parameters.getOriginalFile().getProject();
+
+               if (file.getFileType() == HtmlFileType.INSTANCE && PubspecYamlUtil.findPubspecYamlFile(project, file) == null) {
+                 return;
+               }
 
                final DartSdk sdk = DartSdk.getDartSdk(project);
                if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
