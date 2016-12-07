@@ -69,9 +69,11 @@ function createPluginClass(state) {
                     }
                 }
                 ts_impl["ide_processed"] = true;
+                //clean resources
+                var name_1 = require.resolve(tsPath);
+                delete require.cache[name_1];
             }
             catch (err) {
-                ts_impl["ide_processed"] = false;
             }
         };
         return AngularLanguagePlugin;

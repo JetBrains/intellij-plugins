@@ -88,8 +88,12 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                 }
 
                 ts_impl["ide_processed"] = true;
+
+                //clean resources
+                let name = require.resolve(tsPath);
+                delete require.cache[name];
             } catch (err) {
-                ts_impl["ide_processed"] = false;
+                //do nothing
             }
 
 
