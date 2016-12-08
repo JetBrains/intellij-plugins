@@ -106,11 +106,14 @@ public class BndProjectImporter {
     }
   };
 
+  private static boolean isUnitTestMode() {
+    return ApplicationManager.getApplication().isUnitTestMode();
+  }
+
   private final com.intellij.openapi.project.Project myProject;
   private final Workspace myWorkspace;
   private final Collection<Project> myProjects;
   private final Map<String, String> mySourcesMap = ContainerUtil.newTroveMap(FileUtil.PATH_HASHING_STRATEGY);
-  private final boolean myUnitTestMode = ApplicationManager.getApplication().isUnitTestMode();
 
   public BndProjectImporter(@NotNull com.intellij.openapi.project.Project project,
                             @NotNull Workspace workspace,
@@ -147,8 +150,8 @@ public class BndProjectImporter {
     javacOptions.ADDITIONAL_OPTIONS_STRING = myWorkspace.getProperty("java.options", "");
   }
 
-  public void resolve(final boolean refresh) {
-    if (!myUnitTestMode) {
+  public void resolve(boolean refresh) {
+    if (!isUnitTestMode()) {
       new Task.Backgroundable(myProject, message("bnd.import.resolve.task"), true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
@@ -158,7 +161,7 @@ public class BndProjectImporter {
               if (refresh) {
                 VirtualFileManager.getInstance().asyncRefresh(null);
               }
-            }, ModalityState.NON_MODAL);
+            }, ModalityState.NON_MODAL, BndProjectImporter.this.myProject.getDisposed());
           }
         }
       }.queue();
@@ -485,7 +488,7 @@ public class BndProjectImporter {
   }
 
   private void checkErrors(Project project, Exception e) {
-    if (!myUnitTestMode) {
+    if (!isUnitTestMode()) {
       String text;
       LOG.warn(e);
       text = message("bnd.import.resolve.error", project.getName(), e.getMessage());
@@ -498,7 +501,7 @@ public class BndProjectImporter {
 
   private void checkWarnings(Project project, List<String> warnings, boolean error) {
     if (warnings != null && !warnings.isEmpty()) {
-      if (!myUnitTestMode) {
+      if (!isUnitTestMode()) {
         LOG.warn(warnings.toString());
         String text = message("bnd.import.warn.text", project.getName(), "<br>" + StringUtil.join(warnings, "<br>"));
         NotificationType type = error ? NotificationType.ERROR : NotificationType.WARNING;
@@ -553,39 +556,82 @@ public class BndProjectImporter {
   }
 
   public static void reimportWorkspace(@NotNull com.intellij.openapi.project.Project project) {
+    if (!isUnitTestMode()) {
+      new Task.Backgroundable(project, message("bnd.reimport.task"), true) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          doReimportWorkspace(project, indicator);
+        }
+      }.queue();
+    }
+    else {
+      doReimportWorkspace(project, null);
+    }
+  }
+
+  private static void doReimportWorkspace(com.intellij.openapi.project.Project project, ProgressIndicator indicator) {
     Workspace workspace = getWorkspace(project);
     assert workspace != null : project;
 
+    Collection<Project> projects;
     try {
       workspace.clear();
       workspace.forceRefresh();
 
-      refreshRepositories(workspace);
+      refreshRepositories(workspace, indicator);
 
-      Collection<Project> projects = getWorkspaceProjects(workspace);
+      projects = getWorkspaceProjects(workspace);
       for (Project p : projects) {
+        if (indicator != null) indicator.checkCanceled();
         p.clear();
         p.forceRefresh();
       }
-
-      BndProjectImporter importer = new BndProjectImporter(project, workspace, projects);
-      importer.setupProject();
-      importer.resolve(true);
     }
     catch (Exception e) {
       LOG.error("ws=" + workspace.getBase(), e);
+      return;
+    }
+
+    Runnable task = () -> {
+      BndProjectImporter importer = new BndProjectImporter(project, workspace, projects);
+      importer.setupProject();
+      importer.resolve(true);
+    };
+    if (!isUnitTestMode()) {
+      ApplicationManager.getApplication().invokeLater(task, ModalityState.NON_MODAL, project.getDisposed());
+    }
+    else {
+      task.run();
     }
   }
 
   public static void reimportProjects(@NotNull com.intellij.openapi.project.Project project, @NotNull Collection<String> projectDirs) {
+    if (!isUnitTestMode()) {
+      new Task.Backgroundable(project, message("bnd.reimport.task"), true) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          doReimportProjects(project, projectDirs, indicator);
+        }
+      }.queue();
+    }
+    else {
+      doReimportProjects(project, projectDirs, null);
+    }
+  }
+
+  private static void doReimportProjects(com.intellij.openapi.project.Project project,
+                                         Collection<String> projectDirs,
+                                         ProgressIndicator indicator) {
     Workspace workspace = getWorkspace(project);
     assert workspace != null : project;
 
+    Collection<Project> projects;
     try {
-      refreshRepositories(workspace);
+      refreshRepositories(workspace, indicator);
 
-      Collection<Project> projects = ContainerUtil.newArrayListWithCapacity(projectDirs.size());
+      projects = ContainerUtil.newArrayListWithCapacity(projectDirs.size());
       for (String dir : projectDirs) {
+        if (indicator != null) indicator.checkCanceled();
         Project p = workspace.getProject(PathUtil.getFileName(dir));
         if (p != null) {
           p.clear();
@@ -593,17 +639,25 @@ public class BndProjectImporter {
           projects.add(p);
         }
       }
-
-      new BndProjectImporter(project, workspace, projects).resolve(true);
     }
     catch (Exception e) {
       LOG.error("ws=" + workspace.getBase() + " pr=" + projectDirs, e);
+      return;
+    }
+
+    Runnable task = () -> new BndProjectImporter(project, workspace, projects).resolve(true);
+    if (!isUnitTestMode()) {
+      ApplicationManager.getApplication().invokeLater(task, ModalityState.NON_MODAL, project.getDisposed());
+    }
+    else {
+      task.run();
     }
   }
 
-  private static void refreshRepositories(Workspace workspace) {
+  private static void refreshRepositories(Workspace workspace, ProgressIndicator indicator) {
     List<RepositoryPlugin> plugins = workspace.getPlugins(RepositoryPlugin.class);
     for (RepositoryPlugin plugin : plugins) {
+      if (indicator != null) indicator.checkCanceled();
       if (plugin instanceof Refreshable) {
         try {
           ((Refreshable)plugin).refresh();
