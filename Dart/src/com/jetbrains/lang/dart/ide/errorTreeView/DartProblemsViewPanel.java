@@ -61,16 +61,18 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
 
-  // TODO: Remember settings and filters in workspace.xml. (see ErrorTreeViewConfiguration)
-  private boolean myAutoScrollToSource = false;
-
+  @NotNull private DartProblemsViewSettings mySettings;
   @NotNull private final DartProblemsFilter myFilter;
+
   private Content myContent;
 
-  public DartProblemsViewPanel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
+  public DartProblemsViewPanel(@NotNull final Project project,
+                               @NotNull final DartProblemsFilter filter,
+                               @NotNull DartProblemsViewSettings settings) {
     super(false, true);
     myProject = project;
     myFilter = filter;
+    mySettings = settings;
 
     myTable = createTable();
     setToolbar(createToolbar());
@@ -171,12 +173,12 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     final AutoScrollToSourceHandler autoScrollToSourceHandler = new AutoScrollToSourceHandler() {
       @Override
       protected boolean isAutoScrollMode() {
-        return myAutoScrollToSource;
+        return mySettings.autoScrollToSource;
       }
 
       @Override
       protected void setAutoScrollMode(boolean autoScrollToSource) {
-        myAutoScrollToSource = autoScrollToSource;
+        mySettings.autoScrollToSource = autoScrollToSource;
       }
     };
 
@@ -320,6 +322,10 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   void setContent(Content content) {
     myContent = content;
+  }
+
+  void updateFromSettings(DartProblemsViewSettings settings) {
+    mySettings = settings;
   }
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
