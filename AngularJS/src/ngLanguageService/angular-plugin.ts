@@ -1,6 +1,7 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
 import {TypeScriptLanguagePlugin} from "./typings/typescript/ts-plugin";
 import {createAngularSessionClass} from "./angular-session";
+import {LanguageService, LanguageServiceHost} from "./typings/types";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: AngularTypeScriptPluginState): {languagePlugin: LanguagePlugin, readyMessage?: any } {
@@ -39,30 +40,28 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             let sessionClass: {new(state): IDETypeScriptSession} = createSessionClass(ts_impl, loggerImpl, commonDefaultOptions, pathProcessor, projectEmittedWithAllFiles, mainFile)
 
             let requiredObject = require(state.ngServicePath);
-            let pluginEntryPoint = requiredObject;
+            let ng = requiredObject;
             if (typeof requiredObject == "function") {
                 let obj: any = {}
                 if (ts_impl["ide_processed"]) {
                     obj.typescript = ts_impl;
                     console.error("Passed processed ts_impl")
                 }
-                pluginEntryPoint = requiredObject(obj);
+                ng = requiredObject(obj);
             }
 
-            let PluginClass: typeof LanguageServicePlugin = pluginEntryPoint.default;
 
             extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
                 let languageService = oldFunction.apply(this, args);
                 let host = args[0];
                 let documentRegistry = args[1];
 
+                let ngHost = new ng.TypeScriptServiceHost(host, languageService);
+                let ngService: LanguageService = ng.createLanguageService(ngHost);
+                ngHost.setSite(ngService);
 
-                languageService["angular-plugin"] = new PluginClass({
-                    ts: ts_impl,
-                    host,
-                    service: languageService,
-                    registry: documentRegistry
-                });
+                languageService["ngService"] = ngService
+                languageService["ngHost"] = ngHost;
 
                 return languageService;
 

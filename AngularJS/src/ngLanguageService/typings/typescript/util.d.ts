@@ -2,7 +2,7 @@ export declare function initCommandNames(TypeScriptCommandNames: typeof ts.serve
 export declare abstract class IDETypeScriptSession extends ts.server.Session {
     getChangeSeq(): number;
     updateProjectStructureEx(): void;
-    abstract refreshStructureEx(): void;
+    refreshStructureEx(): void;
     abstract closeClientFileEx(normalizedFileName: string): void;
     updateFilesEx(args: ts.server.protocol.IDEUpdateFilesContentArgs): Response;
     abstract changeFileEx(fileName: string, content: string, tsconfig?: string): void;
@@ -13,6 +13,8 @@ export declare abstract class IDETypeScriptSession extends ts.server.Session {
         response: any;
         responseRequired: boolean;
     };
+
+    logMessage(text: string, force?: boolean);
     abstract lineOffsetToPosition(project: ts.server.Project, fileName: string, line: number, offset: number): number;
     getLanguageService(project: ts.server.Project): ts.LanguageService;
     getDiagnosticsEx(fileNames: string[], commonProject?: ts.server.Project, reqOpen?: boolean): ts.server.protocol.DiagnosticEventBody[];

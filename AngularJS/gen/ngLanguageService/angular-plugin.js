@@ -32,26 +32,24 @@ function createPluginClass(state) {
             var _this = this;
             var sessionClass = createSessionClass(ts_impl, loggerImpl, commonDefaultOptions, pathProcessor, projectEmittedWithAllFiles, mainFile);
             var requiredObject = require(state.ngServicePath);
-            var pluginEntryPoint = requiredObject;
+            var ng = requiredObject;
             if (typeof requiredObject == "function") {
                 var obj = {};
                 if (ts_impl["ide_processed"]) {
                     obj.typescript = ts_impl;
                     console.error("Passed processed ts_impl");
                 }
-                pluginEntryPoint = requiredObject(obj);
+                ng = requiredObject(obj);
             }
-            var PluginClass = pluginEntryPoint.default;
             extendEx(ts_impl, "createLanguageService", function (oldFunction, args) {
                 var languageService = oldFunction.apply(_this, args);
                 var host = args[0];
                 var documentRegistry = args[1];
-                languageService["angular-plugin"] = new PluginClass({
-                    ts: ts_impl,
-                    host: host,
-                    service: languageService,
-                    registry: documentRegistry
-                });
+                var ngHost = new ng.TypeScriptServiceHost(host, languageService);
+                var ngService = ng.createLanguageService(ngHost);
+                ngHost.setSite(ngService);
+                languageService["ngService"] = ngService;
+                languageService["ngHost"] = ngHost;
                 return languageService;
             });
             var angularSession = angular_session_1.createAngularSessionClass(ts_impl, sessionClass);
