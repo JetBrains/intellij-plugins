@@ -115,6 +115,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
                                           : "");
 
     table.setShowVerticalLines(false);
+    table.setShowHorizontalLines(false);
+    table.setMinRowHeight(20);
     return table;
   }
 
