@@ -68,6 +68,11 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     return ourInProgress.get();
   }
 
+  @SuppressWarnings("unused") // Used by Flutter Plugin.
+  public static void setIsInProgress(boolean inProgress) {
+    ourInProgress.set(inProgress);
+  }
+
   @Override
   public void update(@NotNull final AnActionEvent e) {
     //e.getPresentation().setText(getTitle());  "Pub: Build..." action name set in plugin.xml is different from its "Pub: Build" title
