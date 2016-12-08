@@ -74,15 +74,13 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
         }
 
         overrideSysDefaults(ts_impl: typeof ts, state: TypeScriptPluginState, serverFile: string) {
-            super.overrideSysDefaults(ts_impl, state, serverFile);
-
             const path = require('path');
             let tsPath = path.join(state.serverFolderPath, 'typescript.js');
             try {
-                let ts2 = require(tsPath);
-                for (let prop in ts2) {
-                    if (ts2.hasOwnProperty(prop) && !ts_impl.hasOwnProperty(prop)) {
-                        ts_impl[prop] = ts2[prop];
+                let tsWithConstants = require(tsPath);
+                for (let prop in tsWithConstants) {
+                    if (tsWithConstants.hasOwnProperty(prop)) {
+                        ts_impl[prop] = tsWithConstants[prop];
                     }
                 }
 
@@ -96,6 +94,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             }
 
 
+            super.overrideSysDefaults(ts_impl, state, serverFile);
         }
     }
 

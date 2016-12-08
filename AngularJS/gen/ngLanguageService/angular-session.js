@@ -28,7 +28,6 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             var ngHost = this.getNgHost(languageService);
             if (ngHost.updateAnalyzedModules) {
                 ngHost.updateAnalyzedModules();
-                this.logMessage("Updated ng project");
             }
         };
         AngularSession.prototype.getNgLanguageService = function (languageService) {

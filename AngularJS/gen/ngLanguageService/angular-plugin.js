@@ -56,14 +56,13 @@ function createPluginClass(state) {
             return getSession(ts_impl, loggerImpl, commonDefaultOptions, mainFile, projectEmittedWithAllFiles, angularSession);
         };
         AngularLanguagePlugin.prototype.overrideSysDefaults = function (ts_impl, state, serverFile) {
-            _super.prototype.overrideSysDefaults.call(this, ts_impl, state, serverFile);
             var path = require('path');
             var tsPath = path.join(state.serverFolderPath, 'typescript.js');
             try {
-                var ts2 = require(tsPath);
-                for (var prop in ts2) {
-                    if (ts2.hasOwnProperty(prop) && !ts_impl.hasOwnProperty(prop)) {
-                        ts_impl[prop] = ts2[prop];
+                var tsWithConstants = require(tsPath);
+                for (var prop in tsWithConstants) {
+                    if (tsWithConstants.hasOwnProperty(prop)) {
+                        ts_impl[prop] = tsWithConstants[prop];
                     }
                 }
                 ts_impl["ide_processed"] = true;
@@ -73,6 +72,7 @@ function createPluginClass(state) {
             }
             catch (err) {
             }
+            _super.prototype.overrideSysDefaults.call(this, ts_impl, state, serverFile);
         };
         return AngularLanguagePlugin;
     }(TypeScriptLanguagePluginImpl));

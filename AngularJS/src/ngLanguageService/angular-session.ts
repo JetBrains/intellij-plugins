@@ -26,7 +26,6 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
             let ngHost: any = this.getNgHost(languageService);
             if (ngHost.updateAnalyzedModules) {
                 ngHost.updateAnalyzedModules();
-                this.logMessage("Updated ng project");
             }
         }
 
