@@ -38,6 +38,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -117,6 +118,10 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
                                           : "");
 
     table.setShowVerticalLines(false);
+    table.setShowHorizontalLines(false);
+    table.setStriped(true);
+    table.setRowHeight(table.getRowHeight() + JBUI.scale(4));
+
     return table;
   }
 
