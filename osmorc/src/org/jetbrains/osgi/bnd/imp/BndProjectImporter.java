@@ -29,7 +29,6 @@ import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
@@ -161,7 +160,7 @@ public class BndProjectImporter {
               if (refresh) {
                 VirtualFileManager.getInstance().asyncRefresh(null);
               }
-            }, ModalityState.NON_MODAL, BndProjectImporter.this.myProject.getDisposed());
+            }, BndProjectImporter.this.myProject.getDisposed());
           }
         }
       }.queue();
@@ -598,7 +597,7 @@ public class BndProjectImporter {
       importer.resolve(true);
     };
     if (!isUnitTestMode()) {
-      ApplicationManager.getApplication().invokeLater(task, ModalityState.NON_MODAL, project.getDisposed());
+      ApplicationManager.getApplication().invokeLater(task, project.getDisposed());
     }
     else {
       task.run();
@@ -647,7 +646,7 @@ public class BndProjectImporter {
 
     Runnable task = () -> new BndProjectImporter(project, workspace, projects).resolve(true);
     if (!isUnitTestMode()) {
-      ApplicationManager.getApplication().invokeLater(task, ModalityState.NON_MODAL, project.getDisposed());
+      ApplicationManager.getApplication().invokeLater(task, project.getDisposed());
     }
     else {
       task.run();
