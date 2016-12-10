@@ -22,7 +22,7 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+    <fileTypeFactory implementation="name.kropp.intellij.makefile.MakefileFileTypeFactory"/>
   </extensions>
 
   <actions>
