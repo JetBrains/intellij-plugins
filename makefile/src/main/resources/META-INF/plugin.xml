@@ -23,6 +23,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="name.kropp.intellij.makefile.MakefileFileTypeFactory"/>
+    <lang.parserDefinition language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileParserDefinition"/>
   </extensions>
 
   <actions>
