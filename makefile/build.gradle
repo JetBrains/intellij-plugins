@@ -1,0 +1,42 @@
+buildscript {
+    ext.kotlin_version = '1.0.5'
+
+    repositories {
+        mavenCentral()
+        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    id "org.jetbrains.intellij" version "0.1.10"
+}
+apply plugin: 'kotlin'
+
+group 'name.kropp.intellij'
+version '0.1'
+
+intellij {
+    version '2016.3'
+    pluginName rootProject.name
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+  main {
+    kotlin.srcDirs 'src/main/kotlin', 'src/gen/java'
+    resources.srcDirs 'src/main/resources'
+  }
+  test {
+    java.srcDir 'src/test/kotlin'
+  }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
