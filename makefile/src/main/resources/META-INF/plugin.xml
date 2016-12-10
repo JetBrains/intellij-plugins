@@ -25,6 +25,7 @@
     <fileTypeFactory implementation="name.kropp.intellij.makefile.MakefileFileTypeFactory"/>
     <lang.parserDefinition language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileSyntaxHighlighterFactory"/>
+    <lang.psiStructureViewFactory language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileStructureViewFactory"/>
     <colorSettingsPage implementation="name.kropp.intellij.makefile.MakefileColorSettingsPage"/>
   </extensions>
 
