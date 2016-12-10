@@ -14,6 +14,7 @@ plugins {
     id "org.jetbrains.intellij" version "0.1.10"
 }
 apply plugin: 'kotlin'
+apply plugin: 'java'
 
 group 'name.kropp.intellij'
 version '0.1'
@@ -29,8 +30,9 @@ repositories {
 
 sourceSets {
   main {
-    kotlin.srcDirs 'src/main/kotlin', 'src/gen/java'
-    resources.srcDirs 'src/main/resources'
+    kotlin.srcDirs 'src/main/kotlin'
+    java.srcDirs 'gen'
+    kotlin.srcDirs 'src/main/resources'
   }
   test {
     java.srcDir 'src/test/kotlin'

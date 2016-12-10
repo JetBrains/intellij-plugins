@@ -1,0 +1,25 @@
+{
+  parserClass = "name.kropp.intellij.makefile.MakefileParser"
+  extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix = "Makefile"
+  psiImplClassSuffix = "Impl"
+  psiPackage = "name.kropp.intellij.makefile.psi"
+  psiImplPackage = "name.kropp.intellij.makefile.psi.impl"
+
+  elementTypeHolderClass = "name.kropp.intellij.makefile.psi.MakefileTypes"
+  elementTypeClass = "name.kropp.intellij.makefile.psi.MakefileElementType"
+  tokenTypeClass = "name.kropp.intellij.makefile.psi.MakefileTokenType"
+
+  psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
+}
+
+makefile ::= (rule|comment)*
+
+rule ::= target_line EOL commands
+
+target_line ::= target separator dependencies
+target ::= filename
+dependencies ::= filename*
+
+commands ::= command*
