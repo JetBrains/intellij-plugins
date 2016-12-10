@@ -32,9 +32,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == RULE) {
       r = rule(b, 0);
     }
-    else if (t == TARGET) {
-      r = target(b, 0);
-    }
     else if (t == TARGET_LINE) {
       r = target_line(b, 0);
     }
@@ -64,13 +61,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // filename*
+  // dependency*
   public static boolean dependencies(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dependencies")) return false;
     Marker m = enter_section_(b, l, _NONE_, DEPENDENCIES, "<dependencies>");
     int c = current_position_(b);
     while (true) {
-      if (!consumeToken(b, FILENAME)) break;
+      if (!consumeToken(b, DEPENDENCY)) break;
       if (!empty_element_parsed_guard_(b, "dependencies", c)) break;
       c = current_position_(b);
     }
@@ -106,7 +103,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // target_line EOL commands
   public static boolean rule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule")) return false;
-    if (!nextTokenIs(b, FILENAME)) return false;
+    if (!nextTokenIs(b, TARGET)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = target_line(b, l + 1);
@@ -117,26 +114,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // filename
-  public static boolean target(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target")) return false;
-    if (!nextTokenIs(b, FILENAME)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, FILENAME);
-    exit_section_(b, m, TARGET, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // target separator dependencies
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
-    if (!nextTokenIs(b, FILENAME)) return false;
+    if (!nextTokenIs(b, TARGET)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = target(b, l + 1);
-    r = r && consumeToken(b, SEPARATOR);
+    r = consumeTokens(b, 0, TARGET, SEPARATOR);
     r = r && dependencies(b, l + 1);
     exit_section_(b, m, TARGET_LINE, r);
     return r;

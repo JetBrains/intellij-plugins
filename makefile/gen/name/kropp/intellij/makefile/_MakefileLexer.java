@@ -487,7 +487,7 @@ public class _MakefileLexer implements FlexLexer {
             }
           case 13: break;
           case 3: 
-            { yybegin(SEPARATOR); return FILENAME;
+            { yybegin(SEPARATOR); return TARGET;
             }
           case 14: break;
           case 4: 
@@ -511,7 +511,7 @@ public class _MakefileLexer implements FlexLexer {
             }
           case 19: break;
           case 9: 
-            { yybegin(DEPENDENCIES); return FILENAME;
+            { yybegin(DEPENDENCIES); return DEPENDENCY;
             }
           case 20: break;
           case 10: 

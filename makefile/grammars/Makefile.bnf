@@ -19,7 +19,6 @@ makefile ::= (rule|comment)*
 rule ::= target_line EOL commands
 
 target_line ::= target separator dependencies
-target ::= filename
-dependencies ::= filename*
+dependencies ::= dependency*
 
 commands ::= command*

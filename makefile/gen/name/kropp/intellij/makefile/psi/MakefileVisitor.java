@@ -19,10 +19,6 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitTarget(@NotNull MakefileTarget o) {
-    visitPsiElement(o);
-  }
-
   public void visitTargetLine(@NotNull MakefileTargetLine o) {
     visitPsiElement(o);
   }

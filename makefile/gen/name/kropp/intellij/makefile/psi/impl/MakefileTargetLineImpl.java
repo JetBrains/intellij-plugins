@@ -32,10 +32,4 @@ public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements Make
     return findNotNullChildByClass(MakefileDependencies.class);
   }
 
-  @Override
-  @NotNull
-  public MakefileTarget getTarget() {
-    return findNotNullChildByClass(MakefileTarget.class);
-  }
-
 }
