@@ -1,0 +1,11 @@
+resources:
+  resource:
+    PeeringRoute (name)
+    type: AWS::EC2::Route (name)
+    properties:
+      property:
+        DestinationCidrBlock (name)
+      property:
+        RouteTableId (name)
+      property:
+        VpcPeeringConnectionId (name)
