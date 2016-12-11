@@ -7,7 +7,7 @@ import com.intellij.psi.PsiFile
 
 object CloudFormationPsiUtils {
   fun isCloudFormationFile(element: PsiElement): Boolean =
-      element.containingFile.fileType === CloudFormationFileType.INSTANCE
+      element.containingFile.fileType === CloudFormationJsonFileType.INSTANCE
 
   fun getRootExpression(file: PsiFile): JsonObject? {
     var cur: PsiElement? = file.firstChild
@@ -37,5 +37,4 @@ object CloudFormationPsiUtils {
 
     return null
   }
-
 }
