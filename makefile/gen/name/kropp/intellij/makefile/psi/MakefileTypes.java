@@ -14,12 +14,16 @@ public interface MakefileTypes {
   IElementType RULE = new MakefileElementType("RULE");
   IElementType TARGET = new MakefileElementType("TARGET");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
+  IElementType VARIABLE = new MakefileElementType("VARIABLE");
+  IElementType VARIABLE_NAME = new MakefileElementType("VARIABLE_NAME");
 
+  IElementType ASSIGNMENT = new MakefileTokenType("assignment");
   IElementType COMMAND = new MakefileTokenType("command");
   IElementType COMMENT = new MakefileTokenType("comment");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
   IElementType SEPARATOR = new MakefileTokenType("separator");
+  IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -41,6 +45,12 @@ public interface MakefileTypes {
       }
       else if (type == TARGET_LINE) {
         return new MakefileTargetLineImpl(node);
+      }
+      else if (type == VARIABLE) {
+        return new MakefileVariableImpl(node);
+      }
+      else if (type == VARIABLE_NAME) {
+        return new MakefileVariableNameImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

@@ -14,7 +14,7 @@
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|comment)*
+makefile ::= (rule|variable|comment)*
 
 rule ::= target_line EOL commands
 
@@ -25,3 +25,6 @@ dependencies ::= dependency*
 dependency ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileDependencyMixin"}
 
 commands ::= command*
+
+variable ::= variable_name assignment (variable_value EOL|EOL)
+variable_name ::= identifier

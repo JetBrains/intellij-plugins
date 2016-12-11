@@ -29,6 +29,7 @@ public class _MakefileLexer implements FlexLexer {
   public static final int SEPARATOR = 2;
   public static final int DEPENDENCIES = 4;
   public static final int COMMANDS = 6;
+  public static final int VARIABLE = 8;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -37,7 +38,7 @@ public class _MakefileLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0,  0,  1,  1,  2,  2,  3, 3
+     0,  0,  1,  1,  2,  2,  3,  3,  4, 4
   };
 
   /** 
@@ -59,7 +60,7 @@ public class _MakefileLexer implements FlexLexer {
 
   /* The ZZ_CMAP_A table has 256 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
-    "\11\0\1\3\1\1\2\0\1\1\22\0\1\2\2\0\1\4\26\0\1\5\305\0");
+    "\11\0\1\3\1\1\2\0\1\1\22\0\1\2\2\0\1\4\26\0\1\5\2\0\1\6\302\0");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -67,11 +68,12 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\1\1\0\1\2\1\0\1\3\1\1\1\4\1\5"+
-    "\1\6\1\7\1\10\1\11\1\2\1\12\1\13";
+    "\1\1\1\0\1\2\1\0\1\3\1\4\1\1\1\5"+
+    "\1\6\1\7\1\10\1\11\1\12\1\13\1\2\1\14"+
+    "\1\15\1\3";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[15];
+    int [] result = new int[18];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -96,11 +98,12 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\6\0\14\0\22\0\30\0\36\0\44\0\52"+
-    "\0\60\0\66\0\44\0\74\0\102\0\110\0\116";
+    "\0\0\0\7\0\16\0\25\0\34\0\43\0\52\0\61"+
+    "\0\70\0\77\0\106\0\61\0\61\0\115\0\124\0\133"+
+    "\0\142\0\151";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[15];
+    int [] result = new int[18];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -123,15 +126,16 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\5\1\6\1\7\1\10\1\11\3\7\2\12\1\7"+
-    "\1\13\1\14\1\15\2\16\1\14\1\7\1\17\1\7"+
-    "\4\17\1\5\3\0\1\5\2\0\1\6\15\0\1\10"+
-    "\2\0\1\11\1\0\4\11\2\0\2\12\2\0\1\14"+
-    "\3\0\1\14\2\0\1\15\6\0\2\16\2\0\1\17"+
-    "\1\0\4\17";
+    "\1\6\1\7\1\10\1\11\1\12\1\10\1\6\2\10"+
+    "\2\13\1\10\1\14\1\15\1\16\1\17\2\20\1\16"+
+    "\1\10\1\16\1\21\1\10\5\21\1\22\1\17\5\22"+
+    "\1\6\3\0\1\6\1\0\1\6\1\0\1\7\17\0"+
+    "\1\11\3\0\1\12\1\0\5\12\2\0\2\13\3\0"+
+    "\1\16\3\0\1\16\1\0\1\16\1\0\1\17\7\0"+
+    "\2\20\3\0\1\21\1\0\5\21\1\22\1\0\5\22";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[84];
+    int [] result = new int[112];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -169,11 +173,11 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\1\1\0\1\1\1\0\2\1\1\11\3\1\1\11"+
-    "\4\1";
+    "\1\1\1\0\1\1\1\0\3\1\1\11\3\1\2\11"+
+    "\5\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[15];
+    int [] result = new int[18];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -481,47 +485,55 @@ public class _MakefileLexer implements FlexLexer {
           case 1: 
             { yybegin(YYINITIAL); return WHITE_SPACE;
             }
-          case 12: break;
+          case 14: break;
           case 2: 
             { yybegin(YYINITIAL); return EOL;
             }
-          case 13: break;
-          case 3: 
-            { yybegin(SEPARATOR); return IDENTIFIER;
-            }
-          case 14: break;
-          case 4: 
-            { return BAD_CHARACTER;
-            }
           case 15: break;
-          case 5: 
-            { yybegin(COMMANDS); return WHITE_SPACE;
+          case 3: 
+            { yybegin(VARIABLE); return VARIABLE_VALUE;
             }
           case 16: break;
-          case 6: 
-            { yybegin(YYINITIAL); return COMMENT;
+          case 4: 
+            { yybegin(SEPARATOR); return IDENTIFIER;
             }
           case 17: break;
-          case 7: 
-            { yybegin(SEPARATOR); return WHITE_SPACE;
+          case 5: 
+            { return BAD_CHARACTER;
             }
           case 18: break;
-          case 8: 
-            { yybegin(DEPENDENCIES); return MakefileTypes.SEPARATOR;
+          case 6: 
+            { yybegin(COMMANDS); return WHITE_SPACE;
             }
           case 19: break;
-          case 9: 
-            { yybegin(DEPENDENCIES); return IDENTIFIER;
+          case 7: 
+            { yybegin(YYINITIAL); return COMMENT;
             }
           case 20: break;
-          case 10: 
-            { yybegin(DEPENDENCIES); return WHITE_SPACE;
+          case 8: 
+            { yybegin(SEPARATOR); return WHITE_SPACE;
             }
           case 21: break;
-          case 11: 
-            { yybegin(YYINITIAL); return COMMAND;
+          case 9: 
+            { yybegin(DEPENDENCIES); return MakefileTypes.SEPARATOR;
             }
           case 22: break;
+          case 10: 
+            { yybegin(VARIABLE); return MakefileTypes.ASSIGNMENT;
+            }
+          case 23: break;
+          case 11: 
+            { yybegin(DEPENDENCIES); return IDENTIFIER;
+            }
+          case 24: break;
+          case 12: 
+            { yybegin(DEPENDENCIES); return WHITE_SPACE;
+            }
+          case 25: break;
+          case 13: 
+            { yybegin(YYINITIAL); return COMMAND;
+            }
+          case 26: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

@@ -41,6 +41,12 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == TARGET_LINE) {
       r = target_line(b, 0);
     }
+    else if (t == VARIABLE) {
+      r = variable(b, 0);
+    }
+    else if (t == VARIABLE_NAME) {
+      r = variable_name(b, 0);
+    }
     else {
       r = parse_root_(t, b, 0);
     }
@@ -94,7 +100,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (rule|comment)*
+  // (rule|variable|comment)*
   static boolean makefile(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile")) return false;
     int c = current_position_(b);
@@ -106,12 +112,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // rule|comment
+  // rule|variable|comment
   private static boolean makefile_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = rule(b, l + 1);
+    if (!r) r = variable(b, l + 1);
     if (!r) r = consumeToken(b, COMMENT);
     exit_section_(b, m, null, r);
     return r;
@@ -154,6 +161,43 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, SEPARATOR);
     r = r && dependencies(b, l + 1);
     exit_section_(b, m, TARGET_LINE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // variable_name assignment (variable_value EOL|EOL)
+  public static boolean variable(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = variable_name(b, l + 1);
+    r = r && consumeToken(b, ASSIGNMENT);
+    r = r && variable_2(b, l + 1);
+    exit_section_(b, m, VARIABLE, r);
+    return r;
+  }
+
+  // variable_value EOL|EOL
+  private static boolean variable_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parseTokens(b, 0, VARIABLE_VALUE, EOL);
+    if (!r) r = consumeToken(b, EOL);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // identifier
+  public static boolean variable_name(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_name")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, VARIABLE_NAME, r);
     return r;
   }
 

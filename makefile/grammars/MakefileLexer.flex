@@ -28,11 +28,13 @@ WHITE_SPACE=\s+
 SPACES=[ \t]+
 TAB=\t
 COMMENT="#"[^\r\n]*
+VARIABLE_VALUE=[^\r\n]
 SEPARATOR=":"
+ASSIGNMENT="="
 FILENAME_CHARACTER=[^:\ \r\n\t]
 COMMAND=[^\r\n]+
 
-%state SEPARATOR DEPENDENCIES COMMANDS
+%state SEPARATOR DEPENDENCIES COMMANDS VARIABLE
 
 %%
 
@@ -42,6 +44,7 @@ COMMAND=[^\r\n]+
 <YYINITIAL> {FILENAME_CHARACTER}+   { yybegin(SEPARATOR); return IDENTIFIER; }
 
 <SEPARATOR> {SEPARATOR}             { yybegin(DEPENDENCIES); return MakefileTypes.SEPARATOR; }
+<SEPARATOR> {ASSIGNMENT}            { yybegin(VARIABLE); return MakefileTypes.ASSIGNMENT; }
 <SEPARATOR> {SPACES}                { yybegin(SEPARATOR); return WHITE_SPACE; }
 
 <DEPENDENCIES> {FILENAME_CHARACTER}+   { yybegin(DEPENDENCIES); return IDENTIFIER; }
@@ -51,5 +54,7 @@ COMMAND=[^\r\n]+
 <YYINITIAL> {TAB}+                     { yybegin(COMMANDS); return WHITE_SPACE; }
 <COMMANDS> {COMMAND}                   { yybegin(YYINITIAL); return COMMAND; }
 
+<VARIABLE> {VARIABLE_VALUE}*           { yybegin(VARIABLE); return VARIABLE_VALUE; }
+<VARIABLE> {EOL}                       { yybegin(YYINITIAL); return EOL; }
 
 [^] { return BAD_CHARACTER; }
