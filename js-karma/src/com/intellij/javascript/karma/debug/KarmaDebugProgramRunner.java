@@ -16,7 +16,7 @@ import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.DebuggableFileFinder;
 import com.intellij.javascript.debugger.JavaScriptDebugEngine;
 import com.intellij.javascript.debugger.JavaScriptDebugProcess;
-import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
+import com.intellij.javascript.debugger.RemoteDebuggingFileFinder;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;

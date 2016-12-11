@@ -10,7 +10,7 @@ import com.google.jstestdriver.idea.rt.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.model.BasePaths;
 import com.intellij.execution.ExecutionException;
-import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
+import com.intellij.javascript.debugger.RemoteDebuggingFileFinder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
