@@ -68,9 +68,8 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\1\1\0\1\2\1\0\1\3\1\4\1\1\1\5"+
-    "\1\6\1\7\1\10\1\11\1\12\1\13\1\2\1\14"+
-    "\1\15\1\3";
+    "\5\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7"+
+    "\1\10\1\11\1\12\1\13\1\14\1\15";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[18];
@@ -173,8 +172,7 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\1\1\0\1\1\1\0\3\1\1\11\3\1\2\11"+
-    "\5\1";
+    "\5\0\2\1\1\11\3\1\2\11\5\1";
 
   private static int [] zzUnpackAttribute() {
     int [] result = new int[18];
@@ -483,55 +481,55 @@ public class _MakefileLexer implements FlexLexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { yybegin(YYINITIAL); return WHITE_SPACE;
+            { yybegin(SEPARATOR); return IDENTIFIER;
             }
           case 14: break;
           case 2: 
-            { yybegin(YYINITIAL); return EOL;
+            { yybegin(YYINITIAL); return WHITE_SPACE;
             }
           case 15: break;
           case 3: 
-            { yybegin(VARIABLE); return VARIABLE_VALUE;
+            { return BAD_CHARACTER;
             }
           case 16: break;
           case 4: 
-            { yybegin(SEPARATOR); return IDENTIFIER;
+            { yybegin(COMMANDS); return WHITE_SPACE;
             }
           case 17: break;
           case 5: 
-            { return BAD_CHARACTER;
+            { yybegin(YYINITIAL); return COMMENT;
             }
           case 18: break;
           case 6: 
-            { yybegin(COMMANDS); return WHITE_SPACE;
+            { yybegin(SEPARATOR); return WHITE_SPACE;
             }
           case 19: break;
           case 7: 
-            { yybegin(YYINITIAL); return COMMENT;
+            { yybegin(DEPENDENCIES); return COLON;
             }
           case 20: break;
           case 8: 
-            { yybegin(SEPARATOR); return WHITE_SPACE;
+            { yybegin(VARIABLE); return ASSIGN;
             }
           case 21: break;
           case 9: 
-            { yybegin(DEPENDENCIES); return MakefileTypes.SEPARATOR;
+            { yybegin(DEPENDENCIES); return IDENTIFIER;
             }
           case 22: break;
           case 10: 
-            { yybegin(VARIABLE); return MakefileTypes.ASSIGNMENT;
+            { yybegin(YYINITIAL); return EOL;
             }
           case 23: break;
           case 11: 
-            { yybegin(DEPENDENCIES); return IDENTIFIER;
+            { yybegin(DEPENDENCIES); return WHITE_SPACE;
             }
           case 24: break;
           case 12: 
-            { yybegin(DEPENDENCIES); return WHITE_SPACE;
+            { yybegin(YYINITIAL); return COMMAND;
             }
           case 25: break;
           case 13: 
-            { yybegin(YYINITIAL); return COMMAND;
+            { yybegin(VARIABLE); return VARIABLE_VALUE;
             }
           case 26: break;
           default:

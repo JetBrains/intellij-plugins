@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface MakefileTargetLine extends PsiElement {
 
-  @NotNull
+  @Nullable
   MakefileDependencies getDependencies();
 
   @NotNull

@@ -27,9 +27,9 @@ public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRu
   }
 
   @Override
-  @NotNull
+  @Nullable
   public MakefileCommands getCommands() {
-    return findNotNullChildByClass(MakefileCommands.class);
+    return findChildByClass(MakefileCommands.class);
   }
 
   @Override

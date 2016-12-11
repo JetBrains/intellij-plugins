@@ -33,7 +33,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   override fun getTokenHighlights(tokenType: IElementType) = when(tokenType) {
     MakefileTypes.COMMENT -> COMMENT_KEYS
     MakefileTypes.TARGET -> TARGET_KEYS
-    MakefileTypes.SEPARATOR -> SEPARATOR_KEYS
+    //MakefileTypes.SEPARATOR -> SEPARATOR_KEYS
     MakefileTypes.DEPENDENCY -> DEPENDENCY_KEYS
     MakefileTypes.VARIABLE_NAME -> VARIABLE_NAME_KEYS
     MakefileTypes.VARIABLE_VALUE -> VARIABLE_VALUE_KEYS

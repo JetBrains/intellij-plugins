@@ -27,9 +27,9 @@ public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements Make
   }
 
   @Override
-  @NotNull
+  @Nullable
   public MakefileDependencies getDependencies() {
-    return findNotNullChildByClass(MakefileDependencies.class);
+    return findChildByClass(MakefileDependencies.class);
   }
 
   @Override

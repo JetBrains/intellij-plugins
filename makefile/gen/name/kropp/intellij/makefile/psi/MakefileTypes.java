@@ -17,12 +17,12 @@ public interface MakefileTypes {
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_NAME = new MakefileElementType("VARIABLE_NAME");
 
-  IElementType ASSIGNMENT = new MakefileTokenType("assignment");
+  IElementType ASSIGN = new MakefileTokenType("=");
+  IElementType COLON = new MakefileTokenType(":");
   IElementType COMMAND = new MakefileTokenType("command");
   IElementType COMMENT = new MakefileTokenType("comment");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
-  IElementType SEPARATOR = new MakefileTokenType("separator");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
 
   class Factory {
