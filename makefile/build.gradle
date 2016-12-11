@@ -30,9 +30,9 @@ repositories {
 
 sourceSets {
   main {
-    kotlin.srcDirs 'src/main/kotlin'
-    java.srcDirs 'gen'
-    kotlin.srcDirs 'src/main/resources'
+    java { srcDirs 'src/main/java', 'gen' }
+    kotlin { srcDirs 'src/main/kotlin' }
+    resources { srcDirs 'src/main/resources' }
   }
   test {
     java.srcDir 'src/test/kotlin'

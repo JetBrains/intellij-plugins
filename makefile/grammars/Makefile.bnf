@@ -11,14 +11,14 @@
   elementTypeClass = "name.kropp.intellij.makefile.psi.MakefileElementType"
   tokenTypeClass = "name.kropp.intellij.makefile.psi.MakefileTokenType"
 
-  psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
+  psiImplUtilClass = "MakefilePsiImplUtil"
 }
 
 makefile ::= (rule|comment)*
 
 rule ::= target_line EOL commands
 
-target_line ::= target separator dependencies
+target_line ::= target separator dependencies {methods=[getTarget]}
 dependencies ::= dependency*
 
 commands ::= command*

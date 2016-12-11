@@ -10,4 +10,6 @@ public interface MakefileTargetLine extends PsiElement {
   @NotNull
   MakefileDependencies getDependencies();
 
+  String getTarget();
+
 }
