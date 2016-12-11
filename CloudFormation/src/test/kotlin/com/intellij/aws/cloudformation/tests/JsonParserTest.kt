@@ -2,10 +2,12 @@ package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.IndentWriter
-import com.intellij.codeInspection.InspectionManager
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import junit.framework.TestCase
@@ -19,14 +21,14 @@ class JsonParserTest : LightPlatformCodeInsightTestCase() {
 
   fun runTest(name: String) {
     configureByFile("$name.template")
-    val parser = CloudFormationParser(InspectionManager.getInstance(LightPlatformCodeInsightTestCase.myFile.project), true)
+    val parser = CloudFormationParser()
     val file = parser.file(LightPlatformCodeInsightTestCase.myFile)
 
     val writer = StringWriter()
 
     val printer = IndentWriter(writer, "  ")
     for (problem in parser.problems) {
-      printer.println(problem.descriptionTemplate + " at line " + problem.lineNumber)
+      printer.println(problem.description + " at line " + getLineNumber(problem.element))
     }
 
     if (!parser.problems.isEmpty()) {
@@ -36,6 +38,20 @@ class JsonParserTest : LightPlatformCodeInsightTestCase() {
     file.dump(printer)
 
     checkContent("$name.expected", writer.toString())
+  }
+
+  private fun getLineNumber(psiElement: PsiElement): Int {
+    if (!psiElement.isValid) return -1
+    assertTrue(psiElement.isPhysical)
+    val manager = InjectedLanguageManager.getInstance(psiElement.project)
+    val containingFile = manager.getTopLevelFile(psiElement)
+    val document = PsiDocumentManager.getInstance(psiElement.project).getDocument(containingFile) ?: return -1
+    var textRange = psiElement.textRange ?: return -1
+    textRange = manager.injectedToHost(psiElement, textRange)
+    val startOffset = textRange.startOffset
+    val textLength = document.textLength
+    assertTrue(" at $startOffset, $textLength", startOffset <= textLength)
+    return document.getLineNumber(startOffset) + 1
   }
 
   fun checkContent(expectFileName: String, actualContent: String) {

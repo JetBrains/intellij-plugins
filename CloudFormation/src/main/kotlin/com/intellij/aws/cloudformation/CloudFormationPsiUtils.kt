@@ -1,6 +1,9 @@
 package com.intellij.aws.cloudformation
 
-import com.intellij.json.psi.JsonLiteral
+import com.intellij.aws.cloudformation.model.CfnNameNode
+import com.intellij.aws.cloudformation.model.CfnNode
+import com.intellij.aws.cloudformation.model.CfnResourceNode
+import com.intellij.codeInspection.InspectionManager
 import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
@@ -29,29 +32,27 @@ object CloudFormationPsiUtils {
     return property.value as? JsonObject
   }
 
+  fun getParent(node: CfnNode, parser: CloudFormationParser): CfnNode? {
+    var element = parser.getPsiElement(node).parent
+    while (element != null) {
+      val parentNode = parser.getCfnNode(element)
+      if (parentNode != null) return parentNode
+
+      element = element.parent
+    }
+
+    return null
+  }
+
   fun isResourceTypeValuePosition(position: PsiElement): Boolean {
-    val valueExpression = position as? JsonLiteral ?: return false
+    val parser = CloudFormationParser()
+    val file = parser.file(position.containingFile)
 
-    val typeProperty = valueExpression.parent as? JsonProperty
-    if (typeProperty == null ||
-        typeProperty.value !== valueExpression ||
-        CloudFormationConstants.TypePropertyName != typeProperty.name) {
-      return false
-    }
+    val literal = position as? JsonStringLiteral ?: return false
+    val nameNode = parser.getCfnNode(literal) as? CfnNameNode ?: return false
 
-    val resourceExpression = typeProperty.parent as? JsonObject ?: return false
-
-    val resourceProperty = resourceExpression.parent as? JsonProperty ?: return false
-
-    val resourcesExpression = resourceProperty.parent as? JsonObject ?: return false
-
-    val resourcesProperty = resourcesExpression.parent as? JsonProperty
-    if (resourcesProperty == null || CloudFormationSections.Resources != StringUtil.stripQuotesAroundValue(resourcesProperty.name)) {
-      return false
-    }
-
-    val root = CloudFormationPsiUtils.getRootExpression(resourceProperty.containingFile)
-    return root === resourcesProperty.parent
+    val parent = getParent(nameNode, parser)
+    return parent is CfnResourceNode && parent.type == nameNode
   }
 
   fun isResourcePropertyNamePosition(position: PsiElement): Boolean {

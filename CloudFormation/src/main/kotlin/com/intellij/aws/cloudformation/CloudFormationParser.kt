@@ -8,10 +8,6 @@ import com.intellij.aws.cloudformation.model.CfnProperty
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
@@ -23,15 +19,17 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.regex.Pattern
 
-class CloudFormationParser(private val myInspectionManager: InspectionManager, private val myOnTheFly: Boolean) {
-  private val myProblems = ArrayList<ProblemDescriptor>()
+class CloudFormationParser {
+  private val myProblems = ArrayList<ParseProblem>()
   private val myNodesMap = HashBiMap.create<PsiElement, CfnNode>()
 
-  val problems: List<ProblemDescriptor>
+  class ParseProblem(val element: PsiElement, val description: String)
+
+  val problems: List<ParseProblem>
     get() = myProblems
 
   fun getCfnNode(psiElement: PsiElement): CfnNode? = myNodesMap[psiElement]
-  fun getPsiElement(node: CfnNode): PsiElement? = myNodesMap.inverse()[node]
+  fun getPsiElement(node: CfnNode): PsiElement = myNodesMap.inverse()[node]!!
 
   private fun <T : CfnNode> T.registerNode(psiElement: PsiElement): T {
     myNodesMap.put(psiElement, this)
@@ -39,12 +37,7 @@ class CloudFormationParser(private val myInspectionManager: InspectionManager, p
   }
 
   private fun addProblem(element: PsiElement, description: String) {
-    myProblems.add(myInspectionManager.createProblemDescriptor(
-        element,
-        description,
-        myOnTheFly,
-        LocalQuickFix.EMPTY_ARRAY,
-        ProblemHighlightType.GENERIC_ERROR_OR_WARNING))
+    myProblems.add(ParseProblem(element, description))
   }
 
   private fun addProblemOnNameElement(property: JsonProperty, description: String) {
@@ -167,12 +160,12 @@ class CloudFormationParser(private val myInspectionManager: InspectionManager, p
 
   private fun keyName(property: JsonProperty): CfnNameNode {
     if (AlphanumericStringPattern.matcher(property.name).matches()) {
-      return CfnNameNode(property.name).registerNode(property)
+      return CfnNameNode(property.name).registerNode(property.nameElement)
     } else {
       addProblemOnNameElement(
           property,
           CloudFormationBundle.getString("format.invalid.key.name"))
-      return CfnNameNode("").registerNode(property)
+      return CfnNameNode("").registerNode(property.nameElement)
     }
   }
 
@@ -294,7 +287,7 @@ class CloudFormationParser(private val myInspectionManager: InspectionManager, p
       addProblem(typeProperty, CloudFormationBundle.getString("format.unknown.type", value))
     }
 
-    return CfnNameNode(value).registerNode(typeProperty)
+    return CfnNameNode(value).registerNode(typeProperty.value!!)
   }
 
   private fun isCustomResourceType(value: String): Boolean {
@@ -321,13 +314,7 @@ class CloudFormationParser(private val myInspectionManager: InspectionManager, p
     val version = StringUtil.stripQuotesAroundValue(StringUtil.notNullize(text))
     if (!CloudFormationConstants.SupportedTemplateFormatVersions.contains(version)) {
       val supportedVersions = StringUtil.join(CloudFormationConstants.SupportedTemplateFormatVersions, ", ")
-      myProblems.add(
-          myInspectionManager.createProblemDescriptor(
-              value,
-              CloudFormationBundle.getString("format.unknownVersion", supportedVersions),
-              myOnTheFly,
-              LocalQuickFix.EMPTY_ARRAY,
-              ProblemHighlightType.GENERIC_ERROR_OR_WARNING))
+      addProblem(value, CloudFormationBundle.getString("format.unknownVersion", supportedVersions))
     }
   }
 
@@ -339,14 +326,7 @@ class CloudFormationParser(private val myInspectionManager: InspectionManager, p
 
     val literal = expression as? JsonStringLiteral
     if (literal == null) {
-      myProblems.add(
-          myInspectionManager.createProblemDescriptor(
-              expression,
-              CloudFormationBundle.getString("format.expected.quoted.string"),
-              myOnTheFly,
-              LocalQuickFix.EMPTY_ARRAY,
-              ProblemHighlightType.GENERIC_ERROR_OR_WARNING))
-
+      addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
       return null
     }
 
