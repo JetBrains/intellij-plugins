@@ -12,11 +12,11 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
             if (this.projectService) {
                 for (let prj of this.projectService.inferredProjects) {
-                    this.updateNgProject(prj);
+                    // this.updateNgProject(prj);
                 }
 
                 for (let prj of this.projectService.configuredProjects) {
-                    this.updateNgProject(prj);
+                    // this.updateNgProject(prj);
                 }
             }
         }

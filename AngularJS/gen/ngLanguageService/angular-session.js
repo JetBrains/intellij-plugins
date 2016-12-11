@@ -12,16 +12,6 @@ function createAngularSessionClass(ts_impl, sessionClass) {
         }
         AngularSession.prototype.refreshStructureEx = function () {
             _super.prototype.refreshStructureEx.call(this);
-            if (this.projectService) {
-                for (var _i = 0, _a = this.projectService.inferredProjects; _i < _a.length; _i++) {
-                    var prj = _a[_i];
-                    this.updateNgProject(prj);
-                }
-                for (var _b = 0, _c = this.projectService.configuredProjects; _b < _c.length; _b++) {
-                    var prj = _c[_b];
-                    this.updateNgProject(prj);
-                }
-            }
         };
         AngularSession.prototype.updateNgProject = function (project) {
             var languageService = this.getLanguageService(project);
