@@ -21,21 +21,20 @@ class JsonParserTest : LightPlatformCodeInsightTestCase() {
 
   fun runTest(name: String) {
     configureByFile("$name.template")
-    val parser = CloudFormationParser()
-    val file = parser.file(LightPlatformCodeInsightTestCase.myFile)
+    val parsed = CloudFormationParser.parse(myFile)
 
     val writer = StringWriter()
 
     val printer = IndentWriter(writer, "  ")
-    for (problem in parser.problems) {
+    for (problem in parsed.problems) {
       printer.println(problem.description + " at line " + getLineNumber(problem.element))
     }
 
-    if (!parser.problems.isEmpty()) {
+    if (!parsed.problems.isEmpty()) {
       printer.println()
     }
 
-    file.dump(printer)
+    parsed.root.dump(printer)
 
     checkContent("$name.expected", writer.toString())
   }

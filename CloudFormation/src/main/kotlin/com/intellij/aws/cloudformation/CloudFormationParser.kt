@@ -4,7 +4,7 @@ import com.google.common.collect.HashBiMap
 import com.intellij.aws.cloudformation.model.CfnNameNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnPropertiesNode
-import com.intellij.aws.cloudformation.model.CfnProperty
+import com.intellij.aws.cloudformation.model.CfnPropertyNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
@@ -19,17 +19,9 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.regex.Pattern
 
-class CloudFormationParser {
-  private val myProblems = ArrayList<ParseProblem>()
+class CloudFormationParser private constructor () {
+  private val myProblems = ArrayList<CloudFormationParsedFile.ParseProblem>()
   private val myNodesMap = HashBiMap.create<PsiElement, CfnNode>()
-
-  class ParseProblem(val element: PsiElement, val description: String)
-
-  val problems: List<ParseProblem>
-    get() = myProblems
-
-  fun getCfnNode(psiElement: PsiElement): CfnNode? = myNodesMap[psiElement]
-  fun getPsiElement(node: CfnNode): PsiElement = myNodesMap.inverse()[node]!!
 
   private fun <T : CfnNode> T.registerNode(psiElement: PsiElement): T {
     myNodesMap.put(psiElement, this)
@@ -37,7 +29,7 @@ class CloudFormationParser {
   }
 
   private fun addProblem(element: PsiElement, description: String) {
-    myProblems.add(ParseProblem(element, description))
+    myProblems.add(CloudFormationParsedFile.ParseProblem(element, description))
   }
 
   private fun addProblemOnNameElement(property: JsonProperty, description: String) {
@@ -268,7 +260,7 @@ class CloudFormationParser {
       requiredProperties.remove(propertyName)
 
       val propertyNameNode = keyName(property)
-      return@mapNotNull CfnProperty(propertyNameNode).registerNode(property)
+      return@mapNotNull CfnPropertyNode(propertyNameNode).registerNode(property)
     }
 
     if (!requiredProperties.isEmpty()) {
@@ -348,5 +340,12 @@ class CloudFormationParser {
 
   companion object {
     private val AlphanumericStringPattern = Pattern.compile("[a-zA-Z0-9]+")
+
+    fun parse(psiFile: PsiFile): CloudFormationParsedFile {
+      val parser = CloudFormationParser()
+      val rootNode = parser.file(psiFile)
+
+      return CloudFormationParsedFile(parser.myProblems, parser.myNodesMap, rootNode)
+    }
   }
 }

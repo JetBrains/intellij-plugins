@@ -2,12 +2,10 @@ package com.intellij.aws.cloudformation
 
 import com.intellij.aws.cloudformation.model.CfnNameNode
 import com.intellij.aws.cloudformation.model.CfnNode
+import com.intellij.aws.cloudformation.model.CfnPropertiesNode
+import com.intellij.aws.cloudformation.model.CfnPropertyNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
-import com.intellij.codeInspection.InspectionManager
 import com.intellij.json.psi.JsonObject
-import com.intellij.json.psi.JsonProperty
-import com.intellij.json.psi.JsonStringLiteral
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
@@ -32,7 +30,7 @@ object CloudFormationPsiUtils {
     return property.value as? JsonObject
   }
 
-  fun getParent(node: CfnNode, parser: CloudFormationParser): CfnNode? {
+  fun getParent(node: CfnNode, parser: CloudFormationParsedFile): CfnNode? {
     var element = parser.getPsiElement(node).parent
     while (element != null) {
       val parentNode = parser.getCfnNode(element)
@@ -44,51 +42,39 @@ object CloudFormationPsiUtils {
     return null
   }
 
-  fun isResourceTypeValuePosition(position: PsiElement): Boolean {
-    val parser = CloudFormationParser()
-    val file = parser.file(position.containingFile)
+  class ResourceTypeValueMatch(val name: CfnNameNode, val resource: CfnResourceNode) {
+    companion object {
+      fun match(position: PsiElement, parsed: CloudFormationParsedFile): ResourceTypeValueMatch? {
+        val nameNode = parsed.getCfnNode(position) as? CfnNameNode ?: return null
 
-    val literal = position as? JsonStringLiteral ?: return false
-    val nameNode = parser.getCfnNode(literal) as? CfnNameNode ?: return false
+        val parent = getParent(nameNode, parsed)
+        if (parent is CfnResourceNode && parent.type == nameNode) {
+          return ResourceTypeValueMatch(nameNode, parent)
+        }
 
-    val parent = getParent(nameNode, parser)
-    return parent is CfnResourceNode && parent.type == nameNode
+        return null
+      }
+    }
   }
 
-  fun isResourcePropertyNamePosition(position: PsiElement): Boolean {
-    val resourceProperty = getResourceElementFromPropertyName(position) ?: return false
+  class ResourcePropertyNameMatch(val name: CfnNameNode,
+                                  val property: CfnPropertyNode,
+                                  val properties: CfnPropertiesNode,
+                                  val resource: CfnResourceNode) {
+    companion object {
+      fun match(position: PsiElement, parsed: CloudFormationParsedFile): ResourcePropertyNameMatch? {
+        val nameNode = parsed.getCfnNode(position) as? CfnNameNode ?: return null
 
-    val resourcesExpression = resourceProperty.parent as? JsonObject ?: return false
+        val propertyNode = getParent(nameNode, parsed) as? CfnPropertyNode ?: return null
+        val propertiesNode = getParent(propertyNode, parsed) as? CfnPropertiesNode ?: return null
+        val resourceNode = getParent(propertiesNode, parsed) as? CfnResourceNode ?: return null
 
-    val resourcesProperty = resourcesExpression.parent as? JsonProperty
-    if (resourcesProperty == null ||
-        resourcesProperty.name.isEmpty() ||
-        CloudFormationSections.Resources != StringUtil.stripQuotesAroundValue(resourcesProperty.name)) {
-      return false
+        if (propertyNode.name == nameNode) {
+          return ResourcePropertyNameMatch(nameNode, propertyNode, propertiesNode, resourceNode)
+        }
+
+        return null
+      }
     }
-
-    val root = CloudFormationPsiUtils.getRootExpression(resourceProperty.containingFile)
-    return root === resourcesProperty.parent
-  }
-
-  fun getResourceElementFromPropertyName(position: PsiElement): JsonProperty? {
-    val propertyName = position as? JsonStringLiteral ?: return null
-
-    val property = propertyName.parent as? JsonProperty
-    if (property == null || property.nameElement !== propertyName) {
-      return null
-    }
-
-    val propertiesExpression = property.parent as? JsonObject ?: return null
-
-    val properties = propertiesExpression.parent as? JsonProperty
-    if (properties == null ||
-        properties.value !== propertiesExpression ||
-        CloudFormationConstants.PropertiesPropertyName != properties.name) {
-      return null
-    }
-
-    val resourceExpression = properties.parent as? JsonObject ?: return null
-    return resourceExpression.parent as? JsonProperty
   }
 }

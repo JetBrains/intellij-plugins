@@ -33,17 +33,34 @@ class CloudFormationCompletionContributor : CompletionContributor() {
               return
             }
 
-            var parent = position
-            if (parent.parent is JsonStringLiteral) {
-              parent = parent.parent
-            }
+            // Disable all other items from JavaScript
+            rs.stopHere()
+
+            val parsed = CloudFormationParser.parse(position.containingFile)
+            val parent = if (position.parent is JsonStringLiteral) position.parent else position
 
             val quoteResult = false // parent instanceof JSReferenceExpression;
 
-            if (CloudFormationPsiUtils.isResourceTypeValuePosition(parent)) {
-              completeResourceType(rs, quoteResult)
-            } else if (CloudFormationPsiUtils.isResourcePropertyNamePosition(parent)) {
-              completeResourceProperty(rs, parent, quoteResult)
+            val resourceTypeValuePositionMatch = CloudFormationPsiUtils.ResourceTypeValueMatch.match(parent, parsed)
+            if (resourceTypeValuePositionMatch != null) {
+              CloudFormationMetadataProvider.METADATA.resourceTypes.values.forEach { resourceType ->
+                rs.addElement(createLookupElement(resourceType.name, quoteResult))
+              }
+
+              return
+            }
+
+            val resourcePropertyNameMatch = CloudFormationPsiUtils.ResourcePropertyNameMatch.match(parent, parsed)
+            if (resourcePropertyNameMatch != null) {
+              val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(resourcePropertyNameMatch.resource.type?.id ?: "") ?: return
+              for (propertyMetadata in resourceTypeMetadata.properties.values) {
+                if (resourcePropertyNameMatch.resource.properties != null &&
+                    resourcePropertyNameMatch.resource.properties.properties.any { it.name.id == propertyMetadata.name}) {
+                  continue
+                }
+
+                rs.addElement(createLookupElement(propertyMetadata.name, quoteResult))
+              }
             }
 
             completeResourceTopLevelProperty(rs, parent, quoteResult)
@@ -62,8 +79,6 @@ class CloudFormationCompletionContributor : CompletionContributor() {
               }
             }
 
-            // Disable all other items from JavaScript
-            rs.stopHere()
           }
         })
   }
@@ -121,12 +136,6 @@ class CloudFormationCompletionContributor : CompletionContributor() {
     return StringUtil.stripQuotesAroundValue(text)
   }
 
-  private fun completeResourceType(rs: CompletionResultSet, quoteResult: Boolean) {
-    for (resourceType in CloudFormationMetadataProvider.METADATA.resourceTypes.values) {
-      rs.addElement(createLookupElement(resourceType.name, quoteResult))
-    }
-  }
-
   private fun completeAttribute(file: PsiFile, rs: CompletionResultSet, quoteResult: Boolean, resourceName: String) {
     val resource = CloudFormationResolve.resolveEntity(file, resourceName, CloudFormationSections.ResourcesSingletonList) ?: return
 
@@ -143,37 +152,6 @@ class CloudFormationCompletionContributor : CompletionContributor() {
 
     for (attribute in resourceType.attributes.values) {
       rs.addElement(createLookupElement(attribute.name, quoteResult))
-    }
-  }
-
-  private fun completeResourceProperty(rs: CompletionResultSet, propertyNameElement: PsiElement, quoteResult: Boolean) {
-    val propertyName = propertyNameElement as? JsonStringLiteral ?: return
-
-    val property = propertyName.parent as? JsonProperty
-    if (property == null || property.nameElement !== propertyName) {
-      return
-    }
-
-    val propertiesExpression = property.parent as? JsonObject ?: return
-
-    val resourceElement = CloudFormationPsiUtils.getResourceElementFromPropertyName(propertyName) ?: return
-
-    val resourceValue = resourceElement.value as? JsonObject ?: return
-
-    val typeProperty = resourceValue.findProperty(CloudFormationConstants.TypePropertyName) ?: return
-
-    val typeValue = typeProperty.value as? JsonStringLiteral ?: return
-
-    val type = CloudFormationResolve.getTargetName(typeValue)
-
-    val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(type) ?: return
-
-    for (propertyMetadata in resourceTypeMetadata.properties.values) {
-      if (propertiesExpression.findProperty(propertyMetadata.name) != null) {
-        continue
-      }
-
-      rs.addElement(createLookupElement(propertyMetadata.name, quoteResult))
     }
   }
 
