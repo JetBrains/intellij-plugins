@@ -88,6 +88,12 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     return null;
   }
 
+  @NotNull
+  @Override
+  protected String getProcessName() {
+    return "Angular 2";
+  }
+
   public static boolean isEnabledAngularService(Project project) {
     return AngularIndexUtil.hasAngularJS2(project) && getServiceDirectory(project) != null;
   }
