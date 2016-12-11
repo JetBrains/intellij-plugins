@@ -41,7 +41,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
 
             val quoteResult = false // parent instanceof JSReferenceExpression;
 
-            val resourceTypeValuePositionMatch = CloudFormationPsiUtils.ResourceTypeValueMatch.match(parent, parsed)
+            val resourceTypeValuePositionMatch = ResourceTypeValueMatch.match(parent, parsed)
             if (resourceTypeValuePositionMatch != null) {
               CloudFormationMetadataProvider.METADATA.resourceTypes.values.forEach { resourceType ->
                 rs.addElement(createLookupElement(resourceType.name, quoteResult))
@@ -50,7 +50,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
               return
             }
 
-            val resourcePropertyNameMatch = CloudFormationPsiUtils.ResourcePropertyNameMatch.match(parent, parsed)
+            val resourcePropertyNameMatch = ResourcePropertyNameMatch.match(parent, parsed)
             if (resourcePropertyNameMatch != null) {
               val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(resourcePropertyNameMatch.resource.type?.id ?: "") ?: return
               for (propertyMetadata in resourceTypeMetadata.properties.values) {

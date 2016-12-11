@@ -14,12 +14,12 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
     val docElement = if (originalElement.parent is JsonStringLiteral) originalElement.parent else originalElement
     val parsed = CloudFormationParser.parse(docElement.containingFile)
 
-    val resourceTypeValueMatch = CloudFormationPsiUtils.ResourceTypeValueMatch.match(docElement, parsed)
+    val resourceTypeValueMatch = ResourceTypeValueMatch.match(docElement, parsed)
     if (resourceTypeValueMatch != null) {
       return createResourceDescription(resourceTypeValueMatch)
     }
 
-    val resourcePropertyNameMatch = CloudFormationPsiUtils.ResourcePropertyNameMatch.match(docElement, parsed)
+    val resourcePropertyNameMatch = ResourcePropertyNameMatch.match(docElement, parsed)
     if (resourcePropertyNameMatch != null) {
       return createPropertyDescription(resourcePropertyNameMatch)
     }
@@ -27,13 +27,13 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
     return null
   }
 
-  private fun createResourceDescription(match: CloudFormationPsiUtils.ResourceTypeValueMatch): String? {
+  private fun createResourceDescription(match: ResourceTypeValueMatch): String? {
     val typeNode = match.resource.type ?: return null
     val resourceType = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[typeNode.id] ?: return null
     return resourceType.description
   }
 
-  private fun createPropertyDescription(match: CloudFormationPsiUtils.ResourcePropertyNameMatch): String? {
+  private fun createPropertyDescription(match: ResourcePropertyNameMatch): String? {
     val typeNode = match.resource.type ?: return null
 
     val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.resourceTypes[typeNode.id] ?: return ""
