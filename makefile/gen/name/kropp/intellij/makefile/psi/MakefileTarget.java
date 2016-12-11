@@ -5,6 +5,14 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface MakefileTarget extends PsiElement {
+public interface MakefileTarget extends MakefileNamedElement {
+
+  @Nullable
+  String getName();
+
+  PsiElement setName(String newName);
+
+  @Nullable
+  PsiElement getNameIdentifier();
 
 }

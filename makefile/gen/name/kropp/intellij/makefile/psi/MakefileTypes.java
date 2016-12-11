@@ -10,15 +10,16 @@ public interface MakefileTypes {
 
   IElementType COMMANDS = new MakefileElementType("COMMANDS");
   IElementType DEPENDENCIES = new MakefileElementType("DEPENDENCIES");
+  IElementType DEPENDENCY = new MakefileElementType("DEPENDENCY");
   IElementType RULE = new MakefileElementType("RULE");
+  IElementType TARGET = new MakefileElementType("TARGET");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
 
   IElementType COMMAND = new MakefileTokenType("command");
   IElementType COMMENT = new MakefileTokenType("comment");
-  IElementType DEPENDENCY = new MakefileTokenType("dependency");
   IElementType EOL = new MakefileTokenType("EOL");
+  IElementType IDENTIFIER = new MakefileTokenType("identifier");
   IElementType SEPARATOR = new MakefileTokenType("separator");
-  IElementType TARGET = new MakefileTokenType("target");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -29,8 +30,14 @@ public interface MakefileTypes {
       else if (type == DEPENDENCIES) {
         return new MakefileDependenciesImpl(node);
       }
+      else if (type == DEPENDENCY) {
+        return new MakefileDependencyImpl(node);
+      }
       else if (type == RULE) {
         return new MakefileRuleImpl(node);
+      }
+      else if (type == TARGET) {
+        return new MakefileTargetImpl(node);
       }
       else if (type == TARGET_LINE) {
         return new MakefileTargetLineImpl(node);

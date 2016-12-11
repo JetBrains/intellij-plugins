@@ -7,4 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface MakefileDependencies extends PsiElement {
 
+  @NotNull
+  List<MakefileDependency> getDependencyList();
+
 }

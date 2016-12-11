@@ -5,15 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface MakefileTargetLine extends PsiElement {
-
-  @NotNull
-  MakefileDependencies getDependencies();
-
-  @NotNull
-  MakefileTarget getTarget();
-
-  @Nullable
-  String getTargetName();
+public interface MakefileDependency extends PsiElement {
 
 }

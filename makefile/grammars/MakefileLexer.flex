@@ -39,12 +39,12 @@ COMMAND=[^\r\n]+
 <YYINITIAL> {COMMENT}          { yybegin(YYINITIAL); return COMMENT; }
 <YYINITIAL> {EOL}              { yybegin(YYINITIAL); return WHITE_SPACE; }
 
-<YYINITIAL> {FILENAME_CHARACTER}+   { yybegin(SEPARATOR); return TARGET; }
+<YYINITIAL> {FILENAME_CHARACTER}+   { yybegin(SEPARATOR); return IDENTIFIER; }
 
 <SEPARATOR> {SEPARATOR}             { yybegin(DEPENDENCIES); return MakefileTypes.SEPARATOR; }
 <SEPARATOR> {SPACES}                { yybegin(SEPARATOR); return WHITE_SPACE; }
 
-<DEPENDENCIES> {FILENAME_CHARACTER}+   { yybegin(DEPENDENCIES); return DEPENDENCY; }
+<DEPENDENCIES> {FILENAME_CHARACTER}+   { yybegin(DEPENDENCIES); return IDENTIFIER; }
 <DEPENDENCIES> {EOL}                   { yybegin(YYINITIAL); return EOL; }
 <DEPENDENCIES> {SPACES}                { yybegin(DEPENDENCIES); return WHITE_SPACE; }
 

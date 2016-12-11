@@ -15,11 +15,23 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDependency(@NotNull MakefileDependency o) {
+    visitPsiElement(o);
+  }
+
   public void visitRule(@NotNull MakefileRule o) {
     visitPsiElement(o);
   }
 
+  public void visitTarget(@NotNull MakefileTarget o) {
+    visitNamedElement(o);
+  }
+
   public void visitTargetLine(@NotNull MakefileTargetLine o) {
+    visitPsiElement(o);
+  }
+
+  public void visitNamedElement(@NotNull MakefileNamedElement o) {
     visitPsiElement(o);
   }
 

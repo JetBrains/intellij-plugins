@@ -8,17 +8,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import name.kropp.intellij.makefile.psi.*;
 
-public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements MakefileTargetLine {
+public class MakefileTargetImpl extends MakefileNamedElementImpl implements MakefileTarget {
 
-  public MakefileTargetLineImpl(ASTNode node) {
+  public MakefileTargetImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitTargetLine(this);
+    visitor.visitTarget(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -26,21 +25,18 @@ public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements Make
     else super.accept(visitor);
   }
 
-  @Override
-  @NotNull
-  public MakefileDependencies getDependencies() {
-    return findNotNullChildByClass(MakefileDependencies.class);
+  @Nullable
+  public String getName() {
+    return MakefilePsiImplUtil.getName(this);
   }
 
-  @Override
-  @NotNull
-  public MakefileTarget getTarget() {
-    return findNotNullChildByClass(MakefileTarget.class);
+  public PsiElement setName(String newName) {
+    return MakefilePsiImplUtil.setName(this, newName);
   }
 
   @Nullable
-  public String getTargetName() {
-    return MakefilePsiImplUtil.getTargetName(this);
+  public PsiElement getNameIdentifier() {
+    return MakefilePsiImplUtil.getNameIdentifier(this);
   }
 
 }

@@ -26,4 +26,10 @@ public class MakefileDependenciesImpl extends ASTWrapperPsiElement implements Ma
     else super.accept(visitor);
   }
 
+  @Override
+  @NotNull
+  public List<MakefileDependency> getDependencyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileDependency.class);
+  }
+
 }
