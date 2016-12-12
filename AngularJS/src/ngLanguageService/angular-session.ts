@@ -9,27 +9,38 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
     (ts_impl.server.CommandNames as any).IDEGetHtmlErrors = "IDEGetHtmlErrors";
 
 
+    let skipAngular = false;
     abstract class AngularSession extends sessionClass {
 
         beforeFirstMessage(): void {
-            if (this.tsVersion() == "2.0.0") {
+            if (this.tsVersion() == "2.0.0" && !skipAngular) {
                 let sessionThis: AngularSession = this;
                 extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
                     oldFunc.apply(this, args);
-                    if (this.filenameToSourceFile) {
-                        let languageService = sessionThis.getLanguageService(this);
-                        let ngLanguageService = sessionThis.getNgLanguageService(languageService);
-                        for (let template of ngLanguageService.getTemplateReferences()) {
-                            let fileName = ts_impl.normalizePath(template);
-                            sessionThis.logMessage("File " + fileName);
-                            this.filenameToSourceFile[template] = {fileName, text: ""}
+                    try {
+                        if (this.filenameToSourceFile) {
+                            let languageService = sessionThis.getLanguageService(this);
+                            let ngLanguageService = sessionThis.getNgLanguageService(languageService);
+                            for (let template of ngLanguageService.getTemplateReferences()) {
+                                let fileName = ts_impl.normalizePath(template);
+                                sessionThis.logMessage("File " + fileName);
+                                this.filenameToSourceFile[template] = {fileName, text: ""}
+                            }
                         }
+                    } catch (err) {
+                        //something wrong
+                        sessionThis.logError(err, "initialization");
+                        skipAngular = true;
                     }
                 });
             }
         }
 
         executeCommand(request: ts.server.protocol.Request): {response?: any; responseRequired?: boolean} {
+            if (skipAngular) {
+                return super.executeCommand(request);
+            }
+
             let command = request.command;
             if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
                 let args = request.arguments;
@@ -42,14 +53,24 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         refreshStructureEx(): void {
             super.refreshStructureEx();
 
-            if (this.projectService) {
-                for (let prj of this.projectService.inferredProjects) {
-                    this.updateNgProject(prj);
-                }
+            if (skipAngular) {
+                return;
+            }
 
-                for (let prj of this.projectService.configuredProjects) {
-                    this.updateNgProject(prj);
+            try {
+                if (this.projectService) {
+                    for (let prj of this.projectService.inferredProjects) {
+                        this.updateNgProject(prj);
+                    }
+
+                    for (let prj of this.projectService.configuredProjects) {
+                        this.updateNgProject(prj);
+                    }
                 }
+            } catch (err) {
+                this.logError(err, "refresh from angular");
+                skipAngular = true;
+                this.logMessage("ERROR angular integration will be disable", true);
             }
         }
 
@@ -58,16 +79,32 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
             for (let fileName of fileNames) {
                 fileName = ts_impl.normalizePath(fileName);
                 let projectForFileEx = this.getForceProject(fileName);
-                if (projectForFileEx) {
-                    let htmlDiagnostics = this.appendPluginDiagnostics(projectForFileEx, [], fileName);
-                    let mappedDiagnostics: ts.server.protocol.Diagnostic[] = htmlDiagnostics.map((el: ts.Diagnostic) => this.formatDiagnostic(fileName, projectForFileEx, el));
+                try {
+                    if (projectForFileEx) {
+                        let htmlDiagnostics = this.appendPluginDiagnostics(projectForFileEx, [], fileName);
+                        let mappedDiagnostics: ts.server.protocol.Diagnostic[] = htmlDiagnostics.map((el: ts.Diagnostic) => this.formatDiagnostic(fileName, projectForFileEx, el));
 
+                        result.push({
+                            file: fileName,
+                            diagnostics: mappedDiagnostics
+                        });
+                    } else {
+                        this.logMessage("Cannot find parent config for html file " + fileName);
+                    }
+                } catch (err) {
+                    let angularErr = [this.formatDiagnostic(fileName, projectForFileEx, {
+                        file: null,
+                        code: -1,
+                        messageText: "Angular Language Service internal error: " + err.message,
+                        start: 0,
+                        length: 0,
+                        category: 0
+                    })];
                     result.push({
                         file: fileName,
-                        diagnostics: mappedDiagnostics
+                        diagnostics: angularErr
                     });
-                } else {
-                    this.logMessage("Cannot find parent config for html file " + fileName);
+
                 }
             }
 
@@ -92,7 +129,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
         appendPluginDiagnostics(project: ts.server.Project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] {
             let languageService = project != null ? this.getLanguageService(project) : null;
-            if (!languageService) {
+            if (!languageService || skipAngular) {
                 return diags;
             }
 

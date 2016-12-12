@@ -7,30 +7,41 @@ var __extends = (this && this.__extends) || function (d, b) {
 var path = require('path');
 function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDEGetHtmlErrors = "IDEGetHtmlErrors";
+    var skipAngular = false;
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
             _super.apply(this, arguments);
         }
         AngularSession.prototype.beforeFirstMessage = function () {
-            if (this.tsVersion() == "2.0.0") {
+            if (this.tsVersion() == "2.0.0" && !skipAngular) {
                 var sessionThis_1 = this;
                 extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
                     oldFunc.apply(this, args);
-                    if (this.filenameToSourceFile) {
-                        var languageService = sessionThis_1.getLanguageService(this);
-                        var ngLanguageService = sessionThis_1.getNgLanguageService(languageService);
-                        for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
-                            var template = _a[_i];
-                            var fileName = ts_impl.normalizePath(template);
-                            sessionThis_1.logMessage("File " + fileName);
-                            this.filenameToSourceFile[template] = { fileName: fileName, text: "" };
+                    try {
+                        if (this.filenameToSourceFile) {
+                            var languageService = sessionThis_1.getLanguageService(this);
+                            var ngLanguageService = sessionThis_1.getNgLanguageService(languageService);
+                            for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
+                                var template = _a[_i];
+                                var fileName = ts_impl.normalizePath(template);
+                                sessionThis_1.logMessage("File " + fileName);
+                                this.filenameToSourceFile[template] = { fileName: fileName, text: "" };
+                            }
                         }
+                    }
+                    catch (err) {
+                        //something wrong
+                        sessionThis_1.logError(err, "initialization");
+                        skipAngular = true;
                     }
                 });
             }
         };
         AngularSession.prototype.executeCommand = function (request) {
+            if (skipAngular) {
+                return _super.prototype.executeCommand.call(this, request);
+            }
             var command = request.command;
             if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
                 var args = request.arguments;
@@ -40,15 +51,25 @@ function createAngularSessionClass(ts_impl, sessionClass) {
         };
         AngularSession.prototype.refreshStructureEx = function () {
             _super.prototype.refreshStructureEx.call(this);
-            if (this.projectService) {
-                for (var _i = 0, _a = this.projectService.inferredProjects; _i < _a.length; _i++) {
-                    var prj = _a[_i];
-                    this.updateNgProject(prj);
+            if (skipAngular) {
+                return;
+            }
+            try {
+                if (this.projectService) {
+                    for (var _i = 0, _a = this.projectService.inferredProjects; _i < _a.length; _i++) {
+                        var prj = _a[_i];
+                        this.updateNgProject(prj);
+                    }
+                    for (var _b = 0, _c = this.projectService.configuredProjects; _b < _c.length; _b++) {
+                        var prj = _c[_b];
+                        this.updateNgProject(prj);
+                    }
                 }
-                for (var _b = 0, _c = this.projectService.configuredProjects; _b < _c.length; _b++) {
-                    var prj = _c[_b];
-                    this.updateNgProject(prj);
-                }
+            }
+            catch (err) {
+                this.logError(err, "refresh from angular");
+                skipAngular = true;
+                this.logMessage("ERROR angular integration will be disable", true);
             }
         };
         AngularSession.prototype.getHtmlDiagnosticsEx = function (fileNames) {
@@ -57,16 +78,32 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             var _loop_1 = function(fileName) {
                 fileName = ts_impl.normalizePath(fileName);
                 var projectForFileEx = this_1.getForceProject(fileName);
-                if (projectForFileEx) {
-                    var htmlDiagnostics = this_1.appendPluginDiagnostics(projectForFileEx, [], fileName);
-                    var mappedDiagnostics = htmlDiagnostics.map(function (el) { return _this.formatDiagnostic(fileName, projectForFileEx, el); });
+                try {
+                    if (projectForFileEx) {
+                        var htmlDiagnostics = this_1.appendPluginDiagnostics(projectForFileEx, [], fileName);
+                        var mappedDiagnostics = htmlDiagnostics.map(function (el) { return _this.formatDiagnostic(fileName, projectForFileEx, el); });
+                        result.push({
+                            file: fileName,
+                            diagnostics: mappedDiagnostics
+                        });
+                    }
+                    else {
+                        this_1.logMessage("Cannot find parent config for html file " + fileName);
+                    }
+                }
+                catch (err) {
+                    var angularErr = [this_1.formatDiagnostic(fileName, projectForFileEx, {
+                            file: null,
+                            code: -1,
+                            messageText: "Angular Language Service internal error: " + err.message,
+                            start: 0,
+                            length: 0,
+                            category: 0
+                        })];
                     result.push({
                         file: fileName,
-                        diagnostics: mappedDiagnostics
+                        diagnostics: angularErr
                     });
-                }
-                else {
-                    this_1.logMessage("Cannot find parent config for html file " + fileName);
                 }
             };
             var this_1 = this;
@@ -91,7 +128,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
         };
         AngularSession.prototype.appendPluginDiagnostics = function (project, diags, normalizedFileName) {
             var languageService = project != null ? this.getLanguageService(project) : null;
-            if (!languageService) {
+            if (!languageService || skipAngular) {
                 return diags;
             }
             var ngLanguageService = this.getNgLanguageService(languageService);
