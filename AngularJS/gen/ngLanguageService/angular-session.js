@@ -4,22 +4,77 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var path = require('path');
 function createAngularSessionClass(ts_impl, sessionClass) {
+    ts_impl.server.CommandNames.IDEGetHtmlErrors = "IDEGetHtmlErrors";
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
             _super.apply(this, arguments);
         }
+        AngularSession.prototype.beforeFirstMessage = function () {
+            if (this.tsVersion() == "2.0.0") {
+                var sessionThis_1 = this;
+                extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
+                    oldFunc.apply(this, args);
+                    if (this.filenameToSourceFile) {
+                        var languageService = sessionThis_1.getLanguageService(this);
+                        var ngLanguageService = sessionThis_1.getNgLanguageService(languageService);
+                        for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
+                            var template = _a[_i];
+                            var fileName = ts_impl.normalizePath(template);
+                            sessionThis_1.logMessage("File " + fileName);
+                            this.filenameToSourceFile[template] = { fileName: fileName, text: "" };
+                        }
+                    }
+                });
+            }
+        };
+        AngularSession.prototype.executeCommand = function (request) {
+            var command = request.command;
+            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+                var args = request.arguments;
+                return { response: { infos: this.getHtmlDiagnosticsEx(args.files) }, responseRequired: true };
+            }
+            return _super.prototype.executeCommand.call(this, request);
+        };
         AngularSession.prototype.refreshStructureEx = function () {
             _super.prototype.refreshStructureEx.call(this);
             if (this.projectService) {
                 for (var _i = 0, _a = this.projectService.inferredProjects; _i < _a.length; _i++) {
                     var prj = _a[_i];
+                    this.updateNgProject(prj);
                 }
                 for (var _b = 0, _c = this.projectService.configuredProjects; _b < _c.length; _b++) {
                     var prj = _c[_b];
+                    this.updateNgProject(prj);
                 }
             }
+        };
+        AngularSession.prototype.getHtmlDiagnosticsEx = function (fileNames) {
+            var _this = this;
+            var result = [];
+            var _loop_1 = function(fileName) {
+                fileName = ts_impl.normalizePath(fileName);
+                var projectForFileEx = this_1.getForceProject(fileName);
+                if (projectForFileEx) {
+                    var htmlDiagnostics = this_1.appendPluginDiagnostics(projectForFileEx, [], fileName);
+                    var mappedDiagnostics = htmlDiagnostics.map(function (el) { return _this.formatDiagnostic(fileName, projectForFileEx, el); });
+                    result.push({
+                        file: fileName,
+                        diagnostics: mappedDiagnostics
+                    });
+                }
+                else {
+                    this_1.logMessage("Cannot find parent config for html file " + fileName);
+                }
+            };
+            var this_1 = this;
+            for (var _i = 0, fileNames_1 = fileNames; _i < fileNames_1.length; _i++) {
+                var fileName = fileNames_1[_i];
+                _loop_1(fileName);
+            }
+            return result;
         };
         AngularSession.prototype.updateNgProject = function (project) {
             var languageService = this.getLanguageService(project);
@@ -82,3 +137,11 @@ function createAngularSessionClass(ts_impl, sessionClass) {
     return AngularSession;
 }
 exports.createAngularSessionClass = createAngularSessionClass;
+function extendEx(ObjectToExtend, name, func) {
+    var proto = ObjectToExtend.prototype;
+    var oldFunction = proto[name];
+    proto[name] = function () {
+        return func.apply(this, [oldFunction, arguments]);
+    };
+}
+exports.extendEx = extendEx;

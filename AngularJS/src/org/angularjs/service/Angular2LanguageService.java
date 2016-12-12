@@ -1,15 +1,21 @@
 package org.angularjs.service;
 
 
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetErrCommand;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
@@ -17,6 +23,7 @@ import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.util.Consumer;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.service.protocol.Angular2LanguageServiceProtocol;
+import org.angularjs.service.protocol.command.Angular2GetHtmlErrorCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,8 +97,30 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   @NotNull
   @Override
+  protected TypeScriptGetErrCommand createGetErrCommand(@NotNull VirtualFile file, @NotNull String path) {
+    if (file.getFileType() == HtmlFileType.INSTANCE) {
+      return new Angular2GetHtmlErrorCommand(path);
+    }
+    return super.createGetErrCommand(file, path);
+  }
+
+  @Override
+  public boolean canHighlight(@NotNull PsiFile file) {
+    return super.canHighlight(file) || file instanceof HtmlFileImpl;
+  }
+
+  @NotNull
+  @Override
   protected String getProcessName() {
     return "Angular 2";
+  }
+
+  @NotNull
+  @Override
+  public Condition<VirtualFile> getAcceptableFilesFilter() {
+    return Conditions
+      .or(super.getAcceptableFilesFilter(),
+          (el) -> el != null && el.isInLocalFileSystem() && el.getFileType() == HtmlFileType.INSTANCE);
   }
 
   public static boolean isEnabledAngularService(Project project) {

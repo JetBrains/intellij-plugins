@@ -6,3 +6,7 @@ declare interface AngularTypeScriptPluginState extends TypeScriptPluginState {
     ngServicePath: string;
 }
 
+
+declare namespace ts.server.CommandNames {
+    const IDEGetHtmlErrors: string;
+}

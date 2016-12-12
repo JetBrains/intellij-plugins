@@ -7,7 +7,10 @@ export declare abstract class IDETypeScriptSession extends ts.server.Session {
     updateFilesEx(args: ts.server.protocol.IDEUpdateFilesContentArgs): Response;
     abstract changeFileEx(fileName: string, content: string, tsconfig?: string): void;
     getTime(): number;
+    abstract tsVersion():string;
     abstract getProjectForFileEx(fileName: string, projectFile?: string): ts.server.Project;
+    getForceProject(fileName: string): ts.server.Project;
+    processInfo(normalizedFileName:string, info: ts.server.ScriptInfo):void;
     compileFileEx(req: ts.server.protocol.IDECompileFileRequestArgs): Response;
     getCompletionEx(request: ts.server.protocol.Request): {
         response: any;

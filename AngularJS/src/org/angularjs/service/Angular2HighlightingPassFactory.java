@@ -5,6 +5,8 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase;
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider;
 import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceHighlightingPassFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,5 +34,11 @@ public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlighti
   @Override
   protected JSLanguageServiceBase getService() {
     return myProvider != null ? myProvider.getService() : null;
+  }
+
+  @Override
+  protected boolean isAcceptablePsiFile(@NotNull PsiFile file) {
+    //fast check
+    return super.isAcceptablePsiFile(file) || file instanceof HtmlFileImpl;
   }
 }
