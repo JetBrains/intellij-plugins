@@ -11,7 +11,7 @@ import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
-class CloudFormationJsonFileType : LanguageFileType(JsonLanguage.INSTANCE), FileTypeIdentifiableByVirtualFile {
+class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileTypeIdentifiableByVirtualFile {
   private val fileTypeRecursionGuard = RecursionManager.createGuard(javaClass.simpleName)
 
   override fun getName(): String = "AWSCloudFormation (JSON)"
@@ -24,7 +24,7 @@ class CloudFormationJsonFileType : LanguageFileType(JsonLanguage.INSTANCE), File
 
     return fileTypeRecursionGuard.doPreventingRecursion(javaClass.simpleName, false, {
       if (JsonFileType.DEFAULT_EXTENSION.equals(extension, ignoreCase = true) ||
-          CloudFormationJsonFileType.EXTENSION.equals(extension, ignoreCase = true) ||
+          JsonCloudFormationFileType.EXTENSION.equals(extension, ignoreCase = true) ||
           FileTypeManager.getInstance().getFileTypeByFile(file) === JsonFileType.INSTANCE) {
         return@doPreventingRecursion detectFileTypeFromContent(file, SIGNATURE)
       }
@@ -34,7 +34,7 @@ class CloudFormationJsonFileType : LanguageFileType(JsonLanguage.INSTANCE), File
   }
 
   companion object {
-    val INSTANCE = CloudFormationJsonFileType()
+    val INSTANCE = JsonCloudFormationFileType()
 
     private val EXTENSION = "template"
     private val SIGNATURE = CloudFormationSections.FormatVersion.toByteArray(Charsets.US_ASCII)

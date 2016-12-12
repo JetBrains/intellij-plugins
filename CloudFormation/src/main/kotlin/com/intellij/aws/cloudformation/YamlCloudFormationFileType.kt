@@ -11,7 +11,7 @@ import org.jetbrains.yaml.YAMLFileType
 import org.jetbrains.yaml.YAMLLanguage
 import javax.swing.Icon
 
-class CloudFormationYamlFileType : LanguageFileType(YAMLLanguage.INSTANCE), FileTypeIdentifiableByVirtualFile {
+class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE), FileTypeIdentifiableByVirtualFile {
   private val fileTypeRecursionGuard = RecursionManager.createGuard(javaClass.simpleName)
 
   override fun getName(): String = "AWSCloudFormation (YAML)"
@@ -23,8 +23,8 @@ class CloudFormationYamlFileType : LanguageFileType(YAMLLanguage.INSTANCE), File
     val extension = file.extension ?: return false
 
     return fileTypeRecursionGuard.doPreventingRecursion(javaClass.simpleName, false, {
-      if (CloudFormationYamlFileType.EXTENSION1.equals(extension, ignoreCase = true) ||
-          CloudFormationYamlFileType.EXTENSION2.equals(extension, ignoreCase = true) ||
+      if (YamlCloudFormationFileType.EXTENSION1.equals(extension, ignoreCase = true) ||
+          YamlCloudFormationFileType.EXTENSION2.equals(extension, ignoreCase = true) ||
           FileTypeManager.getInstance().getFileTypeByFile(file) === YAMLFileType.YML) {
         return@doPreventingRecursion detectFileTypeFromContent(file, FILE_SIGNATURE)
       }
@@ -34,7 +34,7 @@ class CloudFormationYamlFileType : LanguageFileType(YAMLLanguage.INSTANCE), File
   }
 
   companion object {
-    val INSTANCE = CloudFormationYamlFileType()
+    val INSTANCE = YamlCloudFormationFileType()
 
     private val EXTENSION1 = "yml"
     private val EXTENSION2 = "yaml"

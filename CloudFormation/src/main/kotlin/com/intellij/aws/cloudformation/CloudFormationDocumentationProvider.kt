@@ -28,18 +28,18 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
   }
 
   private fun createResourceDescription(match: ResourceTypeValueMatch): String? {
-    val typeNode = match.resource.type ?: return null
-    val resourceType = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[typeNode.id] ?: return null
+    val typeName = match.resource.typeName ?: return null
+    val resourceType = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[typeName] ?: return null
     return resourceType.description
   }
 
   private fun createPropertyDescription(match: ResourcePropertyNameMatch): String? {
-    val typeNode = match.resource.type ?: return null
+    val typeName = match.resource.typeName ?: return null
 
-    val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.resourceTypes[typeNode.id] ?: return ""
+    val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.resourceTypes[typeName] ?: return ""
     val propertyMetadata = resourceTypeMetadata.properties[match.name.id] ?: return ""
 
-    val resourceTypeDescription = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[typeNode.id] ?: return ""
+    val resourceTypeDescription = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[typeName] ?: return ""
     val propertyDescription = resourceTypeDescription.properties[match.name.id] ?: return ""
 
     val document = "<p>" + propertyDescription + "</p><br>" +

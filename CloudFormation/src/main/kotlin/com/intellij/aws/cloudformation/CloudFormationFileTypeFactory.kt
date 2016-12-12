@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.FileTypeFactory
 
 class CloudFormationFileTypeFactory : FileTypeFactory() {
   override fun createFileTypes(consumer: FileTypeConsumer) {
-    consumer.consume(CloudFormationJsonFileType.INSTANCE)
-    consumer.consume(CloudFormationYamlFileType.INSTANCE)
+    consumer.consume(JsonCloudFormationFileType.INSTANCE)
+    consumer.consume(YamlCloudFormationFileType.INSTANCE)
   }
 }

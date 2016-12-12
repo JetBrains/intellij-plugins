@@ -2,10 +2,13 @@ package com.intellij.aws.cloudformation
 
 import com.google.common.collect.HashBiMap
 import com.intellij.aws.cloudformation.model.CfnNameNode
+import com.intellij.aws.cloudformation.model.CfnNameValueNode
+import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
-import com.intellij.aws.cloudformation.model.CfnPropertiesNode
-import com.intellij.aws.cloudformation.model.CfnPropertyNode
+import com.intellij.aws.cloudformation.model.CfnResourcePropertiesNode
+import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
+import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.json.psi.JsonObject
@@ -59,7 +62,7 @@ class CloudFormationParser private constructor () {
         parameters(value)
       } else if (CloudFormationSections.Resources == name) {
         if (resourcesNode == null) {
-          resourcesNode = resources(value)
+          resourcesNode = resources(property)
         }
       } else if (CloudFormationSections.Conditions == name) {
         // TODO
@@ -165,8 +168,9 @@ class CloudFormationParser private constructor () {
     checkAndGetQuotedStringText(value)
   }
 
-  private fun resources(value: JsonValue): CfnResourcesNode? {
-    val obj = checkAndGetObject(value) ?: return CfnResourcesNode(emptyList()).registerNode(value)
+  private fun resources(property: JsonProperty): CfnResourcesNode? {
+    val nameNode = CfnNameNode(property.name).registerNode(property.nameElement)
+    val obj = checkAndGetObject(property.value!!) ?: return CfnResourcesNode(nameNode, emptyList()).registerNode(property.value!!)
 
     val resourcesList = obj.propertyList.mapNotNull { property ->
       val resourceName = property.name
@@ -179,44 +183,39 @@ class CloudFormationParser private constructor () {
       return@mapNotNull resource(property)
     }
 
-    return CfnResourcesNode(resourcesList).registerNode(value)
+    return CfnResourcesNode(nameNode, resourcesList).registerNode(property)
   }
 
   private fun resource(resourceProperty: JsonProperty): CfnResourceNode {
     val key = keyName(resourceProperty)
 
-    val value = resourceProperty.value ?: return CfnResourceNode(key, null, null).registerNode(resourceProperty)
-    val obj = checkAndGetObject(value) ?: return CfnResourceNode(key, null, null).registerNode(resourceProperty)
+    val value = resourceProperty.value ?: return CfnResourceNode(key, null, emptyMap(), null).registerNode(resourceProperty)
+    val obj = checkAndGetObject(value) ?: return CfnResourceNode(key, null, emptyMap(), null).registerNode(resourceProperty)
 
-    val typeNode: CfnNameNode?
+    val typeNode: CfnResourceTypeNode?
+    val topLevelProperties: MutableMap<String, CfnNamedNode> = hashMapOf()
 
     val typeProperty = obj.findProperty(CloudFormationConstants.TypePropertyName)
     if (typeProperty != null) {
       typeNode = resourceType(typeProperty)
+      topLevelProperties.put(typeProperty.name, typeNode)
     } else {
       addProblemOnNameElement(resourceProperty, CloudFormationBundle.getString("format.type.property.required"))
       typeNode = null
     }
 
-    for (property in obj.propertyList) {
-      val propertyName = property.name
-
-      if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyName)) {
-        addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyName))
-      }
-    }
-
-    val properties: CfnPropertiesNode?
+    val properties: CfnResourcePropertiesNode?
 
     val propertiesProperty = obj.findProperty(CloudFormationConstants.PropertiesPropertyName)
     if (propertiesProperty != null && propertiesProperty.value is JsonObject) {
-      properties = resourceProperties(propertiesProperty, typeNode?.id ?: "")
+      properties = resourceProperties(propertiesProperty, typeNode?.value?.id ?: "")
+      topLevelProperties.put(propertiesProperty.name, properties)
     } else {
       if (propertiesProperty != null && propertiesProperty.value !is JsonObject) {
         addProblemOnNameElement(propertiesProperty, CloudFormationBundle.getString("format.properties.property.should.properties.list"))
       }
 
-      val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeNode?.id ?: "")
+      val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeNode?.value?.id ?: "")
       if (resourceTypeMetadata != null) {
         val requiredProperties = resourceTypeMetadata.requiredProperties
         if (!requiredProperties.isEmpty()) {
@@ -230,10 +229,32 @@ class CloudFormationParser private constructor () {
       properties = null
     }
 
-    return CfnResourceNode(key, typeNode, properties).registerNode(resourceProperty)
+    for (property in obj.propertyList) {
+      val propertyName = property.name
+
+      if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyName)) {
+        addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyName))
+      }
+
+      if (!topLevelProperties.containsKey(propertyName)) {
+        val nameNode = CfnNameNode(propertyName).registerNode(property.nameElement)
+
+        val valueElement = property.value
+        val valueNode = if (valueElement != null) {
+          CfnNameNode(propertyName).registerNode(valueElement)
+        } else {
+          CfnNameNode("")
+        }
+
+        topLevelProperties.put(propertyName, CfnNameValueNode(nameNode, valueNode).registerNode(property))
+      }
+    }
+
+    return CfnResourceNode(key, typeNode, topLevelProperties, properties).registerNode(resourceProperty)
   }
 
-  private fun resourceProperties(propertiesProperty: JsonProperty, rawResourceTypeName: String): CfnPropertiesNode {
+  private fun resourceProperties(propertiesProperty: JsonProperty, rawResourceTypeName: String): CfnResourcePropertiesNode {
+    val nameNode = CfnNameNode(propertiesProperty.name).registerNode(propertiesProperty.nameElement)
     val properties = propertiesProperty.value as JsonObject
 
     val resourceTypeName = if (rawResourceTypeName.startsWith(CloudFormationConstants.CustomResourceTypePrefix)) {
@@ -260,7 +281,7 @@ class CloudFormationParser private constructor () {
       requiredProperties.remove(propertyName)
 
       val propertyNameNode = keyName(property)
-      return@mapNotNull CfnPropertyNode(propertyNameNode).registerNode(property)
+      return@mapNotNull CfnResourcePropertyNode(propertyNameNode).registerNode(property)
     }
 
     if (!requiredProperties.isEmpty()) {
@@ -269,17 +290,21 @@ class CloudFormationParser private constructor () {
           CloudFormationBundle.getString("format.required.resource.properties.are.not.set", requiredPropertiesString))
     }
 
-    return CfnPropertiesNode(propertyNodes).registerNode(propertiesProperty)
+    return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty)
   }
 
-  private fun resourceType(typeProperty: JsonProperty): CfnNameNode {
-    val value = checkAndGetUnquotedStringText(typeProperty.value) ?: return CfnNameNode("").registerNode(typeProperty)
+  private fun resourceType(typeProperty: JsonProperty): CfnResourceTypeNode {
+    val nameNode = CfnNameNode(typeProperty.name).registerNode(typeProperty.nameElement)
+    val value = checkAndGetUnquotedStringText(typeProperty.value) ?:
+        return CfnResourceTypeNode(nameNode, CfnNameNode("")).registerNode(typeProperty)
 
+    // TODO Move to inspections
     if (!isCustomResourceType(value) && CloudFormationMetadataProvider.METADATA.findResourceType(value) == null) {
       addProblem(typeProperty, CloudFormationBundle.getString("format.unknown.type", value))
     }
 
-    return CfnNameNode(value).registerNode(typeProperty.value!!)
+    val valueNode = CfnNameNode(value).registerNode(typeProperty.value!!)
+    return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty)
   }
 
   private fun isCustomResourceType(value: String): Boolean {

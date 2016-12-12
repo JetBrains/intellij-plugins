@@ -1,5 +1,8 @@
 package com.intellij.aws.cloudformation
 
+import com.intellij.aws.cloudformation.model.CfnNameNode
+import com.intellij.aws.cloudformation.model.CfnNamedNode
+import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
@@ -52,24 +55,26 @@ class CloudFormationCompletionContributor : CompletionContributor() {
 
             val resourcePropertyNameMatch = ResourcePropertyNameMatch.match(parent, parsed)
             if (resourcePropertyNameMatch != null) {
-              val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(resourcePropertyNameMatch.resource.type?.id ?: "") ?: return
-              for (propertyMetadata in resourceTypeMetadata.properties.values) {
+              val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(resourcePropertyNameMatch.resource.typeName ?: "") ?: return
+              @Suppress("LoopToCallChain")
+              for ((propertyName) in resourceTypeMetadata.properties.values) {
                 if (resourcePropertyNameMatch.resource.properties != null &&
-                    resourcePropertyNameMatch.resource.properties.properties.any { it.name.id == propertyMetadata.name}) {
+                    resourcePropertyNameMatch.resource.properties.properties.any { it.name.id == propertyName }) {
                   continue
                 }
 
-                rs.addElement(createLookupElement(propertyMetadata.name, quoteResult))
+                rs.addElement(createLookupElement(propertyName, quoteResult))
               }
             }
 
-            completeResourceTopLevelProperty(rs, parent, quoteResult)
+            completeResourceTopLevelProperty(rs, parent, quoteResult, parsed)
 
             val attResourceName = getResourceNameFromGetAttAttributePosition(parent)
             if (attResourceName != null) {
               completeAttribute(parent.containingFile, rs, quoteResult, attResourceName)
             }
 
+            @Suppress("LoopToCallChain")
             for (reference in parent.references) {
               val cfnReference = reference as? CloudFormationReferenceBase
               if (cfnReference != null) {
@@ -83,35 +88,16 @@ class CloudFormationCompletionContributor : CompletionContributor() {
         })
   }
 
-  private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quoteResult: Boolean) {
-    val propertyName = element as? JsonStringLiteral ?: return
+  private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quoteResult: Boolean, parsed: CloudFormationParsedFile) {
+    val nameNode = parsed.getCfnNode(element) as? CfnNameNode ?: return
+    val namedNode = CloudFormationPsiUtils.getParent(nameNode, parsed) as? CfnNamedNode ?: return
+    val resourceNode = CloudFormationPsiUtils.getParent(namedNode, parsed) as? CfnResourceNode ?: return
 
-    val property = propertyName.parent as? JsonProperty
-    if (property == null || property.nameElement !== propertyName) {
-      return
-    }
+    if (namedNode.name != nameNode || !resourceNode.allTopLevelProperties.values.contains(namedNode)) return
 
-    val resourceExpression = property.parent as? JsonObject ?: return
-
-    val resourceProperty = resourceExpression.parent as? JsonProperty ?: return
-
-    val resourcesExpression = resourceProperty.parent as? JsonObject ?: return
-
-    val resourcesProperty = resourcesExpression.parent as? JsonProperty
-    if (resourcesProperty == null || CloudFormationSections.Resources != StringUtil.stripQuotesAroundValue(resourcesProperty.name)) {
-      return
-    }
-
-    val root = CloudFormationPsiUtils.getRootExpression(resourceProperty.containingFile)
-    if (root !== resourcesProperty.parent) {
-      return
-    }
-
-    for (name in CloudFormationConstants.AllTopLevelResourceProperties) {
-      if (resourceExpression.findProperty(name) == null) {
-        rs.addElement(createLookupElement(name, quoteResult))
-      }
-    }
+    CloudFormationConstants.AllTopLevelResourceProperties
+        .filter { !resourceNode.allTopLevelProperties.containsKey(it) }
+        .forEach { rs.addElement(createLookupElement(it, quoteResult)) }
   }
 
   private fun getResourceNameFromGetAttAttributePosition(element: PsiElement): String? {
@@ -150,8 +136,8 @@ class CloudFormationCompletionContributor : CompletionContributor() {
 
     val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName) ?: return
 
-    for (attribute in resourceType.attributes.values) {
-      rs.addElement(createLookupElement(attribute.name, quoteResult))
+    resourceType.attributes.values.forEach {
+      rs.addElement(createLookupElement(it.name, quoteResult))
     }
   }
 

@@ -2,9 +2,10 @@ package com.intellij.aws.cloudformation.model
 
 import com.intellij.aws.cloudformation.IndentWriter
 
-class CfnPropertiesNode(val properties: List<CfnPropertyNode>) : CfnNode() {
+class CfnResourcePropertiesNode(name: CfnNameNode, val properties: List<CfnResourcePropertyNode>) : CfnNamedNode(name) {
   override fun dump(writer: IndentWriter) {
-    writer.println("properties:")
+    writer.print("properties: ")
+    name.dump(writer)
     writer.indent { properties.forEach { it.dump(writer) } }
   }
 }

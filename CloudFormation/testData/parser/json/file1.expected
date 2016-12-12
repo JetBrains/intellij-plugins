@@ -1,8 +1,9 @@
 resources:
   resource:
     PeeringRoute (name)
-    type: AWS::EC2::Route (name)
-    properties:
+    type: Type (name)
+      value: AWS::EC2::Route (name)
+    properties: Properties (name)
       property:
         DestinationCidrBlock (name)
       property:
