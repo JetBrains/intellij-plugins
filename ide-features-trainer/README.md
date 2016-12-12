@@ -1,4 +1,4 @@
-# Training Plugin
+# IDE Features Trainer
 _Learn basic editing features of IntelliJ IDEA_
 
 **System requirements**: IntelliJ IDEA 2016.2 
