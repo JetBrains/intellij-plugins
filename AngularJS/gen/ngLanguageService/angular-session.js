@@ -24,6 +24,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     oldFunc.apply(this, args);
                     try {
                         if (this.filenameToSourceFile) {
+                            sessionThis.logMessage("Connect templates to project");
                             var languageService = sessionThis.getLanguageService(this, false);
                             var ngLanguageService = sessionThis.getNgLanguageService(languageService);
                             for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
@@ -35,15 +36,16 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     }
                     catch (err) {
                         //something wrong
-                        sessionThis.logError(err, "initialization");
-                        skipAngular = true;
+                        sessionThis.logError(err, "update graph ng service");
                     }
                 });
             }
             else if (version == "2.0.5") {
                 extendEx(ts_impl.server.Project, "updateGraph", function (oldFunc, args) {
+                    oldFunc.apply(this, args);
                     try {
                         if (this.getScriptInfoLSHost) {
+                            sessionThis.logMessage("Connect templates to project");
                             var languageService = sessionThis.getLanguageService(this, false);
                             var ngLanguageService = sessionThis.getNgLanguageService(languageService);
                             for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
@@ -56,8 +58,21 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     }
                     catch (err) {
                         //something wrong
-                        sessionThis.logError(err, "initialization");
-                        skipAngular = true;
+                        sessionThis.logError(err, "update graph ng service");
+                    }
+                });
+                extendEx(ts_impl.server.ConfiguredProject, "close", function (oldFunc, args) {
+                    sessionThis.logMessage("Disconnect templates from project");
+                    var languageService = sessionThis.getLanguageService(this, false);
+                    var ngLanguageService = sessionThis.getNgLanguageService(languageService);
+                    for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
+                        var template = _a[_i];
+                        var fileName = ts_impl.normalizePath(template);
+                        // attach script info to project (directly)
+                        var scriptInfoForNormalizedPath = sessionThis.getProjectService().getScriptInfoForNormalizedPath(fileName);
+                        if (scriptInfoForNormalizedPath) {
+                            scriptInfoForNormalizedPath.detachFromProject(this);
+                        }
                     }
                     oldFunc.apply(this, args);
                 });
@@ -71,6 +86,14 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
                 var args = request.arguments;
                 return { response: { infos: this.getHtmlDiagnosticsEx(args.files) }, responseRequired: true };
+            }
+            else if (command == ts_impl.server.CommandNames.Open) {
+                if (this.tsVersion() == "2.0.5") {
+                    var openArgs = request.arguments;
+                    var file = openArgs.file;
+                    var normalizePath = ts_impl.normalizePath(file);
+                    this.projectService.getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
+                }
             }
             return _super.prototype.executeCommand.call(this, request);
         };
@@ -139,7 +162,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             return result;
         };
         AngularSession.prototype.updateNgProject = function (project) {
-            var languageService = this.getLanguageService(project);
+            var languageService = this.getLanguageService(project, false);
             var ngHost = this.getNgHost(languageService);
             if (ngHost.updateAnalyzedModules) {
                 ngHost.updateAnalyzedModules();
@@ -152,7 +175,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             return languageService["ngHost"];
         };
         AngularSession.prototype.appendPluginDiagnostics = function (project, diags, normalizedFileName) {
-            var languageService = project != null ? this.getLanguageService(project) : null;
+            var languageService = project != null ? this.getLanguageService(project, false) : null;
             if (!languageService || skipAngular) {
                 return diags;
             }

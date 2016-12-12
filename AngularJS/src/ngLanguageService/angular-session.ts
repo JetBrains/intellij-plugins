@@ -24,6 +24,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     oldFunc.apply(this, args);
                     try {
                         if (this.filenameToSourceFile) {
+                            sessionThis.logMessage("Connect templates to project")
                             let languageService = sessionThis.getLanguageService(this, false);
                             let ngLanguageService = sessionThis.getNgLanguageService(languageService);
                             for (let template of ngLanguageService.getTemplateReferences()) {
@@ -33,15 +34,15 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                         }
                     } catch (err) {
                         //something wrong
-                        sessionThis.logError(err, "initialization");
-                        skipAngular = true;
+                        sessionThis.logError(err, "update graph ng service");
                     }
                 });
             } else if (version == "2.0.5") {
                 extendEx((ts_impl.server as any).Project, "updateGraph", function (oldFunc, args) {
-
+                    oldFunc.apply(this, args);
                     try {
                         if (this.getScriptInfoLSHost) {
+                            sessionThis.logMessage("Connect templates to project");
                             let languageService = sessionThis.getLanguageService(this, false);
                             let ngLanguageService = sessionThis.getNgLanguageService(languageService);
                             for (let template of ngLanguageService.getTemplateReferences()) {
@@ -53,8 +54,21 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
                     } catch (err) {
                         //something wrong
-                        sessionThis.logError(err, "initialization");
-                        skipAngular = true;
+                        sessionThis.logError(err, "update graph ng service");
+                    }
+                });
+
+                extendEx((ts_impl.server as any).ConfiguredProject, "close", function (oldFunc, args) {
+                    sessionThis.logMessage("Disconnect templates from project");
+                    let languageService = sessionThis.getLanguageService(this, false);
+                    let ngLanguageService = sessionThis.getNgLanguageService(languageService);
+                    for (let template of ngLanguageService.getTemplateReferences()) {
+                        let fileName = ts_impl.normalizePath(template);
+                        // attach script info to project (directly)
+                        let scriptInfoForNormalizedPath = (sessionThis as any).getProjectService().getScriptInfoForNormalizedPath(fileName);
+                        if (scriptInfoForNormalizedPath) {
+                            scriptInfoForNormalizedPath.detachFromProject(this);
+                        }
                     }
 
                     oldFunc.apply(this, args);
@@ -71,6 +85,13 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
             if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
                 let args = request.arguments;
                 return {response: {infos: this.getHtmlDiagnosticsEx(args.files)}, responseRequired: true};
+            } else if (command == ts_impl.server.CommandNames.Open) {
+                if (this.tsVersion() == "2.0.5") {
+                    const openArgs = <ts.server.protocol.OpenRequestArgs>request.arguments;
+                    let file = openArgs.file;
+                    let normalizePath = ts_impl.normalizePath(file);
+                    (this.projectService as any).getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
+                }
             }
 
             return super.executeCommand(request);
@@ -138,7 +159,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
         updateNgProject(project: ts.server.Project) {
-            let languageService = this.getLanguageService(project);
+            let languageService = this.getLanguageService(project, false);
             let ngHost: any = this.getNgHost(languageService);
             if (ngHost.updateAnalyzedModules) {
                 ngHost.updateAnalyzedModules();
@@ -154,7 +175,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
         appendPluginDiagnostics(project: ts.server.Project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] {
-            let languageService = project != null ? this.getLanguageService(project) : null;
+            let languageService = project != null ? this.getLanguageService(project, false) : null;
             if (!languageService || skipAngular) {
                 return diags;
             }
