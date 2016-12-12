@@ -64,7 +64,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                             file,
                             start: error.span.start,
                             length: error.span.end - error.span.start,
-                            messageText: error.message,
+                            messageText: "Angular: " + error.message,
                             category: 0,
                             code: 0
                         });
