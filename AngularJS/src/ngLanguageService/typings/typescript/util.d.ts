@@ -19,7 +19,7 @@ export declare abstract class IDETypeScriptSession extends ts.server.Session {
 
     logMessage(text: string, force?: boolean);
     abstract lineOffsetToPosition(project: ts.server.Project, fileName: string, line: number, offset: number): number;
-    getLanguageService(project: ts.server.Project): ts.LanguageService;
+    abstract getLanguageService(project: ts.server.Project, sync?:boolean): ts.LanguageService
     getDiagnosticsEx(fileNames: string[], commonProject?: ts.server.Project, reqOpen?: boolean): ts.server.protocol.DiagnosticEventBody[];
     abstract containsFileEx(project: ts.server.Project, file: string, reqOpen: boolean): boolean;
     abstract getProjectName(project: ts.server.Project): string | undefined | null;

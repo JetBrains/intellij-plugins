@@ -13,17 +13,21 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
     abstract class AngularSession extends sessionClass {
 
         beforeFirstMessage(): void {
-            if (this.tsVersion() == "2.0.0" && !skipAngular) {
-                let sessionThis: AngularSession = this;
+            if (skipAngular) {
+                return;
+            }
+
+            let sessionThis: AngularSession = this;
+            let version = this.tsVersion();
+            if (version == "2.0.0") {
                 extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
                     oldFunc.apply(this, args);
                     try {
                         if (this.filenameToSourceFile) {
-                            let languageService = sessionThis.getLanguageService(this);
+                            let languageService = sessionThis.getLanguageService(this, false);
                             let ngLanguageService = sessionThis.getNgLanguageService(languageService);
                             for (let template of ngLanguageService.getTemplateReferences()) {
                                 let fileName = ts_impl.normalizePath(template);
-                                sessionThis.logMessage("File " + fileName);
                                 this.filenameToSourceFile[template] = {fileName, text: ""}
                             }
                         }
@@ -32,6 +36,28 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                         sessionThis.logError(err, "initialization");
                         skipAngular = true;
                     }
+                });
+            } else if (version == "2.0.5") {
+                extendEx((ts_impl.server as any).Project, "updateGraph", function (oldFunc, args) {
+
+                    try {
+                        if (this.getScriptInfoLSHost) {
+                            let languageService = sessionThis.getLanguageService(this, false);
+                            let ngLanguageService = sessionThis.getNgLanguageService(languageService);
+                            for (let template of ngLanguageService.getTemplateReferences()) {
+                                let fileName = ts_impl.normalizePath(template);
+                                // attach script info to project (directly)
+                                this.getScriptInfoLSHost(fileName);
+                            }
+                        }
+
+                    } catch (err) {
+                        //something wrong
+                        sessionThis.logError(err, "initialization");
+                        skipAngular = true;
+                    }
+
+                    oldFunc.apply(this, args);
                 });
             }
         }

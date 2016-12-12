@@ -14,27 +14,52 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             _super.apply(this, arguments);
         }
         AngularSession.prototype.beforeFirstMessage = function () {
-            if (this.tsVersion() == "2.0.0" && !skipAngular) {
-                var sessionThis_1 = this;
+            if (skipAngular) {
+                return;
+            }
+            var sessionThis = this;
+            var version = this.tsVersion();
+            if (version == "2.0.0") {
                 extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
                     oldFunc.apply(this, args);
                     try {
                         if (this.filenameToSourceFile) {
-                            var languageService = sessionThis_1.getLanguageService(this);
-                            var ngLanguageService = sessionThis_1.getNgLanguageService(languageService);
+                            var languageService = sessionThis.getLanguageService(this, false);
+                            var ngLanguageService = sessionThis.getNgLanguageService(languageService);
                             for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
                                 var template = _a[_i];
                                 var fileName = ts_impl.normalizePath(template);
-                                sessionThis_1.logMessage("File " + fileName);
                                 this.filenameToSourceFile[template] = { fileName: fileName, text: "" };
                             }
                         }
                     }
                     catch (err) {
                         //something wrong
-                        sessionThis_1.logError(err, "initialization");
+                        sessionThis.logError(err, "initialization");
                         skipAngular = true;
                     }
+                });
+            }
+            else if (version == "2.0.5") {
+                extendEx(ts_impl.server.Project, "updateGraph", function (oldFunc, args) {
+                    try {
+                        if (this.getScriptInfoLSHost) {
+                            var languageService = sessionThis.getLanguageService(this, false);
+                            var ngLanguageService = sessionThis.getNgLanguageService(languageService);
+                            for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
+                                var template = _a[_i];
+                                var fileName = ts_impl.normalizePath(template);
+                                // attach script info to project (directly)
+                                this.getScriptInfoLSHost(fileName);
+                            }
+                        }
+                    }
+                    catch (err) {
+                        //something wrong
+                        sessionThis.logError(err, "initialization");
+                        skipAngular = true;
+                    }
+                    oldFunc.apply(this, args);
                 });
             }
         };
