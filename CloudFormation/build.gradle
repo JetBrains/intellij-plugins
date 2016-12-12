@@ -35,6 +35,7 @@ project(':metadata-crawler') {
 
     intellij {
         version idea_version
+        plugins 'yaml'
     }
 
     dependencies {
