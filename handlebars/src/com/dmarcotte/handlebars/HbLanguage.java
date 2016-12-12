@@ -1,5 +1,6 @@
 package com.dmarcotte.handlebars;
 
+import com.intellij.lang.InjectableLanguage;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HbLanguage extends Language implements TemplateLanguage {
+public class HbLanguage extends Language implements TemplateLanguage, InjectableLanguage {
   public static final HbLanguage INSTANCE = new HbLanguage();
 
   @SuppressWarnings("SameReturnValue") // ideally this would be public static, but the static inits in the tests get cranky when we do that

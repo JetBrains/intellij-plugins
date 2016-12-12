@@ -2,7 +2,6 @@ package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.config.HbConfig;
-import com.dmarcotte.handlebars.file.HbFileViewProvider;
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
 import com.dmarcotte.handlebars.psi.*;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
@@ -42,7 +41,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
 
     String previousChar = editor.getDocument().getText(new TextRange(offset - 1, offset));
 
-    if (file.getViewProvider() instanceof HbFileViewProvider) {
+    if (file.getLanguage() instanceof HbLanguage) {
       PsiDocumentManager.getInstance(project).commitAllDocuments();
 
       // we suppress the built-in "}" auto-complete when we see "{{"
@@ -78,7 +77,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     String previousChar = editor.getDocument().getText(new TextRange(offset - 2, offset - 1));
     boolean closeBraceCompleted = false;
 
-    if (provider instanceof HbFileViewProvider) {
+    if (file.getLanguage() instanceof HbLanguage) {
       if (HbConfig.isAutocompleteMustachesEnabled() && c == '}' && !previousChar.equals("}")) {
         // we may be able to complete the second brace
         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
