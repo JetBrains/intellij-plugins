@@ -35,6 +35,7 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.8
 
 intellij{
+//    alternativeIdePath="path/to/locally/installed/AppCode.app"
     version '2016.2'
     updateSinceUntilBuild = false
     publish {
