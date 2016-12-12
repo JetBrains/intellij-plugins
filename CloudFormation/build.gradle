@@ -15,6 +15,7 @@ plugins {
 intellij {
     version idea_version
     pluginName 'CloudFormation'
+    plugins 'yaml'
     updateSinceUntilBuild false
 }
 
@@ -34,7 +35,6 @@ project(':metadata-crawler') {
 
     intellij {
         version idea_version
-        plugins = ["yaml"]
     }
 
     dependencies {
