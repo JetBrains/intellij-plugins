@@ -1,7 +1,7 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
 import {TypeScriptLanguagePlugin} from "./typings/typescript/ts-plugin";
 import {createAngularSessionClass} from "./angular-session";
-import {LanguageService, LanguageServiceHost} from "./typings/types";
+import {LanguageService} from "./typings/types";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
     create(state: AngularTypeScriptPluginState): {languagePlugin: LanguagePlugin, readyMessage?: any } {
