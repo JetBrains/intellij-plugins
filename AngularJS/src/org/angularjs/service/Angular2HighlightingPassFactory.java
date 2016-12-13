@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase;
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider;
 import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceHighlightingPassFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,12 @@ public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlighti
   @Override
   protected boolean isAcceptablePsiFile(@NotNull PsiFile file) {
     //fast check
-    return super.isAcceptablePsiFile(file) || file instanceof HtmlFileImpl;
+    if (!(super.isAcceptablePsiFile(file) || file instanceof HtmlFileImpl)) {
+      return false;
+    }
+
+    VirtualFile virtualFile = file.getVirtualFile();
+
+    return virtualFile != null && virtualFile.isInLocalFileSystem();
   }
 }

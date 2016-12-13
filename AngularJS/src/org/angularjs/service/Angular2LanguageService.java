@@ -106,7 +106,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   @Override
   public boolean canHighlight(@NotNull PsiFile file) {
-    return super.canHighlight(file) || file instanceof HtmlFileImpl;
+    return file instanceof HtmlFileImpl || super.canHighlight(file);
   }
 
   @NotNull
