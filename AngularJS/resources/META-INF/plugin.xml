@@ -58,13 +58,23 @@
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector" id="angular"/>
     <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first" id="angular2"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
-                            id="AngularJSCompletionContributor" order="first"/>
+                            id="AngularJSCompletionContributor" order="before JSCompletionContributor, before JSPatternBasedCompletionContributor"/>
+
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJSDICompletionContributor"
-                            id="AngularJSDICompletionContributor" order="first"/>
+                            id="AngularJSDICompletionContributor" order="before JSCompletionContributor, before JSPatternBasedCompletionContributor"/>
+
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJavaScriptCompletionContributor"
-                            id="AngularJavaScriptCompletionContributor" order="first"/>
+                            id="AngularJavaScriptCompletionContributor" order="before JSCompletionContributor, before JSPatternBasedCompletionContributor"/>
+
+    <completion.contributor id="Angular2ServiceCompletionContributor" language="AngularJS" order="before JSCompletionContributor, before JSPatternBasedCompletionContributor"
+                            implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
+
+    <completion.contributor id="Angular2ServiceCompletionContributorHtml" language="Angular2HTML" order="before JSCompletionContributor, before JSPatternBasedCompletionContributor"
+                            implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
+
     <completion.contributor language="HTML" implementationClass="org.angularjs.codeInsight.AngularJSXmlCompletionContributor"
                             id="AngularJSXmlCompletionContributor" order="first"/>
+
     <lookup.charFilter implementation="org.angularjs.editor.Angular2LookupCharFilter" order="before xml"/>
 
     <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor" />
@@ -85,6 +95,7 @@
     <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
                      groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
     <diagram.Provider implementation="org.angularjs.codeInsight.router.AngularUiRouterDiagramProvider"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

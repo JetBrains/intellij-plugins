@@ -7,12 +7,36 @@ var __extends = (this && this.__extends) || function (d, b) {
 var path = require('path');
 function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDEGetHtmlErrors = "IDEGetHtmlErrors";
+    ts_impl.server.CommandNames.IDENgCompletions = "IDENgCompletions";
     var skipAngular = false;
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
             _super.apply(this, arguments);
         }
+        AngularSession.prototype.executeCommand = function (request) {
+            if (skipAngular) {
+                return _super.prototype.executeCommand.call(this, request);
+            }
+            var command = request.command;
+            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+                var args = request.arguments;
+                return { response: { infos: this.getHtmlDiagnosticsEx(args.files) }, responseRequired: true };
+            }
+            else if (command == ts_impl.server.CommandNames.Open) {
+                if (this.tsVersion() == "2.0.5") {
+                    var openArgs = request.arguments;
+                    var file = openArgs.file;
+                    var normalizePath = ts_impl.normalizePath(file);
+                    this.projectService.getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
+                }
+            }
+            else if (command == ts_impl.server.CommandNames.IDENgCompletions) {
+                var args = request.arguments;
+                return this.getNgCompletion(args);
+            }
+            return _super.prototype.executeCommand.call(this, request);
+        };
         AngularSession.prototype.beforeFirstMessage = function () {
             if (skipAngular) {
                 return;
@@ -77,25 +101,6 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     oldFunc.apply(this, args);
                 });
             }
-        };
-        AngularSession.prototype.executeCommand = function (request) {
-            if (skipAngular) {
-                return _super.prototype.executeCommand.call(this, request);
-            }
-            var command = request.command;
-            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
-                var args = request.arguments;
-                return { response: { infos: this.getHtmlDiagnosticsEx(args.files) }, responseRequired: true };
-            }
-            else if (command == ts_impl.server.CommandNames.Open) {
-                if (this.tsVersion() == "2.0.5") {
-                    var openArgs = request.arguments;
-                    var file = openArgs.file;
-                    var normalizePath = ts_impl.normalizePath(file);
-                    this.projectService.getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
-                }
-            }
-            return _super.prototype.executeCommand.call(this, request);
         };
         AngularSession.prototype.refreshStructureEx = function () {
             _super.prototype.refreshStructureEx.call(this);
@@ -216,6 +221,24 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 });
             }
             return diags;
+        };
+        AngularSession.prototype.getNgCompletion = function (args) {
+            var file = args.file;
+            file = ts_impl.normalizePath(file);
+            var project = this.getForceProject(file);
+            if (!project) {
+                return {
+                    response: [],
+                    responseRequired: true
+                };
+            }
+            var offset = this.lineOffsetToPosition(project, file, args.line, args.offset);
+            var ngLanguageService = this.getNgLanguageService(this.getLanguageService(project, false));
+            var completionsAt = ngLanguageService.getCompletionsAt(file, offset);
+            return {
+                response: completionsAt == null ? [] : completionsAt,
+                responseRequired: true
+            };
         };
         return AngularSession;
     }(sessionClass));

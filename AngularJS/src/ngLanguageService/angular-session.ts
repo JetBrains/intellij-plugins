@@ -1,5 +1,5 @@
 import {IDETypeScriptSession} from "./typings/typescript/util";
-import {LanguageService} from "./typings/types";
+import {LanguageService, Completions} from "./typings/types";
 import LanguageServiceHost = ts.LanguageServiceHost;
 
 let path = require('path');
@@ -7,10 +7,36 @@ let path = require('path');
 export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new(state: TypeScriptPluginState): IDETypeScriptSession}) {
 
     (ts_impl.server.CommandNames as any).IDEGetHtmlErrors = "IDEGetHtmlErrors";
+    (ts_impl.server.CommandNames as any).IDENgCompletions = "IDENgCompletions";
 
 
     let skipAngular = false;
     abstract class AngularSession extends sessionClass {
+
+        executeCommand(request: ts.server.protocol.Request): {response?: any; responseRequired?: boolean} {
+            if (skipAngular) {
+                return super.executeCommand(request);
+            }
+
+            let command = request.command;
+            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+                let args = request.arguments;
+                return {response: {infos: this.getHtmlDiagnosticsEx(args.files)}, responseRequired: true};
+            } else if (command == ts_impl.server.CommandNames.Open) {
+                if (this.tsVersion() == "2.0.5") {
+                    const openArgs = <ts.server.protocol.OpenRequestArgs>request.arguments;
+                    let file = openArgs.file;
+                    let normalizePath = ts_impl.normalizePath(file);
+                    (this.projectService as any).getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
+                }
+            } else if (command == ts_impl.server.CommandNames.IDENgCompletions) {
+                const args = <ts.server.protocol.CompletionsRequestArgs>request.arguments;
+
+                return this.getNgCompletion(args);
+            }
+
+            return super.executeCommand(request);
+        }
 
         beforeFirstMessage(): void {
             if (skipAngular) {
@@ -74,27 +100,6 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     oldFunc.apply(this, args);
                 });
             }
-        }
-
-        executeCommand(request: ts.server.protocol.Request): {response?: any; responseRequired?: boolean} {
-            if (skipAngular) {
-                return super.executeCommand(request);
-            }
-
-            let command = request.command;
-            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
-                let args = request.arguments;
-                return {response: {infos: this.getHtmlDiagnosticsEx(args.files)}, responseRequired: true};
-            } else if (command == ts_impl.server.CommandNames.Open) {
-                if (this.tsVersion() == "2.0.5") {
-                    const openArgs = <ts.server.protocol.OpenRequestArgs>request.arguments;
-                    let file = openArgs.file;
-                    let normalizePath = ts_impl.normalizePath(file);
-                    (this.projectService as any).getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
-                }
-            }
-
-            return super.executeCommand(request);
         }
 
         refreshStructureEx(): void {
@@ -221,6 +226,29 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
             }
 
             return diags;
+        }
+
+
+        getNgCompletion(args: ts.server.protocol.CompletionsRequestArgs) {
+            let file = args.file;
+            file = ts_impl.normalizePath(file);
+            let project = this.getForceProject(file);
+            if (!project) {
+                return {
+                    response: [],
+                    responseRequired: true
+                };
+            }
+
+            let offset = this.lineOffsetToPosition(project, file, args.line, args.offset);
+            let ngLanguageService = this.getNgLanguageService(this.getLanguageService(project, false));
+
+            let completionsAt: Completions = ngLanguageService.getCompletionsAt(file, offset);
+
+            return {
+                response: completionsAt == null ? [] : completionsAt,
+                responseRequired: true
+            };
         }
     }
 
