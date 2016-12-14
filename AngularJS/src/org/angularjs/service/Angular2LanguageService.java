@@ -46,10 +46,14 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     };
 
   public static final Key<ParameterizedCachedValue<VirtualFile, Project>> NG_SERVICE_PATH_KEY = Key.create("CACHED_NG_SERVICE_PATH");
+  private final Condition<VirtualFile> myFileFilter;
 
   public Angular2LanguageService(@NotNull Project project,
                                  @NotNull TypeScriptCompilerSettings settings) {
     super(project, settings);
+
+    myFileFilter = Conditions
+      .or(super.getAcceptableFilesFilter(), (el) -> el != null && el.isInLocalFileSystem() && el.getFileType() == HtmlFileType.INSTANCE);
   }
 
   @Nullable
@@ -121,9 +125,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @NotNull
   @Override
   public Condition<VirtualFile> getAcceptableFilesFilter() {
-    return Conditions
-      .or(super.getAcceptableFilesFilter(),
-          (el) -> el != null && el.isInLocalFileSystem() && el.getFileType() == HtmlFileType.INSTANCE);
+    return myFileFilter;
   }
 
   @Override
