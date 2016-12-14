@@ -4,8 +4,10 @@ package org.angularjs.service;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetErrCommand;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -23,6 +25,7 @@ import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.util.Consumer;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.service.protocol.Angular2LanguageServiceProtocol;
+import org.angularjs.service.protocol.command.Angular2CompletionsCommand;
 import org.angularjs.service.protocol.command.Angular2GetHtmlErrorCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,6 +125,13 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
       .or(super.getAcceptableFilesFilter(),
           (el) -> el != null && el.isInLocalFileSystem() && el.getFileType() == HtmlFileType.INSTANCE);
   }
+
+  @Override
+  @NotNull
+  protected JSLanguageServiceSimpleCommand createCompletionCommand(TypeScriptCompletionsRequestArgs args) {
+    return new Angular2CompletionsCommand(args);
+  }
+
 
   public static boolean isEnabledAngularService(Project project) {
     return AngularIndexUtil.hasAngularJS2(project) && getServiceDirectory(project) != null;
