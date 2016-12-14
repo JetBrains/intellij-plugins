@@ -128,8 +128,12 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   @Override
   @NotNull
-  protected JSLanguageServiceSimpleCommand createCompletionCommand(TypeScriptCompletionsRequestArgs args) {
-    return new Angular2CompletionsCommand(args);
+  protected JSLanguageServiceSimpleCommand createCompletionCommand(@NotNull TypeScriptCompletionsRequestArgs args,
+                                                                   @NotNull VirtualFile virtualFile,
+                                                                   @NotNull PsiFile file) {
+    return file instanceof HtmlFileImpl || virtualFile.getFileType() == HtmlFileType.INSTANCE ?
+           new Angular2CompletionsCommand(args) :
+           super.createCompletionCommand(args, virtualFile, file);
   }
 
 
