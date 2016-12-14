@@ -1,6 +1,7 @@
 package org.angularjs.service.protocol.command;
 
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetErrCommand;
+import org.jetbrains.annotations.NotNull;
 
 
 public class Angular2GetHtmlErrorCommand extends TypeScriptGetErrCommand {
@@ -10,6 +11,7 @@ public class Angular2GetHtmlErrorCommand extends TypeScriptGetErrCommand {
     super(filePath);
   }
 
+  @NotNull
   @Override
   public String getCommand() {
     return COMMAND;
