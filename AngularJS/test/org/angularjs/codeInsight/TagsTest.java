@@ -251,4 +251,11 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("unclosed.html", "angular.js", "custom.js");
     myFixture.checkHighlighting();
   }
+
+  public void testInlineTemplateHtmlTags() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      List<String> variants = myFixture.getCompletionVariants("inline_template.ts", "angular2.js");
+      assertContainsElements(variants, "a", "img", "my-customer");
+    });
+  }
 }
