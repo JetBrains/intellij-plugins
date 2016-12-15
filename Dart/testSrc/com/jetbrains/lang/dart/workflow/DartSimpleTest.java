@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.workflow;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
+import com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 import junit.framework.TestCase;
@@ -76,5 +77,20 @@ public class DartSimpleTest extends TestCase {
     doTestDebuggerErrorText("Unhandled exception:\n\nNo top-level getter 'foo' declared.\n\n" +
                             "NoSuchMethodError: method not found: 'foo'",
                             "No top-level getter 'foo' declared.");
+  }
+
+  public void testIdentifierInTheEndOfTheString() throws Exception {
+    assertEquals("", DartServerCompletionContributor.getIdentifierInTheEndOfThisString(""));
+    assertEquals("a", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("a"));
+    assertEquals("", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("a "));
+    assertEquals("", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("a."));
+    assertEquals("b", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("a.b"));
+    assertEquals("b", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("a b"));
+    assertEquals("b1$_", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("a.b1$_"));
+    assertEquals("$_", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("a.$_"));
+    assertEquals("_", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("a.1_"));
+    assertEquals("_", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("1_"));
+    assertEquals("abcd", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("abcd"));
+    assertEquals("abcd", DartServerCompletionContributor.getIdentifierInTheEndOfThisString("qwer\nabcd"));
   }
 }
