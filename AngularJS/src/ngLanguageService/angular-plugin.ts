@@ -4,7 +4,7 @@ import {createAngularSessionClass} from "./angular-session";
 import {LanguageService} from "./typings/types";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
-    create(state: AngularTypeScriptPluginState): {languagePlugin: LanguagePlugin, readyMessage?: any } {
+    create(state: AngularTypeScriptPluginState): {languagePlugin: LanguagePlugin, readyMessage?: any} {
 
         let angularLanguagePlugin = createPluginClass(state);
 
@@ -39,33 +39,34 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                              projectEmittedWithAllFiles: any): any {
             let sessionClass: {new(state): IDETypeScriptSession} = createSessionClass(ts_impl, loggerImpl, commonDefaultOptions, pathProcessor, projectEmittedWithAllFiles, mainFile)
 
-            let requiredObject = require(state.ngServicePath);
-            let ng = requiredObject;
-            if (typeof requiredObject == "function") {
-                let obj: any = {}
-                if (ts_impl["ide_processed"]) {
+            if (ts_impl["ide_processed"]) {
+                let requiredObject = require(state.ngServicePath);
+                let ng = requiredObject;
+                if (typeof requiredObject == "function") {
+                    let obj: any = {}
                     obj.typescript = ts_impl;
-                    console.error("Passed processed ts_impl")
+                    ng = requiredObject(obj);
                 }
-                ng = requiredObject(obj);
+
+
+                extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
+                    let languageService = oldFunction.apply(this, args);
+                    let host = args[0];
+                    let documentRegistry = args[1];
+
+                    let ngHost = new ng.TypeScriptServiceHost(host, languageService);
+                    let ngService: LanguageService = ng.createLanguageService(ngHost);
+                    ngHost.setSite(ngService);
+
+                    languageService["ngService"] = ngService
+                    languageService["ngHost"] = ngHost;
+
+                    return languageService;
+
+                });
+            } else {
+                ts_impl["skipNg"] = true;
             }
-
-
-            extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
-                let languageService = oldFunction.apply(this, args);
-                let host = args[0];
-                let documentRegistry = args[1];
-
-                let ngHost = new ng.TypeScriptServiceHost(host, languageService);
-                let ngService: LanguageService = ng.createLanguageService(ngHost);
-                ngHost.setSite(ngService);
-
-                languageService["ngService"] = ngService
-                languageService["ngHost"] = ngHost;
-
-                return languageService;
-
-            });
 
 
             let angularSession = createAngularSessionClass(ts_impl, sessionClass);

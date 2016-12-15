@@ -8,32 +8,34 @@ var path = require('path');
 function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDEGetHtmlErrors = "IDEGetHtmlErrors";
     ts_impl.server.CommandNames.IDENgCompletions = "IDENgCompletions";
-    var skipAngular = false;
+    var skipAngular = ts_impl["skipNg"];
+    var globalError = skipAngular ? "Cannot start Angular Service using bundled TypeScript version. " +
+        "Please specify typescript node_modules package instead in the TypeScript settings" : null;
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
             _super.apply(this, arguments);
         }
         AngularSession.prototype.executeCommand = function (request) {
-            if (skipAngular) {
-                return _super.prototype.executeCommand.call(this, request);
-            }
             var command = request.command;
             if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
                 var args = request.arguments;
                 return { response: { infos: this.getHtmlDiagnosticsEx(args.files) }, responseRequired: true };
             }
-            else if (command == ts_impl.server.CommandNames.Open) {
+            if (command == ts_impl.server.CommandNames.IDENgCompletions) {
+                var args = request.arguments;
+                return this.getNgCompletion(args);
+            }
+            if (skipAngular) {
+                return _super.prototype.executeCommand.call(this, request);
+            }
+            if (command == ts_impl.server.CommandNames.Open) {
                 if (this.tsVersion() == "2.0.5") {
                     var openArgs = request.arguments;
                     var file = openArgs.file;
                     var normalizePath = ts_impl.normalizePath(file);
                     this.projectService.getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
                 }
-            }
-            else if (command == ts_impl.server.CommandNames.IDENgCompletions) {
-                var args = request.arguments;
-                return this.getNgCompletion(args);
             }
             return _super.prototype.executeCommand.call(this, request);
         };
@@ -128,43 +130,45 @@ function createAngularSessionClass(ts_impl, sessionClass) {
         AngularSession.prototype.getHtmlDiagnosticsEx = function (fileNames) {
             var _this = this;
             var result = [];
-            var _loop_1 = function(fileName) {
-                fileName = ts_impl.normalizePath(fileName);
-                var projectForFileEx = this_1.getForceProject(fileName);
-                try {
-                    if (projectForFileEx) {
-                        var htmlDiagnostics = this_1.appendPluginDiagnostics(projectForFileEx, [], fileName);
-                        var mappedDiagnostics = htmlDiagnostics.map(function (el) { return _this.formatDiagnostic(fileName, projectForFileEx, el); });
+            if (!skipAngular) {
+                var _loop_1 = function(fileName) {
+                    fileName = ts_impl.normalizePath(fileName);
+                    var projectForFileEx = this_1.getForceProject(fileName);
+                    try {
+                        if (projectForFileEx) {
+                            var htmlDiagnostics = this_1.appendPluginDiagnostics(projectForFileEx, [], fileName);
+                            var mappedDiagnostics = htmlDiagnostics.map(function (el) { return _this.formatDiagnostic(fileName, projectForFileEx, el); });
+                            result.push({
+                                file: fileName,
+                                diagnostics: mappedDiagnostics
+                            });
+                        }
+                        else {
+                            this_1.logMessage("Cannot find parent config for html file " + fileName);
+                        }
+                    }
+                    catch (err) {
+                        var angularErr = [this_1.formatDiagnostic(fileName, projectForFileEx, {
+                                file: null,
+                                code: -1,
+                                messageText: "Angular Language Service internal globalError: " + err.message,
+                                start: 0,
+                                length: 0,
+                                category: ts_impl.DiagnosticCategory.Error
+                            })];
                         result.push({
                             file: fileName,
-                            diagnostics: mappedDiagnostics
+                            diagnostics: angularErr
                         });
                     }
-                    else {
-                        this_1.logMessage("Cannot find parent config for html file " + fileName);
-                    }
+                };
+                var this_1 = this;
+                for (var _i = 0, fileNames_1 = fileNames; _i < fileNames_1.length; _i++) {
+                    var fileName = fileNames_1[_i];
+                    _loop_1(fileName);
                 }
-                catch (err) {
-                    var angularErr = [this_1.formatDiagnostic(fileName, projectForFileEx, {
-                            file: null,
-                            code: -1,
-                            messageText: "Angular Language Service internal error: " + err.message,
-                            start: 0,
-                            length: 0,
-                            category: ts_impl.DiagnosticCategory.Error
-                        })];
-                    result.push({
-                        file: fileName,
-                        diagnostics: angularErr
-                    });
-                }
-            };
-            var this_1 = this;
-            for (var _i = 0, fileNames_1 = fileNames; _i < fileNames_1.length; _i++) {
-                var fileName = fileNames_1[_i];
-                _loop_1(fileName);
             }
-            return this.appendOldVersionError(result);
+            return this.appendGlobalErrors(result);
         };
         AngularSession.prototype.updateNgProject = function (project) {
             var languageService = this.getLanguageService(project, false);
@@ -186,7 +190,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             }
             var ngLanguageService = this.getNgLanguageService(languageService);
             if (!ngLanguageService) {
-                //error
+                //globalError
                 return diags;
             }
             try {
@@ -214,7 +218,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 diags.push({
                     file: null,
                     code: -1,
-                    messageText: "Angular Language Service internal error: " + err.message,
+                    messageText: "Angular Language Service internal globalError: " + err.message,
                     start: 0,
                     length: 0,
                     category: ts_impl.DiagnosticCategory.Warning
@@ -224,11 +228,22 @@ function createAngularSessionClass(ts_impl, sessionClass) {
         };
         AngularSession.prototype.appendProjectErrors = function (result, processedProjects, empty) {
             var appendProjectErrors = _super.prototype.appendProjectErrors.call(this, result, processedProjects, empty);
-            appendProjectErrors = this.appendOldVersionError(appendProjectErrors);
+            appendProjectErrors = this.appendGlobalErrors(appendProjectErrors);
             return appendProjectErrors;
         };
-        AngularSession.prototype.appendOldVersionError = function (appendProjectErrors) {
-            if (this.tsVersion() == "2.0.0") {
+        AngularSession.prototype.appendGlobalErrors = function (appendProjectErrors) {
+            if (skipAngular && globalError) {
+                appendProjectErrors.push({
+                    file: null,
+                    diagnostics: [{
+                            category: "warning",
+                            end: null,
+                            start: null,
+                            text: globalError
+                        }]
+                });
+            }
+            else if (this.tsVersion() == "2.0.0") {
                 if (appendProjectErrors == null) {
                     appendProjectErrors = [];
                 }
@@ -245,6 +260,12 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             return appendProjectErrors;
         };
         AngularSession.prototype.getNgCompletion = function (args) {
+            if (skipAngular) {
+                return {
+                    response: [],
+                    responseRequired: true
+                };
+            }
             var file = args.file;
             file = ts_impl.normalizePath(file);
             var project = this.getForceProject(file);

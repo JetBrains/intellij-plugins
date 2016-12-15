@@ -10,29 +10,34 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
     (ts_impl.server.CommandNames as any).IDENgCompletions = "IDENgCompletions";
 
 
-    let skipAngular = false;
+    let skipAngular = ts_impl["skipNg"];
+    let globalError = skipAngular ? "Cannot start Angular Service using bundled TypeScript version. " +
+        "Please specify typescript node_modules package instead in the TypeScript settings" : null;
     abstract class AngularSession extends sessionClass {
 
         executeCommand(request: ts.server.protocol.Request): {response?: any; responseRequired?: boolean} {
-            if (skipAngular) {
-                return super.executeCommand(request);
-            }
-
             let command = request.command;
             if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
                 let args = request.arguments;
                 return {response: {infos: this.getHtmlDiagnosticsEx(args.files)}, responseRequired: true};
-            } else if (command == ts_impl.server.CommandNames.Open) {
+            }
+            if (command == ts_impl.server.CommandNames.IDENgCompletions) {
+                const args = <ts.server.protocol.CompletionsRequestArgs>request.arguments;
+
+                return this.getNgCompletion(args);
+            }
+
+            if (skipAngular) {
+                return super.executeCommand(request);
+            }
+
+            if (command == ts_impl.server.CommandNames.Open) {
                 if (this.tsVersion() == "2.0.5") {
                     const openArgs = <ts.server.protocol.OpenRequestArgs>request.arguments;
                     let file = openArgs.file;
                     let normalizePath = ts_impl.normalizePath(file);
                     (this.projectService as any).getOrCreateScriptInfoForNormalizedPath(normalizePath, true, openArgs.fileContent);
                 }
-            } else if (command == ts_impl.server.CommandNames.IDENgCompletions) {
-                const args = <ts.server.protocol.CompletionsRequestArgs>request.arguments;
-
-                return this.getNgCompletion(args);
             }
 
             return super.executeCommand(request);
@@ -128,39 +133,41 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
         getHtmlDiagnosticsEx(fileNames: string[]): ts.server.protocol.DiagnosticEventBody[] {
             let result: ts.server.protocol.DiagnosticEventBody[] = [];
-            for (let fileName of fileNames) {
-                fileName = ts_impl.normalizePath(fileName);
-                let projectForFileEx = this.getForceProject(fileName);
-                try {
-                    if (projectForFileEx) {
-                        let htmlDiagnostics = this.appendPluginDiagnostics(projectForFileEx, [], fileName);
-                        let mappedDiagnostics: ts.server.protocol.Diagnostic[] = htmlDiagnostics.map((el: ts.Diagnostic) => this.formatDiagnostic(fileName, projectForFileEx, el));
+            if (!skipAngular) {
+                for (let fileName of fileNames) {
+                    fileName = ts_impl.normalizePath(fileName);
+                    let projectForFileEx = this.getForceProject(fileName);
+                    try {
+                        if (projectForFileEx) {
+                            let htmlDiagnostics = this.appendPluginDiagnostics(projectForFileEx, [], fileName);
+                            let mappedDiagnostics: ts.server.protocol.Diagnostic[] = htmlDiagnostics.map((el: ts.Diagnostic) => this.formatDiagnostic(fileName, projectForFileEx, el));
 
+                            result.push({
+                                file: fileName,
+                                diagnostics: mappedDiagnostics
+                            });
+                        } else {
+                            this.logMessage("Cannot find parent config for html file " + fileName);
+                        }
+                    } catch (err) {
+                        let angularErr = [this.formatDiagnostic(fileName, projectForFileEx, {
+                            file: null,
+                            code: -1,
+                            messageText: "Angular Language Service internal globalError: " + err.message,
+                            start: 0,
+                            length: 0,
+                            category: ts_impl.DiagnosticCategory.Error
+                        })];
                         result.push({
                             file: fileName,
-                            diagnostics: mappedDiagnostics
+                            diagnostics: angularErr
                         });
-                    } else {
-                        this.logMessage("Cannot find parent config for html file " + fileName);
-                    }
-                } catch (err) {
-                    let angularErr = [this.formatDiagnostic(fileName, projectForFileEx, {
-                        file: null,
-                        code: -1,
-                        messageText: "Angular Language Service internal error: " + err.message,
-                        start: 0,
-                        length: 0,
-                        category: ts_impl.DiagnosticCategory.Error
-                    })];
-                    result.push({
-                        file: fileName,
-                        diagnostics: angularErr
-                    });
 
+                    }
                 }
             }
 
-            return this.appendOldVersionError(result);
+            return this.appendGlobalErrors(result);
         }
 
         updateNgProject(project: ts.server.Project) {
@@ -188,7 +195,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
             let ngLanguageService = this.getNgLanguageService(languageService);
 
             if (!ngLanguageService) {
-                //error
+                //globalError
 
                 return diags;
             }
@@ -217,7 +224,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                 diags.push({
                     file: null,
                     code: -1,
-                    messageText: "Angular Language Service internal error: " + err.message,
+                    messageText: "Angular Language Service internal globalError: " + err.message,
                     start: 0,
                     length: 0,
                     category: ts_impl.DiagnosticCategory.Warning
@@ -230,12 +237,22 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
         appendProjectErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: {[p: string]: ts.server.Project}, empty: boolean): ts.server.protocol.DiagnosticEventBody[] {
             let appendProjectErrors = super.appendProjectErrors(result, processedProjects, empty);
-            appendProjectErrors = this.appendOldVersionError(appendProjectErrors);
+            appendProjectErrors = this.appendGlobalErrors(appendProjectErrors);
             return appendProjectErrors;
         }
 
-        private appendOldVersionError(appendProjectErrors: ts.server.protocol.DiagnosticEventBody[]) {
-            if (this.tsVersion() == "2.0.0") {
+        private appendGlobalErrors(appendProjectErrors: ts.server.protocol.DiagnosticEventBody[]) {
+            if (skipAngular && globalError) {
+                appendProjectErrors.push({
+                    file: null,
+                    diagnostics: [{
+                        category: "warning",
+                        end: null,
+                        start: null,
+                        text: globalError
+                    }]
+                })
+            } else if (this.tsVersion() == "2.0.0") {
                 if (appendProjectErrors == null) {
                     appendProjectErrors = []
                 }
@@ -253,6 +270,12 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
         getNgCompletion(args: ts.server.protocol.CompletionsRequestArgs) {
+            if (skipAngular) {
+                return {
+                    response: [],
+                    responseRequired: true
+                };
+            }
             let file = args.file;
             file = ts_impl.normalizePath(file);
             let project = this.getForceProject(file);
