@@ -150,8 +150,6 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     if (defaultService.isServiceCreated()) {
       //dispose old service
       TransactionGuard.submitTransaction(this, () -> defaultService.terminateStartedProcess(false));
-
-      defaultService.terminateStartedProcess(false);
     }
 
     return super.createLanguageServiceQueue();
