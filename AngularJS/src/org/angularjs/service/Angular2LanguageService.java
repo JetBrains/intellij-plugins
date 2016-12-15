@@ -3,15 +3,18 @@ package org.angularjs.service;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
+import com.intellij.lang.javascript.service.JSLanguageServiceProcessConnector;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand;
+import com.intellij.lang.javascript.service.ui.JSLanguageServiceToolWindowManager;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerService;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetErrCommand;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
@@ -121,7 +124,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @NotNull
   @Override
   protected String getProcessName() {
-    return "Angular 2";
+    return "Angular";
   }
 
   @NotNull
@@ -146,11 +149,20 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     TypeScriptCompilerService defaultService = TypeScriptCompilerService.getDefaultService(myProject);
     if (defaultService.isServiceCreated()) {
       //dispose old service
-      defaultService.restartService(false);
+      TransactionGuard.submitTransaction(this, () -> defaultService.terminateStartedProcess(false));
+
+      defaultService.terminateStartedProcess(false);
     }
 
     return super.createLanguageServiceQueue();
   }
+
+  @Nullable
+  protected JSLanguageServiceQueue.ProcessConnector createProcessConnector(@Nullable JSLanguageServiceToolWindowManager manager) {
+    if (manager == null) return null;
+    return new JSLanguageServiceProcessConnector("Angular Console", manager);
+  }
+
 
   public static boolean isEnabledAngularService(Project project) {
     return AngularIndexUtil.hasAngularJS2(project) && getServiceDirectory(project) != null;
