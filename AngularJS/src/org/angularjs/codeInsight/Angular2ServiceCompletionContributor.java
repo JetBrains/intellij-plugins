@@ -1,8 +1,9 @@
 package org.angularjs.codeInsight;
 
 
+import com.intellij.icons.AllIcons;
 import com.intellij.injected.editor.VirtualFileWindow;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.typescript.compiler.languageService.ide.TypeScriptLanguageServiceCompletionContributor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -11,6 +12,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlTokenType;
+import icons.AngularJSIcons;
 import org.angularjs.service.Angular2LanguageService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +36,7 @@ public class Angular2ServiceCompletionContributor extends TypeScriptLanguageServ
   @Override
   protected boolean isApplicablePlaceForCompletion(PsiElement position) {
     PsiElement parent = position.getParent();
-    if (parent instanceof JSReferenceExpression && ((JSReferenceExpression)parent).getQualifier() == null) {
+    if (parent instanceof JSExpression) {
       return true;
     }
     if (parent instanceof XmlTag) {
@@ -57,12 +59,14 @@ public class Angular2ServiceCompletionContributor extends TypeScriptLanguageServ
   }
 
   @Nullable
-  @Override
   protected Icon getIcon(String kind, @Nullable String kindModifiers) {
-    //todo more icons!
     if ("element".equals(kind)) {
-      return null;
+      return AllIcons.Nodes.Tag;
     }
-    return super.getIcon(kind, kindModifiers);
+    if ("component".equals(kind)) {
+      return AngularJSIcons.Angular2;
+    }
+
+    return getKindIcon(kind);
   }
 }

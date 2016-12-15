@@ -58,32 +58,40 @@
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector" id="angular"/>
     <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first" id="angular2"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
-                            id="AngularJSCompletionContributor" order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
+                            id="AngularJSCompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
 
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJSDICompletionContributor"
-                            id="AngularJSDICompletionContributor" order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
+                            id="AngularJSDICompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
 
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJavaScriptCompletionContributor"
-                            id="AngularJavaScriptCompletionContributor" order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
+                            id="AngularJavaScriptCompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
 
-    <completion.contributor id="Angular2ServiceCompletionContributor" language="AngularJS" order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
+    <completion.contributor id="Angular2ServiceCompletionContributor" language="AngularJS"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
                             implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
 
-    <completion.contributor id="Angular2ServiceCompletionContributorHtml" language="Angular2HTML" order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
+    <completion.contributor id="Angular2ServiceCompletionContributorNgHtml" language="Angular2HTML"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
                             implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
 
     <completion.contributor language="HTML" implementationClass="org.angularjs.codeInsight.AngularJSXmlCompletionContributor"
-                            id="AngularJSXmlCompletionContributor" order="first"/>
+                            id="AngularJSXmlCompletionContributor" order="before xmlNonFirst"/>
+
+    <completion.contributor language="HTML" implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"
+                            id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
 
     <lookup.charFilter implementation="org.angularjs.editor.Angular2LookupCharFilter" order="before xml"/>
 
-    <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor" />
+    <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor"/>
     <targetElementEvaluator language="JavaScript" implementationClass="org.angularjs.AngularJSTargetElementEvaluator"/>
     <elementDescriptionProvider order="first"
-                                implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor" />
+                                implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor"/>
 
     <findUsagesHandlerFactory id="JavaScript" implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory"/>
-    <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher" />
+    <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher"/>
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
     <directoryProjectGenerator implementation="org.angularjs.cli.AngularCLIProjectGenerator"/>
