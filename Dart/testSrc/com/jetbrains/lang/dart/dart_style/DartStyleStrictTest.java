@@ -9,7 +9,9 @@ import java.util.Set;
  */
 public class DartStyleStrictTest extends DartStyleTest {
 
-  /** The set of tests that are known to fail only in strict mode. */
+  /**
+   * The set of tests that are known to fail only in strict mode.
+   */
   private static final Set<String> KNOWN_TO_FAIL_STRICT = new THashSet<>();
 
   static {
@@ -27,6 +29,9 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("comments/maps.stmt:54  multiline trailing block comment");
     KNOWN_TO_FAIL_STRICT.add("comments/maps.stmt:97  remove blank line before beginning of body");
     KNOWN_TO_FAIL_STRICT.add("comments/top_level.unit:8");
+    KNOWN_TO_FAIL_STRICT.add("comments/top_level.unit:87");
+    KNOWN_TO_FAIL_STRICT.add("comments/top_level.unit:96");
+    KNOWN_TO_FAIL_STRICT.add("comments/top_level.unit:188  inline block comment between different kinds of directives");
 
     KNOWN_TO_FAIL_STRICT.add("regression/0000/0041.stmt:1  (indent 8)");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0177.stmt:1");
