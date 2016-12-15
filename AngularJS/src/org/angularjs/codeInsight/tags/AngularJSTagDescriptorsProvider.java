@@ -8,11 +8,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Processor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
 import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
+import icons.AngularJSIcons;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,9 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   }
 
   private static void addLookupItem(List<LookupElement> elements, JSImplicitElement directive) {
-    elements.add(LookupElementBuilder.create(directive).withInsertHandler(XmlTagInsertHandler.INSTANCE));
+    elements.add(LookupElementBuilder.create(directive).
+      withInsertHandler(XmlTagInsertHandler.INSTANCE).
+      withIcon(AngularJSIcons.Angular2));
   }
 
   @Nullable

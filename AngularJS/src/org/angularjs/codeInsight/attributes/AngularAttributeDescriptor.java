@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
@@ -17,6 +18,7 @@ import com.intellij.util.NotNullFunction;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
+import icons.AngularJSIcons;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
@@ -25,13 +27,14 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx {
+public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
   protected final Project myProject;
   private final String myAttributeName;
   private final StubIndexKey<String, JSImplicitElementProvider> myIndex;
@@ -157,5 +160,16 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   @Override
   public String handleTargetRename(@NotNull @NonNls String newTargetName) {
     return newTargetName;
+  }
+
+  @Override
+  public String getTypeName() {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon() {
+    return AngularJSIcons.Angular2;
   }
 }
