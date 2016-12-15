@@ -151,7 +151,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                             messageText: "Angular Language Service internal error: " + err.message,
                             start: 0,
                             length: 0,
-                            category: 0
+                            category: ts_impl.DiagnosticCategory.Error
                         })];
                     result.push({
                         file: fileName,
@@ -164,7 +164,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 var fileName = fileNames_1[_i];
                 _loop_1(fileName);
             }
-            return result;
+            return this.appendOldVersionError(result);
         };
         AngularSession.prototype.updateNgProject = function (project) {
             var languageService = this.getLanguageService(project, false);
@@ -203,7 +203,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                             start: error.span.start,
                             length: error.span.end - error.span.start,
                             messageText: "Angular: " + error.message,
-                            category: 0,
+                            category: ts_impl.DiagnosticCategory.Error,
                             code: 0
                         });
                     }
@@ -217,10 +217,32 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     messageText: "Angular Language Service internal error: " + err.message,
                     start: 0,
                     length: 0,
-                    category: 0
+                    category: ts_impl.DiagnosticCategory.Warning
                 });
             }
             return diags;
+        };
+        AngularSession.prototype.appendProjectErrors = function (result, processedProjects, empty) {
+            var appendProjectErrors = _super.prototype.appendProjectErrors.call(this, result, processedProjects, empty);
+            appendProjectErrors = this.appendOldVersionError(appendProjectErrors);
+            return appendProjectErrors;
+        };
+        AngularSession.prototype.appendOldVersionError = function (appendProjectErrors) {
+            if (this.tsVersion() == "2.0.0") {
+                if (appendProjectErrors == null) {
+                    appendProjectErrors = [];
+                }
+                appendProjectErrors.push({
+                    file: null,
+                    diagnostics: [{
+                            category: "warning",
+                            end: null,
+                            start: null,
+                            text: "For better performance please use TypeScript version 2.0.3 or higher"
+                        }]
+                });
+            }
+            return appendProjectErrors;
         };
         AngularSession.prototype.getNgCompletion = function (args) {
             var file = args.file;

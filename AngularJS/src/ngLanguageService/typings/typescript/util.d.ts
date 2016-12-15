@@ -38,7 +38,7 @@ export declare abstract class IDETypeScriptSession extends ts.server.Session {
     abstract setNewLine(project: ts.server.Project, options: ts.CompilerOptions): void;
     abstract getCompileOptionsEx(project: ts.server.Project): ts.CompilerOptions;
     abstract beforeFirstMessage(): void;
-    abstract appendProjectErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: {
+    appendProjectErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: {
         [p: string]: ts.server.Project;
     }, empty: boolean): ts.server.protocol.DiagnosticEventBody[];
 }

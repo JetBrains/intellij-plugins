@@ -150,7 +150,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                         messageText: "Angular Language Service internal error: " + err.message,
                         start: 0,
                         length: 0,
-                        category: 0
+                        category: ts_impl.DiagnosticCategory.Error
                     })];
                     result.push({
                         file: fileName,
@@ -160,7 +160,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                 }
             }
 
-            return result;
+            return this.appendOldVersionError(result);
         }
 
         updateNgProject(project: ts.server.Project) {
@@ -207,12 +207,11 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                             start: error.span.start,
                             length: error.span.end - error.span.start,
                             messageText: "Angular: " + error.message,
-                            category: 0,
+                            category: ts_impl.DiagnosticCategory.Error,
                             code: 0
                         });
                     }
                 }
-
             } catch (err) {
                 console.log('Error processing angular templates ' + err.message + '\n' + err.stack);
                 diags.push({
@@ -221,13 +220,37 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     messageText: "Angular Language Service internal error: " + err.message,
                     start: 0,
                     length: 0,
-                    category: 0
+                    category: ts_impl.DiagnosticCategory.Warning
                 })
             }
 
             return diags;
         }
 
+
+        appendProjectErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: {[p: string]: ts.server.Project}, empty: boolean): ts.server.protocol.DiagnosticEventBody[] {
+            let appendProjectErrors = super.appendProjectErrors(result, processedProjects, empty);
+            appendProjectErrors = this.appendOldVersionError(appendProjectErrors);
+            return appendProjectErrors;
+        }
+
+        private appendOldVersionError(appendProjectErrors: ts.server.protocol.DiagnosticEventBody[]) {
+            if (this.tsVersion() == "2.0.0") {
+                if (appendProjectErrors == null) {
+                    appendProjectErrors = []
+                }
+                appendProjectErrors.push({
+                    file: null,
+                    diagnostics: [{
+                        category: "warning",
+                        end: null,
+                        start: null,
+                        text: "For better performance please use TypeScript version 2.0.3 or higher"
+                    }]
+                })
+            }
+            return appendProjectErrors;
+        }
 
         getNgCompletion(args: ts.server.protocol.CompletionsRequestArgs) {
             let file = args.file;
