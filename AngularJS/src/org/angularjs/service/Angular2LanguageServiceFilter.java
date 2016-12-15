@@ -13,14 +13,8 @@ import static org.angularjs.service.Angular2LanguageService.isEnabledAngularServ
 public class Angular2LanguageServiceFilter implements JSLanguageServiceFilter {
   @Override
   public boolean isAvailable(Project project, @NotNull JSLanguageService service, @NotNull VirtualFile file) {
-    if (service instanceof Angular2LanguageService) {
-      return true;
-    }
-
-    if (service instanceof TypeScriptServerServiceImpl) {
-      return !isEnabledAngularService(project);
-    }
-
-    return false;
+    return service instanceof Angular2LanguageService ||
+           !(service instanceof TypeScriptServerServiceImpl) ||
+           !isEnabledAngularService(project);
   }
 }

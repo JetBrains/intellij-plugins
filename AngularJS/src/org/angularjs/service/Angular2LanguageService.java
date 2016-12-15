@@ -3,8 +3,10 @@ package org.angularjs.service;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
+import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand;
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerService;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
@@ -138,6 +140,17 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
            super.createCompletionCommand(args, virtualFile, file);
   }
 
+  @Nullable
+  @Override
+  protected JSLanguageServiceQueue createLanguageServiceQueue() {
+    TypeScriptCompilerService defaultService = TypeScriptCompilerService.getDefaultService(myProject);
+    if (defaultService.isServiceCreated()) {
+      //dispose old service
+      defaultService.restartService(false);
+    }
+
+    return super.createLanguageServiceQueue();
+  }
 
   public static boolean isEnabledAngularService(Project project) {
     return AngularIndexUtil.hasAngularJS2(project) && getServiceDirectory(project) != null;
