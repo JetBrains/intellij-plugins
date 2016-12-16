@@ -36,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider.checkServiceIsAvailable;
-import static com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.isServiceEnabled;
 
 public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
@@ -122,7 +121,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @Override
   public boolean canHighlight(@NotNull PsiFile file) {
     if (file instanceof HtmlFileImpl) {
-      return isServiceEnabled(myProject) && checkServiceIsAvailable(myProject, this, mySettings);
+      return checkServiceIsAvailable(myProject, this, mySettings);
     }
 
     return super.canHighlight(file);
