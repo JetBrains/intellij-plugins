@@ -13,7 +13,6 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
@@ -90,7 +89,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
     myIdeView = new TapestryIdeView(this);
 
-    myModuleListener = new ModuleAdapter() {
+    myModuleListener = new ModuleListener() {
       public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
         reload();
       }

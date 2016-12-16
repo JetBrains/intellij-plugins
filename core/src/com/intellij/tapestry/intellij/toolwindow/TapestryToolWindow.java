@@ -3,7 +3,6 @@ package com.intellij.tapestry.intellij.toolwindow;
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.tapestry.core.events.FileSystemListenerAdapter;
@@ -39,7 +38,7 @@ public class TapestryToolWindow extends FileSystemListenerAdapter {
         _dependenciesTab = new DependenciesTab();
        _tabbedPane.addTab("Dependencies", _dependenciesTab.getMainPanel());
 
-        ModuleListener moduleListener = new ModuleAdapter() {
+        ModuleListener moduleListener = new ModuleListener() {
             public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
                 reload();
             }
