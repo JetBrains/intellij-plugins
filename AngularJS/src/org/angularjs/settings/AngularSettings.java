@@ -46,6 +46,6 @@ public class AngularSettings implements
 
   @Override
   public String getTitle() {
-    return "Use angular service if available";
+    return "Use Angular service";
   }
 }
