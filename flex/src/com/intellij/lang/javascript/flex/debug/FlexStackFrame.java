@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.NullableComputable;
@@ -19,7 +20,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.Function;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.ExpressionInfo;
@@ -315,34 +315,30 @@ public class FlexStackFrame extends XStackFrame {
       final int dotPos = expression.indexOf('.');
       final String typeName = dotPos != -1 ? expression.substring(0, dotPos):expression;
 
-      final String resolvedName = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
-        @Override
-        public String compute() {
-          final VirtualFile virtualFile = mySourcePosition.getFile();
-          final PsiFile file = PsiManager.getInstance(myDebugProcess.getSession().getProject()).findFile(virtualFile);
-          final int offset = mySourcePosition.getOffset();
-          PsiElement element = file == null ? null : file.findElementAt(offset);
+      final String resolvedName = DumbService.getInstance(myDebugProcess.getSession().getProject()).runReadActionInSmartMode(() -> {
+        final VirtualFile virtualFile = mySourcePosition.getFile();
+        final PsiFile file = PsiManager.getInstance(myDebugProcess.getSession().getProject()).findFile(virtualFile);
+        final int offset = mySourcePosition.getOffset();
+        PsiElement element = file == null ? null : file.findElementAt(offset);
 
-          if (file instanceof XmlFile) {
-            final PsiLanguageInjectionHost psiLanguageInjectionHost =
-                PsiTreeUtil.getParentOfType(element, PsiLanguageInjectionHost.class);
+        if (file instanceof XmlFile) {
+          final PsiLanguageInjectionHost psiLanguageInjectionHost =
+            PsiTreeUtil.getParentOfType(element, PsiLanguageInjectionHost.class);
 
-            if (psiLanguageInjectionHost != null) {
-              final Ref<PsiElement> result = new Ref<>();
-              InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
-                @Override
-                public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
-                  final int injectedStart = InjectedLanguageUtil.getInjectedStart(places);
-                  result.set(injectedPsi.findElementAt(offset - injectedStart + (places.get(0).getPrefix().length())));
-                }
-              });
-              element = result.get();
-            }
+          if (psiLanguageInjectionHost != null) {
+            final Ref<PsiElement> result = new Ref<>();
+            InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
+              @Override
+              public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
+                final int injectedStart = InjectedLanguageUtil.getInjectedStart(places);
+                result.set(injectedPsi.findElementAt(offset - injectedStart + (places.get(0).getPrefix().length())));
+              }
+            });
+            element = result.get();
           }
-
-          return element == null ? typeName : JSImportHandlingUtil.resolveTypeName(typeName, element);
-
         }
+
+        return element == null ? typeName : JSImportHandlingUtil.resolveTypeName(typeName, element);
       });
 
       boolean isGlobal = false;
