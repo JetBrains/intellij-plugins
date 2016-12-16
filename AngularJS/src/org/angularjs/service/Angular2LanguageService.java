@@ -35,6 +35,9 @@ import org.angularjs.service.protocol.command.Angular2GetHtmlErrorCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider.checkServiceIsAvailable;
+import static com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.isServiceEnabled;
+
 public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   private static final ParameterizedCachedValueProvider<VirtualFile, Project> CACHE_SERVICE_PATH_PROVIDER =
@@ -118,7 +121,11 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   @Override
   public boolean canHighlight(@NotNull PsiFile file) {
-    return file instanceof HtmlFileImpl || super.canHighlight(file);
+    if (file instanceof HtmlFileImpl) {
+      return isServiceEnabled(myProject) && checkServiceIsAvailable(myProject, this, mySettings);
+    }
+
+    return super.canHighlight(file);
   }
 
   @NotNull
