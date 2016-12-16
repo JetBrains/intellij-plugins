@@ -56,11 +56,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     try {
                         if (this.filenameToSourceFile) {
                             sessionThis.logMessage("Connect templates to project")
-                            let languageService = sessionThis.getLanguageService(this, false);
-                            let ngLanguageService = sessionThis.getNgLanguageService(languageService);
-                            for (let template of ngLanguageService.getTemplateReferences()) {
-                                let fileName = ts_impl.normalizePath(template);
-                                this.filenameToSourceFile[template] = {fileName, text: ""}
+                            for (let fileName of sessionThis.getTemplatesRefs(this)) {
+                                this.filenameToSourceFile[fileName] = {fileName, text: ""}
                             }
                         }
                     } catch (err) {
@@ -74,11 +71,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     try {
                         if (this.getScriptInfoLSHost) {
                             sessionThis.logMessage("Connect templates to project");
-                            let languageService = sessionThis.getLanguageService(this, false);
-                            let ngLanguageService = sessionThis.getNgLanguageService(languageService);
-                            for (let template of ngLanguageService.getTemplateReferences()) {
-                                let fileName = ts_impl.normalizePath(template);
-                                // attach script info to project (directly)
+                            for (let fileName of sessionThis.getTemplatesRefs(this)) {
                                 this.getScriptInfoLSHost(fileName);
                             }
                         }
@@ -105,6 +98,20 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     oldFunc.apply(this, args);
                 });
             }
+        }
+
+        getTemplatesRefs(project: ts.server.Project): string[] {
+            let result = []
+            let languageService = this.getLanguageService(project, false);
+            if (!languageService) return result;
+            let ngLanguageService = this.getNgLanguageService(languageService);
+            if (!ngLanguageService) return result;
+            for (let template of ngLanguageService.getTemplateReferences()) {
+                let fileName = ts_impl.normalizePath(template);
+                result.push(fileName)
+            }
+
+            return result;
         }
 
         refreshStructureEx(): void {
@@ -134,40 +141,50 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         getHtmlDiagnosticsEx(fileNames: string[]): ts.server.protocol.DiagnosticEventBody[] {
             let result: ts.server.protocol.DiagnosticEventBody[] = [];
             if (!skipAngular) {
-                for (let fileName of fileNames) {
-                    fileName = ts_impl.normalizePath(fileName);
-                    let projectForFileEx = this.getForceProject(fileName);
-                    try {
-                        if (projectForFileEx) {
-                            let htmlDiagnostics = this.appendPluginDiagnostics(projectForFileEx, [], fileName);
-                            let mappedDiagnostics: ts.server.protocol.Diagnostic[] = htmlDiagnostics.map((el: ts.Diagnostic) => this.formatDiagnostic(fileName, projectForFileEx, el));
-
-                            result.push({
-                                file: fileName,
-                                diagnostics: mappedDiagnostics
-                            });
-                        } else {
-                            this.logMessage("Cannot find parent config for html file " + fileName);
-                        }
-                    } catch (err) {
-                        let angularErr = [this.formatDiagnostic(fileName, projectForFileEx, {
-                            file: null,
-                            code: -1,
-                            messageText: "Angular Language Service internal globalError: " + err.message,
-                            start: 0,
-                            length: 0,
-                            category: ts_impl.DiagnosticCategory.Error
-                        })];
-                        result.push({
-                            file: fileName,
-                            diagnostics: angularErr
-                        });
-
-                    }
-                }
+                this.appendHtmlDiagnostics(null, fileNames, result);
             }
 
-            return this.appendGlobalErrors(result);
+            return this.appendGlobalNgErrors(result);
+        }
+
+        private appendHtmlDiagnostics(project: ts.server.Project | null, fileNames: string[], result: ts.server.protocol.DiagnosticEventBody[]) {
+            for (let fileName of fileNames) {
+                fileName = ts_impl.normalizePath(fileName);
+                project = project == null ? this.getForceProject(fileName) : project;
+                try {
+                    if (project) {
+                        let htmlDiagnostics = this.getNgDiagnostics(project, fileName, null);
+                        if (!htmlDiagnostics || htmlDiagnostics.length == 0) {
+                            continue;
+                        }
+
+                        let mappedDiagnostics: ts.server.protocol.Diagnostic[] = htmlDiagnostics.map((el: ts.Diagnostic) => this.formatDiagnostic(fileName, project, el));
+
+                        result.push({
+                            file: fileName,
+                            diagnostics: mappedDiagnostics
+                        });
+                    } else {
+                        this.logMessage("Cannot find parent config for html file " + fileName);
+                    }
+                } catch (err) {
+                    let angularErr = [this.formatDiagnostic(fileName, project, {
+                        file: null,
+                        code: -1,
+                        messageText: "Angular Language Service internal globalError: " + err.message + err.stack,
+                        start: 0,
+                        length: 0,
+                        category: ts_impl.DiagnosticCategory.Error
+                    })];
+                    this.logError(err, "HtmlDiagnostics");
+
+                    result.push({
+                        file: fileName,
+                        diagnostics: angularErr
+                    });
+
+                }
+            }
         }
 
         updateNgProject(project: ts.server.Project) {
@@ -187,9 +204,21 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
         appendPluginDiagnostics(project: ts.server.Project, diags: ts.Diagnostic[], normalizedFileName: string): ts.Diagnostic[] {
+            let result = this.getNgDiagnostics(project, normalizedFileName, null);
+            if (!result || result.length == 0) {
+                return diags;
+            }
+
+            if (!diags) {
+                diags = [];
+            }
+            return diags.concat(result);
+        }
+
+        private getNgDiagnostics(project: ts.server.Project, normalizedFileName: string, sourceFile: ts.SourceFile): ts.Diagnostic[] {
             let languageService = project != null ? this.getLanguageService(project, false) : null;
             if (!languageService || skipAngular) {
-                return diags;
+                return [];
             }
 
             let ngLanguageService = this.getNgLanguageService(languageService);
@@ -197,17 +226,14 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
             if (!ngLanguageService) {
                 //globalError
 
-                return diags;
+                return [];
             }
 
+            let diags = [];
             try {
-                if (!diags) {
-                    diags = [];
-                }
-
                 let errors = ngLanguageService.getDiagnostics(normalizedFileName);
                 if (errors && errors.length) {
-                    let file = (this.getNgHost(languageService) as any).getSourceFile(normalizedFileName);
+                    let file = sourceFile != null ? sourceFile : (this.getNgHost(languageService) as any).getSourceFile(normalizedFileName);
                     for (const error of errors) {
                         diags.push({
                             file,
@@ -220,7 +246,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     }
                 }
             } catch (err) {
-                console.log('Error processing angular templates ' + err.message + '\n' + err.stack);
+                this.logError(err, "ng diagnostics");
                 diags.push({
                     file: null,
                     code: -1,
@@ -235,13 +261,50 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
 
-        appendProjectErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: {[p: string]: ts.server.Project}, empty: boolean): ts.server.protocol.DiagnosticEventBody[] {
-            let appendProjectErrors = super.appendProjectErrors(result, processedProjects, empty);
-            appendProjectErrors = this.appendGlobalErrors(appendProjectErrors);
+        appendPluginProjectDiagnostics(project: ts.server.Project, program: ts.Program, diags: ts.server.protocol.DiagnosticEventBody[]| null): ts.server.protocol.DiagnosticEventBody[]| null {
+            let result = super.appendPluginProjectDiagnostics(project, program, diags);
+
+            if (!project || !program || this.tsVersion() == "2.0.0") {
+                return result;
+            }
+
+            if (result == null) {
+                result = [];
+            }
+
+
+            for (let file of program.getSourceFiles()) {
+                let fileName = file.fileName;
+
+                let ngDiagnostics: ts.Diagnostic[] = this.getNgDiagnostics(project, fileName, file);
+                if (!ngDiagnostics || ngDiagnostics.length == 0) {
+                    continue;
+                }
+
+                let mappedDiags = ngDiagnostics.map(el => this.formatDiagnostic(fileName, project, el));
+
+                result.push({
+                    file: fileName,
+                    diagnostics: mappedDiags
+                });
+            }
+
+            let templatesRefs = this.getTemplatesRefs(project);
+
+            if (templatesRefs && templatesRefs.length > 0) {
+                this.appendHtmlDiagnostics(project, templatesRefs, result)
+            }
+
+            return result;
+        }
+
+        appendGlobalErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: {[p: string]: ts.server.Project}, empty: boolean): ts.server.protocol.DiagnosticEventBody[] {
+            let appendProjectErrors = super.appendGlobalErrors(result, processedProjects, empty);
+            appendProjectErrors = this.appendGlobalNgErrors(appendProjectErrors);
             return appendProjectErrors;
         }
 
-        private appendGlobalErrors(appendProjectErrors: ts.server.protocol.DiagnosticEventBody[]) {
+        private appendGlobalNgErrors(appendProjectErrors: ts.server.protocol.DiagnosticEventBody[]) {
             if (skipAngular && globalError) {
                 appendProjectErrors.push({
                     file: null,
@@ -262,7 +325,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                         category: "warning",
                         end: null,
                         start: null,
-                        text: "For better performance please use TypeScript version 2.0.3 or higher"
+                        text: "For better performance please use TypeScript version 2.0.3 or higher. Angular project errors are disabled"
                     }]
                 })
             }

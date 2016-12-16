@@ -179,6 +179,6 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @Nullable
   @Override
   public TypeScriptServerServiceSettings getServiceSettings() {
-    return null;
+    return AngularSettings.get(myProject);
   }
 }

@@ -51,12 +51,9 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     try {
                         if (this.filenameToSourceFile) {
                             sessionThis.logMessage("Connect templates to project");
-                            var languageService = sessionThis.getLanguageService(this, false);
-                            var ngLanguageService = sessionThis.getNgLanguageService(languageService);
-                            for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
-                                var template = _a[_i];
-                                var fileName = ts_impl.normalizePath(template);
-                                this.filenameToSourceFile[template] = { fileName: fileName, text: "" };
+                            for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
+                                var fileName = _a[_i];
+                                this.filenameToSourceFile[fileName] = { fileName: fileName, text: "" };
                             }
                         }
                     }
@@ -72,12 +69,8 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     try {
                         if (this.getScriptInfoLSHost) {
                             sessionThis.logMessage("Connect templates to project");
-                            var languageService = sessionThis.getLanguageService(this, false);
-                            var ngLanguageService = sessionThis.getNgLanguageService(languageService);
-                            for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
-                                var template = _a[_i];
-                                var fileName = ts_impl.normalizePath(template);
-                                // attach script info to project (directly)
+                            for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
+                                var fileName = _a[_i];
                                 this.getScriptInfoLSHost(fileName);
                             }
                         }
@@ -104,6 +97,21 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 });
             }
         };
+        AngularSession.prototype.getTemplatesRefs = function (project) {
+            var result = [];
+            var languageService = this.getLanguageService(project, false);
+            if (!languageService)
+                return result;
+            var ngLanguageService = this.getNgLanguageService(languageService);
+            if (!ngLanguageService)
+                return result;
+            for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
+                var template = _a[_i];
+                var fileName = ts_impl.normalizePath(template);
+                result.push(fileName);
+            }
+            return result;
+        };
         AngularSession.prototype.refreshStructureEx = function () {
             _super.prototype.refreshStructureEx.call(this);
             if (skipAngular) {
@@ -128,47 +136,54 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             }
         };
         AngularSession.prototype.getHtmlDiagnosticsEx = function (fileNames) {
-            var _this = this;
             var result = [];
             if (!skipAngular) {
-                var _loop_1 = function(fileName) {
-                    fileName = ts_impl.normalizePath(fileName);
-                    var projectForFileEx = this_1.getForceProject(fileName);
-                    try {
-                        if (projectForFileEx) {
-                            var htmlDiagnostics = this_1.appendPluginDiagnostics(projectForFileEx, [], fileName);
-                            var mappedDiagnostics = htmlDiagnostics.map(function (el) { return _this.formatDiagnostic(fileName, projectForFileEx, el); });
-                            result.push({
-                                file: fileName,
-                                diagnostics: mappedDiagnostics
-                            });
+                this.appendHtmlDiagnostics(null, fileNames, result);
+            }
+            return this.appendGlobalNgErrors(result);
+        };
+        AngularSession.prototype.appendHtmlDiagnostics = function (project, fileNames, result) {
+            var _this = this;
+            var _loop_1 = function(fileName) {
+                fileName = ts_impl.normalizePath(fileName);
+                project = project == null ? this_1.getForceProject(fileName) : project;
+                try {
+                    if (project) {
+                        var htmlDiagnostics = this_1.getNgDiagnostics(project, fileName, null);
+                        if (!htmlDiagnostics || htmlDiagnostics.length == 0) {
+                            return "continue";
                         }
-                        else {
-                            this_1.logMessage("Cannot find parent config for html file " + fileName);
-                        }
-                    }
-                    catch (err) {
-                        var angularErr = [this_1.formatDiagnostic(fileName, projectForFileEx, {
-                                file: null,
-                                code: -1,
-                                messageText: "Angular Language Service internal globalError: " + err.message,
-                                start: 0,
-                                length: 0,
-                                category: ts_impl.DiagnosticCategory.Error
-                            })];
+                        var mappedDiagnostics = htmlDiagnostics.map(function (el) { return _this.formatDiagnostic(fileName, project, el); });
                         result.push({
                             file: fileName,
-                            diagnostics: angularErr
+                            diagnostics: mappedDiagnostics
                         });
                     }
-                };
-                var this_1 = this;
-                for (var _i = 0, fileNames_1 = fileNames; _i < fileNames_1.length; _i++) {
-                    var fileName = fileNames_1[_i];
-                    _loop_1(fileName);
+                    else {
+                        this_1.logMessage("Cannot find parent config for html file " + fileName);
+                    }
                 }
+                catch (err) {
+                    var angularErr = [this_1.formatDiagnostic(fileName, project, {
+                            file: null,
+                            code: -1,
+                            messageText: "Angular Language Service internal globalError: " + err.message + err.stack,
+                            start: 0,
+                            length: 0,
+                            category: ts_impl.DiagnosticCategory.Error
+                        })];
+                    this_1.logError(err, "HtmlDiagnostics");
+                    result.push({
+                        file: fileName,
+                        diagnostics: angularErr
+                    });
+                }
+            };
+            var this_1 = this;
+            for (var _i = 0, fileNames_1 = fileNames; _i < fileNames_1.length; _i++) {
+                var fileName = fileNames_1[_i];
+                _loop_1(fileName);
             }
-            return this.appendGlobalErrors(result);
         };
         AngularSession.prototype.updateNgProject = function (project) {
             var languageService = this.getLanguageService(project, false);
@@ -184,22 +199,30 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             return languageService["ngHost"];
         };
         AngularSession.prototype.appendPluginDiagnostics = function (project, diags, normalizedFileName) {
+            var result = this.getNgDiagnostics(project, normalizedFileName, null);
+            if (!result || result.length == 0) {
+                return diags;
+            }
+            if (!diags) {
+                diags = [];
+            }
+            return diags.concat(result);
+        };
+        AngularSession.prototype.getNgDiagnostics = function (project, normalizedFileName, sourceFile) {
             var languageService = project != null ? this.getLanguageService(project, false) : null;
             if (!languageService || skipAngular) {
-                return diags;
+                return [];
             }
             var ngLanguageService = this.getNgLanguageService(languageService);
             if (!ngLanguageService) {
                 //globalError
-                return diags;
+                return [];
             }
+            var diags = [];
             try {
-                if (!diags) {
-                    diags = [];
-                }
                 var errors = ngLanguageService.getDiagnostics(normalizedFileName);
                 if (errors && errors.length) {
-                    var file = this.getNgHost(languageService).getSourceFile(normalizedFileName);
+                    var file = sourceFile != null ? sourceFile : this.getNgHost(languageService).getSourceFile(normalizedFileName);
                     for (var _i = 0, errors_1 = errors; _i < errors_1.length; _i++) {
                         var error = errors_1[_i];
                         diags.push({
@@ -214,7 +237,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 }
             }
             catch (err) {
-                console.log('Error processing angular templates ' + err.message + '\n' + err.stack);
+                this.logError(err, "ng diagnostics");
                 diags.push({
                     file: null,
                     code: -1,
@@ -226,12 +249,44 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             }
             return diags;
         };
-        AngularSession.prototype.appendProjectErrors = function (result, processedProjects, empty) {
-            var appendProjectErrors = _super.prototype.appendProjectErrors.call(this, result, processedProjects, empty);
-            appendProjectErrors = this.appendGlobalErrors(appendProjectErrors);
+        AngularSession.prototype.appendPluginProjectDiagnostics = function (project, program, diags) {
+            var _this = this;
+            var result = _super.prototype.appendPluginProjectDiagnostics.call(this, project, program, diags);
+            if (!project || !program || this.tsVersion() == "2.0.0") {
+                return result;
+            }
+            if (result == null) {
+                result = [];
+            }
+            var _loop_2 = function(file) {
+                var fileName = file.fileName;
+                var ngDiagnostics = this_2.getNgDiagnostics(project, fileName, file);
+                if (!ngDiagnostics || ngDiagnostics.length == 0) {
+                    return "continue";
+                }
+                var mappedDiags = ngDiagnostics.map(function (el) { return _this.formatDiagnostic(fileName, project, el); });
+                result.push({
+                    file: fileName,
+                    diagnostics: mappedDiags
+                });
+            };
+            var this_2 = this;
+            for (var _i = 0, _a = program.getSourceFiles(); _i < _a.length; _i++) {
+                var file = _a[_i];
+                _loop_2(file);
+            }
+            var templatesRefs = this.getTemplatesRefs(project);
+            if (templatesRefs && templatesRefs.length > 0) {
+                this.appendHtmlDiagnostics(project, templatesRefs, result);
+            }
+            return result;
+        };
+        AngularSession.prototype.appendGlobalErrors = function (result, processedProjects, empty) {
+            var appendProjectErrors = _super.prototype.appendGlobalErrors.call(this, result, processedProjects, empty);
+            appendProjectErrors = this.appendGlobalNgErrors(appendProjectErrors);
             return appendProjectErrors;
         };
-        AngularSession.prototype.appendGlobalErrors = function (appendProjectErrors) {
+        AngularSession.prototype.appendGlobalNgErrors = function (appendProjectErrors) {
             if (skipAngular && globalError) {
                 appendProjectErrors.push({
                     file: null,
@@ -253,7 +308,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                             category: "warning",
                             end: null,
                             start: null,
-                            text: "For better performance please use TypeScript version 2.0.3 or higher"
+                            text: "For better performance please use TypeScript version 2.0.3 or higher. Angular project errors are disabled"
                         }]
                 });
             }
