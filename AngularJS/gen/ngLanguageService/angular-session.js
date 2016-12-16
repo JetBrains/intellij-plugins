@@ -8,6 +8,7 @@ var path = require('path');
 function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDEGetHtmlErrors = "IDEGetHtmlErrors";
     ts_impl.server.CommandNames.IDENgCompletions = "IDENgCompletions";
+    ts_impl.server.CommandNames.IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
     var skipAngular = ts_impl["skipNg"];
     var globalError = skipAngular ? "Cannot start Angular Service using bundled TypeScript version. " +
         "Please specify typescript node_modules package instead in the TypeScript settings" : null;
@@ -25,6 +26,15 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             if (command == ts_impl.server.CommandNames.IDENgCompletions) {
                 var args = request.arguments;
                 return this.getNgCompletion(args);
+            }
+            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+                var args = request.arguments;
+                var fileName = args.file;
+                var project = this.getProjectForFileEx(fileName);
+                if (!this.getProjectConfigPathEx(project)) {
+                    return { response: { infos: [] }, responseRequired: true };
+                }
+                return { response: { infos: this.getProjectDiagnosticsEx(project) }, responseRequired: true };
             }
             if (skipAngular) {
                 return _super.prototype.executeCommand.call(this, request);
@@ -50,7 +60,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     oldFunc.apply(this, args);
                     try {
                         if (this.filenameToSourceFile) {
-                            sessionThis.logMessage("Connect templates to project");
+                            sessionThis.logMessage("Connect templates to project (old)");
                             for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
                                 var fileName = _a[_i];
                                 this.filenameToSourceFile[fileName] = { fileName: fileName, text: "" };
@@ -68,10 +78,13 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     var result = oldFunc.apply(this, args);
                     try {
                         if (this.getScriptInfoLSHost) {
-                            sessionThis.logMessage("Connect templates to project");
-                            for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
-                                var fileName = _a[_i];
-                                this.getScriptInfoLSHost(fileName);
+                            var projectPath = sessionThis.getProjectConfigPathEx(this);
+                            if (projectPath) {
+                                sessionThis.logMessage("Connect templates to project");
+                                for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
+                                    var fileName = _a[_i];
+                                    this.getScriptInfoLSHost(fileName);
+                                }
                             }
                         }
                     }
@@ -83,18 +96,18 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 });
                 extendEx(ts_impl.server.ConfiguredProject, "close", function (oldFunc, args) {
                     sessionThis.logMessage("Disconnect templates from project");
-                    var languageService = sessionThis.getLanguageService(this, false);
-                    var ngLanguageService = sessionThis.getNgLanguageService(languageService);
-                    for (var _i = 0, _a = ngLanguageService.getTemplateReferences(); _i < _a.length; _i++) {
-                        var template = _a[_i];
-                        var fileName = ts_impl.normalizePath(template);
-                        // attach script info to project (directly)
-                        var scriptInfoForNormalizedPath = sessionThis.getProjectService().getScriptInfoForNormalizedPath(fileName);
-                        if (scriptInfoForNormalizedPath) {
-                            scriptInfoForNormalizedPath.detachFromProject(this);
+                    var projectPath = sessionThis.getProjectConfigPathEx(this);
+                    if (projectPath) {
+                        for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
+                            var fileName = _a[_i];
+                            // attach script info to project (directly)
+                            var scriptInfoForNormalizedPath = sessionThis.getProjectService().getScriptInfoForNormalizedPath(fileName);
+                            if (scriptInfoForNormalizedPath) {
+                                scriptInfoForNormalizedPath.detachFromProject(this);
+                            }
                         }
                     }
-                    oldFunc.apply(this, args);
+                    return oldFunc.apply(this, args);
                 });
             }
         };

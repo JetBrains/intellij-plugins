@@ -10,4 +10,5 @@ declare interface AngularTypeScriptPluginState extends TypeScriptPluginState {
 declare namespace ts.server.CommandNames {
     const IDEGetHtmlErrors: string;
     const IDENgCompletions: string;
+    const IDEGetProjectHtmlErr: string;
 }

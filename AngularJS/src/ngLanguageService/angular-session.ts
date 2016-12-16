@@ -8,6 +8,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
     (ts_impl.server.CommandNames as any).IDEGetHtmlErrors = "IDEGetHtmlErrors";
     (ts_impl.server.CommandNames as any).IDENgCompletions = "IDENgCompletions";
+    (ts_impl.server.CommandNames as any).IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
 
 
     let skipAngular = ts_impl["skipNg"];
@@ -25,6 +26,17 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                 const args = <ts.server.protocol.CompletionsRequestArgs>request.arguments;
 
                 return this.getNgCompletion(args);
+            }
+
+            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+                let args: ts.server.protocol.FileRequestArgs = request.arguments;
+                let fileName = args.file;
+                let project = this.getProjectForFileEx(fileName);
+                if (!this.getProjectConfigPathEx(project)) {
+                    return {response: {infos: []}, responseRequired: true}
+                }
+
+                return {response: {infos: this.getProjectDiagnosticsEx(project)}, responseRequired: true}
             }
 
             if (skipAngular) {
@@ -55,7 +67,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     oldFunc.apply(this, args);
                     try {
                         if (this.filenameToSourceFile) {
-                            sessionThis.logMessage("Connect templates to project")
+                            sessionThis.logMessage("Connect templates to project (old)")
                             for (let fileName of sessionThis.getTemplatesRefs(this)) {
                                 this.filenameToSourceFile[fileName] = {fileName, text: ""}
                             }
@@ -66,13 +78,16 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     }
                 });
             } else if (version == "2.0.5") {
-                extendEx((ts_impl.server as any).Project, "updateGraph", function (oldFunc, args) {
+                extendEx((ts_impl.server as any).Project, "updateGraph", function (this: ts.server.Project, oldFunc, args) {
                     let result = oldFunc.apply(this, args);
                     try {
-                        if (this.getScriptInfoLSHost) {
-                            sessionThis.logMessage("Connect templates to project");
-                            for (let fileName of sessionThis.getTemplatesRefs(this)) {
-                                this.getScriptInfoLSHost(fileName);
+                        if ((<any>this).getScriptInfoLSHost) {
+                            let projectPath = sessionThis.getProjectConfigPathEx(this);
+                            if (projectPath) {
+                                sessionThis.logMessage("Connect templates to project");
+                                for (let fileName of sessionThis.getTemplatesRefs(this)) {
+                                    (<any>this).getScriptInfoLSHost(fileName);
+                                }
                             }
                         }
 
@@ -86,18 +101,18 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
                 extendEx((ts_impl.server as any).ConfiguredProject, "close", function (oldFunc, args) {
                     sessionThis.logMessage("Disconnect templates from project");
-                    let languageService = sessionThis.getLanguageService(this, false);
-                    let ngLanguageService = sessionThis.getNgLanguageService(languageService);
-                    for (let template of ngLanguageService.getTemplateReferences()) {
-                        let fileName = ts_impl.normalizePath(template);
-                        // attach script info to project (directly)
-                        let scriptInfoForNormalizedPath = (sessionThis as any).getProjectService().getScriptInfoForNormalizedPath(fileName);
-                        if (scriptInfoForNormalizedPath) {
-                            scriptInfoForNormalizedPath.detachFromProject(this);
+                    let projectPath = sessionThis.getProjectConfigPathEx(this);
+                    if (projectPath) {
+                        for (let fileName of sessionThis.getTemplatesRefs(this)) {
+                            // attach script info to project (directly)
+                            let scriptInfoForNormalizedPath = (sessionThis as any).getProjectService().getScriptInfoForNormalizedPath(fileName);
+                            if (scriptInfoForNormalizedPath) {
+                                scriptInfoForNormalizedPath.detachFromProject(this);
+                            }
                         }
                     }
 
-                    oldFunc.apply(this, args);
+                    return oldFunc.apply(this, args);
                 });
             }
         }

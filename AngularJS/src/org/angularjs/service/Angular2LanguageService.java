@@ -2,9 +2,11 @@ package org.angularjs.service;
 
 
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.ide.highlighter.XmlLikeFileType;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.lang.javascript.service.JSLanguageServiceProcessConnector;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand;
 import com.intellij.lang.javascript.service.ui.JSLanguageServiceToolWindowManager;
@@ -16,6 +18,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
@@ -28,11 +31,13 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.service.protocol.Angular2LanguageServiceProtocol;
 import org.angularjs.service.protocol.command.Angular2CompletionsCommand;
 import org.angularjs.service.protocol.command.Angular2GetHtmlErrorCommand;
+import org.angularjs.service.protocol.command.Angular2GetProjectHtmlErrCommand;
 import org.angularjs.settings.AngularSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -146,9 +151,16 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   protected JSLanguageServiceSimpleCommand createCompletionCommand(@NotNull TypeScriptCompletionsRequestArgs args,
                                                                    @NotNull VirtualFile virtualFile,
                                                                    @NotNull PsiFile file) {
-    return file instanceof HtmlFileImpl || virtualFile.getFileType() == HtmlFileType.INSTANCE ?
+    return file instanceof XmlFile || virtualFile.getFileType() instanceof XmlLikeFileType ?
            new Angular2CompletionsCommand(args) :
            super.createCompletionCommand(args, virtualFile, file);
+  }
+
+  @NotNull
+  @Override
+  protected JSLanguageServiceCommand createProjectCommand(@NotNull VirtualFile file, @NotNull String path) {
+    FileType type = file.getFileType();
+    return type instanceof XmlLikeFileType ? new Angular2GetProjectHtmlErrCommand(path) : super.createProjectCommand(file, path);
   }
 
   @Nullable

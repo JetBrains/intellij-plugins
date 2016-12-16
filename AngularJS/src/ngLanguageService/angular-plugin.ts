@@ -52,7 +52,6 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                 extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
                     let languageService = oldFunction.apply(this, args);
                     let host = args[0];
-                    let documentRegistry = args[1];
 
                     let ngHost = new ng.TypeScriptServiceHost(host, languageService);
                     let ngService: LanguageService = ng.createLanguageService(ngHost);
@@ -78,10 +77,10 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             const path = require('path');
             let tsPath = path.join(state.serverFolderPath, 'typescript.js');
             try {
-                let tsWithConstants = require(tsPath);
-                for (let prop in tsWithConstants) {
-                    if (tsWithConstants.hasOwnProperty(prop)) {
-                        ts_impl[prop] = tsWithConstants[prop];
+                let fullTypescriptVersion = require(tsPath);
+                for (let prop in fullTypescriptVersion) {
+                    if (fullTypescriptVersion.hasOwnProperty(prop)) {
+                        ts_impl[prop] = fullTypescriptVersion[prop];
                     }
                 }
 
