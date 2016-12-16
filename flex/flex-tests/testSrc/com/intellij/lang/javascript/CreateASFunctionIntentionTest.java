@@ -74,9 +74,9 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
                                                    "}\n" +
                                                    "}");
     JSExtractFunctionHandler extractFunctionHandler = new JSExtractFunctionHandler();
-    JSFunction function = findFirstFunction(myFile);
-    List<JSExtractFunctionHandler.IntroductionScope> scopes =
-      extractFunctionHandler.findBases(function);
+    int offset = myEditor.getCaretModel().getOffset();
+    JSFunction function = PsiTreeUtil.getParentOfType(myFile.findElementAt(offset), JSFunction.class);
+    List<JSExtractFunctionHandler.IntroductionScope> scopes = extractFunctionHandler.findBases(function);
 
     JSSignatureContext context = new JSSignatureContext() {
       @Override
@@ -111,12 +111,6 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
       extractFunctionHandler
         .getIntroductionScope(myEditor, new ExtractedFunctionSignatureGenerator(), context, callback, "extractedFunction");
     Assert.assertEquals(ContainerUtil.getFirstItem(scopes), actualScope);
-  }
-
-  @Nullable
-  private JSFunction findFirstFunction(@NotNull PsiFile file) {
-    int offset = myEditor.getCaretModel().getOffset();
-    return PsiTreeUtil.getParentOfType(file.findElementAt(offset), JSFunction.class);
   }
 
   protected VirtualFile configureByFiles(@Nullable final File rawProjectRoot, @NotNull final VirtualFile... vFiles) throws IOException {
