@@ -67,7 +67,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                 });
             } else if (version == "2.0.5") {
                 extendEx((ts_impl.server as any).Project, "updateGraph", function (oldFunc, args) {
-                    oldFunc.apply(this, args);
+                    let result = oldFunc.apply(this, args);
                     try {
                         if (this.getScriptInfoLSHost) {
                             sessionThis.logMessage("Connect templates to project");
@@ -80,6 +80,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                         //something wrong
                         sessionThis.logError(err, "update graph ng service");
                     }
+
+                    return result;
                 });
 
                 extendEx((ts_impl.server as any).ConfiguredProject, "close", function (oldFunc, args) {
