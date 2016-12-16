@@ -26,6 +26,10 @@
 
     <applicationService serviceInterface="org.angularjs.settings.AngularJSConfig"
                         serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
+    <projectService serviceInterface="org.angularjs.settings.AngularSettings"
+                    serviceImplementation="org.angularjs.settings.AngularSettings"/>
+
+
     <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
 
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>

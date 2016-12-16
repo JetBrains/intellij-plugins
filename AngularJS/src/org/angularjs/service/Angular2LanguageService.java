@@ -13,6 +13,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptGetErrCommand;
+import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.project.Project;
@@ -32,6 +33,7 @@ import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.service.protocol.Angular2LanguageServiceProtocol;
 import org.angularjs.service.protocol.command.Angular2CompletionsCommand;
 import org.angularjs.service.protocol.command.Angular2GetHtmlErrorCommand;
+import org.angularjs.settings.AngularSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -169,6 +171,14 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
 
   public static boolean isEnabledAngularService(Project project) {
-    return AngularIndexUtil.hasAngularJS2(project) && getServiceDirectory(project) != null;
+    return AngularSettings.get(project).isUseService() &&
+           AngularIndexUtil.hasAngularJS2(project) &&
+           getServiceDirectory(project) != null;
+  }
+
+  @Nullable
+  @Override
+  public TypeScriptServerServiceSettings getServiceSettings() {
+    return null;
   }
 }
