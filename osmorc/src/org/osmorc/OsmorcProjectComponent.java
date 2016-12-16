@@ -33,7 +33,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.ModuleAdapter;
+import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -165,7 +165,7 @@ public class OsmorcProjectComponent implements ProjectComponent {
     }
   }
 
-  private class MyModuleRenameHandler extends ModuleAdapter {
+  private class MyModuleRenameHandler implements ModuleListener {
     @Override
     public void modulesRenamed(@NotNull Project project, @NotNull List<Module> modules, @NotNull Function<Module, String> oldNameProvider) {
       final List<Pair<SelectedBundle, String>> pairs = ContainerUtil.newSmartList();
