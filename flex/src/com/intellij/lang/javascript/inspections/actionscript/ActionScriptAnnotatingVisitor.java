@@ -200,6 +200,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (!(aClass instanceof JSPackageStatement)) {
       VirtualFile parent = file.getParent();
+      if (parent == null) return; // EA-90191
+
       boolean found = false;
       for (String ext : EXTENSIONS_TO_CHECK) {
         String name = file.getNameWithoutExtension() + "." + ext;
