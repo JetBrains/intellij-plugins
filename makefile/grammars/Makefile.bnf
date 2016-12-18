@@ -19,7 +19,7 @@
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|variable|comment)*
+makefile ::= (rule|variable|include|comment)*
 
 rule ::= target_line EOL commands?
 
@@ -33,3 +33,5 @@ commands ::= command*
 
 variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? EOL {pin=2}
 variable_name ::= identifier
+
+include ::= 'include' filename

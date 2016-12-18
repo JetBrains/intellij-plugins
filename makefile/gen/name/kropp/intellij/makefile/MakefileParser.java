@@ -32,6 +32,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == DEPENDENCY) {
       r = dependency(b, 0);
     }
+    else if (t == INCLUDE) {
+      r = include(b, 0);
+    }
     else if (t == RULE) {
       r = rule(b, 0);
     }
@@ -100,7 +103,19 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (rule|variable|comment)*
+  // 'include' filename
+  public static boolean include(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "include")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, INCLUDE, "<include>");
+    r = consumeToken(b, "include");
+    r = r && consumeToken(b, FILENAME);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // (rule|variable|include|comment)*
   static boolean makefile(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile")) return false;
     int c = current_position_(b);
@@ -112,13 +127,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // rule|variable|comment
+  // rule|variable|include|comment
   private static boolean makefile_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = rule(b, l + 1);
     if (!r) r = variable(b, l + 1);
+    if (!r) r = include(b, l + 1);
     if (!r) r = consumeToken(b, COMMENT);
     exit_section_(b, m, null, r);
     return r;

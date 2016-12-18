@@ -33,12 +33,13 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 FILENAME_CHARACTER=[^:\ \r\n\t]
 COMMAND=[^\r\n]+
 
-%state SEPARATOR DEPENDENCIES COMMANDS VARIABLE
+%state SEPARATOR DEPENDENCIES COMMANDS VARIABLE INCLUDES
 
 %%
 
 <YYINITIAL> {COMMENT}          { yybegin(YYINITIAL); return COMMENT; }
 <YYINITIAL> {EOL}              { yybegin(YYINITIAL); return WHITE_SPACE; }
+<YYINITIAL> "include"          { yybegin(INCLUDES); return INCLUDE; }
 
 <YYINITIAL> {FILENAME_CHARACTER}+   { yybegin(SEPARATOR); return IDENTIFIER; }
 
@@ -55,5 +56,8 @@ COMMAND=[^\r\n]+
 
 <VARIABLE> {VARIABLE_VALUE}+           { yybegin(VARIABLE); return VARIABLE_VALUE; }
 <VARIABLE> {EOL}                       { yybegin(YYINITIAL); return EOL; }
+
+<INCLUDES> {SPACES}                     { yybegin(INCLUDES); return WHITE_SPACE; }
+<INCLUDES> {FILENAME_CHARACTER}+        { yybegin(YYINITIAL); return FILENAME; }
 
 [^] { return BAD_CHARACTER; }

@@ -1,0 +1,5 @@
+Makefile
+  MakefileIncludeImpl(INCLUDE)
+    PsiElement(INCLUDE)('include')
+    PsiWhiteSpace(' ')
+    PsiElement(filename)('HelloWorld.mk')

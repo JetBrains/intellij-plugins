@@ -11,6 +11,7 @@ public interface MakefileTypes {
   IElementType COMMANDS = new MakefileElementType("COMMANDS");
   IElementType DEPENDENCIES = new MakefileElementType("DEPENDENCIES");
   IElementType DEPENDENCY = new MakefileElementType("DEPENDENCY");
+  IElementType INCLUDE = new MakefileElementType("INCLUDE");
   IElementType RULE = new MakefileElementType("RULE");
   IElementType TARGET = new MakefileElementType("TARGET");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
@@ -22,6 +23,7 @@ public interface MakefileTypes {
   IElementType COMMAND = new MakefileTokenType("command");
   IElementType COMMENT = new MakefileTokenType("comment");
   IElementType EOL = new MakefileTokenType("EOL");
+  IElementType FILENAME = new MakefileTokenType("filename");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
 
@@ -36,6 +38,9 @@ public interface MakefileTypes {
       }
       else if (type == DEPENDENCY) {
         return new MakefileDependencyImpl(node);
+      }
+      else if (type == INCLUDE) {
+        return new MakefileIncludeImpl(node);
       }
       else if (type == RULE) {
         return new MakefileRuleImpl(node);
