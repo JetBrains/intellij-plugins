@@ -31,5 +31,5 @@ dependency ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.Makefile
 
 commands ::= command*
 
-variable ::= variable_name '=' variable_value? EOL {pin=2}
+variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? EOL {pin=2}
 variable_name ::= identifier

@@ -29,7 +29,7 @@ TAB=\t
 COMMENT="#"[^\r\n]*
 VARIABLE_VALUE=[^\r\n]
 COLON=":"
-ASSIGN="="
+ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 FILENAME_CHARACTER=[^:\ \r\n\t]
 COMMAND=[^\r\n]+
 

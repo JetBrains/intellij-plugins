@@ -3,6 +3,7 @@ import name.kropp.intellij.makefile.MakefileParserDefinition
 
 class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinition()) {
   fun testHelloWorld() { doTest(true); }
+  fun testVariables() { doTest(true); }
 
   override fun getTestDataPath() = "testData"
 }

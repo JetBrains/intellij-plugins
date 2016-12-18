@@ -173,19 +173,34 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable_name '=' variable_value? EOL
+  // variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? EOL
   public static boolean variable(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, VARIABLE, null);
     r = variable_name(b, l + 1);
-    r = r && consumeToken(b, ASSIGN);
+    r = r && variable_1(b, l + 1);
     p = r; // pin = 2
     r = r && report_error_(b, variable_2(b, l + 1));
     r = p && consumeToken(b, EOL) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // '='|':='|'::='|'?='|'!='|'+='
+  private static boolean variable_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, ASSIGN);
+    if (!r) r = consumeToken(b, ":=");
+    if (!r) r = consumeToken(b, "::=");
+    if (!r) r = consumeToken(b, "?=");
+    if (!r) r = consumeToken(b, "!=");
+    if (!r) r = consumeToken(b, "+=");
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // variable_value?
