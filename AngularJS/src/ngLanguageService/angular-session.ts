@@ -12,8 +12,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
 
     let skipAngular = ts_impl["skipNg"];
-    let globalError = skipAngular ? "Cannot start Angular Service using bundled TypeScript version. " +
-        "Please specify typescript node_modules package instead in the TypeScript settings" : null;
+    let globalError = skipAngular ? "Cannot start Angular Service with the bundled TypeScript. " +
+        "Please specify 'typescript' node_modules package" : null;
     abstract class AngularSession extends sessionClass {
 
         executeCommand(request: ts.server.protocol.Request): {response?: any; responseRequired?: boolean} {

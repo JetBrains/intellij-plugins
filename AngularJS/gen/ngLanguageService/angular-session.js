@@ -10,8 +10,8 @@ function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDENgCompletions = "IDENgCompletions";
     ts_impl.server.CommandNames.IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
     var skipAngular = ts_impl["skipNg"];
-    var globalError = skipAngular ? "Cannot start Angular Service using bundled TypeScript version. " +
-        "Please specify typescript node_modules package instead in the TypeScript settings" : null;
+    var globalError = skipAngular ? "Cannot start Angular Service with the bundled TypeScript. " +
+        "Please specify 'typescript' node_modules package" : null;
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
