@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     openBrowserOnFeedbackForm(template, project);
   }
 
-  public static void openBrowserOnFeedbackForm(String urlTemplate, Project project) {
+  public static void openBrowserOnFeedbackForm(@NotNull String urlTemplate, @Nullable Project project) {
     BrowserUtil.browse(urlTemplate, project);
   }
 

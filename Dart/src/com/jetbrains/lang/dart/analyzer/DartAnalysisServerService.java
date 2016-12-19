@@ -1684,7 +1684,7 @@ public class DartAnalysisServerService {
       long timeStamp = System.currentTimeMillis();
       if (timeStamp - myPreviousTime < MIN_DISRUPTION_TIME) {
         if (messageDiffers(errorMessage)) {
-          LOG.error(errorMessage);
+          LOG.warn(errorMessage);
           if (myDisruptionCount > 0) {
             myDisruptionCount++; // The red flashing icon is somewhat disruptive, but we only count if the user has already been queried.
           }
@@ -1705,7 +1705,7 @@ public class DartAnalysisServerService {
             builder.sendFeedback(null, errorMessage);
           }
           else {
-            LOG.error(errorMessage);
+            LOG.warn(errorMessage);
           }
         });
       }
