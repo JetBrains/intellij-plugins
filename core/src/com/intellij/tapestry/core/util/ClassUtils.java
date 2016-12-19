@@ -1,9 +1,6 @@
 package com.intellij.tapestry.core.util;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiNewExpression;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
@@ -55,8 +52,8 @@ public class ClassUtils {
                     nameProperty = (nameProperty.replaceFirst("is", ""));
                 }
 
-                if (!nameProperty.equals("")) {
-                    nameProperty = StringUtils.uncapitalize(nameProperty);
+                if (StringUtil.isNotEmpty(nameProperty)) {
+                    nameProperty = StringUtil.decapitalize(nameProperty);
 
                     getterMethods.put(nameProperty, method);
                 }

@@ -4,6 +4,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -13,8 +14,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.maven.MavenConfiguration;
 import com.intellij.tapestry.core.maven.MavenUtils;
-import com.intellij.tapestry.core.maven.RemoteRepositoryDescription;
-import com.intellij.tapestry.core.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -67,8 +66,8 @@ public class AddTapestrySupportUtil {
     String modulePath = contentRoots[0].getPath();
 
     try {
-      String pomText = StringUtils
-        .toString(AddTapestrySupportUtil.class.getResourceAsStream("/fileTemplates/j2ee/" + TapestryConstants.POM_TEMPLATE_NAME + ".ft"));
+      String pomText = FileUtil.loadTextAndClose(
+        AddTapestrySupportUtil.class.getResourceAsStream("/fileTemplates/j2ee/" + TapestryConstants.POM_TEMPLATE_NAME + ".ft"));
       pomText = pomText.replace("${GROUP}", configuration.getApplicationPackage());
       pomText = pomText.replace("${ARTIFACT}", configuration.getFilterName());
       pomText = pomText.replace("${NAME}", rootModel.getModule().getName());

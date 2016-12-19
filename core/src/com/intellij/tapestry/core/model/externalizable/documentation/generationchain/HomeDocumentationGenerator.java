@@ -3,7 +3,6 @@ package com.intellij.tapestry.core.model.externalizable.documentation.generation
 import com.intellij.tapestry.core.model.externalizable.documentation.Home;
 import com.intellij.tapestry.core.model.externalizable.documentation.wrapper.PresentationElementDocumentationWrapper;
 import com.intellij.tapestry.core.util.ClassLocator;
-import com.intellij.tapestry.core.util.StringUtils;
 import com.intellij.tapestry.core.util.VelocityProcessor;
 import org.apache.commons.chain.Context;
 
@@ -51,7 +50,12 @@ public class HomeDocumentationGenerator extends AbstractDocumentationGenerator {
                     if (resource.getUrl().toExternalForm().endsWith(".xml")) {
                         PresentationElementDocumentationWrapper elementDocumentation = new PresentationElementDocumentationWrapper(resource.getUrl());
 
-                        filesProperties.put(resource.getClassName(), StringUtils.truncateWords(elementDocumentation.getDescription(), 100) + "(...)");
+                        String description = elementDocumentation.getDescription();
+                        String truncated = description.length() < 100
+                                    ? description
+                                    : description.substring(0, description.substring(0, 100).lastIndexOf(' '));
+
+                        filesProperties.put(resource.getClassName(), truncated + "(...)");
                     }
                 }
 

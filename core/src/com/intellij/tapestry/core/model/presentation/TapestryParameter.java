@@ -5,11 +5,13 @@ import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaMethod;
-import com.intellij.tapestry.core.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+
+import static com.intellij.openapi.util.text.StringUtil.capitalize;
+import static com.intellij.openapi.util.text.StringUtil.notNullize;
 
 /**
  * A Tapestry parameter.
@@ -146,7 +148,7 @@ public class TapestryParameter implements Comparable {
     }
 
     private static boolean hasMethod(IJavaClassType clazz, String methodName) {
-        String methodOfParameter = TapestryConstants.DEFAULT_PARAMETER_METHOD_PREFIX + StringUtils.capitalize(methodName);
+        String methodOfParameter = TapestryConstants.DEFAULT_PARAMETER_METHOD_PREFIX + capitalize(notNullize(methodName));
 
         Collection<IJavaMethod> methods = (clazz).getAllMethods(true);
         for (IJavaMethod method : methods) {

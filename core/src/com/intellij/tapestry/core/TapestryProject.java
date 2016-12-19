@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
-import static com.intellij.tapestry.core.util.StringUtils.isNotEmpty;
+import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
 
 /**
  * A Tapestry project. Every IDE implementation must hold a reference to an instance of this class for each project.
