@@ -32,7 +32,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                 let args: ts.server.protocol.FileRequestArgs = request.arguments;
                 let fileName = args.file;
                 let project = this.getProjectForFileEx(fileName);
-                if (!this.getProjectConfigPathEx(project)) {
+                if (project == null || !this.getProjectConfigPathEx(project)) {
                     return {response: {infos: []}, responseRequired: true}
                 }
 

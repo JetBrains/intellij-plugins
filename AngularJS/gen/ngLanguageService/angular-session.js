@@ -31,7 +31,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 var args = request.arguments;
                 var fileName = args.file;
                 var project = this.getProjectForFileEx(fileName);
-                if (!this.getProjectConfigPathEx(project)) {
+                if (project == null || !this.getProjectConfigPathEx(project)) {
                     return { response: { infos: [] }, responseRequired: true };
                 }
                 return { response: { infos: this.getProjectDiagnosticsEx(project) }, responseRequired: true };
