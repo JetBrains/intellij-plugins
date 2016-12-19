@@ -27,7 +27,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 var args = request.arguments;
                 return this.getNgCompletion(args);
             }
-            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+            if (command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr) {
                 var args = request.arguments;
                 var fileName = args.file;
                 var project = this.getProjectForFileEx(fileName);

@@ -28,7 +28,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                 return this.getNgCompletion(args);
             }
 
-            if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
+            if (command == ts_impl.server.CommandNames.IDEGetProjectHtmlErr) {
                 let args: ts.server.protocol.FileRequestArgs = request.arguments;
                 let fileName = args.file;
                 let project = this.getProjectForFileEx(fileName);
