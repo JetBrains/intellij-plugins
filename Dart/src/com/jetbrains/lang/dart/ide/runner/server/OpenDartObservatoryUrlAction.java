@@ -24,7 +24,9 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
    * @param url <code>null</code> if URL is not known at the moment of the action instantiation; use {@link #setUrl(String)} afterwards
    */
   public OpenDartObservatoryUrlAction(@Nullable final String url, @NotNull final Computable<Boolean> isApplicable) {
-    super(DartBundle.message("open.observatory.action.text"), DartBundle.message("open.observatory.action.description"), DartIcons.Dart_16);
+    super(DartBundle.message("open.observatory.action.text"),
+          DartBundle.message("open.observatory.action.description"),
+          DartIcons.Observatory);
     myUrl = url;
     myIsApplicable = isApplicable;
   }
