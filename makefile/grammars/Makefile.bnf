@@ -19,9 +19,9 @@
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|variable|include|comment)*
+makefile ::= (rule|variable|include|conditional|comment)*
 
-rule ::= target_line EOL commands?
+rule ::= target_line EOL (commands|conditional)?
 
 target_line ::= target ':' dependencies {pin=2 methods=[getTargetName]}
 target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement" methods=[getName setName getNameIdentifier]}
@@ -30,6 +30,14 @@ dependencies ::= dependency*
 dependency ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileDependencyMixin"}
 
 commands ::= command*
+
+conditional ::= ifeq condition thenbranch else_ EOL elsebranch endif
+
+ifeq ::= 'ifeq'
+else_ ::= 'else'
+endif ::= 'endif'
+thenbranch ::= commands
+elsebranch ::= commands
 
 variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? EOL {pin=2}
 variable_name ::= identifier

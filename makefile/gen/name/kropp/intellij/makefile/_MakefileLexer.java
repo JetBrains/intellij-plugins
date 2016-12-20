@@ -31,6 +31,7 @@ public class _MakefileLexer implements FlexLexer {
   public static final int COMMANDS = 6;
   public static final int VARIABLE = 8;
   public static final int INCLUDES = 10;
+  public static final int CONDITIONALS = 12;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -39,7 +40,7 @@ public class _MakefileLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5, 5
+     0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  6, 6
   };
 
   /** 
@@ -62,7 +63,8 @@ public class _MakefileLexer implements FlexLexer {
   /* The ZZ_CMAP_A table has 256 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
     "\11\0\1\3\1\1\2\0\1\1\22\0\1\2\1\7\1\0\1\4\7\0\1\7\16\0\1\5\2\0\1\6\1\0\1"+
-    "\7\43\0\1\12\1\15\1\16\3\0\1\10\2\0\1\13\1\0\1\11\6\0\1\14\212\0");
+    "\7\43\0\1\12\1\15\1\16\1\17\2\0\1\10\2\0\1\13\1\0\1\11\2\0\1\20\1\0\1\21\1"+
+    "\0\1\14\212\0");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -70,12 +72,13 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\6\0\1\1\1\2\1\3\1\4\1\5\1\1\1\6"+
+    "\7\0\1\1\1\2\1\3\1\4\1\5\2\1\1\6"+
     "\1\7\1\10\1\3\1\11\1\12\1\13\1\14\1\15"+
-    "\1\16\1\17\1\1\1\0\4\1\1\20";
+    "\1\16\1\17\1\20\1\21\4\1\1\0\5\1\1\22"+
+    "\1\1\1\23\1\1\1\24\1\1\1\25";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[30];
+    int [] result = new int[44];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -100,13 +103,15 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\17\0\36\0\55\0\74\0\113\0\132\0\151"+
-    "\0\170\0\207\0\226\0\245\0\264\0\303\0\170\0\322"+
-    "\0\341\0\360\0\377\0\u010e\0\u011d\0\u012c\0\u013b\0\u014a"+
-    "\0\322\0\u0159\0\u0168\0\u0177\0\u0186\0\132";
+    "\0\0\0\22\0\44\0\66\0\110\0\132\0\154\0\176"+
+    "\0\220\0\242\0\264\0\306\0\330\0\352\0\374\0\u010e"+
+    "\0\242\0\u0120\0\u0132\0\u0144\0\u0156\0\u0168\0\u017a\0\u018c"+
+    "\0\u019e\0\u01b0\0\u01c2\0\u01d4\0\u01e6\0\u01f8\0\u020a\0\u0120"+
+    "\0\u021c\0\u022e\0\u0240\0\u0252\0\u0264\0\176\0\u0276\0\176"+
+    "\0\u0288\0\176\0\u029a\0\176";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[30];
+    int [] result = new int[44];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -129,24 +134,33 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\7\1\10\1\11\1\12\1\13\1\11\2\7\1\14"+
-    "\6\7\2\11\2\15\1\11\1\16\1\17\1\20\7\11"+
-    "\1\21\1\22\2\23\1\21\1\11\11\21\1\24\1\11"+
-    "\15\24\1\25\1\22\15\25\1\26\1\11\2\27\1\26"+
-    "\1\11\11\26\1\7\3\0\1\7\1\0\11\7\1\0"+
-    "\1\10\37\0\1\12\13\0\1\13\1\0\15\13\1\7"+
-    "\3\0\1\7\1\0\3\7\1\30\5\7\2\0\2\15"+
-    "\20\0\1\31\1\17\16\0\1\17\10\0\1\21\3\0"+
-    "\1\21\1\0\11\21\1\0\1\22\17\0\2\23\13\0"+
-    "\1\24\1\0\15\24\1\25\1\0\15\25\1\26\3\0"+
-    "\1\26\1\0\11\26\2\0\2\27\13\0\1\7\3\0"+
-    "\1\7\1\0\4\7\1\32\5\7\3\0\1\7\1\0"+
-    "\5\7\1\33\4\7\3\0\1\7\1\0\6\7\1\34"+
-    "\3\7\3\0\1\7\1\0\7\7\1\35\2\7\3\0"+
-    "\1\7\1\0\10\7\1\36";
+    "\1\10\1\11\1\12\1\13\1\14\1\12\2\10\1\15"+
+    "\5\10\1\16\3\10\2\12\2\17\1\12\1\20\1\21"+
+    "\1\22\12\12\1\23\1\24\2\25\1\23\1\12\14\23"+
+    "\1\26\1\12\20\26\1\27\1\24\20\27\1\30\1\12"+
+    "\2\31\1\30\1\12\14\30\1\32\1\11\2\33\1\32"+
+    "\1\12\14\32\1\10\3\0\1\10\1\0\14\10\1\0"+
+    "\1\11\45\0\1\13\16\0\1\14\1\0\20\14\1\10"+
+    "\3\0\1\10\1\0\3\10\1\34\5\10\1\35\3\10"+
+    "\3\0\1\10\1\0\3\10\1\36\1\10\1\37\6\10"+
+    "\2\0\2\17\23\0\1\40\1\21\21\0\1\21\13\0"+
+    "\1\23\3\0\1\23\1\0\14\23\1\0\1\24\22\0"+
+    "\2\25\16\0\1\26\1\0\20\26\1\27\1\0\20\27"+
+    "\1\30\3\0\1\30\1\0\14\30\2\0\2\31\16\0"+
+    "\1\32\3\0\1\32\1\0\14\32\2\0\2\33\16\0"+
+    "\1\10\3\0\1\10\1\0\4\10\1\41\10\10\3\0"+
+    "\1\10\1\0\10\10\1\42\4\10\3\0\1\10\1\0"+
+    "\7\10\1\43\5\10\3\0\1\10\1\0\13\10\1\44"+
+    "\1\10\3\0\1\10\1\0\5\10\1\45\7\10\3\0"+
+    "\1\10\1\0\12\10\1\46\2\10\3\0\1\10\1\0"+
+    "\2\10\1\47\12\10\3\0\1\10\1\0\10\10\1\50"+
+    "\4\10\3\0\1\10\1\0\6\10\1\51\6\10\3\0"+
+    "\1\10\1\0\11\10\1\52\3\10\3\0\1\10\1\0"+
+    "\7\10\1\53\5\10\3\0\1\10\1\0\10\10\1\54"+
+    "\3\10";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[405];
+    int [] result = new int[684];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -184,10 +198,10 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\6\0\2\1\1\11\5\1\1\11\11\1\1\0\5\1";
+    "\7\0\2\1\1\11\6\1\1\11\16\1\1\0\14\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[30];
+    int [] result = new int[44];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -495,67 +509,87 @@ public class _MakefileLexer implements FlexLexer {
           case 1: 
             { yybegin(SEPARATOR); return IDENTIFIER;
             }
-          case 17: break;
+          case 22: break;
           case 2: 
             { yybegin(YYINITIAL); return WHITE_SPACE;
             }
-          case 18: break;
+          case 23: break;
           case 3: 
             { return BAD_CHARACTER;
             }
-          case 19: break;
+          case 24: break;
           case 4: 
             { yybegin(COMMANDS); return WHITE_SPACE;
             }
-          case 20: break;
+          case 25: break;
           case 5: 
             { yybegin(YYINITIAL); return COMMENT;
             }
-          case 21: break;
+          case 26: break;
           case 6: 
             { yybegin(SEPARATOR); return WHITE_SPACE;
             }
-          case 22: break;
+          case 27: break;
           case 7: 
             { yybegin(DEPENDENCIES); return COLON;
             }
-          case 23: break;
+          case 28: break;
           case 8: 
             { yybegin(VARIABLE); return ASSIGN;
             }
-          case 24: break;
+          case 29: break;
           case 9: 
             { yybegin(DEPENDENCIES); return IDENTIFIER;
             }
-          case 25: break;
+          case 30: break;
           case 10: 
             { yybegin(YYINITIAL); return EOL;
             }
-          case 26: break;
+          case 31: break;
           case 11: 
             { yybegin(DEPENDENCIES); return WHITE_SPACE;
             }
-          case 27: break;
+          case 32: break;
           case 12: 
             { yybegin(YYINITIAL); return COMMAND;
             }
-          case 28: break;
+          case 33: break;
           case 13: 
             { yybegin(VARIABLE); return VARIABLE_VALUE;
             }
-          case 29: break;
+          case 34: break;
           case 14: 
             { yybegin(YYINITIAL); return FILENAME;
             }
-          case 30: break;
+          case 35: break;
           case 15: 
             { yybegin(INCLUDES); return WHITE_SPACE;
             }
-          case 31: break;
+          case 36: break;
           case 16: 
+            { yybegin(YYINITIAL); return CONDITION;
+            }
+          case 37: break;
+          case 17: 
+            { return WHITE_SPACE;
+            }
+          case 38: break;
+          case 18: 
+            { yybegin(CONDITIONALS); return IFEQ;
+            }
+          case 39: break;
+          case 19: 
+            { yybegin(YYINITIAL); return ELSE_;
+            }
+          case 40: break;
+          case 20: 
+            { yybegin(YYINITIAL); return ENDIF;
+            }
+          case 41: break;
+          case 21: 
             { yybegin(INCLUDES); return INCLUDE;
             }
-          case 32: break;
+          case 42: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

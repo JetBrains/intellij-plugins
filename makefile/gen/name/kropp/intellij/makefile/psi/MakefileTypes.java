@@ -9,12 +9,18 @@ import name.kropp.intellij.makefile.psi.impl.*;
 public interface MakefileTypes {
 
   IElementType COMMANDS = new MakefileElementType("COMMANDS");
+  IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEPENDENCIES = new MakefileElementType("DEPENDENCIES");
   IElementType DEPENDENCY = new MakefileElementType("DEPENDENCY");
+  IElementType ELSEBRANCH = new MakefileElementType("ELSEBRANCH");
+  IElementType ELSE_ = new MakefileElementType("ELSE_");
+  IElementType ENDIF = new MakefileElementType("ENDIF");
+  IElementType IFEQ = new MakefileElementType("IFEQ");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
   IElementType RULE = new MakefileElementType("RULE");
   IElementType TARGET = new MakefileElementType("TARGET");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
+  IElementType THENBRANCH = new MakefileElementType("THENBRANCH");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_NAME = new MakefileElementType("VARIABLE_NAME");
 
@@ -22,6 +28,7 @@ public interface MakefileTypes {
   IElementType COLON = new MakefileTokenType(":");
   IElementType COMMAND = new MakefileTokenType("command");
   IElementType COMMENT = new MakefileTokenType("comment");
+  IElementType CONDITION = new MakefileTokenType("condition");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType FILENAME = new MakefileTokenType("filename");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
@@ -33,11 +40,26 @@ public interface MakefileTypes {
        if (type == COMMANDS) {
         return new MakefileCommandsImpl(node);
       }
+      else if (type == CONDITIONAL) {
+        return new MakefileConditionalImpl(node);
+      }
       else if (type == DEPENDENCIES) {
         return new MakefileDependenciesImpl(node);
       }
       else if (type == DEPENDENCY) {
         return new MakefileDependencyImpl(node);
+      }
+      else if (type == ELSEBRANCH) {
+        return new MakefileElsebranchImpl(node);
+      }
+      else if (type == ELSE_) {
+        return new MakefileElse_Impl(node);
+      }
+      else if (type == ENDIF) {
+        return new MakefileEndifImpl(node);
+      }
+      else if (type == IFEQ) {
+        return new MakefileIfeqImpl(node);
       }
       else if (type == INCLUDE) {
         return new MakefileIncludeImpl(node);
@@ -50,6 +72,9 @@ public interface MakefileTypes {
       }
       else if (type == TARGET_LINE) {
         return new MakefileTargetLineImpl(node);
+      }
+      else if (type == THENBRANCH) {
+        return new MakefileThenbranchImpl(node);
       }
       else if (type == VARIABLE) {
         return new MakefileVariableImpl(node);

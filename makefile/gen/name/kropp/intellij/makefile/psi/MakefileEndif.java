@@ -5,15 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface MakefileRule extends PsiElement {
-
-  @Nullable
-  MakefileCommands getCommands();
-
-  @Nullable
-  MakefileConditional getConditional();
-
-  @NotNull
-  MakefileTargetLine getTargetLine();
+public interface MakefileEndif extends PsiElement {
 
 }

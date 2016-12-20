@@ -11,11 +11,31 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitConditional(@NotNull MakefileConditional o) {
+    visitPsiElement(o);
+  }
+
   public void visitDependencies(@NotNull MakefileDependencies o) {
     visitPsiElement(o);
   }
 
   public void visitDependency(@NotNull MakefileDependency o) {
+    visitPsiElement(o);
+  }
+
+  public void visitElse_(@NotNull MakefileElse_ o) {
+    visitPsiElement(o);
+  }
+
+  public void visitElsebranch(@NotNull MakefileElsebranch o) {
+    visitPsiElement(o);
+  }
+
+  public void visitEndif(@NotNull MakefileEndif o) {
+    visitPsiElement(o);
+  }
+
+  public void visitIfeq(@NotNull MakefileIfeq o) {
     visitPsiElement(o);
   }
 
@@ -32,6 +52,10 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitTargetLine(@NotNull MakefileTargetLine o) {
+    visitPsiElement(o);
+  }
+
+  public void visitThenbranch(@NotNull MakefileThenbranch o) {
     visitPsiElement(o);
   }
 

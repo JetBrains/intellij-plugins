@@ -11,37 +11,19 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import name.kropp.intellij.makefile.psi.*;
 
-public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRule {
+public class MakefileElse_Impl extends ASTWrapperPsiElement implements MakefileElse_ {
 
-  public MakefileRuleImpl(ASTNode node) {
+  public MakefileElse_Impl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitRule(this);
+    visitor.visitElse_(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public MakefileCommands getCommands() {
-    return findChildByClass(MakefileCommands.class);
-  }
-
-  @Override
-  @Nullable
-  public MakefileConditional getConditional() {
-    return findChildByClass(MakefileConditional.class);
-  }
-
-  @Override
-  @NotNull
-  public MakefileTargetLine getTargetLine() {
-    return findNotNullChildByClass(MakefileTargetLine.class);
   }
 
 }

@@ -33,13 +33,18 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 FILENAME_CHARACTER=[^:\ \r\n\t]
 COMMAND=[^\r\n]+
 
-%state SEPARATOR DEPENDENCIES COMMANDS VARIABLE INCLUDES
+%state SEPARATOR DEPENDENCIES COMMANDS VARIABLE INCLUDES CONDITIONALS
 
 %%
 
-<YYINITIAL> {COMMENT}          { yybegin(YYINITIAL); return COMMENT; }
-<YYINITIAL> {EOL}              { yybegin(YYINITIAL); return WHITE_SPACE; }
-<YYINITIAL> "include"          { yybegin(INCLUDES); return INCLUDE; }
+<YYINITIAL> {
+    {COMMENT}          { yybegin(YYINITIAL); return COMMENT; }
+    {EOL}              { yybegin(YYINITIAL); return WHITE_SPACE; }
+    "include"          { yybegin(INCLUDES); return INCLUDE; }
+    "ifeq"             { yybegin(CONDITIONALS); return IFEQ; }
+    "else"             { yybegin(YYINITIAL); return ELSE_; }
+    "endif"            { yybegin(YYINITIAL); return ENDIF; }
+}
 
 <YYINITIAL> {FILENAME_CHARACTER}+   { yybegin(SEPARATOR); return IDENTIFIER; }
 
@@ -59,5 +64,11 @@ COMMAND=[^\r\n]+
 
 <INCLUDES> {SPACES}                     { yybegin(INCLUDES); return WHITE_SPACE; }
 <INCLUDES> {FILENAME_CHARACTER}+        { yybegin(YYINITIAL); return FILENAME; }
+
+<CONDITIONALS> {
+    {FILENAME_CHARACTER}+      { yybegin(YYINITIAL); return CONDITION; }
+    {SPACES}                   { return WHITE_SPACE; }
+    {EOL}                      { yybegin(YYINITIAL); return WHITE_SPACE; }
+}
 
 [^] { return BAD_CHARACTER; }

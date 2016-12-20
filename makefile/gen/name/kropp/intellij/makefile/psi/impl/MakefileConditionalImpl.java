@@ -11,14 +11,14 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import name.kropp.intellij.makefile.psi.*;
 
-public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRule {
+public class MakefileConditionalImpl extends ASTWrapperPsiElement implements MakefileConditional {
 
-  public MakefileRuleImpl(ASTNode node) {
+  public MakefileConditionalImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitRule(this);
+    visitor.visitConditional(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +27,33 @@ public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRu
   }
 
   @Override
-  @Nullable
-  public MakefileCommands getCommands() {
-    return findChildByClass(MakefileCommands.class);
-  }
-
-  @Override
-  @Nullable
-  public MakefileConditional getConditional() {
-    return findChildByClass(MakefileConditional.class);
+  @NotNull
+  public MakefileElse_ getElse_() {
+    return findNotNullChildByClass(MakefileElse_.class);
   }
 
   @Override
   @NotNull
-  public MakefileTargetLine getTargetLine() {
-    return findNotNullChildByClass(MakefileTargetLine.class);
+  public MakefileElsebranch getElsebranch() {
+    return findNotNullChildByClass(MakefileElsebranch.class);
+  }
+
+  @Override
+  @NotNull
+  public MakefileEndif getEndif() {
+    return findNotNullChildByClass(MakefileEndif.class);
+  }
+
+  @Override
+  @NotNull
+  public MakefileIfeq getIfeq() {
+    return findNotNullChildByClass(MakefileIfeq.class);
+  }
+
+  @Override
+  @NotNull
+  public MakefileThenbranch getThenbranch() {
+    return findNotNullChildByClass(MakefileThenbranch.class);
   }
 
 }

@@ -26,11 +26,26 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (t == COMMANDS) {
       r = commands(b, 0);
     }
+    else if (t == CONDITIONAL) {
+      r = conditional(b, 0);
+    }
     else if (t == DEPENDENCIES) {
       r = dependencies(b, 0);
     }
     else if (t == DEPENDENCY) {
       r = dependency(b, 0);
+    }
+    else if (t == ELSE_) {
+      r = else_(b, 0);
+    }
+    else if (t == ELSEBRANCH) {
+      r = elsebranch(b, 0);
+    }
+    else if (t == ENDIF) {
+      r = endif(b, 0);
+    }
+    else if (t == IFEQ) {
+      r = ifeq(b, 0);
     }
     else if (t == INCLUDE) {
       r = include(b, 0);
@@ -43,6 +58,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     }
     else if (t == TARGET_LINE) {
       r = target_line(b, 0);
+    }
+    else if (t == THENBRANCH) {
+      r = thenbranch(b, 0);
     }
     else if (t == VARIABLE) {
       r = variable(b, 0);
@@ -76,6 +94,22 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // ifeq condition thenbranch else_ elsebranch endif
+  public static boolean conditional(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conditional")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, CONDITIONAL, "<conditional>");
+    r = ifeq(b, l + 1);
+    r = r && consumeToken(b, CONDITION);
+    r = r && thenbranch(b, l + 1);
+    r = r && else_(b, l + 1);
+    r = r && elsebranch(b, l + 1);
+    r = r && endif(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // dependency*
   public static boolean dependencies(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dependencies")) return false;
@@ -103,6 +137,50 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'else'
+  public static boolean else_(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "else_")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, ELSE_, "<else>");
+    r = consumeToken(b, "else");
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // commands
+  public static boolean elsebranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "elsebranch")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, ELSEBRANCH, "<elsebranch>");
+    r = commands(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'endif'
+  public static boolean endif(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "endif")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, ENDIF, "<endif>");
+    r = consumeToken(b, "endif");
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'ifeq'
+  public static boolean ifeq(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifeq")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, IFEQ, "<ifeq>");
+    r = consumeToken(b, "ifeq");
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // 'include' filename
   public static boolean include(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include")) return false;
@@ -115,7 +193,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (rule|variable|include|comment)*
+  // (rule|variable|include|conditional|comment)*
   static boolean makefile(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile")) return false;
     int c = current_position_(b);
@@ -127,7 +205,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // rule|variable|include|comment
+  // rule|variable|include|conditional|comment
   private static boolean makefile_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile_0")) return false;
     boolean r;
@@ -135,13 +213,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = rule(b, l + 1);
     if (!r) r = variable(b, l + 1);
     if (!r) r = include(b, l + 1);
+    if (!r) r = conditional(b, l + 1);
     if (!r) r = consumeToken(b, COMMENT);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // target_line EOL commands?
+  // target_line EOL (commands|conditional)?
   public static boolean rule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
@@ -154,11 +233,22 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // commands?
+  // (commands|conditional)?
   private static boolean rule_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule_2")) return false;
-    commands(b, l + 1);
+    rule_2_0(b, l + 1);
     return true;
+  }
+
+  // commands|conditional
+  private static boolean rule_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "rule_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = commands(b, l + 1);
+    if (!r) r = conditional(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -186,6 +276,17 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = r && dependencies(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // commands
+  public static boolean thenbranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "thenbranch")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, THENBRANCH, "<thenbranch>");
+    r = commands(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
