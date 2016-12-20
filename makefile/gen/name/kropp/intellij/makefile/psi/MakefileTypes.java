@@ -10,13 +10,15 @@ public interface MakefileTypes {
 
   IElementType COMMANDS = new MakefileElementType("COMMANDS");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
-  IElementType DEPENDENCIES = new MakefileElementType("DEPENDENCIES");
-  IElementType DEPENDENCY = new MakefileElementType("DEPENDENCY");
   IElementType ELSEBRANCH = new MakefileElementType("ELSEBRANCH");
   IElementType ELSE_ = new MakefileElementType("ELSE_");
   IElementType ENDIF = new MakefileElementType("ENDIF");
   IElementType IFEQ = new MakefileElementType("IFEQ");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
+  IElementType NORMAL_PREREQUISITES = new MakefileElementType("NORMAL_PREREQUISITES");
+  IElementType ORDER_ONLY_PREREQUISITES = new MakefileElementType("ORDER_ONLY_PREREQUISITES");
+  IElementType PREREQUISITE = new MakefileElementType("PREREQUISITE");
+  IElementType PREREQUISITES = new MakefileElementType("PREREQUISITES");
   IElementType RULE = new MakefileElementType("RULE");
   IElementType TARGET = new MakefileElementType("TARGET");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
@@ -32,6 +34,7 @@ public interface MakefileTypes {
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType FILENAME = new MakefileTokenType("filename");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
+  IElementType PIPE = new MakefileTokenType("|");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
 
   class Factory {
@@ -42,12 +45,6 @@ public interface MakefileTypes {
       }
       else if (type == CONDITIONAL) {
         return new MakefileConditionalImpl(node);
-      }
-      else if (type == DEPENDENCIES) {
-        return new MakefileDependenciesImpl(node);
-      }
-      else if (type == DEPENDENCY) {
-        return new MakefileDependencyImpl(node);
       }
       else if (type == ELSEBRANCH) {
         return new MakefileElsebranchImpl(node);
@@ -63,6 +60,18 @@ public interface MakefileTypes {
       }
       else if (type == INCLUDE) {
         return new MakefileIncludeImpl(node);
+      }
+      else if (type == NORMAL_PREREQUISITES) {
+        return new MakefileNormalPrerequisitesImpl(node);
+      }
+      else if (type == ORDER_ONLY_PREREQUISITES) {
+        return new MakefileOrderOnlyPrerequisitesImpl(node);
+      }
+      else if (type == PREREQUISITE) {
+        return new MakefilePrerequisiteImpl(node);
+      }
+      else if (type == PREREQUISITES) {
+        return new MakefilePrerequisitesImpl(node);
       }
       else if (type == RULE) {
         return new MakefileRuleImpl(node);

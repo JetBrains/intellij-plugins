@@ -5,9 +5,10 @@ Makefile
         PsiElement(identifier)('all')
       PsiElement(:)(':')
       PsiWhiteSpace(' ')
-      MakefileDependenciesImpl(DEPENDENCIES)
-        MakefileDependencyImpl(DEPENDENCY)
-          PsiElement(identifier)('hello')
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          MakefilePrerequisiteImpl(PREREQUISITE)
+            PsiElement(identifier)('hello')
     PsiElement(EOL)('\n\n')
     MakefileCommandsImpl(COMMANDS)
       <empty list>
@@ -23,8 +24,9 @@ Makefile
       MakefileTargetImpl(TARGET)
         PsiElement(identifier)('hello')
       PsiElement(:)(':')
-      MakefileDependenciesImpl(DEPENDENCIES)
-        <empty list>
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          <empty list>
     PsiElement(EOL)('\n')
     PsiWhiteSpace('\t')
     MakefileCommandsImpl(COMMANDS)

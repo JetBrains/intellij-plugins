@@ -11,7 +11,7 @@ class MakefileColorSettingsPage : ColorSettingsPage {
   private val DESCRIPTORS = arrayOf(
       AttributesDescriptor("Target", MakefileSyntaxHighlighter.TARGET),
       AttributesDescriptor("Separator", MakefileSyntaxHighlighter.SEPARATOR),
-      AttributesDescriptor("Dependency", MakefileSyntaxHighlighter.DEPENDENCY),
+      AttributesDescriptor("Dependency", MakefileSyntaxHighlighter.PREREQUISITE),
       AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE_NAME),
       AttributesDescriptor("Variable Value", MakefileSyntaxHighlighter.VARIABLE_VALUE)
   )

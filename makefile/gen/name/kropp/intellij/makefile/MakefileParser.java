@@ -29,12 +29,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == CONDITIONAL) {
       r = conditional(b, 0);
     }
-    else if (t == DEPENDENCIES) {
-      r = dependencies(b, 0);
-    }
-    else if (t == DEPENDENCY) {
-      r = dependency(b, 0);
-    }
     else if (t == ELSE_) {
       r = else_(b, 0);
     }
@@ -49,6 +43,18 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     }
     else if (t == INCLUDE) {
       r = include(b, 0);
+    }
+    else if (t == NORMAL_PREREQUISITES) {
+      r = normal_prerequisites(b, 0);
+    }
+    else if (t == ORDER_ONLY_PREREQUISITES) {
+      r = order_only_prerequisites(b, 0);
+    }
+    else if (t == PREREQUISITE) {
+      r = prerequisite(b, 0);
+    }
+    else if (t == PREREQUISITES) {
+      r = prerequisites(b, 0);
     }
     else if (t == RULE) {
       r = rule(b, 0);
@@ -106,33 +112,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = r && elsebranch(b, l + 1);
     r = r && endif(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // dependency*
-  public static boolean dependencies(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dependencies")) return false;
-    Marker m = enter_section_(b, l, _NONE_, DEPENDENCIES, "<dependencies>");
-    int c = current_position_(b);
-    while (true) {
-      if (!dependency(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dependencies", c)) break;
-      c = current_position_(b);
-    }
-    exit_section_(b, l, m, true, false, null);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // identifier
-  public static boolean dependency(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dependency")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, DEPENDENCY, r);
     return r;
   }
 
@@ -220,6 +199,81 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // prerequisite*
+  public static boolean normal_prerequisites(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "normal_prerequisites")) return false;
+    Marker m = enter_section_(b, l, _NONE_, NORMAL_PREREQUISITES, "<normal prerequisites>");
+    int c = current_position_(b);
+    while (true) {
+      if (!prerequisite(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "normal_prerequisites", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, l, m, true, false, null);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // prerequisite+
+  public static boolean order_only_prerequisites(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "order_only_prerequisites")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = prerequisite(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!prerequisite(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "order_only_prerequisites", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, ORDER_ONLY_PREREQUISITES, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // identifier
+  public static boolean prerequisite(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisite")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, PREREQUISITE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // normal_prerequisites ('|' order_only_prerequisites)?
+  public static boolean prerequisites(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisites")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, PREREQUISITES, "<prerequisites>");
+    r = normal_prerequisites(b, l + 1);
+    r = r && prerequisites_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ('|' order_only_prerequisites)?
+  private static boolean prerequisites_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisites_1")) return false;
+    prerequisites_1_0(b, l + 1);
+    return true;
+  }
+
+  // '|' order_only_prerequisites
+  private static boolean prerequisites_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisites_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, PIPE);
+    r = r && order_only_prerequisites(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // target_line EOL (commands|conditional)?
   public static boolean rule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule")) return false;
@@ -264,7 +318,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // target ':' dependencies
+  // target ':' prerequisites
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
@@ -273,7 +327,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = target(b, l + 1);
     r = r && consumeToken(b, COLON);
     p = r; // pin = 2
-    r = r && dependencies(b, l + 1);
+    r = r && prerequisites(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }

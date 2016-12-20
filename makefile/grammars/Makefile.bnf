@@ -14,6 +14,7 @@
   tokens = [
     COLON = ":"
     ASSIGN = "="
+    PIPE = "|"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
@@ -23,15 +24,17 @@ makefile ::= (rule|variable|include|conditional|comment)*
 
 rule ::= target_line EOL (commands|conditional)?
 
-target_line ::= target ':' dependencies {pin=2 methods=[getTargetName]}
+target_line ::= target ':' prerequisites {pin=2 methods=[getTargetName]}
 target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement" methods=[getName setName getNameIdentifier]}
 
-dependencies ::= dependency*
-dependency ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileDependencyMixin"}
+prerequisites ::= normal_prerequisites ('|' order_only_prerequisites)?
+normal_prerequisites ::= prerequisite*
+order_only_prerequisites ::= prerequisite+
+prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin"}
 
 commands ::= command*
 
-conditional ::= ifeq condition thenbranch else_ EOL elsebranch endif
+conditional ::= ifeq condition thenbranch else_ elsebranch endif
 
 ifeq ::= 'ifeq'
 else_ ::= 'else'

@@ -5,9 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface MakefileDependencies extends PsiElement {
+public interface MakefilePrerequisites extends PsiElement {
 
   @NotNull
-  List<MakefileDependency> getDependencyList();
+  MakefileNormalPrerequisites getNormalPrerequisites();
+
+  @Nullable
+  MakefileOrderOnlyPrerequisites getOrderOnlyPrerequisites();
 
 }

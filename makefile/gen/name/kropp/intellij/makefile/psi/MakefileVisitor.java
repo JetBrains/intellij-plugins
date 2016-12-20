@@ -15,14 +15,6 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitDependencies(@NotNull MakefileDependencies o) {
-    visitPsiElement(o);
-  }
-
-  public void visitDependency(@NotNull MakefileDependency o) {
-    visitPsiElement(o);
-  }
-
   public void visitElse_(@NotNull MakefileElse_ o) {
     visitPsiElement(o);
   }
@@ -40,6 +32,22 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitInclude(@NotNull MakefileInclude o) {
+    visitPsiElement(o);
+  }
+
+  public void visitNormalPrerequisites(@NotNull MakefileNormalPrerequisites o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOrderOnlyPrerequisites(@NotNull MakefileOrderOnlyPrerequisites o) {
+    visitPsiElement(o);
+  }
+
+  public void visitPrerequisite(@NotNull MakefilePrerequisite o) {
+    visitPsiElement(o);
+  }
+
+  public void visitPrerequisites(@NotNull MakefilePrerequisites o) {
     visitPsiElement(o);
   }
 

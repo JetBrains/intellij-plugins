@@ -8,28 +8,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import name.kropp.intellij.makefile.psi.*;
 
-public class MakefileDependenciesImpl extends ASTWrapperPsiElement implements MakefileDependencies {
+public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implements MakefilePrerequisite {
 
-  public MakefileDependenciesImpl(ASTNode node) {
+  public MakefilePrerequisiteImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitDependencies(this);
+    visitor.visitPrerequisite(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public List<MakefileDependency> getDependencyList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileDependency.class);
   }
 
 }

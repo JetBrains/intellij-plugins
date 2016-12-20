@@ -11,14 +11,14 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import name.kropp.intellij.makefile.psi.*;
 
-public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements MakefileTargetLine {
+public class MakefilePrerequisitesImpl extends ASTWrapperPsiElement implements MakefilePrerequisites {
 
-  public MakefileTargetLineImpl(ASTNode node) {
+  public MakefilePrerequisitesImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitTargetLine(this);
+    visitor.visitPrerequisites(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,20 +27,15 @@ public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements Make
   }
 
   @Override
-  @Nullable
-  public MakefilePrerequisites getPrerequisites() {
-    return findChildByClass(MakefilePrerequisites.class);
+  @NotNull
+  public MakefileNormalPrerequisites getNormalPrerequisites() {
+    return findNotNullChildByClass(MakefileNormalPrerequisites.class);
   }
 
   @Override
-  @NotNull
-  public MakefileTarget getTarget() {
-    return findNotNullChildByClass(MakefileTarget.class);
-  }
-
   @Nullable
-  public String getTargetName() {
-    return MakefilePsiImplUtil.getTargetName(this);
+  public MakefileOrderOnlyPrerequisites getOrderOnlyPrerequisites() {
+    return findChildByClass(MakefileOrderOnlyPrerequisites.class);
   }
 
 }

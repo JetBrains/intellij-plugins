@@ -4,8 +4,9 @@ Makefile
       MakefileTargetImpl(TARGET)
         PsiElement(identifier)('clean')
       PsiElement(:)(':')
-      MakefileDependenciesImpl(DEPENDENCIES)
-        <empty list>
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          <empty list>
     PsiElement(EOL)('\n')
     MakefileCommandsImpl(COMMANDS)
       <empty list>

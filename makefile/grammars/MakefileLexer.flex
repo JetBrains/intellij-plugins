@@ -29,11 +29,13 @@ TAB=\t
 COMMENT="#"[^\r\n]*
 VARIABLE_VALUE=[^\r\n]
 COLON=":"
+PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
+
 FILENAME_CHARACTER=[^:\ \r\n\t]
 COMMAND=[^\r\n]+
 
-%state SEPARATOR DEPENDENCIES COMMANDS VARIABLE INCLUDES CONDITIONALS
+%state SEPARATOR PREREQUISITES COMMANDS VARIABLE INCLUDES CONDITIONALS
 
 %%
 
@@ -48,13 +50,16 @@ COMMAND=[^\r\n]+
 
 <YYINITIAL> {FILENAME_CHARACTER}+   { yybegin(SEPARATOR); return IDENTIFIER; }
 
-<SEPARATOR> {COLON}             { yybegin(DEPENDENCIES); return COLON; }
+<SEPARATOR> {COLON}             { yybegin(PREREQUISITES); return COLON; }
 <SEPARATOR> {ASSIGN}            { yybegin(VARIABLE); return ASSIGN; }
 <SEPARATOR> {SPACES}            { yybegin(SEPARATOR); return WHITE_SPACE; }
 
-<DEPENDENCIES> {FILENAME_CHARACTER}+   { yybegin(DEPENDENCIES); return IDENTIFIER; }
-<DEPENDENCIES> {EOL}                   { yybegin(YYINITIAL); return EOL; }
-<DEPENDENCIES> {SPACES}                { yybegin(DEPENDENCIES); return WHITE_SPACE; }
+<PREREQUISITES> {
+    {PIPE}                  { return PIPE; }
+    {FILENAME_CHARACTER}+   { return IDENTIFIER; }
+    {EOL}                   { yybegin(YYINITIAL); return EOL; }
+    {SPACES}                { return WHITE_SPACE; }
+}
 
 <YYINITIAL> {TAB}+                     { yybegin(COMMANDS); return WHITE_SPACE; }
 <COMMANDS> {COMMAND}                   { yybegin(YYINITIAL); return COMMAND; }
