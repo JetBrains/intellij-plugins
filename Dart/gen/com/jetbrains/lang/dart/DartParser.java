@@ -565,18 +565,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "argument_list_recover")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NOT_);
-    r = !argument_list_recover_0(b, l + 1);
+    r = !consumeToken(b, RPAREN);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // (')')
-  private static boolean argument_list_recover_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "argument_list_recover_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, RPAREN);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -731,19 +721,17 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' ';'
+  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')'
   public static boolean assertStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assertStatement")) return false;
     if (!nextTokenIs(b, ASSERT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, ASSERT_STATEMENT, null);
-    r = consumeToken(b, ASSERT);
+    r = consumeTokens(b, 1, ASSERT, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParenOrComma(b, l + 1)) && r;
+    r = r && report_error_(b, expressionWithRecoverUntilParenOrComma(b, l + 1));
     r = p && report_error_(b, assertStatement_3(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
-    r = p && consumeToken(b, SEMICOLON) && r;
+    r = p && consumeToken(b, RPAREN) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -764,6 +752,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && stringLiteralExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // assertStatement ';'
+  static boolean assertStatementWithSemicolon(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "assertStatementWithSemicolon")) return false;
+    if (!nextTokenIs(b, ASSERT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = assertStatement(b, l + 1);
+    p = r; // pin = 1
+    r = r && consumeToken(b, SEMICOLON);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1104,10 +1106,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, CATCH)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CATCH_PART, null);
-    r = consumeToken(b, CATCH);
+    r = consumeTokens(b, 1, CATCH, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, componentName(b, l + 1)) && r;
+    r = r && report_error_(b, componentName(b, l + 1));
     r = p && report_error_(b, catchPart_3(b, l + 1)) && r;
     r = p && consumeToken(b, RPAREN) && r;
     exit_section_(b, l, m, r, p, null);
@@ -1415,10 +1416,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, DEFAULT_CASE, "<default case>");
     r = defaultCase_0(b, l + 1);
-    r = r && consumeToken(b, DEFAULT);
+    r = r && consumeTokens(b, 1, DEFAULT, COLON);
     p = r; // pin = 2
-    r = r && report_error_(b, consumeToken(b, COLON));
-    r = p && statements(b, l + 1) && r;
+    r = r && statements(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1510,11 +1510,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, DO);
     p = r; // pin = 1
     r = r && report_error_(b, statement(b, l + 1));
-    r = p && report_error_(b, consumeToken(b, WHILE)) && r;
-    r = p && report_error_(b, consumeToken(b, LPAREN)) && r;
+    r = p && report_error_(b, consumeTokens(b, -1, WHILE, LPAREN)) && r;
     r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
-    r = p && consumeToken(b, SEMICOLON) && r;
+    r = p && report_error_(b, consumeTokens(b, -1, RPAREN, SEMICOLON)) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -2043,8 +2041,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, FIELD_FORMAL_PARAMETER, "<field formal parameter>");
     r = fieldFormalParameter_0(b, l + 1);
     r = r && fieldFormalParameter_1(b, l + 1);
-    r = r && consumeToken(b, THIS);
-    r = r && consumeToken(b, DOT);
+    r = r && consumeTokens(b, 0, THIS, DOT);
     r = r && referenceExpression(b, l + 1);
     r = r && fieldFormalParameter_5(b, l + 1);
     r = r && fieldFormalParameter_6(b, l + 1);
@@ -2112,8 +2109,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "fieldInitializer_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, THIS);
-    r = r && consumeToken(b, DOT);
+    r = consumeTokens(b, 0, THIS, DOT);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2512,21 +2508,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, LPAREN)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = formalParameterList_0(b, l + 1);
+    r = parseTokens(b, 0, LPAREN, RPAREN);
     if (!r) r = formalParameterList_1(b, l + 1);
     if (!r) r = formalParameterList_2(b, l + 1);
     exit_section_(b, m, FORMAL_PARAMETER_LIST, r);
-    return r;
-  }
-
-  // '(' ')'
-  private static boolean formalParameterList_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "formalParameterList_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, LPAREN);
-    r = r && consumeToken(b, RPAREN);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -3239,10 +3224,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, IF)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, IF_STATEMENT, null);
-    r = consumeToken(b, IF);
+    r = consumeTokens(b, 1, IF, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
     r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
     r = p && report_error_(b, statement(b, l + 1)) && r;
     r = p && ifStatement_5(b, l + 1) && r;
@@ -3275,8 +3259,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, IF)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, IF);
-    r = r && consumeToken(b, LPAREN);
+    r = consumeTokens(b, 0, IF, LPAREN);
     r = r && dottedName(b, l + 1);
     r = r && importConfig_3(b, l + 1);
     r = r && consumeToken(b, RPAREN);
@@ -4463,7 +4446,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                | breakStatement
   //                                | continueStatement
   //                                | returnStatement
-  //                                | assertStatement
+  //                                | assertStatementWithSemicolon
   //                                | statementFollowedBySemiColon
   //                                | yieldEachStatement
   //                                | yieldStatement
@@ -4485,7 +4468,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = breakStatement(b, l + 1);
     if (!r) r = continueStatement(b, l + 1);
     if (!r) r = returnStatement(b, l + 1);
-    if (!r) r = assertStatement(b, l + 1);
+    if (!r) r = assertStatementWithSemicolon(b, l + 1);
     if (!r) r = statementFollowedBySemiColon(b, l + 1);
     if (!r) r = yieldEachStatement(b, l + 1);
     if (!r) r = yieldStatement(b, l + 1);
@@ -4757,8 +4740,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, PART_OF_STATEMENT, "<part of statement>");
     r = partOfStatement_0(b, l + 1);
-    r = r && consumeToken(b, PART);
-    r = r && consumeToken(b, OF);
+    r = r && consumeTokens(b, 0, PART, OF);
     r = r && partOfStatement_3(b, l + 1);
     p = r; // pin = 4
     r = r && consumeToken(b, SEMICOLON);
@@ -4920,8 +4902,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, REDIRECTION, null);
-    r = consumeToken(b, COLON);
-    r = r && consumeToken(b, THIS);
+    r = consumeTokens(b, 2, COLON, THIS);
     p = r; // pin = 2
     r = r && report_error_(b, redirection_2(b, l + 1));
     r = p && argumentsWrapper(b, l + 1) && r;
@@ -4993,9 +4974,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, RETHROW)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, RETHROW_STATEMENT, null);
-    r = consumeToken(b, RETHROW);
+    r = consumeTokens(b, 1, RETHROW, SEMICOLON);
     p = r; // pin = 1
-    r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -5581,12 +5561,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // (superExpression | thisExpression) ('.' referenceExpression)? <<argumentsWrapper>>
   //                               | fieldInitializer
+  //                               | assertStatement
   public static boolean superCallOrFieldInitializer(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, SUPER_CALL_OR_FIELD_INITIALIZER, "<super call or field initializer>");
     r = superCallOrFieldInitializer_0(b, l + 1);
     if (!r) r = fieldInitializer(b, l + 1);
+    if (!r) r = assertStatement(b, l + 1);
     exit_section_(b, l, m, r, false, super_call_or_field_initializer_recover_parser_);
     return r;
   }
@@ -5747,12 +5729,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, SWITCH)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, SWITCH_STATEMENT, null);
-    r = consumeToken(b, SWITCH);
+    r = consumeTokens(b, 1, SWITCH, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
-    r = p && report_error_(b, consumeToken(b, LBRACE)) && r;
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
+    r = p && report_error_(b, consumeTokens(b, -1, RPAREN, LBRACE)) && r;
     r = p && report_error_(b, switchStatement_5(b, l + 1)) && r;
     r = p && report_error_(b, switchStatement_6(b, l + 1)) && r;
     r = p && consumeToken(b, RBRACE) && r;
@@ -6241,8 +6221,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "userDefinableOperator_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, LBRACKET);
-    r = r && consumeToken(b, RBRACKET);
+    r = consumeTokens(b, 0, LBRACKET, RBRACKET);
     r = r && userDefinableOperator_2_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -6531,10 +6510,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, WHILE)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, WHILE_STATEMENT, null);
-    r = consumeToken(b, WHILE);
+    r = consumeTokens(b, 1, WHILE, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
     r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
     r = p && statement(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
@@ -6548,8 +6526,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, YIELD)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, YIELD_EACH_STATEMENT, null);
-    r = consumeToken(b, YIELD);
-    r = r && consumeToken(b, MUL);
+    r = consumeTokens(b, 2, YIELD, MUL);
     p = r; // pin = 2
     r = r && report_error_(b, expression(b, l + 1));
     r = p && consumeToken(b, SEMICOLON) && r;

@@ -190,6 +190,14 @@ Dart File
           INITIALIZERS
             PsiElement(:)(':')
             SUPER_CALL_OR_FIELD_INITIALIZER
+              ASSERT_STATEMENT
+                PsiElement(assert)('assert')
+                PsiElement(()('(')
+                LITERAL_EXPRESSION
+                  PsiElement(false)('false')
+                PsiElement())(')')
+            PsiElement(,)(',')
+            SUPER_CALL_OR_FIELD_INITIALIZER
               FIELD_INITIALIZER
                 PsiElement(this)('this')
                 PsiElement(.)('.')
@@ -200,6 +208,23 @@ Dart File
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('y')
+            PsiElement(,)(',')
+            SUPER_CALL_OR_FIELD_INITIALIZER
+              ASSERT_STATEMENT
+                PsiElement(assert)('assert')
+                PsiElement(()('(')
+                COMPARE_EXPRESSION
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                  RELATIONAL_OPERATOR
+                    PsiElement(<)('<')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('2')
+                PsiElement(,)(',')
+                STRING_LITERAL_EXPRESSION
+                  PsiElement(OPEN_QUOTE)('"')
+                  PsiElement(CLOSING_QUOTE)('"')
+                PsiElement())(')')
             PsiElement(,)(',')
             SUPER_CALL_OR_FIELD_INITIALIZER
               FIELD_INITIALIZER

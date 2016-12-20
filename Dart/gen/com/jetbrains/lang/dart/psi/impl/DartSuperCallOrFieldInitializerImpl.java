@@ -27,6 +27,12 @@ public class DartSuperCallOrFieldInitializerImpl extends DartPsiCompositeElement
   }
 
   @Override
+  @Nullable
+  public DartAssertStatement getAssertStatement() {
+    return findChildByClass(DartAssertStatement.class);
+  }
+
+  @Override
   @NotNull
   public List<DartExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
