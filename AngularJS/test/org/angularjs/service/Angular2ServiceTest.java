@@ -75,12 +75,12 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
   }
 
 
-  private void defaultTest() throws IOException {
+  private void defaultTest(String extension) throws IOException {
     if (skipTests) {
       return;
     }
 
-    doTestFor(getTestName(false) + ".ts");
+    doTestFor(getTestName(false) + extension);
   }
 
 
@@ -95,6 +95,10 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
   }
 
   public void testSimpleHighlight() throws IOException {
-    defaultTest();
+    defaultTest(".ts");
+  }
+
+  public void testSimpleHighlightHtml() throws IOException {
+    defaultTest(".html");
   }
 }
