@@ -81,18 +81,13 @@
     </component>
   </project-components>
 
-  <module-components>
-    <component>
-      <implementation-class>org.osmorc.OsmorcModuleComponent</implementation-class>
-    </component>
-  </module-components>
-
   <extensionPoints>
     <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
     <extensionPoint name="obr" interface="org.osmorc.obrimport.Obr"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="org.osmorc.OsmorcModuleComponent"/>
 
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndProjectImportProvider"/>
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndModuleImportProvider"/>
