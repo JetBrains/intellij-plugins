@@ -1,7 +1,7 @@
 package org.angularjs.service;
 
 import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar;
-import com.intellij.lang.javascript.service.JSLanguageServiceBase;
+import com.intellij.lang.javascript.service.JSLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider;
 import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceHighlightingPassFactory;
 import com.intellij.openapi.project.Project;
@@ -33,7 +33,7 @@ public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlighti
 
   @Nullable
   @Override
-  protected JSLanguageServiceBase getService() {
+  protected JSLanguageService getService() {
     return myProvider != null ? myProvider.getService() : null;
   }
 
