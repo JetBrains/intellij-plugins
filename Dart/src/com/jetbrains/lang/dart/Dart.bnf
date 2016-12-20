@@ -303,6 +303,7 @@ fieldInitializer ::= ('this' '.')? referenceExpression '=' expression {pin=2}
 
 superCallOrFieldInitializer ::= (superExpression | thisExpression) ('.' referenceExpression)? <<argumentsWrapper>>
                               | fieldInitializer
+                              | assertStatement
                               {recoverWhile="super_call_or_field_initializer_recover"}
 private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'async' | 'class' | 'const' |
                                                       'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' |
@@ -406,7 +407,7 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.
                                | breakStatement
                                | continueStatement
                                | returnStatement
-                               | assertStatement
+                               | assertStatementWithSemicolon
                                | statementFollowedBySemiColon
                                | yieldEachStatement
                                | yieldStatement
@@ -429,7 +430,8 @@ whileStatement ::= 'while' '(' expressionWithRecoverUntilParen ')' statement {pi
 doWhileStatement ::= 'do' statement 'while' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
 forStatement ::= 'await'? 'for' forLoopPartsInBraces statement {pin=2}
 //todo component
-assertStatement ::= 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' ';' {pin=1}
+private assertStatementWithSemicolon ::= assertStatement ';' {pin=1}
+assertStatement ::= 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' {pin=1}
 yieldEachStatement ::= 'yield' '*' expression ';' {pin=2}
 yieldStatement ::= 'yield' expression ';' {pin=1}
 breakStatement ::= 'break' referenceExpression? ';' {pin=1}

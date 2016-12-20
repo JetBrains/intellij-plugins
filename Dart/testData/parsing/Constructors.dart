@@ -4,7 +4,7 @@ class ConstructorSyntax {
   ConstructorSyntax(void this.a(), int this.b());
   ConstructorSyntax(x, y) : super(), this.x = x, this.y = y {}
   ConstructorSyntax.a(x, y) : x = x, super(), y = x {}
-  ConstructorSyntax.b(x, y) : this.x = y, this.y = x, super() {}
+  ConstructorSyntax.b(x, y) : assert(false), this.x = y, assert(1<2, ""), this.y = x, super() {}
 }
 
 class CompileTimeConstructorSyntax {

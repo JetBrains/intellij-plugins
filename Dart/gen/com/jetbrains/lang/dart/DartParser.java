@@ -721,7 +721,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' ';'
+  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')'
   public static boolean assertStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assertStatement")) return false;
     if (!nextTokenIs(b, ASSERT)) return false;
@@ -731,7 +731,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, expressionWithRecoverUntilParenOrComma(b, l + 1));
     r = p && report_error_(b, assertStatement_3(b, l + 1)) && r;
-    r = p && report_error_(b, consumeTokens(b, -1, RPAREN, SEMICOLON)) && r;
+    r = p && consumeToken(b, RPAREN) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -752,6 +752,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && stringLiteralExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // assertStatement ';'
+  static boolean assertStatementWithSemicolon(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "assertStatementWithSemicolon")) return false;
+    if (!nextTokenIs(b, ASSERT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = assertStatement(b, l + 1);
+    p = r; // pin = 1
+    r = r && consumeToken(b, SEMICOLON);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -4432,7 +4446,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                | breakStatement
   //                                | continueStatement
   //                                | returnStatement
-  //                                | assertStatement
+  //                                | assertStatementWithSemicolon
   //                                | statementFollowedBySemiColon
   //                                | yieldEachStatement
   //                                | yieldStatement
@@ -4453,7 +4467,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = breakStatement(b, l + 1);
     if (!r) r = continueStatement(b, l + 1);
     if (!r) r = returnStatement(b, l + 1);
-    if (!r) r = assertStatement(b, l + 1);
+    if (!r) r = assertStatementWithSemicolon(b, l + 1);
     if (!r) r = statementFollowedBySemiColon(b, l + 1);
     if (!r) r = yieldEachStatement(b, l + 1);
     if (!r) r = yieldStatement(b, l + 1);
@@ -5545,12 +5559,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // (superExpression | thisExpression) ('.' referenceExpression)? <<argumentsWrapper>>
   //                               | fieldInitializer
+  //                               | assertStatement
   public static boolean superCallOrFieldInitializer(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, SUPER_CALL_OR_FIELD_INITIALIZER, "<super call or field initializer>");
     r = superCallOrFieldInitializer_0(b, l + 1);
     if (!r) r = fieldInitializer(b, l + 1);
+    if (!r) r = assertStatement(b, l + 1);
     exit_section_(b, l, m, r, false, super_call_or_field_initializer_recover_parser_);
     return r;
   }
