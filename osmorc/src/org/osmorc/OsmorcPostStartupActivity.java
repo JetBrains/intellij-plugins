@@ -28,8 +28,12 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleComponent;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetType;
 import org.osmorc.impl.AdditionalJARContentsWatcherManager;
@@ -37,52 +41,43 @@ import org.osmorc.impl.AdditionalJARContentsWatcherManager;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcModuleComponent implements ModuleComponent {
-  private final Module myModule;
+class OsmorcPostStartupActivity implements StartupActivity {
+  private static void handleFacetChange(@NotNull Facet facet, @NotNull Project project) {
+    if (facet.getTypeId() != OsmorcFacetType.ID) {
+      return;
+    }
 
-  public OsmorcModuleComponent(@NotNull Module module) {
-    myModule = module;
-  }
-
-  @NonNls
-  @NotNull
-  @Override
-  public String getComponentName() {
-    return "OsmorcModuleComponent";
+    for (Module module : ModuleManager.getInstance(project).getModules()) {
+      AdditionalJARContentsWatcherManager.getInstance(module).updateWatcherSetup();
+    }
   }
 
   @Override
-  public void initComponent() {
-    myModule.getMessageBus().connect(myModule).subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
+  public void runActivity(@NotNull Project project) {
+    if (project.isDefault()) {
+      return;
+    }
+
+    MessageBusConnection connection = project.getMessageBus().connect();
+    connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
       @Override
       public void facetAdded(@NotNull Facet facet) {
-        handleFacetChange(facet);
+        handleFacetChange(facet, project);
       }
 
       @Override
       public void facetConfigurationChanged(@NotNull Facet facet) {
-        handleFacetChange(facet);
+        handleFacetChange(facet, project);
       }
     });
-  }
 
-  @Override
-  public void disposeComponent() { }
-
-  @Override
-  public void projectOpened() { }
-
-  @Override
-  public void projectClosed() {
-    AdditionalJARContentsWatcherManager.getInstance(myModule).cleanup();
-  }
-
-  @Override
-  public void moduleAdded() { }
-
-  private void handleFacetChange(Facet facet) {
-    if (facet.getTypeId() == OsmorcFacetType.ID) {
-      AdditionalJARContentsWatcherManager.getInstance(myModule).updateWatcherSetup();
-    }
+    connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
+      @Override
+      public void projectClosing(Project project) {
+        for (Module module : ModuleManager.getInstance(project).getModules()) {
+          AdditionalJARContentsWatcherManager.getInstance(module).cleanup();
+        }
+      }
+    });
   }
 }
