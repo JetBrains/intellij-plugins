@@ -20,7 +20,7 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     return "Create an issue on GitHub?";
   }
 
-  public void sendFeedback(@Nullable Project project, @Nullable String errorMessage) {
+  public void sendFeedback(@Nullable Project project, @Nullable String errorMessage, @Nullable String serverLog) {
     final ApplicationInfoEx appInfo = ApplicationInfoEx.getInstanceEx();
     boolean eap = appInfo.isEAP();
     String ijBuild = eap ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
@@ -29,21 +29,19 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     String template = DartBundle.message("dart.feedback.url.template", ijBuild, sdkVsn, platDescr);
     if (errorMessage != null) {
       errorMessage = "```\n" + errorMessage + "```";
-      String potentialTemplate = template + "\n\n" + errorMessage;
-      if (potentialTemplate.length() <= MAX_URL_LENGTH) {
-        template = potentialTemplate;
+      try {
+        File file = FileUtil.createTempFile("report", ".txt");
+        FileUtil.writeToFile(file, errorMessage);
+        if (serverLog != null) {
+          // Assume serverLog is never long enough that opening and closing the file is cheaper than copying it.
+          FileUtil.writeToFile(file, "\n\n" + serverLog, true);
+        }
+        String potentialTemplate =
+          template + "\n\n" + DartBundle.message("dart.error.file.instructions", file.getAbsolutePath()) + "\n\n" + errorMessage;
+        template = potentialTemplate.substring(0, MAX_URL_LENGTH);
       }
-      else {
-        try {
-          File file = FileUtil.createTempFile("report", ".txt");
-          FileUtil.writeToFile(file, errorMessage);
-          potentialTemplate =
-            template + "\n\n" + DartBundle.message("dart.error.file.instructions", file.getAbsolutePath()) + "\n\n" + errorMessage;
-          template = potentialTemplate.substring(0, MAX_URL_LENGTH);
-        }
-        catch (IOException e) {
-          // ignore it
-        }
+      catch (IOException e) {
+        // ignore it
       }
     }
     openBrowserOnFeedbackForm(template, project);

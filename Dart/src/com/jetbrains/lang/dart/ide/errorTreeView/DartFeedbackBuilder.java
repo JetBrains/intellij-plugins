@@ -58,8 +58,9 @@ public abstract class DartFeedbackBuilder {
    *
    * @param project the current project
    * @param errorMessage additional information for the issue, such as a tack trace
+   * @param serverLog recent requests made to the analysis server
    */
-  public abstract void sendFeedback(@Nullable Project project, @Nullable String errorMessage);
+  public abstract void sendFeedback(@Nullable Project project, @Nullable String errorMessage, @Nullable String serverLog);
 
   /**
    * Display a standard query dialog and return the user's response.
