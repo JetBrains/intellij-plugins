@@ -1,6 +1,9 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.config;
 
-import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
+import com.intellij.lang.javascript.linter.JSLinterConfiguration;
+import com.intellij.lang.javascript.linter.JSLinterDescriptorBase;
+import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

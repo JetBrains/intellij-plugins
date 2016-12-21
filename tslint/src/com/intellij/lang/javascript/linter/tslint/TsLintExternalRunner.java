@@ -9,6 +9,8 @@ import com.intellij.idea.RareLogger;
 import com.intellij.javascript.nodejs.NodePackageVersionUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;

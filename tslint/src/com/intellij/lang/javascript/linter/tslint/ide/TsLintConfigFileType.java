@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.ide;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.json.JsonLanguage;

@@ -1,7 +1,8 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
 import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.tslint.TsLintInspection;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;

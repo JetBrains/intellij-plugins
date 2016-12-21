@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.idea.RareLogger;
 import com.intellij.lang.javascript.linter.JSLinterError;
 import com.intellij.lang.javascript.linter.JSLinterErrorBase;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;

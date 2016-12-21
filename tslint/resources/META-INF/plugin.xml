@@ -12,15 +12,15 @@
 
     <projectConfigurable id="settings.javascript.linters.tslint"
                          parentId="settings.typescriptcompiler"
-                         instance="com.intellij.lang.javascript.linter.tslint.TsLintConfigurable"
+                         instance="com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable"
                          key="settings.javascript.linters.tslint.configurable.name"
                          bundle="messages.TsLintBundle"
                          order="last"/>
 
-    <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.TsLintConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration"/>
     <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.TsLintConfigFileChangeTracker"/>
-    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.tslint.TsLintDescriptor"/>
-    <fileTypeFactory implementation="com.intellij.lang.javascript.linter.tslint.TsLintConfigFileTypeFactory"/>
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.tslint.config.TsLintDescriptor"/>
+    <fileTypeFactory implementation="com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileTypeFactory"/>
 
     <localInspection language="TypeScript"
                      bundle="messages.TsLintBundle"

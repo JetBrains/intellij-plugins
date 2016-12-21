@@ -3,6 +3,8 @@ package com.intellij.lang.javascript.linter.tslint;
 import com.intellij.json.JsonFileType;
 import com.intellij.lang.javascript.linter.JSLinterConfigChangeTracker;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
