@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "typedef-whitespace": [true, {
+      <caret>
+    }]
+  }
+}
