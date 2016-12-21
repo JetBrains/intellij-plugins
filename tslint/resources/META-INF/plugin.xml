@@ -34,5 +34,8 @@
     <externalAnnotator language="TypeScript" implementationClass="com.intellij.lang.javascript.linter.tslint.TsLintExternalAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.tslint.TsLintExternalAnnotator"/>
   </extensions>
+  <extensions defaultExtensionNs="JavaScript.JsonSchema">
+    <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>
+  </extensions>
 
 </idea-plugin>
