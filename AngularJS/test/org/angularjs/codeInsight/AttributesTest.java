@@ -715,4 +715,12 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(resolve);
     });
   }
+
+  public void testCaseCompletion2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("case.html", "angular2.js");
+      myFixture.completeBasic();
+      myFixture.checkResultByFile("case.after.html");
+    });
+  }
 }
