@@ -18,6 +18,6 @@ class MakefileFoldingBuilder : FoldingBuilderEx() {
   override fun isCollapsedByDefault(node: ASTNode) = false
 
   class MakefileFoldingDescriptor(private val rule: MakefileRule) : FoldingDescriptor(rule, rule.textRange) {
-    override fun getPlaceholderText(): String? = rule.targetLine.target.name + ":"
+    override fun getPlaceholderText(): String? = rule.targetLine.targets.text + ":"
   }
 }

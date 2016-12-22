@@ -19,6 +19,7 @@ public interface MakefileTypes {
   IElementType PREREQUISITES = new MakefileElementType("PREREQUISITES");
   IElementType RULE = new MakefileElementType("RULE");
   IElementType TARGET = new MakefileElementType("TARGET");
+  IElementType TARGETS = new MakefileElementType("TARGETS");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
   IElementType THENBRANCH = new MakefileElementType("THENBRANCH");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
@@ -73,6 +74,9 @@ public interface MakefileTypes {
       }
       else if (type == TARGET) {
         return new MakefileTargetImpl(node);
+      }
+      else if (type == TARGETS) {
+        return new MakefileTargetsImpl(node);
       }
       else if (type == TARGET_LINE) {
         return new MakefileTargetLineImpl(node);

@@ -59,6 +59,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == TARGET_LINE) {
       r = target_line(b, 0);
     }
+    else if (t == TARGETS) {
+      r = targets(b, 0);
+    }
     else if (t == THENBRANCH) {
       r = thenbranch(b, 0);
     }
@@ -291,18 +294,36 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // target ':' prerequisites
+  // targets ':' prerequisites
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, TARGET_LINE, null);
-    r = target(b, l + 1);
+    r = targets(b, l + 1);
     r = r && consumeToken(b, COLON);
     p = r; // pin = 2
     r = r && prerequisites(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // target+
+  public static boolean targets(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "targets")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = target(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!target(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "targets", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, TARGETS, r);
+    return r;
   }
 
   /* ********************************************************** */

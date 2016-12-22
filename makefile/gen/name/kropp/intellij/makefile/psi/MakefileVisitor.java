@@ -55,6 +55,10 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitTargets(@NotNull MakefileTargets o) {
+    visitPsiElement(o);
+  }
+
   public void visitThenbranch(@NotNull MakefileThenbranch o) {
     visitPsiElement(o);
   }

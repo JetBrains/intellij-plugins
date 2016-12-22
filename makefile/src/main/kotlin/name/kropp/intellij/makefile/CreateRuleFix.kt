@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import name.kropp.intellij.makefile.psi.MakefileElementFactory
 
-class CreateRuleFix(private val dependency: PsiElement) : BaseIntentionAction() {
+class CreateRuleFix(private val prerequisite: PsiElement) : BaseIntentionAction() {
   override fun getText() = "Create Rule"
   override fun getFamilyName() = "Create Rule"
 
@@ -19,8 +19,8 @@ class CreateRuleFix(private val dependency: PsiElement) : BaseIntentionAction() 
     object : WriteCommandAction.Simple<Any>(project, psiFile) {
       override fun run() {
         val file = psiFile as MakefileFile
-        val rule = MakefileElementFactory.createRule(project, dependency.text)
-        file.node.addChild(rule.node, dependency.parent.parent.parent.node)
+        val rule = MakefileElementFactory.createRule(project, prerequisite.text)
+        file.node.addChild(rule.node, prerequisite.parent.parent.parent.node)
         (rule.lastChild.navigationElement as Navigatable).navigate(true)
       }
     }.execute()

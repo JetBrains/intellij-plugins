@@ -7,6 +7,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testInclude() { doTest(true); }
   fun testConditionals() { doTest(true); }
   fun testPrerequisites() { doTest(true); }
+  fun testMultipleTargets() { doTest(true); }
 
   override fun getTestDataPath() = "testData"
 }

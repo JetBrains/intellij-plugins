@@ -28,7 +28,8 @@ makefile ::= (rule|variable|include|comment)*
 
 rule ::= target_line EOL (conditional|commands)?
 
-target_line ::= target ':' prerequisites {pin=2 methods=[getTargetName]}
+target_line ::= targets ':' prerequisites {pin=2 methods=[getTargetName]}
+targets ::= target+
 target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement" methods=[getName setName getNameIdentifier]}
 
 prerequisites ::= normal_prerequisites ('|' order_only_prerequisites)?

@@ -5,15 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface MakefileTargetLine extends PsiElement {
-
-  @Nullable
-  MakefilePrerequisites getPrerequisites();
+public interface MakefileTargets extends PsiElement {
 
   @NotNull
-  MakefileTargets getTargets();
-
-  @Nullable
-  String getTargetName();
+  List<MakefileTarget> getTargetList();
 
 }
