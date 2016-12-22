@@ -17,6 +17,7 @@ package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectBuilder;
+import aQute.bnd.osgi.Builder;
 import org.jetbrains.annotations.NotNull;
 
 public class ReportingProjectBuilder extends ProjectBuilder {
@@ -24,6 +25,11 @@ public class ReportingProjectBuilder extends ProjectBuilder {
 
   public ReportingProjectBuilder(@NotNull Reporter reporter, @NotNull Project project) {
     super(project);
+    myReporter = reporter;
+  }
+
+  public ReportingProjectBuilder(@NotNull Reporter reporter, @NotNull ProjectBuilder parent) {
+    super(parent);
     myReporter = reporter;
   }
 
@@ -59,4 +65,13 @@ public class ReportingProjectBuilder extends ProjectBuilder {
   public void trace(String format, Object... args) {
     myReporter.debug(formatArrays(format, args));
   }
+
+  @Override
+  public Builder getSubBuilder() throws Exception {
+    ReportingProjectBuilder builder = new ReportingProjectBuilder(myReporter, this);
+    builder.setBase(this.getBase());
+    builder.use(this);
+    return builder;
+  }
+
 }
