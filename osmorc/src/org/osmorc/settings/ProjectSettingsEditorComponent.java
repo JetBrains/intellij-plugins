@@ -60,6 +60,7 @@ public class ProjectSettingsEditorComponent {
   private TextFieldWithBrowseButton myBundleOutputPath;
   private JButton myApplyToAllButton;
   private JBCheckBox myBndAutoImport;
+  private JBCheckBox myBndWorkspace;
 
   private Project myProject;
   private ProjectSettings mySettings;
@@ -128,6 +129,7 @@ public class ProjectSettingsEditorComponent {
     settings.setBundlesOutputPath(!StringUtil.isEmptyOrSpaces(outputPath) ? outputPath : null);
 
     settings.setBndAutoImport(myBndAutoImport.isSelected());
+    settings.setBndWorkspace(myBndWorkspace.isSelected());
 
     myModified = false;
   }
@@ -148,6 +150,7 @@ public class ProjectSettingsEditorComponent {
     }
 
     myBndAutoImport.setSelected(settings.isBndAutoImport());
+    myBndWorkspace.setSelected(settings.isBndWorkspace());
 
     myModified = false;
   }

@@ -53,6 +53,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   private String myDefaultManifestFileLocation = "META-INF/MANIFEST.MF";
   private String myBundlesOutputPath;
   private boolean myBndAutoImport = false;
+  private boolean myBndWorkspace = false;
 
   /**
    * Returns the default output path for bundles. This is the compiler output path plus "/bundles" (e.g. $PROJECT_ROOT/out/bundles).
@@ -125,6 +126,14 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   public void setBndAutoImport(boolean bndAutoImport) {
     myBndAutoImport = bndAutoImport;
+  }
+
+  public boolean isBndWorkspace() {
+    return myBndWorkspace;
+  }
+
+  public void setBndWorkspace(boolean bndWorkspace) {
+    this.myBndWorkspace = bndWorkspace;
   }
 
   @NotNull
