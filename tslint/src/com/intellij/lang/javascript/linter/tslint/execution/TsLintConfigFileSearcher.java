@@ -8,17 +8,18 @@ import com.intellij.util.SystemProperties;
 
 import java.io.File;
 
+import static com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration.TSLINT_JSON;
+
 /**
  * @author Irina.Chernushina on 6/4/2015.
  */
 public class TsLintConfigFileSearcher {
   private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
-  public final static String CONFIG_FILE_NAME = "tslint.json";
 
   public VirtualFile lookup(VirtualFile vf) {
     VirtualFile current = vf.getParent();
     while (current != null) {
-      final VirtualFile child = current.findChild(CONFIG_FILE_NAME);
+      final VirtualFile child = current.findChild(TSLINT_JSON);
       if (child != null) return child;
       current = current.getParent();
     }
