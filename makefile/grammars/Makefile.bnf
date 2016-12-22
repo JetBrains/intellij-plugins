@@ -48,4 +48,4 @@ variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? {pin=
 variable_name ::= identifier
 
 include ::= 'include' filename
-filename ::= identifier
+filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
