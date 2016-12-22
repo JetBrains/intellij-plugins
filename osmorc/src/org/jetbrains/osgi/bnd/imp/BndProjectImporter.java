@@ -415,10 +415,25 @@ public class BndProjectImporter {
         if (module == null) {
           throw new IllegalArgumentException("Unknown module '" + name + "'");
         }
-        entry = rootModel.addModuleOrderEntry(module);
-        break;
-      }
 
+        // It's possible that the module is already added in case subbundles are used, only add the
+        // ModuleOrderEntry in case it wasn't added before
+        if (Arrays.stream(rootModel.getOrderEntries())
+                .filter(existing -> ModuleOrderEntry.class.isAssignableFrom(existing.getClass()))
+                .map(existing -> ((ModuleOrderEntry)existing).getModule())
+                .noneMatch(module::equals)) {
+
+          entry = rootModel.addModuleOrderEntry(module);
+          entry.setScope(scope);
+        }
+
+        /* FALLTHROUGH
+         * Also add the generated jar as that can contain classes that are not in the module output
+         * for example it's possible additional classes are added using an Include-Resource instruction
+         *
+         * By also adding the generated bundle dependency these additional resources will be visible
+         */
+      }
       case REPO: {
         String name = BND_LIB_PREFIX + bsn + ":" + version;
         Library library = libraryModel.getLibraryByName(name);
