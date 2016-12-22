@@ -1,13 +1,22 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.ui.Messages;
-import com.jetbrains.lang.dart.DartBundle;
+import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+
+import static com.intellij.notification.NotificationDisplayType.STICKY_BALLOON;
 
 /**
  * Plugins may define alternative implementations that cause issues to be opened
@@ -16,9 +25,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class DartFeedbackBuilder {
   public static final int MAX_URL_LENGTH = 4000;
-  private static boolean ShowPrompt = true;
+  private static final NotificationGroup ourNotificationGroup = new NotificationGroup("Dart Analyzer Error",
+                                                                                      STICKY_BALLOON, true);
 
   private static ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
+
+  static {
+    Notifications.Bus.register(ourNotificationGroup.getDisplayId(), null);
+  }
 
   @NotNull
   public static DartFeedbackBuilder getFeedbackBuilder() {
@@ -55,7 +69,7 @@ public abstract class DartFeedbackBuilder {
   /**
    * Perform the action required to send feedback.
    *
-   * @param project the current project
+   * @param project      the current project
    * @param errorMessage additional information for the issue, such as a tack trace
    * @param serverLog recent requests made to the analysis server
    */
@@ -63,40 +77,39 @@ public abstract class DartFeedbackBuilder {
 
   /**
    * Display a standard query dialog and return the user's response.
+   *
+   * @param message optional, an additional message to display before the prompt
    */
   public boolean showQuery(String message) {
-    if (ShowPrompt) {
-      return
-        (MessageDialogBuilder.yesNo(title(), message == null ? prompt() : message + "\n" + prompt())
-           .icon(Messages.getQuestionIcon())
-           .doNotAsk(getDoNotAskOption())
-           .yesText(label())
-           .show() == Messages.YES);
-    } else {
-      return false;
-    }
+    return
+      (MessageDialogBuilder.yesNo(title(), message == null ? prompt() : message + "\n" + prompt())
+         .icon(Messages.getQuestionIcon())
+         .yesText(label())
+         .show() == Messages.YES);
   }
 
   /**
-   * Return a DoNotAskOption option for the MessageDialogBuilder.
+   * Show a notification that allows the user to submit a feedback issue.
+   *
+   * @param message      optional, an additional message to display before the prompt
+   * @param project      optional, the current project
+   * @param errorMessage optional, may be used for stack trace
    */
-  public DialogWrapper.DoNotAskOption getDoNotAskOption() {
-    return getDefaultDoNotAskOption();
-  }
-
-  static DialogWrapper.DoNotAskOption getDefaultDoNotAskOption() {
-    return new DialogWrapper.DoNotAskOption.Adapter() {
-      @Override
-      public void rememberChoice(boolean isSelected, int exitCode) {
-        //noinspection AssignmentToStaticFieldFromInstanceMethod
-        ShowPrompt = !isSelected;
-      }
-
-      @NotNull
-      @Override
-      public String getDoNotShowMessage() {
-        return DartBundle.message("dart.report.options.do.not.ask");
-      }
-    };
+  public void showNotification(String message, @NotNull Project project, String errorMessage, String debugLog) {
+    // TODO(messick) work in progress
+    IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
+    String link = "<a href=\"\">" + prompt() + "</a>";
+    Notifications.Bus.notify(
+      new Notification(
+        ourNotificationGroup.getDisplayId(),
+        title(),
+        message == null ? link : message + "<br>" + link,
+        NotificationType.ERROR,
+        (notification, event) -> {
+          if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            notification.expire();
+            sendFeedback(project, errorMessage, debugLog);
+          }
+        }));
   }
 }
