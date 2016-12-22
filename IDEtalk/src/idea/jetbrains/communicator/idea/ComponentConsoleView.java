@@ -20,7 +20,6 @@ import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PlaceProvider;
@@ -37,7 +36,7 @@ import java.awt.event.MouseEvent;
  * @author Kir
  */
 class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
-  public static final int MAX_LENGTH = 200;
+  private static final int MAX_LENGTH = 200;
   private final JPanel myPanel = new JPanel();
   private int myLength;
   private final Project myProject;
@@ -142,7 +141,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   }
 
   @Override
-  public void setHelpId(String helpId) {
+  public void setHelpId(@NotNull String helpId) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
@@ -163,10 +162,6 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   @Override
   public JComponent getPreferredFocusableComponent() {
     return myPanel;
-  }
-
-  public ActionGroup getActions() {
-    return null;
   }
 
   @Override
