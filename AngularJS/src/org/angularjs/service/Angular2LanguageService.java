@@ -86,11 +86,6 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     return new Angular2LanguageServiceProtocol(myProject, path, mySettings, readyConsumer);
   }
 
-  @Override
-  public boolean isAcceptable(@NotNull VirtualFile file) {
-    return super.isAcceptable(file) && isEnabledAngularService(myProject);
-  }
-
   public static VirtualFile getServiceDirectory(Project project) {
     return CachedValuesManager.getManager(project)
       .getParameterizedCachedValue(project, NG_SERVICE_PATH_KEY, CACHE_SERVICE_PATH_PROVIDER, false, project);
