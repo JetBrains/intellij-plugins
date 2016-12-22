@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.javascript.nodejs.AbstractNodeBinFileVersionManager;

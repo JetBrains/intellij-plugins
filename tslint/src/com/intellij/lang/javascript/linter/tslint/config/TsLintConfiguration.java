@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
 import com.intellij.lang.javascript.linter.*;
-import com.intellij.lang.javascript.linter.tslint.TsLintInspection;
+import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -18,6 +18,9 @@ import org.jetbrains.annotations.Nullable;
  */
 @State(name = "TsLintConfiguration", storages = @Storage("jsLinters/tslint.xml"))
 public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
+
+  public static final String TSLINT_JSON = "tslint.json";
+
   public static final String LOG_CATEGORY = "#com.intellij.lang.javascript.linter.tslint.TsLint";
   public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("TSLint Messages");
   private static final String TSLINT_ELEMENT_NAME = "tslint";

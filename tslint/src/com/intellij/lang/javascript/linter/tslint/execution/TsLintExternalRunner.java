@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.execution;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -9,6 +9,8 @@ import com.intellij.idea.RareLogger;
 import com.intellij.javascript.nodejs.NodePackageVersionUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintBinFileVersionManager;
+import com.intellij.lang.javascript.linter.tslint.highlight.TsLintConfigFileChangeTracker;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.openapi.diagnostic.Logger;

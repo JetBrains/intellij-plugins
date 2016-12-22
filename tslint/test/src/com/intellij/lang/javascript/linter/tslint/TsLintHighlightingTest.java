@@ -5,6 +5,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
+import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 

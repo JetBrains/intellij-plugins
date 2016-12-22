@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.lang.javascript.linter.JSLinterError;
+import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputParser;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import org.junit.Assert;
 import org.junit.Test;

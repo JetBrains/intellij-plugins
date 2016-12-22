@@ -16,8 +16,6 @@ public class TsLintConfigFileType extends LanguageFileType {
 
   /**
    * Creates a language file type for the specified language.
-   *
-   * @param language The language used in the files of the type.
    */
   protected TsLintConfigFileType() {
     super(JsonLanguage.INSTANCE);

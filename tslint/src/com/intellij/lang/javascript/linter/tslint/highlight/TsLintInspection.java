@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.lang.javascript.JSBundle;

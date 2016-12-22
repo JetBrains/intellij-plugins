@@ -1,9 +1,11 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintBinFileVersionManager;
+import com.intellij.lang.javascript.linter.tslint.execution.TsLintExternalRunner;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;

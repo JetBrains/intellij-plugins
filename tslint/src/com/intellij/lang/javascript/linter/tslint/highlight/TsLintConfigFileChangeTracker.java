@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.json.JsonFileType;
 import com.intellij.lang.javascript.linter.JSLinterConfigChangeTracker;
@@ -10,10 +10,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration.TSLINT_JSON;
+
 /**
  * @author Irina.Chernushina on 6/4/2015.
  */
 public class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
+
   public TsLintConfigFileChangeTracker(@NotNull Project project) {
     super(project, JsonFileType.INSTANCE);
   }
@@ -29,7 +32,7 @@ public class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
     if (state.isCustomConfigFileUsed()) {
       final VirtualFile configVirtualFile = JSLinterConfigFileUtil.findLocalFileByPath(state.getCustomConfigFilePath());
       return changedFile.equals(configVirtualFile);
-    } else if ("tslint.json".equals(changedFile.getName())) {
+    } else if (TSLINT_JSON.equals(changedFile.getName())) {
       return true;
     }
     return false;

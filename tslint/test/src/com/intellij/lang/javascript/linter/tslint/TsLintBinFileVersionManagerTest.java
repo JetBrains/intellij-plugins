@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintBinFileVersionManager;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.execution;
 
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.openapi.diagnostic.Logger;

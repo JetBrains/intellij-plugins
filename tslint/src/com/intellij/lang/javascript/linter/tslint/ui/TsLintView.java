@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.ui;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
 import com.intellij.lang.javascript.linter.NodeModuleConfigurationView;
-import com.intellij.lang.javascript.linter.tslint.TsLintConfigFileSearcher;
+import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileTexts;

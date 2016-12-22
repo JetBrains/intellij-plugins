@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.linter.tslint;
+package com.intellij.lang.javascript.linter.tslint.execution;
 
 import com.google.gson.*;
 import com.intellij.execution.process.ProcessEvent;
