@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.ide;
 
-import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.openapi.fileTypes.ExactFileNameMatcher;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
@@ -12,6 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public class TsLintConfigFileTypeFactory extends FileTypeFactory {
   @Override
   public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-    consumer.consume(TsLintConfigFileType.INSTANCE, new ExactFileNameMatcher(TsLintConfigFileSearcher.CONFIG_FILE_NAME));
+    consumer.consume(TsLintConfigFileType.INSTANCE, new ExactFileNameMatcher(TsLintConfiguration.TSLINT_JSON));
   }
 }

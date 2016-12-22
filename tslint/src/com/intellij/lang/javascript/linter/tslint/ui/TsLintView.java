@@ -3,9 +3,9 @@ package com.intellij.lang.javascript.linter.tslint.ui;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
 import com.intellij.lang.javascript.linter.NodeModuleConfigurationView;
-import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
-import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
+import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType;
 import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileTexts;
 import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileView;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -51,9 +51,9 @@ public class TsLintView extends JSLinterBaseView<TsLintState> {
         homeVf = lfs.refreshAndFindFileByIoFile(homeFile);
       }
       if (homeVf == null) return Collections.emptyList();
-      VirtualFile config = homeVf.findChild(TsLintConfigFileSearcher.CONFIG_FILE_NAME);
+      VirtualFile config = homeVf.findChild(TsLintConfiguration.TSLINT_JSON);
       if (config == null) {
-        config = lfs.refreshAndFindFileByIoFile(new File(homeFile, TsLintConfigFileSearcher.CONFIG_FILE_NAME));
+        config = lfs.refreshAndFindFileByIoFile(new File(homeFile, TsLintConfiguration.TSLINT_JSON));
       }
       if (config == null) return Collections.emptyList();
       return Collections.singletonList(config);

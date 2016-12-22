@@ -32,7 +32,8 @@ public class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
     if (state.isCustomConfigFileUsed()) {
       final VirtualFile configVirtualFile = JSLinterConfigFileUtil.findLocalFileByPath(state.getCustomConfigFilePath());
       return changedFile.equals(configVirtualFile);
-    } else if (TSLINT_JSON.equals(changedFile.getName())) {
+    }
+    else if (TSLINT_JSON.equals(changedFile.getName())) {
       return true;
     }
     return false;
