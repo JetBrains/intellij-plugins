@@ -3,12 +3,14 @@ package name.kropp.intellij.makefile
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementResolveResult
+import com.intellij.psi.PsiReference
 import name.kropp.intellij.makefile.psi.MakefileElementFactory
 import name.kropp.intellij.makefile.psi.MakefilePrerequisite
 import name.kropp.intellij.makefile.psi.MakefileTarget
 
-class MakefileReference(private val prerequisite: MakefilePrerequisite) : PsiReference {
+class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiReference {
   override fun getElement() = prerequisite
   override fun getRangeInElement() = TextRange.create(0, element.textLength)
   override fun bindToElement(element: PsiElement): PsiElement? = null
