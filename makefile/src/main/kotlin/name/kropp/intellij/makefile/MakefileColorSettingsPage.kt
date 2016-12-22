@@ -9,9 +9,10 @@ class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getIcon() = MakefileIcon
 
   private val DESCRIPTORS = arrayOf(
+      AttributesDescriptor("Keyword", MakefileSyntaxHighlighter.KEYWORD),
       AttributesDescriptor("Target", MakefileSyntaxHighlighter.TARGET),
       AttributesDescriptor("Separator", MakefileSyntaxHighlighter.SEPARATOR),
-      AttributesDescriptor("Dependency", MakefileSyntaxHighlighter.PREREQUISITE),
+      AttributesDescriptor("Prerequisite", MakefileSyntaxHighlighter.PREREQUISITE),
       AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE_NAME),
       AttributesDescriptor("Variable Value", MakefileSyntaxHighlighter.VARIABLE_VALUE)
   )
@@ -20,6 +21,7 @@ class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getHighlighter() = MakefileSyntaxHighlighter()
 
   override fun getDemoText() = """# Simple Makefile
+include make.mk
 
 all: hello
 
@@ -28,8 +30,11 @@ hello: hello.o world.o
 GCC = gcc
 
 .o.c:
+if eq($(FOO),'bar')
 ${'\t'}$(GCC) -c qwe
-${'\t'}echo "Hello World""""
+else
+${'\t'}echo "Hello World"
+endif"""
 
   override fun getAdditionalHighlightingTagToDescriptorMap() = null
   override fun getColorDescriptors() = ColorDescriptor.EMPTY_ARRAY

@@ -13,6 +13,7 @@ import name.kropp.intellij.makefile.psi.MakefileTypes
 class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   companion object {
     val COMMENT = createTextAttributesKey("MAKEFILE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+    val KEYWORD = createTextAttributesKey("MAKEFILE_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
     val TARGET = createTextAttributesKey("MAKEFILE_TARGET", DefaultLanguageHighlighterColors.CLASS_NAME)
     val SEPARATOR = createTextAttributesKey("MAKEFILE_SEPARATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN)
     val PREREQUISITE = createTextAttributesKey("MAKEFILE_PREREQUISITE", DefaultLanguageHighlighterColors.INSTANCE_METHOD)
@@ -22,6 +23,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
 
     private val BAD_CHAR_KEYS = arrayOf(BAD_CHARACTER)
     private val SEPARATOR_KEYS = arrayOf(SEPARATOR)
+    private val KEYWORD_KEYS = arrayOf(KEYWORD)
     private val TARGET_KEYS = arrayOf(TARGET)
     private val PREREQUISITE_KEYS = arrayOf(PREREQUISITE)
     private val VARIABLE_NAME_KEYS = arrayOf(VARIABLE_NAME)
@@ -33,7 +35,8 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   override fun getTokenHighlights(tokenType: IElementType) = when(tokenType) {
     MakefileTypes.COMMENT -> COMMENT_KEYS
     MakefileTypes.TARGET -> TARGET_KEYS
-    //MakefileTypes.SEPARATOR -> SEPARATOR_KEYS
+    MakefileTypes.COLON, MakefileTypes.ASSIGN -> SEPARATOR_KEYS
+    MakefileTypes.KEYWORD_INCLUDE, MakefileTypes.KEYWORD_IFEQ, MakefileTypes.KEYWORD_ELSE, MakefileTypes.KEYWORD_ENDIF -> KEYWORD_KEYS
     MakefileTypes.PREREQUISITE -> PREREQUISITE_KEYS
     MakefileTypes.VARIABLE_NAME -> VARIABLE_NAME_KEYS
     MakefileTypes.VARIABLE_VALUE -> VARIABLE_VALUE_KEYS
