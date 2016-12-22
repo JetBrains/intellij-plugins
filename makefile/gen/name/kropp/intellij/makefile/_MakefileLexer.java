@@ -30,7 +30,7 @@ public class _MakefileLexer implements FlexLexer {
   public static final int PREREQUISITES = 4;
   public static final int COMMANDS = 6;
   public static final int VARIABLE = 8;
-  public static final int INCLUDES = 10;
+  public static final int KEYWORDS = 10;
   public static final int CONDITIONALS = 12;
 
   /**
@@ -73,12 +73,12 @@ public class _MakefileLexer implements FlexLexer {
 
   private static final String ZZ_ACTION_PACKED_0 =
     "\7\0\1\1\1\2\1\3\1\4\1\5\2\1\1\6"+
-    "\1\7\1\10\1\3\1\11\1\12\1\13\1\14\1\15"+
-    "\1\16\1\17\1\20\1\21\4\1\1\0\5\1\1\22"+
-    "\1\1\1\23\1\1\1\24\1\1\1\25";
+    "\1\7\1\10\1\3\1\11\1\12\1\2\1\13\1\14"+
+    "\1\15\1\16\1\17\1\20\1\21\4\1\1\0\5\1"+
+    "\1\22\1\1\1\23\1\1\1\24\1\1\1\25";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[44];
+    int [] result = new int[45];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -106,12 +106,12 @@ public class _MakefileLexer implements FlexLexer {
     "\0\0\0\23\0\46\0\71\0\114\0\137\0\162\0\205"+
     "\0\230\0\253\0\276\0\321\0\344\0\367\0\u010a\0\u011d"+
     "\0\253\0\u0130\0\u0143\0\u0156\0\u0169\0\u0143\0\u017c\0\u018f"+
-    "\0\u01a2\0\u01b5\0\u01c8\0\u01db\0\u01ee\0\u0201\0\u0214\0\u0130"+
-    "\0\u0227\0\u023a\0\u024d\0\u0260\0\u0273\0\205\0\u0286\0\205"+
-    "\0\u0299\0\205\0\u02ac\0\205";
+    "\0\u01a2\0\u01b5\0\u01c8\0\u01db\0\u01ee\0\u0201\0\u0214\0\u0227"+
+    "\0\u0130\0\u023a\0\u024d\0\u0260\0\u0273\0\u0286\0\205\0\u0299"+
+    "\0\205\0\u02ac\0\205\0\u02bf\0\205";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[44];
+    int [] result = new int[45];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -137,30 +137,30 @@ public class _MakefileLexer implements FlexLexer {
     "\1\10\1\11\1\12\1\13\1\14\1\12\3\10\1\15"+
     "\5\10\1\16\3\10\2\12\2\17\1\12\1\20\1\12"+
     "\1\21\1\22\12\12\1\23\1\24\2\25\1\23\1\12"+
-    "\1\26\14\23\1\27\1\12\21\27\1\30\1\24\21\30"+
-    "\1\31\1\12\2\32\1\31\1\12\15\31\1\33\1\11"+
-    "\2\25\1\33\1\12\15\33\1\10\3\0\1\10\1\0"+
+    "\1\26\14\23\1\27\1\12\21\27\1\30\1\31\21\30"+
+    "\1\32\1\31\2\33\1\32\1\12\15\32\1\34\1\31"+
+    "\2\25\1\34\1\12\15\34\1\10\3\0\1\10\1\0"+
     "\15\10\1\0\1\11\47\0\1\13\17\0\1\14\1\0"+
-    "\21\14\1\10\3\0\1\10\1\0\4\10\1\34\5\10"+
-    "\1\35\3\10\3\0\1\10\1\0\4\10\1\36\1\10"+
-    "\1\37\6\10\2\0\2\17\24\0\1\40\1\0\1\21"+
+    "\21\14\1\10\3\0\1\10\1\0\4\10\1\35\5\10"+
+    "\1\36\3\10\3\0\1\10\1\0\4\10\1\37\1\10"+
+    "\1\40\6\10\2\0\2\17\24\0\1\41\1\0\1\21"+
     "\22\0\1\21\13\0\1\23\3\0\1\23\1\0\15\23"+
     "\1\0\1\24\23\0\2\25\17\0\1\27\1\0\21\27"+
-    "\1\30\1\0\21\30\1\31\3\0\1\31\1\0\15\31"+
-    "\2\0\2\32\17\0\1\33\3\0\1\33\1\0\15\33"+
-    "\1\10\3\0\1\10\1\0\5\10\1\41\10\10\3\0"+
-    "\1\10\1\0\11\10\1\42\4\10\3\0\1\10\1\0"+
-    "\10\10\1\43\5\10\3\0\1\10\1\0\14\10\1\44"+
-    "\1\10\3\0\1\10\1\0\6\10\1\45\7\10\3\0"+
-    "\1\10\1\0\13\10\1\46\2\10\3\0\1\10\1\0"+
-    "\3\10\1\47\12\10\3\0\1\10\1\0\11\10\1\50"+
-    "\4\10\3\0\1\10\1\0\7\10\1\51\6\10\3\0"+
-    "\1\10\1\0\12\10\1\52\3\10\3\0\1\10\1\0"+
-    "\10\10\1\53\5\10\3\0\1\10\1\0\11\10\1\54"+
-    "\3\10";
+    "\1\30\1\0\21\30\1\0\1\31\21\0\1\32\3\0"+
+    "\1\32\1\0\15\32\2\0\2\33\17\0\1\34\3\0"+
+    "\1\34\1\0\15\34\1\10\3\0\1\10\1\0\5\10"+
+    "\1\42\10\10\3\0\1\10\1\0\11\10\1\43\4\10"+
+    "\3\0\1\10\1\0\10\10\1\44\5\10\3\0\1\10"+
+    "\1\0\14\10\1\45\1\10\3\0\1\10\1\0\6\10"+
+    "\1\46\7\10\3\0\1\10\1\0\13\10\1\47\2\10"+
+    "\3\0\1\10\1\0\3\10\1\50\12\10\3\0\1\10"+
+    "\1\0\11\10\1\51\4\10\3\0\1\10\1\0\7\10"+
+    "\1\52\6\10\3\0\1\10\1\0\12\10\1\53\3\10"+
+    "\3\0\1\10\1\0\10\10\1\54\5\10\3\0\1\10"+
+    "\1\0\11\10\1\55\3\10";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[703];
+    int [] result = new int[722];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -198,10 +198,10 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\7\0\2\1\1\11\6\1\1\11\16\1\1\0\14\1";
+    "\7\0\2\1\1\11\6\1\1\11\17\1\1\0\14\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[44];
+    int [] result = new int[45];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -511,7 +511,7 @@ public class _MakefileLexer implements FlexLexer {
             }
           case 22: break;
           case 2: 
-            { yybegin(YYINITIAL); return WHITE_SPACE;
+            { return WHITE_SPACE;
             }
           case 23: break;
           case 3: 
@@ -523,7 +523,7 @@ public class _MakefileLexer implements FlexLexer {
             }
           case 25: break;
           case 5: 
-            { yybegin(YYINITIAL); return COMMENT;
+            { return COMMENT;
             }
           case 26: break;
           case 6: 
@@ -547,27 +547,27 @@ public class _MakefileLexer implements FlexLexer {
             }
           case 31: break;
           case 11: 
-            { return WHITE_SPACE;
+            { return PIPE;
             }
           case 32: break;
           case 12: 
-            { return PIPE;
+            { yybegin(YYINITIAL); return COMMAND;
             }
           case 33: break;
           case 13: 
-            { yybegin(YYINITIAL); return COMMAND;
+            { yybegin(VARIABLE); return VARIABLE_VALUE;
             }
           case 34: break;
           case 14: 
-            { yybegin(VARIABLE); return VARIABLE_VALUE;
+            { yybegin(YYINITIAL); return WHITE_SPACE;
             }
           case 35: break;
           case 15: 
-            { yybegin(YYINITIAL); return FILENAME;
+            { yybegin(YYINITIAL); return IDENTIFIER;
             }
           case 36: break;
           case 16: 
-            { yybegin(INCLUDES); return WHITE_SPACE;
+            { yybegin(KEYWORDS); return WHITE_SPACE;
             }
           case 37: break;
           case 17: 
@@ -575,19 +575,19 @@ public class _MakefileLexer implements FlexLexer {
             }
           case 38: break;
           case 18: 
-            { yybegin(CONDITIONALS); return IFEQ;
+            { yybegin(CONDITIONALS); return KEYWORD_IFEQ;
             }
           case 39: break;
           case 19: 
-            { yybegin(YYINITIAL); return ELSE_;
+            { yybegin(KEYWORDS); return KEYWORD_ELSE;
             }
           case 40: break;
           case 20: 
-            { yybegin(YYINITIAL); return ENDIF;
+            { yybegin(KEYWORDS); return KEYWORD_ENDIF;
             }
           case 41: break;
           case 21: 
-            { yybegin(INCLUDES); return INCLUDE;
+            { yybegin(KEYWORDS); return KEYWORD_INCLUDE;
             }
           case 42: break;
           default:

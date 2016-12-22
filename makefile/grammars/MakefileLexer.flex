@@ -35,17 +35,17 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 FILENAME_CHARACTER=[^:\ \r\n\t]
 COMMAND=[^\r\n]+
 
-%state SEPARATOR PREREQUISITES COMMANDS VARIABLE INCLUDES CONDITIONALS
+%state SEPARATOR PREREQUISITES COMMANDS VARIABLE KEYWORDS CONDITIONALS
 
 %%
 
 <YYINITIAL> {
-    {COMMENT}          { yybegin(YYINITIAL); return COMMENT; }
-    {EOL}              { yybegin(YYINITIAL); return WHITE_SPACE; }
-    "include"          { yybegin(INCLUDES); return INCLUDE; }
-    "ifeq"             { yybegin(CONDITIONALS); return IFEQ; }
-    "else"             { yybegin(YYINITIAL); return ELSE_; }
-    "endif"            { yybegin(YYINITIAL); return ENDIF; }
+    {COMMENT}          { return COMMENT; }
+    {EOL}              { return WHITE_SPACE; }
+    "include"          { yybegin(KEYWORDS); return KEYWORD_INCLUDE; }
+    "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }
+    "else"             { yybegin(KEYWORDS); return KEYWORD_ELSE; }
+    "endif"            { yybegin(KEYWORDS); return KEYWORD_ENDIF; }
 }
 
 <YYINITIAL> {FILENAME_CHARACTER}+   { yybegin(SEPARATOR); return IDENTIFIER; }
@@ -65,10 +65,13 @@ COMMAND=[^\r\n]+
 <COMMANDS> {COMMAND}                   { yybegin(YYINITIAL); return COMMAND; }
 
 <VARIABLE> {VARIABLE_VALUE}+           { yybegin(VARIABLE); return VARIABLE_VALUE; }
-<VARIABLE> {EOL}                       { yybegin(YYINITIAL); return EOL; }
+<VARIABLE> {EOL}                       { yybegin(YYINITIAL); return WHITE_SPACE; }
 
-<INCLUDES> {SPACES}                     { yybegin(INCLUDES); return WHITE_SPACE; }
-<INCLUDES> {FILENAME_CHARACTER}+        { yybegin(YYINITIAL); return FILENAME; }
+<KEYWORDS> {
+    {SPACES}                     { yybegin(KEYWORDS); return WHITE_SPACE; }
+    {FILENAME_CHARACTER}+        { yybegin(YYINITIAL); return IDENTIFIER; }
+    {EOL}                        { yybegin(YYINITIAL); return WHITE_SPACE; }
+}
 
 <CONDITIONALS> {
     {FILENAME_CHARACTER}+      { yybegin(YYINITIAL); return CONDITION; }

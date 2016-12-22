@@ -7,4 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface MakefileInclude extends PsiElement {
 
+  @NotNull
+  MakefileFilename getFilename();
+
 }

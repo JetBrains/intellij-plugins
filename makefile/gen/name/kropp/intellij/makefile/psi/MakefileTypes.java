@@ -11,9 +11,7 @@ public interface MakefileTypes {
   IElementType COMMANDS = new MakefileElementType("COMMANDS");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType ELSEBRANCH = new MakefileElementType("ELSEBRANCH");
-  IElementType ELSE_ = new MakefileElementType("ELSE_");
-  IElementType ENDIF = new MakefileElementType("ENDIF");
-  IElementType IFEQ = new MakefileElementType("IFEQ");
+  IElementType FILENAME = new MakefileElementType("FILENAME");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
   IElementType NORMAL_PREREQUISITES = new MakefileElementType("NORMAL_PREREQUISITES");
   IElementType ORDER_ONLY_PREREQUISITES = new MakefileElementType("ORDER_ONLY_PREREQUISITES");
@@ -32,8 +30,11 @@ public interface MakefileTypes {
   IElementType COMMENT = new MakefileTokenType("comment");
   IElementType CONDITION = new MakefileTokenType("condition");
   IElementType EOL = new MakefileTokenType("EOL");
-  IElementType FILENAME = new MakefileTokenType("filename");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
+  IElementType KEYWORD_ELSE = new MakefileTokenType("else");
+  IElementType KEYWORD_ENDIF = new MakefileTokenType("endif");
+  IElementType KEYWORD_IFEQ = new MakefileTokenType("ifeq");
+  IElementType KEYWORD_INCLUDE = new MakefileTokenType("include");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
 
@@ -49,14 +50,8 @@ public interface MakefileTypes {
       else if (type == ELSEBRANCH) {
         return new MakefileElsebranchImpl(node);
       }
-      else if (type == ELSE_) {
-        return new MakefileElse_Impl(node);
-      }
-      else if (type == ENDIF) {
-        return new MakefileEndifImpl(node);
-      }
-      else if (type == IFEQ) {
-        return new MakefileIfeqImpl(node);
+      else if (type == FILENAME) {
+        return new MakefileFilenameImpl(node);
       }
       else if (type == INCLUDE) {
         return new MakefileIncludeImpl(node);

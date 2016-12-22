@@ -15,14 +15,18 @@
     COLON = ":"
     ASSIGN = "="
     PIPE = "|"
+    KEYWORD_INCLUDE = "include"
+    KEYWORD_IFEQ = "ifeq"
+    KEYWORD_ELSE = "else"
+    KEYWORD_ENDIF = "endif"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|variable|include|conditional|comment)*
+makefile ::= (rule|variable|include|comment)*
 
-rule ::= target_line EOL (commands|conditional)?
+rule ::= target_line EOL (conditional|commands)?
 
 target_line ::= target ':' prerequisites {pin=2 methods=[getTargetName]}
 target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement" methods=[getName setName getNameIdentifier]}
@@ -34,15 +38,13 @@ prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.Makefi
 
 commands ::= command*
 
-conditional ::= ifeq condition thenbranch else_ elsebranch endif
+conditional ::= 'ifeq' condition thenbranch 'else' elsebranch 'endif'
 
-ifeq ::= 'ifeq'
-else_ ::= 'else'
-endif ::= 'endif'
 thenbranch ::= commands
 elsebranch ::= commands
 
-variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? EOL {pin=2}
+variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? {pin=2}
 variable_name ::= identifier
 
 include ::= 'include' filename
+filename ::= identifier

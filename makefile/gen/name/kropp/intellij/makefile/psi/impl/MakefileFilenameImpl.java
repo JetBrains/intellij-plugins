@@ -11,14 +11,14 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import name.kropp.intellij.makefile.psi.*;
 
-public class MakefileEndifImpl extends ASTWrapperPsiElement implements MakefileEndif {
+public class MakefileFilenameImpl extends ASTWrapperPsiElement implements MakefileFilename {
 
-  public MakefileEndifImpl(ASTNode node) {
+  public MakefileFilenameImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitEndif(this);
+    visitor.visitFilename(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

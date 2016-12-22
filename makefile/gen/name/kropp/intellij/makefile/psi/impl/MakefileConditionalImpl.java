@@ -28,26 +28,8 @@ public class MakefileConditionalImpl extends ASTWrapperPsiElement implements Mak
 
   @Override
   @NotNull
-  public MakefileElse_ getElse_() {
-    return findNotNullChildByClass(MakefileElse_.class);
-  }
-
-  @Override
-  @NotNull
   public MakefileElsebranch getElsebranch() {
     return findNotNullChildByClass(MakefileElsebranch.class);
-  }
-
-  @Override
-  @NotNull
-  public MakefileEndif getEndif() {
-    return findNotNullChildByClass(MakefileEndif.class);
-  }
-
-  @Override
-  @NotNull
-  public MakefileIfeq getIfeq() {
-    return findNotNullChildByClass(MakefileIfeq.class);
   }
 
   @Override

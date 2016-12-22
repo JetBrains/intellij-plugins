@@ -15,19 +15,11 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitElse_(@NotNull MakefileElse_ o) {
-    visitPsiElement(o);
-  }
-
   public void visitElsebranch(@NotNull MakefileElsebranch o) {
     visitPsiElement(o);
   }
 
-  public void visitEndif(@NotNull MakefileEndif o) {
-    visitPsiElement(o);
-  }
-
-  public void visitIfeq(@NotNull MakefileIfeq o) {
+  public void visitFilename(@NotNull MakefileFilename o) {
     visitPsiElement(o);
   }
 

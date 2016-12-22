@@ -28,8 +28,8 @@ hello: hello.o world.o
 GCC = gcc
 
 .o.c:
-  $(GCC) -c qwe
-  echo "Hello World""""
+${'\t'}$(GCC) -c qwe
+${'\t'}echo "Hello World""""
 
   override fun getAdditionalHighlightingTagToDescriptorMap() = null
   override fun getColorDescriptors() = ColorDescriptor.EMPTY_ARRAY

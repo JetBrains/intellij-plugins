@@ -8,16 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface MakefileConditional extends PsiElement {
 
   @NotNull
-  MakefileElse_ getElse_();
-
-  @NotNull
   MakefileElsebranch getElsebranch();
-
-  @NotNull
-  MakefileEndif getEndif();
-
-  @NotNull
-  MakefileIfeq getIfeq();
 
   @NotNull
   MakefileThenbranch getThenbranch();

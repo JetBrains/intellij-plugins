@@ -26,4 +26,10 @@ public class MakefileIncludeImpl extends ASTWrapperPsiElement implements Makefil
     else super.accept(visitor);
   }
 
+  @Override
+  @NotNull
+  public MakefileFilename getFilename() {
+    return findNotNullChildByClass(MakefileFilename.class);
+  }
+
 }
