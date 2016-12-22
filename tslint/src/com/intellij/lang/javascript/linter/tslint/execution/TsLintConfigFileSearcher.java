@@ -5,6 +5,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SystemProperties;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -16,7 +18,8 @@ import static com.intellij.lang.javascript.linter.tslint.config.TsLintConfigurat
 public class TsLintConfigFileSearcher {
   private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
 
-  public VirtualFile lookup(VirtualFile vf) {
+  @Nullable
+  public VirtualFile lookup(@NotNull VirtualFile vf) {
     VirtualFile current = vf.getParent();
     while (current != null) {
       final VirtualFile child = current.findChild(TSLINT_JSON);
