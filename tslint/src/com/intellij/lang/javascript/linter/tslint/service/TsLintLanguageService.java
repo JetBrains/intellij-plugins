@@ -71,7 +71,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase implement
   }
 
   @NotNull
-  private static JSLanguageServiceCommandProcessor<List<JSAnnotationError>> createProcessor(String path) {
+  private static JSLanguageServiceCommandProcessor<List<JSAnnotationError>> createProcessor(@NotNull String path) {
     return new JSLanguageServiceCommandProcessor<List<JSAnnotationError>>() {
       @Nullable
       @Override

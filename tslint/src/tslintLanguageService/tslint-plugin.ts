@@ -99,9 +99,6 @@ export class TSLintPlugin implements LanguagePlugin {
 function resolveTsLint(options: PluginState): LinerOptions {
     const tslintPackagePath = options.tslintPackagePath;
     let value: any = require(tslintPackagePath);
-    if (typeof value == "function") {
-        value = value();
-    }
 
     let versionText = getVersionText(value);
     const versionKind = getVersion(versionText);

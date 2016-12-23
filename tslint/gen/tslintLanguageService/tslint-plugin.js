@@ -78,9 +78,6 @@ exports.TSLintPlugin = TSLintPlugin;
 function resolveTsLint(options) {
     var tslintPackagePath = options.tslintPackagePath;
     var value = require(tslintPackagePath);
-    if (typeof value == "function") {
-        value = value();
-    }
     var versionText = getVersionText(value);
     var versionKind = getVersion(versionText);
     var linter = versionKind == 1 /* VERSION_4_AND_HIGHER */ ? value.Linter : value;
