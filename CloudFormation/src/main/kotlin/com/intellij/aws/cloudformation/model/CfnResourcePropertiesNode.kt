@@ -2,7 +2,7 @@ package com.intellij.aws.cloudformation.model
 
 import com.intellij.aws.cloudformation.IndentWriter
 
-class CfnResourcePropertiesNode(name: CfnNameNode, val properties: List<CfnResourcePropertyNode>) : CfnNamedNode(name) {
+class CfnResourcePropertiesNode(name: CfnStringValueNode, val properties: List<CfnResourcePropertyNode>) : CfnNamedNode(name) {
   override fun dump(writer: IndentWriter) {
     writer.print("properties: ")
     name.dump(writer)

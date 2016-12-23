@@ -13,7 +13,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
-import java.util.Arrays
 import java.util.HashSet
 
 class CloudFormationReferenceProvider : PsiReferenceProvider() {
@@ -28,7 +27,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
   }
 
   companion object {
-    val ParametersAndResourcesSections = Arrays.asList(CloudFormationSections.Parameters, CloudFormationSections.Resources)
+    val ParametersAndResourcesSections = listOf(CloudFormationSections.Parameters, CloudFormationSections.Resources)
 
     fun buildFromElement(element: PsiElement): PsiReference? {
       val stringLiteral = element as? JsonStringLiteral ?: return null
@@ -55,9 +54,9 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       val parametersArray = element.parent as? JsonArray
       if (parametersArray != null) {
         val funcProperty = parametersArray.parent as? JsonProperty
-        val isFindInMap = funcProperty != null && CloudFormationIntrinsicFunctions.FnFindInMap == funcProperty.name
-        val isGetAtt = funcProperty != null && CloudFormationIntrinsicFunctions.FnGetAtt == funcProperty.name
-        val isIf = funcProperty != null && CloudFormationIntrinsicFunctions.FnIf == funcProperty.name
+        val isFindInMap = funcProperty != null && CloudFormationIntrinsicFunctions.FnFindInMap.id == funcProperty.name
+        val isGetAtt = funcProperty != null && CloudFormationIntrinsicFunctions.FnGetAtt.id == funcProperty.name
+        val isIf = funcProperty != null && CloudFormationIntrinsicFunctions.FnIf.id == funcProperty.name
 
         if (isGetAtt || isFindInMap || isIf) {
           val obj = funcProperty!!.parent as? JsonObject
@@ -120,7 +119,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
     fun handleRef(element: JsonStringLiteral): PsiReference? {
       val refProperty = element.parent as? JsonProperty
-      if (refProperty == null || CloudFormationIntrinsicFunctions.Ref != refProperty.name) {
+      if (refProperty == null || CloudFormationIntrinsicFunctions.Ref.id != refProperty.name) {
         return null
       }
 

@@ -2,7 +2,7 @@ package com.intellij.aws.cloudformation.model
 
 import com.intellij.aws.cloudformation.IndentWriter
 
-open class CfnNameValueNode(name: CfnNameNode, val value: CfnNameNode) : CfnNamedNode(name) {
+open class CfnNameValueNode(name: CfnStringValueNode, val value: CfnStringValueNode) : CfnNamedNode(name) {
   override fun dump(writer: IndentWriter) {
     name.dump(writer)
     writer.indent {

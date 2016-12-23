@@ -37,10 +37,10 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
     val typeName = match.resource.typeName ?: return null
 
     val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.resourceTypes[typeName] ?: return ""
-    val propertyMetadata = resourceTypeMetadata.properties[match.name.id] ?: return ""
+    val propertyMetadata = resourceTypeMetadata.properties[match.name.value] ?: return ""
 
     val resourceTypeDescription = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[typeName] ?: return ""
-    val propertyDescription = resourceTypeDescription.properties[match.name.id] ?: return ""
+    val propertyDescription = resourceTypeDescription.properties[match.name.value] ?: return ""
 
     val document = "<p>" + propertyDescription + "</p><br>" +
         "<p><i>Required:</i> " + propertyMetadata.required + "</p>" +

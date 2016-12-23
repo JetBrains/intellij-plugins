@@ -61,6 +61,11 @@
     <description>Expected properties list</description>
   </problem>
   <problem>
+    <file>notObjExpr1.template</file>
+    <line>9</line>
+    <description>Required resource properties are not set: UserName</description>
+  </problem>
+  <problem>
     <file>maxOutputs.template</file>
     <line>4</line>
     <description>Exceeded a maximum of 60 outputs in template</description>

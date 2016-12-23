@@ -1,12 +1,16 @@
 package com.intellij.aws.cloudformation
 
-object CloudFormationIntrinsicFunctions {
-  val FnBase64 = "Fn::Base64"
-  val FnFindInMap = "Fn::FindInMap"
-  val FnGetAtt = "Fn::GetAtt"
-  val FnGetAZs = "Fn::GetAZs"
-  val FnJoin = "Fn::Join"
-  val FnSelect = "Fn::Select"
-  val FnIf = "Fn::If"
-  val Ref = "Ref"
+enum class CloudFormationIntrinsicFunctions(val id: String) {
+  FnBase64("Fn::Base64"),
+  FnFindInMap("Fn::FindInMap"),
+  FnGetAtt("Fn::GetAtt"),
+  FnGetAZs("Fn::GetAZs"),
+  FnJoin("Fn::Join"),
+  FnSelect("Fn::Select"),
+  FnIf("Fn::If"),
+  Ref("Ref");
+
+  companion object {
+    val allNames = CloudFormationIntrinsicFunctions.values().map { it.id }.toSet()
+  }
 }

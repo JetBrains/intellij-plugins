@@ -1,19 +1,19 @@
 package com.intellij.aws.cloudformation
 
-import com.intellij.aws.cloudformation.model.CfnNameNode
+import com.intellij.aws.cloudformation.model.CfnStringValueNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertiesNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.psi.PsiElement
 
 class ResourcePropertyNameMatch private constructor(
-    val name: CfnNameNode,
+    val name: CfnStringValueNode,
     val property: CfnResourcePropertyNode,
     val properties: CfnResourcePropertiesNode,
     val resource: CfnResourceNode) {
   companion object {
     fun match(position: PsiElement, parsed: CloudFormationParsedFile): ResourcePropertyNameMatch? {
-      val nameNode = parsed.getCfnNode(position) as? CfnNameNode ?: return null
+      val nameNode = parsed.getCfnNode(position) as? CfnStringValueNode ?: return null
 
       val propertyNode = CloudFormationPsiUtils.getParent(nameNode, parsed) as? CfnResourcePropertyNode ?: return null
       val propertiesNode = CloudFormationPsiUtils.getParent(propertyNode, parsed) as? CfnResourcePropertiesNode ?: return null

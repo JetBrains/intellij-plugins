@@ -1,8 +1,8 @@
 package com.intellij.aws.cloudformation
 
-import com.intellij.aws.cloudformation.model.CfnNameNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
+import com.intellij.aws.cloudformation.model.CfnStringValueNode
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
@@ -59,7 +59,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
               @Suppress("LoopToCallChain")
               for ((propertyName) in resourceTypeMetadata.properties.values) {
                 if (resourcePropertyNameMatch.resource.properties != null &&
-                    resourcePropertyNameMatch.resource.properties.properties.any { it.name.id == propertyName }) {
+                    resourcePropertyNameMatch.resource.properties.properties.any { it.name.value == propertyName }) {
                   continue
                 }
 
@@ -89,7 +89,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   }
 
   private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quoteResult: Boolean, parsed: CloudFormationParsedFile) {
-    val nameNode = parsed.getCfnNode(element) as? CfnNameNode ?: return
+    val nameNode = parsed.getCfnNode(element) as? CfnStringValueNode ?: return
     val namedNode = CloudFormationPsiUtils.getParent(nameNode, parsed) as? CfnNamedNode ?: return
     val resourceNode = CloudFormationPsiUtils.getParent(namedNode, parsed) as? CfnResourceNode ?: return
 
@@ -109,7 +109,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
     }
 
     val getattProperty = getattParameters.parent as? JsonProperty
-    if (getattProperty == null || CloudFormationIntrinsicFunctions.FnGetAtt != getattProperty.name) {
+    if (getattProperty == null || CloudFormationIntrinsicFunctions.FnGetAtt.id != getattProperty.name) {
       return null
     }
 
