@@ -105,6 +105,9 @@ public class DartAnalysisServerService {
   private static final long MIN_DISRUPTION_TIME = 10000L; // 10 seconds minimum between error report queries
   private static final int MAX_DISRUPTIONS_PER_SESSION = 5; // Do not annoy the user too many times
 
+  private static final int DEBUG_LOG_CAPACITY = 30;
+  private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
+
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
   @Nullable private AnalysisServer myServer;
@@ -139,6 +142,14 @@ public class DartAnalysisServerService {
 
   public long maxMillisToWaitForServerResponse = 0L;
   @NotNull private final InteractiveErrorReporter myErrorReporter = new InteractiveErrorReporter();
+
+  @NotNull private final Object myDebugLogLock = new Object();
+  @NotNull private final LinkedHashMap<String, String> myDebugLog = new LinkedHashMap<String, String>(DEBUG_LOG_CAPACITY) {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+      return this.size() >= DEBUG_LOG_CAPACITY;
+    }
+  };
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -1367,7 +1378,10 @@ public class DartAnalysisServerService {
       final DebugPrintStream debugStream = new DebugPrintStream() {
         @Override
         public void println(String str) {
-          //System.out.println("debugStream: " + str);
+          str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
+          synchronized (myDebugLogLock) {
+            myDebugLog.put(str, str);
+          }
         }
       };
 
@@ -1672,7 +1686,7 @@ public class DartAnalysisServerService {
    * - The same message is not reported twice in a row
    * - The user is not interrupted too often
    */
-  private static class InteractiveErrorReporter {
+  private class InteractiveErrorReporter {
 
     @NotNull private QueueProcessor<Runnable> myErrorReporter = QueueProcessor.createRunnableQueueProcessor();
     private long myPreviousTime;
@@ -1693,6 +1707,7 @@ public class DartAnalysisServerService {
       }
       myPreviousTime = timeStamp;
       if (messageDiffers(errorMessage)) {
+        String debugLog = debugLogContent();
         myErrorReporter.add(() -> {
           DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
           final boolean[] reportIt = new boolean[1];
@@ -1702,7 +1717,7 @@ public class DartAnalysisServerService {
             myPreviousTime = System.currentTimeMillis();
           });
           if (reportIt[0]) {
-            builder.sendFeedback(null, errorMessage);
+            builder.sendFeedback(null, errorMessage, debugLog);
           }
           else {
             LOG.warn(errorMessage);
@@ -1719,6 +1734,25 @@ public class DartAnalysisServerService {
       if (errIdx < 0) return !errorMessage.equals(myPreviousMessage);
       // Compare Dart stack traces
       return !errorMessage.substring(errIdx).equals(myPreviousMessage.substring(prevIdx));
+    }
+
+    private String debugLogContent() {
+      ArrayList<String> reversedLines = new ArrayList<>();
+      StringBuilder log = new StringBuilder();
+      synchronized (myDebugLogLock) {
+        Collection<String> logLines = myDebugLog.values();
+        logLines.iterator().forEachRemaining(reversedLines::add);
+      }
+      ListIterator<String> itr = reversedLines.listIterator(reversedLines.size());
+      if (itr.hasPrevious()) {
+        log.append("```\n");
+        while (itr.hasPrevious()) {
+          log.append(itr.previous());
+          log.append('\n');
+        }
+        log.append("```\n");
+      }
+      return log.toString();
     }
   }
 }
