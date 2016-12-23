@@ -4,7 +4,6 @@ package name.kropp.intellij.makefile;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import name.kropp.intellij.makefile.psi.MakefileTypes;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
@@ -27,9 +26,10 @@ public class _MakefileLexer implements FlexLexer {
   /** lexical states */
   public static final int YYINITIAL = 0;
   public static final int PREREQUISITES = 2;
-  public static final int COMMANDS = 4;
-  public static final int VARIABLE = 6;
-  public static final int CONDITIONALS = 8;
+  public static final int INCLUDES = 4;
+  public static final int COMMANDS = 6;
+  public static final int VARIABLE = 8;
+  public static final int CONDITIONALS = 10;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -38,7 +38,7 @@ public class _MakefileLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0,  0,  1,  1,  2,  2,  3,  3,  4, 4
+     0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5, 5
   };
 
   /** 
@@ -70,13 +70,13 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\5\0\1\1\2\2\1\3\1\4\1\5\1\6\3\1"+
+    "\6\0\1\1\2\2\1\3\1\4\1\5\1\6\3\1"+
     "\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\0"+
     "\1\6\11\1\1\16\1\1\1\17\1\1\1\20\1\1"+
     "\1\21";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[40];
+    int [] result = new int[41];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -102,13 +102,14 @@ public class _MakefileLexer implements FlexLexer {
 
   private static final String ZZ_ROWMAP_PACKED_0 =
     "\0\0\0\23\0\46\0\71\0\114\0\137\0\162\0\205"+
-    "\0\230\0\253\0\276\0\137\0\321\0\344\0\367\0\u010a"+
-    "\0\u011d\0\137\0\u0130\0\u0143\0\u0156\0\u0169\0\u017c\0\u011d"+
-    "\0\u018f\0\u01a2\0\u01b5\0\u01c8\0\u01db\0\u01ee\0\u0201\0\u0214"+
-    "\0\u0227\0\137\0\u023a\0\137\0\u024d\0\137\0\u0260\0\137";
+    "\0\230\0\253\0\276\0\321\0\162\0\344\0\367\0\u010a"+
+    "\0\u011d\0\u0130\0\162\0\u0143\0\u0156\0\u0169\0\u017c\0\u018f"+
+    "\0\u0130\0\u01a2\0\u01b5\0\u01c8\0\u01db\0\u01ee\0\u0201\0\u0214"+
+    "\0\u0227\0\u023a\0\162\0\u024d\0\162\0\u0260\0\162\0\u0273"+
+    "\0\162";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[40];
+    int [] result = new int[41];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -131,30 +132,31 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\6\1\7\1\10\1\11\1\12\1\13\1\6\1\14"+
-    "\1\15\1\16\5\6\1\17\4\6\1\20\2\10\1\6"+
-    "\1\21\1\22\14\6\1\23\1\21\21\23\1\24\1\25"+
-    "\21\24\1\26\1\25\2\10\1\26\1\21\15\26\1\6"+
-    "\3\0\1\6\1\0\15\6\1\0\1\7\23\0\2\10"+
-    "\21\0\1\10\1\11\17\0\1\12\1\0\21\12\5\0"+
-    "\1\27\1\0\1\30\13\0\1\6\3\0\1\6\1\0"+
-    "\1\6\1\14\14\6\3\0\1\6\1\0\4\6\1\31"+
-    "\5\6\1\32\3\6\3\0\1\6\1\0\4\6\1\33"+
-    "\1\6\1\34\6\6\1\0\1\20\44\0\1\23\1\0"+
-    "\21\23\1\24\1\0\21\24\1\0\1\25\21\0\1\26"+
-    "\3\0\1\26\1\0\15\26\7\0\1\30\13\0\1\6"+
-    "\3\0\1\6\1\0\5\6\1\35\10\6\3\0\1\6"+
-    "\1\0\11\6\1\36\4\6\3\0\1\6\1\0\10\6"+
-    "\1\37\5\6\3\0\1\6\1\0\14\6\1\40\1\6"+
-    "\3\0\1\6\1\0\6\6\1\41\7\6\3\0\1\6"+
-    "\1\0\13\6\1\42\2\6\3\0\1\6\1\0\3\6"+
-    "\1\43\12\6\3\0\1\6\1\0\11\6\1\44\4\6"+
-    "\3\0\1\6\1\0\7\6\1\45\6\6\3\0\1\6"+
-    "\1\0\12\6\1\46\3\6\3\0\1\6\1\0\10\6"+
-    "\1\47\5\6\3\0\1\6\1\0\11\6\1\50\3\6";
+    "\1\7\1\10\1\11\1\12\1\13\1\14\1\7\1\15"+
+    "\1\16\1\17\5\7\1\20\4\7\1\21\2\11\1\7"+
+    "\1\22\1\23\15\7\1\21\2\11\1\7\1\22\15\7"+
+    "\1\24\1\22\21\24\1\25\1\26\21\25\1\27\1\26"+
+    "\2\11\1\27\1\22\15\27\1\7\3\0\1\7\1\0"+
+    "\15\7\1\0\1\10\23\0\2\11\21\0\1\11\1\12"+
+    "\17\0\1\13\1\0\21\13\5\0\1\30\1\0\1\31"+
+    "\13\0\1\7\3\0\1\7\1\0\1\7\1\15\14\7"+
+    "\3\0\1\7\1\0\4\7\1\32\5\7\1\33\3\7"+
+    "\3\0\1\7\1\0\4\7\1\34\1\7\1\35\6\7"+
+    "\1\0\1\21\44\0\1\24\1\0\21\24\1\25\1\0"+
+    "\21\25\1\0\1\26\21\0\1\27\3\0\1\27\1\0"+
+    "\15\27\7\0\1\31\13\0\1\7\3\0\1\7\1\0"+
+    "\5\7\1\36\10\7\3\0\1\7\1\0\11\7\1\37"+
+    "\4\7\3\0\1\7\1\0\10\7\1\40\5\7\3\0"+
+    "\1\7\1\0\14\7\1\41\1\7\3\0\1\7\1\0"+
+    "\6\7\1\42\7\7\3\0\1\7\1\0\13\7\1\43"+
+    "\2\7\3\0\1\7\1\0\3\7\1\44\12\7\3\0"+
+    "\1\7\1\0\11\7\1\45\4\7\3\0\1\7\1\0"+
+    "\7\7\1\46\6\7\3\0\1\7\1\0\12\7\1\47"+
+    "\3\7\3\0\1\7\1\0\10\7\1\50\5\7\3\0"+
+    "\1\7\1\0\11\7\1\51\3\7";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[627];
+    int [] result = new int[646];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -192,10 +194,10 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\5\0\13\1\1\11\5\1\1\0\1\11\20\1";
+    "\6\0\13\1\1\11\5\1\1\0\1\11\20\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[40];
+    int [] result = new int[41];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -496,7 +498,14 @@ public class _MakefileLexer implements FlexLexer {
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
+        switch (zzLexicalState) {
+            case INCLUDES: {
+              yypushback(yylength()); yybegin(YYINITIAL); return EOL;
+            }
+            case 42: break;
+            default:
         return null;
+        }
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
@@ -565,7 +574,7 @@ public class _MakefileLexer implements FlexLexer {
             }
           case 33: break;
           case 17: 
-            { return KEYWORD_INCLUDE;
+            { yybegin(INCLUDES); return KEYWORD_INCLUDE;
             }
           case 34: break;
           default:

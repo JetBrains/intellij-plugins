@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
-import com.intellij.lang.LightPsiParser;
+import com.intellij.psi.tree.IElementType;
+
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class MakefileParser implements PsiParser, LightPsiParser {
@@ -136,15 +136,32 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'include' filename
+  // 'include' filename+ EOL
   public static boolean include(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include")) return false;
     if (!nextTokenIs(b, KEYWORD_INCLUDE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_INCLUDE);
-    r = r && filename(b, l + 1);
+    r = r && include_1(b, l + 1);
+    r = r && consumeToken(b, EOL);
     exit_section_(b, m, INCLUDE, r);
+    return r;
+  }
+
+  // filename+
+  private static boolean include_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "include_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = filename(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!filename(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "include_1", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
     return r;
   }
 

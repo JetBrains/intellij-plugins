@@ -47,5 +47,5 @@ elsebranch ::= commands
 variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? {pin=2}
 variable_name ::= identifier
 
-include ::= 'include' filename
+include ::= 'include' filename+ EOL
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}

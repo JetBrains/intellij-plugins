@@ -4,3 +4,6 @@ Makefile
     PsiWhiteSpace(' ')
     MakefileFilenameImpl(FILENAME)
       PsiElement(identifier)('HelloWorld.mk')
+    PsiWhiteSpace(' ')
+    MakefileFilenameImpl(FILENAME)
+      PsiElement(identifier)('Variables.mk')
