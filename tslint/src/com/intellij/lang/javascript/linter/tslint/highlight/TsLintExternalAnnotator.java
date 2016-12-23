@@ -3,18 +3,28 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
+import com.intellij.lang.javascript.integration.JSAnnotationError;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintBinFileVersionManager;
-import com.intellij.lang.javascript.linter.tslint.execution.TsLintExternalRunner;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
+import com.intellij.lang.javascript.linter.tslint.execution.TsLintExternalRunner;
+import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.service.JSFileHighlightingInfo;
+import com.intellij.lang.javascript.service.JSHighlightingInfoBuilder;
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -74,6 +84,25 @@ public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintSta
   @Override
   public JSLinterAnnotationResult<TsLintState> doAnnotate(@Nullable JSLinterInput<TsLintState> collectedInfo) {
     if (collectedInfo == null) return null;
+
+    if (!StringUtil.isEmpty(System.getProperty("use.tslint.new"))) {
+      TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
+      JSFileHighlightingInfo context = JSHighlightingInfoBuilder
+        .createInfoWithUnSavedFiles(collectedInfo.getProject(), collectedInfo.getVirtualFile(), service.getAcceptableFilesFilter());
+
+      Future<List<JSAnnotationError>> highlight = service.highlight(collectedInfo.getPsiFile(), context);
+      List<JSAnnotationError> annotationErrors = JSLanguageServiceUtil.awaitFuture(highlight);
+      if (annotationErrors == null) {
+        return null;
+      }
+
+      List<JSLinterError> errors = annotationErrors
+        .stream()
+        .map(el -> ((JSLinterError)el)).collect(Collectors.toList());
+
+      return JSLinterAnnotationResult.createLinterResult(collectedInfo, errors, null);
+    }
+
     return new TsLintExternalRunner(collectedInfo,
                                     myCodeFilesMirror,
                                     myConfigFilesMirror,

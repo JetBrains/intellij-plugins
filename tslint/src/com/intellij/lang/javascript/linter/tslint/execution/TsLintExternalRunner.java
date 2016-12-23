@@ -10,13 +10,12 @@ import com.intellij.javascript.nodejs.NodePackageVersionUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintBinFileVersionManager;
-import com.intellij.lang.javascript.linter.tslint.highlight.TsLintConfigFileChangeTracker;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
+import com.intellij.lang.javascript.linter.tslint.highlight.TsLintConfigFileChangeTracker;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Producer;
@@ -38,8 +37,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class TsLintExternalRunner {
   private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
-  private final static String INTERNAL_ERROR = "Internal TSLint problem. Please report the problem and attach the log using \"Help | Show Log in "
-                                               + ShowFilePathAction.getFileManagerName() + "\"";
+  private final static String INTERNAL_ERROR =
+    "Internal TSLint problem. Please report the problem and attach the log using \"Help | Show Log in "
+    + ShowFilePathAction.getFileManagerName() + "\"";
   public static final int TIMEOUT_IN_MILLISECONDS = (int)TimeUnit.SECONDS.toMillis(10);
   private static final Logger RARE_LOGGER = RareLogger.wrap(LOG, false);
   private static final SemVer VERSION_2_4_0 = new SemVer("2.4.0", 2, 4, 0);
@@ -105,18 +105,20 @@ public class TsLintExternalRunner {
       CapturingProcessHandler processHandler;
       try {
         processHandler = new CapturingProcessHandler(commandLine);
-      } catch (ExecutionException e) {
+      }
+      catch (ExecutionException e) {
         return createError("Can not start TSLint process: " + e.getMessage());
       }
-      boolean zeroBasedRowCol = myTsLintVersion != null && (myTsLintVersion.getMajor() < 2 ||
-                                                            myTsLintVersion.getMajor() == 2 && myTsLintVersion.getMinor() <= 1);
-      final TsLintOutputParser parser = new TsLintOutputParser(myActualCodeFile.getPath(), zeroBasedRowCol);
+      boolean zeroBasedRowCol = TsLintOutputJsonParser.isVersionZeroBased(myTsLintVersion);
+      final TsLintProcessListener parser = new TsLintProcessListener(myActualCodeFile.getAbsolutePath(), zeroBasedRowCol);
       processHandler.addProcessListener(parser);
       final ProcessOutput processOutput = processHandler.runProcess(TIMEOUT_IN_MILLISECONDS);
       if (processOutput.isTimeout()) {
         return JSLinterAnnotationResult.create(myInputInfo, new JSLinterFileLevelAnnotation("Process timed out after "
-                                                                                            + DateFormatUtil.formatDuration(TIMEOUT_IN_MILLISECONDS)),
-                                                               myConfigVirtualFile);
+                                                                                            +
+                                                                                            DateFormatUtil
+                                                                                              .formatDuration(TIMEOUT_IN_MILLISECONDS)),
+                                               myConfigVirtualFile);
       }
       parser.process();
 
@@ -128,13 +130,17 @@ public class TsLintExternalRunner {
           final String predefinedError = parsePredefinedErrorText(error);
           if (predefinedError != null) {
             message = predefinedError;
-          } else if (PsiErrorElementUtil.hasErrors(myProject, myCodeVirtualFile)) {
+          }
+          else if (PsiErrorElementUtil.hasErrors(myProject, myCodeVirtualFile)) {
             // just ignore everything: https://github.com/palantir/tslint/issues/647
             return JSLinterAnnotationResult.createLinterResult(myInputInfo, Collections.emptyList(), myConfigVirtualFile);
           }
         }
         final JSLinterFileLevelAnnotation annotation = new JSLinterFileLevelAnnotation(message,
-          JSLinterUtil.createDetailsAction(myProject, myCodeVirtualFile, commandLine, processOutput, null));
+                                                                                       JSLinterUtil
+                                                                                         .createDetailsAction(myProject, myCodeVirtualFile,
+                                                                                                              commandLine, processOutput,
+                                                                                                              null));
         return JSLinterAnnotationResult.create(myInputInfo, annotation, myConfigVirtualFile);
       }
       return JSLinterAnnotationResult.createLinterResult(myInputInfo, parser.getErrors(), myConfigVirtualFile);
@@ -188,7 +194,7 @@ public class TsLintExternalRunner {
       commandLine.addParameters("-c", myActualConfigFile.getAbsolutePath());
     }
     final String rulesDirectory = myInputInfo.getState().getRulesDirectory();
-    if (! StringUtil.isEmptyOrSpaces(rulesDirectory)) {
+    if (!StringUtil.isEmptyOrSpaces(rulesDirectory)) {
       commandLine.addParameters("-r", rulesDirectory);
     }
     boolean passOldFileFlag = myTsLintVersion != null && myTsLintVersion.compareTo(VERSION_2_4_0) < 0;
@@ -214,29 +220,24 @@ public class TsLintExternalRunner {
   private Producer<JSLinterAnnotationResult<TsLintState>> checkConfigPath() {
     return () -> {
       final TsLintState state = myInputInfo.getState();
-
-      if (state.isCustomConfigFileUsed()) {
-        final String configFilePath = state.getCustomConfigFilePath();
-        if (StringUtil.isEmptyOrSpaces(configFilePath)) {
-          return createError("Configuration file for TSLint is not specified");
-        }
-        final File configFile = new File(configFilePath);
-        myConfigVirtualFile = VfsUtil.findFileByIoFile(configFile, false);
-        if (myConfigVirtualFile == null) {
-          return createError("Can not find configuration file for TSLint by path: " + configFilePath);
-        }
-      } else {
-        final TsLintConfigFileSearcher searcher = new TsLintConfigFileSearcher();
-        myConfigVirtualFile = searcher.lookup(myInputInfo.getPsiFile().getVirtualFile());
-        if (myConfigVirtualFile == null) {
-          return createError("Configuration file for TSLint is not found");
-        }
+      final TsLintConfigFileSearcher searcher = new TsLintConfigFileSearcher();
+      String error = searcher.validate(state);
+      if (error != null) {
+        return createError(error);
       }
+
+      VirtualFile config = searcher.getConfig(state, myInputInfo.getPsiFile());
+      if (config == null) {
+        return createError("Configuration file for TSLint is not found");
+      }
+
+      myConfigVirtualFile = config;
       myActualConfigFile = myConfigFilesMirror.getOrCreateFileWithActualContent(myConfigVirtualFile, null);
       if (myActualConfigFile == null) {
         LOG.debug("Skipped TSLint file analysis: can not mirror config file in temp directory: " + myConfigVirtualFile.getPath());
         mySkip = true;
       }
+
       return null;
     };
   }
@@ -263,7 +264,7 @@ public class TsLintExternalRunner {
         return createError("Node interpreter file is not specified");
       }
       myNodeFile = new File(nodePath);
-      if (! myNodeFile.isFile() || ! myNodeFile.isAbsolute() || ! myNodeFile.canExecute()) {
+      if (!myNodeFile.isFile() || !myNodeFile.isAbsolute() || !myNodeFile.canExecute()) {
         return createError("Node interpreter file is not found");
       }
       final String packagePath = state.getPackagePath();
@@ -272,12 +273,13 @@ public class TsLintExternalRunner {
       }
       myPackageDir = new File(packagePath);
       if (myPackageDir.isDirectory()) {
-        if (! myPackageDir.isAbsolute()) {
+        if (!myPackageDir.isAbsolute()) {
           return createError(JSLinterUtil.getLinterPackageMissingError(myProject, packagePath, "TSLint"));
         }
         myTsLintFile = new File(myPackageDir, "bin" + File.separator + "tslint");
         myTsLintVersion = NodePackageVersionUtil.getPackageVersion(myPackageDir);
-      } else {
+      }
+      else {
         myTsLintFile = myPackageDir;
         try {
           myTsLintVersion = myBinFileVersionManager.getVersion(myNodeFile.getAbsolutePath(),
@@ -289,10 +291,11 @@ public class TsLintExternalRunner {
           LOG.info("Cannot fetch version of " + myTsLintFile.getAbsolutePath(), e);
         }
       }
-      if (! myTsLintFile.exists()) {
+      if (!myTsLintFile.exists()) {
         if (myPackageDir.exists() && myTsLintFile == myPackageDir) {
           return createError("Provided TSLint path does not exist");
-        } else {
+        }
+        else {
           return createError(JSLinterUtil.getLinterPackageMissingError(myProject, packagePath, "TSLint"));
         }
       }
