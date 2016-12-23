@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl implements DartFunctionTypeAlias {
+public class DartFunctionTypeImpl extends DartPsiCompositeElementImpl implements DartFunctionType {
 
-  public DartFunctionTypeAliasImpl(ASTNode node) {
+  public DartFunctionTypeImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitFunctionTypeAlias(this);
+    visitor.visitFunctionType(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,26 +28,8 @@ public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl impleme
 
   @Override
   @NotNull
-  public DartComponentName getComponentName() {
-    return findNotNullChildByClass(DartComponentName.class);
-  }
-
-  @Override
-  @Nullable
-  public DartFormalParameterList getFormalParameterList() {
-    return findChildByClass(DartFormalParameterList.class);
-  }
-
-  @Override
-  @Nullable
-  public DartFunctionType getFunctionType() {
-    return findChildByClass(DartFunctionType.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  public DartParameterTypeList getParameterTypeList() {
+    return findNotNullChildByClass(DartParameterTypeList.class);
   }
 
   @Override

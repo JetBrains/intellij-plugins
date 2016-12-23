@@ -103,6 +103,20 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     return false;
   }
 
+  public static boolean functionId(PsiBuilder builder_, int level_) {
+    if (!"Function".equals(builder_.getTokenText())) return false;
+
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    final boolean result_ = consumeToken(builder_, IDENTIFIER);
+    if (result_) {
+      marker_.done(ID);
+      return true;
+    }
+
+    marker_.rollbackTo();
+    return false;
+  }
+
   public static boolean lazyParseableBlockImpl(PsiBuilder builder, int level) {
     if (builder.getTokenType() != LBRACE) return false;
 
