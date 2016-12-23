@@ -499,10 +499,14 @@ public class _MakefileLexer implements FlexLexer {
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
         switch (zzLexicalState) {
-            case INCLUDES: {
+            case PREREQUISITES: {
               yypushback(yylength()); yybegin(YYINITIAL); return EOL;
             }
             case 42: break;
+            case INCLUDES: {
+              yypushback(yylength()); yybegin(YYINITIAL); return EOL;
+            }
+            case 43: break;
             default:
         return null;
         }
