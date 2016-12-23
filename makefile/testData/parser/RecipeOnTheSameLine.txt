@@ -8,10 +8,8 @@ Makefile
       PsiWhiteSpace(' ')
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
-          MakefilePrerequisiteImpl(PREREQUISITE)
-            PsiElement(identifier)('world')
-    PsiWhiteSpace(' ')
+          <empty list>
     PsiElement(;)(';')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandsImpl(COMMANDS)
-        <empty list>
+        PsiElement(command)(' echo hello')

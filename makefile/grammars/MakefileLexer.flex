@@ -58,7 +58,7 @@ COMMAND=[^\r\n]+
 
 <PREREQUISITES> {
     {PIPE}                  { return PIPE; }
-    {SEMICOLON}             { return SEMICOLON; }
+    {SEMICOLON}             { yybegin(COMMANDS); return SEMICOLON; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }

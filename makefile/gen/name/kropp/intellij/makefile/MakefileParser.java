@@ -356,7 +356,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // target_line (';' EOL | EOL recipe)
+  // target_line (';' EOL? | EOL) recipe
   public static boolean rule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
@@ -364,30 +364,38 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = target_line(b, l + 1);
     r = r && rule_1(b, l + 1);
+    r = r && recipe(b, l + 1);
     exit_section_(b, m, RULE, r);
     return r;
   }
 
-  // ';' EOL | EOL recipe
+  // ';' EOL? | EOL
   private static boolean rule_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = parseTokens(b, 0, SEMICOLON, EOL);
-    if (!r) r = rule_1_1(b, l + 1);
+    r = rule_1_0(b, l + 1);
+    if (!r) r = consumeToken(b, EOL);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // EOL recipe
-  private static boolean rule_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "rule_1_1")) return false;
+  // ';' EOL?
+  private static boolean rule_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "rule_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, EOL);
-    r = r && recipe(b, l + 1);
+    r = consumeToken(b, SEMICOLON);
+    r = r && rule_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // EOL?
+  private static boolean rule_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "rule_1_0_1")) return false;
+    consumeToken(b, EOL);
+    return true;
   }
 
   /* ********************************************************** */

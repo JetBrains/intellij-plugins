@@ -570,7 +570,7 @@ public class _MakefileLexer implements FlexLexer {
             }
           case 32: break;
           case 9: 
-            { return SEMICOLON;
+            { yybegin(COMMANDS); return SEMICOLON;
             }
           case 33: break;
           case 10: 

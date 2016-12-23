@@ -9,7 +9,6 @@ import name.kropp.intellij.makefile.psi.MakefileRule;
 import name.kropp.intellij.makefile.psi.MakefileTargetLine;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRule {
 
@@ -27,9 +26,9 @@ public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRu
   }
 
   @Override
-  @Nullable
+  @NotNull
   public MakefileRecipe getRecipe() {
-    return findChildByClass(MakefileRecipe.class);
+    return findNotNullChildByClass(MakefileRecipe.class);
   }
 
   @Override
