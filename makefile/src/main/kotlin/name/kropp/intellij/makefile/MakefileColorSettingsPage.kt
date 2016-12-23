@@ -4,6 +4,12 @@ import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 
+private val tags = mapOf(
+    "target" to MakefileSyntaxHighlighter.TARGET,
+    "variableName" to MakefileSyntaxHighlighter.VARIABLE_NAME,
+    "prerequisite" to MakefileSyntaxHighlighter.PREREQUISITE
+)
+
 class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getDisplayName() = MakefileLanguage.displayName
   override fun getIcon() = MakefileIcon
@@ -23,19 +29,19 @@ class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getDemoText() = """# Simple Makefile
 include make.mk
 
-all: hello
+<target>all</target>: <prerequisite>hello</prerequisite>
 
-hello: hello.o world.o
+<target>hello</target>: <prerequisite>hello.o</prerequisite> <prerequisite>world.o</prerequisite>
 
-GCC = gcc
+<variableName>GCC</variableName> = gcc
 
-.o.c:
-if eq($(FOO),'bar')
+<target>.o.c</target>:
+ifeq ($(FOO),'bar')
 ${'\t'}$(GCC) -c qwe
 else
 ${'\t'}echo "Hello World"
 endif"""
 
-  override fun getAdditionalHighlightingTagToDescriptorMap() = null
+  override fun getAdditionalHighlightingTagToDescriptorMap() = tags
   override fun getColorDescriptors() = ColorDescriptor.EMPTY_ARRAY
 }

@@ -1,13 +1,12 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
-import com.intellij.psi.tree.IElementType
 import com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey
+import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
 import com.intellij.psi.TokenType
+import com.intellij.psi.tree.IElementType
 import name.kropp.intellij.makefile.psi.MakefileTypes
 
 class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
@@ -35,8 +34,8 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   override fun getTokenHighlights(tokenType: IElementType) = when(tokenType) {
     MakefileTypes.COMMENT -> COMMENT_KEYS
     MakefileTypes.TARGET -> TARGET_KEYS
-    MakefileTypes.COLON, MakefileTypes.ASSIGN -> SEPARATOR_KEYS
-    MakefileTypes.KEYWORD_INCLUDE, MakefileTypes.KEYWORD_IFEQ, MakefileTypes.KEYWORD_ELSE, MakefileTypes.KEYWORD_ENDIF -> KEYWORD_KEYS
+    MakefileTypes.COLON, MakefileTypes.ASSIGN, MakefileTypes.SEMICOLON, MakefileTypes.PIPE -> SEPARATOR_KEYS
+    MakefileTypes.KEYWORD_INCLUDE, MakefileTypes.KEYWORD_MINUSINCLUDE, MakefileTypes.KEYWORD_IFEQ, MakefileTypes.KEYWORD_IFNEQ, MakefileTypes.KEYWORD_IFNDEF, MakefileTypes.KEYWORD_ELSE, MakefileTypes.KEYWORD_ENDIF -> KEYWORD_KEYS
     MakefileTypes.PREREQUISITE -> PREREQUISITE_KEYS
     MakefileTypes.VARIABLE_NAME -> VARIABLE_NAME_KEYS
     MakefileTypes.VARIABLE_VALUE -> VARIABLE_VALUE_KEYS
