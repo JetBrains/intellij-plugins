@@ -311,8 +311,26 @@ private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':
                                                       '}' )
 
 functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
+                    | metadata* 'typedef' componentName typeParameters? '=' functionType ';'
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionPrefix ::= returnType componentName | componentName
+
+// TODO may be introduce a dedicated token for 'Function' like we have for other special identifiers that are not keywords?
+functionType ::= <<functionId>> typeParameters? parameterTypeList | returnType <<functionId>> typeParameters? parameterTypeList
+parameterTypeList ::= '(' ')'
+                    | '(' normalParameterTypes ','? ')'
+                    | '(' normalParameterTypes ',' optionalParameterTypes ')'
+                    | '(' optionalParameterTypes ')'
+
+private normalParameterTypes ::= normalParameterType (',' normalParameterType)*
+// TODO spec changes the rule for 'type' completely, not only for typedefs
+normalParameterType ::= functionType <<nonStrictID>> | type <<nonStrictID>> | functionType | type
+
+optionalParameterTypes ::= optionalPositionalParameterTypes | namedParameterTypes
+private optionalPositionalParameterTypes ::= '[' normalParameterTypes ','? ']'
+private namedParameterTypes ::= '{' namedParameterType (',' namedParameterType)* ','? '}'
+// TODO spec changes the rule for 'type' completely, not only for typedefs
+namedParameterType ::= functionType <<nonStrictID>> | type <<nonStrictID>> | <<nonStrictID>>
 
 factoryConstructorDeclaration ::= metadata* ('external' | 'const')* 'factory' componentName ('.' componentName)? formalParameterList factoryTail?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent" methods = [getComponentName]}

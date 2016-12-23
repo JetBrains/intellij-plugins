@@ -3,8 +3,8 @@ package com.jetbrains.lang.dart.psi;
 
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
-import  com.intellij.psi.PsiNameIdentifierOwner;
 import  com.intellij.psi.PsiLanguageInjectionHost;
+import  com.intellij.psi.PsiNameIdentifierOwner;
 
 public class DartVisitor extends PsiElementVisitor {
 
@@ -204,6 +204,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitComponent(o);
   }
 
+  public void visitFunctionType(@NotNull DartFunctionType o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitFunctionTypeAlias(@NotNull DartFunctionTypeAlias o) {
     visitComponent(o);
   }
@@ -340,12 +344,20 @@ public class DartVisitor extends PsiElementVisitor {
     visitComponent(o);
   }
 
+  public void visitNamedParameterType(@NotNull DartNamedParameterType o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitNewExpression(@NotNull DartNewExpression o) {
     visitExpression(o);
     // visitReference(o);
   }
 
   public void visitNormalFormalParameter(@NotNull DartNormalFormalParameter o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitNormalParameterType(@NotNull DartNormalParameterType o) {
     visitPsiCompositeElement(o);
   }
 
@@ -357,9 +369,17 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitOptionalParameterTypes(@NotNull DartOptionalParameterTypes o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitParameterNameReferenceExpression(@NotNull DartParameterNameReferenceExpression o) {
     visitExpression(o);
     // visitReference(o);
+  }
+
+  public void visitParameterTypeList(@NotNull DartParameterTypeList o) {
+    visitPsiCompositeElement(o);
   }
 
   public void visitParenthesizedExpression(@NotNull DartParenthesizedExpression o) {

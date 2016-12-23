@@ -11,31 +11,19 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl implements DartFunctionTypeAlias {
+public class DartNamedParameterTypeImpl extends DartPsiCompositeElementImpl implements DartNamedParameterType {
 
-  public DartFunctionTypeAliasImpl(ASTNode node) {
+  public DartNamedParameterTypeImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitFunctionTypeAlias(this);
+    visitor.visitNamedParameterType(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public DartComponentName getComponentName() {
-    return findNotNullChildByClass(DartComponentName.class);
-  }
-
-  @Override
-  @Nullable
-  public DartFormalParameterList getFormalParameterList() {
-    return findChildByClass(DartFormalParameterList.class);
   }
 
   @Override
@@ -45,21 +33,9 @@ public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl impleme
   }
 
   @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
-  }
-
-  @Override
   @Nullable
-  public DartReturnType getReturnType() {
-    return findChildByClass(DartReturnType.class);
-  }
-
-  @Override
-  @Nullable
-  public DartTypeParameters getTypeParameters() {
-    return findChildByClass(DartTypeParameters.class);
+  public DartType getType() {
+    return findChildByClass(DartType.class);
   }
 
 }
