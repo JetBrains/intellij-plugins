@@ -176,7 +176,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     String targetPath = target.getFile();
     PsiFile file = findPsiFile(project, targetPath);
     if (file != null) {
-      int targetOffset = target.getOffset(file.getVirtualFile());
+      int targetOffset = target.getOffset(project, file.getVirtualFile());
 
       PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartComponentName.class, false);
       if (elementAt == null) elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartLibraryNameElement.class, false);

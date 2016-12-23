@@ -125,7 +125,7 @@ public class DartAnalysisServerService {
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
   @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<>();
 
-  @NotNull private final DartServerData myServerData = new DartServerData(myRootsHandler);
+  @NotNull private final DartServerData myServerData = new DartServerData(this, myRootsHandler);
 
   private volatile boolean myAnalysisInProgress;
   private volatile boolean myPubListInProgress;
@@ -881,7 +881,7 @@ public class DartAnalysisServerService {
         final List<DartServerData.DartNavigationRegion> dartRegions = new ArrayList<>(regions.size());
         for (NavigationRegion region : regions) {
           if (region.getLength() > 0) {
-            dartRegions.add(DartServerData.createDartNavigationRegion(file, region));
+            dartRegions.add(DartServerData.createDartNavigationRegion(DartAnalysisServerService.this, file, region));
           }
         }
 

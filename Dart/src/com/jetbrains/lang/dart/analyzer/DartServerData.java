@@ -19,6 +19,7 @@ import java.util.*;
 
 public class DartServerData {
 
+  private final DartAnalysisServerService myService;
   private DartServerRootsHandler myRootsHandler;
 
   private final Map<String, List<DartError>> myErrorData =
@@ -36,7 +37,8 @@ public class DartServerData {
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
-  DartServerData(@NotNull final DartServerRootsHandler rootsHandler) {
+  DartServerData(@NotNull final DartAnalysisServerService service, @NotNull final DartServerRootsHandler rootsHandler) {
+    myService = service;
     myRootsHandler = rootsHandler;
   }
 
@@ -44,12 +46,11 @@ public class DartServerData {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartError> newErrors = new ArrayList<>(errors.size());
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
     for (AnalysisError error : errors) {
-      final int offset = service.getConvertedOffset(file, error.getLocation().getOffset());
-      final int length = service.getConvertedOffset(file, error.getLocation().getOffset() + error.getLocation().getLength()) - offset;
+      final int offset = myService.getConvertedOffset(file, error.getLocation().getOffset());
+      final int length = myService.getConvertedOffset(file, error.getLocation().getOffset() + error.getLocation().getLength()) - offset;
       newErrors.add(new DartError(error, offset, length));
     }
 
@@ -64,13 +65,12 @@ public class DartServerData {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartHighlightRegion> newRegions = new ArrayList<>(regions.size());
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
     for (HighlightRegion region : regions) {
       if (region.getLength() > 0) {
-        final int offset = service.getConvertedOffset(file, region.getOffset());
-        final int length = service.getConvertedOffset(file, region.getOffset() + region.getLength()) - offset;
+        final int offset = myService.getConvertedOffset(file, region.getOffset());
+        final int length = myService.getConvertedOffset(file, region.getOffset() + region.getLength()) - offset;
         newRegions.add(new DartHighlightRegion(offset, length, region.getType()));
       }
     }
@@ -87,7 +87,7 @@ public class DartServerData {
 
     for (NavigationRegion region : regions) {
       if (region.getLength() > 0) {
-        final DartNavigationRegion dartNavigationRegion = createDartNavigationRegion(file, region);
+        final DartNavigationRegion dartNavigationRegion = createDartNavigationRegion(myService, file, region);
         newRegions.add(dartNavigationRegion);
       }
     }
@@ -97,10 +97,9 @@ public class DartServerData {
   }
 
   @NotNull
-  static DartNavigationRegion createDartNavigationRegion(@Nullable final VirtualFile file,
+  static DartNavigationRegion createDartNavigationRegion(@NotNull final DartAnalysisServerService service,
+                                                         @Nullable final VirtualFile file,
                                                          @NotNull final NavigationRegion region) {
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
-
     final int offset = service.getConvertedOffset(file, region.getOffset());
     final int length = service.getConvertedOffset(file, region.getOffset() + region.getLength()) - offset;
     final SmartList<DartNavigationTarget> targets = new SmartList<>();
@@ -114,13 +113,12 @@ public class DartServerData {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartOverrideMember> newOverrides = new ArrayList<>(overrides.size());
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
     for (OverrideMember override : overrides) {
       if (override.getLength() > 0) {
-        final int offset = service.getConvertedOffset(file, override.getOffset());
-        final int length = service.getConvertedOffset(file, override.getOffset() + override.getLength()) - offset;
+        final int offset = myService.getConvertedOffset(file, override.getOffset());
+        final int length = myService.getConvertedOffset(file, override.getOffset() + override.getLength()) - offset;
         newOverrides.add(new DartOverrideMember(offset, length, override.getSuperclassMember(), override.getInterfaceMembers()));
       }
     }
@@ -134,20 +132,19 @@ public class DartServerData {
                            @NotNull final List<ImplementedMember> implementedMembers) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
     final List<DartRegion> newImplementedClasses = new ArrayList<>(implementedClasses.size());
     for (ImplementedClass implementedClass : implementedClasses) {
-      final int offset = service.getConvertedOffset(file, implementedClass.getOffset());
-      final int length = service.getConvertedOffset(file, implementedClass.getOffset() + implementedClass.getLength()) - offset;
+      final int offset = myService.getConvertedOffset(file, implementedClass.getOffset());
+      final int length = myService.getConvertedOffset(file, implementedClass.getOffset() + implementedClass.getLength()) - offset;
       newImplementedClasses.add(new DartRegion(offset, length));
     }
 
     final List<DartRegion> newImplementedMembers = new ArrayList<>(implementedMembers.size());
     for (ImplementedMember implementedMember : implementedMembers) {
-      final int offset = service.getConvertedOffset(file, implementedMember.getOffset());
-      final int length = service.getConvertedOffset(file, implementedMember.getOffset() + implementedMember.getLength()) - offset;
+      final int offset = myService.getConvertedOffset(file, implementedMember.getOffset());
+      final int length = myService.getConvertedOffset(file, implementedMember.getOffset() + implementedMember.getLength()) - offset;
       newImplementedMembers.add(new DartRegion(offset, length));
     }
 
@@ -481,7 +478,7 @@ public class DartServerData {
       return myFile;
     }
 
-    public int getOffset(@Nullable final VirtualFile file) {
+    public int getOffset(@NotNull final Project project, @Nullable final VirtualFile file) {
       if (myConvertedOffset == -1) {
         myConvertedOffset = DartAnalysisServerService.getInstance().getConvertedOffset(file, myOriginalOffset);
       }
