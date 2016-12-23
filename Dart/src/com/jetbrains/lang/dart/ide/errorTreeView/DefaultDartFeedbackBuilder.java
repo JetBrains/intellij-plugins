@@ -38,7 +38,7 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
         }
         String potentialTemplate =
           template + "\n\n" + DartBundle.message("dart.error.file.instructions", file.getAbsolutePath()) + "\n\n" + errorMessage;
-        template = potentialTemplate.substring(0, MAX_URL_LENGTH);
+        template = potentialTemplate.substring(0, Math.min(potentialTemplate.length(), MAX_URL_LENGTH));
       }
       catch (IOException e) {
         // ignore it
