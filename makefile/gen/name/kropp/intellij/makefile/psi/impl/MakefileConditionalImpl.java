@@ -1,15 +1,17 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import name.kropp.intellij.makefile.psi.*;
+import name.kropp.intellij.makefile.psi.MakefileConditional;
+import name.kropp.intellij.makefile.psi.MakefileElsebranch;
+import name.kropp.intellij.makefile.psi.MakefileThenbranch;
+import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class MakefileConditionalImpl extends ASTWrapperPsiElement implements MakefileConditional {
 
@@ -28,8 +30,8 @@ public class MakefileConditionalImpl extends ASTWrapperPsiElement implements Mak
 
   @Override
   @NotNull
-  public MakefileElsebranch getElsebranch() {
-    return findNotNullChildByClass(MakefileElsebranch.class);
+  public List<MakefileElsebranch> getElsebranchList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileElsebranch.class);
   }
 
   @Override

@@ -4,3 +4,12 @@ ifeq ($(BUILD_TYPE),QA)
 else
 	rm -rf dependencies
 endif
+
+advanced:
+ifndef qwerty
+	rm -rf dependencies
+else
+	rm -rf dependencies
+else
+	rm -rf dependencies
+endif

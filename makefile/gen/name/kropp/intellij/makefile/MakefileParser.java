@@ -103,18 +103,52 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'ifeq' condition thenbranch 'else' elsebranch 'endif'
+  // ('ifeq'|'ifneq'|'ifndef') condition thenbranch ('else' elsebranch)* 'endif'
   public static boolean conditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional")) return false;
-    if (!nextTokenIs(b, KEYWORD_IFEQ)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, CONDITIONAL, "<conditional>");
+    r = conditional_0(b, l + 1);
+    r = r && consumeToken(b, CONDITION);
+    r = r && thenbranch(b, l + 1);
+    r = r && conditional_3(b, l + 1);
+    r = r && consumeToken(b, KEYWORD_ENDIF);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // 'ifeq'|'ifneq'|'ifndef'
+  private static boolean conditional_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conditional_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, KEYWORD_IFEQ, CONDITION);
-    r = r && thenbranch(b, l + 1);
-    r = r && consumeToken(b, KEYWORD_ELSE);
+    r = consumeToken(b, KEYWORD_IFEQ);
+    if (!r) r = consumeToken(b, KEYWORD_IFNEQ);
+    if (!r) r = consumeToken(b, KEYWORD_IFNDEF);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('else' elsebranch)*
+  private static boolean conditional_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conditional_3")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!conditional_3_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "conditional_3", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // 'else' elsebranch
+  private static boolean conditional_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conditional_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_ELSE);
     r = r && elsebranch(b, l + 1);
-    r = r && consumeToken(b, KEYWORD_ENDIF);
-    exit_section_(b, m, CONDITIONAL, r);
+    exit_section_(b, m, null, r);
     return r;
   }
 

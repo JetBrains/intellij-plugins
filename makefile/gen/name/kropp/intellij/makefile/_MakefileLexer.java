@@ -75,12 +75,12 @@ public class _MakefileLexer implements FlexLexer {
     "\10\0\1\1\2\2\1\3\1\4\1\5\1\6\5\1"+
     "\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16"+
     "\1\10\1\17\1\1\2\20\1\21\1\0\1\6\6\1"+
-    "\1\0\1\17\1\20\6\1\1\20\1\1\1\22\2\1"+
+    "\1\0\1\17\1\20\7\1\1\20\3\1\1\22\2\1"+
     "\1\23\1\1\1\20\2\1\1\24\1\1\1\25\1\1"+
-    "\1\26\1\1\1\27\1\1\1\30";
+    "\1\26\1\1\1\27\1\30\1\1\1\31\1\1\1\32";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[70];
+    int [] result = new int[76];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -111,12 +111,13 @@ public class _MakefileLexer implements FlexLexer {
     "\0\u01b9\0\u01ce\0\u01e3\0\u01f8\0\u020d\0\250\0\u0222\0\u0237"+
     "\0\u024c\0\u0261\0\u0276\0\u01a4\0\u028b\0\u02a0\0\u02b5\0\u02ca"+
     "\0\u02df\0\u02f4\0\u0309\0\u01a4\0\u031e\0\u0333\0\u0348\0\u035d"+
-    "\0\u0372\0\u0387\0\u039c\0\u03b1\0\u03c6\0\250\0\u03db\0\u03f0"+
-    "\0\250\0\u0405\0\u041a\0\u042f\0\u0444\0\250\0\u0459\0\u0237"+
-    "\0\u046e\0\250\0\u0483\0\250\0\u0498\0\250";
+    "\0\u0372\0\u0387\0\u039c\0\u03b1\0\u03c6\0\u03db\0\u03f0\0\u0405"+
+    "\0\250\0\u041a\0\u042f\0\250\0\u0444\0\u0459\0\u046e\0\u0483"+
+    "\0\250\0\u0498\0\250\0\u04ad\0\u0237\0\u04c2\0\250\0\250"+
+    "\0\u04d7\0\250\0\u04ec\0\250";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[70];
+    int [] result = new int[76];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -158,28 +159,32 @@ public class _MakefileLexer implements FlexLexer {
     "\3\0\1\11\1\0\2\11\1\36\14\11\1\40\1\0"+
     "\24\40\1\0\11\40\1\55\11\40\1\42\3\0\1\42"+
     "\1\0\17\42\10\0\1\44\14\0\1\11\3\0\1\11"+
-    "\1\0\6\11\1\56\11\11\3\0\1\11\1\0\12\11"+
-    "\1\57\5\11\3\0\1\11\1\0\14\11\1\60\3\11"+
-    "\3\0\1\11\1\0\11\11\1\61\6\11\3\0\1\11"+
-    "\1\0\16\11\1\62\1\11\3\0\1\11\1\0\5\11"+
-    "\1\63\11\11\10\0\1\54\14\0\1\40\1\0\15\40"+
-    "\1\64\5\40\1\11\3\0\1\11\1\0\7\11\1\65"+
-    "\10\11\3\0\1\11\1\0\15\11\1\66\2\11\3\0"+
-    "\1\11\1\0\4\11\1\67\13\11\3\0\1\11\1\0"+
-    "\4\11\1\70\13\11\3\0\1\11\1\0\12\11\1\71"+
-    "\5\11\3\0\1\11\1\0\6\11\1\72\10\11\1\40"+
-    "\1\0\16\40\1\73\4\40\1\11\3\0\1\11\1\0"+
-    "\10\11\1\74\7\11\3\0\1\11\1\0\5\11\1\75"+
-    "\12\11\3\0\1\11\1\0\14\11\1\76\3\11\3\0"+
-    "\1\11\1\0\7\11\1\77\7\11\1\40\1\0\20\40"+
-    "\1\100\2\40\1\11\3\0\1\11\1\0\11\11\1\101"+
-    "\6\11\3\0\1\11\1\0\12\11\1\102\5\11\3\0"+
-    "\1\11\1\0\10\11\1\103\7\11\3\0\1\11\1\0"+
-    "\12\11\1\104\5\11\3\0\1\11\1\0\11\11\1\105"+
-    "\6\11\3\0\1\11\1\0\12\11\1\106\4\11";
+    "\1\0\6\11\1\56\11\11\3\0\1\11\1\0\5\11"+
+    "\1\57\4\11\1\60\5\11\3\0\1\11\1\0\14\11"+
+    "\1\61\3\11\3\0\1\11\1\0\11\11\1\62\6\11"+
+    "\3\0\1\11\1\0\16\11\1\63\1\11\3\0\1\11"+
+    "\1\0\5\11\1\64\11\11\10\0\1\54\14\0\1\40"+
+    "\1\0\15\40\1\65\5\40\1\11\3\0\1\11\1\0"+
+    "\7\11\1\66\10\11\3\0\1\11\1\0\11\11\1\67"+
+    "\1\70\5\11\3\0\1\11\1\0\15\11\1\71\2\11"+
+    "\3\0\1\11\1\0\4\11\1\72\13\11\3\0\1\11"+
+    "\1\0\4\11\1\73\13\11\3\0\1\11\1\0\12\11"+
+    "\1\74\5\11\3\0\1\11\1\0\6\11\1\75\10\11"+
+    "\1\40\1\0\16\40\1\76\4\40\1\11\3\0\1\11"+
+    "\1\0\10\11\1\77\7\11\3\0\1\11\1\0\12\11"+
+    "\1\100\5\11\3\0\1\11\1\0\15\11\1\101\2\11"+
+    "\3\0\1\11\1\0\5\11\1\102\12\11\3\0\1\11"+
+    "\1\0\14\11\1\103\3\11\3\0\1\11\1\0\7\11"+
+    "\1\104\7\11\1\40\1\0\20\40\1\105\2\40\1\11"+
+    "\3\0\1\11\1\0\11\11\1\106\6\11\3\0\1\11"+
+    "\1\0\14\11\1\107\3\11\3\0\1\11\1\0\12\11"+
+    "\1\110\5\11\3\0\1\11\1\0\10\11\1\111\7\11"+
+    "\3\0\1\11\1\0\12\11\1\112\5\11\3\0\1\11"+
+    "\1\0\11\11\1\113\6\11\3\0\1\11\1\0\12\11"+
+    "\1\114\4\11";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[1197];
+    int [] result = new int[1281];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -218,10 +223,10 @@ public class _MakefileLexer implements FlexLexer {
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\10\0\15\1\1\11\14\1\1\0\1\11\6\1\1\0"+
-    "\1\11\32\1";
+    "\1\11\40\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[70];
+    int [] result = new int[76];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -526,11 +531,11 @@ public class _MakefileLexer implements FlexLexer {
             case PREREQUISITES: {
               yypushback(yylength()); yybegin(YYINITIAL); return EOL;
             }
-            case 71: break;
+            case 77: break;
             case INCLUDES: {
               yypushback(yylength()); yybegin(YYINITIAL); return EOL;
             }
-            case 72: break;
+            case 78: break;
             default:
         return null;
         }
@@ -540,99 +545,107 @@ public class _MakefileLexer implements FlexLexer {
           case 1: 
             { return IDENTIFIER;
             }
-          case 25: break;
+          case 27: break;
           case 2: 
             { return WHITE_SPACE;
             }
-          case 26: break;
+          case 28: break;
           case 3: 
             { yybegin(COMMANDS); return WHITE_SPACE;
             }
-          case 27: break;
+          case 29: break;
           case 4: 
             { return COMMENT;
             }
-          case 28: break;
+          case 30: break;
           case 5: 
             { yybegin(PREREQUISITES); return COLON;
             }
-          case 29: break;
+          case 31: break;
           case 6: 
             { yybegin(VARIABLE); return ASSIGN;
             }
-          case 30: break;
+          case 32: break;
           case 7: 
             { yybegin(YYINITIAL); return EOL;
             }
-          case 31: break;
+          case 33: break;
           case 8: 
             { return BAD_CHARACTER;
             }
-          case 32: break;
+          case 34: break;
           case 9: 
             { yybegin(COMMANDS); return SEMICOLON;
             }
-          case 33: break;
+          case 35: break;
           case 10: 
             { return PIPE;
             }
-          case 34: break;
+          case 36: break;
           case 11: 
             { yybegin(YYINITIAL); return COMMAND;
             }
-          case 35: break;
+          case 37: break;
           case 12: 
             { return VARIABLE_VALUE;
             }
-          case 36: break;
+          case 38: break;
           case 13: 
             { yybegin(YYINITIAL); return WHITE_SPACE;
             }
-          case 37: break;
+          case 39: break;
           case 14: 
             { yybegin(DEFINEBODY); return WHITE_SPACE;
             }
-          case 38: break;
+          case 40: break;
           case 15: 
             { return ASSIGN;
             }
-          case 39: break;
+          case 41: break;
           case 16: 
             { return VARIABLE_VALUE_LINE;
             }
-          case 40: break;
+          case 42: break;
           case 17: 
             { yybegin(YYINITIAL); return CONDITION;
             }
-          case 41: break;
+          case 43: break;
           case 18: 
             { yybegin(CONDITIONALS); return KEYWORD_IFEQ;
             }
-          case 42: break;
+          case 44: break;
           case 19: 
             { return KEYWORD_ELSE;
             }
-          case 43: break;
-          case 20: 
-            { return KEYWORD_ENDIF;
-            }
-          case 44: break;
-          case 21: 
-            { yybegin(YYINITIAL); return KEYWORD_ENDEF;
-            }
           case 45: break;
-          case 22: 
-            { yybegin(DEFINE); return KEYWORD_DEFINE;
+          case 20: 
+            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ;
             }
           case 46: break;
-          case 23: 
-            { yybegin(INCLUDES); return KEYWORD_INCLUDE;
+          case 21: 
+            { return KEYWORD_ENDIF;
             }
           case 47: break;
-          case 24: 
-            { yybegin(INCLUDES); return KEYWORD_MINUSINCLUDE;
+          case 22: 
+            { yybegin(YYINITIAL); return KEYWORD_ENDEF;
             }
           case 48: break;
+          case 23: 
+            { yybegin(CONDITIONALS); return KEYWORD_IFNDEF;
+            }
+          case 49: break;
+          case 24: 
+            { yybegin(DEFINE); return KEYWORD_DEFINE;
+            }
+          case 50: break;
+          case 25: 
+            { yybegin(INCLUDES); return KEYWORD_INCLUDE;
+            }
+          case 51: break;
+          case 26: 
+            { yybegin(INCLUDES); return KEYWORD_MINUSINCLUDE;
+            }
+          case 52: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

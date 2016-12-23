@@ -51,6 +51,8 @@ COMMAND=[^\r\n]+
     "-include"         { yybegin(INCLUDES); return KEYWORD_MINUSINCLUDE; }
     "define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
     "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }
+    "ifneq"            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ; }
+    "ifndef"           { yybegin(CONDITIONALS); return KEYWORD_IFNDEF; }
     "else"             { return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }

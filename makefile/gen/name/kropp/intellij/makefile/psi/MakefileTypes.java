@@ -39,6 +39,8 @@ public interface MakefileTypes {
   IElementType KEYWORD_ENDEF = new MakefileTokenType("endef");
   IElementType KEYWORD_ENDIF = new MakefileTokenType("endif");
   IElementType KEYWORD_IFEQ = new MakefileTokenType("ifeq");
+  IElementType KEYWORD_IFNDEF = new MakefileTokenType("ifndef");
+  IElementType KEYWORD_IFNEQ = new MakefileTokenType("ifneq");
   IElementType KEYWORD_INCLUDE = new MakefileTokenType("include");
   IElementType KEYWORD_MINUSINCLUDE = new MakefileTokenType("-include");
   IElementType PIPE = new MakefileTokenType("|");

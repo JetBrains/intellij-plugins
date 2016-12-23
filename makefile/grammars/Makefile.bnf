@@ -19,6 +19,8 @@
     KEYWORD_INCLUDE = "include"
     KEYWORD_MINUSINCLUDE = "-include"
     KEYWORD_IFEQ = "ifeq"
+    KEYWORD_IFNEQ = "ifneq"
+    KEYWORD_IFNDEF = "ifndef"
     KEYWORD_ELSE = "else"
     KEYWORD_ENDIF = "endif"
     KEYWORD_DEFINE = "define"
@@ -44,7 +46,7 @@ prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.Makefi
 
 commands ::= command*
 
-conditional ::= 'ifeq' condition thenbranch 'else' elsebranch 'endif'
+conditional ::= ('ifeq'|'ifneq'|'ifndef') condition thenbranch ('else' elsebranch)* 'endif'
 
 thenbranch ::= commands
 elsebranch ::= commands
