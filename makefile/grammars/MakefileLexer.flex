@@ -29,6 +29,7 @@ TAB=\t
 COMMENT="#"[^\r\n]*
 VARIABLE_VALUE=[^\r\n]
 COLON=":"
+SEMICOLON=";"
 PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
@@ -56,6 +57,7 @@ COMMAND=[^\r\n]+
 
 <PREREQUISITES> {
     {PIPE}                  { return PIPE; }
+    {SEMICOLON}             { return SEMICOLON; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }

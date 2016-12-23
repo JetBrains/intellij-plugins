@@ -13,6 +13,7 @@
 
   tokens = [
     COLON = ":"
+    SEMICOLON = ";"
     ASSIGN = "="
     PIPE = "|"
     KEYWORD_INCLUDE = "include"
@@ -28,7 +29,8 @@
 
 makefile ::= (rule|variable|define|include|comment)*
 
-rule ::= target_line EOL (conditional|commands)?
+rule ::= target_line (';' EOL | EOL recipe)
+recipe ::= (conditional|commands)?
 
 target_line ::= targets ':' prerequisites {pin=2 methods=[getTargetName]}
 targets ::= target+

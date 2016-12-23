@@ -4,21 +4,21 @@ package name.kropp.intellij.makefile.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
+import name.kropp.intellij.makefile.psi.MakefileCommands;
+import name.kropp.intellij.makefile.psi.MakefileConditional;
 import name.kropp.intellij.makefile.psi.MakefileRecipe;
-import name.kropp.intellij.makefile.psi.MakefileRule;
-import name.kropp.intellij.makefile.psi.MakefileTargetLine;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRule {
+public class MakefileRecipeImpl extends ASTWrapperPsiElement implements MakefileRecipe {
 
-  public MakefileRuleImpl(ASTNode node) {
+  public MakefileRecipeImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitRule(this);
+    visitor.visitRecipe(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,14 +28,14 @@ public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRu
 
   @Override
   @Nullable
-  public MakefileRecipe getRecipe() {
-    return findChildByClass(MakefileRecipe.class);
+  public MakefileCommands getCommands() {
+    return findChildByClass(MakefileCommands.class);
   }
 
   @Override
-  @NotNull
-  public MakefileTargetLine getTargetLine() {
-    return findNotNullChildByClass(MakefileTargetLine.class);
+  @Nullable
+  public MakefileConditional getConditional() {
+    return findChildByClass(MakefileConditional.class);
   }
 
 }

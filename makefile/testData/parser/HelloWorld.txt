@@ -11,8 +11,9 @@ Makefile
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('hello')
     PsiElement(EOL)('\n\n')
-    MakefileCommandsImpl(COMMANDS)
-      <empty list>
+    MakefileRecipeImpl(RECIPE)
+      MakefileCommandsImpl(COMMANDS)
+        <empty list>
   MakefileVariableImpl(VARIABLE)
     MakefileVariableNameImpl(VARIABLE_NAME)
       PsiElement(identifier)('GCC')
@@ -31,5 +32,6 @@ Makefile
           <empty list>
     PsiElement(EOL)('\n')
     PsiWhiteSpace('\t')
-    MakefileCommandsImpl(COMMANDS)
-      PsiElement(command)('$(GCC) -c hello.c')
+    MakefileRecipeImpl(RECIPE)
+      MakefileCommandsImpl(COMMANDS)
+        PsiElement(command)('$(GCC) -c hello.c')

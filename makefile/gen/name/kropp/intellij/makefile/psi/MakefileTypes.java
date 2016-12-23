@@ -18,6 +18,7 @@ public interface MakefileTypes {
   IElementType ORDER_ONLY_PREREQUISITES = new MakefileElementType("ORDER_ONLY_PREREQUISITES");
   IElementType PREREQUISITE = new MakefileElementType("PREREQUISITE");
   IElementType PREREQUISITES = new MakefileElementType("PREREQUISITES");
+  IElementType RECIPE = new MakefileElementType("RECIPE");
   IElementType RULE = new MakefileElementType("RULE");
   IElementType TARGET = new MakefileElementType("TARGET");
   IElementType TARGETS = new MakefileElementType("TARGETS");
@@ -40,6 +41,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_IFEQ = new MakefileTokenType("ifeq");
   IElementType KEYWORD_INCLUDE = new MakefileTokenType("include");
   IElementType PIPE = new MakefileTokenType("|");
+  IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
   IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable_value_line");
 
@@ -75,6 +77,9 @@ public interface MakefileTypes {
       }
       else if (type == PREREQUISITES) {
         return new MakefilePrerequisitesImpl(node);
+      }
+      else if (type == RECIPE) {
+        return new MakefileRecipeImpl(node);
       }
       else if (type == RULE) {
         return new MakefileRuleImpl(node);
