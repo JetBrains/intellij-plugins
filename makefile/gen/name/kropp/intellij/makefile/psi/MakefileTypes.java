@@ -40,6 +40,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_ENDIF = new MakefileTokenType("endif");
   IElementType KEYWORD_IFEQ = new MakefileTokenType("ifeq");
   IElementType KEYWORD_INCLUDE = new MakefileTokenType("include");
+  IElementType KEYWORD_MINUSINCLUDE = new MakefileTokenType("-include");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");

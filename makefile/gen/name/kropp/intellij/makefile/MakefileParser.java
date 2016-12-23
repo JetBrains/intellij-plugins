@@ -192,16 +192,27 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'include' filename+ EOL
+  // ('include'|'-include') filename+ EOL
   public static boolean include(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include")) return false;
-    if (!nextTokenIs(b, KEYWORD_INCLUDE)) return false;
+    if (!nextTokenIs(b, "<include>", KEYWORD_MINUSINCLUDE, KEYWORD_INCLUDE)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, INCLUDE, "<include>");
+    r = include_0(b, l + 1);
+    r = r && include_1(b, l + 1);
+    r = r && consumeToken(b, EOL);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // 'include'|'-include'
+  private static boolean include_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "include_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_INCLUDE);
-    r = r && include_1(b, l + 1);
-    r = r && consumeToken(b, EOL);
-    exit_section_(b, m, INCLUDE, r);
+    if (!r) r = consumeToken(b, KEYWORD_MINUSINCLUDE);
+    exit_section_(b, m, null, r);
     return r;
   }
 

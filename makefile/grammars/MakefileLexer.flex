@@ -48,6 +48,7 @@ COMMAND=[^\r\n]+
     {COLON}            { yybegin(PREREQUISITES); return COLON; }
     {ASSIGN}           { yybegin(VARIABLE); return ASSIGN; }
     "include"          { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
+    "-include"         { yybegin(INCLUDES); return KEYWORD_MINUSINCLUDE; }
     "define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
     "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }
     "else"             { return KEYWORD_ELSE; }

@@ -17,6 +17,7 @@
     ASSIGN = "="
     PIPE = "|"
     KEYWORD_INCLUDE = "include"
+    KEYWORD_MINUSINCLUDE = "-include"
     KEYWORD_IFEQ = "ifeq"
     KEYWORD_ELSE = "else"
     KEYWORD_ENDIF = "endif"
@@ -52,5 +53,5 @@ variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? {pin=
 variable_name ::= identifier
 define ::= 'define' variable_name ('='|':='|'::='|'?='|'!='|'+=')? variable_value_line* 'endef'
 
-include ::= 'include' filename+ EOL
+include ::= ('include'|'-include') filename+ EOL
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
