@@ -1,5 +1,5 @@
 interface LanguagePluginFactory {
-    create(state:PluginState): { languagePlugin: LanguagePlugin, readyMessage?:any};
+    create(state: PluginState): {languagePlugin: LanguagePlugin, readyMessage?: any};
 }
 
 interface LanguagePluginFactoryProvider {
@@ -7,11 +7,15 @@ interface LanguagePluginFactoryProvider {
 }
 
 interface LanguagePlugin {
-    onMessage(p:string):any;
+    onMessage(p: string, writer: MessageWriter): any;
 }
 
 interface PluginState {
-    pluginName:string
-    pluginPath?:string
-    sessionId:string
+    pluginName: string
+    pluginPath?: string
+    sessionId: string
+}
+
+interface MessageWriter {
+    write(answer: string): void
 }
