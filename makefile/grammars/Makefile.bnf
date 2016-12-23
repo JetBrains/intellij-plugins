@@ -19,12 +19,14 @@
     KEYWORD_IFEQ = "ifeq"
     KEYWORD_ELSE = "else"
     KEYWORD_ENDIF = "endif"
+    KEYWORD_DEFINE = "define"
+    KEYWORD_ENDEF = "endef"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|variable|include|comment)*
+makefile ::= (rule|variable|define|include|comment)*
 
 rule ::= target_line EOL (conditional|commands)?
 
@@ -46,6 +48,7 @@ elsebranch ::= commands
 
 variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? {pin=2}
 variable_name ::= identifier
+define ::= 'define' variable_name ('='|':='|'::='|'?='|'!='|'+=')? variable_value_line* 'endef'
 
 include ::= 'include' filename+ EOL
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}

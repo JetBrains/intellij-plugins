@@ -35,7 +35,7 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 FILENAME_CHARACTER=[^:\ \r\n\t]
 COMMAND=[^\r\n]+
 
-%state PREREQUISITES INCLUDES COMMANDS VARIABLE CONDITIONALS
+%state PREREQUISITES INCLUDES COMMANDS VARIABLE DEFINE DEFINEBODY CONDITIONALS
 
 %%
 
@@ -47,6 +47,7 @@ COMMAND=[^\r\n]+
     {COLON}            { yybegin(PREREQUISITES); return COLON; }
     {ASSIGN}           { yybegin(VARIABLE); return ASSIGN; }
     "include"          { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
+    "define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
     "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }
     "else"             { return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }
@@ -71,8 +72,23 @@ COMMAND=[^\r\n]+
 
 <COMMANDS> {COMMAND}                   { yybegin(YYINITIAL); return COMMAND; }
 
-<VARIABLE> {VARIABLE_VALUE}+           { yybegin(VARIABLE); return VARIABLE_VALUE; }
-<VARIABLE> {EOL}                       { yybegin(YYINITIAL); return WHITE_SPACE; }
+<VARIABLE> {
+    {VARIABLE_VALUE}+           { return VARIABLE_VALUE; }
+    {EOL}                       { yybegin(YYINITIAL); return WHITE_SPACE; }
+}
+
+<DEFINE> {
+    {SPACES}                    { return WHITE_SPACE; }
+    {EOL}                       { yybegin(DEFINEBODY); return WHITE_SPACE; }
+    {ASSIGN}                    { return ASSIGN; }
+    {FILENAME_CHARACTER}+       { return IDENTIFIER; }
+}
+
+<DEFINEBODY> {
+    "endef"                { yybegin(YYINITIAL); return KEYWORD_ENDEF; }
+    {VARIABLE_VALUE}+      { return VARIABLE_VALUE_LINE; }
+    {EOL}                  { return WHITE_SPACE; }
+}
 
 <CONDITIONALS> {
     {FILENAME_CHARACTER}+      { yybegin(YYINITIAL); return CONDITION; }

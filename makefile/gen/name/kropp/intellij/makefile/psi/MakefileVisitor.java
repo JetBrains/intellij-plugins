@@ -1,9 +1,9 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi;
 
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import org.jetbrains.annotations.NotNull;
 
 public class MakefileVisitor extends PsiElementVisitor {
 
@@ -12,6 +12,10 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitConditional(@NotNull MakefileConditional o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDefine(@NotNull MakefileDefine o) {
     visitPsiElement(o);
   }
 

@@ -1,15 +1,16 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi;
 
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import name.kropp.intellij.makefile.psi.impl.*;
 
 public interface MakefileTypes {
 
   IElementType COMMANDS = new MakefileElementType("COMMANDS");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
+  IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType ELSEBRANCH = new MakefileElementType("ELSEBRANCH");
   IElementType FILENAME = new MakefileElementType("FILENAME");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
@@ -32,12 +33,15 @@ public interface MakefileTypes {
   IElementType CONDITION = new MakefileTokenType("condition");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
+  IElementType KEYWORD_DEFINE = new MakefileTokenType("define");
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");
+  IElementType KEYWORD_ENDEF = new MakefileTokenType("endef");
   IElementType KEYWORD_ENDIF = new MakefileTokenType("endif");
   IElementType KEYWORD_IFEQ = new MakefileTokenType("ifeq");
   IElementType KEYWORD_INCLUDE = new MakefileTokenType("include");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
+  IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable_value_line");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -47,6 +51,9 @@ public interface MakefileTypes {
       }
       else if (type == CONDITIONAL) {
         return new MakefileConditionalImpl(node);
+      }
+      else if (type == DEFINE) {
+        return new MakefileDefineImpl(node);
       }
       else if (type == ELSEBRANCH) {
         return new MakefileElsebranchImpl(node);
