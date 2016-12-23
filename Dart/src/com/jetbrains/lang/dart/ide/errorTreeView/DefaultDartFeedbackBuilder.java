@@ -1,9 +1,11 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.actions.SendFeedbackAction;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-
-import static com.intellij.ide.actions.SendFeedbackAction.getDescription;
 
 public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
 
@@ -25,7 +25,7 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     boolean eap = appInfo.isEAP();
     String ijBuild = eap ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
     String sdkVsn = getSdkVersion(project);
-    String platDescr = getDescription().replaceAll(";", " ").trim();
+    String platDescr = StringUtil.replace(SendFeedbackAction.getDescription(), ";", " ").trim();
     String template = DartBundle.message("dart.feedback.url.template", ijBuild, sdkVsn, platDescr);
     if (errorMessage != null) {
       errorMessage = "```\n" + errorMessage + "```";
