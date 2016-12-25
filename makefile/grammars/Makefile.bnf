@@ -30,7 +30,9 @@
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|variable|define|include|comment)*
+makefile ::= (rule|variable|directive|comment)*
+
+private directive ::= define|include
 
 rule ::= target_line (';' EOL? | EOL) recipe
 recipe ::= (conditional|commands)?
@@ -55,5 +57,5 @@ variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? {pin=
 variable_name ::= identifier
 define ::= 'define' variable_name ('='|':='|'::='|'?='|'!='|'+=')? variable_value_line* 'endef'
 
-include ::= ('include'|'-include') filename+ EOL
+include ::= ('include'|'-include'|'sinclude') filename+ EOL
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}

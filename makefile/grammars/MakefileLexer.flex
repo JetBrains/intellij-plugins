@@ -49,6 +49,7 @@ COMMAND=[^\r\n]+
     {ASSIGN}           { yybegin(VARIABLE); return ASSIGN; }
     "include"          { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
     "-include"         { yybegin(INCLUDES); return KEYWORD_MINUSINCLUDE; }
+    "sinclude"         { yybegin(INCLUDES); return KEYWORD_MINUSINCLUDE; }
     "define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
     "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }
     "ifneq"            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ; }
