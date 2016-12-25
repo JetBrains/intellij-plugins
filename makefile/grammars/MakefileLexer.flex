@@ -59,6 +59,7 @@ COMMAND=[^\r\n]+
     "endif"            { return KEYWORD_ENDIF; }
     "override"         { return KEYWORD_OVERRIDE; }
     "export"           { return KEYWORD_EXPORT; }
+    "private"          { return KEYWORD_PRIVATE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
 }
 

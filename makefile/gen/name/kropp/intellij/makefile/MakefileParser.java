@@ -59,6 +59,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == PREREQUISITES) {
       r = prerequisites(b, 0);
     }
+    else if (t == PRIVATEVAR) {
+      r = privatevar(b, 0);
+    }
     else if (t == RECIPE) {
       r = recipe(b, 0);
     }
@@ -211,7 +214,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // define|include|undefine|override|export
+  // define|include|undefine|override|export|privatevar
   static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     boolean r;
@@ -221,6 +224,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = undefine(b, l + 1);
     if (!r) r = override(b, l + 1);
     if (!r) r = export(b, l + 1);
+    if (!r) r = privatevar(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -431,6 +435,19 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, PIPE);
     r = r && order_only_prerequisites(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'private' variable-assignment
+  public static boolean privatevar(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "privatevar")) return false;
+    if (!nextTokenIs(b, KEYWORD_PRIVATE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_PRIVATE);
+    r = r && variable_assignment(b, l + 1);
+    exit_section_(b, m, PRIVATEVAR, r);
     return r;
   }
 

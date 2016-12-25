@@ -20,6 +20,7 @@ public interface MakefileTypes {
   IElementType OVERRIDE = new MakefileElementType("OVERRIDE");
   IElementType PREREQUISITE = new MakefileElementType("PREREQUISITE");
   IElementType PREREQUISITES = new MakefileElementType("PREREQUISITES");
+  IElementType PRIVATEVAR = new MakefileElementType("PRIVATEVAR");
   IElementType RECIPE = new MakefileElementType("RECIPE");
   IElementType RULE = new MakefileElementType("RULE");
   IElementType TARGET = new MakefileElementType("TARGET");
@@ -47,6 +48,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_IFNEQ = new MakefileTokenType("ifneq");
   IElementType KEYWORD_INCLUDE = new MakefileTokenType("include");
   IElementType KEYWORD_OVERRIDE = new MakefileTokenType("override");
+  IElementType KEYWORD_PRIVATE = new MakefileTokenType("private");
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
@@ -91,6 +93,9 @@ public interface MakefileTypes {
       }
       else if (type == PREREQUISITES) {
         return new MakefilePrerequisitesImpl(node);
+      }
+      else if (type == PRIVATEVAR) {
+        return new MakefilePrivatevarImpl(node);
       }
       else if (type == RECIPE) {
         return new MakefileRecipeImpl(node);
