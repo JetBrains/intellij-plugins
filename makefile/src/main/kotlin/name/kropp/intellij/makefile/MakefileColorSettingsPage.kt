@@ -6,7 +6,7 @@ import com.intellij.openapi.options.colors.ColorSettingsPage
 
 private val tags = mapOf(
     "target" to MakefileSyntaxHighlighter.TARGET,
-    "variableName" to MakefileSyntaxHighlighter.VARIABLE_NAME,
+    "variableName" to MakefileSyntaxHighlighter.VARIABLE,
     "prerequisite" to MakefileSyntaxHighlighter.PREREQUISITE
 )
 
@@ -19,7 +19,7 @@ class MakefileColorSettingsPage : ColorSettingsPage {
       AttributesDescriptor("Target", MakefileSyntaxHighlighter.TARGET),
       AttributesDescriptor("Separator", MakefileSyntaxHighlighter.SEPARATOR),
       AttributesDescriptor("Prerequisite", MakefileSyntaxHighlighter.PREREQUISITE),
-      AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE_NAME),
+      AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE),
       AttributesDescriptor("Variable Value", MakefileSyntaxHighlighter.VARIABLE_VALUE)
   )
 

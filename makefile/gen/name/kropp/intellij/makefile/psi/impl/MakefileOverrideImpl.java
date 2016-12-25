@@ -4,19 +4,19 @@ package name.kropp.intellij.makefile.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import name.kropp.intellij.makefile.psi.MakefileDefine;
-import name.kropp.intellij.makefile.psi.MakefileVariable;
+import name.kropp.intellij.makefile.psi.MakefileOverride;
+import name.kropp.intellij.makefile.psi.MakefileVariableAssignment;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class MakefileDefineImpl extends ASTWrapperPsiElement implements MakefileDefine {
+public class MakefileOverrideImpl extends ASTWrapperPsiElement implements MakefileOverride {
 
-  public MakefileDefineImpl(ASTNode node) {
+  public MakefileOverrideImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitDefine(this);
+    visitor.visitOverride(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -26,8 +26,8 @@ public class MakefileDefineImpl extends ASTWrapperPsiElement implements Makefile
 
   @Override
   @NotNull
-  public MakefileVariable getVariable() {
-    return findNotNullChildByClass(MakefileVariable.class);
+  public MakefileVariableAssignment getVariableAssignment() {
+    return findNotNullChildByClass(MakefileVariableAssignment.class);
   }
 
 }

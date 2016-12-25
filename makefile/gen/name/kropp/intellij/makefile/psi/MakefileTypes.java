@@ -16,6 +16,7 @@ public interface MakefileTypes {
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
   IElementType NORMAL_PREREQUISITES = new MakefileElementType("NORMAL_PREREQUISITES");
   IElementType ORDER_ONLY_PREREQUISITES = new MakefileElementType("ORDER_ONLY_PREREQUISITES");
+  IElementType OVERRIDE = new MakefileElementType("OVERRIDE");
   IElementType PREREQUISITE = new MakefileElementType("PREREQUISITE");
   IElementType PREREQUISITES = new MakefileElementType("PREREQUISITES");
   IElementType RECIPE = new MakefileElementType("RECIPE");
@@ -26,7 +27,7 @@ public interface MakefileTypes {
   IElementType THENBRANCH = new MakefileElementType("THENBRANCH");
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
-  IElementType VARIABLE_NAME = new MakefileElementType("VARIABLE_NAME");
+  IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
 
   IElementType ASSIGN = new MakefileTokenType("=");
   IElementType COLON = new MakefileTokenType(":");
@@ -43,11 +44,12 @@ public interface MakefileTypes {
   IElementType KEYWORD_IFNDEF = new MakefileTokenType("ifndef");
   IElementType KEYWORD_IFNEQ = new MakefileTokenType("ifneq");
   IElementType KEYWORD_INCLUDE = new MakefileTokenType("include");
+  IElementType KEYWORD_OVERRIDE = new MakefileTokenType("override");
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
-  IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
-  IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable_value_line");
+  IElementType VARIABLE_VALUE = new MakefileTokenType("variable-value");
+  IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -75,6 +77,9 @@ public interface MakefileTypes {
       }
       else if (type == ORDER_ONLY_PREREQUISITES) {
         return new MakefileOrderOnlyPrerequisitesImpl(node);
+      }
+      else if (type == OVERRIDE) {
+        return new MakefileOverrideImpl(node);
       }
       else if (type == PREREQUISITE) {
         return new MakefilePrerequisiteImpl(node);
@@ -106,8 +111,8 @@ public interface MakefileTypes {
       else if (type == VARIABLE) {
         return new MakefileVariableImpl(node);
       }
-      else if (type == VARIABLE_NAME) {
-        return new MakefileVariableNameImpl(node);
+      else if (type == VARIABLE_ASSIGNMENT) {
+        return new MakefileVariableAssignmentImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

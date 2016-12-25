@@ -5,7 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import name.kropp.intellij.makefile.psi.MakefileUndefine;
-import name.kropp.intellij.makefile.psi.MakefileVariableName;
+import name.kropp.intellij.makefile.psi.MakefileVariable;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +26,8 @@ public class MakefileUndefineImpl extends ASTWrapperPsiElement implements Makefi
 
   @Override
   @NotNull
-  public MakefileVariableName getVariableName() {
-    return findNotNullChildByClass(MakefileVariableName.class);
+  public MakefileVariable getVariable() {
+    return findNotNullChildByClass(MakefileVariable.class);
   }
 
 }

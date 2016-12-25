@@ -4,9 +4,9 @@ package name.kropp.intellij.makefile.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public interface MakefileDefine extends PsiElement {
+public interface MakefileOverride extends PsiElement {
 
   @NotNull
-  MakefileVariable getVariable();
+  MakefileVariableAssignment getVariableAssignment();
 
 }

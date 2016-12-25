@@ -57,6 +57,7 @@ COMMAND=[^\r\n]+
     "ifndef"           { yybegin(CONDITIONALS); return KEYWORD_IFNDEF; }
     "else"             { return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }
+    "override"         { return KEYWORD_OVERRIDE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
 }
 

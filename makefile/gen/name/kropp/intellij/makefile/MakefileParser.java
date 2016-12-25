@@ -47,6 +47,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == ORDER_ONLY_PREREQUISITES) {
       r = order_only_prerequisites(b, 0);
     }
+    else if (t == OVERRIDE) {
+      r = override(b, 0);
+    }
     else if (t == PREREQUISITE) {
       r = prerequisite(b, 0);
     }
@@ -76,9 +79,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     }
     else if (t == VARIABLE) {
       r = variable(b, 0);
-    }
-    else if (t == VARIABLE_NAME) {
-      r = variable_name(b, 0);
     }
     else {
       r = parse_root_(t, b, 0);
@@ -156,14 +156,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'define' variable_name ('='|':='|'::='|'?='|'!='|'+=')? variable_value_line* 'endef'
+  // 'define' variable ('='|':='|'::='|'?='|'!='|'+=')? variable-value-line* 'endef'
   public static boolean define(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "define")) return false;
     if (!nextTokenIs(b, KEYWORD_DEFINE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_DEFINE);
-    r = r && variable_name(b, l + 1);
+    r = r && variable(b, l + 1);
     r = r && define_2(b, l + 1);
     r = r && define_3(b, l + 1);
     r = r && consumeToken(b, KEYWORD_ENDEF);
@@ -193,7 +193,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // variable_value_line*
+  // variable-value-line*
   private static boolean define_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "define_3")) return false;
     int c = current_position_(b);
@@ -206,7 +206,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // define|include|undefine
+  // define|include|undefine|override
   static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     boolean r;
@@ -214,6 +214,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = define(b, l + 1);
     if (!r) r = include(b, l + 1);
     if (!r) r = undefine(b, l + 1);
+    if (!r) r = override(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -283,7 +284,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (rule|variable|directive|comment)*
+  // (rule|variable-assignment|directive|comment)*
   static boolean makefile(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile")) return false;
     int c = current_position_(b);
@@ -295,13 +296,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // rule|variable|directive|comment
+  // rule|variable-assignment|directive|comment
   private static boolean makefile_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = rule(b, l + 1);
-    if (!r) r = variable(b, l + 1);
+    if (!r) r = variable_assignment(b, l + 1);
     if (!r) r = directive(b, l + 1);
     if (!r) r = consumeToken(b, COMMENT);
     exit_section_(b, m, null, r);
@@ -338,6 +339,19 @@ public class MakefileParser implements PsiParser, LightPsiParser {
       c = current_position_(b);
     }
     exit_section_(b, m, ORDER_ONLY_PREREQUISITES, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'override' variable-assignment
+  public static boolean override(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "override")) return false;
+    if (!nextTokenIs(b, KEYWORD_OVERRIDE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_OVERRIDE);
+    r = r && variable_assignment(b, l + 1);
+    exit_section_(b, m, OVERRIDE, r);
     return r;
   }
 
@@ -504,37 +518,49 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'undefine' variable_name EOL
+  // 'undefine' variable EOL
   public static boolean undefine(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "undefine")) return false;
     if (!nextTokenIs(b, KEYWORD_UNDEFINE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_UNDEFINE);
-    r = r && variable_name(b, l + 1);
+    r = r && variable(b, l + 1);
     r = r && consumeToken(b, EOL);
     exit_section_(b, m, UNDEFINE, r);
     return r;
   }
 
   /* ********************************************************** */
-  // variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value?
+  // identifier
   public static boolean variable(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, VARIABLE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // variable ('='|':='|'::='|'?='|'!='|'+=') variable-value?
+  public static boolean variable_assignment(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_assignment")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, VARIABLE, null);
-    r = variable_name(b, l + 1);
-    r = r && variable_1(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, VARIABLE_ASSIGNMENT, null);
+    r = variable(b, l + 1);
+    r = r && variable_assignment_1(b, l + 1);
     p = r; // pin = 2
-    r = r && variable_2(b, l + 1);
+    r = r && variable_assignment_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // '='|':='|'::='|'?='|'!='|'+='
-  private static boolean variable_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "variable_1")) return false;
+  private static boolean variable_assignment_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_assignment_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, ASSIGN);
@@ -547,23 +573,11 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // variable_value?
-  private static boolean variable_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "variable_2")) return false;
+  // variable-value?
+  private static boolean variable_assignment_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_assignment_2")) return false;
     consumeToken(b, VARIABLE_VALUE);
     return true;
-  }
-
-  /* ********************************************************** */
-  // identifier
-  public static boolean variable_name(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "variable_name")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, VARIABLE_NAME, r);
-    return r;
   }
 
 }

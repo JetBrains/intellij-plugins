@@ -4,7 +4,7 @@ package name.kropp.intellij.makefile.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public interface MakefileDefine extends PsiElement {
+public interface MakefileVariableAssignment extends PsiElement {
 
   @NotNull
   MakefileVariable getVariable();

@@ -25,14 +25,15 @@
     KEYWORD_ENDEF = "endef"
     KEYWORD_DEFINE = "define"
     KEYWORD_UNDEFINE = "undefine"
+    KEYWORD_OVERRIDE = "override"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|variable|directive|comment)*
+makefile ::= (rule|variable-assignment|directive|comment)*
 
-private directive ::= define|include|undefine
+private directive ::= define|include|undefine|override
 
 rule ::= target_line (';' EOL? | EOL) recipe
 recipe ::= (conditional|commands)?
@@ -53,10 +54,11 @@ conditional ::= ('ifeq'|'ifneq'|'ifndef') condition thenbranch ('else' elsebranc
 thenbranch ::= commands
 elsebranch ::= commands
 
-variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? {pin=2}
-variable_name ::= identifier
-define ::= 'define' variable_name ('='|':='|'::='|'?='|'!='|'+=')? variable_value_line* 'endef'
-undefine ::= 'undefine' variable_name EOL
+meta variable-assignment ::= variable ('='|':='|'::='|'?='|'!='|'+=') variable-value? {pin=2}
+variable ::= identifier
+define ::= 'define' variable ('='|':='|'::='|'?='|'!='|'+=')? variable-value-line* 'endef'
+undefine ::= 'undefine' variable EOL
+override ::= 'override' variable-assignment
 
 include ::= ('include'|'-include'|'sinclude') filename+ EOL
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}

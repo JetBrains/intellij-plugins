@@ -7,6 +7,6 @@ import org.jetbrains.annotations.NotNull;
 public interface MakefileUndefine extends PsiElement {
 
   @NotNull
-  MakefileVariableName getVariableName();
+  MakefileVariable getVariable();
 
 }

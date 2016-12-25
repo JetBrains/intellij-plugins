@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import name.kropp.intellij.makefile.psi.MakefilePrerequisite
 import name.kropp.intellij.makefile.psi.MakefileTarget
 import name.kropp.intellij.makefile.psi.MakefileTargetLine
-import name.kropp.intellij.makefile.psi.MakefileVariableName
+import name.kropp.intellij.makefile.psi.MakefileVariable
 
 
 class MakefileAnnotator : Annotator {
@@ -23,8 +23,8 @@ class MakefileAnnotator : Annotator {
       } else {
         holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.PREREQUISITE
       }
-    } else if (element is MakefileVariableName) {
-      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE_NAME
+    } else if (element is MakefileVariable) {
+      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE
     }
   }
 }

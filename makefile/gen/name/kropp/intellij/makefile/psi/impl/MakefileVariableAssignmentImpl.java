@@ -4,19 +4,19 @@ package name.kropp.intellij.makefile.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import name.kropp.intellij.makefile.psi.MakefileDefine;
 import name.kropp.intellij.makefile.psi.MakefileVariable;
+import name.kropp.intellij.makefile.psi.MakefileVariableAssignment;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class MakefileDefineImpl extends ASTWrapperPsiElement implements MakefileDefine {
+public class MakefileVariableAssignmentImpl extends ASTWrapperPsiElement implements MakefileVariableAssignment {
 
-  public MakefileDefineImpl(ASTNode node) {
+  public MakefileVariableAssignmentImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitDefine(this);
+    visitor.visitVariableAssignment(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
