@@ -35,6 +35,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == ELSEBRANCH) {
       r = elsebranch(b, 0);
     }
+    else if (t == EXPORT) {
+      r = export(b, 0);
+    }
     else if (t == FILENAME) {
       r = filename(b, 0);
     }
@@ -208,7 +211,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // define|include|undefine|override
+  // define|include|undefine|override|export
   static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     boolean r;
@@ -217,6 +220,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = include(b, l + 1);
     if (!r) r = undefine(b, l + 1);
     if (!r) r = override(b, l + 1);
+    if (!r) r = export(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -229,6 +233,37 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, ELSEBRANCH, "<elsebranch>");
     r = commands(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'export' (variable-assignment|variable)?
+  public static boolean export(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "export")) return false;
+    if (!nextTokenIs(b, KEYWORD_EXPORT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_EXPORT);
+    r = r && export_1(b, l + 1);
+    exit_section_(b, m, EXPORT, r);
+    return r;
+  }
+
+  // (variable-assignment|variable)?
+  private static boolean export_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "export_1")) return false;
+    export_1_0(b, l + 1);
+    return true;
+  }
+
+  // variable-assignment|variable
+  private static boolean export_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "export_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = variable_assignment(b, l + 1);
+    if (!r) r = variable(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 

@@ -58,6 +58,7 @@ COMMAND=[^\r\n]+
     "else"             { return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }
     "override"         { return KEYWORD_OVERRIDE; }
+    "export"           { return KEYWORD_EXPORT; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
 }
 

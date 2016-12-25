@@ -12,6 +12,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testEmptyRecipe() { doTest(true); }
   fun testRecipeOnTheSameLine() { doTest(true); }
   fun testDirectives() { doTest(true); }
+  fun testExport() { doTest(true); }
 
   override fun getTestDataPath() = "testData"
 }

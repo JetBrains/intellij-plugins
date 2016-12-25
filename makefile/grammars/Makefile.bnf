@@ -26,6 +26,7 @@
     KEYWORD_DEFINE = "define"
     KEYWORD_UNDEFINE = "undefine"
     KEYWORD_OVERRIDE = "override"
+    KEYWORD_EXPORT = "export"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
@@ -33,7 +34,7 @@
 
 makefile ::= (rule|variable-assignment|directive|comment)*
 
-private directive ::= define|include|undefine|override
+private directive ::= define|include|undefine|override|export
 
 rule ::= target_line (';' EOL? | EOL) recipe
 recipe ::= (conditional|commands)?
@@ -60,6 +61,7 @@ variable ::= identifier
 define ::= 'define' variable assignment? variable-value-line* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable EOL
 override ::= 'override' variable-assignment
+export ::= 'export' (variable-assignment|variable)?
 
 include ::= ('include'|'-include'|'sinclude') filename+ EOL
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}

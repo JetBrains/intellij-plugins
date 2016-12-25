@@ -12,6 +12,7 @@ public interface MakefileTypes {
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType ELSEBRANCH = new MakefileElementType("ELSEBRANCH");
+  IElementType EXPORT = new MakefileElementType("EXPORT");
   IElementType FILENAME = new MakefileElementType("FILENAME");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
   IElementType NORMAL_PREREQUISITES = new MakefileElementType("NORMAL_PREREQUISITES");
@@ -40,6 +41,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");
   IElementType KEYWORD_ENDEF = new MakefileTokenType("endef");
   IElementType KEYWORD_ENDIF = new MakefileTokenType("endif");
+  IElementType KEYWORD_EXPORT = new MakefileTokenType("export");
   IElementType KEYWORD_IFEQ = new MakefileTokenType("ifeq");
   IElementType KEYWORD_IFNDEF = new MakefileTokenType("ifndef");
   IElementType KEYWORD_IFNEQ = new MakefileTokenType("ifneq");
@@ -65,6 +67,9 @@ public interface MakefileTypes {
       }
       else if (type == ELSEBRANCH) {
         return new MakefileElsebranchImpl(node);
+      }
+      else if (type == EXPORT) {
+        return new MakefileExportImpl(node);
       }
       else if (type == FILENAME) {
         return new MakefileFilenameImpl(node);

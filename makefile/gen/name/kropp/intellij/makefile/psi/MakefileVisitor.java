@@ -23,6 +23,10 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitExport(@NotNull MakefileExport o) {
+    visitPsiElement(o);
+  }
+
   public void visitFilename(@NotNull MakefileFilename o) {
     visitPsiElement(o);
   }
