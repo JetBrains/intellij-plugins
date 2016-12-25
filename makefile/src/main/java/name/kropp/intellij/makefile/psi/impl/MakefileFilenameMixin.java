@@ -11,6 +11,7 @@ public class MakefileFilenameMixin extends ASTWrapperPsiElement {
         super(astNode);
     }
 
+    @NotNull
     @Override
     public PsiReference[] getReferences() {
         return new FileReferenceSet(getNode().getPsi()).getAllReferences();

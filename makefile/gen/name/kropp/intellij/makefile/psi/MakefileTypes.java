@@ -11,6 +11,7 @@ public interface MakefileTypes {
   IElementType COMMANDS = new MakefileElementType("COMMANDS");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEFINE = new MakefileElementType("DEFINE");
+  IElementType DIRECTORY = new MakefileElementType("DIRECTORY");
   IElementType ELSEBRANCH = new MakefileElementType("ELSEBRANCH");
   IElementType EXPORT = new MakefileElementType("EXPORT");
   IElementType FILENAME = new MakefileElementType("FILENAME");
@@ -18,6 +19,7 @@ public interface MakefileTypes {
   IElementType NORMAL_PREREQUISITES = new MakefileElementType("NORMAL_PREREQUISITES");
   IElementType ORDER_ONLY_PREREQUISITES = new MakefileElementType("ORDER_ONLY_PREREQUISITES");
   IElementType OVERRIDE = new MakefileElementType("OVERRIDE");
+  IElementType PATTERN = new MakefileElementType("PATTERN");
   IElementType PREREQUISITE = new MakefileElementType("PREREQUISITE");
   IElementType PREREQUISITES = new MakefileElementType("PREREQUISITES");
   IElementType PRIVATEVAR = new MakefileElementType("PRIVATEVAR");
@@ -30,6 +32,7 @@ public interface MakefileTypes {
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
+  IElementType VPATH = new MakefileElementType("VPATH");
 
   IElementType ASSIGN = new MakefileTokenType("=");
   IElementType COLON = new MakefileTokenType(":");
@@ -50,6 +53,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_OVERRIDE = new MakefileTokenType("override");
   IElementType KEYWORD_PRIVATE = new MakefileTokenType("private");
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
+  IElementType KEYWORD_VPATH = new MakefileTokenType("vpath");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable-value");
@@ -66,6 +70,9 @@ public interface MakefileTypes {
       }
       else if (type == DEFINE) {
         return new MakefileDefineImpl(node);
+      }
+      else if (type == DIRECTORY) {
+        return new MakefileDirectoryImpl(node);
       }
       else if (type == ELSEBRANCH) {
         return new MakefileElsebranchImpl(node);
@@ -87,6 +94,9 @@ public interface MakefileTypes {
       }
       else if (type == OVERRIDE) {
         return new MakefileOverrideImpl(node);
+      }
+      else if (type == PATTERN) {
+        return new MakefilePatternImpl(node);
       }
       else if (type == PREREQUISITE) {
         return new MakefilePrerequisiteImpl(node);
@@ -123,6 +133,9 @@ public interface MakefileTypes {
       }
       else if (type == VARIABLE_ASSIGNMENT) {
         return new MakefileVariableAssignmentImpl(node);
+      }
+      else if (type == VPATH) {
+        return new MakefileVpathImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

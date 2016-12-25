@@ -50,6 +50,7 @@ COMMAND=[^\r\n]+
     "include"          { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
     "-include"         { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
     "sinclude"         { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
+    "vpath"            { yybegin(INCLUDES); return KEYWORD_VPATH; }
     "define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
     "undefine"         { yybegin(INCLUDES); return KEYWORD_UNDEFINE; }
     "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }

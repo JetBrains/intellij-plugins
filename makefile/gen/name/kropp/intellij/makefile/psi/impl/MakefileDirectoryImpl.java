@@ -1,0 +1,25 @@
+// This is a generated file. Not intended for manual editing.
+package name.kropp.intellij.makefile.psi.impl;
+
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElementVisitor;
+import name.kropp.intellij.makefile.psi.MakefileDirectory;
+import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import org.jetbrains.annotations.NotNull;
+
+public class MakefileDirectoryImpl extends MakefileFilenameMixin implements MakefileDirectory {
+
+  public MakefileDirectoryImpl(ASTNode node) {
+    super(node);
+  }
+
+  public void accept(@NotNull MakefileVisitor visitor) {
+    visitor.visitDirectory(this);
+  }
+
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
+    else super.accept(visitor);
+  }
+
+}

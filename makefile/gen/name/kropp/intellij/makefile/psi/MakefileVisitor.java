@@ -19,6 +19,10 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDirectory(@NotNull MakefileDirectory o) {
+    visitPsiElement(o);
+  }
+
   public void visitElsebranch(@NotNull MakefileElsebranch o) {
     visitPsiElement(o);
   }
@@ -44,6 +48,10 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitOverride(@NotNull MakefileOverride o) {
+    visitPsiElement(o);
+  }
+
+  public void visitPattern(@NotNull MakefilePattern o) {
     visitPsiElement(o);
   }
 
@@ -92,6 +100,10 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitVariableAssignment(@NotNull MakefileVariableAssignment o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVpath(@NotNull MakefileVpath o) {
     visitPsiElement(o);
   }
 

@@ -32,6 +32,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == DEFINE) {
       r = define(b, 0);
     }
+    else if (t == DIRECTORY) {
+      r = directory(b, 0);
+    }
     else if (t == ELSEBRANCH) {
       r = elsebranch(b, 0);
     }
@@ -52,6 +55,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     }
     else if (t == OVERRIDE) {
       r = override(b, 0);
+    }
+    else if (t == PATTERN) {
+      r = pattern(b, 0);
     }
     else if (t == PREREQUISITE) {
       r = prerequisite(b, 0);
@@ -85,6 +91,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     }
     else if (t == VARIABLE) {
       r = variable(b, 0);
+    }
+    else if (t == VPATH) {
+      r = vpath(b, 0);
     }
     else {
       r = parse_root_(t, b, 0);
@@ -214,7 +223,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // define|include|undefine|override|export|privatevar
+  // define|include|undefine|override|export|privatevar|vpath
   static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     boolean r;
@@ -225,7 +234,20 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = override(b, l + 1);
     if (!r) r = export(b, l + 1);
     if (!r) r = privatevar(b, l + 1);
+    if (!r) r = vpath(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // identifier
+  public static boolean directory(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "directory")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, DIRECTORY, r);
     return r;
   }
 
@@ -393,6 +415,18 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, KEYWORD_OVERRIDE);
     r = r && variable_assignment(b, l + 1);
     exit_section_(b, m, OVERRIDE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // identifier
+  public static boolean pattern(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "pattern")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, PATTERN, r);
     return r;
   }
 
@@ -616,6 +650,50 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   private static boolean variable_assignment_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable_assignment_2")) return false;
     consumeToken(b, VARIABLE_VALUE);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'vpath' (pattern directory*)? EOL
+  public static boolean vpath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "vpath")) return false;
+    if (!nextTokenIs(b, KEYWORD_VPATH)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_VPATH);
+    r = r && vpath_1(b, l + 1);
+    r = r && consumeToken(b, EOL);
+    exit_section_(b, m, VPATH, r);
+    return r;
+  }
+
+  // (pattern directory*)?
+  private static boolean vpath_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "vpath_1")) return false;
+    vpath_1_0(b, l + 1);
+    return true;
+  }
+
+  // pattern directory*
+  private static boolean vpath_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "vpath_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = pattern(b, l + 1);
+    r = r && vpath_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // directory*
+  private static boolean vpath_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "vpath_1_0_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!directory(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "vpath_1_0_1", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 

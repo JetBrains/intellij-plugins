@@ -28,6 +28,7 @@
     KEYWORD_OVERRIDE = "override"
     KEYWORD_EXPORT = "export"
     KEYWORD_PRIVATE = "private"
+    KEYWORD_VPATH = "vpath"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
@@ -35,7 +36,7 @@
 
 makefile ::= (rule|variable-assignment|directive|comment)*
 
-private directive ::= define|include|undefine|override|export|privatevar
+private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line (';' EOL? | EOL) recipe
 recipe ::= (conditional|commands)?
@@ -67,3 +68,7 @@ privatevar ::= 'private' variable-assignment
 
 include ::= ('include'|'-include'|'sinclude') filename+ EOL
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
+
+vpath ::= 'vpath' (pattern directory*)? EOL
+pattern ::= identifier
+directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
