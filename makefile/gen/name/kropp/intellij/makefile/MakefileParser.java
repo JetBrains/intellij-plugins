@@ -91,6 +91,22 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '='|':='|'::='|'?='|'!='|'+='
+  static boolean assignment(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "assignment")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, ASSIGN);
+    if (!r) r = consumeToken(b, ":=");
+    if (!r) r = consumeToken(b, "::=");
+    if (!r) r = consumeToken(b, "?=");
+    if (!r) r = consumeToken(b, "!=");
+    if (!r) r = consumeToken(b, "+=");
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // command*
   public static boolean commands(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "commands")) return false;
@@ -156,41 +172,27 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'define' variable ('='|':='|'::='|'?='|'!='|'+=')? variable-value-line* 'endef'
+  // 'define' variable assignment? variable-value-line* 'endef'
   public static boolean define(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "define")) return false;
     if (!nextTokenIs(b, KEYWORD_DEFINE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, DEFINE, null);
     r = consumeToken(b, KEYWORD_DEFINE);
-    r = r && variable(b, l + 1);
-    r = r && define_2(b, l + 1);
-    r = r && define_3(b, l + 1);
-    r = r && consumeToken(b, KEYWORD_ENDEF);
-    exit_section_(b, m, DEFINE, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, variable(b, l + 1));
+    r = p && report_error_(b, define_2(b, l + 1)) && r;
+    r = p && report_error_(b, define_3(b, l + 1)) && r;
+    r = p && consumeToken(b, KEYWORD_ENDEF) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
-  // ('='|':='|'::='|'?='|'!='|'+=')?
+  // assignment?
   private static boolean define_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "define_2")) return false;
-    define_2_0(b, l + 1);
+    assignment(b, l + 1);
     return true;
-  }
-
-  // '='|':='|'::='|'?='|'!='|'+='
-  private static boolean define_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "define_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, ASSIGN);
-    if (!r) r = consumeToken(b, ":=");
-    if (!r) r = consumeToken(b, "::=");
-    if (!r) r = consumeToken(b, "?=");
-    if (!r) r = consumeToken(b, "!=");
-    if (!r) r = consumeToken(b, "+=");
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   // variable-value-line*
@@ -544,33 +546,18 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable ('='|':='|'::='|'?='|'!='|'+=') variable-value?
+  // variable assignment variable-value?
   public static boolean variable_assignment(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable_assignment")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, VARIABLE_ASSIGNMENT, null);
     r = variable(b, l + 1);
-    r = r && variable_assignment_1(b, l + 1);
+    r = r && assignment(b, l + 1);
     p = r; // pin = 2
     r = r && variable_assignment_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  // '='|':='|'::='|'?='|'!='|'+='
-  private static boolean variable_assignment_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "variable_assignment_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, ASSIGN);
-    if (!r) r = consumeToken(b, ":=");
-    if (!r) r = consumeToken(b, "::=");
-    if (!r) r = consumeToken(b, "?=");
-    if (!r) r = consumeToken(b, "!=");
-    if (!r) r = consumeToken(b, "+=");
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   // variable-value?

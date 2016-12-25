@@ -3,11 +3,14 @@ package name.kropp.intellij.makefile.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import name.kropp.intellij.makefile.psi.MakefileDefine;
+import name.kropp.intellij.makefile.psi.MakefilePsiImplUtil;
 import name.kropp.intellij.makefile.psi.MakefileVariable;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefileDefineImpl extends ASTWrapperPsiElement implements MakefileDefine {
 
@@ -25,9 +28,19 @@ public class MakefileDefineImpl extends ASTWrapperPsiElement implements Makefile
   }
 
   @Override
-  @NotNull
+  @Nullable
   public MakefileVariable getVariable() {
-    return findNotNullChildByClass(MakefileVariable.class);
+    return findChildByClass(MakefileVariable.class);
+  }
+
+  @Nullable
+  public PsiElement getAssignment() {
+    return MakefilePsiImplUtil.getAssignment(this);
+  }
+
+  @Nullable
+  public String getValue() {
+    return MakefilePsiImplUtil.getValue(this);
   }
 
 }

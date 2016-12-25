@@ -2,7 +2,11 @@ package name.kropp.intellij.makefile.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class MakefilePsiImplUtil {
     @Nullable
@@ -33,5 +37,22 @@ public class MakefilePsiImplUtil {
     public static PsiElement getNameIdentifier(MakefileTarget element) {
         ASTNode targetNode = element.getNode();
         return targetNode != null ? targetNode.getPsi() : null;
+    }
+
+    private static TokenSet ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN);
+    private static TokenSet VARIABLE_VALUE_LINE = TokenSet.create(MakefileTypes.VARIABLE_VALUE_LINE);
+
+    @Nullable
+    public static PsiElement getAssignment(MakefileDefine element) {
+        ASTNode node = element.getNode().findChildByType(ASSIGNMENT);
+        if (node == null)
+            return null;
+        return node.getPsi();
+    }
+
+    @Nullable
+    public static String getValue(MakefileDefine element) {
+        ASTNode[] nodes = element.getNode().getChildren(VARIABLE_VALUE_LINE);
+        return Arrays.stream(nodes).map(ASTNode::getText).collect(Collectors.joining("\n"));
     }
 }

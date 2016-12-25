@@ -2,11 +2,17 @@
 package name.kropp.intellij.makefile.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface MakefileDefine extends PsiElement {
 
-  @NotNull
+  @Nullable
   MakefileVariable getVariable();
+
+  @Nullable
+  PsiElement getAssignment();
+
+  @Nullable
+  String getValue();
 
 }
