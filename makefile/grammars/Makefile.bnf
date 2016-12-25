@@ -17,14 +17,14 @@
     ASSIGN = "="
     PIPE = "|"
     KEYWORD_INCLUDE = "include"
-    KEYWORD_MINUSINCLUDE = "-include"
     KEYWORD_IFEQ = "ifeq"
     KEYWORD_IFNEQ = "ifneq"
     KEYWORD_IFNDEF = "ifndef"
     KEYWORD_ELSE = "else"
     KEYWORD_ENDIF = "endif"
-    KEYWORD_DEFINE = "define"
     KEYWORD_ENDEF = "endef"
+    KEYWORD_DEFINE = "define"
+    KEYWORD_UNDEFINE = "undefine"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
@@ -32,7 +32,7 @@
 
 makefile ::= (rule|variable|directive|comment)*
 
-private directive ::= define|include
+private directive ::= define|include|undefine
 
 rule ::= target_line (';' EOL? | EOL) recipe
 recipe ::= (conditional|commands)?
@@ -56,6 +56,7 @@ elsebranch ::= commands
 variable ::= variable_name ('='|':='|'::='|'?='|'!='|'+=') variable_value? {pin=2}
 variable_name ::= identifier
 define ::= 'define' variable_name ('='|':='|'::='|'?='|'!='|'+=')? variable_value_line* 'endef'
+undefine ::= 'undefine' variable_name EOL
 
 include ::= ('include'|'-include'|'sinclude') filename+ EOL
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}

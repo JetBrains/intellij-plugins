@@ -71,6 +71,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == THENBRANCH) {
       r = thenbranch(b, 0);
     }
+    else if (t == UNDEFINE) {
+      r = undefine(b, 0);
+    }
     else if (t == VARIABLE) {
       r = variable(b, 0);
     }
@@ -203,13 +206,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // define|include
+  // define|include|undefine
   static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = define(b, l + 1);
     if (!r) r = include(b, l + 1);
+    if (!r) r = undefine(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -256,7 +260,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_INCLUDE);
-    if (!r) r = consumeToken(b, KEYWORD_MINUSINCLUDE);
+    if (!r) r = consumeToken(b, "-include");
     if (!r) r = consumeToken(b, "sinclude");
     exit_section_(b, m, null, r);
     return r;
@@ -496,6 +500,20 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, THENBRANCH, "<thenbranch>");
     r = commands(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'undefine' variable_name EOL
+  public static boolean undefine(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "undefine")) return false;
+    if (!nextTokenIs(b, KEYWORD_UNDEFINE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_UNDEFINE);
+    r = r && variable_name(b, l + 1);
+    r = r && consumeToken(b, EOL);
+    exit_section_(b, m, UNDEFINE, r);
     return r;
   }
 

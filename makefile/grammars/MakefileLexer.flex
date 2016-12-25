@@ -48,9 +48,10 @@ COMMAND=[^\r\n]+
     {COLON}            { yybegin(PREREQUISITES); return COLON; }
     {ASSIGN}           { yybegin(VARIABLE); return ASSIGN; }
     "include"          { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
-    "-include"         { yybegin(INCLUDES); return KEYWORD_MINUSINCLUDE; }
-    "sinclude"         { yybegin(INCLUDES); return KEYWORD_MINUSINCLUDE; }
+    "-include"         { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
+    "sinclude"         { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
     "define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
+    "undefine"         { yybegin(INCLUDES); return KEYWORD_UNDEFINE; }
     "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }
     "ifneq"            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ; }
     "ifndef"           { yybegin(CONDITIONALS); return KEYWORD_IFNDEF; }

@@ -1,0 +1,3 @@
+TEST=qwerty
+
+undefine TEST

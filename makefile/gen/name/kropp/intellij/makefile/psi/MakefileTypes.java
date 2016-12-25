@@ -24,6 +24,7 @@ public interface MakefileTypes {
   IElementType TARGETS = new MakefileElementType("TARGETS");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
   IElementType THENBRANCH = new MakefileElementType("THENBRANCH");
+  IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_NAME = new MakefileElementType("VARIABLE_NAME");
 
@@ -42,7 +43,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_IFNDEF = new MakefileTokenType("ifndef");
   IElementType KEYWORD_IFNEQ = new MakefileTokenType("ifneq");
   IElementType KEYWORD_INCLUDE = new MakefileTokenType("include");
-  IElementType KEYWORD_MINUSINCLUDE = new MakefileTokenType("-include");
+  IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType VARIABLE_VALUE = new MakefileTokenType("variable_value");
@@ -98,6 +99,9 @@ public interface MakefileTypes {
       }
       else if (type == THENBRANCH) {
         return new MakefileThenbranchImpl(node);
+      }
+      else if (type == UNDEFINE) {
+        return new MakefileUndefineImpl(node);
       }
       else if (type == VARIABLE) {
         return new MakefileVariableImpl(node);
