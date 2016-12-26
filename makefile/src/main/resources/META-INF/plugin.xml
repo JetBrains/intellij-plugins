@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>name.kropp.intellij.makefile</id>
   <name>Makefile support</name>
-  <version>0.2</version>
+  <version>0.5</version>
   <vendor email="victor.kropp@gmail.com" url="https://victor.kropp.name">Victor Kropp</vendor>
 
   <description><![CDATA[
