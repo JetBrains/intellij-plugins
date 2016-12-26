@@ -16,6 +16,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testDirectives() { doTest(true); }
   fun testExport() { doTest(true); }
   fun testVPath() { doTest(true); }
+  fun testComments() { doTest(true); }
 
   override fun getTestDataPath() = "testData"
 }

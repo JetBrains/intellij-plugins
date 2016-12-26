@@ -40,8 +40,9 @@ COMMAND=[^\r\n]+
 
 %%
 
+{COMMENT}              { return COMMENT; }
+
 <YYINITIAL> {
-    {COMMENT}          { return COMMENT; }
     {TAB}+             { yybegin(COMMANDS); return WHITE_SPACE; }
     {EOL}              { return WHITE_SPACE; }
     {SPACES}           { return WHITE_SPACE; }
