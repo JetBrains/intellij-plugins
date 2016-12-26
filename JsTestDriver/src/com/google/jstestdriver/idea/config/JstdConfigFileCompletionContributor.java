@@ -189,7 +189,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       basePath, caretBipartiteElementText.getPrefix()
     );
     if (parentWithLastComponentPrefix != null) {
-      PrefixMatcher matcher = new StrictPrefixMatcher(parentWithLastComponentPrefix.getLastComponentPrefix(), false);
+      PrefixMatcher matcher = new PlainPrefixMatcher(parentWithLastComponentPrefix.getLastComponentPrefix());
       result = result.withPrefixMatcher(matcher);
       VirtualFile parentFile = parentWithLastComponentPrefix.getParent();
       VirtualFile[] children = parentFile.getChildren();
@@ -348,27 +348,6 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     @Override
     public String toString() {
       return "prefix:'" + myPrefix + "'\', suffix='" + mySuffix + '\'';
-    }
-  }
-
-  private static class StrictPrefixMatcher extends PrefixMatcher {
-
-    private final boolean myIgnoreCase;
-
-    public StrictPrefixMatcher(@NotNull String prefix, boolean ignoreCase) {
-      super(prefix);
-      myIgnoreCase = ignoreCase;
-    }
-
-    @Override
-    public boolean prefixMatches(@NotNull String name) {
-      return name.regionMatches(myIgnoreCase, 0, myPrefix, 0, myPrefix.length());
-    }
-
-    @NotNull
-    @Override
-    public PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
-      return new StrictPrefixMatcher(prefix, myIgnoreCase);
     }
   }
 }
