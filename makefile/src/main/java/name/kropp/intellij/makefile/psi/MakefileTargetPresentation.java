@@ -19,7 +19,7 @@ class MakefileTargetPresentation implements ItemPresentation {
 
     @Override
     public String getLocationString() {
-        return "";
+        return "in " + target.getContainingFile().getVirtualFile().getPresentableName();
     }
 
     @Override
