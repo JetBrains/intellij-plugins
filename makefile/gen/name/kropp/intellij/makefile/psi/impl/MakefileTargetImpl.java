@@ -2,6 +2,7 @@
 package name.kropp.intellij.makefile.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import name.kropp.intellij.makefile.psi.MakefilePsiImplUtil;
@@ -37,6 +38,10 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
   @Nullable
   public PsiElement getNameIdentifier() {
     return MakefilePsiImplUtil.getNameIdentifier(this);
+  }
+
+  public ItemPresentation getPresentation() {
+    return MakefilePsiImplUtil.getPresentation(this);
   }
 
 }

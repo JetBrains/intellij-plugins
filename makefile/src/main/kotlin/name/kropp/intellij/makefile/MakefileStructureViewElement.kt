@@ -1,21 +1,12 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.icons.AllIcons
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.util.treeView.smartTree.TreeElement
-import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.NavigationItem
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
-import name.kropp.intellij.makefile.psi.MakefileRule
-import name.kropp.intellij.makefile.psi.MakefileTarget
 
 class MakefileStructureViewElement(private val element: PsiElement) : StructureViewTreeElement {
-  override fun getPresentation() = (element as? NavigationItem)?.presentation ?: object : ItemPresentation {
-    override fun getIcon(p0: Boolean) = AllIcons.Toolwindows.ToolWindowRun
-    override fun getPresentableText() = (element as? MakefileTarget)?.name
-    override fun getLocationString() = ""
-  }
+  override fun getPresentation() = (element as NavigationItem).presentation!!
 
   override fun getChildren(): Array<out TreeElement> {
     if (element is MakefileFile) {

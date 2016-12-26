@@ -43,7 +43,7 @@ recipe ::= (conditional|command)*
 
 target_line ::= targets ':' prerequisites {pin=2 methods=[getTargetName]}
 targets ::= target+
-target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement" methods=[getName setName getNameIdentifier]}
+target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement,com.intellij.navigation.NavigationItem" methods=[getName setName getNameIdentifier getPresentation]}
 
 prerequisites ::= normal_prerequisites ('|' order_only_prerequisites)?
 normal_prerequisites ::= prerequisite*

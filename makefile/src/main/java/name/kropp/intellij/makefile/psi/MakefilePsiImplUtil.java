@@ -1,6 +1,7 @@
 package name.kropp.intellij.makefile.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +38,10 @@ public class MakefilePsiImplUtil {
     public static PsiElement getNameIdentifier(MakefileTarget element) {
         ASTNode targetNode = element.getNode();
         return targetNode != null ? targetNode.getPsi() : null;
+    }
+
+    public static ItemPresentation getPresentation(MakefileTarget element) {
+        return new MakefileTargetPresentation(element);
     }
 
     private static TokenSet ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN);
