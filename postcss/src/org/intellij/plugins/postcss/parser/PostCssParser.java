@@ -6,6 +6,7 @@ import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ArrayUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssElementTypes;
@@ -26,6 +27,11 @@ public class PostCssParser extends CssParser2 {
   @Override
   public boolean supportsNestedBlocks() {
     return true;
+  }
+
+  @Override
+  protected TokenSet getCommentTokenTypes() {
+    return PostCssTokenTypes.POST_CSS_COMMENTS;
   }
 
   @Override

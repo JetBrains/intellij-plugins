@@ -47,7 +47,6 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
 
   static {
     mapping = new HashMap<>();
-    mapping.put(CssElementTypes.CSS_COMMENT, COMMENT);
     mapping.put(CssElementTypes.CSS_HASH, ID_SELECTOR);
     mapping.put(CssElementTypes.CSS_IDENT, IDENTIFIER);
     mapping.put(CssElementTypes.CSS_STRING_TOKEN, STRING);
@@ -74,6 +73,9 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     mapping.put(CssElementTypes.CSS_SEMICOLON, SEMICOLON);
     mapping.put(CssElementTypes.CSS_BAD_CHARACTER, BAD_CHARACTER);
     mapping.put(CssElementTypes.CSS_KEYWORD, KEYWORD);
+    for (IElementType type : PostCssTokenTypes.POST_CSS_COMMENTS.getTypes()) {
+      mapping.put(type, COMMENT);
+    }
     for (IElementType type : PostCssTokenTypes.KEYWORDS.getTypes()) {
       mapping.put(type, KEYWORD);
     }
