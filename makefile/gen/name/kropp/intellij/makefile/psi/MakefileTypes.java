@@ -8,7 +8,6 @@ import name.kropp.intellij.makefile.psi.impl.*;
 
 public interface MakefileTypes {
 
-  IElementType COMMANDS = new MakefileElementType("COMMANDS");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType DIRECTORY = new MakefileElementType("DIRECTORY");
@@ -62,10 +61,7 @@ public interface MakefileTypes {
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-       if (type == COMMANDS) {
-        return new MakefileCommandsImpl(node);
-      }
-      else if (type == CONDITIONAL) {
+       if (type == CONDITIONAL) {
         return new MakefileConditionalImpl(node);
       }
       else if (type == DEFINE) {

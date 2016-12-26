@@ -21,8 +21,7 @@ Makefile
             PsiElement(identifier)('only')
     PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
-      MakefileCommandsImpl(COMMANDS)
-        <empty list>
+      <empty list>
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -34,8 +33,7 @@ Makefile
           <empty list>
     PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
-      MakefileCommandsImpl(COMMANDS)
-        <empty list>
+      <empty list>
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -47,8 +45,7 @@ Makefile
           <empty list>
     PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
-      MakefileCommandsImpl(COMMANDS)
-        <empty list>
+      <empty list>
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -59,5 +56,4 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
     MakefileRecipeImpl(RECIPE)
-      MakefileCommandsImpl(COMMANDS)
-        <empty list>
+      <empty list>

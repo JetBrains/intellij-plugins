@@ -39,7 +39,7 @@ makefile ::= (rule|variable-assignment|directive|comment)*
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line (';' EOL? | EOL) recipe
-recipe ::= (conditional|commands)?
+recipe ::= (conditional|command)*
 
 target_line ::= targets ':' prerequisites {pin=2 methods=[getTargetName]}
 targets ::= target+
@@ -50,25 +50,23 @@ normal_prerequisites ::= prerequisite*
 order_only_prerequisites ::= prerequisite+
 prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin"}
 
-commands ::= command*
+conditional ::= ('ifeq'|'ifneq'|'ifndef') condition thenbranch ('else' elsebranch)* 'endif' {pin=1}
 
-conditional ::= ('ifeq'|'ifneq'|'ifndef') condition thenbranch ('else' elsebranch)* 'endif'
-
-thenbranch ::= commands
-elsebranch ::= commands
+thenbranch ::= command*
+elsebranch ::= command*
 
 meta variable-assignment ::= variable assignment variable-value? {pin=2}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
 define ::= 'define' variable assignment? variable-value-line* 'endef' {pin=1 methods=[getAssignment getValue]}
-undefine ::= 'undefine' variable EOL
-override ::= 'override' variable-assignment
-export ::= 'export' (variable-assignment|variable)?
-privatevar ::= 'private' variable-assignment
+undefine ::= 'undefine' variable EOL {pin=1}
+override ::= 'override' variable-assignment {pin=1}
+export ::= 'export' (variable-assignment|variable)? {pin=1}
+privatevar ::= 'private' variable-assignment {pin=1}
 
-include ::= ('include'|'-include'|'sinclude') filename+ EOL
+include ::= ('include'|'-include'|'sinclude') filename+ EOL {pin=1}
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-vpath ::= 'vpath' (pattern directory*)? EOL
+vpath ::= 'vpath' (pattern directory*)? EOL {pin=1}
 pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}

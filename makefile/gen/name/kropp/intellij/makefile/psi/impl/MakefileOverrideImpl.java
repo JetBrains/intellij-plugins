@@ -8,6 +8,7 @@ import name.kropp.intellij.makefile.psi.MakefileOverride;
 import name.kropp.intellij.makefile.psi.MakefileVariableAssignment;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefileOverrideImpl extends ASTWrapperPsiElement implements MakefileOverride {
 
@@ -25,9 +26,9 @@ public class MakefileOverrideImpl extends ASTWrapperPsiElement implements Makefi
   }
 
   @Override
-  @NotNull
+  @Nullable
   public MakefileVariableAssignment getVariableAssignment() {
-    return findNotNullChildByClass(MakefileVariableAssignment.class);
+    return findChildByClass(MakefileVariableAssignment.class);
   }
 
 }

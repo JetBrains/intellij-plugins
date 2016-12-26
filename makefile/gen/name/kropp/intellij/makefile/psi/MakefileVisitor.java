@@ -7,10 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class MakefileVisitor extends PsiElementVisitor {
 
-  public void visitCommands(@NotNull MakefileCommands o) {
-    visitPsiElement(o);
-  }
-
   public void visitConditional(@NotNull MakefileConditional o) {
     visitPsiElement(o);
   }

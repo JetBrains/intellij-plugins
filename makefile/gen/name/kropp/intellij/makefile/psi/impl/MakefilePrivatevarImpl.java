@@ -8,6 +8,7 @@ import name.kropp.intellij.makefile.psi.MakefilePrivatevar;
 import name.kropp.intellij.makefile.psi.MakefileVariableAssignment;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefilePrivatevarImpl extends ASTWrapperPsiElement implements MakefilePrivatevar {
 
@@ -25,9 +26,9 @@ public class MakefilePrivatevarImpl extends ASTWrapperPsiElement implements Make
   }
 
   @Override
-  @NotNull
+  @Nullable
   public MakefileVariableAssignment getVariableAssignment() {
-    return findNotNullChildByClass(MakefileVariableAssignment.class);
+    return findChildByClass(MakefileVariableAssignment.class);
   }
 
 }

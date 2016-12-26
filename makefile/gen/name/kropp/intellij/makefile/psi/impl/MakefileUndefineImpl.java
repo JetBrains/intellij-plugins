@@ -8,6 +8,7 @@ import name.kropp.intellij.makefile.psi.MakefileUndefine;
 import name.kropp.intellij.makefile.psi.MakefileVariable;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefileUndefineImpl extends ASTWrapperPsiElement implements MakefileUndefine {
 
@@ -25,9 +26,9 @@ public class MakefileUndefineImpl extends ASTWrapperPsiElement implements Makefi
   }
 
   @Override
-  @NotNull
+  @Nullable
   public MakefileVariable getVariable() {
-    return findNotNullChildByClass(MakefileVariable.class);
+    return findChildByClass(MakefileVariable.class);
   }
 
 }

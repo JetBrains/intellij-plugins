@@ -12,8 +12,7 @@ Makefile
             PsiElement(identifier)('hello')
     PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
-      MakefileCommandsImpl(COMMANDS)
-        <empty list>
+      <empty list>
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -29,5 +28,4 @@ Makefile
     PsiElement(EOL)('\n')
     PsiWhiteSpace('\t')
     MakefileRecipeImpl(RECIPE)
-      MakefileCommandsImpl(COMMANDS)
-        PsiElement(command)('$(GCC) -c hello.c')
+      PsiElement(command)('$(GCC) -c hello.c')

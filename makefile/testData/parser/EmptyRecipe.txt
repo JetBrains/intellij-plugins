@@ -13,5 +13,4 @@ Makefile
     PsiWhiteSpace(' ')
     PsiElement(;)(';')
     MakefileRecipeImpl(RECIPE)
-      MakefileCommandsImpl(COMMANDS)
-        <empty list>
+      <empty list>

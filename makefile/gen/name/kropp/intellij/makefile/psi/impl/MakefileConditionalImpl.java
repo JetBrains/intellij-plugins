@@ -10,6 +10,7 @@ import name.kropp.intellij.makefile.psi.MakefileElsebranch;
 import name.kropp.intellij.makefile.psi.MakefileThenbranch;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -35,9 +36,9 @@ public class MakefileConditionalImpl extends ASTWrapperPsiElement implements Mak
   }
 
   @Override
-  @NotNull
+  @Nullable
   public MakefileThenbranch getThenbranch() {
-    return findNotNullChildByClass(MakefileThenbranch.class);
+    return findChildByClass(MakefileThenbranch.class);
   }
 
 }

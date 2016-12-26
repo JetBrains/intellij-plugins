@@ -2,14 +2,13 @@
 package name.kropp.intellij.makefile.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface MakefileRecipe extends PsiElement {
 
-  @Nullable
-  MakefileCommands getCommands();
-
-  @Nullable
-  MakefileConditional getConditional();
+  @NotNull
+  List<MakefileConditional> getConditionalList();
 
 }
