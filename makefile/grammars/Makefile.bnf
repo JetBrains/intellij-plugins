@@ -34,7 +34,7 @@
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|variable-assignment|directive|comment)*
+makefile ::= (rule|variable-assignment|directive|topconditional|comment)*
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
@@ -50,10 +50,9 @@ normal_prerequisites ::= prerequisite*
 order_only_prerequisites ::= prerequisite+
 prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin"}
 
-conditional ::= ('ifeq'|'ifneq'|'ifndef') condition thenbranch ('else' elsebranch)* 'endif' {pin=1}
+conditional ::= ('ifeq'|'ifneq'|'ifndef') condition branch ('else' branch)* 'endif' {pin=1}
 
-thenbranch ::= command*
-elsebranch ::= command*
+branch ::= (conditional|command)*
 
 meta variable-assignment ::= variable assignment variable-value? {pin=2}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
@@ -70,3 +69,6 @@ filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFi
 vpath ::= 'vpath' (pattern directory*)? EOL {pin=1}
 pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
+
+topconditional ::= ('ifeq'|'ifneq'|'ifndef') condition block ('else' block)* 'endif' {pin=1}
+block ::= variable-assignment|directive|if|comment

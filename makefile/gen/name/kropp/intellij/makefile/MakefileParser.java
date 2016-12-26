@@ -23,7 +23,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, null);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == CONDITIONAL) {
+    if (t == BLOCK) {
+      r = block(b, 0);
+    }
+    else if (t == BRANCH) {
+      r = branch(b, 0);
+    }
+    else if (t == CONDITIONAL) {
       r = conditional(b, 0);
     }
     else if (t == DEFINE) {
@@ -31,9 +37,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     }
     else if (t == DIRECTORY) {
       r = directory(b, 0);
-    }
-    else if (t == ELSEBRANCH) {
-      r = elsebranch(b, 0);
     }
     else if (t == EXPORT) {
       r = export(b, 0);
@@ -80,8 +83,8 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == TARGETS) {
       r = targets(b, 0);
     }
-    else if (t == THENBRANCH) {
-      r = thenbranch(b, 0);
+    else if (t == TOPCONDITIONAL) {
+      r = topconditional(b, 0);
     }
     else if (t == UNDEFINE) {
       r = undefine(b, 0);
@@ -119,7 +122,47 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('ifeq'|'ifneq'|'ifndef') condition thenbranch ('else' elsebranch)* 'endif'
+  // variable-assignment|directive|if|comment
+  public static boolean block(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "block")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, BLOCK, "<block>");
+    r = variable_assignment(b, l + 1);
+    if (!r) r = directive(b, l + 1);
+    if (!r) r = consumeToken(b, IF);
+    if (!r) r = consumeToken(b, COMMENT);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // (conditional|command)*
+  public static boolean branch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "branch")) return false;
+    Marker m = enter_section_(b, l, _NONE_, BRANCH, "<branch>");
+    int c = current_position_(b);
+    while (true) {
+      if (!branch_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "branch", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, l, m, true, false, null);
+    return true;
+  }
+
+  // conditional|command
+  private static boolean branch_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "branch_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = conditional(b, l + 1);
+    if (!r) r = consumeToken(b, COMMAND);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ('ifeq'|'ifneq'|'ifndef') condition branch ('else' branch)* 'endif'
   public static boolean conditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional")) return false;
     boolean r, p;
@@ -127,7 +170,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = conditional_0(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, CONDITION));
-    r = p && report_error_(b, thenbranch(b, l + 1)) && r;
+    r = p && report_error_(b, branch(b, l + 1)) && r;
     r = p && report_error_(b, conditional_3(b, l + 1)) && r;
     r = p && consumeToken(b, KEYWORD_ENDIF) && r;
     exit_section_(b, l, m, r, p, null);
@@ -146,7 +189,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ('else' elsebranch)*
+  // ('else' branch)*
   private static boolean conditional_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_3")) return false;
     int c = current_position_(b);
@@ -158,13 +201,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'else' elsebranch
+  // 'else' branch
   private static boolean conditional_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_ELSE);
-    r = r && elsebranch(b, l + 1);
+    r = r && branch(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -232,21 +275,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, IDENTIFIER);
     exit_section_(b, m, DIRECTORY, r);
     return r;
-  }
-
-  /* ********************************************************** */
-  // command*
-  public static boolean elsebranch(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "elsebranch")) return false;
-    Marker m = enter_section_(b, l, _NONE_, ELSEBRANCH, "<elsebranch>");
-    int c = current_position_(b);
-    while (true) {
-      if (!consumeToken(b, COMMAND)) break;
-      if (!empty_element_parsed_guard_(b, "elsebranch", c)) break;
-      c = current_position_(b);
-    }
-    exit_section_(b, l, m, true, false, null);
-    return true;
   }
 
   /* ********************************************************** */
@@ -336,7 +364,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (rule|variable-assignment|directive|comment)*
+  // (rule|variable-assignment|directive|topconditional|comment)*
   static boolean makefile(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile")) return false;
     int c = current_position_(b);
@@ -348,7 +376,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // rule|variable-assignment|directive|comment
+  // rule|variable-assignment|directive|topconditional|comment
   private static boolean makefile_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "makefile_0")) return false;
     boolean r;
@@ -356,6 +384,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = rule(b, l + 1);
     if (!r) r = variable_assignment(b, l + 1);
     if (!r) r = directive(b, l + 1);
+    if (!r) r = topconditional(b, l + 1);
     if (!r) r = consumeToken(b, COMMENT);
     exit_section_(b, m, null, r);
     return r;
@@ -591,18 +620,54 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // command*
-  public static boolean thenbranch(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "thenbranch")) return false;
-    Marker m = enter_section_(b, l, _NONE_, THENBRANCH, "<thenbranch>");
+  // ('ifeq'|'ifneq'|'ifndef') condition block ('else' block)* 'endif'
+  public static boolean topconditional(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "topconditional")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, TOPCONDITIONAL, "<topconditional>");
+    r = topconditional_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, CONDITION));
+    r = p && report_error_(b, block(b, l + 1)) && r;
+    r = p && report_error_(b, topconditional_3(b, l + 1)) && r;
+    r = p && consumeToken(b, KEYWORD_ENDIF) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // 'ifeq'|'ifneq'|'ifndef'
+  private static boolean topconditional_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "topconditional_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_IFEQ);
+    if (!r) r = consumeToken(b, KEYWORD_IFNEQ);
+    if (!r) r = consumeToken(b, KEYWORD_IFNDEF);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('else' block)*
+  private static boolean topconditional_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "topconditional_3")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!consumeToken(b, COMMAND)) break;
-      if (!empty_element_parsed_guard_(b, "thenbranch", c)) break;
+      if (!topconditional_3_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "topconditional_3", c)) break;
       c = current_position_(b);
     }
-    exit_section_(b, l, m, true, false, null);
     return true;
+  }
+
+  // 'else' block
+  private static boolean topconditional_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "topconditional_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_ELSE);
+    r = r && block(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */

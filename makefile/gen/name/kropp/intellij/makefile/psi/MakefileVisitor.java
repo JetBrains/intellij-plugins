@@ -7,6 +7,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class MakefileVisitor extends PsiElementVisitor {
 
+  public void visitBlock(@NotNull MakefileBlock o) {
+    visitPsiElement(o);
+  }
+
+  public void visitBranch(@NotNull MakefileBranch o) {
+    visitPsiElement(o);
+  }
+
   public void visitConditional(@NotNull MakefileConditional o) {
     visitPsiElement(o);
   }
@@ -16,10 +24,6 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitDirectory(@NotNull MakefileDirectory o) {
-    visitPsiElement(o);
-  }
-
-  public void visitElsebranch(@NotNull MakefileElsebranch o) {
     visitPsiElement(o);
   }
 
@@ -83,7 +87,7 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitThenbranch(@NotNull MakefileThenbranch o) {
+  public void visitTopconditional(@NotNull MakefileTopconditional o) {
     visitPsiElement(o);
   }
 

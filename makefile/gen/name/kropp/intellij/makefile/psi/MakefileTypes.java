@@ -8,10 +8,11 @@ import name.kropp.intellij.makefile.psi.impl.*;
 
 public interface MakefileTypes {
 
+  IElementType BLOCK = new MakefileElementType("BLOCK");
+  IElementType BRANCH = new MakefileElementType("BRANCH");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType DIRECTORY = new MakefileElementType("DIRECTORY");
-  IElementType ELSEBRANCH = new MakefileElementType("ELSEBRANCH");
   IElementType EXPORT = new MakefileElementType("EXPORT");
   IElementType FILENAME = new MakefileElementType("FILENAME");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
@@ -27,7 +28,7 @@ public interface MakefileTypes {
   IElementType TARGET = new MakefileElementType("TARGET");
   IElementType TARGETS = new MakefileElementType("TARGETS");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
-  IElementType THENBRANCH = new MakefileElementType("THENBRANCH");
+  IElementType TOPCONDITIONAL = new MakefileElementType("TOPCONDITIONAL");
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
@@ -40,6 +41,7 @@ public interface MakefileTypes {
   IElementType CONDITION = new MakefileTokenType("condition");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
+  IElementType IF = new MakefileTokenType("if");
   IElementType KEYWORD_DEFINE = new MakefileTokenType("define");
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");
   IElementType KEYWORD_ENDEF = new MakefileTokenType("endef");
@@ -61,7 +63,13 @@ public interface MakefileTypes {
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-       if (type == CONDITIONAL) {
+       if (type == BLOCK) {
+        return new MakefileBlockImpl(node);
+      }
+      else if (type == BRANCH) {
+        return new MakefileBranchImpl(node);
+      }
+      else if (type == CONDITIONAL) {
         return new MakefileConditionalImpl(node);
       }
       else if (type == DEFINE) {
@@ -69,9 +77,6 @@ public interface MakefileTypes {
       }
       else if (type == DIRECTORY) {
         return new MakefileDirectoryImpl(node);
-      }
-      else if (type == ELSEBRANCH) {
-        return new MakefileElsebranchImpl(node);
       }
       else if (type == EXPORT) {
         return new MakefileExportImpl(node);
@@ -118,8 +123,8 @@ public interface MakefileTypes {
       else if (type == TARGET_LINE) {
         return new MakefileTargetLineImpl(node);
       }
-      else if (type == THENBRANCH) {
-        return new MakefileThenbranchImpl(node);
+      else if (type == TOPCONDITIONAL) {
+        return new MakefileTopconditionalImpl(node);
       }
       else if (type == UNDEFINE) {
         return new MakefileUndefineImpl(node);
