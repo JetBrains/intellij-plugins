@@ -205,18 +205,17 @@ public class DartTestUtils {
 
   public static VirtualFile configureNavigation(@NotNull PsiTestCase test,
                                                 @NotNull VirtualFile testRoot,
-                                                @NotNull final VirtualFile... vFiles)
-    throws IOException {
-    DartAnalysisServerService.getInstance().serverReadyForRequest(test.getProject());
+                                                @NotNull final VirtualFile... vFiles) throws IOException {
+    DartAnalysisServerService.getInstance(test.getProject()).serverReadyForRequest(test.getProject());
     // Trigger navigation requests for each file that needs to have navigation data during resolution.
     for (VirtualFile vFile : vFiles) {
       String name = vFile.getName();
       VirtualFile testFile = testRoot.findChild(name);
       if (testFile == null) TestCase.fail();
-      DartAnalysisServerService.getInstance().analysis_getNavigation(testFile, 0, (int)testFile.getLength());
+      DartAnalysisServerService.getInstance(test.getProject()).analysis_getNavigation(testFile, 0, (int)testFile.getLength());
     }
     // A little cargo-cult programming: some tests fail without the next line.
-    DartAnalysisServerService.getInstance().waitForAnalysisToComplete_TESTS_ONLY(test.getFile().getVirtualFile());
+    DartAnalysisServerService.getInstance(test.getProject()).waitForAnalysisToComplete_TESTS_ONLY(test.getFile().getVirtualFile());
     return testRoot;
   }
 
@@ -230,6 +229,6 @@ public class DartTestUtils {
     // let's keep updateVisibleFiles() method package-local, but here we need to invoke it because FileEditorManagerListener is not notified in test environment
     final Method method = DartAnalysisServerService.class.getDeclaredMethod("updateVisibleFiles");
     method.setAccessible(true);
-    method.invoke(DartAnalysisServerService.getInstance());
+    method.invoke(DartAnalysisServerService.getInstance(fixture.getProject()));
   }
 }

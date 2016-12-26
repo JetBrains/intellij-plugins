@@ -1,9 +1,7 @@
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
-import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
@@ -22,7 +20,7 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
   public void setUp() throws Exception {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
+    DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest(getProject());
   }
 
   @Override

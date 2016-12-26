@@ -50,7 +50,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
 
   private void undoAndUpdateHighlighting(@NotNull final VirtualFile file) {
     // to make sure that navigation and highlighting regions are reset we have to send new document contents both before Undo and after
-    DartAnalysisServerService.getInstance().updateFilesContent();
+    DartAnalysisServerService.getInstance(getProject()).updateFilesContent();
     UndoManager.getInstance(getProject()).undo(FileEditorManager.getInstance(getProject()).getSelectedEditor(file));
     myFixture.doHighlighting();
     checkServerDataInitialState(file);
@@ -76,8 +76,8 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.doHighlighting();
   }
 
-  private static void checkServerDataInitialState(@NotNull final VirtualFile file) {
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+  private void checkServerDataInitialState(@NotNull final VirtualFile file) {
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
     // references to 'dart:core'
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
     checkRegions(service.getHighlight(file),
@@ -90,7 +90,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     // navigation region must be deleted when touched by editing and updated otherwise
     initServerDataTest();
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
     final VirtualFile file = getFile().getVirtualFile();
     checkServerDataInitialState(file);
 
@@ -127,7 +127,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   public void testServerDataUpdateOnPaste() {
     initServerDataTest();
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
     final VirtualFile file = getFile().getVirtualFile();
     checkServerDataInitialState(file);
 
@@ -166,7 +166,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   public void testServerDataUpdateOnBackspace() {
     initServerDataTest();
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
     final VirtualFile file = getFile().getVirtualFile();
     checkServerDataInitialState(file);
 
@@ -203,7 +203,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   public void testServerDataUpdateOnSelectionDelete() {
     initServerDataTest();
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
     final VirtualFile file = getFile().getVirtualFile();
     checkServerDataInitialState(file);
 
@@ -255,7 +255,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.configureByText(DartFileType.INSTANCE, "var a = 1; var b = a;");
     myFixture.doHighlighting();
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
     final VirtualFile file = getFile().getVirtualFile();
 
     final List<DartNavigationRegion> regions = service.getNavigation(file);
@@ -279,7 +279,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     final VirtualFile secondFile =
       myFixture.addFileToProject("secondFile.dart", "class Bar { toString(){ return super.toString(); } }").getVirtualFile();
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
 
     myFixture.doHighlighting();
     assertNotEmpty(service.getHighlight(firstFile));

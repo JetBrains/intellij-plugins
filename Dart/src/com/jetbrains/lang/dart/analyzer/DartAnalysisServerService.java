@@ -585,6 +585,11 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
+  public static DartAnalysisServerService getInstance(@NotNull final Project project) {
+    return getInstance();
+  }
+
+  @NotNull
   public static DartAnalysisServerService getInstance() {
     return ServiceManager.getService(DartAnalysisServerService.class);
   }
