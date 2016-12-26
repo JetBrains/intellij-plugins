@@ -1,1 +1,1 @@
-x = {<selection><caret>"xxx": "yyy", "zzz":"tttt"</selection>}
+x = {<selection><caret>"xxx": "yyy",</selection> "zzz":"tttt"}
