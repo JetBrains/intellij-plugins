@@ -117,7 +117,6 @@ public class DartAnalysisServerService {
   @NotNull private String mySdkVersion = "";
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
-  private final FileOffsetsManager myOffsetsManager = new FileOffsetsManager();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<>();
   private final List<String> myVisibleFiles = new ArrayList<>();
   private final Set<Document> myChangedDocuments = new THashSet<>();
@@ -366,7 +365,7 @@ public class DartAnalysisServerService {
     if (originalOffset <= 0 || file == null) return originalOffset;
     return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
            ? originalOffset
-           : myOffsetsManager.getConvertedOffset(file, originalOffset);
+           : FileOffsetsManager.getInstance().getConvertedOffset(file, originalOffset);
   }
 
   /**
@@ -377,7 +376,7 @@ public class DartAnalysisServerService {
 
     return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
            ? convertedOffset
-           : myOffsetsManager.getOriginalOffset(file, convertedOffset);
+           : FileOffsetsManager.getInstance().getOriginalOffset(file, convertedOffset);
   }
 
   public int[] getConvertedOffsets(@NotNull final VirtualFile file, final int[] _offsets) {

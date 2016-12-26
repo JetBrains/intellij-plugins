@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -16,6 +17,11 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class FileOffsetsManager {
+
+  @NotNull
+  public static FileOffsetsManager getInstance() {
+    return ServiceManager.getService(FileOffsetsManager.class);
+  }
 
   private final Map<VirtualFile, LineOffsets> myLineOffsetsMap = new THashMap<>();
 
