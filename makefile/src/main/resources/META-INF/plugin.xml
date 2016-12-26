@@ -24,6 +24,7 @@
     <annotator language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileAnnotator"/>
     <lang.psiStructureViewFactory language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileStructureViewFactory"/>
     <lang.commenter language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileCommenter"/>
+    <lang.findUsagesProvider language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFindUsagesProvider"/>
     <colorSettingsPage implementation="name.kropp.intellij.makefile.MakefileColorSettingsPage"/>
     <completion.contributor language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileCompletionContributor"/>
   </extensions>
