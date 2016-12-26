@@ -15,6 +15,7 @@
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +32,11 @@ public class ServerExtractMethodRefactoring extends ServerRefactoring {
     new ExtractMethodOptions("returnType", false, "name", ImmutableList.<RefactoringMethodParameter>of(), false);
   private ExtractMethodFeedback feedback;
 
-  public ServerExtractMethodRefactoring(VirtualFile file, int offset, int length) {
-    super("Extract Method", RefactoringKind.EXTRACT_METHOD, file, offset, length);
+  public ServerExtractMethodRefactoring(@NotNull final Project project,
+                                        @NotNull final VirtualFile file,
+                                        final int offset,
+                                        final int length) {
+    super(project, "Extract Method", RefactoringKind.EXTRACT_METHOD, file, offset, length);
   }
 
   public boolean canExtractGetter() {

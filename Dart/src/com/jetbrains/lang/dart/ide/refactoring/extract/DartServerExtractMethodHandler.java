@@ -52,7 +52,7 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
 
     final int offset = selectionModel.getSelectionStart();
     final int length = selectionModel.getSelectionEnd() - offset;
-    final ServerExtractMethodRefactoring refactoring = new ServerExtractMethodRefactoring(file.getVirtualFile(), offset, length);
+    final ServerExtractMethodRefactoring refactoring = new ServerExtractMethodRefactoring(project, file.getVirtualFile(), offset, length);
 
     // Validate initial status.
     {

@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.refactoring;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.lang3.text.WordUtils;
 import org.dartlang.analysis.server.protocol.*;
@@ -29,8 +30,8 @@ public class ServerRenameRefactoring extends ServerRefactoring {
   private String elementKindName;
   private String oldName;
 
-  public ServerRenameRefactoring(@NotNull VirtualFile file, int offset, int length) {
-    super("Rename", RefactoringKind.RENAME, file, offset, length);
+  public ServerRenameRefactoring(@NotNull final Project project, @NotNull final VirtualFile file, final int offset, final int length) {
+    super(project, "Rename", RefactoringKind.RENAME, file, offset, length);
   }
 
   @NotNull

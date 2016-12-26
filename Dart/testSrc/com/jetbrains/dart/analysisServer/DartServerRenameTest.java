@@ -112,7 +112,7 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.doHighlighting(); // make sure server is warmed up
     final int offset = getEditor().getCaretModel().getOffset();
-    return new ServerRenameRefactoring(getFile().getVirtualFile(), offset, 0);
+    return new ServerRenameRefactoring(getProject(), getFile().getVirtualFile(), offset, 0);
   }
 
   public void testAvailability() {
@@ -178,7 +178,7 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     myFixture.doHighlighting(); // warm up
     myFixture.type('\n');
     final int offset = getEditor().getCaretModel().getOffset();
-    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(getFile().getVirtualFile(), offset, 0);
+    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(getProject(), getFile().getVirtualFile(), offset, 0);
 
     doTest(refactoring, "newName");
   }

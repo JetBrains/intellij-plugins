@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
@@ -40,6 +41,7 @@ import java.util.concurrent.TimeUnit;
  * The LTK wrapper around an Analysis Server refactoring.
  */
 public abstract class ServerRefactoring {
+  @NotNull private final Project myProject;
   @NotNull private final String refactoringName;
   @NotNull private final String kind;
 
@@ -58,12 +60,23 @@ public abstract class ServerRefactoring {
   private int lastId = 0;
   @Nullable private ServerRefactoringListener listener;
 
-  public ServerRefactoring(@NotNull String refactoringName, @NotNull String kind, @NotNull VirtualFile file, int offset, int length) {
+  public ServerRefactoring(@NotNull final Project project,
+                           @NotNull final String refactoringName,
+                           @NotNull final String kind,
+                           @NotNull final VirtualFile file,
+                           final int offset,
+                           final int length) {
+    myProject = project;
     this.refactoringName = refactoringName;
     this.kind = kind;
     this.file = file;
     this.offset = offset;
     this.length = length;
+  }
+
+  @NotNull
+  protected Project getProject() {
+    return myProject;
   }
 
   @NotNull
@@ -145,8 +158,8 @@ public abstract class ServerRefactoring {
     serverErrorStatus = null;
     final CountDownLatch latch = new CountDownLatch(1);
     RefactoringOptions options = getOptions();
-    DartAnalysisServerService.getInstance().updateFilesContent();
-    final boolean success = DartAnalysisServerService.getInstance()
+    DartAnalysisServerService.getInstance(myProject).updateFilesContent();
+    final boolean success = DartAnalysisServerService.getInstance(myProject)
       .edit_getRefactoring(kind, file, offset, length, validateOnly, options, new GetRefactoringConsumer() {
         @Override
         public void computedRefactorings(List<RefactoringProblem> initialProblems,

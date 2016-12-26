@@ -71,10 +71,10 @@ public class DartInlineHandler extends InlineActionHandler {
     // create refactoring
     final ServerRefactoring refactoring;
     if (ElementKind.LOCAL_VARIABLE.equals(context.kind)) {
-      refactoring = new ServerInlineLocalRefactoring(context.virtualFile, context.offset, 0);
+      refactoring = new ServerInlineLocalRefactoring(project, context.virtualFile, context.offset, 0);
     }
     else {
-      refactoring = new ServerInlineMethodRefactoring(context.virtualFile, context.offset, 0);
+      refactoring = new ServerInlineMethodRefactoring(project, context.virtualFile, context.offset, 0);
     }
     // validate initial status
     {

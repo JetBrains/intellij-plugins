@@ -66,7 +66,7 @@ public class DartInlineMethodRefactoringTest extends CodeInsightFixtureTestCase 
     myFixture.doHighlighting(); // make sure server is warmed up
     // find the Element to rename
     final int offset = getEditor().getCaretModel().getOffset();
-    return new ServerInlineMethodRefactoring(psiFile.getVirtualFile(), offset, 0);
+    return new ServerInlineMethodRefactoring(getProject(), psiFile.getVirtualFile(), offset, 0);
   }
 
   private void doTest(String filePath, boolean all) {

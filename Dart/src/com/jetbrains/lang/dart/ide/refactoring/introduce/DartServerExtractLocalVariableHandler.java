@@ -120,7 +120,7 @@ class ExtractLocalVariableProcessor {
   }
 
   private void createRefactoring(int offset, int length) {
-    refactoring = new ServerExtractLocalVariableRefactoring(file.getVirtualFile(), offset, length);
+    refactoring = new ServerExtractLocalVariableRefactoring(project, file.getVirtualFile(), offset, length);
     final RefactoringStatus initialStatus = refactoring.checkInitialConditions();
     if (showMessageIfError(initialStatus)) {
       refactoring = null;

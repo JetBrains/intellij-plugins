@@ -69,7 +69,7 @@ public class DartExtractMethodRefactoringTest extends CodeInsightFixtureTestCase
     final SelectionModel selectionModel = getEditor().getSelectionModel();
     int offset = selectionModel.getSelectionStart();
     final int length = selectionModel.getSelectionEnd() - offset;
-    return new ServerExtractMethodRefactoring(psiFile.getVirtualFile(), offset, length);
+    return new ServerExtractMethodRefactoring(getProject(), psiFile.getVirtualFile(), offset, length);
   }
 
   private void doTest(String filePath, boolean all, boolean asGetter) {

@@ -14,6 +14,7 @@
 
 package com.jetbrains.lang.dart.ide.refactoring;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.dartlang.analysis.server.protocol.InlineLocalVariableFeedback;
 import org.dartlang.analysis.server.protocol.RefactoringFeedback;
@@ -28,8 +29,8 @@ public class ServerInlineLocalRefactoring extends ServerRefactoring {
   private String variableName;
   private int occurrences;
 
-  public ServerInlineLocalRefactoring(VirtualFile file, int offset, int length) {
-    super("Inline Local Variable", RefactoringKind.INLINE_LOCAL_VARIABLE, file, offset, length);
+  public ServerInlineLocalRefactoring(@NotNull final Project project, @NotNull final VirtualFile file, final int offset, final int length) {
+    super(project, "Inline Local Variable", RefactoringKind.INLINE_LOCAL_VARIABLE, file, offset, length);
   }
 
   public int getOccurrences() {
