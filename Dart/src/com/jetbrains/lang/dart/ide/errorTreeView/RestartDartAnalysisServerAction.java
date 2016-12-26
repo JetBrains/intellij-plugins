@@ -19,10 +19,11 @@ public class RestartDartAnalysisServerAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(AnActionEvent e) {
-    DartAnalysisServerService.getInstance().restartServer();
-    // The list of projects was probably lost when the server crashed. Prime it with the current project to get the server restarted.
-    if (e.getProject() != null) {
-      DartAnalysisServerService.getInstance().serverReadyForRequest(e.getProject());
+    final Project project = getEventProject(e);
+    if (project != null) {
+      DartAnalysisServerService.getInstance(project).restartServer();
+      // The list of projects was probably lost when the server crashed. Prime it with the current project to get the server restarted.
+      DartAnalysisServerService.getInstance(project).serverReadyForRequest(project);
     }
   }
 

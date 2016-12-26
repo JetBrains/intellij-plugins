@@ -159,14 +159,14 @@ public class DartFileReference implements PsiPolyVariantReference {
       if (region == null) {
         // file might be not open in editor, so we do not have navigation information for it
         final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(refPsiFile);
+        final DartAnalysisServerService das = DartAnalysisServerService.getInstance(refPsiFile.getProject());
         if (virtualFile != null &&
-            DartAnalysisServerService.getInstance().getNavigation(virtualFile).isEmpty() &&
-            DartAnalysisServerService.getInstance().getHighlight(virtualFile).isEmpty()) {
+            das.getNavigation(virtualFile).isEmpty() &&
+            das.getHighlight(virtualFile).isEmpty()) {
           final PsiElement parent = reference.getElement().getParent();
           final int parentOffset = parent.getTextRange().getStartOffset();
           final int parentLength = parent.getTextRange().getLength();
-          final List<DartNavigationRegion> regions =
-            DartAnalysisServerService.getInstance().analysis_getNavigation(virtualFile, parentOffset, parentLength);
+          final List<DartNavigationRegion> regions = das.analysis_getNavigation(virtualFile, parentOffset, parentLength);
           if (regions != null) {
             region = DartResolver.findRegion(regions, refOffset, refLength);
           }

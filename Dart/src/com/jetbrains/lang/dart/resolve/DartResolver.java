@@ -165,7 +165,8 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   public static DartNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
     final VirtualFile refVirtualFile = DartResolveUtil.getRealVirtualFile(refPsiFile);
     if (refVirtualFile != null) {
-      final List<DartServerData.DartNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
+      final List<DartServerData.DartNavigationRegion> regions =
+        DartAnalysisServerService.getInstance(refPsiFile.getProject()).getNavigation(refVirtualFile);
       return findRegion(regions, refOffset, refLength);
     }
     return null;

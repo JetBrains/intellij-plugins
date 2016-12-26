@@ -38,6 +38,7 @@ import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
 
     final String path = psiFile.getVirtualFile().getPath();
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
     service.updateFilesContent();
     final SourceFileEdit fileEdit = service.edit_sortMembers(path);
 
@@ -84,7 +85,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     }
 
     final Runnable runnable = () -> {
-      AssistUtils.applySourceEdits(psiFile.getVirtualFile(), document, edits);
+      AssistUtils.applySourceEdits(project, psiFile.getVirtualFile(), document, edits, Collections.emptySet());
       showHintLater(editor, DartBundle.message("dart.sort.members.hint.success"), false);
     };
 
@@ -118,14 +119,14 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
         }
 
         final String path = virtualFile.getPath();
-        final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance().edit_sortMembers(path);
+        final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance(project).edit_sortMembers(path);
         if (fileEdit != null) {
           fileToFileEditMap.put(virtualFile, fileEdit);
         }
       }
     };
 
-    DartAnalysisServerService.getInstance().updateFilesContent();
+    DartAnalysisServerService.getInstance(project).updateFilesContent();
 
     final boolean ok = ApplicationManagerEx.getApplicationEx()
       .runProcessWithProgressSynchronously(runnable, DartBundle.message("dart.sort.members.action.name"), true, project);
@@ -139,7 +140,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
           final Document document = FileDocumentManager.getInstance().getDocument(file);
           final SourceFileEdit fileEdit = entry.getValue();
           if (document != null) {
-            AssistUtils.applySourceEdits(file, document, fileEdit.getEdits());
+            AssistUtils.applySourceEdits(project, file, document, fileEdit.getEdits(), Collections.emptySet());
           }
         }
       };

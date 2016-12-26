@@ -56,7 +56,7 @@ public class DartQuickFixSet {
       fix.setSourceChange(null);
     }
 
-    final List<AnalysisErrorFixes> fixes = DartAnalysisServerService.getInstance().edit_getFixes(myFile, myOffset);
+    final List<AnalysisErrorFixes> fixes = DartAnalysisServerService.getInstance(myPsiManager.getProject()).edit_getFixes(myFile, myOffset);
     if (fixes == null || fixes.isEmpty()) {
       if (myErrorCode != null) {
         myQuickFixes.get(0).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, false));

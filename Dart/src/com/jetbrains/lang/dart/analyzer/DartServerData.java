@@ -480,7 +480,7 @@ public class DartServerData {
 
     public int getOffset(@NotNull final Project project, @Nullable final VirtualFile file) {
       if (myConvertedOffset == -1) {
-        myConvertedOffset = DartAnalysisServerService.getInstance().getConvertedOffset(file, myOriginalOffset);
+        myConvertedOffset = DartAnalysisServerService.getInstance(project).getConvertedOffset(file, myOriginalOffset);
       }
       return myConvertedOffset;
     }

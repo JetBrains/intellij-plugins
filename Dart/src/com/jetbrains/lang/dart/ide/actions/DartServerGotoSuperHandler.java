@@ -55,7 +55,7 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
     // ask for the super type hierarchy
     final VirtualFile virtualFile = file.getVirtualFile();
     final int offset = inComponent.getComponentName().getTextRange().getStartOffset();
-    final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance().search_getTypeHierarchy(virtualFile, offset, true);
+    final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(project).search_getTypeHierarchy(virtualFile, offset, true);
     // build list of DartComponent(s)
     final List<DartComponent> supers = Lists.newArrayList();
     if (!items.isEmpty()) {

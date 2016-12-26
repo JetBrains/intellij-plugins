@@ -44,8 +44,8 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
 
     ApplicationManager.getApplication().runReadAction(() -> {
       final List<TypeHierarchyItem> hierarchyItems = CachedValuesManager.getCachedValue(parameters.getElement(), () -> {
-        final List<TypeHierarchyItem> items =
-          DartAnalysisServerService.getInstance().search_getTypeHierarchy(fileRef.get(), offsetRef.get(), false);
+        final DartAnalysisServerService das = DartAnalysisServerService.getInstance(parameters.getElement().getProject());
+        final List<TypeHierarchyItem> items = das.search_getTypeHierarchy(fileRef.get(), offsetRef.get(), false);
         return new CachedValueProvider.Result<>(items, PsiModificationTracker.MODIFICATION_COUNT);
       });
 

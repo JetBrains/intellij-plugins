@@ -32,17 +32,18 @@ public class AnalysisServerStatusAction extends DumbAwareAction {
 
   public void update(AnActionEvent e) {
     Presentation presentation = e.getPresentation();
-    if (isApplicable(e.getProject())) {
+    final Project project = e.getProject();
+    if (isApplicable(project)) {
       presentation.setEnabledAndVisible(true);
-      updateStatus(presentation);
+      updateStatus(project, presentation);
     }
     else {
       presentation.setEnabledAndVisible(false);
     }
   }
 
-  private static void updateStatus(@NotNull final Presentation presentation) {
-    DartAnalysisServerService das = DartAnalysisServerService.getInstance();
+  private static void updateStatus(@NotNull final Project project, @NotNull final Presentation presentation) {
+    DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
     Icon statusIcon;
     String statusText;
     String statusDesc;

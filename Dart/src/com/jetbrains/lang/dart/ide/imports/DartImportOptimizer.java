@@ -31,7 +31,7 @@ public class DartImportOptimizer implements ImportOptimizer {
   @NotNull
   @Override
   public Runnable processFile(final PsiFile file) {
-    DartAnalysisServerService.getInstance().serverReadyForRequest(file.getProject());
+    DartAnalysisServerService.getInstance(file.getProject()).serverReadyForRequest(file.getProject());
     return new CollectingInfoRunnable() {
       private boolean myFileChanged = false;
 
@@ -40,9 +40,9 @@ public class DartImportOptimizer implements ImportOptimizer {
         final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(file);
         if (vFile != null) {
           final String filePath = vFile.getPath();
-          final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance().edit_organizeDirectives(filePath);
+          final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance(file.getProject()).edit_organizeDirectives(filePath);
           if (fileEdit != null) {
-            myFileChanged = AssistUtils.applyFileEdit(fileEdit);
+            myFileChanged = AssistUtils.applyFileEdit(file.getProject(), fileEdit);
           }
         }
       }

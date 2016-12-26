@@ -30,7 +30,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -77,7 +76,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     }
     else {
       final VirtualFile[] filesAndDirs = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
-      if (filesAndDirs != null && DartAnalysisServerService.getInstance().serverReadyForRequest(project)) {
+      if (filesAndDirs != null && DartAnalysisServerService.getInstance(project).serverReadyForRequest(project)) {
         final List<VirtualFile> files = getApplicableVirtualFiles(project, filesAndDirs);
         runOverFiles(project, files);
       }

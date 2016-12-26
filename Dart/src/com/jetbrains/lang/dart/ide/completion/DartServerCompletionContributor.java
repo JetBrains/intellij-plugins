@@ -70,10 +70,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final DartSdk sdk = DartSdk.getDartSdk(project);
                if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
 
-               DartAnalysisServerService.getInstance().updateFilesContent();
+               final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+               das.updateFilesContent();
 
                final String completionId =
-                 DartAnalysisServerService.getInstance().completion_getSuggestions(file, parameters.getOffset());
+                 das.completion_getSuggestions(file, parameters.getOffset());
                if (completionId == null) return;
 
                final String specialPrefix = getSpecialPrefix(parameters);
@@ -81,7 +82,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                                      ? originalResultSet.withPrefixMatcher(specialPrefix)
                                                      : originalResultSet;
 
-               DartAnalysisServerService.getInstance().addCompletions(completionId, suggestion -> {
+               das.addCompletions(completionId, suggestion -> {
                  final LookupElement lookupElement = createLookupElement(project, suggestion);
                  resultSet.addElement(lookupElement);
                });

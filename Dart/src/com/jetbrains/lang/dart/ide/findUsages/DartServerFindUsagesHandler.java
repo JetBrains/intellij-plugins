@@ -59,7 +59,7 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
                                       @NotNull final Processor<UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
     final SearchScope scope = options.searchScope;
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
 
     final ReadActionConsumer<SearchResult> searchResultProcessor = new ReadActionConsumer<SearchResult>() {
       @Override

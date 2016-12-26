@@ -79,7 +79,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     setToolbar(createToolbar());
     setContent(createCenterPanel());
 
-    DartAnalysisServerService.getInstance().maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
+    DartAnalysisServerService.getInstance(project).maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
   }
 
   @NotNull
