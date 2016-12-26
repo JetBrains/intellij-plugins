@@ -7,15 +7,12 @@ import com.intellij.util.ProcessingContext
 import name.kropp.intellij.makefile.psi.MakefileTypes
 
 class MakefileCompletionContributor : CompletionContributor() {
+  private val keywords = listOf("include", "define", "undefine", "override", "export", "private", "vpath")
   init {
-    extend(CompletionType.BASIC,
-        PlatformPatterns.psiElement(MakefileTypes.IDENTIFIER).withLanguage(MakefileLanguage),
+    extend(CompletionType.BASIC, PlatformPatterns.psiElement(MakefileTypes.IDENTIFIER).withParent(MakefileFile::class.java),
         object : CompletionProvider<CompletionParameters>() {
       override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext?, resultSet: CompletionResultSet) {
-        val file = parameters.originalFile
-        if (file is MakefileFile) {
-          //resultSet.addAllElements(file.targets.mapNotNull { it?.let { LookupElementBuilder.create(it.text) } })
-        }
+        resultSet.addAllElements(keywords.map { LookupElementBuilder.create(it) })
       }
     })
   }
