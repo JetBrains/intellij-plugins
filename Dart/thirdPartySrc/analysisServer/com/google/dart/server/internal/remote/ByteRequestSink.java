@@ -70,6 +70,7 @@ public class ByteRequestSink implements RequestSink {
   @Override
   public void close() {
     writer.close();
+    lineQueue.add(ByteResponseStream.EOF_LINE);
   }
 
   public void waitForFlush() {
@@ -92,6 +93,10 @@ public class ByteRequestSink implements RequestSink {
       while (true) {
         try {
           String line = lineQueue.take();
+          if (line == ByteResponseStream.EOF_LINE) {
+            return;
+          }
+
           writer.println(line);
           writer.flush();
         }
