@@ -1546,7 +1546,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSReturnStatement(JSReturnStatement node) {
+  public void visitJSReturnStatement(@NotNull JSReturnStatement node) {
     super.visitJSReturnStatement(node);
 
     final PsiElement element =
