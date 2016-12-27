@@ -85,13 +85,6 @@ public class DartTestUtils {
                     "the corresponding JUnit run configuration (Run | Edit Configurations)");
       }
       VfsRootAccess.allowRootAccess(disposable, sdkHome);
-      // Dart Analysis Server threads
-      ThreadTracker.longRunningThreadCreated(ApplicationManager.getApplication(),
-                                             "ByteRequestSink.LinesWriterThread",
-                                             "ByteResponseStream.LinesReaderThread",
-                                             "RemoteAnalysisServerImpl watcher",
-                                             "ServerErrorReaderThread",
-                                             "ServerResponseReaderThread");
     }
     else {
       sdkHome = SDK_HOME_PATH;

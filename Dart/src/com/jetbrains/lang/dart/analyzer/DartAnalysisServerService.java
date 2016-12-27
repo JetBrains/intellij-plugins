@@ -20,12 +20,12 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -36,7 +36,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
@@ -77,7 +76,7 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class DartAnalysisServerService {
+public class DartAnalysisServerService implements Disposable {
 
   public static final String MIN_SDK_VERSION = "1.12";
 
@@ -108,6 +107,8 @@ public class DartAnalysisServerService {
   private static final int DEBUG_LOG_CAPACITY = 30;
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
 
+  @NotNull private final Project myProject;
+
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
   @Nullable private AnalysisServer myServer;
@@ -116,21 +117,23 @@ public class DartAnalysisServerService {
   @NotNull private String myServerVersion = "";
   @NotNull private String mySdkVersion = "";
   @Nullable private String mySdkHome = null;
-  private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
+
+  private final DartServerRootsHandler myRootsHandler;
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<>();
   private final List<String> myVisibleFiles = new ArrayList<>();
   private final Set<Document> myChangedDocuments = new THashSet<>();
-  private final Alarm myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, ApplicationManager.getApplication());
+  private final Alarm myUpdateFilesAlarm;
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
   @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<>();
 
-  @NotNull private final DartServerData myServerData = new DartServerData(this, myRootsHandler);
+  @NotNull private final DartServerData myServerData;
 
   private volatile boolean myAnalysisInProgress;
   private volatile boolean myPubListInProgress;
-  @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
-  @NotNull private final Set<ProgressIndicator> myProgressIndicators = new THashSet<>(); // also used to wait/notify
+  @NotNull private final Alarm myShowServerProgressAlarm;
+  @Nullable private ProgressIndicator myProgressIndicator;
+  private final Object myProgressLock = new Object();
 
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
@@ -160,7 +163,9 @@ public class DartAnalysisServerService {
     @Override
     public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
       final String fileName = PathUtil.getFileName(filePathSD);
-      for (ProgressIndicator indicator : myProgressIndicators) {
+
+      final ProgressIndicator indicator = myProgressIndicator;
+      if (indicator != null) {
         indicator.setText(DartBundle.message("dart.analysis.progress.with.file", fileName));
       }
 
@@ -281,18 +286,16 @@ public class DartAnalysisServerService {
       if (pubStatus != null) myPubListInProgress = pubStatus.isListingPackageDirs();
 
       if (!wasBusy && (myAnalysisInProgress || myPubListInProgress)) {
-        for (final Project project : myRootsHandler.getTrackedProjects()) {
-          final Runnable delayedRunnable = () -> {
-            if (!project.isDisposed() && (myAnalysisInProgress || myPubListInProgress)) {
-              startShowingServerProgress(project);
-            }
-          };
+        final Runnable delayedRunnable = () -> {
+          if (myAnalysisInProgress || myPubListInProgress) {
+            startShowingServerProgress();
+          }
+        };
 
-          // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events
-          // 300ms delay to avoid showing progress for very fast analysis start-stop cycle that happens with analysisStatus events
-          final int delay = pubStatus != null && pubStatus.isListingPackageDirs() ? 50 : 300;
-          myShowServerProgressAlarm.addRequest(delayedRunnable, delay, ModalityState.any());
-        }
+        // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events
+        // 300ms delay to avoid showing progress for very fast analysis start-stop cycle that happens with analysisStatus events
+        final int delay = pubStatus != null && pubStatus.isListingPackageDirs() ? 50 : 300;
+        myShowServerProgressAlarm.addRequest(delayedRunnable, delay, ModalityState.any());
       }
 
       if (!myAnalysisInProgress && !myPubListInProgress) {
@@ -305,11 +308,11 @@ public class DartAnalysisServerService {
     return i == 0 ? Integer.MAX_VALUE : i;
   }
 
-  private void startShowingServerProgress(final Project project) {
-    final Task.Backgroundable task = new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
+  private void startShowingServerProgress() {
+    final Task.Backgroundable task = new Task.Backgroundable(myProject, DartBundle.message("dart.analysis.progress.title"), false) {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
-        if (project.isDisposed()) return;
+        if (myProject.isDisposed()) return;
         if (!myAnalysisInProgress && !myPubListInProgress) return;
 
         indicator.setText(DartBundle.message("dart.analysis.progress.title"));
@@ -321,11 +324,11 @@ public class DartAnalysisServerService {
         }
         else {
           try {
-            myProgressIndicators.add(indicator);
-            waitWhileServerBusy(indicator);
+            myProgressIndicator = indicator;
+            waitWhileServerBusy();
           }
           finally {
-            myProgressIndicators.remove(indicator);
+            myProgressIndicator = null;
           }
         }
       }
@@ -333,30 +336,6 @@ public class DartAnalysisServerService {
 
     ProgressManager.getInstance().run(task);
   }
-
-  private DocumentAdapter myDocumentListener = new DocumentAdapter() {
-    @Override
-    public void beforeDocumentChange(DocumentEvent e) {
-      myServerData.onDocumentChanged(e);
-
-      final VirtualFile file = FileDocumentManager.getInstance().getFile(e.getDocument());
-      if (isLocalAnalyzableFile(file)) {
-        for (Project project : myRootsHandler.getTrackedProjects()) {
-          for (VirtualFile fileInEditor : FileEditorManager.getInstance(project).getSelectedFiles()) {
-            if (fileInEditor.equals(file)) {
-              synchronized (myLock) {
-                myChangedDocuments.add(e.getDocument());
-              }
-              break;
-            }
-          }
-        }
-      }
-
-      myUpdateFilesAlarm.cancelAllRequests();
-      myUpdateFilesAlarm.addRequest(DartAnalysisServerService.this::updateFilesContent, UPDATE_FILES_TIMEOUT);
-    }
-  };
 
   /**
    * Must use it each time right after reading any offset or length from any class from org.dartlang.analysis.server.protocol package
@@ -394,16 +373,6 @@ public class DartAnalysisServerService {
       lengths[i] = getConvertedOffset(file, _offsets[i] + _lengths[i]) - offsets[i];
     }
     return lengths;
-  }
-
-  void addDocumentListener() {
-    // by design document listener must not be already registered, next line is for the safety only
-    EditorFactory.getInstance().getEventMulticaster().removeDocumentListener(myDocumentListener);
-    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(myDocumentListener);
-  }
-
-  void removeDocumentListener() {
-    EditorFactory.getInstance().getEventMulticaster().removeDocumentListener(myDocumentListener);
   }
 
   public static boolean isDartSdkVersionSufficient(@NotNull final DartSdk sdk) {
@@ -462,11 +431,7 @@ public class DartAnalysisServerService {
   }
 
   private void configureImportedLibraries(@NotNull final Collection<String> filePaths) {
-    final Set<Project> projects = myRootsHandler.getTrackedProjects();
-    if (projects.size() != 1) return; // no idea how to map files from filePaths to several open projects
-
-    final Project project = projects.iterator().next();
-    DumbService.getInstance(project).smartInvokeLater(() -> doConfigureImportedLibraries(project, filePaths));
+    DumbService.getInstance(myProject).smartInvokeLater(() -> doConfigureImportedLibraries(myProject, filePaths));
   }
 
   private static void doConfigureImportedLibraries(@NotNull final Project project, @NotNull final Collection<String> filePaths) {
@@ -509,12 +474,25 @@ public class DartAnalysisServerService {
     DartFileListener.updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
   }
 
-  public DartAnalysisServerService() {
-    Disposer.register(ApplicationManager.getApplication(), new Disposable() {
-      public void dispose() {
-        stopServer();
-      }
-    });
+  public DartAnalysisServerService(@NotNull final Project project) {
+    myProject = project;
+    myRootsHandler = new DartServerRootsHandler(project);
+    myServerData = new DartServerData(this);
+    myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, project);
+    myShowServerProgressAlarm = new Alarm(project);
+
+    setDasLogger();
+
+    registerFileEditorManagerListener();
+    registerDocumentListener();
+
+    registerQuickAssistIntentions();
+  }
+
+  private static void setDasLogger() {
+    if (Logging.getLogger() != com.google.dart.server.utilities.logging.Logger.NULL) {
+      return; // already registered
+    }
 
     Logging.setLogger(new com.google.dart.server.utilities.logging.Logger() {
       @Override
@@ -537,61 +515,90 @@ public class DartAnalysisServerService {
         LOG.debug(message, exception);
       }
     });
+  }
 
-    ApplicationManager.getApplication().getMessageBus().connect()
-      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
-        @Override
-        public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-          if (!Registry.is("dart.projects.without.pubspec", false) &&
-              (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE)) {
-            DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
-          }
-
-          updateCurrentFile();
-
-          if (isLocalAnalyzableFile(file)) {
-            updateVisibleFiles();
-          }
+  private void registerFileEditorManagerListener() {
+    myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
+      @Override
+      public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+        if (!Registry.is("dart.projects.without.pubspec", false) &&
+            (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE)) {
+          DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
         }
 
-        @Override
-        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-          updateCurrentFile();
+        updateCurrentFile();
 
-          if (isLocalAnalyzableFile(event.getOldFile()) || isLocalAnalyzableFile(event.getNewFile())) {
-            updateVisibleFiles();
-          }
+        if (isLocalAnalyzableFile(file)) {
+          updateVisibleFiles();
         }
+      }
 
-        @Override
-        public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-          updateCurrentFile();
+      @Override
+      public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+        updateCurrentFile();
 
-          if (isLocalAnalyzableFile(file)) {
-            // file could be opened in more than one editor, so this check is needed
-            for (Project project : myRootsHandler.getTrackedProjects()) {
-              if (FileEditorManager.getInstance(project).getSelectedEditor(file) == null) {
-                myServerData.onFileClosed(file);
-                break;
+        if (isLocalAnalyzableFile(event.getOldFile()) || isLocalAnalyzableFile(event.getNewFile())) {
+          updateVisibleFiles();
+        }
+      }
+
+      @Override
+      public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+        updateCurrentFile();
+
+        if (isLocalAnalyzableFile(file)) {
+          // file could be opened in more than one editor, so this check is needed
+          if (FileEditorManager.getInstance(myProject).getSelectedEditor(file) == null) {
+            myServerData.onFileClosed(file);
+          }
+
+          updateVisibleFiles();
+        }
+      }
+    });
+  }
+
+  private void registerDocumentListener() {
+    final DocumentListener documentListener = new DocumentAdapter() {
+      @Override
+      public void beforeDocumentChange(DocumentEvent e) {
+        if (myServer == null) return;
+
+        myServerData.onDocumentChanged(e);
+
+        final VirtualFile file = FileDocumentManager.getInstance().getFile(e.getDocument());
+        if (isLocalAnalyzableFile(file)) {
+          for (VirtualFile fileInEditor : FileEditorManager.getInstance(myProject).getSelectedFiles()) {
+            if (fileInEditor.equals(file)) {
+              synchronized (myLock) {
+                myChangedDocuments.add(e.getDocument());
               }
+              break;
             }
-
-            updateVisibleFiles();
           }
         }
-      });
 
-    registerQuickAssistIntentions();
+        myUpdateFilesAlarm.cancelAllRequests();
+        myUpdateFilesAlarm.addRequest(DartAnalysisServerService.this::updateFilesContent, UPDATE_FILES_TIMEOUT);
+      }
+    };
+
+    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(documentListener, myProject);
   }
 
   @NotNull
   public static DartAnalysisServerService getInstance(@NotNull final Project project) {
-    return getInstance();
+    return ServiceManager.getService(project, DartAnalysisServerService.class);
   }
 
   @NotNull
-  public static DartAnalysisServerService getInstance() {
-    return ServiceManager.getService(DartAnalysisServerService.class);
+  public Project getProject() {
+    return myProject;
+  }
+
+  @Override
+  public void dispose() {
+    stopServer();
   }
 
   @NotNull
@@ -626,25 +633,22 @@ public class DartAnalysisServerService {
 
   void updateCurrentFile() {
     UIUtil.invokeLaterIfNeeded(() -> {
-      for (Project project : myRootsHandler.getTrackedProjects()) {
-        final VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
-        if (files.length > 0) {
-          DartProblemsView.getInstance(project).setCurrentFile(files[0]);
-        }
+      final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
+      if (files.length > 0) {
+        DartProblemsView.getInstance(myProject).setCurrentFile(files[0]);
       }
     });
   }
 
   void updateVisibleFiles() {
     ApplicationManager.getApplication().assertReadAccessAllowed();
+
     synchronized (myLock) {
       final List<String> newVisibleFiles = new ArrayList<>();
 
-      for (Project project : myRootsHandler.getTrackedProjects()) {
-        for (VirtualFile file : FileEditorManager.getInstance(project).getSelectedFiles()) {
-          if (isLocalAnalyzableFile(file)) {
-            newVisibleFiles.add(FileUtil.toSystemDependentName(file.getPath()));
-          }
+      for (VirtualFile file : FileEditorManager.getInstance(myProject).getSelectedFiles()) {
+        if (isLocalAnalyzableFile(file)) {
+          newVisibleFiles.add(FileUtil.toSystemDependentName(file.getPath()));
         }
       }
 
@@ -745,10 +749,6 @@ public class DartAnalysisServerService {
   }
 
   public boolean updateRoots(@NotNull final List<String> includedRoots, @NotNull final List<String> excludedRoots) {
-    if (includedRoots.isEmpty()) {
-      stopShowingServerProgress();
-    }
-
     AnalysisServer server = myServer;
     if (server == null) {
       return false;
@@ -772,15 +772,11 @@ public class DartAnalysisServerService {
 
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
 
-      for (final Project project : myRootsHandler.getTrackedProjects()) {
-        if (project.isDisposed()) continue;
-
-        if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
-          DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
-        }
-        else {
-          DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
-        }
+      if (vFile != null && ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(vFile)) {
+        DartProblemsView.getInstance(myProject).updateErrorsForFile(filePath, errors);
+      }
+      else {
+        DartProblemsView.getInstance(myProject).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
       }
     });
   }
@@ -820,17 +816,15 @@ public class DartAnalysisServerService {
     }
   }
 
-  private void clearAllErrors(@NotNull final Collection<Project> projects) {
+  private void clearAllErrors() {
     synchronized (myFilePathsWithErrors) {
       myFilePathsWithErrors.clear();
       myFilePathToErrorsHash.clear();
       myFolderPathsWithErrors.clear();
     }
 
-    for (final Project project : projects) {
-      if (!project.isDisposed()) {
-        DartProblemsView.getInstance(project).clearAll();
-      }
+    if (!myProject.isDisposed()) {
+      DartProblemsView.getInstance(myProject).clearAll();
     }
   }
 
@@ -1236,16 +1230,13 @@ public class DartAnalysisServerService {
     return resultRef.get();
   }
 
-  public void analysis_reanalyze(@Nullable final List<String> roots) {
+  public void analysis_reanalyze() {
     final AnalysisServer server = myServer;
     if (server == null) return;
 
-    String rootsStr = roots != null ? StringUtil.join(roots, ",\n") : "all roots";
-    LOG.debug("analysis_reanalyze, roots: " + rootsStr);
+    server.analysis_reanalyze(null);
 
-    server.analysis_reanalyze(roots);
-
-    ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(myRootsHandler.getTrackedProjects()), ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(), ModalityState.NON_MODAL);
   }
 
   private void analysis_setPriorityFiles() {
@@ -1482,30 +1473,19 @@ public class DartAnalysisServerService {
       if (myServer == null || !sdk.getHomePath().equals(mySdkHome) || !sdk.getVersion().equals(mySdkVersion) || !myServer.isSocketOpen()) {
         stopServer();
         startServer(sdk);
-      }
 
-      if (myServer != null) {
-        if ((myAnalysisInProgress || myPubListInProgress) && !myRootsHandler.getTrackedProjects().contains(project)) {
-          startShowingServerProgress(project);
+        if (myServer != null) {
+          myRootsHandler.ensureProjectServed();
         }
-
-        myRootsHandler.ensureProjectServed(project);
-
-        return true;
       }
 
-      return false;
+      return myServer != null;
     }
   }
 
   public void restartServer() {
-    final Set<Project> projects = new THashSet<>(myRootsHandler.getTrackedProjects());
-
     stopServer();
-
-    for (Project project : projects) {
-      serverReadyForRequest(project);
-    }
+    serverReadyForRequest(myProject);
   }
 
   void stopServer() {
@@ -1536,11 +1516,9 @@ public class DartAnalysisServerService {
       myVisibleFiles.clear();
       myChangedDocuments.clear();
       myServerData.clearData();
-
-      final List<Project> projects = new ArrayList<>(myRootsHandler.getTrackedProjects());
       myRootsHandler.reset();
 
-      ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(projects), ModalityState.NON_MODAL);
+      ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(), ModalityState.NON_MODAL);
     }
   }
 
@@ -1568,29 +1546,25 @@ public class DartAnalysisServerService {
     assert latch.getCount() == 0 : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
   }
 
-  private void waitWhileServerBusy(@NotNull final ProgressIndicator indicator) {
+  private void waitWhileServerBusy() {
     try {
-      synchronized (myProgressIndicators) {
+      synchronized (myProgressLock) {
         while (myAnalysisInProgress || myPubListInProgress) {
-          indicator.checkCanceled();
-          myProgressIndicators.wait(100);
+          myProgressLock.wait();
         }
       }
     }
-    catch (ProcessCanceledException e) {/* happens when project is closed */ }
     catch (InterruptedException e) {/* unlucky */}
   }
 
   private void stopShowingServerProgress() {
     myShowServerProgressAlarm.cancelAllRequests();
 
-    synchronized (myProgressIndicators) {
+    synchronized (myProgressLock) {
       myAnalysisInProgress = false;
       myPubListInProgress = false;
-      myProgressIndicators.notifyAll();
+      myProgressLock.notifyAll();
     }
-
-    myProgressIndicators.clear();
   }
 
   public boolean isFileWithErrors(@NotNull final VirtualFile file) {

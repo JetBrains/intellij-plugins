@@ -1,11 +1,9 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.ProjectTopics;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
@@ -17,7 +15,6 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.io.URLUtil;
-import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
@@ -31,48 +28,34 @@ import java.util.Set;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartServerRootsHandler {
-  private final Set<Project> myTrackedProjects = new THashSet<>();
+
+  private final Project myProject;
+
   private final List<String> myIncludedRoots = new SmartList<>();
   private final List<String> myExcludedRoots = new SmartList<>();
 
-  public DartServerRootsHandler() {
-    // ProjectManagerListener.projectClosed() is not called in unittest mode, that's why ProjectLifecycleListener is used - it is called always
-    final MessageBusConnection busConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    busConnection.subscribe(ProjectLifecycleListener.TOPIC, new ProjectLifecycleListener() {
-      @Override
-      public void afterProjectClosed(@NotNull final Project project) {
-        if (myTrackedProjects.remove(project)) {
-          if (myTrackedProjects.isEmpty()) {
-            DartAnalysisServerService.getInstance().removeDocumentListener();
-          }
-          updateRoots();
-          DartAnalysisServerService.getInstance().updateVisibleFiles();
-        }
-      }
-    });
+  public DartServerRootsHandler(Project project) {
+    myProject = project;
   }
 
   public void reset() {
-    myTrackedProjects.clear();
     myIncludedRoots.clear();
     myExcludedRoots.clear();
   }
 
-  public void ensureProjectServed(@NotNull final Project project) {
-    if (myTrackedProjects.contains(project)) return;
-
-    if (myTrackedProjects.isEmpty()) {
-      DartAnalysisServerService.getInstance().addDocumentListener();
-    }
+  public void ensureProjectServed() {
+    assert (myIncludedRoots.isEmpty());
+    assert (myExcludedRoots.isEmpty());
 
     ProgressManager.getInstance().executeNonCancelableSection(() -> {
-      myTrackedProjects.add(project);
       updateRoots();
-      DartAnalysisServerService.getInstance().updateCurrentFile();
-      DartAnalysisServerService.getInstance().updateVisibleFiles();
+
+      final DartAnalysisServerService das = DartAnalysisServerService.getInstance(myProject);
+      das.updateCurrentFile();
+      das.updateVisibleFiles();
     });
 
-    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+    myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
       public void rootsChanged(final ModuleRootEvent event) {
         updateRoots();
@@ -80,39 +63,33 @@ public class DartServerRootsHandler {
     });
   }
 
-  public Set<Project> getTrackedProjects() {
-    return myTrackedProjects;
-  }
-
   private void updateRoots() {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
-      DartAnalysisServerService.getInstance().stopServer();
+      DartAnalysisServerService.getInstance(myProject).stopServer();
     }
 
     final List<String> newIncludedRoots = new SmartList<>();
     final List<String> newExcludedRoots = new SmartList<>();
 
     if (sdk != null) {
-      for (Project project : myTrackedProjects) {
-        @SuppressWarnings("ConstantConditions")
-        final String dotIdeaPath = PathUtil.getParentPath(project.getProjectFilePath());
-        if (dotIdeaPath.endsWith("/.idea")) {
-          newExcludedRoots.add(FileUtil.toSystemDependentName(dotIdeaPath));
-        }
+      @SuppressWarnings("ConstantConditions")
+      final String dotIdeaPath = PathUtil.getParentPath(myProject.getProjectFilePath());
+      if (dotIdeaPath.endsWith("/.idea")) {
+        newExcludedRoots.add(FileUtil.toSystemDependentName(dotIdeaPath));
+      }
 
-        for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkEnabled(project)) {
-          final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);
+      for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkEnabled(myProject)) {
+        final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);
 
-          for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
-            final String contentEntryUrl = contentEntry.getUrl();
-            if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
-              newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntryUrl)));
+        for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
+          final String contentEntryUrl = contentEntry.getUrl();
+          if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
+            newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntryUrl)));
 
-              for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
-                if (excludedUrl.startsWith(contentEntryUrl) && !excludedPackageSymlinkUrls.contains(excludedUrl)) {
-                  newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
-                }
+            for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
+              if (excludedUrl.startsWith(contentEntryUrl) && !excludedPackageSymlinkUrls.contains(excludedUrl)) {
+                newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
               }
             }
           }
@@ -124,7 +101,7 @@ public class DartServerRootsHandler {
       myIncludedRoots.clear();
       myExcludedRoots.clear();
 
-      if (DartAnalysisServerService.getInstance().updateRoots(newIncludedRoots, newExcludedRoots)) {
+      if (DartAnalysisServerService.getInstance(myProject).updateRoots(newIncludedRoots, newExcludedRoots)) {
         myIncludedRoots.addAll(newIncludedRoots);
         myExcludedRoots.addAll(newExcludedRoots);
       }

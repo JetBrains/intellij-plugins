@@ -2,6 +2,8 @@ package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -20,7 +22,6 @@ import java.util.*;
 public class DartServerData {
 
   private final DartAnalysisServerService myService;
-  private DartServerRootsHandler myRootsHandler;
 
   private final Map<String, List<DartError>> myErrorData =
     Collections.synchronizedMap(new THashMap<String, List<DartError>>());
@@ -37,9 +38,8 @@ public class DartServerData {
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
-  DartServerData(@NotNull final DartAnalysisServerService service, @NotNull final DartServerRootsHandler rootsHandler) {
+  DartServerData(@NotNull final DartAnalysisServerService service) {
     myService = service;
-    myRootsHandler = rootsHandler;
   }
 
   void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean restartHighlighting) {
@@ -204,15 +204,18 @@ public class DartServerData {
 
   private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
     if (file != null) {
-      Set<Project> projects = myRootsHandler.getTrackedProjects();
-      for (final Project project : projects) {
-        if (project.isDisposed()) continue;
+      final Project project = myService.getProject();
 
-        if (clearCache) {
-          ResolveCache.getInstance(project).clearCache(true);
-        }
-        DaemonCodeAnalyzer.getInstance(project).restart();
+      if (clearCache) {
+        ResolveCache.getInstance(project).clearCache(true);
       }
+
+      // It's ok to call DaemonCodeAnalyzer.restart() right in this thread, without invokeLater(),
+      // but it would cache RemoteAnalysisServerImpl$ServerResponseReaderThread in FileStatusMap.threads and as a result,
+      // DartAnalysisServerService.myProject would be leaked in tests
+      ApplicationManager.getApplication().invokeLater(() -> DaemonCodeAnalyzer.getInstance(project).restart(),
+                                                      ModalityState.NON_MODAL,
+                                                      project.getDisposed());
     }
   }
 

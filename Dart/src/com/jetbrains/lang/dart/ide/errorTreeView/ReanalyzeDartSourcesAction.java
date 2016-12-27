@@ -39,7 +39,7 @@ public class ReanalyzeDartSourcesAction extends AnAction implements DumbAware {
     if (isApplicable(project)) {
       DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
       if (das.isServerProcessActive()) {
-        das.analysis_reanalyze(null);
+        das.analysis_reanalyze();
       }
       else {
         // Ensure the server is properly stopped.
