@@ -25,7 +25,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * An {@link InputStream} based implementation of {@link ResponseStream}. Each line must contain
  * exactly one complete JSON object.
- * 
+ *
  * @coverage dart.server.remote
  */
 public class ByteResponseStream implements ResponseStream {
@@ -47,6 +47,11 @@ public class ByteResponseStream implements ResponseStream {
         // check for EOF
         if (line == null) {
           lineQueue.add(EOF_LINE);
+
+          if (onStreamEndRunnable != null) {
+            onStreamEndRunnable.run();
+          }
+
           return;
         }
         // debug output
@@ -63,7 +68,7 @@ public class ByteResponseStream implements ResponseStream {
     }
   }
 
-  private static String EOF_LINE = "EOF line";
+  public static final String EOF_LINE = "EOF line";
 
   /**
    * The {@link BufferedReader} to read JSON strings from.
@@ -74,6 +79,7 @@ public class ByteResponseStream implements ResponseStream {
    * The {@link DebugPrintStream} to print all lines to.
    */
   private final DebugPrintStream debugStream;
+  private final Runnable onStreamEndRunnable;
 
   /**
    * The queue of lines.
@@ -82,13 +88,14 @@ public class ByteResponseStream implements ResponseStream {
 
   /**
    * Initializes a newly created response stream.
-   * 
+   *
    * @param stream the byte stream to read JSON strings from
    * @param debugStream the {@link PrintStream} to print all lines to, may be {@code null}
    */
-  public ByteResponseStream(InputStream stream, DebugPrintStream debugStream) {
+  public ByteResponseStream(InputStream stream, DebugPrintStream debugStream, Runnable onStreamEndRunnable) {
     reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
     this.debugStream = debugStream;
+    this.onStreamEndRunnable = onStreamEndRunnable;
     new LinesReaderThread().start();
   }
 
