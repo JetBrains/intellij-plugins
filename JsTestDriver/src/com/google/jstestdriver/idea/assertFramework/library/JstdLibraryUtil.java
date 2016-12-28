@@ -122,13 +122,8 @@ public class JstdLibraryUtil {
     }
 
     @Override
-    public void beforeLibraryRemoved(Library library) {
-    }
-
-    @Override
     public void afterLibraryRemoved(Library library) {
       libraryChanged();
     }
   }
-
 }
