@@ -44,8 +44,8 @@ import org.osmorc.util.OsgiPsiUtil;
  * Inspection that reports classes implementing BundleActivator
  * which are not registered in either manifest or facet configuration.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
   @NotNull

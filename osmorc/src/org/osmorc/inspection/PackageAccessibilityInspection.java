@@ -57,8 +57,8 @@ import static org.osmorc.i18n.OsmorcBundle.message;
 /**
  * Inspection which checks if a package of a class is accessible inside the OSGi context.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspectionTool {
   public boolean checkTests = false;
