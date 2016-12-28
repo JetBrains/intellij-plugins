@@ -47,7 +47,7 @@ import java.util.List;
  * This is a compiler step that builds up a bundle. Depending on user settings the compiler either uses a user-edited
  * manifest or builds up a manifest using bnd.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class BundleCompiler implements Reporter {
   private static final Logger LOG = Logger.getInstance(BundleCompiler.class);

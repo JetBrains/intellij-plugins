@@ -34,7 +34,7 @@ import org.osmorc.i18n.OsmorcBundle;
  * Inspection that reports classes which are located in the default package.
  * These classes cannot be imported or exported in OSGi.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ClassInDefaultPackageInspection extends AbstractOsgiVisitor {
   @NotNull

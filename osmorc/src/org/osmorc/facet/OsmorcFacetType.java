@@ -42,8 +42,8 @@ import javax.swing.*;
 /**
  * The facet type of Osmorc.
  *
- * @author Robert F. Beeger (robert@beeger.net)
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfiguration> {
   public static final FacetTypeId<OsmorcFacet> ID = new FacetTypeId<>("Osmorc");

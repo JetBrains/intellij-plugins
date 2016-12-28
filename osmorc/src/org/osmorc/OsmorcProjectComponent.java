@@ -63,7 +63,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * A project level component which enables some listeners to keep data in sync when the project opens or it's settings change.
  *
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsmorcProjectComponent implements ProjectComponent {
   public static final NotificationGroup IMPORTANT_NOTIFICATIONS =

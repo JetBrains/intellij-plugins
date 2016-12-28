@@ -44,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Tests that the menu group is properly created and that it will list the jar files for all modules.
  *
- * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
 @RunWith(SwingRunner.class)
 public class ShowGeneratedManifestTest extends HeavyOsgiFixtureTestCase {

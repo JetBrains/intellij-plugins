@@ -49,7 +49,7 @@ import javax.swing.*;
 import java.util.List;
 
 /**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ProjectSettingsEditorComponent {
   private UserActivityWatcher myWatcher;

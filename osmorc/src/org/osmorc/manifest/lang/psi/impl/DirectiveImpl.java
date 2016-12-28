@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Directive;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class DirectiveImpl extends AbstractAssignmentExpression implements Directive {
   public DirectiveImpl(@NotNull ASTNode node) {

@@ -36,7 +36,7 @@ import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osgi.framework.Version;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class BundleVersionParser extends StandardHeaderParser {
   public static final HeaderParser INSTANCE = new BundleVersionParser();

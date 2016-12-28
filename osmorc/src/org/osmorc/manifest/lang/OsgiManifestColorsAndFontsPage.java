@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS = {

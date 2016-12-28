@@ -41,7 +41,7 @@ import java.util.jar.Manifest;
 /**
  * This is a helper class which helps providing information about bundles (that do not necessarily belong to the project).
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class CachingBundleInfoProvider {
   private static final Map<String, Pair<Long, Manifest>> ourCache = new WeakHashMap<String, Pair<Long, Manifest>>();

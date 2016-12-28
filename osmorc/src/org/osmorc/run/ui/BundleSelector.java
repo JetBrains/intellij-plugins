@@ -62,7 +62,7 @@ import static org.osmorc.frameworkintegration.FrameworkInstanceManager.Framework
 /**
  * Dialog for selecting a bundle to be deployed.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class BundleSelector extends DialogWrapper {
   private JPanel myContentPane;

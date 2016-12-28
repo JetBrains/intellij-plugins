@@ -29,7 +29,7 @@ package org.osmorc.run;
  * Classes implementing this interface provide additional checkers for the run configuration.
  * Currently only framework integrators are checked whether they implement this interface..
  *
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public interface OsgiRunConfigurationCheckerProvider {
   OsgiRunConfigurationChecker getOsgiRunConfigurationChecker();

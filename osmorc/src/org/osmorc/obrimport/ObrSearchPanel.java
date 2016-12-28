@@ -47,7 +47,7 @@ import java.util.List;
 /**
  * Search panel which does the actual searching.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id:$
  */
 public class ObrSearchPanel extends ProgressIndicatorBase {

@@ -43,8 +43,8 @@ import java.util.List;
 /**
  * Application wide settings which apply to all Osmorc driven projects.
  *
- * @author Robert F. Beeger (robert@beeger.net)
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 @State(name = "Osmorc", storages = @Storage("osmorc.xml"))
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {

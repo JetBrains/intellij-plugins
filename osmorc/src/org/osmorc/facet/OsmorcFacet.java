@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.settings.ProjectSettings;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
   public OsmorcFacet(@NotNull Module module) {

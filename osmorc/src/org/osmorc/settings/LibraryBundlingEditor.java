@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
- * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
 public class LibraryBundlingEditor implements SearchableConfigurable, Configurable.NoScroll {
   private LibraryBundlingEditorComponent myComponent;

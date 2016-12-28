@@ -51,8 +51,8 @@ import java.awt.event.ActionListener;
  * The facet editor tab which is used to set up Osmorc facet settings concerning the generation of the manifest file by
  * Osmorc.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
   private final FacetEditorContext myEditorContext;

@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class FrameworkIntegratorRegistryTest extends LightOsgiFixtureTestCase {
   public void testRegistry() {

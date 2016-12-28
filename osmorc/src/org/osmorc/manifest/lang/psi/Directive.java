@@ -25,7 +25,7 @@
 package org.osmorc.manifest.lang.psi;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public interface Directive extends AssignmentExpression {
 }

@@ -30,7 +30,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class AddtionalJARContentsTableModelTest {
     @Test

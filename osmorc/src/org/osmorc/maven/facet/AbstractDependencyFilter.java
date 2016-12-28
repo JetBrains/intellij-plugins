@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * Apply clause-based filter over given dependencies.
  *
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public abstract class AbstractDependencyFilter {
   private static final Pattern MISSING_KEY_PATTERN = Pattern.compile("(^|,)\\p{Blank}*(!)?\\p{Blank}*([a-zA-Z]+=)");

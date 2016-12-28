@@ -71,8 +71,8 @@ import static org.jetbrains.osgi.jps.model.OutputPathType.*;
 /**
  * The facet editor tab which is used to set up Osmorc facet settings concerning the bundle JAR created by Osmorc.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JPanel myRoot;

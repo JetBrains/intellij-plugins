@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
 /**
  * Class which wraps bnd and integrates it into IntelliJ.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class BndWrapper {
   private final Reporter myReporter;

@@ -28,7 +28,7 @@ import aQute.bnd.osgi.Analyzer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @since Jul 20, 2009
  */
 public class ReportingAnalyzer extends Analyzer {

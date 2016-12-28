@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ApplicationSettingsEditor implements SearchableConfigurable {
   private FrameworkDefinitionsEditorComponent myComponent;

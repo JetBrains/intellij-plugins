@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
- * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ProjectSettingsEditor implements SearchableConfigurable {
   private final Project myProject;

@@ -52,7 +52,7 @@ import java.util.Map;
 /**
  * The OsmorcFacetImporter reads Maven metadata and import OSGi-specific settings as an Osmorc facet.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
   private static final String INCLUDE_MANIFEST = "_include";

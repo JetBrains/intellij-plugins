@@ -31,7 +31,7 @@ import org.jetbrains.annotations.PropertyKey;
 /**
  * Internationalization bundle for Osmorc.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class OsmorcBundle extends AbstractBundle {
   private static final String PATH_TO_BUNDLE = "messages.OsmorcBundle";

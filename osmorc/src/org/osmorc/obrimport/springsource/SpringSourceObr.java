@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 /**
  * Implementation of {@link Obr} for the springsource bundle repository.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class SpringSourceObr implements Obr {
 
@@ -85,7 +85,7 @@ public class SpringSourceObr implements Obr {
         String detailUrl = m.group(1);
         // cut out the session id.
         detailUrl = detailUrl.replaceAll(";jsessionid.*?\\?", "?");
-        // replace &amp; with & 
+        // replace &amp; with &
         detailUrl = detailUrl.replace("&amp;", "&");
 
         String packageName = m.group(2);

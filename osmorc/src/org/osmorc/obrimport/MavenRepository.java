@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class representing a maven repository.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id:$
  */
 public class MavenRepository {

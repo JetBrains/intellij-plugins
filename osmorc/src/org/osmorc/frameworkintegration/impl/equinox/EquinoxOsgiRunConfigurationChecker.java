@@ -38,8 +38,8 @@ import java.util.Map;
 /**
  * Run configuration checker for the Equinox framework.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class EquinoxOsgiRunConfigurationChecker extends DefaultOsgiRunConfigurationChecker {
   @Override

@@ -43,7 +43,7 @@ import java.util.regex.PatternSyntaxException;
  * A library bundlification rule contains a ruleset that is being used
  * when converting a plain java library to an OSGi bundle using the Bnd tool.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class LibraryBundlificationRule {
   private String myRuleRegex = ".*";

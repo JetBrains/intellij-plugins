@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Attribute;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class AttributeImpl extends AbstractAssignmentExpression implements Attribute {
   public AttributeImpl(@NotNull ASTNode node) {

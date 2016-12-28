@@ -67,8 +67,8 @@ import static aQute.bnd.osgi.Constants.INCLUDE_RESOURCE;
  * The facet configuration of an osmorc facet.
  * <p/>
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsmorcFacetConfiguration implements FacetConfiguration, ModificationTracker {
   private static final Logger LOG = Logger.getInstance(OsmorcFacetConfiguration.class);

@@ -29,7 +29,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import org.jetbrains.lang.manifest.highlighting.ManifestColorsAndFonts;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsgiManifestColorsAndFonts {
   static final TextAttributesKey ATTRIBUTE_NAME_KEY =

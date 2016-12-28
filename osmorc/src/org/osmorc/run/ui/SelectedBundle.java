@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * Class representing a bundle that has been selected for running.
  * This can either be some pre-jarred bundle from the classpath, or a module from the project.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class SelectedBundle {
   public enum BundleType {

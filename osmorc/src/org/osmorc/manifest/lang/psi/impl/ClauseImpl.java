@@ -37,7 +37,7 @@ import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import java.util.List;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
   public ClauseImpl(ASTNode node) {

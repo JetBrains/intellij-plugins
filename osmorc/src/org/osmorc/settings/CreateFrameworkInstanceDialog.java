@@ -44,7 +44,7 @@ import javax.swing.event.DocumentEvent;
 /**
  * Dialog for creating/updating a framework instance.
  *
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class CreateFrameworkInstanceDialog extends DialogWrapper {
   private JPanel myMainPanel;

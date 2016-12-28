@@ -41,7 +41,7 @@ import java.util.List;
  * Concierge specific implementation of {@link org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner}.
  *
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class ConciergeRunner extends AbstractFrameworkRunner {
   static final String MAIN_CLASS = "ch.ethz.iks.concierge.framework.Framework";

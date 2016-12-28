@@ -38,7 +38,7 @@ import java.beans.PropertyChangeListener;
 /**
  * A dialog for searching inside the known Obrs.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id:$
  */
 public class ObrSearchDialog extends DialogWrapper {

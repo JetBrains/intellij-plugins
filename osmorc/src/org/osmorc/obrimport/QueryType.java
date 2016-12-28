@@ -28,7 +28,7 @@ package org.osmorc.obrimport;
 /**
  * A query type for the {@link org.osmorc.obrimport.ObrSearchDialog}.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id:$
  */
 enum QueryType {

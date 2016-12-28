@@ -40,8 +40,8 @@ import java.util.List;
 /**
  * Felix specific implementation of {@link org.osmorc.frameworkintegration.FrameworkRunner}.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class FelixRunner extends AbstractFrameworkRunner {
   static final String MAIN_CLASS = "org.apache.felix.main.Main";
