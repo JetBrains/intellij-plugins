@@ -98,7 +98,6 @@ public class DartAnalysisServerService implements Disposable {
   private static final long EXECUTION_MAP_URI_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long ANALYSIS_IN_TESTS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
 
-  private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
   private static final String STACK_TRACE_MARKER = "#0";
   private static final long MIN_DISRUPTION_TIME = 10000L; // 10 seconds minimum between error report queries
@@ -108,6 +107,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
 
   @NotNull private final Project myProject;
+  private boolean myInitializationOnServerStartupDone = false;
 
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
@@ -480,13 +480,6 @@ public class DartAnalysisServerService implements Disposable {
     myServerData = new DartServerData(this);
     myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, project);
     myShowServerProgressAlarm = new Alarm(project);
-
-    setDasLogger();
-
-    registerFileEditorManagerListener();
-    registerDocumentListener();
-
-    registerQuickAssistIntentions();
   }
 
   private static void setDasLogger() {
@@ -823,7 +816,7 @@ public class DartAnalysisServerService implements Disposable {
       myFolderPathsWithErrors.clear();
     }
 
-    if (!myProject.isDisposed()) {
+    if (!myProject.isDisposed() && myInitializationOnServerStartupDone) {
       DartProblemsView.getInstance(myProject).clearAll();
     }
   }
@@ -1408,10 +1401,20 @@ public class DartAnalysisServerService implements Disposable {
 
       try {
         startedServer.start();
-        startedServer.server_setSubscriptions(SERVER_SUBSCRIPTIONS);
+        startedServer.server_setSubscriptions(Collections.singletonList(ServerService.STATUS));
         if (Registry.is("dart.projects.without.pubspec", false)) {
           startedServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
         }
+
+        if (!myInitializationOnServerStartupDone) {
+          myInitializationOnServerStartupDone = true;
+
+          registerFileEditorManagerListener();
+          registerDocumentListener();
+          setDasLogger();
+          registerQuickAssistIntentions();
+        }
+
         startedServer.addAnalysisServerListener(myAnalysisServerListener);
 
         startedServer.addStatusListener(new AnalysisServerStatusListener() {
