@@ -70,7 +70,7 @@ public class ProjectSettingsEditorComponent {
     myFrameworkInstance.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[not specified]") {
       @Override
       protected boolean isInstanceDefined(@NotNull FrameworkInstanceDefinition instance) {
-        return ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions().stream().anyMatch(instance::equals);
+        return ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions().contains(instance);
       }
     });
 
