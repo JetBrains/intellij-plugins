@@ -44,15 +44,15 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest) throws IOException {
-    if (!checkPaths()) return;
+    if (!myNodeLinterPackagePaths.checkPaths()) return;
 
     final File tmp = FileUtil.createTempFile("tslint", ".json");
     tmp.deleteOnExit();
     FileUtil.copy(new File(getTestDataPath(), directoryToCopy + "/tslint.json"), tmp);
 
     final TsLintState state = new TsLintState.Builder()
-      .setNodePath(NodeJsInterpreterRef.create(myNode.getAbsolutePath()))
-      .setPackagePath(myPackage.getPath())
+      .setNodePath(NodeJsInterpreterRef.create(myNodeLinterPackagePaths.getNodePath().getAbsolutePath()))
+      .setPackagePath(myNodeLinterPackagePaths.getPackagePath().getPath())
       .setCustomConfigFileUsed(true)
       .setCustomConfigFilePath(tmp.getAbsolutePath())
       .build();
