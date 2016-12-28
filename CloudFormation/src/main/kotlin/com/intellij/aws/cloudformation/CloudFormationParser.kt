@@ -11,6 +11,7 @@ import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnNumberValueNode
 import com.intellij.aws.cloudformation.model.CfnObjectValueNode
+import com.intellij.aws.cloudformation.model.CfnOutputsNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertiesNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
@@ -29,7 +30,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import java.util.ArrayList
-import java.util.HashSet
 import java.util.regex.Pattern
 
 class CloudFormationParser private constructor () {
@@ -53,6 +53,7 @@ class CloudFormationParser private constructor () {
 
   private fun root(root: JsonObject): CfnRootNode {
     var resourcesNode: CfnResourcesNode? = null
+    var outputsNode: CfnOutputsNode? = null
 
     for (property in root.propertyList) {
       val name = property.name
@@ -65,7 +66,7 @@ class CloudFormationParser private constructor () {
       if (CloudFormationSections.FormatVersion == name) {
         formatVersion(value)
       } else if (CloudFormationSections.Transform == name) {
-        checkAndGetQuotedStringText(value)
+        checkAndGetUnquotedStringText(value)
       } else if (CloudFormationSections.Description == name) {
         description(value)
       } else if (CloudFormationSections.Parameters == name) {
@@ -73,6 +74,8 @@ class CloudFormationParser private constructor () {
       } else if (CloudFormationSections.Resources == name) {
         if (resourcesNode == null) {
           resourcesNode = resources(property)
+        } else {
+          addProblem(property, "Duplicate Resources node")
         }
       } else if (CloudFormationSections.Conditions == name) {
         // TODO
@@ -80,7 +83,11 @@ class CloudFormationParser private constructor () {
         // Generic content inside, no need to check
         // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
       } else if (CloudFormationSections.Outputs == name) {
-        outputs(value)
+        if (outputsNode == null) {
+          outputsNode = outputs(property)
+        } else {
+          addProblem(property, "Duplicate Outputs node")
+        }
       } else if (CloudFormationSections.Mappings == name) {
         mappings(value)
       } else {
@@ -90,38 +97,23 @@ class CloudFormationParser private constructor () {
       }
     }
 
-    if (root.findProperty(CloudFormationSections.Resources) == null) {
-      addProblem(root, CloudFormationBundle.getString("format.resources.section.required"))
-    }
-
-    return CfnRootNode(resourcesNode).registerNode(root)
+    return CfnRootNode(resourcesNode, outputsNode).registerNode(root)
   }
 
-  private fun outputs(outputsExpression: JsonValue) {
-    val obj = checkAndGetObject(outputsExpression) ?: return
+  private fun outputs(outputs: JsonProperty): CfnOutputsNode {
+    val obj = checkAndGetObject(outputs.value!!) ?: return CfnOutputsNode(keyName(outputs), emptyList())
 
-    for (property in obj.propertyList) {
-      val name = property.name
+    val properties = obj.propertyList.mapNotNull { property ->
       val value = property.value
-      if (name.isEmpty() || value == null) {
-        continue
+      if (value == null) {
+        addProblem(property, "Property value is expected")
+        return@mapNotNull null
       }
 
-      keyName(property)
-      expression(value)
+      Pair(keyName(property), expression(value))
     }
 
-    if (obj.propertyList.size == 0) {
-      addProblemOnNameElement(
-          obj.parent as JsonProperty,
-          CloudFormationBundle.getString("format.no.outputs.declared"))
-    }
-
-    if (obj.propertyList.size > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
-      addProblemOnNameElement(
-          obj.parent as JsonProperty,
-          CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
-    }
+    return CfnOutputsNode(keyName(outputs), properties).registerNode(outputs.value!!)
   }
 
   private fun parameters(parametersExpression: JsonValue) {
@@ -156,10 +148,6 @@ class CloudFormationParser private constructor () {
     }
   }
 
-  private fun stringValue(expression: JsonValue) {
-    checkAndGetQuotedStringText(expression)
-  }
-
   private fun keyName(property: JsonProperty): CfnStringValueNode {
     if (AlphanumericStringPattern.matcher(property.name).matches()) {
       return CfnStringValueNode(property.name).registerNode(property.nameElement)
@@ -172,7 +160,7 @@ class CloudFormationParser private constructor () {
   }
 
   private fun description(value: JsonValue) {
-    checkAndGetQuotedStringText(value)
+    checkAndGetUnquotedStringText(value)
   }
 
   private fun resources(property: JsonProperty): CfnResourcesNode? {
@@ -207,7 +195,6 @@ class CloudFormationParser private constructor () {
       typeNode = resourceType(typeProperty)
       topLevelProperties.put(typeProperty.name, typeNode)
     } else {
-      addProblemOnNameElement(resourceProperty, CloudFormationBundle.getString("format.type.property.required"))
       typeNode = null
     }
 
@@ -215,22 +202,11 @@ class CloudFormationParser private constructor () {
 
     val propertiesProperty = obj.findProperty(CloudFormationConstants.PropertiesPropertyName)
     if (propertiesProperty != null && propertiesProperty.value is JsonObject) {
-      properties = resourceProperties(propertiesProperty, typeNode?.value?.value ?: "")
+      properties = resourceProperties(propertiesProperty)
       topLevelProperties.put(propertiesProperty.name, properties)
     } else {
       if (propertiesProperty != null && propertiesProperty.value !is JsonObject) {
         addProblemOnNameElement(propertiesProperty, CloudFormationBundle.getString("format.properties.property.should.properties.list"))
-      }
-
-      val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeNode?.value?.value ?: "")
-      if (resourceTypeMetadata != null) {
-        val requiredProperties = resourceTypeMetadata.requiredProperties
-        if (!requiredProperties.isEmpty()) {
-          val requiredPropertiesString = StringUtil.join(requiredProperties, " ")
-          addProblemOnNameElement(
-              resourceProperty,
-              CloudFormationBundle.getString("format.required.resource.properties.are.not.set", requiredPropertiesString))
-        }
       }
 
       properties = null
@@ -260,32 +236,15 @@ class CloudFormationParser private constructor () {
     return CfnResourceNode(key, typeNode, topLevelProperties, properties).registerNode(resourceProperty)
   }
 
-  private fun resourceProperties(propertiesProperty: JsonProperty, rawResourceTypeName: String): CfnResourcePropertiesNode {
+  private fun resourceProperties(propertiesProperty: JsonProperty): CfnResourcePropertiesNode {
     val nameNode = CfnStringValueNode(propertiesProperty.name).registerNode(propertiesProperty.nameElement)
     val properties = propertiesProperty.value as JsonObject
-
-    val resourceTypeName = if (rawResourceTypeName.startsWith(CloudFormationConstants.CustomResourceTypePrefix)) {
-      CloudFormationConstants.CustomResourceType
-    } else {
-      rawResourceTypeName
-    }
-
-    val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName)
-    val requiredProperties = HashSet(resourceType?.requiredProperties ?: emptyList())
 
     val propertyNodes = properties.propertyList.mapNotNull { property ->
       val propertyName = property.name
       if (propertyName == CloudFormationConstants.CommentResourcePropertyName) {
         return@mapNotNull null
       }
-
-      if (resourceType != null) {
-        if (resourceType.findProperty(propertyName) == null && !isCustomResourceType(resourceTypeName)) {
-          addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName))
-        }
-      }
-
-      requiredProperties.remove(propertyName)
 
       val propertyNameNode = keyName(property)
 
@@ -297,12 +256,6 @@ class CloudFormationParser private constructor () {
       }
 
       return@mapNotNull CfnResourcePropertyNode(propertyNameNode, valueNode).registerNode(property)
-    }
-
-    if (!requiredProperties.isEmpty()) {
-      val requiredPropertiesString = StringUtil.join(requiredProperties, " ")
-      addProblemOnNameElement(propertiesProperty,
-          CloudFormationBundle.getString("format.required.resource.properties.are.not.set", requiredPropertiesString))
     }
 
     return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty)
@@ -360,17 +313,8 @@ class CloudFormationParser private constructor () {
     val value = checkAndGetUnquotedStringText(typeProperty.value) ?:
         return CfnResourceTypeNode(nameNode, CfnStringValueNode("")).registerNode(typeProperty)
 
-    // TODO Move to inspections
-    if (!isCustomResourceType(value) && CloudFormationMetadataProvider.METADATA.findResourceType(value) == null) {
-      addProblem(typeProperty, CloudFormationBundle.getString("format.unknown.type", value))
-    }
-
     val valueNode = CfnStringValueNode(value).registerNode(typeProperty.value!!)
     return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty)
-  }
-
-  private fun isCustomResourceType(value: String): Boolean {
-    return value == CloudFormationConstants.CustomResourceType || value.startsWith(CloudFormationConstants.CustomResourceTypePrefix)
   }
 
   private fun checkAndGetObject(expression: JsonValue): JsonObject? {
@@ -388,16 +332,15 @@ class CloudFormationParser private constructor () {
 
 
   private fun formatVersion(value: JsonValue) {
-    val text = checkAndGetQuotedStringText(value) ?: return
+    val version = checkAndGetUnquotedStringText(value) ?: return
 
-    val version = StringUtil.stripQuotesAroundValue(StringUtil.notNullize(text))
     if (!CloudFormationConstants.SupportedTemplateFormatVersions.contains(version)) {
       val supportedVersions = StringUtil.join(CloudFormationConstants.SupportedTemplateFormatVersions, ", ")
       addProblem(value, CloudFormationBundle.getString("format.unknownVersion", supportedVersions))
     }
   }
 
-  private fun checkAndGetQuotedStringText(expression: JsonValue?): String? {
+  private fun checkAndGetUnquotedStringText(expression: JsonValue?): String? {
     if (expression == null) {
       // Do not threat value absence as error
       return null
@@ -409,13 +352,7 @@ class CloudFormationParser private constructor () {
       return null
     }
 
-    return literal.text
-  }
-
-  private fun checkAndGetUnquotedStringText(expression: JsonValue?): String? {
-    val quoted = checkAndGetQuotedStringText(expression) ?: return null
-
-    return StringUtil.stripQuotesAroundValue(quoted)
+    return literal.value
   }
 
   fun file(psiFile: PsiFile): CfnRootNode {

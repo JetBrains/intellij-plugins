@@ -8,3 +8,9 @@ class CfnResourcesNode(name: CfnStringValueNode, val resources: List<CfnResource
     writer.indent { resources.forEach { it.dump(writer) } }
   }
 }
+
+class CfnOutputsNode(name: CfnStringValueNode, val properties: List<Pair<CfnStringValueNode, CfnExpressionNode>>) : CfnNamedNode(name) {
+  override fun dump(writer: IndentWriter) {
+    throw NotImplementedError()
+  }
+}

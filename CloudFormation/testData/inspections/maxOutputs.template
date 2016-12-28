@@ -71,5 +71,14 @@
     "o60" : { "Value" : "a" }
   },
 
-  "Resources": {}
+  "Resources": {
+    "PeeringRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "SomeCidr",
+        "RouteTableId": "Someroutetable",
+        "VpcPeeringConnectionId": "XXX"
+      }
+    }
+  }
 }

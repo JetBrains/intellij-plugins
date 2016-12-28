@@ -1,5 +1,7 @@
 package com.intellij.aws.cloudformation.inspections
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.CloudFormationPsiUtils
 import com.intellij.codeInspection.InspectionManager
@@ -9,6 +11,8 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiFile
 
+
+
 class FormatViolationInspection : LocalInspectionTool() {
   override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
     if (!CloudFormationPsiUtils.isCloudFormationFile(file)) {
@@ -16,6 +20,11 @@ class FormatViolationInspection : LocalInspectionTool() {
     }
 
     val parsed = CloudFormationParser.parse(file)
+
+    val mapper = ObjectMapper(YAMLFactory())
+    println(mapper.writeValueAsString(parsed.root))
+
+    //println(Yaml().dump(parsed.root))
 
     val problems = parsed.problems.map {
       manager.createProblemDescriptor(

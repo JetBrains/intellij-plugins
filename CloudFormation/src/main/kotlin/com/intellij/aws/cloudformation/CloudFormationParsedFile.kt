@@ -8,7 +8,11 @@ import com.intellij.psi.PsiElement
 class CloudFormationParsedFile(val problems: List<ParseProblem>,
                                val nodesMap: HashBiMap<PsiElement, CfnNode>,
                                val root: CfnRootNode) {
-  class ParseProblem(val element: PsiElement, val description: String)
+  class ParseProblem(val element: PsiElement, val description: String) {
+    override fun toString(): String {
+      return "ParseProblem(line=${CloudFormationPsiUtils.getLineNumber(element)}, description='$description')"
+    }
+  }
 
   fun getCfnNode(psiElement: PsiElement): CfnNode? = nodesMap[psiElement]
   fun getPsiElement(node: CfnNode): PsiElement = nodesMap.inverse()[node]!!

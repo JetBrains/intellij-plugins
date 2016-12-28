@@ -1,13 +1,11 @@
 package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationParser
+import com.intellij.aws.cloudformation.CloudFormationPsiUtils.getLineNumber
 import com.intellij.aws.cloudformation.IndentWriter
-import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import junit.framework.TestCase
@@ -34,23 +32,9 @@ class JsonParserTest : LightPlatformCodeInsightTestCase() {
       printer.println()
     }
 
-    parsed.root.dump(printer)
+    //parsed.root.dump(printer)
 
     checkContent("$name.expected", writer.toString())
-  }
-
-  private fun getLineNumber(psiElement: PsiElement): Int {
-    if (!psiElement.isValid) return -1
-    assertTrue(psiElement.isPhysical)
-    val manager = InjectedLanguageManager.getInstance(psiElement.project)
-    val containingFile = manager.getTopLevelFile(psiElement)
-    val document = PsiDocumentManager.getInstance(psiElement.project).getDocument(containingFile) ?: return -1
-    var textRange = psiElement.textRange ?: return -1
-    textRange = manager.injectedToHost(psiElement, textRange)
-    val startOffset = textRange.startOffset
-    val textLength = document.textLength
-    assertTrue(" at $startOffset, $textLength", startOffset <= textLength)
-    return document.getLineNumber(startOffset) + 1
   }
 
   fun checkContent(expectFileName: String, actualContent: String) {

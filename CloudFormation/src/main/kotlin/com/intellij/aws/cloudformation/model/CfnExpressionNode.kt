@@ -32,7 +32,7 @@ class CfnArrayValueNode(val items: List<CfnExpressionNode>) : CfnExpressionNode(
   }
 }
 
-class CfnObjectValueNode(val properties: List<Pair<CfnStringValueNode, CfnExpressionNode>>) : CfnExpressionNode() {
+open class CfnObjectValueNode(val properties: List<Pair<CfnStringValueNode, CfnExpressionNode>>) : CfnExpressionNode() {
   override fun dump(writer: IndentWriter) {
     writer.println("(object)")
     writer.indent {
