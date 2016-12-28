@@ -39,24 +39,6 @@ public class ReportingAnalyzer extends Analyzer {
   }
 
   @Override
-  public SetLocation error(String format, Object... args) {
-    myReporter.error(formatArrays(format, args), null, null);
-    return MuteLocation.INSTANCE;
-  }
-
-  @Override
-  public SetLocation error(String format, Throwable t, Object... args) {
-    myReporter.error(formatArrays(format, args), t, null);
-    return MuteLocation.INSTANCE;
-  }
-
-  @Override
-  public SetLocation warning(String format, Object... args) {
-    myReporter.warning(formatArrays(format, args), null, null);
-    return MuteLocation.INSTANCE;
-  }
-
-  @Override
   public void progress(float progress, String format, Object... args) {
     myReporter.progress(formatArrays(format, args));
   }

@@ -167,6 +167,8 @@ public class BndWrapper {
       try (Jar jar = analyzer.getJar()) {
         jar.write(outputJar);
       }
+
+      reportProblems(analyzer);
     }
     catch (OsgiBuildException e) {
       throw e;
@@ -237,6 +239,13 @@ public class BndWrapper {
       jar.setName(outputFile.getName());
       jar.write(outputFile);
     }
+
+    reportProblems(builder);
+  }
+
+  private void reportProblems(Processor processor) {
+    processor.getWarnings().forEach(s -> myReporter.warning(s, null, null));
+    processor.getErrors().forEach(s -> myReporter.error(s, null, null));
   }
 
   /**
