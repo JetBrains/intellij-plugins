@@ -264,7 +264,7 @@ public class TsLintExternalRunner {
         return createError("Node interpreter file is not specified");
       }
       myNodeFile = new File(nodePath);
-      if (!myNodeFile.isFile() || !myNodeFile.isAbsolute() || !myNodeFile.canExecute()) {
+      if (!myNodeFile.isFile() || !myNodeFile.canExecute()) {
         return createError("Node interpreter file ('" + nodePath + "') is not found or the file can not be executed");
       }
       final String packagePath = state.getPackagePath();
