@@ -44,7 +44,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
         .toString();
     }
   };
-  
+
   @NotNull
   private final JPanel myPanelWrapper;
   @NotNull
@@ -85,7 +85,8 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
       ApplicationManager.getApplication().invokeLater(() -> {
         myPanel = new JFXPanelWrapper();
-        myPanel.setScene(scene);
+
+        Platform.runLater(() -> myPanel.setScene(scene));
 
         setHtml("");
         for (Runnable action : myInitActions) {
@@ -100,7 +101,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
     subscribeForGrayscaleSetting();
   }
-  
+
   private void runInPlatformWhenAvailable(@NotNull Runnable runnable) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     if (myPanel == null) {
@@ -228,7 +229,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       Logger.getInstance(JavaPanelBridge.class).warn(text);
     }
   }
-  
+
   private class BridgeSettingListener implements ChangeListener<State> {
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
@@ -237,7 +238,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
         win.setMember("JavaPanelBridge", new JavaPanelBridge());
     }
   }
-  
+
   private class ScrollPreservingListener implements ChangeListener<State> {
     volatile int myScrollY = 0;
 
@@ -255,5 +256,5 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
           .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
       }
     }
-  } 
+  }
 }
