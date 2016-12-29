@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.linter.JSLinterErrorBase;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.text.CharSequenceReader;
 
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class TsLintProcessListener implements ProcessListener {
   }
 
   public void process() {
+    if (StringUtil.isEmptyOrSpaces(myText)) return;
     try {
       JsonElement root = new JsonParser().parse(new CharSequenceReader(myText));
       myErrors.addAll(new TsLintOutputJsonParser(myPath, root, myZeroBasedRowCol).getErrors());
