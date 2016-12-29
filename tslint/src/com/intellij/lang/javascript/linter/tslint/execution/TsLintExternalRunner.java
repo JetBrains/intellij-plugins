@@ -7,7 +7,7 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.ide.actions.ShowFilePathAction;
 import com.intellij.idea.RareLogger;
 import com.intellij.javascript.nodejs.NodePackageVersionUtil;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintBinFileVersionManager;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
@@ -185,7 +185,7 @@ public class TsLintExternalRunner {
     commandLine.withCharset(StandardCharsets.UTF_8);
     CommandLineUtil.configureShellEnvironment(commandLine, true, Collections.emptyMap());
     commandLine.withWorkDirectory(workingDir);
-    commandLine.setExePath(myNodeFile.getAbsolutePath());
+    commandLine.setExePath(myNodeFile.getPath());
 
     commandLine.addParameter(myTsLintFile.getAbsolutePath());
 
@@ -258,15 +258,18 @@ public class TsLintExternalRunner {
   private Producer<JSLinterAnnotationResult<TsLintState>> checkExePath() {
     return () -> {
       final TsLintState state = myInputInfo.getState();
-      final NodeJsInterpreter interpreter = state.getInterpreterRef().resolve(myProject);
-      final String nodePath = interpreter == null ? "" : interpreter.getPresentableName();
+      final NodeJsLocalInterpreter interpreter;
+      try {
+        interpreter = state.getInterpreterRef().resolveAsLocal(myProject);
+      }
+      catch (ExecutionException e) {
+        return createError(e.getMessage());
+      }
+      final String nodePath = interpreter.getInterpreterSystemDependentPath();
       if (StringUtil.isEmptyOrSpaces(nodePath)) {
         return createError("Node interpreter file is not specified");
       }
       myNodeFile = new File(nodePath);
-      if (!myNodeFile.isFile() || !myNodeFile.canExecute()) {
-        return createError("Node interpreter file ('" + nodePath + "') is not found or the file can not be executed");
-      }
       final String packagePath = state.getPackagePath();
       if (StringUtil.isEmptyOrSpaces(packagePath)) {
         return createError(JSLinterUtil.getLinterPackageMissingError(myProject, packagePath, "TSLint"));
@@ -282,7 +285,7 @@ public class TsLintExternalRunner {
       else {
         myTsLintFile = myPackageDir;
         try {
-          myTsLintVersion = myBinFileVersionManager.getVersion(myNodeFile.getAbsolutePath(),
+          myTsLintVersion = myBinFileVersionManager.getVersion(myNodeFile.getPath(),
                                                                myTsLintFile,
                                                                Collections.singletonList("--version"),
                                                                10000);
