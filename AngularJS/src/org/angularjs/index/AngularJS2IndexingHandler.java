@@ -32,6 +32,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING;
+import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_FILTER_INDEX_USER_STRING;
+
 public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   public static final String TEMPLATE_REF = "TemplateRef";
   public static final String SELECTOR = "selector";
@@ -118,7 +121,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
             final String restrict = selectorName.startsWith("[") ? "A" : "E";
             elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
               .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
-            elementBuilder.setUserString("adi");
+            elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
             outData.addImplicitElement(elementBuilder.toImplicitElement());
             added.add(attr);
           }
@@ -129,7 +132,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
             if (added.contains(attr)) continue;
             elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
               .setType(JSImplicitElement.Type.Class).setTypeString("A;;;");
-            elementBuilder.setUserString("adi");
+            elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
             outData.addImplicitElement(elementBuilder.toImplicitElement());
             added.add(attr);
           }
@@ -141,7 +144,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   private static JSElementIndexingDataImpl addPipe(PsiElement expression, JSElementIndexingDataImpl outData, String pipe) {
     if (pipe == null) return outData;
-    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(pipe, expression).setUserString("afi");
+    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(pipe, expression).setUserString(
+      ANGULAR_FILTER_INDEX_USER_STRING);
     outData.addImplicitElement(elementBuilder.toImplicitElement());
     return outData;
   }

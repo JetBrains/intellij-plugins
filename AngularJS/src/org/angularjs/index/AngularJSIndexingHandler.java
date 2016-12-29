@@ -80,6 +80,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXES;
   public static final String AS_CONNECTOR_WITH_SPACES = " as ";
 
+  public static final String ANGULAR_DIRECTIVES_INDEX_USER_STRING = "adi";
+  public static final String ANGULAR_FILTER_INDEX_USER_STRING = "afi";
+
   static {
     Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
 
@@ -109,8 +112,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES = new BidirectionalMap<>();
     INDEXES.put("aci", AngularControllerIndex.KEY);
     INDEXES.put("addi", AngularDirectivesDocIndex.KEY);
-    INDEXES.put("adi", AngularDirectivesIndex.KEY);
-    INDEXES.put("afi", AngularFilterIndex.KEY);
+    INDEXES.put(ANGULAR_DIRECTIVES_INDEX_USER_STRING, AngularDirectivesIndex.KEY);
+    INDEXES.put(ANGULAR_FILTER_INDEX_USER_STRING, AngularFilterIndex.KEY);
     INDEXES.put("aidi", AngularInjectionDelimiterIndex.KEY);
     INDEXES.put("ami", AngularModuleIndex.KEY);
     INDEXES.put("asi", AngularSymbolIndex.KEY);
