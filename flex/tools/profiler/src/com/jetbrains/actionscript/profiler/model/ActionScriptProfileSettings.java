@@ -65,10 +65,18 @@ public class ActionScriptProfileSettings implements PersistentStateComponent<Ele
   @Override
   public Element getState() {
     final Element element = new Element(ACTIONSCRIPT_PROFILER_SETTINGS);
-    element.setAttribute(PORT_ATTR_NAME, String.valueOf(port));
-    element.setAttribute(HOST_ATTR_NAME, host);
-    element.setAttribute(PATH_ATTR_NAME, pathToMmCfg);
-    element.setAttribute(CUSTOM_MMCFG_ATTR_NAME, Boolean.toString(useCustomPathToMmCfg));
+    if (port != DEFAULT_PORT) {
+      element.setAttribute(PORT_ATTR_NAME, String.valueOf(port));
+    }
+    if (host != DEFAULT_HOST) {
+      element.setAttribute(HOST_ATTR_NAME, host);
+    }
+    if (!StringUtil.isEmpty(pathToMmCfg)) {
+      element.setAttribute(PATH_ATTR_NAME, pathToMmCfg);
+    }
+    if (useCustomPathToMmCfg) {
+      element.setAttribute(CUSTOM_MMCFG_ATTR_NAME, "true");
+    }
     return element;
   }
 
