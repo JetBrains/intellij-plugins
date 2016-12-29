@@ -27,7 +27,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
     new THashMap<>();
   private final Map<String, List<String>> myIsolateTemporaryBreakpoints = new THashMap<>();
 
-  protected DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
+  public DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
     super(DartLineBreakpointType.class);
     myDebugProcess = debugProcess;
   }
