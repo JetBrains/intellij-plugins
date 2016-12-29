@@ -27,6 +27,7 @@ package org.jetbrains.osgi.jps.build;
 import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.*;
+import aQute.service.reporter.Report;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -78,7 +79,7 @@ public class BndWrapper {
           }
         }
         catch (OsgiBuildException e) {
-          myReporter.warning(e.getMessage(), e.getCause(), e.getSourcePath());
+          myReporter.warning(e.getMessage(), e.getCause(), e.getSourcePath(), -1);
         }
       }
       else if (CachingBundleInfoProvider.isBundle(path)) {
@@ -168,7 +169,8 @@ public class BndWrapper {
         jar.write(outputJar);
       }
 
-      reportProblems(analyzer);
+      analyzer.getWarnings().forEach(s -> reportProblem(s, null, false));
+      analyzer.getErrors().forEach(s -> reportProblem(s, null, true));
     }
     catch (OsgiBuildException e) {
       throw e;
@@ -226,11 +228,11 @@ public class BndWrapper {
           String value = p.getProperty(Attributes.Name.MANIFEST_VERSION.toString());
           if (StringUtil.isEmptyOrSpaces(value)) {
             String message = "Manifest misses a Manifest-Version entry. This may produce an empty manifest in the resulting bundle.";
-            myReporter.warning(message, null, manifest);
+            myReporter.warning(message, null, manifest, -1);
           }
         }
         catch (Exception e) {
-          myReporter.warning("Can't read manifest: " + e.getMessage(), e, manifest);
+          myReporter.warning("Can't read manifest: " + e.getMessage(), e, manifest, -1);
         }
       }
     }
@@ -240,12 +242,25 @@ public class BndWrapper {
       jar.write(outputFile);
     }
 
-    reportProblems(builder);
+    builder.getWarnings().forEach(s -> reportProblem(s, builder.getLocation(s), false));
+    builder.getErrors().forEach(s -> reportProblem(s, builder.getLocation(s), true));
   }
 
-  private void reportProblems(Processor processor) {
-    processor.getWarnings().forEach(s -> myReporter.warning(s, null, null));
-    processor.getErrors().forEach(s -> myReporter.error(s, null, null));
+  private void reportProblem(String message, Report.Location location, boolean error) {
+    String sourcePath = null;
+    int lineNum = -1;
+    if (location != null) {
+      sourcePath = location.file;
+      if (location.line > 0) {
+        lineNum = location.line + 1;
+      }
+    }
+    if (error) {
+      myReporter.error(message, null, sourcePath, lineNum);
+    }
+    else {
+      myReporter.warning(message, null, sourcePath, lineNum);
+    }
   }
 
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,8 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static com.intellij.util.ObjectUtils.coalesce;
+
 public class OsgiBuildSession implements Reporter {
   private static final Logger LOG = Logger.getInstance(OsgiBuildSession.class);
 
@@ -77,12 +79,12 @@ public class OsgiBuildSession implements Reporter {
       doBuild();
     }
     catch (OsgiBuildException e) {
-      error(e.getMessage(), e.getCause(), e.getSourcePath());
+      error(e.getMessage(), e.getCause(), e.getSourcePath(), -1);
       return;
     }
 
     if (!myOutputJarFile.exists()) {
-      error("Bundle was not built", null, null);
+      error("Bundle was not built", null, null, -1);
       return;
     }
 
@@ -183,12 +185,12 @@ public class OsgiBuildSession implements Reporter {
         Properties properties = OsgiBuildUtil.getMavenProjectProperties(myContext, myModule);
         List<String> warnings = new BundlorWrapper().wrapModule(properties, tempFile, myOutputJarFile, bundlorFile);
         for (String warning : warnings) {
-          warning(warning, null, bundlorFile.getPath());
+          warning(warning, null, bundlorFile.getPath(), -1);
         }
       }
       finally {
         if (!FileUtil.delete(tempFile)) {
-          warning("Can't delete temporary file '" + tempFile + "'", null, null);
+          warning("Can't delete temporary file '" + tempFile + "'", null, null, -1);
         }
       }
     }
@@ -309,17 +311,18 @@ public class OsgiBuildSession implements Reporter {
   }
 
   @Override
-  public void warning(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath) {
-    LOG.warn(message, t);
-    if (sourcePath == null) sourcePath = mySourceToReport;
-    myContext.processMessage(new CompilerMessage(OsmorcBuilder.ID, BuildMessage.Kind.WARNING, myMessagePrefix + message, sourcePath));
+  public void warning(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath, int lineNum) {
+    process(BuildMessage.Kind.WARNING, message, t, sourcePath, lineNum);
   }
 
   @Override
-  public void error(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath) {
-    LOG.warn(message, t);
-    if (sourcePath == null) sourcePath = mySourceToReport;
-    myContext.processMessage(new CompilerMessage(OsmorcBuilder.ID, BuildMessage.Kind.ERROR, myMessagePrefix + message, sourcePath));
+  public void error(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath, int lineNum) {
+    process(BuildMessage.Kind.ERROR, message, t, sourcePath, lineNum);
+  }
+
+  private void process(BuildMessage.Kind kind, String text, Throwable t, String path, int line) {
+    LOG.warn(text, t);
+    myContext.processMessage(new CompilerMessage(OsmorcBuilder.ID, kind, myMessagePrefix + text, coalesce(path, mySourceToReport), -1, -1, -1, line, -1));
   }
 
   @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import org.jetbrains.annotations.Nullable;
 public interface Reporter {
   void progress(@NotNull String message);
 
-  void warning(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath);
+  void warning(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath, int lineNum);
 
-  void error(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath);
+  void error(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath, int lineNum);
 
   boolean isDebugEnabled();
 

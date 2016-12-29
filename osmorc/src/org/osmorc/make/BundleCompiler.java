@@ -30,7 +30,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,12 +103,12 @@ public class BundleCompiler implements Reporter {
   }
 
   @Override
-  public void warning(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath) {
+  public void warning(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath, int lineNum) {
     LOG.warn(message, t);
   }
 
   @Override
-  public void error(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath) {
+  public void error(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath, int lineNum) {
     LOG.warn(message, t);
   }
 
