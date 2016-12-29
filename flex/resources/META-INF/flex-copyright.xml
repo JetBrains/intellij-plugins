@@ -1,6 +1,5 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij.copyright">
     <updater filetype="MXML" implementationClass="com.intellij.javascript.flex.mxml.copyright.UpdateMxmlCopyrightsProvider"/>
-    <updater filetype="ActionScript" implementationClass="com.intellij.javascript.flex.copyright.UpdateActionScriptCopyrightsProvider"/>
   </extensions>
 </idea-plugin>

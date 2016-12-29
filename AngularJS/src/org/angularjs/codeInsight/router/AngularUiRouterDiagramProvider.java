@@ -190,6 +190,11 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         }
         return null;
       }
+
+      @Override
+      public boolean drawGradientInHeader() {
+        return false;
+      }
     };
   }
 
@@ -514,6 +519,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             container.setBorder(NORMAL_BORDER);
           }
         }
+        if (!node.getIdentifyingElement().getChildrenList().isEmpty()) container.getHeader().setBorder(JBUI.Borders.customLine(Gray._190, 0, 0, 1, 0));
         return container;
       }
     };

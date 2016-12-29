@@ -55,6 +55,7 @@ public interface DartTokenTypes {
   IElementType FUNCTION_EXPRESSION = new DartElementType("FUNCTION_EXPRESSION");
   IElementType FUNCTION_EXPRESSION_BODY = new DartElementType("FUNCTION_EXPRESSION_BODY");
   IElementType FUNCTION_SIGNATURE = new DartElementType("FUNCTION_SIGNATURE");
+  IElementType FUNCTION_TYPE = new DartElementType("FUNCTION_TYPE");
   IElementType FUNCTION_TYPE_ALIAS = new DartElementType("FUNCTION_TYPE_ALIAS");
   IElementType GETTER_DECLARATION = new DartElementType("GETTER_DECLARATION");
   IElementType HIDE_COMBINATOR = new DartElementType("HIDE_COMBINATOR");
@@ -87,11 +88,15 @@ public interface DartTokenTypes {
   IElementType MULTIPLICATIVE_OPERATOR = new DartElementType("MULTIPLICATIVE_OPERATOR");
   IElementType NAMED_ARGUMENT = new DartElementType("NAMED_ARGUMENT");
   IElementType NAMED_CONSTRUCTOR_DECLARATION = new DartElementType("NAMED_CONSTRUCTOR_DECLARATION");
+  IElementType NAMED_PARAMETER_TYPE = new DartElementType("NAMED_PARAMETER_TYPE");
   IElementType NEW_EXPRESSION = new DartElementType("NEW_EXPRESSION");
   IElementType NORMAL_FORMAL_PARAMETER = new DartElementType("NORMAL_FORMAL_PARAMETER");
+  IElementType NORMAL_PARAMETER_TYPE = new DartElementType("NORMAL_PARAMETER_TYPE");
   IElementType ON_PART = new DartElementType("ON_PART");
   IElementType OPTIONAL_FORMAL_PARAMETERS = new DartElementType("OPTIONAL_FORMAL_PARAMETERS");
+  IElementType OPTIONAL_PARAMETER_TYPES = new DartElementType("OPTIONAL_PARAMETER_TYPES");
   IElementType PARAMETER_NAME_REFERENCE_EXPRESSION = new DartElementType("PARAMETER_NAME_REFERENCE_EXPRESSION");
+  IElementType PARAMETER_TYPE_LIST = new DartElementType("PARAMETER_TYPE_LIST");
   IElementType PARENTHESIZED_EXPRESSION = new DartElementType("PARENTHESIZED_EXPRESSION");
   IElementType PART_OF_STATEMENT = new DartElementType("PART_OF_STATEMENT");
   IElementType PART_STATEMENT = new DartElementType("PART_STATEMENT");
@@ -406,6 +411,9 @@ public interface DartTokenTypes {
       else if (type == FUNCTION_SIGNATURE) {
         return new DartFunctionSignatureImpl(node);
       }
+      else if (type == FUNCTION_TYPE) {
+        return new DartFunctionTypeImpl(node);
+      }
       else if (type == FUNCTION_TYPE_ALIAS) {
         return new DartFunctionTypeAliasImpl(node);
       }
@@ -502,11 +510,17 @@ public interface DartTokenTypes {
       else if (type == NAMED_CONSTRUCTOR_DECLARATION) {
         return new DartNamedConstructorDeclarationImpl(node);
       }
+      else if (type == NAMED_PARAMETER_TYPE) {
+        return new DartNamedParameterTypeImpl(node);
+      }
       else if (type == NEW_EXPRESSION) {
         return new DartNewExpressionImpl(node);
       }
       else if (type == NORMAL_FORMAL_PARAMETER) {
         return new DartNormalFormalParameterImpl(node);
+      }
+      else if (type == NORMAL_PARAMETER_TYPE) {
+        return new DartNormalParameterTypeImpl(node);
       }
       else if (type == ON_PART) {
         return new DartOnPartImpl(node);
@@ -514,8 +528,14 @@ public interface DartTokenTypes {
       else if (type == OPTIONAL_FORMAL_PARAMETERS) {
         return new DartOptionalFormalParametersImpl(node);
       }
+      else if (type == OPTIONAL_PARAMETER_TYPES) {
+        return new DartOptionalParameterTypesImpl(node);
+      }
       else if (type == PARAMETER_NAME_REFERENCE_EXPRESSION) {
         return new DartParameterNameReferenceExpressionImpl(node);
+      }
+      else if (type == PARAMETER_TYPE_LIST) {
+        return new DartParameterTypeListImpl(node);
       }
       else if (type == PARENTHESIZED_EXPRESSION) {
         return new DartParenthesizedExpressionImpl(node);

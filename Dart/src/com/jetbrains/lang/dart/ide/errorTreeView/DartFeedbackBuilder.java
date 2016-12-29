@@ -2,6 +2,10 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.MessageDialogBuilder;
+import com.intellij.openapi.ui.Messages;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,11 +14,15 @@ import org.jetbrains.annotations.Nullable;
  * for projects other than the Dart plugin. For example, the Flutter plugin may
  * send issues to the flutter project on github.
  */
-public interface DartFeedbackBuilder {
-  ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
+public abstract class DartFeedbackBuilder {
+  public static final int MAX_URL_LENGTH = 4000;
+  // TODO(messick): Change ShowPrompt to a Dart preference
+  private static boolean ShowPrompt = true;
+
+  private static ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
 
   @NotNull
-  static DartFeedbackBuilder getFeedbackBuilder() {
+  public static DartFeedbackBuilder getFeedbackBuilder() {
     final DartFeedbackBuilder[] builders = EP_NAME.getExtensions();
     assert builders.length > 0;
     return builders[0];
@@ -25,7 +33,7 @@ public interface DartFeedbackBuilder {
    *
    * @return The string to display in the title of the confirmation dialog.
    */
-  default String title() {
+  public String title() {
     return "Open Browser";
   }
 
@@ -34,14 +42,14 @@ public interface DartFeedbackBuilder {
    *
    * @return The string to display in the confirmation dialog.
    */
-  String prompt();
+  public abstract String prompt();
 
   /**
    * The label should indicate what is going to happen when clicked (eg send feedback).
    *
    * @return The string to display as the label of the yes-button in the confirmation dialog.
    */
-  default String label() {
+  public String label() {
     return "Send feedback";
   }
 
@@ -49,6 +57,47 @@ public interface DartFeedbackBuilder {
    * Perform the action required to send feedback.
    *
    * @param project the current project
+   * @param errorMessage additional information for the issue, such as a tack trace
+   * @param serverLog recent requests made to the analysis server
    */
-  void sendFeedback(@Nullable Project project);
+  public abstract void sendFeedback(@Nullable Project project, @Nullable String errorMessage, @Nullable String serverLog);
+
+  /**
+   * Display a standard query dialog and return the user's response.
+   */
+  public boolean showQuery(String message) {
+    if (ShowPrompt) {
+      return
+        (MessageDialogBuilder.yesNo(title(), message == null ? prompt() : message + "\n" + prompt())
+           .icon(Messages.getQuestionIcon())
+           .doNotAsk(getDoNotAskOption())
+           .yesText(label())
+           .show() == Messages.YES);
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Return a DoNotAskOption option for the MessageDialogBuilder.
+   */
+  public DialogWrapper.DoNotAskOption getDoNotAskOption() {
+    return getDefaultDoNotAskOption();
+  }
+
+  static DialogWrapper.DoNotAskOption getDefaultDoNotAskOption() {
+    return new DialogWrapper.DoNotAskOption.Adapter() {
+      @Override
+      public void rememberChoice(boolean isSelected, int exitCode) {
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
+        ShowPrompt = !isSelected;
+      }
+
+      @NotNull
+      @Override
+      public String getDoNotShowMessage() {
+        return DartBundle.message("dart.report.options.do.not.ask");
+      }
+    };
+  }
 }

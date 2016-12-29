@@ -29,7 +29,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class FrameworkInstanceDefinition extends UserDataHolderBase {
   private String myFrameworkIntegratorName;

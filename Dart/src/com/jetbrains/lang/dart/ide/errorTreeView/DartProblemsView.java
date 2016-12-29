@@ -21,7 +21,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.Alarm;
@@ -43,7 +44,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class DartProblemsView {
+@State(
+  name = "DartProblemsView",
+  storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
+)
+public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings> {
   public static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
 
   private static final Logger LOG = Logger.getInstance(DartProblemsView.class.getName());
@@ -57,6 +62,7 @@ public class DartProblemsView {
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
   private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
   private final Alarm myAlarm;
+  private DartProblemsViewSettings mySettings = new DartProblemsViewSettings();
 
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
@@ -87,13 +93,15 @@ public class DartProblemsView {
         return;
       }
 
-      myPanel = new DartProblemsViewPanel(project, myFilter);
+      myPanel = new DartProblemsViewPanel(project, myFilter, mySettings);
 
       final ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
       toolWindow.setIcon(DartIcons.Dart_13);
 
       final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
       toolWindow.getContentManager().addContent(content);
+      ((ToolWindowEx)toolWindow).setTitleActions(new AnalysisServerStatusAction());
+      myPanel.setContent(content);
 
       if (PropertiesComponent.getInstance(project).getBoolean("dart.analysis.tool.window.force.activate", true)) {
         PropertiesComponent.getInstance(project).setValue("dart.analysis.tool.window.force.activate", false, true);
@@ -111,6 +119,21 @@ public class DartProblemsView {
 
   public static DartProblemsView getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, DartProblemsView.class);
+  }
+
+  @Override
+  public DartProblemsViewSettings getState() {
+    return mySettings;
+  }
+
+  @Override
+  public void loadState(DartProblemsViewSettings state) {
+    mySettings = state;
+
+    // Update children.
+    if (myPanel != null) {
+      myPanel.updateFromSettings(mySettings);
+    }
   }
 
   public void setCurrentFile(@Nullable final VirtualFile file) {

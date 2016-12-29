@@ -64,7 +64,7 @@ import java.util.Set;
 /**
  * Inspection which detects non-OSGi dependencies.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionTool {
   @NotNull

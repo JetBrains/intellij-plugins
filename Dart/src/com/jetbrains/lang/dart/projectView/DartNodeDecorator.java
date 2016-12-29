@@ -6,6 +6,7 @@ import com.intellij.ide.projectView.ProjectViewNodeDecorator;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packageDependencies.ui.PackageDependenciesNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -17,7 +18,8 @@ public class DartNodeDecorator implements ProjectViewNodeDecorator {
   public void decorate(@NotNull final ProjectViewNode node, @NotNull final PresentationData presentation) {
     if (node instanceof PsiFileNode || node instanceof PsiDirectoryNode) {
       final VirtualFile nodeFile = node.getVirtualFile();
-      if (nodeFile != null && DartAnalysisServerService.getInstance().isFileWithErrors(nodeFile)) {
+      final Project project = node.getProject();
+      if (nodeFile != null && project != null && DartAnalysisServerService.getInstance(project).isFileWithErrors(nodeFile)) {
         presentation.setAttributesKey(CodeInsightColors.ERRORS_ATTRIBUTES);
       }
     }

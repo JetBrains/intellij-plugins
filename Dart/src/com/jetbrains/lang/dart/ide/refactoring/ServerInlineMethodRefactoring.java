@@ -14,6 +14,7 @@
 
 package com.jetbrains.lang.dart.ide.refactoring;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +27,11 @@ public class ServerInlineMethodRefactoring extends ServerRefactoring {
   private String fullName;
   private boolean isDeclaration;
 
-  public ServerInlineMethodRefactoring(VirtualFile file, int offset, int length) {
-    super("Inline Method", RefactoringKind.INLINE_METHOD, file, offset, length);
+  public ServerInlineMethodRefactoring(@NotNull final Project project,
+                                       @NotNull final VirtualFile file,
+                                       final int offset,
+                                       final int length) {
+    super(project, "Inline Method", RefactoringKind.INLINE_METHOD, file, offset, length);
   }
 
   public String getFullName() {

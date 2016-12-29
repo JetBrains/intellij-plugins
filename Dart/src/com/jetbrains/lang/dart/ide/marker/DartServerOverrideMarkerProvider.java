@@ -79,7 +79,8 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
       return null;
     }
 
-    final List<DartServerData.DartOverrideMember> overrideMembers = DartAnalysisServerService.getInstance().getOverrideMembers(virtualFile);
+    final List<DartServerData.DartOverrideMember> overrideMembers =
+      DartAnalysisServerService.getInstance(componentName.getProject()).getOverrideMembers(virtualFile);
     final Project project = componentName.getProject();
     final int nameOffset = componentName.getTextRange().getStartOffset();
     DartComponent superclassComponent = null;

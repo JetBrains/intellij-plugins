@@ -48,7 +48,7 @@ public class DartProblem {
 
   public int getOffset() {
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(mySystemIndependentPath);
-    return DartAnalysisServerService.getInstance().getConvertedOffset(file, myAnalysisError.getLocation().getOffset());
+    return DartAnalysisServerService.getInstance(myProject).getConvertedOffset(file, myAnalysisError.getLocation().getOffset());
   }
 
   @NotNull

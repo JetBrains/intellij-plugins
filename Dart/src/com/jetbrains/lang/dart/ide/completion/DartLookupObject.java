@@ -34,7 +34,7 @@ public class DartLookupObject implements ResolveResult {
     final VirtualFile vFile = filePath == null ? null : LocalFileSystem.getInstance().findFileByPath(filePath);
     final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(myProject).findFile(vFile);
     if (psiFile != null) {
-      final int offset = DartAnalysisServerService.getInstance().getConvertedOffset(vFile, myLocation.getOffset());
+      final int offset = DartAnalysisServerService.getInstance(myProject).getConvertedOffset(vFile, myLocation.getOffset());
       final PsiElement elementAtOffset = psiFile.findElementAt(offset);
       return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponentName.class);
     }

@@ -16,7 +16,6 @@
 
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.MacroCallNode;
@@ -105,7 +104,6 @@ public class JSUntypedDeclarationInspection extends JSInspection {
     public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
       PsiElement anchor = descriptor.getPsiElement();
       final PsiFile containingFile = anchor.getContainingFile();
-      if (!FileModificationService.getInstance().prepareFileForWrite(containingFile)) return;
 
       PsiElement parent = anchor.getParent();
       if (parent instanceof JSFunction) {

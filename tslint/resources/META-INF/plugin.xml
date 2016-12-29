@@ -1,0 +1,43 @@
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/tslint">
+  <name>tslint</name>
+  <description>Support for tslint</description>
+  <vendor>JetBrains</vendor>
+
+  <depends>JavaScript</depends>
+  <depends>com.intellij.modules.platform</depends>
+  <resource-bundle>messages.TsLintBundle</resource-bundle>
+
+
+  <extensions defaultExtensionNs="com.intellij">
+
+    <projectConfigurable id="settings.javascript.linters.tslint"
+                         parentId="settings.typescriptcompiler"
+                         instance="com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable"
+                         key="settings.javascript.linters.tslint.configurable.name"
+                         bundle="messages.TsLintBundle"
+                         order="last"/>
+
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.linter.tslint.highlight.TsLintConfigFileChangeTracker"/>
+    <JavaScript.linter.descriptor implementation="com.intellij.lang.javascript.linter.tslint.config.TsLintDescriptor"/>
+    <fileTypeFactory implementation="com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileTypeFactory"/>
+
+    <localInspection language="TypeScript"
+                     bundle="messages.TsLintBundle"
+                     key="settings.javascript.linters.tslint.configurable.name"
+                     groupName="TypeScript"
+                     enabledByDefault="false"
+                     level="ERROR"
+                     implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection"
+                     unfair="true"/>
+
+    <externalAnnotator language="TypeScript"
+                       implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
+    <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
+  </extensions>
+  <extensions defaultExtensionNs="JavaScript.JsonSchema">
+    <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>
+  </extensions>
+
+</idea-plugin>

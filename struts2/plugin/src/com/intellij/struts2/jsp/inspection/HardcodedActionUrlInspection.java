@@ -14,7 +14,6 @@
  */
 package com.intellij.struts2.jsp.inspection;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.completion.ExtendedTagInsertHandler;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -127,7 +126,6 @@ public class HardcodedActionUrlInspection extends XmlSuppressableInspectionTool 
 
         final JspFile jspFile = JspPsiUtil.getJspFile(value);
         assert jspFile != null;
-        if (!FileModificationService.getInstance().prepareFileForWrite(jspFile)) return;
 
         XmlTag rootTag = jspFile.getRootTag();
         String prefix = rootTag.getPrefixByNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI);

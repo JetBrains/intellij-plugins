@@ -40,7 +40,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id:$
  */
 public class FileSelectorTableCellEditor extends AbstractTableCellEditor {

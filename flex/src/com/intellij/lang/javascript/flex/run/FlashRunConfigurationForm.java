@@ -44,7 +44,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileFilter;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.*;
 
@@ -465,7 +464,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     return myMainPanel;
   }
 
-  protected void resetEditorFrom(final FlashRunConfiguration configuration) {
+  protected void resetEditorFrom(@NotNull final FlashRunConfiguration configuration) {
     myResetting = true;
     try {
       doResetEditorFrom(configuration);
@@ -554,7 +553,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     return "";
   }
 
-  protected void applyEditorTo(final FlashRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull final FlashRunConfiguration configuration) throws ConfigurationException {
     final FlashRunnerParameters params = configuration.getRunnerParameters();
 
     myBCCombo.applyTo(params);

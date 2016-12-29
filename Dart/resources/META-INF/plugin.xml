@@ -157,12 +157,14 @@
     <gotoSymbolContributor implementation="com.jetbrains.lang.dart.ide.DartSymbolContributor"/>
 
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
+    <completion.contributor language="HTML" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <weigher key="completion" id="DartServerCompletionWeigher" order="after prefix"
              implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionWeigher"/>
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
+    <annotator language="HTML" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
     <lang.findUsagesProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.findUsages.DartFindUsagesProvider"/>
@@ -176,8 +178,10 @@
       <category>Dart</category>
     </intentionAction>
 
-    <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
-                        serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
+    <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.FileOffsetsManager"
+                        serviceImplementation="com.jetbrains.lang.dart.analyzer.FileOffsetsManager"/>
+    <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
+                    serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"

@@ -30,7 +30,7 @@ import org.osmorc.obrimport.Obr;
 /**
  * A query result which represents a maven dependency.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id:$
  */
 public class ObrMavenResult {

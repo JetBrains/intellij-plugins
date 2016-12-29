@@ -26,6 +26,10 @@
 
     <applicationService serviceInterface="org.angularjs.settings.AngularJSConfig"
                         serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
+    <projectService serviceInterface="org.angularjs.settings.AngularSettings"
+                    serviceImplementation="org.angularjs.settings.AngularSettings"/>
+
+
     <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
 
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
@@ -58,22 +62,40 @@
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector" id="angular"/>
     <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first" id="angular2"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
-                            id="AngularJSCompletionContributor" order="first"/>
+                            id="AngularJSCompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
+
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJSDICompletionContributor"
-                            id="AngularJSDICompletionContributor" order="first"/>
+                            id="AngularJSDICompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
+
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJavaScriptCompletionContributor"
-                            id="AngularJavaScriptCompletionContributor" order="first"/>
+                            id="AngularJavaScriptCompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
+
+    <completion.contributor id="Angular2ServiceCompletionContributor" language="AngularJS"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
+                            implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
+
+    <completion.contributor id="Angular2ServiceCompletionContributorNgHtml" language="Angular2HTML"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"
+                            implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"/>
+
     <completion.contributor language="HTML" implementationClass="org.angularjs.codeInsight.AngularJSXmlCompletionContributor"
-                            id="AngularJSXmlCompletionContributor" order="first"/>
+                            id="AngularJSXmlCompletionContributor" order="before xmlNonFirst"/>
+
+    <completion.contributor language="HTML" implementationClass="org.angularjs.codeInsight.Angular2ServiceCompletionContributor"
+                            id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
+
     <lookup.charFilter implementation="org.angularjs.editor.Angular2LookupCharFilter" order="before xml"/>
 
-    <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor" />
+    <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor"/>
     <targetElementEvaluator language="JavaScript" implementationClass="org.angularjs.AngularJSTargetElementEvaluator"/>
     <elementDescriptionProvider order="first"
-                                implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor" />
+                                implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor"/>
 
     <findUsagesHandlerFactory id="JavaScript" implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory"/>
-    <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher" />
+    <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher"/>
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
     <directoryProjectGenerator implementation="org.angularjs.cli.AngularCLIProjectGenerator"/>
@@ -85,6 +107,7 @@
     <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
                      groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
     <diagram.Provider implementation="org.angularjs.codeInsight.router.AngularUiRouterDiagramProvider"/>
+    <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -92,8 +115,11 @@
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler"/>
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJS2IndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
-    <inheritedLanguagesConfigurableProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
+    <inheritedLanguagesConfigurableProvider language="AngularJS"
+                                            implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
     <elementScopeProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSResolveScopeProvider"/>
+    <LanguageServiceProvider implementation="org.angularjs.service.Angular2LanguageServiceProvider"/>
+    <LanguageServiceFilter implementation="org.angularjs.service.Angular2LanguageServiceFilter"/>
   </extensions>
 
   <actions>
@@ -103,4 +129,10 @@
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
   </actions>
+
+  <project-components>
+    <component>
+      <implementation-class>org.angularjs.service.Angular2HighlightingPassFactory</implementation-class>
+    </component>
+  </project-components>
 </idea-plugin>

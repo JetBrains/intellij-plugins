@@ -30,8 +30,8 @@ import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class EquinoxRunProperties extends GenericRunProperties {
   private static final String EQUINOX_PRODUCT = "equinoxProduct";

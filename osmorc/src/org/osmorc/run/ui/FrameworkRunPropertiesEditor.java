@@ -32,7 +32,7 @@ import org.osmorc.run.OsgiRunConfiguration;
 import javax.swing.*;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public interface FrameworkRunPropertiesEditor {
   void resetEditorFrom(@NotNull OsgiRunConfiguration runConfiguration);

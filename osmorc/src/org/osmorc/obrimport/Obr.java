@@ -34,7 +34,7 @@ import java.io.IOException;
 /**
  * A query interface for an Open Bundle Repository.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id:$
  */
 public interface Obr {

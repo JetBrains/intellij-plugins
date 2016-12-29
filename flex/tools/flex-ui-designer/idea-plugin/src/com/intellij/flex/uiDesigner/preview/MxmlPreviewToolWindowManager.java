@@ -27,9 +27,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Alarm;
-import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.Processor;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
@@ -38,8 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -291,7 +287,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     return DesignerApplicationManager.isApplicable(project, PsiDocumentManager.getInstance(project).getPsiFile(document));
   }
 
-  private class MyFileEditorManagerListener extends FileEditorManagerAdapter implements Runnable {
+  private class MyFileEditorManagerListener implements Runnable, FileEditorManagerListener {
     private boolean waitingForSmartMode;
 
     @Override

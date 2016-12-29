@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.ide.actions;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class DartEditorNotificationsProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
   private static final Key<EditorNotificationPanel> KEY = Key.create("DartEditorNotificationsProvider");
@@ -106,18 +104,13 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
   private static class PubActionsPanel extends EditorNotificationPanel {
     private PubActionsPanel() {
+      super(EditorColors.GUTTER_BACKGROUND);
       myLinksPanel.add(new JLabel("Pub actions:"));
       createActionLabel(DartBundle.message("get.dependencies"), "Dart.pub.get");
       createActionLabel(DartBundle.message("upgrade.dependencies"), "Dart.pub.upgrade");
       createActionLabel("Build...", "Dart.pub.build");
-      myLinksPanel.add(new JLabel("        "));
+      myLinksPanel.add(new JSeparator(SwingConstants.VERTICAL));
       createActionLabel("Repair cache...", "Dart.pub.cache.repair");
-    }
-
-    @Override
-    public Color getBackground() {
-      final Color color = EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.GUTTER_BACKGROUND);
-      return color != null ? color : super.getBackground();
     }
   }
 

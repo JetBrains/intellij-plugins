@@ -164,6 +164,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == FUNCTION_SIGNATURE) {
       r = functionSignature(b, 0);
     }
+    else if (t == FUNCTION_TYPE) {
+      r = functionType(b, 0);
+    }
     else if (t == FUNCTION_TYPE_ALIAS) {
       r = functionTypeAlias(b, 0);
     }
@@ -260,11 +263,17 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == NAMED_CONSTRUCTOR_DECLARATION) {
       r = namedConstructorDeclaration(b, 0);
     }
+    else if (t == NAMED_PARAMETER_TYPE) {
+      r = namedParameterType(b, 0);
+    }
     else if (t == NEW_EXPRESSION) {
       r = newExpression(b, 0);
     }
     else if (t == NORMAL_FORMAL_PARAMETER) {
       r = normalFormalParameter(b, 0);
+    }
+    else if (t == NORMAL_PARAMETER_TYPE) {
+      r = normalParameterType(b, 0);
     }
     else if (t == ON_PART) {
       r = onPart(b, 0);
@@ -272,8 +281,14 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == OPTIONAL_FORMAL_PARAMETERS) {
       r = optionalFormalParameters(b, 0);
     }
+    else if (t == OPTIONAL_PARAMETER_TYPES) {
+      r = optionalParameterTypes(b, 0);
+    }
     else if (t == PARAMETER_NAME_REFERENCE_EXPRESSION) {
       r = parameterNameReferenceExpression(b, 0);
+    }
+    else if (t == PARAMETER_TYPE_LIST) {
+      r = parameterTypeList(b, 0);
     }
     else if (t == PARENTHESIZED_EXPRESSION) {
       r = parenthesizedExpression(b, 0);
@@ -565,18 +580,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "argument_list_recover")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NOT_);
-    r = !argument_list_recover_0(b, l + 1);
+    r = !consumeToken(b, RPAREN);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // (')')
-  private static boolean argument_list_recover_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "argument_list_recover_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, RPAREN);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -731,19 +736,17 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' ';'
+  // 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')'
   public static boolean assertStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assertStatement")) return false;
     if (!nextTokenIs(b, ASSERT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, ASSERT_STATEMENT, null);
-    r = consumeToken(b, ASSERT);
+    r = consumeTokens(b, 1, ASSERT, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParenOrComma(b, l + 1)) && r;
+    r = r && report_error_(b, expressionWithRecoverUntilParenOrComma(b, l + 1));
     r = p && report_error_(b, assertStatement_3(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
-    r = p && consumeToken(b, SEMICOLON) && r;
+    r = p && consumeToken(b, RPAREN) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -764,6 +767,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && stringLiteralExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // assertStatement ';'
+  static boolean assertStatementWithSemicolon(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "assertStatementWithSemicolon")) return false;
+    if (!nextTokenIs(b, ASSERT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = assertStatement(b, l + 1);
+    p = r; // pin = 1
+    r = r && consumeToken(b, SEMICOLON);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1017,14 +1034,22 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<argumentsWrapper>>
+  // typeArguments? <<argumentsWrapper>>
   public static boolean callExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callExpression")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, CALL_EXPRESSION, "<call expression>");
-    r = argumentsWrapper(b, l + 1);
+    r = callExpression_0(b, l + 1);
+    r = r && argumentsWrapper(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // typeArguments?
+  private static boolean callExpression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "callExpression_0")) return false;
+    typeArguments(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1096,10 +1121,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, CATCH)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CATCH_PART, null);
-    r = consumeToken(b, CATCH);
+    r = consumeTokens(b, 1, CATCH, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, componentName(b, l + 1)) && r;
+    r = r && report_error_(b, componentName(b, l + 1));
     r = p && report_error_(b, catchPart_3(b, l + 1)) && r;
     r = p && consumeToken(b, RPAREN) && r;
     exit_section_(b, l, m, r, p, null);
@@ -1407,10 +1431,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, DEFAULT_CASE, "<default case>");
     r = defaultCase_0(b, l + 1);
-    r = r && consumeToken(b, DEFAULT);
+    r = r && consumeTokens(b, 1, DEFAULT, COLON);
     p = r; // pin = 2
-    r = r && report_error_(b, consumeToken(b, COLON));
-    r = p && statements(b, l + 1) && r;
+    r = r && statements(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1502,11 +1525,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, DO);
     p = r; // pin = 1
     r = r && report_error_(b, statement(b, l + 1));
-    r = p && report_error_(b, consumeToken(b, WHILE)) && r;
-    r = p && report_error_(b, consumeToken(b, LPAREN)) && r;
+    r = p && report_error_(b, consumeTokens(b, -1, WHILE, LPAREN)) && r;
     r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
-    r = p && consumeToken(b, SEMICOLON) && r;
+    r = p && report_error_(b, consumeTokens(b, -1, RPAREN, SEMICOLON)) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -2028,17 +2049,17 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
+  // metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression typeParameters? formalParameterList?
   public static boolean fieldFormalParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldFormalParameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, FIELD_FORMAL_PARAMETER, "<field formal parameter>");
     r = fieldFormalParameter_0(b, l + 1);
     r = r && fieldFormalParameter_1(b, l + 1);
-    r = r && consumeToken(b, THIS);
-    r = r && consumeToken(b, DOT);
+    r = r && consumeTokens(b, 0, THIS, DOT);
     r = r && referenceExpression(b, l + 1);
     r = r && fieldFormalParameter_5(b, l + 1);
+    r = r && fieldFormalParameter_6(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2062,9 +2083,16 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // formalParameterList?
+  // typeParameters?
   private static boolean fieldFormalParameter_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldFormalParameter_5")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // formalParameterList?
+  private static boolean fieldFormalParameter_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldFormalParameter_6")) return false;
     formalParameterList(b, l + 1);
     return true;
   }
@@ -2096,8 +2124,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "fieldInitializer_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, THIS);
-    r = r && consumeToken(b, DOT);
+    r = consumeTokens(b, 0, THIS, DOT);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2496,21 +2523,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, LPAREN)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = formalParameterList_0(b, l + 1);
+    r = parseTokens(b, 0, LPAREN, RPAREN);
     if (!r) r = formalParameterList_1(b, l + 1);
     if (!r) r = formalParameterList_2(b, l + 1);
     exit_section_(b, m, FORMAL_PARAMETER_LIST, r);
-    return r;
-  }
-
-  // '(' ')'
-  private static boolean formalParameterList_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "formalParameterList_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, LPAREN);
-    r = r && consumeToken(b, RPAREN);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -2604,7 +2620,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // returnType componentName formalParameterList | componentName formalParameterList
+  // returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList
   static boolean functionDeclarationPrivate(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationPrivate")) return false;
     boolean r;
@@ -2615,31 +2631,47 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // returnType componentName formalParameterList
+  // returnType componentName typeParameters? formalParameterList
   private static boolean functionDeclarationPrivate_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationPrivate_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = returnType(b, l + 1);
     r = r && componentName(b, l + 1);
+    r = r && functionDeclarationPrivate_0_2(b, l + 1);
     r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // componentName formalParameterList
+  // typeParameters?
+  private static boolean functionDeclarationPrivate_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionDeclarationPrivate_0_2")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // componentName typeParameters? formalParameterList
   private static boolean functionDeclarationPrivate_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationPrivate_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = componentName(b, l + 1);
+    r = r && functionDeclarationPrivate_1_1(b, l + 1);
     r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
+  // typeParameters?
+  private static boolean functionDeclarationPrivate_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionDeclarationPrivate_1_1")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
   /* ********************************************************** */
-  // metadata*  (returnType componentName formalParameterList | componentName formalParameterList) functionBody
+  // metadata*  (returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList) functionBody
   public static boolean functionDeclarationWithBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBody")) return false;
     boolean r;
@@ -2663,7 +2695,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // returnType componentName formalParameterList | componentName formalParameterList
+  // returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList
   private static boolean functionDeclarationWithBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBody_1")) return false;
     boolean r;
@@ -2674,31 +2706,47 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // returnType componentName formalParameterList
+  // returnType componentName typeParameters? formalParameterList
   private static boolean functionDeclarationWithBody_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBody_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = returnType(b, l + 1);
     r = r && componentName(b, l + 1);
+    r = r && functionDeclarationWithBody_1_0_2(b, l + 1);
     r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // componentName formalParameterList
+  // typeParameters?
+  private static boolean functionDeclarationWithBody_1_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionDeclarationWithBody_1_0_2")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // componentName typeParameters? formalParameterList
   private static boolean functionDeclarationWithBody_1_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBody_1_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = componentName(b, l + 1);
+    r = r && functionDeclarationWithBody_1_1_1(b, l + 1);
     r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
+  // typeParameters?
+  private static boolean functionDeclarationWithBody_1_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionDeclarationWithBody_1_1_1")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
   /* ********************************************************** */
-  // metadata* 'external'? (returnType componentName formalParameterList | componentName formalParameterList) ( ';' | functionBodyOrNative)
+  // metadata* 'external'? (returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList) ( ';' | functionBodyOrNative)
   public static boolean functionDeclarationWithBodyOrNative(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBodyOrNative")) return false;
     boolean r;
@@ -2730,7 +2778,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // returnType componentName formalParameterList | componentName formalParameterList
+  // returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList
   private static boolean functionDeclarationWithBodyOrNative_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBodyOrNative_2")) return false;
     boolean r;
@@ -2741,27 +2789,43 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // returnType componentName formalParameterList
+  // returnType componentName typeParameters? formalParameterList
   private static boolean functionDeclarationWithBodyOrNative_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBodyOrNative_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = returnType(b, l + 1);
     r = r && componentName(b, l + 1);
+    r = r && functionDeclarationWithBodyOrNative_2_0_2(b, l + 1);
     r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // componentName formalParameterList
+  // typeParameters?
+  private static boolean functionDeclarationWithBodyOrNative_2_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionDeclarationWithBodyOrNative_2_0_2")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // componentName typeParameters? formalParameterList
   private static boolean functionDeclarationWithBodyOrNative_2_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBodyOrNative_2_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = componentName(b, l + 1);
+    r = r && functionDeclarationWithBodyOrNative_2_1_1(b, l + 1);
     r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // typeParameters?
+  private static boolean functionDeclarationWithBodyOrNative_2_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionDeclarationWithBodyOrNative_2_1_1")) return false;
+    typeParameters(b, l + 1);
+    return true;
   }
 
   // ';' | functionBodyOrNative
@@ -2776,16 +2840,24 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // formalParameterList functionExpressionBody
+  // typeParameters? formalParameterList functionExpressionBody
   public static boolean functionExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionExpression")) return false;
-    if (!nextTokenIs(b, LPAREN)) return false;
+    if (!nextTokenIs(b, "<function expression>", LPAREN, LT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = formalParameterList(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION_EXPRESSION, "<function expression>");
+    r = functionExpression_0(b, l + 1);
+    r = r && formalParameterList(b, l + 1);
     r = r && functionExpressionBody(b, l + 1);
-    exit_section_(b, m, FUNCTION_EXPRESSION, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // typeParameters?
+  private static boolean functionExpression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionExpression_0")) return false;
+    typeParameters(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2895,38 +2967,135 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // <<functionId>> typeParameters? parameterTypeList | returnType <<functionId>> typeParameters? parameterTypeList
+  public static boolean functionType(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionType")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION_TYPE, "<function type>");
+    r = functionType_0(b, l + 1);
+    if (!r) r = functionType_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // <<functionId>> typeParameters? parameterTypeList
+  private static boolean functionType_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionType_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionId(b, l + 1);
+    r = r && functionType_0_1(b, l + 1);
+    r = r && parameterTypeList(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // typeParameters?
+  private static boolean functionType_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionType_0_1")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // returnType <<functionId>> typeParameters? parameterTypeList
+  private static boolean functionType_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionType_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = returnType(b, l + 1);
+    r = r && functionId(b, l + 1);
+    r = r && functionType_1_2(b, l + 1);
+    r = r && parameterTypeList(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // typeParameters?
+  private static boolean functionType_1_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionType_1_2")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
+  //                     | metadata* 'typedef' componentName typeParameters? '=' functionType ';'
   public static boolean functionTypeAlias(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionTypeAlias")) return false;
     if (!nextTokenIs(b, "<function type alias>", AT, TYPEDEF)) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_TYPE_ALIAS, "<function type alias>");
     r = functionTypeAlias_0(b, l + 1);
+    if (!r) r = functionTypeAlias_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
+  private static boolean functionTypeAlias_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionTypeAlias_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionTypeAlias_0_0(b, l + 1);
     r = r && consumeToken(b, TYPEDEF);
     r = r && functionPrefix(b, l + 1);
-    r = r && functionTypeAlias_3(b, l + 1);
+    r = r && functionTypeAlias_0_3(b, l + 1);
     r = r && formalParameterList(b, l + 1);
-    p = r; // pin = 5
     r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // metadata*
-  private static boolean functionTypeAlias_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionTypeAlias_0")) return false;
+  private static boolean functionTypeAlias_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionTypeAlias_0_0")) return false;
     int c = current_position_(b);
     while (true) {
       if (!metadata(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "functionTypeAlias_0", c)) break;
+      if (!empty_element_parsed_guard_(b, "functionTypeAlias_0_0", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // typeParameters?
-  private static boolean functionTypeAlias_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionTypeAlias_3")) return false;
+  private static boolean functionTypeAlias_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionTypeAlias_0_3")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // metadata* 'typedef' componentName typeParameters? '=' functionType ';'
+  private static boolean functionTypeAlias_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionTypeAlias_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionTypeAlias_1_0(b, l + 1);
+    r = r && consumeToken(b, TYPEDEF);
+    r = r && componentName(b, l + 1);
+    r = r && functionTypeAlias_1_3(b, l + 1);
+    r = r && consumeToken(b, EQ);
+    r = r && functionType(b, l + 1);
+    r = r && consumeToken(b, SEMICOLON);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // metadata*
+  private static boolean functionTypeAlias_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionTypeAlias_1_0")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "functionTypeAlias_1_0", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // typeParameters?
+  private static boolean functionTypeAlias_1_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionTypeAlias_1_3")) return false;
     typeParameters(b, l + 1);
     return true;
   }
@@ -3167,10 +3336,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, IF)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, IF_STATEMENT, null);
-    r = consumeToken(b, IF);
+    r = consumeTokens(b, 1, IF, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
     r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
     r = p && report_error_(b, statement(b, l + 1)) && r;
     r = p && ifStatement_5(b, l + 1) && r;
@@ -3203,8 +3371,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, IF)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, IF);
-    r = r && consumeToken(b, LPAREN);
+    r = consumeTokens(b, 0, IF, LPAREN);
     r = r && dottedName(b, l + 1);
     r = r && importConfig_3(b, l + 1);
     r = r && consumeToken(b, RPAREN);
@@ -4047,7 +4214,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // returnType <<methodNameWrapper>> formalParameterList | <<methodNameWrapper>> formalParameterList
+  // returnType <<methodNameWrapper>> typeParameters? formalParameterList | <<methodNameWrapper>> typeParameters? formalParameterList
   static boolean methodDeclarationPrivate(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "methodDeclarationPrivate")) return false;
     boolean r;
@@ -4058,27 +4225,43 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // returnType <<methodNameWrapper>> formalParameterList
+  // returnType <<methodNameWrapper>> typeParameters? formalParameterList
   private static boolean methodDeclarationPrivate_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "methodDeclarationPrivate_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = returnType(b, l + 1);
     r = r && methodNameWrapper(b, l + 1);
+    r = r && methodDeclarationPrivate_0_2(b, l + 1);
     r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // <<methodNameWrapper>> formalParameterList
+  // typeParameters?
+  private static boolean methodDeclarationPrivate_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "methodDeclarationPrivate_0_2")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // <<methodNameWrapper>> typeParameters? formalParameterList
   private static boolean methodDeclarationPrivate_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "methodDeclarationPrivate_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = methodNameWrapper(b, l + 1);
+    r = r && methodDeclarationPrivate_1_1(b, l + 1);
     r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // typeParameters?
+  private static boolean methodDeclarationPrivate_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "methodDeclarationPrivate_1_1")) return false;
+    typeParameters(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -4318,6 +4501,87 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // functionType <<nonStrictID>> | type <<nonStrictID>> | <<nonStrictID>>
+  public static boolean namedParameterType(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterType")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, NAMED_PARAMETER_TYPE, "<named parameter type>");
+    r = namedParameterType_0(b, l + 1);
+    if (!r) r = namedParameterType_1(b, l + 1);
+    if (!r) r = nonStrictID(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // functionType <<nonStrictID>>
+  private static boolean namedParameterType_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterType_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionType(b, l + 1);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // type <<nonStrictID>>
+  private static boolean namedParameterType_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterType_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = type(b, l + 1);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' namedParameterType (',' namedParameterType)* ','? '}'
+  static boolean namedParameterTypes(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes")) return false;
+    if (!nextTokenIs(b, LBRACE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LBRACE);
+    r = r && namedParameterType(b, l + 1);
+    r = r && namedParameterTypes_2(b, l + 1);
+    r = r && namedParameterTypes_3(b, l + 1);
+    r = r && consumeToken(b, RBRACE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (',' namedParameterType)*
+  private static boolean namedParameterTypes_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!namedParameterTypes_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "namedParameterTypes_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ',' namedParameterType
+  private static boolean namedParameterTypes_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMA);
+    r = r && namedParameterType(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean namedParameterTypes_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_3")) return false;
+    consumeToken(b, COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
   // ('new' | 'const') type ('.' referenceExpression)? <<argumentsWrapper>>
   public static boolean newExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "newExpression")) return false;
@@ -4375,7 +4639,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                | breakStatement
   //                                | continueStatement
   //                                | returnStatement
-  //                                | assertStatement
+  //                                | assertStatementWithSemicolon
   //                                | statementFollowedBySemiColon
   //                                | yieldEachStatement
   //                                | yieldStatement
@@ -4396,7 +4660,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = breakStatement(b, l + 1);
     if (!r) r = continueStatement(b, l + 1);
     if (!r) r = returnStatement(b, l + 1);
-    if (!r) r = assertStatement(b, l + 1);
+    if (!r) r = assertStatementWithSemicolon(b, l + 1);
     if (!r) r = statementFollowedBySemiColon(b, l + 1);
     if (!r) r = yieldEachStatement(b, l + 1);
     if (!r) r = yieldStatement(b, l + 1);
@@ -4453,6 +4717,77 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
     r = r && normalFormalParameter(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // functionType <<nonStrictID>> | type <<nonStrictID>> | functionType | type
+  public static boolean normalParameterType(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "normalParameterType")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, NORMAL_PARAMETER_TYPE, "<normal parameter type>");
+    r = normalParameterType_0(b, l + 1);
+    if (!r) r = normalParameterType_1(b, l + 1);
+    if (!r) r = functionType(b, l + 1);
+    if (!r) r = type(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // functionType <<nonStrictID>>
+  private static boolean normalParameterType_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "normalParameterType_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionType(b, l + 1);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // type <<nonStrictID>>
+  private static boolean normalParameterType_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "normalParameterType_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = type(b, l + 1);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // normalParameterType (',' normalParameterType)*
+  static boolean normalParameterTypes(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "normalParameterTypes")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = normalParameterType(b, l + 1);
+    r = r && normalParameterTypes_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (',' normalParameterType)*
+  private static boolean normalParameterTypes_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "normalParameterTypes_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!normalParameterTypes_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "normalParameterTypes_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ',' normalParameterType
+  private static boolean normalParameterTypes_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "normalParameterTypes_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMA);
+    r = r && normalParameterType(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4577,6 +4912,19 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // optionalPositionalParameterTypes | namedParameterTypes
+  public static boolean optionalParameterTypes(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "optionalParameterTypes")) return false;
+    if (!nextTokenIs(b, "<optional parameter types>", LBRACKET, LBRACE)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, OPTIONAL_PARAMETER_TYPES, "<optional parameter types>");
+    r = optionalPositionalParameterTypes(b, l + 1);
+    if (!r) r = namedParameterTypes(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']'
   static boolean optionalPositionalFormalParameters(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "optionalPositionalFormalParameters")) return false;
@@ -4623,6 +4971,28 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '[' normalParameterTypes ','? ']'
+  static boolean optionalPositionalParameterTypes(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "optionalPositionalParameterTypes")) return false;
+    if (!nextTokenIs(b, LBRACKET)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LBRACKET);
+    r = r && normalParameterTypes(b, l + 1);
+    r = r && optionalPositionalParameterTypes_2(b, l + 1);
+    r = r && consumeToken(b, RBRACKET);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean optionalPositionalParameterTypes_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "optionalPositionalParameterTypes_2")) return false;
+    consumeToken(b, COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
   // << nonStrictID >>
   public static boolean parameterNameReferenceExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameterNameReferenceExpression")) return false;
@@ -4630,6 +5000,70 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _COLLAPSE_, PARAMETER_NAME_REFERENCE_EXPRESSION, "<parameter name reference expression>");
     r = nonStrictID(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '(' ')'
+  //                     | '(' normalParameterTypes ','? ')'
+  //                     | '(' normalParameterTypes ',' optionalParameterTypes ')'
+  //                     | '(' optionalParameterTypes ')'
+  public static boolean parameterTypeList(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameterTypeList")) return false;
+    if (!nextTokenIs(b, LPAREN)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parseTokens(b, 0, LPAREN, RPAREN);
+    if (!r) r = parameterTypeList_1(b, l + 1);
+    if (!r) r = parameterTypeList_2(b, l + 1);
+    if (!r) r = parameterTypeList_3(b, l + 1);
+    exit_section_(b, m, PARAMETER_TYPE_LIST, r);
+    return r;
+  }
+
+  // '(' normalParameterTypes ','? ')'
+  private static boolean parameterTypeList_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameterTypeList_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LPAREN);
+    r = r && normalParameterTypes(b, l + 1);
+    r = r && parameterTypeList_1_2(b, l + 1);
+    r = r && consumeToken(b, RPAREN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean parameterTypeList_1_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameterTypeList_1_2")) return false;
+    consumeToken(b, COMMA);
+    return true;
+  }
+
+  // '(' normalParameterTypes ',' optionalParameterTypes ')'
+  private static boolean parameterTypeList_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameterTypeList_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LPAREN);
+    r = r && normalParameterTypes(b, l + 1);
+    r = r && consumeToken(b, COMMA);
+    r = r && optionalParameterTypes(b, l + 1);
+    r = r && consumeToken(b, RPAREN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '(' optionalParameterTypes ')'
+  private static boolean parameterTypeList_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameterTypeList_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LPAREN);
+    r = r && optionalParameterTypes(b, l + 1);
+    r = r && consumeToken(b, RPAREN);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -4667,8 +5101,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, PART_OF_STATEMENT, "<part of statement>");
     r = partOfStatement_0(b, l + 1);
-    r = r && consumeToken(b, PART);
-    r = r && consumeToken(b, OF);
+    r = r && consumeTokens(b, 0, PART, OF);
     r = r && partOfStatement_3(b, l + 1);
     p = r; // pin = 4
     r = r && consumeToken(b, SEMICOLON);
@@ -4830,8 +5263,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, REDIRECTION, null);
-    r = consumeToken(b, COLON);
-    r = r && consumeToken(b, THIS);
+    r = consumeTokens(b, 2, COLON, THIS);
     p = r; // pin = 2
     r = r && report_error_(b, redirection_2(b, l + 1));
     r = p && argumentsWrapper(b, l + 1) && r;
@@ -4903,9 +5335,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, RETHROW)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, RETHROW_STATEMENT, null);
-    r = consumeToken(b, RETHROW);
+    r = consumeTokens(b, 1, RETHROW, SEMICOLON);
     p = r; // pin = 1
-    r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -5491,12 +5922,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // (superExpression | thisExpression) ('.' referenceExpression)? <<argumentsWrapper>>
   //                               | fieldInitializer
+  //                               | assertStatement
   public static boolean superCallOrFieldInitializer(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, SUPER_CALL_OR_FIELD_INITIALIZER, "<super call or field initializer>");
     r = superCallOrFieldInitializer_0(b, l + 1);
     if (!r) r = fieldInitializer(b, l + 1);
+    if (!r) r = assertStatement(b, l + 1);
     exit_section_(b, l, m, r, false, super_call_or_field_initializer_recover_parser_);
     return r;
   }
@@ -5657,12 +6090,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, SWITCH)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, SWITCH_STATEMENT, null);
-    r = consumeToken(b, SWITCH);
+    r = consumeTokens(b, 1, SWITCH, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
-    r = p && report_error_(b, consumeToken(b, LBRACE)) && r;
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
+    r = p && report_error_(b, consumeTokens(b, -1, RPAREN, LBRACE)) && r;
     r = p && report_error_(b, switchStatement_5(b, l + 1)) && r;
     r = p && report_error_(b, switchStatement_6(b, l + 1)) && r;
     r = p && consumeToken(b, RBRACE) && r;
@@ -6151,8 +6582,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "userDefinableOperator_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, LBRACKET);
-    r = r && consumeToken(b, RBRACKET);
+    r = consumeTokens(b, 0, LBRACKET, RBRACKET);
     r = r && userDefinableOperator_2_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -6441,10 +6871,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, WHILE)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, WHILE_STATEMENT, null);
-    r = consumeToken(b, WHILE);
+    r = consumeTokens(b, 1, WHILE, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LPAREN));
-    r = p && report_error_(b, expressionWithRecoverUntilParen(b, l + 1)) && r;
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
     r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
     r = p && statement(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
@@ -6458,8 +6887,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, YIELD)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, YIELD_EACH_STATEMENT, null);
-    r = consumeToken(b, YIELD);
-    r = r && consumeToken(b, MUL);
+    r = consumeTokens(b, 2, YIELD, MUL);
     p = r; // pin = 2
     r = r && report_error_(b, expression(b, l + 1));
     r = p && consumeToken(b, SEMICOLON) && r;

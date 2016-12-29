@@ -13,7 +13,7 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
   public void setUp() throws Exception {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
+    DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest(getProject());
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 

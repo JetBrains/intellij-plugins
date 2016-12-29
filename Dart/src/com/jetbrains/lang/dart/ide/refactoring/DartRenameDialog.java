@@ -182,7 +182,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     final SourceChange change = myRefactoring.getChange();
     assert change != null;
 
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(myProject);
     final PsiManager psiManager = PsiManager.getInstance(myProject);
 
     for (SourceFileEdit fileEdit : change.getEdits()) {

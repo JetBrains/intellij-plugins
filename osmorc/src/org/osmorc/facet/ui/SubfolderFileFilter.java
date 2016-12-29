@@ -32,7 +32,7 @@ import com.intellij.psi.PsiFile;
 /**
  * File filter for filtering files which are not within a certain subfolder
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id$
  */
 public class SubfolderFileFilter implements TreeFileChooser.PsiFileFilter {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,24 +25,6 @@ public class ReportingProjectBuilder extends ProjectBuilder {
   public ReportingProjectBuilder(@NotNull Reporter reporter, @NotNull Project project) {
     super(project);
     myReporter = reporter;
-  }
-
-  @Override
-  public SetLocation error(String format, Object... args) {
-    myReporter.error(formatArrays(format, args), null, null);
-    return MuteLocation.INSTANCE;
-  }
-
-  @Override
-  public SetLocation error(String format, Throwable t, Object... args) {
-    myReporter.error(formatArrays(format, args), t, null);
-    return MuteLocation.INSTANCE;
-  }
-
-  @Override
-  public SetLocation warning(String format, Object... args) {
-    myReporter.warning(formatArrays(format, args), null, null);
-    return MuteLocation.INSTANCE;
   }
 
   @Override

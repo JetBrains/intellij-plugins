@@ -6,7 +6,6 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
@@ -23,7 +22,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   public void setUp() throws Exception {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
+    DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest(getProject());
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 

@@ -32,7 +32,7 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
     if (file == null) return;
     VirtualFile vFile = file.getVirtualFile();
     List<DartNavigationRegion> navRegions =
-      DartAnalysisServerService.getInstance().analysis_getNavigation(vFile, decl.getTextOffset(), decl.getTextLength());
+      DartAnalysisServerService.getInstance(element.getProject()).analysis_getNavigation(vFile, decl.getTextOffset(), decl.getTextLength());
     if (navRegions == null) return;
     resolveReferences(decl, navRegions, results);
   }

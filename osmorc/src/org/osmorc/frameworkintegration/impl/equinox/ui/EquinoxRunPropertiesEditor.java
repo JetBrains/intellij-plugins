@@ -39,8 +39,8 @@ import java.awt.event.ActionListener;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor {
   private JPanel myMainPanel;

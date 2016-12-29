@@ -73,7 +73,7 @@ public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureT
     final SelectionModel selectionModel = getEditor().getSelectionModel();
     int offset = selectionModel.getSelectionStart();
     final int length = selectionModel.getSelectionEnd() - offset;
-    return new ServerExtractLocalVariableRefactoring(psiFile.getVirtualFile(), offset, length);
+    return new ServerExtractLocalVariableRefactoring(getProject(), psiFile.getVirtualFile(), offset, length);
   }
 
   private void doTest(String filePath, boolean all) {

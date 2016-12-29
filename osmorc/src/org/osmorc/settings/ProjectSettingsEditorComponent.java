@@ -47,10 +47,9 @@ import org.osmorc.util.OsgiUiUtil;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ProjectSettingsEditorComponent {
   private UserActivityWatcher myWatcher;
@@ -71,7 +70,7 @@ public class ProjectSettingsEditorComponent {
     myFrameworkInstance.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[not specified]") {
       @Override
       protected boolean isInstanceDefined(@NotNull FrameworkInstanceDefinition instance) {
-        return Stream.of(ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions()).anyMatch(instance::equals);
+        return ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions().contains(instance);
       }
     });
 

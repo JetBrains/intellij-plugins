@@ -35,7 +35,7 @@ import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 /**
  * Abstract base class for framework integrators, for avoiding duplicated code.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public abstract class AbstractFrameworkIntegrator implements FrameworkIntegrator, OsgiRunConfigurationCheckerProvider {
   private final FrameworkInstanceManager myInstanceManager;

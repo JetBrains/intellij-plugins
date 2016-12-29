@@ -48,7 +48,7 @@ import org.osmorc.util.OsgiPsiUtil;
 import java.util.List;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class ExportPackageParser extends BasePackageParser {
   public static final HeaderParser INSTANCE = new ExportPackageParser();

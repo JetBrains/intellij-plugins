@@ -71,6 +71,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     catch (RuntimeConfigurationError e) { /* can't happen because already checked */}
   }
 
+  @NotNull
   @Override
   protected AnAction[] createActions(final ConsoleView console, final ProcessHandler processHandler, final Executor executor) {
     // These actions are effectively added only to the Run tool window. For Debug see DartCommandLineDebugProcess.registerAdditionalActions()

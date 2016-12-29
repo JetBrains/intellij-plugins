@@ -53,3 +53,16 @@ typedef Box<int> BoxBoxCallbuk1<E>(E event);
 typedef Box<I> BoxBoxCallbuk2<E, I>(E event, I x);
 typedef Box<I> BoxBoxCallbuk3<E, I>(E event, I x, y);
 typedef Box<I> BoxBoxCallbuk4<E, I>(E event, I x, var y);
+
+typedef F<T> = List<T> Function<T>(T,);
+typedef G = List<int> Function();
+// Function may be a special word or a type, but not a name identifier
+typedef I<T> = List<T> Function([int Function<T>() a,
+Function(int) a,
+Function a,
+Function]);
+// Here Function may be a special word, type and a name identifier, all cases are tested here
+@foo @bar typedef L<T, E> = List<T,E> Function<S,E>(S, {T Function(int, S) factory,
+Function<T>() factory,
+Function factory,
+Function});

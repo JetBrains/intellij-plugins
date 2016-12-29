@@ -113,7 +113,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   }
 
   @Override
-  protected void resetEditorFrom(CucumberJavaRunConfiguration configuration) {
+  protected void resetEditorFrom(@NotNull CucumberJavaRunConfiguration configuration) {
     myModuleSelector.reset(configuration);
     myCommonProgramParameters.reset(configuration);
 
@@ -123,7 +123,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   }
 
   @Override
-  protected void applyEditorTo(CucumberJavaRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull CucumberJavaRunConfiguration configuration) throws ConfigurationException {
     myCommonProgramParameters.applyTo(configuration);
     myModuleSelector.applyTo(configuration);
 

@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Action group, which holds references to the jar files that are created by
  *
- * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ViewGeneratedManifestGroup extends ActionGroup {
   @Override

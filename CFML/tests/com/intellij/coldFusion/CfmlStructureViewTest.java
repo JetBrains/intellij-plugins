@@ -25,7 +25,6 @@ import com.intellij.ide.util.treeView.AbstractTreeStructure;
 import com.intellij.ide.util.treeView.smartTree.Group;
 import com.intellij.ide.util.treeView.smartTree.SmartTreeStructure;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.ide.util.treeView.smartTree.TreeStructureUtil;
 import com.intellij.lang.LanguageStructureViewBuilder;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -92,7 +91,7 @@ public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
 
     AbstractTreeStructure jsTreeStructure = new SmartTreeStructure(getProject(), structureViewModel);
 
-    Object[] items = TreeStructureUtil.getChildElementsFromTreeStructure(jsTreeStructure, jsTreeStructure.getRootElement());
+    Object[] items = jsTreeStructure.getChildElements(jsTreeStructure.getRootElement());
     structureViewModel.dispose();
     Disposer.dispose(structureView);
     return items;

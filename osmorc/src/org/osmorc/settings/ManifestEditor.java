@@ -37,7 +37,7 @@ import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
 /**
  * Editor component for editing a Manifest with syntax highlighting and code completion. This is used in various settings dialogs.
  *
- * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ManifestEditor extends EditorTextField implements Disposable {
   private final ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();

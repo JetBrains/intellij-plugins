@@ -1,0 +1,12 @@
+"use strict";
+var tslint_plugin_1 = require("./tslint-plugin");
+var TSLintPluginFactory = (function () {
+    function TSLintPluginFactory() {
+    }
+    TSLintPluginFactory.prototype.create = function (state) {
+        return { languagePlugin: new tslint_plugin_1.TSLintPlugin(state) };
+    };
+    return TSLintPluginFactory;
+}());
+var factory = new TSLintPluginFactory();
+exports.factory = factory;

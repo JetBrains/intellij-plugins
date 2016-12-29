@@ -38,7 +38,7 @@ import org.osmorc.settings.ApplicationSettings;
 /**
  * Configuration type for a bundle run configuration.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class OsgiConfigurationType extends ConfigurationTypeBase {
   private static final String ID = "#org.osmorc.OsgiConfigurationType";

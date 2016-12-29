@@ -58,7 +58,8 @@ public class DartHierarchyUtil {
     final DartComponentName name = dartClass.getComponentName();
     if (name == null) return Collections.emptyList();
 
-    return DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), false);
+    return DartAnalysisServerService.getInstance(dartClass.getProject())
+      .search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), false);
   }
 
   public static boolean isExecutable(@NotNull PsiElement component) {
@@ -144,7 +145,7 @@ public class DartHierarchyUtil {
       return null;
     }
 
-    final int offset = DartAnalysisServerService.getInstance().getConvertedOffset(virtualFile, location.getOffset());
+    final int offset = DartAnalysisServerService.getInstance(project).getConvertedOffset(virtualFile, location.getOffset());
     final PsiElement elementAtOffset = psiFile.findElementAt(offset);
     return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponent.class);
   }

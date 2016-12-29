@@ -50,21 +50,20 @@ public class AssistUtils {
   /**
    * @return <code>true</code> if file contents changed, <code>false</code> otherwise
    */
-  public static boolean applyFileEdit(@NotNull final SourceFileEdit fileEdit) {
+  public static boolean applyFileEdit(@NotNull final Project project, @NotNull final SourceFileEdit fileEdit) {
     final VirtualFile file = findVirtualFile(fileEdit);
     final Document document = file == null ? null : FileDocumentManager.getInstance().getDocument(file);
     if (document == null) return false;
 
     final long initialModStamp = document.getModificationStamp();
-    applySourceEdits(file, document, fileEdit.getEdits(), Collections.emptySet());
+    applySourceEdits(project, file, document, fileEdit.getEdits(), Collections.emptySet());
     return document.getModificationStamp() != initialModStamp;
   }
 
   public static void applySourceChange(@NotNull final Project project,
                                        @NotNull final SourceChange sourceChange,
                                        final boolean withLinkedEdits) throws DartSourceEditException {
-    Set<String> excludedIds = Collections.emptySet();
-    applySourceChange(project, sourceChange, withLinkedEdits, excludedIds);
+    applySourceChange(project, sourceChange, withLinkedEdits, Collections.emptySet());
   }
 
   public static void applySourceChange(@NotNull final Project project,
@@ -91,7 +90,7 @@ public class AssistUtils {
         final SourceFileEdit fileEdit = entry.getValue();
         final Document document = FileDocumentManager.getInstance().getDocument(file);
         if (document != null) {
-          final List<SourceEditInfo> infos = applySourceEdits(file, document, fileEdit.getEdits(), excludedIds);
+          final List<SourceEditInfo> infos = applySourceEdits(project, file, document, fileEdit.getEdits(), excludedIds);
 
           if (linkedEditTarget != null && linkedEditTarget.virtualFile.equals(file)) {
             sourceEditInfos = infos;
@@ -105,19 +104,13 @@ public class AssistUtils {
     }, sourceChange.getMessage(), null);
   }
 
-  public static void applySourceEdits(@NotNull final VirtualFile file,
-                                      @NotNull final Document document,
-                                      @NotNull final List<SourceEdit> edits) {
-    final Set<String> excludedIds = Collections.emptySet();
-    applySourceEdits(file, document, edits, excludedIds);
-  }
-
-  public static List<SourceEditInfo> applySourceEdits(@NotNull final VirtualFile file,
+  public static List<SourceEditInfo> applySourceEdits(@NotNull final Project project,
+                                                      @NotNull final VirtualFile file,
                                                       @NotNull final Document document,
                                                       @NotNull final List<SourceEdit> edits,
                                                       @NotNull final Set<String> excludedIds) {
     final List<SourceEditInfo> result = new ArrayList<>(edits.size());
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
 
     for (SourceEdit edit : edits) {
       if (excludedIds.contains(edit.getId())) {
@@ -205,7 +198,8 @@ public class AssistUtils {
     return null;
   }
 
-  private static int getLinkedEditConvertedOffset(@NotNull final VirtualFile file,
+  private static int getLinkedEditConvertedOffset(@NotNull final Project project,
+                                                  @NotNull final VirtualFile file,
                                                   final int linkedEditOffset,
                                                   @NotNull final List<SourceEditInfo> editInfos) {
     // first check if linkedEditOffset is inside of some SourceEdit
@@ -231,7 +225,7 @@ public class AssistUtils {
     }
 
     // 2. convert offset
-    leOffset = DartAnalysisServerService.getInstance().getConvertedOffset(file, leOffset);
+    leOffset = DartAnalysisServerService.getInstance(project).getConvertedOffset(file, leOffset);
 
     // 3. find offset after all SourceEdits applied
     for (SourceEditInfo info : editInfos) {
@@ -267,7 +261,7 @@ public class AssistUtils {
                                      @NotNull final SourceChange sourceChange,
                                      @NotNull final ChangeTarget target,
                                      @NotNull final List<SourceEditInfo> sourceEditInfos) {
-    final int caretOffset = getLinkedEditConvertedOffset(target.virtualFile, target.originalOffset, sourceEditInfos);
+    final int caretOffset = getLinkedEditConvertedOffset(project, target.virtualFile, target.originalOffset, sourceEditInfos);
     final Editor editor = navigate(project, target.virtualFile, caretOffset);
     if (editor == null) {
       return;
@@ -288,7 +282,7 @@ public class AssistUtils {
         if (FileUtil.toSystemIndependentName(position.getFile()).equals(target.virtualFile.getPath())) {
           hasTextRanges = true;
 
-          final int offset = getLinkedEditConvertedOffset(target.virtualFile, position.getOffset(), sourceEditInfos);
+          final int offset = getLinkedEditConvertedOffset(project, target.virtualFile, position.getOffset(), sourceEditInfos);
           final int end = offset + group.getLength();
           final TextRange range = new TextRange(offset, end);
           if (firstPosition) {

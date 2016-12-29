@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Run properties which are supported by any OSGi Framework.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class GenericRunProperties {
   private static final String SYSTEM_PACKAGES = "systemPackages";

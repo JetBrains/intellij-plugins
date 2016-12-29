@@ -43,7 +43,7 @@ import java.util.jar.JarFile;
 /**
  * Action which allows view the manifest of a given jar file. The action will open the manifest in a new editor tab.
  *
- * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ViewManifestAction extends AnAction implements DumbAware {
   private final String myJarFilePath;

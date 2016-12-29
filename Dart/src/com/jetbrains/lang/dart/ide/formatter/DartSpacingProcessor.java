@@ -11,6 +11,8 @@ import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.SortedList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -63,15 +65,15 @@ public class DartSpacingProcessor {
       }
     }
 
-    if (type1 == SINGLE_LINE_COMMENT) {
-      int spaces = 0;
-      int lines = 1;
-      if (elementType == DART_FILE &&
-          !isScriptTag(child1) &&
-          !isDirectlyPrecededByNewline(child1)) {
-        lines = 2;
+    if (elementType == DART_FILE && COMMENTS.contains(type1) && !COMMENTS.contains(type2)) {
+      final ASTNode prev = getPrevSiblingOnTheSameLineSkipCommentsAndWhitespace(((AbstractBlock)child1).getNode());
+      if (prev != null) {
+        final int lineBreaks = getMinLineBreaksBetweenTopLevelNodes(prev.getElementType(), type2);
+        return Spacing.createSpacing(0, 0, lineBreaks, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
       }
-      return Spacing.createSpacing(spaces, spaces, lines, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+    if (type1 == SINGLE_LINE_COMMENT) {
+      return Spacing.createSpacing(0, 0, 1, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (type2 == SINGLE_LINE_DOC_COMMENT) {
       int nsp = 2;
@@ -808,6 +810,35 @@ public class DartSpacingProcessor {
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
 
+  private static int getMinLineBreaksBetweenTopLevelNodes(@NotNull final IElementType type1, @NotNull final IElementType type2) {
+    /*
+       libraryStatement
+     | partOfStatement
+     | importStatement
+     | exportStatement
+     | partStatement
+     | classDefinition
+     | enumDefinition
+     | functionTypeAlias
+     | getterOrSetterDeclaration
+     | functionDeclarationWithBodyOrNative
+     | varDeclarationListWithSemicolon
+     */
+    if (type1 == LIBRARY_STATEMENT) return 2;
+    if (type1 == PART_OF_STATEMENT) return 2;
+    if (type1 == IMPORT_STATEMENT || type1 == EXPORT_STATEMENT) {
+      if (type2 != IMPORT_STATEMENT && type2 != EXPORT_STATEMENT) return 2;
+    }
+    if (type1 == PART) return 2;
+    if (type1 == CLASS_DEFINITION) return 2;
+    if (type1 == ENUM_DEFINITION) return 2;
+    if (type1 == GETTER_DECLARATION) return 2;
+    if (type1 == SETTER_DECLARATION) return 2;
+    if (type1 == FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE) return 2;
+
+    return 1;
+  }
+
   private Spacing addLineBreak() {
     return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
@@ -1072,6 +1103,23 @@ public class DartSpacingProcessor {
       break;
     }
     return false;
+  }
+
+  @Nullable
+  private static ASTNode getPrevSiblingOnTheSameLineSkipCommentsAndWhitespace(@NotNull ASTNode node) {
+    while ((node = node.getTreePrev()) != null) {
+      if (node.getElementType() == WHITE_SPACE || COMMENTS.contains(node.getElementType())) {
+        if (node.getText().contains("\n")) {
+          return null;
+        }
+        else {
+          continue;
+        }
+      }
+      return node;
+    }
+
+    return null;
   }
 
   private static boolean isDirectlyPrecededByBlockComment(Block child) {

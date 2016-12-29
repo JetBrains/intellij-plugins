@@ -349,7 +349,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     if (myVmServiceWrapper != null) {
       if (myDASExecutionContextId != null) {
-        DartAnalysisServerService.getInstance().execution_deleteContext(myDASExecutionContextId);
+        DartAnalysisServerService.getInstance(getSession().getProject()).execution_deleteContext(myDASExecutionContextId);
       }
 
       Disposer.dispose(myVmServiceWrapper);
@@ -459,7 +459,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     // package: (if applicable)
     if (myDASExecutionContextId != null) {
-      final String uriByServer = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, file.getPath(), null);
+      final String uriByServer =
+        DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, file.getPath(), null);
       if (uriByServer != null) {
         result.add(uriByServer);
       }
@@ -494,7 +495,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       String uri = scriptRef.getUri();
 
       if (myDASExecutionContextId != null && !isDartPatchUri(uri)) {
-        final String path = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, null, uri);
+        final String path =
+          DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, null, uri);
         if (path != null) {
           return LocalFileSystem.getInstance().findFileByPath(path);
         }

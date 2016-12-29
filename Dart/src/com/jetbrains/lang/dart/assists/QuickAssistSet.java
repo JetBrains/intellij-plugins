@@ -49,7 +49,7 @@ public class QuickAssistSet {
     lastOffset = offset;
     lastLength = length;
     lastPsiModificationCount = psiModificationCount;
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(psiFile.getProject());
     service.updateFilesContent();
     lastSourceChanges = service.edit_getAssists(psiFile.getVirtualFile(), offset, length);
     return lastSourceChanges;

@@ -99,7 +99,7 @@ public class KarmaUtil {
       int startOffset = extensionInd - beforeExtPart.length();
       if (startOffset > 0 && CharArrayUtil.regionMatches(filename, startOffset, beforeExtPart)) {
         if (NAME_PART_DELIMITERS.indexOf(filename.charAt(startOffset - 1)) >= 0) {
-          return true;
+          return !StringUtil.contains(filename, "protractor");
         }
       }
     }

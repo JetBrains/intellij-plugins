@@ -33,7 +33,7 @@ import aQute.bnd.osgi.Constants;
 import java.util.Map;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsgiManifestHeaderParsers implements HeaderParserProvider {
   private final Map<String, HeaderParser> myParsers;

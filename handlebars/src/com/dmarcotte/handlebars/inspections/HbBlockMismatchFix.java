@@ -4,12 +4,10 @@ import com.dmarcotte.handlebars.HbBundle;
 import com.dmarcotte.handlebars.psi.HbBlockMustache;
 import com.dmarcotte.handlebars.psi.HbOpenBlockMustache;
 import com.dmarcotte.handlebars.psi.HbPath;
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -58,8 +56,7 @@ class HbBlockMismatchFix implements IntentionAction {
     final int offset = editor.getCaretModel().getOffset();
     PsiElement psiElement = file.findElementAt(offset);
 
-    if (psiElement == null || !psiElement.isValid()) return;
-    if (!FileModificationService.getInstance().prepareFileForWrite(psiElement.getContainingFile())) return;
+    if (psiElement == null) return;
 
     if (psiElement instanceof PsiWhiteSpace) psiElement = PsiTreeUtil.prevLeaf(psiElement);
 

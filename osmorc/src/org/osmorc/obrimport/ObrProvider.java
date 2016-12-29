@@ -31,7 +31,7 @@ import com.intellij.openapi.extensions.Extensions;
 /**
  * Application component which provides the available bundle repositories.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @version $Id:$
  */
 public class ObrProvider {

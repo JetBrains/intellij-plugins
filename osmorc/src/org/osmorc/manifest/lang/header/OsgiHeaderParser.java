@@ -38,7 +38,7 @@ import org.osmorc.manifest.lang.psi.OsgiManifestElementType;
 import static com.intellij.lang.PsiBuilderUtil.expect;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsgiHeaderParser extends StandardHeaderParser {
   public static final HeaderParser INSTANCE = new OsgiHeaderParser();

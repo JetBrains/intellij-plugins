@@ -43,7 +43,7 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class LibraryBundlingEditorComponent {
   private final Project myProject;

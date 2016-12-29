@@ -21,7 +21,6 @@ import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.lang.LanguageSurrounders;
 import com.intellij.lang.surroundWith.SurroundDescriptor;
 import com.intellij.lang.surroundWith.Surrounder;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.PsiElement;
 
 import java.util.ArrayList;
@@ -72,9 +71,8 @@ public class CfmlSurroundWithTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   private void doTest(final Surrounder surrounder) throws Exception {
-
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
-    WriteCommandAction.runWriteCommandAction(null, () -> SurroundWithHandler.invoke(getProject(), myFixture.getEditor(), myFixture.getFile(), surrounder));
+    SurroundWithHandler.invoke(getProject(), myFixture.getEditor(), myFixture.getFile(), surrounder);
     myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));
   }
 

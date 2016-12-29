@@ -265,7 +265,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       final List<AnalysisError> errors = entry.getValue();
 
       for (AnalysisError analysisError : errors) {
-        if (DartAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError.getType(), analysisError.getLocation().getFile())) {
+        if (DartAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError.getLocation().getFile())) {
           continue;
         }
 

@@ -58,7 +58,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
 
   @Nullable
   private static LineMarkerInfo createMarker(@NotNull final DartComponentName name) {
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(name.getProject());
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     if (file == null || !file.isInLocalFileSystem()) {
       return null;
@@ -94,8 +94,8 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
                                 new GutterIconNavigationHandler<PsiElement>() {
                                   @Override
                                   public void navigate(MouseEvent e, PsiElement elt) {
-                                    final List<TypeHierarchyItem> items =
-                                      DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, nameOffset, false);
+                                    final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(name.getProject())
+                                      .search_getTypeHierarchy(file, nameOffset, false);
                                     if (items.isEmpty()) {
                                       return;
                                     }
@@ -121,8 +121,8 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
                                 new GutterIconNavigationHandler<PsiElement>() {
                                   @Override
                                   public void navigate(MouseEvent e, PsiElement elt) {
-                                    final List<TypeHierarchyItem> items =
-                                      DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, nameOffset, false);
+                                    final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(name.getProject())
+                                      .search_getTypeHierarchy(file, nameOffset, false);
                                     if (items.isEmpty()) {
                                       return;
                                     }

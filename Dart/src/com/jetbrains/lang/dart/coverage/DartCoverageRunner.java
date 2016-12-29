@@ -24,6 +24,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.rt.coverage.data.ClassData;
 import com.intellij.rt.coverage.data.LineData;
@@ -83,12 +84,13 @@ public class DartCoverageRunner extends CoverageRunner {
       }
     }
 
+    final Project project = coverageSuite.getProject();
     final String contextFilePath = coverageSuite.getContextFilePath();
-    if (contextFilePath == null) {
+    if (project == null || contextFilePath == null) {
       return null;
     }
 
-    final String contextId = DartAnalysisServerService.getInstance().execution_createContext(contextFilePath);
+    final String contextId = DartAnalysisServerService.getInstance(project).execution_createContext(contextFilePath);
     if (contextId == null) {
       return null;
     }
@@ -105,7 +107,7 @@ public class DartCoverageRunner extends CoverageRunner {
       for (Map.Entry<String, SortedMap<Integer, Integer>> entry : data.getMergedDartFileCoverageData().entrySet()) {
         ProgressManager.checkCanceled();
 
-        String filePath = getFileForUri(contextId, entry.getKey());
+        String filePath = getFileForUri(project, contextId, entry.getKey());
         if (filePath == null) {
           // File is not found.
           continue;
@@ -129,20 +131,20 @@ public class DartCoverageRunner extends CoverageRunner {
       LOG.warn(e);
     }
     finally {
-      DartAnalysisServerService.getInstance().execution_deleteContext(contextId);
+      DartAnalysisServerService.getInstance(project).execution_deleteContext(contextId);
     }
 
     return projectData;
   }
 
   @Nullable
-  private static String getFileForUri(@NotNull final String contextId, @NotNull final String uri) {
+  private static String getFileForUri(@NotNull final Project project, @NotNull final String contextId, @NotNull final String uri) {
     if (uri.startsWith("dart:_") || uri.startsWith("dart:") && uri.contains("-patch/")) {
       // dart:_builtin or dart:core-patch/core_patch.dart
       return null;
     }
 
-    return DartAnalysisServerService.getInstance().execution_mapUri(contextId, null, uri);
+    return DartAnalysisServerService.getInstance(project).execution_mapUri(contextId, null, uri);
   }
 
   @NotNull

@@ -11,14 +11,11 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -123,7 +120,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     return myMainPanel;
   }
 
-  protected void resetEditorFrom(final FlexUnitRunConfiguration config) {
+  protected void resetEditorFrom(@NotNull final FlexUnitRunConfiguration config) {
     final FlexUnitRunnerParameters params = config.getRunnerParameters();
     myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
 
@@ -140,7 +137,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     myAppDescriptorForEmulatorCombo.setSelectedItem(params.getAppDescriptorForEmulator());
   }
 
-  protected void applyEditorTo(final FlexUnitRunConfiguration config) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull final FlexUnitRunConfiguration config) throws ConfigurationException {
     final FlexUnitRunnerParameters params = config.getRunnerParameters();
 
     myBCCombo.applyTo(params);

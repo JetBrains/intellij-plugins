@@ -93,7 +93,7 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
   }
 
   @Override
-  protected void resetEditorFrom(CfmlUnitRunConfiguration s) {
+  protected void resetEditorFrom(@NotNull CfmlUnitRunConfiguration s) {
     final CfmlUnitRunnerParameters parameters = s.getRunnerParameters();
     if (parameters.getScope() == CfmlUnitRunnerParameters.Scope.Component) {
       myComponentRadioButton.setSelected(true);
@@ -110,7 +110,7 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
   }
 
   @Override
-  protected void applyEditorTo(CfmlUnitRunConfiguration s) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull CfmlUnitRunConfiguration s) throws ConfigurationException {
     final CfmlUnitRunnerParameters parameters = s.getRunnerParameters();
     if (myComponentRadioButton.isSelected()) {
       parameters.setScope(CfmlUnitRunnerParameters.Scope.Component);

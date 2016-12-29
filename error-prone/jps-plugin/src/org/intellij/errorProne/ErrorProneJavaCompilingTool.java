@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.java.CannotCreateJavaCompilerException;
 import org.jetbrains.jps.builders.java.JavaCompilingTool;
 
-import javax.tools.*;
+import javax.tools.JavaCompiler;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;

@@ -33,7 +33,7 @@ import org.osmorc.manifest.lang.psi.impl.ClauseImpl;
 import org.osmorc.manifest.lang.psi.impl.DirectiveImpl;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public abstract class OsgiManifestElementType extends ManifestElementType {
   public static final IElementType ATTRIBUTE = new OsgiManifestElementType("ATTRIBUTE") {

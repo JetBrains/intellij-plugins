@@ -32,7 +32,7 @@ import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 /**
  * The FrameworkIntegrator is an integrating class that provides access to all framework specific components.
  *
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public interface FrameworkIntegrator {
   ExtensionPointName<FrameworkIntegrator> EP_NAME = ExtensionPointName.create("Osmorc.frameworkIntegrator");

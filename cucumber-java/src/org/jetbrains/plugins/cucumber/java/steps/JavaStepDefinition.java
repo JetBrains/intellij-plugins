@@ -38,8 +38,10 @@ public class JavaStepDefinition extends AbstractStepDefinition {
   @Override
   protected String getCucumberRegexFromElement(PsiElement element) {
     if (element instanceof PsiMethod) {
-      PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element);
-      assert stepAnnotation != null;
+      final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element);
+      if (stepAnnotation == null) {
+        return null;
+      }
       final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
       if (annotationValue != null) {
         final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();

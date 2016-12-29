@@ -36,6 +36,11 @@ function getKarmaPackageDir() {
   return karmaPackageDir;
 }
 
+function getKarmaFilePath(relativePath) {
+  var karmaPath = getKarmaPackageDir();
+  return join(karmaPath, relativePath);
+}
+
 function requireKarmaModule(moduleName) {
   var karmaPath = getKarmaPackageDir();
   return require(join(karmaPath, moduleName));
@@ -86,6 +91,7 @@ function isWithCoverage() {
   return options.hasOwnProperty(COVERAGE_TEMP_DIR);
 }
 
+exports.getKarmaFilePath = getKarmaFilePath;
 exports.requireKarmaModule = requireKarmaModule;
 exports.getConfigFile = getConfigFile;
 exports.getServerPort = getServerPort;

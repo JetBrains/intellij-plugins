@@ -60,6 +60,7 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
       ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).generateApp(baseDir, module, sdk, projectType);
       RModuleUtil.getInstance().refreshRubyModuleTypeContent(module);
     });
+    super.generateProject(project, baseDir, settings, module);
   }
 
   @NotNull

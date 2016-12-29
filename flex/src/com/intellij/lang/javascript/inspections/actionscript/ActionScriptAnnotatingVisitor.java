@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameElementFix;
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameFileFix;
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
@@ -201,6 +200,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (!(aClass instanceof JSPackageStatement)) {
       VirtualFile parent = file.getParent();
+      if (parent == null) return; // EA-90191
+
       boolean found = false;
       for (String ext : EXTENSIONS_TO_CHECK) {
         String name = file.getNameWithoutExtension() + "." + ext;
@@ -606,8 +607,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
 
     public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
-
       JSAttributeListWrapper w = new JSAttributeListWrapper(myNode.getAttributeList());
       w.overrideModifier(JSAttributeList.ModifierType.OVERRIDE, true);
       w.applyTo(myNode);
@@ -1547,7 +1546,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  public void visitJSReturnStatement(JSReturnStatement node) {
+  public void visitJSReturnStatement(@NotNull JSReturnStatement node) {
     super.visitJSReturnStatement(node);
 
     final PsiElement element =

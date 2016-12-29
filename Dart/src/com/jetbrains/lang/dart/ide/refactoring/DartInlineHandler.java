@@ -71,10 +71,10 @@ public class DartInlineHandler extends InlineActionHandler {
     // create refactoring
     final ServerRefactoring refactoring;
     if (ElementKind.LOCAL_VARIABLE.equals(context.kind)) {
-      refactoring = new ServerInlineLocalRefactoring(context.virtualFile, context.offset, 0);
+      refactoring = new ServerInlineLocalRefactoring(project, context.virtualFile, context.offset, 0);
     }
     else {
-      refactoring = new ServerInlineMethodRefactoring(context.virtualFile, context.offset, 0);
+      refactoring = new ServerInlineMethodRefactoring(project, context.virtualFile, context.offset, 0);
     }
     // validate initial status
     {
@@ -139,7 +139,7 @@ public class DartInlineHandler extends InlineActionHandler {
     final VirtualFile virtualFile = psiFile.getVirtualFile();
     // prepare navigation regions
     final int offset = editor.getCaretModel().getOffset();
-    final List<DartNavigationRegion> navigationRegions = DartAnalysisServerService.getInstance().getNavigation(virtualFile);
+    final List<DartNavigationRegion> navigationRegions = DartAnalysisServerService.getInstance(project).getNavigation(virtualFile);
     // find the navigation region
     for (DartNavigationRegion region : navigationRegions) {
       if (region.getOffset() <= offset && offset <= region.getOffset() + region.getLength()) {

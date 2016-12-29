@@ -33,7 +33,7 @@ import java.io.IOException;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsgiTestUtil {
   public static File extractProject(String projectName, String projectDirPath) throws IOException {

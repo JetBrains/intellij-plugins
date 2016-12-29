@@ -10,8 +10,11 @@ public interface DartFunctionTypeAlias extends DartComponent {
   @NotNull
   DartComponentName getComponentName();
 
-  @NotNull
+  @Nullable
   DartFormalParameterList getFormalParameterList();
+
+  @Nullable
+  DartFunctionType getFunctionType();
 
   @NotNull
   List<DartMetadata> getMetadataList();

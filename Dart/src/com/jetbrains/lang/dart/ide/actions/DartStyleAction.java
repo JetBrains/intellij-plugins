@@ -51,20 +51,20 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
+    final int caretOffset = editor.getCaretModel().getOffset();
+    final int lineLength = getRightMargin(project);
+
+    final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+    das.updateFilesContent();
+    DartAnalysisServerService.FormatResult formatResult = das.edit_format(psiFile.getVirtualFile(), caretOffset, 0, lineLength);
+
+    if (formatResult == null) {
+      showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
+      LOG.warn("Unexpected response from edit_format, formatResult is null");
+      return;
+    }
+
     final Runnable runnable = () -> {
-      final int caretOffset = editor.getCaretModel().getOffset();
-      final int lineLength = getRightMargin(project);
-
-      DartAnalysisServerService.getInstance().updateFilesContent();
-      DartAnalysisServerService.FormatResult formatResult =
-        DartAnalysisServerService.getInstance().edit_format(psiFile.getVirtualFile(), caretOffset, 0, lineLength);
-
-      if (formatResult == null) {
-        showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
-        LOG.warn("Unexpected response from edit_format, formatResult is null");
-        return;
-      }
-
       final List<SourceEdit> edits = formatResult.getEdits();
       if (edits == null || edits.size() == 0) {
         showHintLater(editor, DartBundle.message("dart.style.hint.already.good"), false);
@@ -72,7 +72,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       else if (edits.size() == 1) {
         final String replacement = StringUtil.convertLineSeparators(edits.get(0).getReplacement());
         document.replaceString(0, document.getTextLength(), replacement);
-        final int offset = DartAnalysisServerService.getInstance().getConvertedOffset(psiFile.getVirtualFile(), formatResult.getOffset());
+        final int offset = das.getConvertedOffset(psiFile.getVirtualFile(), formatResult.getOffset());
         editor.getCaretModel().moveToOffset(offset);
         showHintLater(editor, DartBundle.message("dart.style.hint.success"), false);
       }
@@ -112,7 +112,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
         }
 
         final DartAnalysisServerService.FormatResult formatResult =
-          DartAnalysisServerService.getInstance().edit_format(virtualFile, 0, 0, lineLength);
+          DartAnalysisServerService.getInstance(project).edit_format(virtualFile, 0, 0, lineLength);
         if (formatResult != null && formatResult.getEdits() != null && formatResult.getEdits().size() == 1) {
           final String replacement = StringUtil.convertLineSeparators(formatResult.getEdits().get(0).getReplacement());
           fileToNewContentMap.put(virtualFile, replacement);
@@ -120,7 +120,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       }
     };
 
-    DartAnalysisServerService.getInstance().updateFilesContent();
+    DartAnalysisServerService.getInstance(project).updateFilesContent();
 
     final boolean ok = ApplicationManagerEx.getApplicationEx()
       .runProcessWithProgressSynchronously(runnable, DartBundle.message("dart.style.action.name"), true, project);

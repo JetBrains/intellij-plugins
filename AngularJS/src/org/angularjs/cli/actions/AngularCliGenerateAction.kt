@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.popup.IconButton
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
@@ -179,7 +180,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val filter = AngularCLIFilter(project, baseDir.path)
     AngularCLIProjectGenerator.generate(node, AngularCLIProjectGenerator.ng(module.virtualFile?.path!!),
-                                        project.baseDir, project.baseDir, project, null, arrayOf(filter), "generate", blueprint.name, *arguments)
+                                        project.baseDir, VfsUtilCore.virtualToIoFile(project.baseDir),
+                                        project, null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }
 
   override fun update(e: AnActionEvent?) {

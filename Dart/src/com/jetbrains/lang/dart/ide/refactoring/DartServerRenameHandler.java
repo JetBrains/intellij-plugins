@@ -99,7 +99,7 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
       }
     }
     // Create the refactoring.
-    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(virtualFile, offset, 0);
+    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(project, virtualFile, offset, 0);
     // Validate initial status.
     {
       final RefactoringStatus initialStatus = refactoring.checkInitialConditions();

@@ -1,0 +1,4 @@
+function() {
+    var y4:int = 2;
+    var x4:int = 1;
+}

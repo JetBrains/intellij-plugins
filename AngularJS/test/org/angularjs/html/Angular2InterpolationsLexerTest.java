@@ -16,25 +16,25 @@ import org.angularjs.lang.parser.AngularJSElementTypes;
 public class Angular2InterpolationsLexerTest extends LexerTestCase {
   public void testInterpolation() {
     doTest("{{interpolated}}", "XML_DATA_CHARACTERS ('{{')\n" +
-                               "EMBEDDED_CONTENT ('interpolated')\n" +
+                               "ANG_EMBEDDED_CONTENT ('interpolated')\n" +
                                "XML_DATA_CHARACTERS ('}}')");
 
     doTest("{{interpolated}}{{again}}", "XML_DATA_CHARACTERS ('{{')\n" +
-                                        "EMBEDDED_CONTENT ('interpolated')\n" +
+                                        "ANG_EMBEDDED_CONTENT ('interpolated')\n" +
                                         "XML_DATA_CHARACTERS ('}}{{')\n" +
-                                        "EMBEDDED_CONTENT ('again')\n" +
+                                        "ANG_EMBEDDED_CONTENT ('again')\n" +
                                         "XML_DATA_CHARACTERS ('}}')");
 
     doTest("{{interpolated}}with{{text}}", "XML_DATA_CHARACTERS ('{{')\n" +
-                                           "EMBEDDED_CONTENT ('interpolated')\n" +
+                                           "ANG_EMBEDDED_CONTENT ('interpolated')\n" +
                                            "XML_DATA_CHARACTERS ('}}with{{')\n" +
-                                           "EMBEDDED_CONTENT ('text')\n" +
+                                           "ANG_EMBEDDED_CONTENT ('text')\n" +
                                            "XML_DATA_CHARACTERS ('}}')");
 
     doTest("more{{interpolated}}with{{text}}again", "XML_DATA_CHARACTERS ('more{{')\n" +
-                                                    "EMBEDDED_CONTENT ('interpolated')\n" +
+                                                    "ANG_EMBEDDED_CONTENT ('interpolated')\n" +
                                                     "XML_DATA_CHARACTERS ('}}with{{')\n" +
-                                                    "EMBEDDED_CONTENT ('text')\n" +
+                                                    "ANG_EMBEDDED_CONTENT ('text')\n" +
                                                     "XML_DATA_CHARACTERS ('}}again')");
   }
 
@@ -43,7 +43,7 @@ public class Angular2InterpolationsLexerTest extends LexerTestCase {
            "            | started : status\n" +
            "            | search : term\n" +
            "            }}", "XML_DATA_CHARACTERS ('{{')\n" +
-                             "EMBEDDED_CONTENT ('#todo of todoService.todos\\n            | started : status\\n            | search : term\\n            ')\n" +
+                             "ANG_EMBEDDED_CONTENT ('#todo of todoService.todos\\n            | started : status\\n            | search : term\\n            ')\n" +
                              "XML_DATA_CHARACTERS ('}}')");
   }
 

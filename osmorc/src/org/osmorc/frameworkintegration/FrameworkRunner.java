@@ -36,8 +36,8 @@ import java.util.List;
 /**
  * This interface encapsulates framework-specific runtime configuration.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public interface FrameworkRunner extends Disposable {
   JavaParameters createJavaParameters(@NotNull OsgiRunConfiguration runConfiguration,

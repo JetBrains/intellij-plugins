@@ -52,7 +52,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
   }
 
   @Override
-  protected void resetEditorFrom(JstdRunConfiguration runConfiguration) {
+  protected void resetEditorFrom(@NotNull JstdRunConfiguration runConfiguration) {
     JstdRunSettings runSettings = runConfiguration.getRunSettings();
     for (RunSettingsSection section : myTabSections.values()) {
       section.resetFrom(runSettings);
@@ -60,7 +60,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
   }
 
   @Override
-  protected void applyEditorTo(JstdRunConfiguration runConfiguration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull JstdRunConfiguration runConfiguration) throws ConfigurationException {
     JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
     for (RunSettingsSection section : myTabSections.values()) {
       section.applyTo(builder);

@@ -34,7 +34,7 @@ import javax.swing.*;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class GenericRunPropertiesEditor implements FrameworkRunPropertiesEditor {
   private JPanel myMainPanel;

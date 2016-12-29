@@ -42,6 +42,9 @@ public class HbBlockMismatchAnnotator implements Annotator {
         }
       }
       else {
+        if (openBlockMustacheName == null) {
+          return;
+        }
         holder.createErrorAnnotation(openBlockMustacheName,
                                      HbBundle.message("hb.block.mismatch.inspection.missing.end.block", openBlockMustache.getName()));
       }

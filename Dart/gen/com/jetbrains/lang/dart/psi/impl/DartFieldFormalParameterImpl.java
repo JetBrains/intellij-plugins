@@ -50,4 +50,10 @@ public class DartFieldFormalParameterImpl extends DartPsiCompositeElementImpl im
     return findChildByClass(DartType.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
+  }
+
 }

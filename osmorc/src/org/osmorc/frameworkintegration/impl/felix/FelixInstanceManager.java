@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class FelixInstanceManager extends AbstractFrameworkInstanceManager {
   private static final String[] BUNDLE_DIRS = {"bin", "bundle", "bundles"};

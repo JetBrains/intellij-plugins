@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -193,5 +193,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0"))
+  }
+
+  fun testErrorProcessingDirective() {
+    bndBuild(myModule)
+    createFile("main/bnd.bnd", "-fixupmessages: \"No value *\";is:=ignore\nBad-Property\n")
+    buildAllModules().assertSuccessful()
   }
 }

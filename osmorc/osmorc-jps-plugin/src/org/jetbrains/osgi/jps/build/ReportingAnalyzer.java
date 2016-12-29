@@ -28,7 +28,7 @@ import aQute.bnd.osgi.Analyzer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @since Jul 20, 2009
  */
 public class ReportingAnalyzer extends Analyzer {
@@ -36,24 +36,6 @@ public class ReportingAnalyzer extends Analyzer {
 
   public ReportingAnalyzer(@NotNull Reporter reporter) {
     myReporter = reporter;
-  }
-
-  @Override
-  public SetLocation error(String format, Object... args) {
-    myReporter.error(formatArrays(format, args), null, null);
-    return MuteLocation.INSTANCE;
-  }
-
-  @Override
-  public SetLocation error(String format, Throwable t, Object... args) {
-    myReporter.error(formatArrays(format, args), t, null);
-    return MuteLocation.INSTANCE;
-  }
-
-  @Override
-  public SetLocation warning(String format, Object... args) {
-    myReporter.warning(formatArrays(format, args), null, null);
-    return MuteLocation.INSTANCE;
   }
 
   @Override

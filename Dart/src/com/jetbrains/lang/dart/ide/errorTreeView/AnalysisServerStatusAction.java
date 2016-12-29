@@ -5,8 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageDialogBuilder;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -27,28 +25,25 @@ public class AnalysisServerStatusAction extends DumbAwareAction {
   @Override
   public void actionPerformed(AnActionEvent e) {
     DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
-
-    if (MessageDialogBuilder.yesNo(builder.title(), builder.prompt())
-          .icon(Messages.getQuestionIcon())
-          .yesText(builder.label())
-          .show() == Messages.YES) {
-      builder.sendFeedback(e.getProject());
+    if (builder.showQuery(null)) {
+      builder.sendFeedback(e.getProject(), null, null);
     }
   }
 
   public void update(AnActionEvent e) {
     Presentation presentation = e.getPresentation();
-    if (isApplicable(e.getProject())) {
+    final Project project = e.getProject();
+    if (isApplicable(project)) {
       presentation.setEnabledAndVisible(true);
-      updateStatus(presentation);
+      updateStatus(project, presentation);
     }
     else {
       presentation.setEnabledAndVisible(false);
     }
   }
 
-  private static void updateStatus(@NotNull final Presentation presentation) {
-    DartAnalysisServerService das = DartAnalysisServerService.getInstance();
+  private static void updateStatus(@NotNull final Project project, @NotNull final Presentation presentation) {
+    DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
     Icon statusIcon;
     String statusText;
     String statusDesc;

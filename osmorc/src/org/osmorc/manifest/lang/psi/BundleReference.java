@@ -50,7 +50,7 @@ import org.osgi.framework.Constants;
 import org.osmorc.i18n.OsmorcBundle;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class BundleReference extends PsiReferenceBase<HeaderValuePart> implements EmptyResolveMessageProvider {
   public BundleReference(@NotNull HeaderValuePart element) {

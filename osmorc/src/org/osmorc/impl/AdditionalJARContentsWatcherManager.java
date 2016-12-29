@@ -45,7 +45,7 @@ import java.util.Set;
  * by IDEA and so changes to them normally aren't noticed by IDEA. This manager makes sure that
  * changes to those files in the additional JAR contents are watched.
  *
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class AdditionalJARContentsWatcherManager {
   public static AdditionalJARContentsWatcherManager getInstance(@NotNull Module module) {

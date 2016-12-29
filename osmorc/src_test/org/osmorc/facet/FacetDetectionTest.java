@@ -44,8 +44,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 @RunWith(SwingRunner.class)
 public class FacetDetectionTest extends HeavyOsgiFixtureTestCase {

@@ -1,0 +1,21 @@
+// SplitDeclarationAndInitialization:true
+package foo {
+import bar.A;
+public class A{
+    public static function func() : bar.A {}
+}
+}
+package bar {
+public class A{}
+}
+package {
+import bar.A;
+
+import foo.A;
+class Test {
+    function a() {
+        var v:bar.A;
+        v = A.func();
+    }
+}
+}

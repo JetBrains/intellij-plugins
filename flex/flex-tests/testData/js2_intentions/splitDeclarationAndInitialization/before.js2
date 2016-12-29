@@ -1,0 +1,7 @@
+var xm<caret>l = <user>
+<name>Nick</name>
+<address>
+<country>Russia</country>
+<city>Moscow</city>
+</address>
+</user>

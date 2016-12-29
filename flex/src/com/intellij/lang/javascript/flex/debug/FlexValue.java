@@ -6,11 +6,10 @@ import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -24,7 +23,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.Processor;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
@@ -420,10 +418,8 @@ class FlexValue extends XValue {
 
         final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap = new LinkedHashMap<>(tokenizer.countTokens());
 
-        final NodeClassInfo nodeClassInfo = ApplicationManager.getApplication().runReadAction(new NullableComputable<NodeClassInfo>() {
-          @Override
-          @Nullable
-          public NodeClassInfo compute() {
+        final NodeClassInfo nodeClassInfo =
+          DumbService.getInstance(myDebugProcess.getSession().getProject()).runReadActionInSmartMode(() -> {
             final Project project = myDebugProcess.getSession().getProject();
             final JSClass jsClass = mySourcePosition == null
                                     ? null
@@ -431,8 +427,7 @@ class FlexValue extends XValue {
                                                   ModuleUtilCore.findModuleForFile(mySourcePosition.getFile(), project),
                                                   typeFromFlexValueResult);
             return jsClass == null ? null : NodeClassInfo.getNodeClassInfo(jsClass);
-          }
-        });
+          });
 
         while (tokenizer.hasMoreElements()) {
           final String s = tokenizer.nextToken().trim();

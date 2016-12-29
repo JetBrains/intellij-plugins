@@ -42,8 +42,8 @@ import java.util.EventListener;
 /**
  * This class stores Osmorc project settings.
  *
- * @author Robert F. Beeger (robert@beeger.net)
- * @author Jan Thom&auml; (janthomae@janthomae.de)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
+ * @author Jan Thomä (janthomae@janthomae.de)
  */
 @State(name = "Osmorc")
 public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {

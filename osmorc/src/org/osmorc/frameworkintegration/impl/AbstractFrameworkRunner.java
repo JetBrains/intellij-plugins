@@ -48,8 +48,8 @@ import static org.osmorc.frameworkintegration.FrameworkInstanceManager.Framework
 /**
  * This class provides a default implementation for a part of the FrameworkRunner interface.
  *
- * @author Robert F. Beeger (robert@beeger.net)
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public abstract class AbstractFrameworkRunner implements FrameworkRunner {
   protected OsgiRunConfiguration myRunConfiguration;
@@ -126,6 +126,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     // runner options
 
     params.setUseDynamicVMOptions(!myBundles.isEmpty());
+    params.setUseDynamicParameters(!myBundles.isEmpty());
 
     HttpConfigurable.getInstance().getJvmProperties(false, null).forEach(p -> params.getVMParametersList().addProperty(p.first, p.second));
     params.getVMParametersList().addParametersString(myRunConfiguration.getVmParameters());

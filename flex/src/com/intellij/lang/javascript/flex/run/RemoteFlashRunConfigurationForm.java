@@ -7,7 +7,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -51,7 +50,7 @@ public class RemoteFlashRunConfigurationForm extends SettingsEditor<RemoteFlashR
     return myMainPanel;
   }
 
-  protected void resetEditorFrom(final RemoteFlashRunConfiguration configuration) {
+  protected void resetEditorFrom(@NotNull final RemoteFlashRunConfiguration configuration) {
     final RemoteFlashRunnerParameters params = configuration.getRunnerParameters();
     myBCCombo.resetFrom(params);
 
@@ -66,7 +65,7 @@ public class RemoteFlashRunConfigurationForm extends SettingsEditor<RemoteFlashR
     updateControls();
   }
 
-  protected void applyEditorTo(final RemoteFlashRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull final RemoteFlashRunConfiguration configuration) throws ConfigurationException {
     final RemoteFlashRunnerParameters params = configuration.getRunnerParameters();
     myBCCombo.applyTo(params);
 

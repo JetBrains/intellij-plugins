@@ -24,6 +24,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -34,9 +35,10 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TableSpeedSearch;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.content.Content;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -53,27 +55,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyProvider {
+public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
 
   private static final long DEFAULT_SERVER_WAIT_MILLIS = 5000L; // Switch to UNKNOWN after 5s with no response.
 
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
-  @NotNull private JBLabel mySummaryLabel = new JBLabel();
 
-  // TODO: Remember settings and filters in workspace.xml. (see ErrorTreeViewConfiguration)
-  private boolean myAutoScrollToSource = false;
-
+  @NotNull private DartProblemsViewSettings mySettings;
   @NotNull private final DartProblemsFilter myFilter;
 
-  public DartProblemsViewPanel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
-    super(new BorderLayout());
+  private Content myContent;
+
+  public DartProblemsViewPanel(@NotNull final Project project,
+                               @NotNull final DartProblemsFilter filter,
+                               @NotNull DartProblemsViewSettings settings) {
+    super(false, true);
     myProject = project;
     myFilter = filter;
+    mySettings = settings;
 
     myTable = createTable();
-    add(createToolbar(), BorderLayout.WEST);
-    add(createCenterPanel(), BorderLayout.CENTER);
+    setToolbar(createToolbar());
+    setContent(createCenterPanel());
+
+    DartAnalysisServerService.getInstance(project).maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
   }
 
   @NotNull
@@ -111,6 +117,11 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
                                           ? ((DartProblem)object).getErrorMessage() + " " + ((DartProblem)object).getPresentableLocation()
                                           : "");
 
+    table.setShowVerticalLines(false);
+    table.setShowHorizontalLines(false);
+    table.setStriped(true);
+    table.setRowHeight(table.getRowHeight() + JBUI.scale(4));
+
     return table;
   }
 
@@ -147,39 +158,16 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   private JPanel createCenterPanel() {
     final JPanel panel = new JPanel(new BorderLayout());
     panel.add(ScrollPaneFactory.createScrollPane(myTable), BorderLayout.CENTER);
-    panel.add(createStatusBar(), BorderLayout.SOUTH);
     return panel;
   }
 
-  @NotNull
-  private JPanel createStatusBar() {
-    final JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-    panel.add(mySummaryLabel);
-    mySummaryLabel.setText("");
-
-    final JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-    DefaultActionGroup group = new DefaultActionGroup(new AnalysisServerStatusAction());
-    ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, group, true);
-    p.add(actionToolbar.getComponent());
-    panel.add(p);
-
-    DartAnalysisServerService.getInstance().maxMillisToWaitForServerResponse = DEFAULT_SERVER_WAIT_MILLIS;
-
-    return panel;
-  }
-
-  private void updateStatusBar() {
-    mySummaryLabel.setText(((DartProblemsTableModel)myTable.getModel()).getStatusText());
-    mySummaryLabel.setCopyable(true);
+  private void updateStatusDescription() {
+    if (myContent != null) {
+      myContent.setDisplayName(((DartProblemsTableModel)myTable.getModel()).getStatusText());
+    }
   }
 
   private static void addReanalyzeActions(@NotNull final DefaultActionGroup group) {
-    final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
-    if (reanalyzeAction != null) {
-      group.add(reanalyzeAction);
-    }
-
     final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
     if (restartAction != null) {
       group.add(restartAction);
@@ -190,12 +178,12 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     final AutoScrollToSourceHandler autoScrollToSourceHandler = new AutoScrollToSourceHandler() {
       @Override
       protected boolean isAutoScrollMode() {
-        return myAutoScrollToSource;
+        return mySettings.autoScrollToSource;
       }
 
       @Override
       protected void setAutoScrollMode(boolean autoScrollToSource) {
-        myAutoScrollToSource = autoScrollToSource;
+        mySettings.autoScrollToSource = autoScrollToSource;
       }
     };
 
@@ -225,7 +213,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   void fireGroupingOrFilterChanged() {
     myTable.getRowSorter().allRowsChanged();
     ((DartProblemsTableModel)myTable.getModel()).onFilterChanged();
-    updateStatusBar();
+    updateStatusDescription();
   }
 
   private void showFiltersPopup() {
@@ -329,12 +317,20 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       myTable.setSelection(Collections.singletonList(updatedSelectedProblem));
     }
 
-    updateStatusBar();
+    updateStatusDescription();
   }
 
   public void clearAll() {
     ((DartProblemsTableModel)myTable.getModel()).removeAll();
-    updateStatusBar();
+    updateStatusDescription();
+  }
+
+  void setContent(Content content) {
+    myContent = content;
+  }
+
+  void updateFromSettings(DartProblemsViewSettings settings) {
+    mySettings = settings;
   }
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {

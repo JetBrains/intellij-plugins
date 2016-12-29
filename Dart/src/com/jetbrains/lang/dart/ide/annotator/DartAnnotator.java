@@ -34,7 +34,6 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
-import org.dartlang.analysis.server.protocol.AnalysisErrorType;
 import org.dartlang.analysis.server.protocol.HighlightRegionType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -164,11 +163,7 @@ public class DartAnnotator implements Annotator {
   }
 
   public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath,
-                                                            @NotNull final String errorType,
                                                             @NotNull final String analysisErrorFileSD) {
-    // already done using IDE engine
-    if (AnalysisErrorType.TODO.equals(errorType)) return true;
-
     // workaround for https://github.com/dart-lang/sdk/issues/25034
     if (!filePath.equals(FileUtil.toSystemIndependentName(analysisErrorFileSD))) return true;
 
@@ -184,7 +179,7 @@ public class DartAnnotator implements Annotator {
       session.putUserData(DART_SERVER_DATA_HANDLED, Boolean.TRUE);
 
       final VirtualFile vFile = element.getContainingFile().getVirtualFile();
-      final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+      final DartAnalysisServerService service = DartAnalysisServerService.getInstance(element.getProject());
       if (canBeAnalyzedByServer(element.getProject(), vFile) && service.serverReadyForRequest(element.getProject())) {
         service.updateFilesContent();
 
@@ -233,8 +228,9 @@ public class DartAnnotator implements Annotator {
   private static void applyServerHighlighting(@NotNull final VirtualFile file, @NotNull final AnnotationHolder holder) {
     final PsiFile psiFile = holder.getCurrentAnnotationSession().getFile();
 
-    for (DartServerData.DartError error : DartAnalysisServerService.getInstance().getErrors(file)) {
-      if (shouldIgnoreMessageFromDartAnalyzer(file.getPath(), error.getType(), error.getAnalysisErrorFileSD())) continue;
+    final DartAnalysisServerService das = DartAnalysisServerService.getInstance(psiFile.getProject());
+    for (DartServerData.DartError error : das.getErrors(file)) {
+      if (shouldIgnoreMessageFromDartAnalyzer(file.getPath(), error.getAnalysisErrorFileSD())) continue;
 
       final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
 
@@ -252,7 +248,7 @@ public class DartAnnotator implements Annotator {
       }
     }
 
-    for (DartServerData.DartHighlightRegion region : DartAnalysisServerService.getInstance().getHighlight(file)) {
+    for (DartServerData.DartHighlightRegion region : das.getHighlight(file)) {
       final String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
       if (attributeKey != null) {
         final TextRange textRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());

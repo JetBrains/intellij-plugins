@@ -758,7 +758,7 @@ Dart File
                           LITERAL_EXPRESSION
                             PsiElement(NUMBER)('12')
                         PsiElement())(')')
-                        PsiElement(;)(';')
+                      PsiElement(;)(';')
                       ASSERT_STATEMENT
                         PsiElement(assert)('assert')
                         PsiElement(()('(')
@@ -784,7 +784,7 @@ Dart File
                                   PsiElement(NUMBER)('1')
                               PsiElement())(')')
                         PsiElement())(')')
-                        PsiElement(;)(';')
+                      PsiElement(;)(';')
                       ASSERT_STATEMENT
                         PsiElement(assert)('assert')
                         PsiElement(()('(')
@@ -795,7 +795,7 @@ Dart File
                           PsiElement(IDENTIFIER)('b')
                         PsiElement(IDENTIFIER)('c')
                         PsiElement())(')')
-                        PsiElement(;)(';')
+                      PsiElement(;)(';')
                       ASSERT_STATEMENT
                         PsiElement(assert)('assert')
                         PsiElement(()('(')
@@ -814,7 +814,7 @@ Dart File
                           PsiElement(REGULAR_STRING_PART)('error')
                           PsiElement(CLOSING_QUOTE)('"')
                         PsiElement())(')')
-                        PsiElement(;)(';')
+                      PsiElement(;)(';')
                     PsiElement(})('}')
               PsiElement(})('}')
         METHOD_DECLARATION

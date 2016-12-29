@@ -15,7 +15,7 @@ import org.jdom.JDOMException;
 import java.io.File;
 import java.io.IOException;
 
-import static com.intellij.testFramework.Assertions.assertThat;
+import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
 public abstract class ConversionTestBaseEx extends ConversionTestBase {
 

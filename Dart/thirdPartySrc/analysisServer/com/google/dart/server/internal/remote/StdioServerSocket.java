@@ -128,7 +128,7 @@ public class StdioServerSocket implements AnalysisServerSocket {
     ProcessBuilder processBuilder = new ProcessBuilder(arguments);
     process = processBuilder.start();
     requestSink = new ByteRequestSink(process.getOutputStream(), debugStream);
-    responseStream = new ByteResponseStream(process.getInputStream(), debugStream);
+    responseStream = new ByteResponseStream(process.getInputStream(), debugStream, () -> requestSink.close());
     errorStream = new ByteLineReaderStream(process.getErrorStream());
   }
 

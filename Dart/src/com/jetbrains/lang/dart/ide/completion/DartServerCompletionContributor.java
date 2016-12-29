@@ -1,11 +1,15 @@
 package com.jetbrains.lang.dart.ide.completion;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.injected.editor.VirtualFileWindow;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -13,6 +17,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
@@ -24,6 +30,7 @@ import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -40,30 +47,42 @@ public class DartServerCompletionContributor extends CompletionContributor {
   public DartServerCompletionContributor() {
     extend(CompletionType.BASIC,
            or(psiElement().withLanguage(DartLanguage.INSTANCE),
+              psiElement().inFile(psiFile().withLanguage(HTMLLanguage.INSTANCE)),
               psiElement().inFile(psiFile().withName(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS))),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters parameters,
                                            @NotNull final ProcessingContext context,
                                            @NotNull final CompletionResultSet originalResultSet) {
-               final VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
+               VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
+               if (file instanceof VirtualFileWindow) {
+                 file = ((VirtualFileWindow)file).getDelegate();
+               }
+
                if (file == null) return;
 
                final Project project = parameters.getOriginalFile().getProject();
 
+               if (file.getFileType() == HtmlFileType.INSTANCE && PubspecYamlUtil.findPubspecYamlFile(project, file) == null) {
+                 return;
+               }
+
                final DartSdk sdk = DartSdk.getDartSdk(project);
                if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
 
-               DartAnalysisServerService.getInstance().updateFilesContent();
+               final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+               das.updateFilesContent();
 
                final String completionId =
-                 DartAnalysisServerService.getInstance().completion_getSuggestions(file, parameters.getOffset());
+                 das.completion_getSuggestions(file, parameters.getOffset());
                if (completionId == null) return;
 
-               final String uriPrefix = getPrefixIfCompletingUri(parameters);
-               final CompletionResultSet resultSet = uriPrefix != null ? originalResultSet.withPrefixMatcher(uriPrefix) : originalResultSet;
+               final String specialPrefix = getSpecialPrefix(parameters);
+               final CompletionResultSet resultSet = specialPrefix != null
+                                                     ? originalResultSet.withPrefixMatcher(specialPrefix)
+                                                     : originalResultSet;
 
-               DartAnalysisServerService.getInstance().addCompletions(completionId, suggestion -> {
+               das.addCompletions(completionId, suggestion -> {
                  final LookupElement lookupElement = createLookupElement(project, suggestion);
                  resultSet.addElement(lookupElement);
                });
@@ -72,17 +91,64 @@ public class DartServerCompletionContributor extends CompletionContributor {
   }
 
   @Nullable
-  private static String getPrefixIfCompletingUri(@NotNull final CompletionParameters parameters) {
+  private static String getSpecialPrefix(@NotNull final CompletionParameters parameters) {
     final PsiElement psiElement = parameters.getOriginalPosition();
-    final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
-    final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
-    if (parentParent instanceof DartUriElement) {
-      final int uriStringOffset = ((DartUriElement)parentParent).getUriStringAndItsRange().second.getStartOffset();
-      if (parameters.getOffset() >= parentParent.getTextRange().getStartOffset() + uriStringOffset) {
-        return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextRange().getStartOffset());
+    if (psiElement == null) return null;
+
+    final PsiElement parent = psiElement.getParent();
+    if (parent instanceof DartStringLiteralExpression) {
+      final PsiElement parentParent = parent.getParent();
+      if (parentParent instanceof DartUriElement) {
+        final int uriStringOffset = ((DartUriElement)parentParent).getUriStringAndItsRange().second.getStartOffset();
+        if (parameters.getOffset() >= parentParent.getTextRange().getStartOffset() + uriStringOffset) {
+          return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextRange().getStartOffset());
+        }
+      }
+      else {
+        return getIdentifierPrefix(parameters);
       }
     }
+
+    final IElementType elementType = psiElement.getNode().getElementType();
+    if (elementType == XmlTokenType.XML_DATA_CHARACTERS || elementType == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
+      return getIdentifierPrefix(parameters);
+    }
+
     return null;
+  }
+
+  @Nullable
+  private static String getIdentifierPrefix(@NotNull final CompletionParameters parameters) {
+    final PsiElement element = parameters.getOriginalPosition();
+    if (element == null) return null;
+
+    final int offset = parameters.getOffset();
+    final TextRange range = element.getTextRange();
+    if (offset < range.getStartOffset() || offset > range.getEndOffset()) return null;
+
+    return getIdentifierInTheEndOfThisString(element.getText().substring(0, parameters.getOffset() - range.getStartOffset()));
+  }
+
+  /**
+   * If <code>text</code> ends with any valid identifier - this identifier is returned, otherwise empty string is returned.
+   * For example if text="foo.bar123" then "bar123" is returned; if text="foo." then empty string is returned.
+   */
+  @NotNull
+  @VisibleForTesting
+  public static String getIdentifierInTheEndOfThisString(@NotNull final String text) {
+    int prefixStartIndex = text.length();
+    for (int i = text.length() - 1; i >= 0; i--) {
+      char ch = text.charAt(i);
+      if (!Character.isJavaIdentifierPart(ch)) {
+        return text.substring(prefixStartIndex);
+      }
+
+      if (Character.isJavaIdentifierStart(ch)) {
+        prefixStartIndex = i;
+      }
+    }
+
+    return text.substring(prefixStartIndex);
   }
 
   @Override

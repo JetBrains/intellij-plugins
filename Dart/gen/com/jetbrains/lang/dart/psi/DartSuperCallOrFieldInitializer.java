@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface DartSuperCallOrFieldInitializer extends DartPsiCompositeElement {
 
+  @Nullable
+  DartAssertStatement getAssertStatement();
+
   @NotNull
   List<DartExpression> getExpressionList();
 

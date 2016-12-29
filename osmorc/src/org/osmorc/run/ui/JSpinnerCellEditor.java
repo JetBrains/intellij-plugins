@@ -33,7 +33,7 @@ import java.text.ParseException;
 import java.util.EventObject;
 
 /**
- * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
 public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
   private final JSpinner mySpinner = new JSpinner();

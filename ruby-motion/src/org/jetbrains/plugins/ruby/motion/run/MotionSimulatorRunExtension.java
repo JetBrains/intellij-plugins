@@ -5,11 +5,8 @@ import com.intellij.execution.Location;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.WriteExternalException;
 import com.jetbrains.cidr.execution.ProcessOutputReaders;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +24,6 @@ import java.util.Map;
  * @author Dennis.Ushakov
  */
 public class MotionSimulatorRunExtension extends RubyRunConfigurationExtension {
-  private static final Logger LOG = Logger.getInstance(MotionSimulatorRunExtension.class);
   public static final Key<MotionProcessOutputReaders> FILE_OUTPUT_READERS = Key.create("RubyMotion.FileOutputReaders");
 
   @NotNull
@@ -39,22 +35,6 @@ public class MotionSimulatorRunExtension extends RubyRunConfigurationExtension {
   @Override
   protected void readExternal(@NotNull AbstractRubyRunConfiguration runConfiguration, @NotNull Element element)
     throws InvalidDataException {}
-
-  @Override
-  protected void writeExternal(@NotNull AbstractRubyRunConfiguration runConfiguration, @NotNull Element element)
-    throws WriteExternalException {}
-
-  @Nullable
-  @Override
-  protected <P extends AbstractRubyRunConfiguration> SettingsEditor<P> createEditor(@NotNull P configuration) {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  protected String getEditorTitle() {
-    return null;
-  }
 
   @Override
   protected boolean isApplicableFor(@NotNull AbstractRubyRunConfiguration configuration) {

@@ -33,7 +33,7 @@ import java.util.LinkedHashSet;
  * Add BND directives to embed selected dependencies inside a bundle
  *
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public final class DependencyEmbedder extends AbstractDependencyFilter {
   public static final String EMBED_DEPENDENCY = "Embed-Dependency";

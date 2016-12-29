@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
 /**
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManager {
   private static final String[] BUNDLE_DIRS = {"knopflerfish.org/osgi", "knopflerfish.org/osgi/jars/*", "osgi", "osgi/jars/*", "bundles"};
