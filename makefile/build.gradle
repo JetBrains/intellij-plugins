@@ -17,11 +17,12 @@ apply plugin: 'kotlin'
 apply plugin: 'java'
 
 group 'name.kropp.intellij'
-version '0.5'
+version '0.5.1'
 
 intellij {
     version '2016.3'
     pluginName rootProject.name
+    updateSinceUntilBuild false
 }
 
 repositories {
