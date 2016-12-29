@@ -10,6 +10,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.html.HTMLLanguage;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -73,8 +74,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
                das.updateFilesContent();
 
-               final String completionId =
-                 das.completion_getSuggestions(file, parameters.getOffset());
+               final int offset =
+                 InjectedLanguageManager.getInstance(project).injectedToHost(parameters.getOriginalFile(), parameters.getOffset());
+               final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
 
                final String specialPrefix = getSpecialPrefix(parameters);
