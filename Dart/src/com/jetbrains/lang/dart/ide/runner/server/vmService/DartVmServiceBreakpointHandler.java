@@ -70,6 +70,13 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
     getIsolateInfo(isolateId).removeTemporaryBreakpoints();
   }
 
+  public void removeAllVMBreakpoints(@NotNull String isolateId) {
+    final Set<String> vmBreakpoints = getIsolateInfo(isolateId).removeAllVMBreakpoints();
+    for (String vmBreakpointId : vmBreakpoints) {
+      myVmBreakpointIdToXBreakpointMap.remove(vmBreakpointId);
+    }
+  }
+
   private IsolateBreakpointInfo getIsolateInfo(String isolateId) {
     IsolateBreakpointInfo info = myIsolateInfo.get(isolateId);
     if (info == null) {
@@ -116,6 +123,27 @@ class IsolateBreakpointInfo {
     myTemporaryBreakpoints.clear();
   }
 
+  public Set<String> removeAllVMBreakpoints() {
+    if (!myDebugProcess.isIsolateAlive(myIsolateId)) {
+      return new HashSet<>();
+    }
+
+    final Set<String> allVmBreakpoints = new HashSet<>();
+
+    synchronized (myXBreakpointToVmBreakpointIdsMap) {
+      for (Set<String> bps : myXBreakpointToVmBreakpointIdsMap.values()) {
+        allVmBreakpoints.addAll(bps);
+      }
+      myXBreakpointToVmBreakpointIdsMap.clear();
+    }
+
+    for (String vmBreakpointId : allVmBreakpoints) {
+      myDebugProcess.getVmServiceWrapper().removeBreakpoint(myIsolateId, vmBreakpointId);
+    }
+
+    return allVmBreakpoints;
+  }
+
   public void addTemporaryBreakpoint(String breakpointId) {
     myTemporaryBreakpoints.add(breakpointId);
   }
@@ -133,11 +161,13 @@ class IsolateBreakpointInfo {
   }
 
   private Set<String> getVmBreakpoints(XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
-    Set<String> vmBreakpoints = myXBreakpointToVmBreakpointIdsMap.get(xBreakpoint);
-    if (vmBreakpoints == null) {
-      vmBreakpoints = new HashSet<>();
-      myXBreakpointToVmBreakpointIdsMap.put(xBreakpoint, vmBreakpoints);
+    synchronized (myXBreakpointToVmBreakpointIdsMap) {
+      Set<String> vmBreakpoints = myXBreakpointToVmBreakpointIdsMap.get(xBreakpoint);
+      if (vmBreakpoints == null) {
+        vmBreakpoints = new HashSet<>();
+        myXBreakpointToVmBreakpointIdsMap.put(xBreakpoint, vmBreakpoints);
+      }
+      return vmBreakpoints;
     }
-    return vmBreakpoints;
   }
 }

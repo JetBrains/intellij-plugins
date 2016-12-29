@@ -439,7 +439,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     final Set<String> result = new HashSet<>();
     String uriByIde = myDartUrlResolver.getDartUrlForFile(file);
 
-    // If dart:, short circut the results.
+    // If dart:, short circuit the results.
     if (uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
       result.add(uriByIde);
       return result;
