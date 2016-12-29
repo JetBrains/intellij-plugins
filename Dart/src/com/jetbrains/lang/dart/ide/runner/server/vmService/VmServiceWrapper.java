@@ -284,33 +284,26 @@ public class VmServiceWrapper implements Disposable {
    * Re-loaded scripts need to have their breakpoints re-applied. Re-set all existing breakpoints.
    */
   public void restoreBreakpointsForIsolate(@NotNull final String isolateId) {
-    // Set current breakpoints.
-    final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
+    // Remove all existing VM breakpoints for this isolate.
+    myBreakpointHandler.removeAllVMBreakpoints(isolateId);
 
-    if (xBreakpoints.isEmpty()) {
-      return;
-    }
+    // Re-set existing breakpoints.
+    final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
 
     for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
       addBreakpoint(isolateId, xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
-          checkDone();
         }
 
         @Override
         public void received(Breakpoint vmBreakpoint) {
           myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
-          checkDone();
         }
 
         @Override
         public void onError(RPCError error) {
           myBreakpointHandler.breakpointFailed(xBreakpoint);
-          checkDone();
-        }
-
-        private void checkDone() {
         }
       });
     }
@@ -450,6 +443,7 @@ public class VmServiceWrapper implements Disposable {
     }));
   }
 
+  @SuppressWarnings("SameParameterValue")
   public void evaluateInTargetContext(@NotNull final String isolateId,
                                       @NotNull final String targetId,
                                       @NotNull final String expression,
