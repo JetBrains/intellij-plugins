@@ -25,13 +25,13 @@ ScriptInfo size 9 2 %
 MethodBodies size 32 8 %
   script0
 
-  [__go_to_definition_help(file="C:\Documents and Settings\Maxim.Mossienko\IdeaProjects\untitled43\MyInterface.as",pos="29")]
+  [__go_to_definition_help(file="C:\\Documents and Settings\\Maxim.Mossienko\\IdeaProjects\\untitled43\\MyInterface.as",pos="29")]
   interface MyInterface extends *
   {
 
     function MyInterface():*	/* disp_id -1*/
 
-    [__go_to_definition_help(file="C:\Documents and Settings\Maxim.Mossienko\IdeaProjects\untitled43\MyInterface.as",pos="57")]
+    [__go_to_definition_help(file="C:\\Documents and Settings\\Maxim.Mossienko\\IdeaProjects\\untitled43\\MyInterface.as",pos="57")]
     function MyInterface::doIt(int):*	/* disp_id 0*/
 
     static function MyInterface$cinit():*	/* disp_id 0*/

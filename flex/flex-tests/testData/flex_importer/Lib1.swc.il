@@ -25,13 +25,13 @@ ScriptInfo size 9 1 %
 MethodBodies size 194 23 %
   script0
 
-  [__go_to_definition_help(file="C:\apps\test\IDEA\Lib1\src\lib\util\SElement.as",pos="211")]
+  [__go_to_definition_help(file="C:\\apps\\test\\IDEA\\Lib1\\src\\lib\\util\\SElement.as",pos="211")]
   class lib.util::SElement extends flash.events::EventDispatcher
   {
 
     function lib.util::SElement(Object,Object):*	/* disp_id -1*/
 
-    [__go_to_definition_help(file="C:\apps\test\IDEA\Lib1\src\lib\util\SElement.as",pos="278")]
+    [__go_to_definition_help(file="C:\\apps\\test\\IDEA\\Lib1\\src\\lib\\util\\SElement.as",pos="278")]
     static function lib.util:lib_internal::findClass(Class):Object	/* disp_id 3*/
 
     static function lib.util::SElement$cinit():*	/* disp_id 0*/

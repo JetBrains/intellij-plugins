@@ -60,18 +60,18 @@ ScriptInfo size 15 3 %
 MethodBodies size 110 24 %
   script0
 
-  [__go_to_definition_help(file="C:\temp\untitled\src\Hi.as",pos="26")]
+  [__go_to_definition_help(file="C:\\temp\\untitled\\src\\Hi.as",pos="26")]
   class Hi extends Object
   {
 
     function Hi():*	/* disp_id -1*/
-    [__go_to_definition_help(file="C:\temp\untitled\src\Hi.as",pos="42")]
+    [__go_to_definition_help(file="C:\\temp\\untitled\\src\\Hi.as",pos="42")]
     var _segments:__AS3__.vec::Vector.<private::PathSegment>	/* slot_id 0 */
 
     static function Hi$cinit():*	/* disp_id 0*/
   }
 
-  [__go_to_definition_help(file="C:\temp\untitled\src\Hi.as",pos="91")]
+  [__go_to_definition_help(file="C:\\temp\\untitled\\src\\Hi.as",pos="91")]
   class private::PathSegment extends Object
   {
 

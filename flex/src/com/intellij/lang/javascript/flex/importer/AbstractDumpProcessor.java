@@ -5,7 +5,8 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * @author Maxim.Mossienko
@@ -127,7 +128,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
     firstMetaDataMember = true;
     
     for (String n : metaData.keySet()) {
-      addMetaDataValue(!"*".equals(n) || doStarMetaAttrNameDump() ?  n:null, '"' + metaData.get(n) + '"');
+      addMetaDataValue(!"*".equals(n) || doStarMetaAttrNameDump() ?  n:null, '"' + quote(metaData.get(n)) + '"');
     }
 
     if (!firstMetaDataMember) append(")");
