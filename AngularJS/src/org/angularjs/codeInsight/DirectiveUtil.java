@@ -3,6 +3,7 @@ package org.angularjs.codeInsight;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -48,7 +49,8 @@ public class DirectiveUtil {
   }
 
   public static boolean isAngular2Directive(final PsiElement directive) {
-    return directive instanceof JSImplicitElement && directive.getParent() instanceof JSCallExpression;
+    return directive instanceof JSImplicitElement && (directive.getParent() instanceof JSCallExpression ||
+                                                      directive.getParent() instanceof ES6Decorator);
   }
 
   public static String attributeToDirective(final PsiElement directive, final String name) {

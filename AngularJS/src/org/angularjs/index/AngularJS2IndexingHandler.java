@@ -279,7 +279,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   @Nullable
   public static JSProperty getSelector(PsiElement decorator) {
-    return getProperty(decorator, SELECTOR);
+    return getProperty(decorator instanceof ES6Decorator ? PsiTreeUtil.findChildOfType(decorator, JSCallExpression.class) : decorator, SELECTOR);
   }
 
   @Nullable

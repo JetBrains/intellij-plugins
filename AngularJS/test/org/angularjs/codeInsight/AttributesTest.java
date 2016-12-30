@@ -171,7 +171,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       PsiElement resolve = ref.resolve();
       assertNotNull(resolve);
       assertEquals("custom.ts", resolve.getContainingFile().getName());
-      assertEquals("Directive({\n" +
+      assertEquals("@Directive({\n" +
                    "    selector: '[my-customer]',\n" +
                    "    properties: {\n" +
                    "        'id':'dependency'\n" +
