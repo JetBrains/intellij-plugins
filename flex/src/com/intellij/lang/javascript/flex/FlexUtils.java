@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.LinkageType;
@@ -54,6 +53,7 @@ import com.intellij.util.xml.NanoXmlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import javax.swing.*;
 import java.io.*;
@@ -411,13 +411,13 @@ public class FlexUtils {
       if (endIndex > startIndex) {
         final String macroName = builder.substring(startIndex + 2, endIndex);
         final String macroValue;
-        if (PathMacrosImpl.MODULE_DIR_MACRO_NAME.equals(macroName)) {
+        if (PathMacroUtil.MODULE_DIR_MACRO_NAME.equals(macroName)) {
           macroValue = ModuleUtilCore.getModuleDirPath(module);
         }
-        else if (PathMacrosImpl.PROJECT_DIR_MACRO_NAME.equals(macroName)) {
+        else if (PathMacroUtil.PROJECT_DIR_MACRO_NAME.equals(macroName)) {
           macroValue = module.getProject().getBasePath();
         }
-        else if (PathMacrosImpl.USER_HOME_MACRO_NAME.equals(macroName)) {
+        else if (PathMacroUtil.USER_HOME_NAME.equals(macroName)) {
           macroValue = StringUtil.trimEnd((StringUtil.trimEnd(SystemProperties.getUserHome(), "/")), "\\");
         }
         else if (CompilerOptionInfo.FLEX_SDK_MACRO_NAME.equals(macroName)) {

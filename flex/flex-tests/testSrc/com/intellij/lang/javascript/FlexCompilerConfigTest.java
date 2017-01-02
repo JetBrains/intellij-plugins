@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript;
 
-import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
@@ -39,6 +38,7 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -444,7 +444,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
   }
 
   private String replaceMacros(String text, final Sdk sdk, @Nullable Map<String, String> additionalMacros) {
-    text = text.replace("$" + PathMacrosImpl.MODULE_DIR_MACRO_NAME + "$", myModule.getModuleFile().getParent().getPath());
+    text = text.replace("$" + PathMacroUtil.MODULE_DIR_MACRO_NAME + "$", myModule.getModuleFile().getParent().getPath());
     text = text.replace("$FLEX_SDK$", sdk.getHomePath());
     if (additionalMacros != null) {
       for (String key : additionalMacros.keySet()) {
