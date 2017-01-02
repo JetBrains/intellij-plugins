@@ -28,6 +28,7 @@
     <gotoSymbolContributor implementation="name.kropp.intellij.makefile.MakefileChooseByNameContributor"/>
     <colorSettingsPage implementation="name.kropp.intellij.makefile.MakefileColorSettingsPage"/>
     <completion.contributor language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileCompletionContributor"/>
+    <configurationType implementation="name.kropp.intellij.makefile.MakefileRunConfigurationType"/>
   </extensions>
 
   <actions>
