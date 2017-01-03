@@ -1,6 +1,7 @@
 package name.kropp.intellij.makefile
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -13,7 +14,7 @@ fun findTargets(project: Project): List<MakefileTarget> {
   return FileBasedIndex.getInstance()
       .getContainingFiles(FileTypeIndex.NAME, MakefileFileType, GlobalSearchScope.allScope(project))
       .mapNotNull { psiManager.findFile(it) }
-      .flatMap { PsiTreeUtil.findChildrenOfType(it, MakefileTarget::class.java).asIterable() }
+      .flatMap(::findTargets)
 }
 
 fun findTargets(project: Project, name: String): List<MakefileTarget> {
@@ -21,6 +22,8 @@ fun findTargets(project: Project, name: String): List<MakefileTarget> {
   return FileBasedIndex.getInstance()
       .getContainingFiles(FileTypeIndex.NAME, MakefileFileType, GlobalSearchScope.allScope(project))
       .mapNotNull { psiManager.findFile(it) }
-      .flatMap { PsiTreeUtil.findChildrenOfType(it, MakefileTarget::class.java).asIterable() }
+      .flatMap(::findTargets)
       .filter { it.text == name }
 }
+
+fun findTargets(psiFile: PsiFile) = PsiTreeUtil.findChildrenOfType(psiFile, MakefileTarget::class.java).asIterable()
