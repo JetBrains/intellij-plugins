@@ -13,4 +13,6 @@ public interface JpsOsmorcProjectExtension extends JpsElement {
   String getBundlesOutputPath();
 
   String getDefaultManifestFileLocation();
+
+  boolean isBndWorkspace();
 }

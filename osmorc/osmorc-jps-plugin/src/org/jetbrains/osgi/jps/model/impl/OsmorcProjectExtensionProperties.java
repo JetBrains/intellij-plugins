@@ -13,4 +13,7 @@ public class OsmorcProjectExtensionProperties {
 
   @OptionTag("defaultManifestFileLocation")
   public String myDefaultManifestFileLocation = JarFile.MANIFEST_NAME;
+
+  @OptionTag("bndWorkspace")
+  public Boolean myBndWorkspace;
 }

@@ -18,7 +18,6 @@ package org.jetbrains.osgi.bnd.imp;
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
-import aQute.bnd.header.Attrs;
 import aQute.bnd.service.Refreshable;
 import aQute.bnd.service.RepositoryPlugin;
 import com.intellij.compiler.CompilerConfiguration;
@@ -60,11 +59,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerOptions;
-import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
-import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.facet.OsmorcFacetConfiguration;
-import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 import java.io.IOException;
@@ -318,26 +313,8 @@ public class BndProjectImporter {
     CompilerConfiguration.getInstance(myProject).setBytecodeTargetLevel(module, targetLevel);
 
     OsmorcFacet facet = OsmorcFacet.getInstance(module);
-
-    if (project.isNoBundles() && facet != null) {
-      FacetUtil.deleteFacet(facet);
-      facet = null;
-    }
-    else if (!project.isNoBundles() && facet == null) {
-      facet = FacetUtil.addFacet(module, OsmorcFacetType.getInstance());
-    }
-
     if (facet != null) {
-      OsmorcFacetConfiguration facetConfig = facet.getConfiguration();
-
-      facetConfig.setManifestGenerationMode(ManifestGenerationMode.Bnd);
-      facetConfig.setBndFileLocation(FileUtil.getRelativePath(path(project.getBase()), path(project.getPropertiesFile()), '/'));
-
-      Map.Entry<String, Attrs> bsn = project.getBundleSymbolicName();
-      File bundle = project.getOutputFile(bsn != null ? bsn.getKey() : name, project.getBundleVersion());
-      facetConfig.setJarFileLocation(path(bundle), OutputPathType.SpecificOutputPath);
-
-      facetConfig.setDoNotSynchronizeWithMaven(true);
+      FacetUtil.deleteFacet(facet);
     }
 
     return rootModel;
@@ -440,10 +417,25 @@ public class BndProjectImporter {
         if (module == null) {
           throw new IllegalArgumentException("Unknown module '" + name + "'");
         }
-        entry = rootModel.addModuleOrderEntry(module);
-        break;
-      }
 
+        // It's possible that the module is already added in case subbundles are used, only add the
+        // ModuleOrderEntry in case it wasn't added before
+        if (Arrays.stream(rootModel.getOrderEntries())
+                .filter(existing -> ModuleOrderEntry.class.isAssignableFrom(existing.getClass()))
+                .map(existing -> ((ModuleOrderEntry)existing).getModule())
+                .noneMatch(module::equals)) {
+
+          entry = rootModel.addModuleOrderEntry(module);
+          entry.setScope(scope);
+        }
+
+        /* FALLTHROUGH
+         * Also add the generated jar as that can contain classes that are not in the module output
+         * for example it's possible additional classes are added using an Include-Resource instruction
+         *
+         * By also adding the generated bundle dependency these additional resources will be visible
+         */
+      }
       case REPO: {
         String name = BND_LIB_PREFIX + bsn + ":" + version;
         Library library = libraryModel.getLibraryByName(name);
@@ -514,10 +506,6 @@ public class BndProjectImporter {
 
   private static boolean booleanProperty(String value) {
     return "on".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
-  }
-
-  private static String path(File file) {
-    return FileUtil.toSystemIndependentName(file.getPath());
   }
 
   private static String url(File file) {

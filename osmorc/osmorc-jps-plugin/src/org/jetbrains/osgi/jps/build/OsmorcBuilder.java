@@ -23,6 +23,7 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.TargetBuilder;
+import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -48,7 +49,11 @@ public class OsmorcBuilder extends TargetBuilder<BuildRootDescriptor, OsmorcBuil
                     @NotNull DirtyFilesHolder<BuildRootDescriptor, OsmorcBuildTarget> holder,
                     @NotNull BuildOutputConsumer outputConsumer,
                     @NotNull CompileContext context) throws ProjectBuildException, IOException {
-    if (target.getExtension().isAlwaysRebuildBundleJar() ||
+
+    if (target.getProject() != null) {
+      new BndWorkspaceBuildSession().build(target, context);
+    }
+    else if (JpsOsmorcExtensionService.getExtension(target.getModule()).isAlwaysRebuildBundleJar() ||
         JavaBuilderUtil.isForcedRecompilationAllJavaModules(context) ||
         holder.hasDirtyFiles() || holder.hasRemovedFiles()) {
       new OsgiBuildSession().build(target, context);

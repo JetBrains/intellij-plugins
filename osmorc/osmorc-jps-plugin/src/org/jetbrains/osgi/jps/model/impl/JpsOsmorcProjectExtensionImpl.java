@@ -41,6 +41,11 @@ public class JpsOsmorcProjectExtensionImpl extends JpsElementBase<JpsOsmorcProje
     return myProperties.myDefaultManifestFileLocation;
   }
 
+  @Override
+  public boolean isBndWorkspace() {
+    return Boolean.TRUE.equals(myProperties.myBndWorkspace);
+  }
+
   @NotNull
   public static String getDefaultBundlesOutputPath(JpsProject project) {
     JpsJavaExtensionService service = JpsJavaExtensionService.getInstance();

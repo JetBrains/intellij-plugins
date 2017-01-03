@@ -15,11 +15,20 @@
  */
 package org.jetbrains.osgi.jps.build;
 
-import com.intellij.util.Consumer;
-import com.intellij.util.containers.ContainerUtil;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.builders.*;
+import org.jetbrains.jps.builders.BuildRootDescriptor;
+import org.jetbrains.jps.builders.BuildRootIndex;
+import org.jetbrains.jps.builders.BuildTarget;
+import org.jetbrains.jps.builders.BuildTargetRegistry;
+import org.jetbrains.jps.builders.ModuleBasedTarget;
+import org.jetbrains.jps.builders.TargetOutputIndex;
 import org.jetbrains.jps.builders.impl.BuildRootDescriptorImpl;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
 import org.jetbrains.jps.incremental.CompileContext;
@@ -31,24 +40,47 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import com.intellij.util.Consumer;
+import com.intellij.util.containers.ContainerUtil;
+
+import aQute.bnd.build.Project;
+import aQute.bnd.osgi.Builder;
 
 /**
  * @author michael.golubev
  */
 public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
-  private final JpsOsmorcModuleExtension myExtension;
+  private JpsOsmorcModuleExtension myExtension;
+  private Project myProject;
+  private Collection<File> myOutputFiles;
+
+  public OsmorcBuildTarget(@NotNull Project project, @NotNull JpsModule module) throws Exception {
+    super(OsmorcBuildTargetType.INSTANCE, module);
+    myProject = project;
+
+    Collection<File> outputFiles = new ArrayList<File>();
+    Collection<? extends Builder> subBuilders = project.getSubBuilders();
+    for (Builder subBuilder : subBuilders) {
+      outputFiles.add(project.getOutputFile(subBuilder.getBsn()));
+    }
+
+    myOutputFiles = outputFiles;
+  }
 
   public OsmorcBuildTarget(@NotNull JpsOsmorcModuleExtension extension, @NotNull JpsModule module) {
     super(OsmorcBuildTargetType.INSTANCE, module);
     myExtension = extension;
+
+    String jarFileLocation = extension.getJarFileLocation();
+    myOutputFiles = jarFileLocation.isEmpty() ? Collections.<File>emptyList() : Collections.singleton(new File(jarFileLocation));
   }
 
   public JpsOsmorcModuleExtension getExtension() {
     return myExtension;
+  }
+
+  public Project getProject() {
+    return myProject;
   }
 
   @Override
@@ -114,8 +146,7 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   @NotNull
   @Override
   public Collection<File> getOutputRoots(CompileContext context) {
-    String jarFileLocation = myExtension.getJarFileLocation();
-    return jarFileLocation.isEmpty() ? Collections.<File>emptyList() : Collections.singleton(new File(jarFileLocation));
+      return myOutputFiles;
   }
 
   @Override
@@ -127,13 +158,17 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
 
-    OsmorcBuildTarget target = (OsmorcBuildTarget)o;
-    return myExtension.equals(target.myExtension);
+    OsmorcBuildTarget that = (OsmorcBuildTarget) o;
+
+    return myOutputFiles != null ? myOutputFiles.equals(that.myOutputFiles) : that.myOutputFiles == null;
   }
 
   @Override
   public int hashCode() {
-    return myExtension.hashCode();
+    int result = super.hashCode();
+    result = 31 * result + (myOutputFiles != null ? myOutputFiles.hashCode() : 0);
+    return result;
   }
 }
