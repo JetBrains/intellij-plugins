@@ -14,8 +14,10 @@ import com.intellij.psi.PsiManager
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.TextFieldWithAutoCompletion
 import com.intellij.ui.TextFieldWithAutoCompletionListProvider
+import com.intellij.util.getOrCreate
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
+import org.jdom.Element
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
@@ -35,10 +37,27 @@ class MakefileRunConfigurationFactory(runConfigurationType: MakefileRunConfigura
 }
 
 class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : RunConfigurationBase(project, factory, name) {
+  var filename: String = ""
+  var target: String = ""
+
   override fun checkConfiguration() {
   }
 
   override fun getConfigurationEditor() = MakefileRunConfigurationEditor(project)
+
+  override fun writeExternal(element: Element?) {
+    super.writeExternal(element)
+    val child = element!!.getOrCreate("makefile")
+    child.setAttribute("filename", filename)
+    child.setAttribute("target", target)
+  }
+
+  override fun readExternal(element: Element?) {
+    super.readExternal(element)
+    val child = element?.getChild("makefile")
+    filename = child?.getAttributeValue("filename") ?: ""
+    target = child?.getAttributeValue("target") ?: ""
+  }
 
   override fun getState(executor: Executor, executionEnvironment: ExecutionEnvironment): RunProfileState? {
     return null
@@ -46,10 +65,19 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
 }
 
 class MakefileRunConfigurationEditor(private val project: Project) : SettingsEditor<MakefileRunConfiguration>() {
-  private val panel: JPanel
   private val filenameField = TextFieldWithBrowseButton()
   private val targetCompletionProvider = MakefileTextFieldAutocompletionTargetProvider()
   private val targetField = TextFieldWithAutoCompletion<String>(project, targetCompletionProvider, true, "")
+
+  private val panel: JPanel by lazy {
+    FormBuilder.createFormBuilder()
+        .setAlignLabelOnRight(false)
+        .setHorizontalGap(UIUtil.DEFAULT_HGAP)
+        .setVerticalGap(UIUtil.DEFAULT_VGAP)
+        .addLabeledComponent("&Makefile", filenameField)
+        .addLabeledComponent("&Target", targetField)
+        .panel
+  }
 
   init {
     filenameField.addBrowseFolderListener("Makefile", "Makefile path", project, MakefileFileChooserDescriptor())
@@ -58,14 +86,6 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
         updateTargetCompletion(filenameField.text)
       }
     })
-
-    panel = FormBuilder.createFormBuilder()
-        .setAlignLabelOnRight(false)
-        .setHorizontalGap(UIUtil.DEFAULT_HGAP)
-        .setVerticalGap(UIUtil.DEFAULT_VGAP)
-        .addLabeledComponent("&Makefile", filenameField)
-        .addLabeledComponent("&Target", targetField)
-        .panel
   }
 
   fun updateTargetCompletion(filename: String) {
@@ -83,10 +103,15 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   override fun createEditor() = panel
 
   override fun applyEditorTo(configuration: MakefileRunConfiguration) {
-    //filenameField.text = configuration.
+    configuration.filename = filenameField.text
+    configuration.target = targetField.text
   }
 
   override fun resetEditorFrom(configuration: MakefileRunConfiguration) {
+    filenameField.text = configuration.filename
+    targetField.text = configuration.target
+
+    updateTargetCompletion(configuration.filename)
   }
 }
 
