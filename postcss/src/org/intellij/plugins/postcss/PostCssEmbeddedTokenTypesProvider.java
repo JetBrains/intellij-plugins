@@ -14,6 +14,6 @@ public class PostCssEmbeddedTokenTypesProvider implements EmbeddedTokenTypesProv
   @NotNull
   @Override
   public IElementType getElementType() {
-    return PostCssElementTypes.POST_CSS_STYLESHEET;
+    return PostCssElementTypes.POST_CSS_LAZY_STYLESHEET;
   }
 }

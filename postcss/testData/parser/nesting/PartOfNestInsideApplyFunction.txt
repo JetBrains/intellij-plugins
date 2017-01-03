@@ -1,30 +1,31 @@
 PostCSS File:PartOfNestInsideApplyFunction.pcss
-  PsiElement(POST_CSS_STYLESHEET)
-    PsiElement(CSS_RULESET_LIST)
-      PsiElement(CSS_RULESET)
-        PsiElement(CSS_SELECTOR_LIST)
-          PsiElement(CSS_SELECTOR)
-            PsiElement(CSS_SIMPLE_SELECTOR)
-              PsiElement(CSS_IDENT)('h1')
-              PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+  PsiElement(POST_CSS_LAZY_STYLESHEET)
+    PsiElement(POST_CSS_STYLESHEET)
+      PsiElement(CSS_RULESET_LIST)
+        PsiElement(CSS_RULESET)
+          PsiElement(CSS_SELECTOR_LIST)
+            PsiElement(CSS_SELECTOR)
+              PsiElement(CSS_SIMPLE_SELECTOR)
+                PsiElement(CSS_IDENT)('h1')
+                PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                  <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(CSS_DECLARATION_BLOCK)
+            PsiElement(CSS_LBRACE)('{')
+            PsiWhiteSpace('\n  ')
+            PsiElement(CSS_APPLY)
+              PsiElement(CSS_APPLY_SYM)('@apply')
+              PsiElement(CSS_LPAREN)('(')
+              PsiErrorElement:an identifier expected
                 <empty list>
-        PsiWhiteSpace(' ')
-        PsiElement(CSS_DECLARATION_BLOCK)
-          PsiElement(CSS_LBRACE)('{')
-          PsiWhiteSpace('\n  ')
-          PsiElement(CSS_APPLY)
-            PsiElement(CSS_APPLY_SYM)('@apply')
-            PsiElement(CSS_LPAREN)('(')
-            PsiErrorElement:an identifier expected
+              PsiErrorElement:')' expected
+                <empty list>
+            PsiErrorElement:';' expected
               <empty list>
-            PsiErrorElement:')' expected
+            PsiElement(CSS_BAD_AT_RULE)
+              PsiElement(CSS_ATKEYWORD)('@n')
+              PsiElement(CSS_RPAREN)(')')
+              PsiWhiteSpace('\n')
+              PsiElement(CSS_RBRACE)('}')
+            PsiErrorElement:'}' expected
               <empty list>
-          PsiErrorElement:';' expected
-            <empty list>
-          PsiElement(CSS_BAD_AT_RULE)
-            PsiElement(CSS_ATKEYWORD)('@n')
-            PsiElement(CSS_RPAREN)(')')
-            PsiWhiteSpace('\n')
-            PsiElement(CSS_RBRACE)('}')
-          PsiErrorElement:'}' expected
-            <empty list>

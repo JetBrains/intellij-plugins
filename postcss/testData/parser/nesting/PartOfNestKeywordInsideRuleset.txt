@@ -1,20 +1,21 @@
 PostCSS File:PartOfNestKeywordInsideRuleset.pcss
-  PsiElement(POST_CSS_STYLESHEET)
-    PsiElement(CSS_RULESET_LIST)
-      PsiElement(CSS_RULESET)
-        PsiElement(CSS_SELECTOR_LIST)
-          PsiElement(CSS_SELECTOR)
-            PsiElement(CSS_SIMPLE_SELECTOR)
-              PsiElement(CSS_IDENT)('h1')
-              PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                <empty list>
-        PsiWhiteSpace(' ')
-        PsiElement(CSS_DECLARATION_BLOCK)
-          PsiElement(CSS_LBRACE)('{')
-          PsiWhiteSpace('\n  ')
-          PsiElement(CSS_BAD_AT_RULE)
-            PsiElement(CSS_ATKEYWORD)('@n')
-            PsiWhiteSpace('\n')
-            PsiElement(CSS_RBRACE)('}')
-          PsiErrorElement:'}' expected
-            <empty list>
+  PsiElement(POST_CSS_LAZY_STYLESHEET)
+    PsiElement(POST_CSS_STYLESHEET)
+      PsiElement(CSS_RULESET_LIST)
+        PsiElement(CSS_RULESET)
+          PsiElement(CSS_SELECTOR_LIST)
+            PsiElement(CSS_SELECTOR)
+              PsiElement(CSS_SIMPLE_SELECTOR)
+                PsiElement(CSS_IDENT)('h1')
+                PsiElement(CSS_SELECTOR_SUFFIX_LIST)
+                  <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(CSS_DECLARATION_BLOCK)
+            PsiElement(CSS_LBRACE)('{')
+            PsiWhiteSpace('\n  ')
+            PsiElement(CSS_BAD_AT_RULE)
+              PsiElement(CSS_ATKEYWORD)('@n')
+              PsiWhiteSpace('\n')
+              PsiElement(CSS_RBRACE)('}')
+            PsiErrorElement:'}' expected
+              <empty list>

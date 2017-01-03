@@ -3,8 +3,6 @@ package org.intellij.plugins.postcss.psi.impl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.css.impl.StylesheetFileBase;
-import com.intellij.psi.css.impl.util.CssStyleSheetElementType;
-import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.PostCssFileType;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.psi.PostCssFile;
@@ -22,10 +20,5 @@ public class PostCssFileImpl extends StylesheetFileBase implements PostCssFile {
 
   public String toString() {
     return "PostCSS File:" + getName();
-  }
-
-  @Override
-  protected CssStyleSheetElementType getStylesheetElementType() {
-    return PostCssElementTypes.POST_CSS_STYLESHEET;
   }
 }
