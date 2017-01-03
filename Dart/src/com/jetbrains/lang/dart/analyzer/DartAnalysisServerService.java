@@ -145,7 +145,6 @@ public class DartAnalysisServerService implements Disposable {
   public long maxMillisToWaitForServerResponse = 0L;
   @NotNull private final InteractiveErrorReporter myErrorReporter = new InteractiveErrorReporter();
 
-  @NotNull private final Object myDebugLogLock = new Object();
   @NotNull private final LinkedHashMap<String, String> myDebugLog = new LinkedHashMap<String, String>(DEBUG_LOG_CAPACITY) {
     @Override
     protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
@@ -1367,7 +1366,7 @@ public class DartAnalysisServerService implements Disposable {
         @Override
         public void println(String str) {
           str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
-          synchronized (myDebugLogLock) {
+          synchronized (myDebugLog) {
             myDebugLog.put(str, str);
           }
         }
@@ -1720,7 +1719,7 @@ public class DartAnalysisServerService implements Disposable {
     private String debugLogContent() {
       ArrayList<String> reversedLines = new ArrayList<>();
       StringBuilder log = new StringBuilder();
-      synchronized (myDebugLogLock) {
+      synchronized (myDebugLog) {
         Collection<String> logLines = myDebugLog.values();
         logLines.iterator().forEachRemaining(reversedLines::add);
       }
