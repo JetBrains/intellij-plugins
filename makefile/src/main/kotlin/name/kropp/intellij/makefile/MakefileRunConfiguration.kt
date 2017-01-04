@@ -40,7 +40,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     return object : CommandLineState(executionEnvironment) {
       override fun startProcess(): ProcessHandler {
         val cmd = GeneralCommandLine()
-            .withExePath("/usr/bin/make")
+            .withExePath(DEFAULT_MAKE_PATH)
             .withWorkDirectory(project.basePath)
             .withParameters("-f", filename, target)
         val processHandler = OSProcessHandler(cmd)

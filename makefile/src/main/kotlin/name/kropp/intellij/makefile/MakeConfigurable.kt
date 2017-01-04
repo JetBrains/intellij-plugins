@@ -8,7 +8,7 @@ import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import javax.swing.JComponent
 
-class MakeConfigurable(private val project: Project?) : Configurable {
+class MakeConfigurable(private val project: Project?, private val settings: MakefileProjectSettings) : Configurable {
   private val pathField = TextFieldWithBrowseButton()
 
   init {
@@ -16,11 +16,12 @@ class MakeConfigurable(private val project: Project?) : Configurable {
   }
 
   override fun isModified(): Boolean {
-    return false
+    return settings.settings?.path != pathField.text
   }
 
   override fun getDisplayName() = "Make"
   override fun apply() {
+    settings.settings?.path = pathField.text
   }
 
   override fun createComponent(): JComponent {
@@ -33,6 +34,7 @@ class MakeConfigurable(private val project: Project?) : Configurable {
   }
 
   override fun reset() {
+    pathField.text = settings.settings?.path
   }
 
   override fun getHelpTopic() = null
