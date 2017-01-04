@@ -1,1 +1,86 @@
-4: Exceeded a maximum of 60 outputs in template
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  0@<"Outputs">: {
+    "o00" : { "Value" : "a" },
+    "o01" : { "Value" : "a" },
+    "o02" : { "Value" : "a" },
+    "o03" : { "Value" : "a" },
+    "o04" : { "Value" : "a" },
+    "o05" : { "Value" : "a" },
+    "o06" : { "Value" : "a" },
+    "o07" : { "Value" : "a" },
+    "o08" : { "Value" : "a" },
+    "o09" : { "Value" : "a" },
+
+    "o10" : { "Value" : "a" },
+    "o11" : { "Value" : "a" },
+    "o12" : { "Value" : "a" },
+    "o13" : { "Value" : "a" },
+    "o14" : { "Value" : "a" },
+    "o15" : { "Value" : "a" },
+    "o16" : { "Value" : "a" },
+    "o17" : { "Value" : "a" },
+    "o18" : { "Value" : "a" },
+    "o19" : { "Value" : "a" },
+
+    "o20" : { "Value" : "a" },
+    "o21" : { "Value" : "a" },
+    "o22" : { "Value" : "a" },
+    "o23" : { "Value" : "a" },
+    "o24" : { "Value" : "a" },
+    "o25" : { "Value" : "a" },
+    "o26" : { "Value" : "a" },
+    "o27" : { "Value" : "a" },
+    "o28" : { "Value" : "a" },
+    "o29" : { "Value" : "a" },
+
+    "o30" : { "Value" : "a" },
+    "o31" : { "Value" : "a" },
+    "o32" : { "Value" : "a" },
+    "o33" : { "Value" : "a" },
+    "o34" : { "Value" : "a" },
+    "o35" : { "Value" : "a" },
+    "o36" : { "Value" : "a" },
+    "o37" : { "Value" : "a" },
+    "o38" : { "Value" : "a" },
+    "o39" : { "Value" : "a" },
+
+    "o40" : { "Value" : "a" },
+    "o41" : { "Value" : "a" },
+    "o42" : { "Value" : "a" },
+    "o43" : { "Value" : "a" },
+    "o44" : { "Value" : "a" },
+    "o45" : { "Value" : "a" },
+    "o46" : { "Value" : "a" },
+    "o47" : { "Value" : "a" },
+    "o48" : { "Value" : "a" },
+    "o49" : { "Value" : "a" },
+
+    "o50" : { "Value" : "a" },
+    "o51" : { "Value" : "a" },
+    "o52" : { "Value" : "a" },
+    "o53" : { "Value" : "a" },
+    "o54" : { "Value" : "a" },
+    "o55" : { "Value" : "a" },
+    "o56" : { "Value" : "a" },
+    "o57" : { "Value" : "a" },
+    "o58" : { "Value" : "a" },
+    "o59" : { "Value" : "a" },
+
+    "o60" : { "Value" : "a" }
+  },
+
+  "Resources": {
+    "PeeringRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "SomeCidr",
+        "RouteTableId": "Someroutetable",
+        "VpcPeeringConnectionId": "XXX"
+      }
+    }
+  }
+}
+
+0: Exceeded a maximum of 60 outputs in template

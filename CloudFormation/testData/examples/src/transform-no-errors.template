@@ -2,5 +2,13 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
   "Transform": "AWS::Serverless-2016-10-31",
   "Resources" : {
+    "PeeringRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "SomeCidr",
+        "RouteTableId": "Someroutetable",
+        "VpcPeeringConnectionId": "XXX"
+      }
+    }
   }
 }

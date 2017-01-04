@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>issue25-no-errors.template</file>
+    <line>6</line>
+    <description>Type value is required</description>
+  </problem>
+  <problem>
+    <file>issue37-no-errors.template</file>
+    <line>13</line>
+    <description>Type value is required</description>
+  </problem>
+</problems>

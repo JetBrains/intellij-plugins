@@ -33,7 +33,7 @@ import java.util.ArrayList
 import java.util.regex.Pattern
 
 class CloudFormationParser private constructor () {
-  private val myProblems = ArrayList<CloudFormationParsedFile.ParseProblem>()
+  private val myProblems = ArrayList<CloudFormationProblem>()
   private val myNodesMap = HashBiMap.create<PsiElement, CfnNode>()
 
   private fun <T : CfnNode> T.registerNode(psiElement: PsiElement): T {
@@ -42,7 +42,7 @@ class CloudFormationParser private constructor () {
   }
 
   private fun addProblem(element: PsiElement, description: String) {
-    myProblems.add(CloudFormationParsedFile.ParseProblem(element, description))
+    myProblems.add(CloudFormationProblem(element, description))
   }
 
   private fun addProblemOnNameElement(property: JsonProperty, description: String) {

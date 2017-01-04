@@ -1,5 +1,6 @@
 package com.intellij.aws.cloudformation.inspections
 
+import com.intellij.aws.cloudformation.CloudFormationInspections
 import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.CloudFormationPsiUtils
 import com.intellij.codeInspection.InspectionManager
@@ -17,8 +18,9 @@ class FormatViolationInspection : LocalInspectionTool() {
     }
 
     val parsed = CloudFormationParser.parse(file)
+    val inspected = CloudFormationInspections.inspectFile(parsed)
 
-    val problems = parsed.problems.map {
+    val problems = parsed.problems.plus(inspected).map {
       manager.createProblemDescriptor(
           it.element,
           it.description,

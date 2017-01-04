@@ -3,7 +3,12 @@
   <problem>
     <file>wrongSyntax.template</file>
     <line>2</line>
-    <description>A quoted string is expected</description>
+    <description>A string literal is expected</description>
+  </problem>
+  <problem>
+    <file>wrongSyntax.template</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
   </problem>
   <problem>
     <file>wrongVersion.template</file>
@@ -14,6 +19,16 @@
     <file>wrongVersion.json</file>
     <line>2</line>
     <description>Unknown AWS CloudFormation template version &quot;2010-09-09 + 1&quot;. Supported versions: 2010-09-09</description>
+  </problem>
+  <problem>
+    <file>wrongVersion.template</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>wrongVersion.json</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
   </problem>
   <problem>
     <file>noResourceType.template</file>
@@ -36,14 +51,14 @@
     <description>Required resource properties are not set: UserName</description>
   </problem>
   <problem>
-    <file>noResourcesSection.template</file>
-    <line>1</line>
-    <description>Resources section is required</description>
+    <file>notStringDescr.template</file>
+    <line>3</line>
+    <description>A string literal is expected</description>
   </problem>
   <problem>
     <file>notStringDescr.template</file>
-    <line>3</line>
-    <description>A quoted string is expected</description>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
   </problem>
   <problem>
     <file>unknownSection.template</file>
@@ -51,9 +66,19 @@
     <description>Unknown section: XXX</description>
   </problem>
   <problem>
+    <file>unknownSection.template</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
     <file>notObjExpr2.template</file>
     <line>8</line>
     <description>Expected JSON object</description>
+  </problem>
+  <problem>
+    <file>notObjExpr2.template</file>
+    <line>8</line>
+    <description>Resources section should declare at least one resource</description>
   </problem>
   <problem>
     <file>notObjExpr1.template</file>
@@ -66,19 +91,24 @@
     <description>Required resource properties are not set: UserName</description>
   </problem>
   <problem>
-    <file>maxOutputs.template</file>
-    <line>4</line>
-    <description>Exceeded a maximum of 60 outputs in template</description>
-  </problem>
-  <problem>
     <file>maxParameters.template</file>
     <line>4</line>
     <description>Exceeded a maximum of 60 parameters in template</description>
   </problem>
   <problem>
+    <file>maxParameters.template</file>
+    <line>74</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
     <file>maxMappings.template</file>
     <line>4</line>
     <description>Exceeded a maximum of 100 mappings in template</description>
+  </problem>
+  <problem>
+    <file>maxMappings.template</file>
+    <line>118</line>
+    <description>Resources section should declare at least one resource</description>
   </problem>
   <problem>
     <file>noServiceTokenInCustomResourceType1.template</file>

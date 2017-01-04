@@ -1,1 +1,19 @@
-4: Outputs section must declare at least one stack output
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  0@<"Outputs">: {
+  },
+
+  "Resources": {
+    "PeeringRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "SomeCidr",
+        "RouteTableId": "Someroutetable",
+        "VpcPeeringConnectionId": "XXX"
+      }
+    }
+  }
+}
+
+0: Outputs section must declare at least one stack output

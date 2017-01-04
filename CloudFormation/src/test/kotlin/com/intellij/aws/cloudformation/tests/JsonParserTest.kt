@@ -1,8 +1,6 @@
 package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationParser
-import com.intellij.aws.cloudformation.CloudFormationPsiUtils.getLineNumber
-import com.intellij.aws.cloudformation.IndentWriter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
@@ -11,7 +9,6 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import junit.framework.TestCase
 import java.io.File
 import java.io.IOException
-import java.io.StringWriter
 
 class JsonParserTest : LightPlatformCodeInsightTestCase() {
   fun testFile1() = runTest("file1")
@@ -20,21 +17,7 @@ class JsonParserTest : LightPlatformCodeInsightTestCase() {
   fun runTest(name: String) {
     configureByFile("$name.template")
     val parsed = CloudFormationParser.parse(myFile)
-
-    val writer = StringWriter()
-
-    val printer = IndentWriter(writer, "  ")
-    for (problem in parsed.problems) {
-      printer.println(problem.description + " at line " + getLineNumber(problem.element))
-    }
-
-    if (!parsed.problems.isEmpty()) {
-      printer.println()
-    }
-
-    //parsed.root.dump(printer)
-
-    checkContent("$name.expected", writer.toString())
+    checkContent("$name.expected", TestUtil.renderProblems(myFile, parsed.problems))
   }
 
   fun checkContent(expectFileName: String, actualContent: String) {

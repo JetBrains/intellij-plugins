@@ -4,12 +4,9 @@ import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
-import com.intellij.psi.PsiElement
 
 class CloudFormationInspections private constructor(val parsed: CloudFormationParsedFile) {
-  val problems: MutableList<Problem> = mutableListOf()
-
-  class Problem(val element: PsiElement, val description: String)
+  val problems: MutableList<CloudFormationProblem> = mutableListOf()
 
 /*
   private fun addProblem(element: PsiElement, description: String) {
@@ -19,7 +16,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   private fun addProblem(element: CfnNode, description: String) {
     // TODO check psi element mapping not exists
-    problems.add(Problem(parsed.getPsiElement(element), description))
+    problems.add(CloudFormationProblem(parsed.getPsiElement(element), description))
   }
 
   /*private fun addProblemOnNameElement(property: JsonProperty, description: String) {
@@ -51,8 +48,17 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     }
 
     val typeName = resourceType.value.value
-    val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeName)
-    if (!isCustomResourceType(typeName) && resourceTypeMetadata == null) {
+    if (typeName.isEmpty()) {
+      addProblem(resource.name, "Type value is required")
+      return
+    }
+
+
+    val isCustomResourceType = isCustomResourceType(typeName)
+    val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(
+        if (isCustomResourceType) CloudFormationConstants.CustomResourceType else typeName)
+
+    if (!isCustomResourceType && resourceTypeMetadata == null) {
       addProblem(resourceType.value, CloudFormationBundle.getString("format.unknown.type", typeName))
     }
 
@@ -68,6 +74,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           val propertyName = it.name.value
           if (propertyName.isNotEmpty() &&
               propertyName != CloudFormationConstants.CommentResourcePropertyName &&
+              !isCustomResourceType &&
               resourceTypeMetadata.findProperty(propertyName) == null) {
             addProblem(it.name, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName))
           }
@@ -113,7 +120,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
   }
 
   companion object {
-    fun inspectFile(parsed: CloudFormationParsedFile): List<Problem> {
+    fun inspectFile(parsed: CloudFormationParsedFile): List<CloudFormationProblem> {
       val inspections = CloudFormationInspections(parsed)
       inspections.root()
       return inspections.problems

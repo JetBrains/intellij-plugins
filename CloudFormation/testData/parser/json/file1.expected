@@ -1,15 +1,14 @@
-resources:
-  resource:
-    PeeringRoute (string)
-    type: Type (string)
-      value: AWS::EC2::Route (string)
-    properties: Properties (string)
-      property:
-        - name: DestinationCidrBlock (string)
-        - value: SomeCidr (string)
-      property:
-        - name: RouteTableId (string)
-        - value: Someroutetable (string)
-      property:
-        - name: VpcPeeringConnectionId (string)
-        - value: XXX (string)
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Resources": {
+    "PeeringRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "SomeCidr",
+        "RouteTableId": "Someroutetable",
+        "VpcPeeringConnectionId": "XXX"
+      }
+    }
+  }
+}

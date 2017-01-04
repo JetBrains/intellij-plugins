@@ -1,3 +1,6 @@
-Expected JSON object at line 3
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": 0@<["XXX"]>
+}
 
-resources:
+0: Expected JSON object
