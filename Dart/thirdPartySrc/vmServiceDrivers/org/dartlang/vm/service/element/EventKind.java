@@ -57,6 +57,11 @@ public enum EventKind {
   IsolateExit,
 
   /**
+   * Notification that an isolate has been reloaded.
+   */
+  IsolateReload,
+
+  /**
    * Notification that an isolate is ready to run.
    */
   IsolateRunnable,
@@ -99,7 +104,7 @@ public enum EventKind {
   PauseInterrupted,
 
   /**
-   * An isolate has paused after a service protocol request.
+   * An isolate has paused after a service request.
    */
   PausePostRequest,
 

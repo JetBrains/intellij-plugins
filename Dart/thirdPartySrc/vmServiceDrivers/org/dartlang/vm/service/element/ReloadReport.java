@@ -15,23 +15,18 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-/**
- * A {@link StepOption} indicates which form of stepping is requested in a resume RPC.
- */
-public enum StepOption {
+import com.google.gson.JsonObject;
 
-  Into,
+public class ReloadReport extends Response {
 
-  Out,
-
-  Over,
-
-  OverAsyncSuspension,
-
-  Rewind,
+  public ReloadReport(JsonObject json) {
+    super(json);
+  }
 
   /**
-   * Represents a value returned by the VM but unknown to this client
+   * Did the reload succeed or fail?
    */
-  Unknown
+  public boolean getStatus() {
+    return json.get("status").getAsBoolean();
+  }
 }
