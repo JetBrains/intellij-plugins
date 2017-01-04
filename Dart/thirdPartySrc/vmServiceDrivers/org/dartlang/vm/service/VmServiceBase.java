@@ -444,7 +444,6 @@ abstract class VmServiceBase implements VmServiceConst {
         return;
       }
       consumer.onError(new RPCError(error));
-      Logging.getLogger().logError("Error Response: " + error);
       return;
     }
 

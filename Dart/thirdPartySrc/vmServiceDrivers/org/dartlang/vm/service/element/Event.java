@@ -148,6 +148,15 @@ public class Event extends Response {
   }
 
   /**
+   * The status (success or failure) related to the event. This is provided for the event kinds:
+   *  - IsolateReloaded
+   *  - IsolateSpawn
+   */
+  public String getStatus() {
+    return json.get("status").getAsString();
+  }
+
+  /**
    * An array of TimelineEvents
    *
    * This is provided for the TimelineEvents event.
