@@ -29,6 +29,9 @@
     <colorSettingsPage implementation="name.kropp.intellij.makefile.MakefileColorSettingsPage"/>
     <completion.contributor language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileCompletionContributor"/>
     <configurationType implementation="name.kropp.intellij.makefile.MakefileRunConfigurationType"/>
+    <!--<projectService serviceImplementation="name.kropp.intellij.makefile.MakefileProjectSettings"/>-->
+    <projectConfigurable groupId="build.tools" groupWeight="110" id="reference.settingsdialog.project.make"
+                         instance="name.kropp.intellij.makefile.MakeConfigurable"/>
   </extensions>
 
   <actions>
