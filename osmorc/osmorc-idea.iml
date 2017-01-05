@@ -34,6 +34,23 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="OSGi namespaces">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.contract-1.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.implementation-1.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.extender-1.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.service-1.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.contract-1.0.0.jar!/OSGI-OPT/src/org/osgi/namespace/contract" />
+          <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.implementation-1.0.0.jar!/OSGI-OPT/src/org/osgi/namespace/implementation" />
+          <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.extender-1.0.1.jar!/OSGI-OPT/src/org/osgi/namespace/extender" />
+          <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.service-1.0.0.jar!/OSGI-OPT/src/org/osgi/namespace/service" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
     <orderEntry type="library" scope="TEST" name="KotlinJavaRuntime" level="project" />
