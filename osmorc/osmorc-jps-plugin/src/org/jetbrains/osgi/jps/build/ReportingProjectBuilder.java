@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectBuilder;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public class ReportingProjectBuilder extends ProjectBuilder {
@@ -25,6 +26,12 @@ public class ReportingProjectBuilder extends ProjectBuilder {
   public ReportingProjectBuilder(@NotNull Reporter reporter, @NotNull Project project) {
     super(project);
     myReporter = reporter;
+  }
+
+  @Override
+  public SetLocation exception(Throwable t, String format, Object... args) {
+    Logger.getInstance(myReporter.getClass()).warn(formatArrays(format, args), t);
+    return super.exception(t, format, args);
   }
 
   @Override

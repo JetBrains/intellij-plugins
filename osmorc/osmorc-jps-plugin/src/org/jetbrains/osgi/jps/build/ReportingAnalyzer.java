@@ -25,6 +25,7 @@
 package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.osgi.Analyzer;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,6 +37,12 @@ public class ReportingAnalyzer extends Analyzer {
 
   public ReportingAnalyzer(@NotNull Reporter reporter) {
     myReporter = reporter;
+  }
+
+  @Override
+  public SetLocation exception(Throwable t, String format, Object... args) {
+    Logger.getInstance(myReporter.getClass()).warn(formatArrays(format, args), t);
+    return super.exception(t, format, args);
   }
 
   @Override
