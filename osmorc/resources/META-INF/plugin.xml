@@ -184,5 +184,12 @@
            class="org.osmorc.make.ViewGeneratedManifestGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
+
+    <group id="BndActions" text="Bnd" popup="true" icon="OsmorcIdeaIcons.Bnd">
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+      <action class="org.jetbrains.osgi.bnd.resolve.ResolveAction" id="org.jetbrains.osgi.bnd.resolve.ResolveAction"
+              text="Resolve" description="Resolve">
+      </action>
+    </group>
   </actions>
 </idea-plugin>
