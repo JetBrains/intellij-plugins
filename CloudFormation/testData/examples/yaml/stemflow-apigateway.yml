@@ -1,0 +1,48 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  StemflowApi:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Description: "StemFlow ApiGateway"
+      Name: "StemFlow ApiGateway"
+  StemflowPOSTMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:aws:apigateway:"
+              - Ref: "AWS::Region"
+              - ":lambda:path/2015-03-31/functions/"
+              - "arn:aws:lambda:ap-southeast-2:650679463300:function:StemFlowLambda-StemflowRenderFunction-3KB1F0SLUGTY"
+              - "/invocations"
+      MethodResponses:
+        - StatusCode: "200"
+      ResourceId:
+        Fn::GetAtt:
+          - "StemflowApi"
+          - "RootResourceId"
+      RestApiId:
+        Ref: "StemflowApi"
+  StemflowTestDeployment:
+    DependsOn: "StemflowPOSTMethod"
+    Type: "AWS::ApiGateway::Deployment"
+    Properties:
+      RestApiId:
+        Ref: "StemflowApi"
+      Description: "Deployment"
+      StageName: "test"
+      StageDescription:
+        StageName: "test"
+        CacheClusterEnabled: false
+        LoggingLevel: "ERROR"
+        MetricsEnabled: true
+        ThrottlingBurstLimit: 2000
+        ThrottlingRateLimit: 1000

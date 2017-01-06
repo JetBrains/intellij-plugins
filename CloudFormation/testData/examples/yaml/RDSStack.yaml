@@ -1,0 +1,122 @@
+# https://raw.githubusercontent.com/tramwaj29/infrastructure-as-code/master/cf/RDSStack.yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RDS + DBSubnet + SecurityGroup '
+Outputs:
+  DBPort:
+    Value:
+      Fn::GetAtt:
+      - Database
+      - Endpoint.Port
+  DBUrl:
+    Value:
+      Fn::GetAtt:
+      - Database
+      - Endpoint.Address
+Parameters:
+  DBAllocatedStorage:
+    ConstraintDescription: must be between 5+
+    Default: '5'
+    Description: The size of the database (Gb)
+    MaxValue: '6144'
+    MinValue: '5'
+    Type: Number
+  DBInstanceType:
+    AllowedValues:
+    - db.t1.micro
+    - db.m1.small
+    - db.t2.micro
+    - db.t2.small
+    - db.t2.medium
+    - db.t2.large
+    - db.m4.large
+    - db.m4.xlarge
+    - db.m4.2xlarge
+    - db.m4.4xlarge
+    - db.m4.10xlarge
+    - db.r3.large
+    - db.r3.xlarge
+    - db.r3.2xlarge
+    - db.r3.4xlarge
+    - db.r3.8xlarge
+    Default: db.t1.micro
+    Description: The Key Pair to launch instances with
+    Type: String
+  DBName:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric
+      characters.
+    Default: pgdb
+    Description: The database name
+    MaxLength: '8'
+    MinLength: '1'
+    Type: String
+  DBPassword:
+    AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: must contain only alphanumeric characters.
+    Description: Database admin account password
+    MaxLength: '41'
+    MinLength: '1'
+    NoEcho: 'true'
+    Type: String
+  DBUser:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric
+      characters.
+    Default: dbuser
+    Description: Database admin account name
+    MaxLength: '16'
+    MinLength: '1'
+    Type: String
+  ParentStackName:
+    Type: String
+  ParentNetworkStackName:
+    Type: String
+Resources:
+  DBSecurityGroup:
+    Properties:
+      GroupDescription: RDS Security Group
+      SecurityGroupIngress:
+      - CidrIp:
+          Fn::ImportValue: !Sub "${ParentNetworkStackName}-VpcCird"
+        FromPort: '5432'
+        IpProtocol: tcp
+        ToPort: '5432'
+      VpcId:
+        Fn::ImportValue: !Sub "${ParentNetworkStackName}-VpcId"
+    Type: AWS::EC2::SecurityGroup
+  DBSubnetGroup:
+    Properties:
+      DBSubnetGroupDescription: DB Private Subnet
+      SubnetIds:
+        - Fn::ImportValue: !Sub "${ParentNetworkStackName}-PrivateSubnetId"
+        - Fn::ImportValue: !Sub "${ParentNetworkStackName}-PrivateSubnetBId"
+      Tags:
+      - Key: Name
+        Value:
+          Ref: ParentStackName
+    Type: AWS::RDS::DBSubnetGroup
+  Database:
+    Properties:
+      AllocatedStorage:
+        Ref: DBAllocatedStorage
+      DBInstanceClass:
+        Ref: DBInstanceType
+      DBName:
+        Ref: DBName
+      DBSubnetGroupName:
+        Ref: DBSubnetGroup
+      Engine: postgres
+      EngineVersion: 9.4.5
+      MasterUserPassword:
+        Ref: DBPassword
+      MasterUsername:
+        Ref: DBUser
+      Port: '5432'
+      PubliclyAccessible: false
+      Tags:
+      - Key: Name
+        Value:
+          Ref: ParentStackName
+      VPCSecurityGroups:
+      - Ref: DBSecurityGroup
+    Type: AWS::RDS::DBInstance
