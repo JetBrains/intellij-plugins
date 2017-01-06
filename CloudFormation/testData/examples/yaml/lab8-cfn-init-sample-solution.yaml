@@ -1,0 +1,83 @@
+# https://raw.githubusercontent.com/widdix/learn-cloudformation/master/lab8-cfn-init/sample-solution.yaml
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lab 8: cfn-init'
+Parameters:
+  VPC:
+    Description: The default VPC
+    Type: AWS::EC2::VPC::Id
+  Subnet:
+    Description: A public subnet from default VPC.
+    Type: AWS::EC2::Subnet::Id
+Mappings:
+  RegionMap:
+    eu-west-1:
+      AMI: ami-bff32ccc
+    ap-southeast-1:
+      AMI: ami-c9b572aa
+    ap-southeast-2:
+      AMI: ami-48d38c2b
+    eu-central-1:
+      AMI: ami-bc5b48d0
+    ap-northeast-2:
+      AMI: ami-249b554a
+    ap-northeast-1:
+      AMI: ami-383c1956
+    us-east-1:
+      AMI: ami-60b6c60a
+    sa-east-1:
+      AMI: ami-6817af04
+    us-west-1:
+      AMI: ami-d5ea86b5
+    us-west-2:
+      AMI: ami-f0091d91
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          packages:
+            yum:
+              httpd: []
+          files:
+            "/var/www/html/index.html":
+              content: "<html><body>Hello World!</body></html>"
+              mode: '000644'
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              httpd:
+                enabled: 'true'
+                ensureRunning: 'true'
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref 'AWS::Region', AMI]
+      InstanceType: t2.micro
+      NetworkInterfaces:
+      - AssociatePublicIpAddress: 'true'
+        DeviceIndex: '0'
+        GroupSet:
+        - !Ref WebserverSecurityGroup
+        SubnetId: !Ref Subnet
+      Tags:
+      - Key: Name
+        Value: lab8-webserver
+      UserData:
+        'Fn::Base64': !Sub |
+          #!/bin/bash -ex
+          /opt/aws/bin/cfn-init -s ${AWS::StackName} -r EC2Instance --region ${AWS::Region}
+  WebserverSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: lab8-webserver
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 80
+        IpProtocol: tcp
+        ToPort: 80
+Outputs:
+  WebsiteURL:
+    Description: The URL pointing the webserver.
+    Value: !Sub http://${EC2Instance.PublicIp}
