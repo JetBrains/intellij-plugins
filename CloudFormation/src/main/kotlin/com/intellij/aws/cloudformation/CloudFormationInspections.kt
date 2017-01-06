@@ -4,6 +4,7 @@ import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
+import com.intellij.aws.cloudformation.model.CfnStringValueNode
 
 class CloudFormationInspections private constructor(val parsed: CloudFormationParsedFile) {
   val problems: MutableList<CloudFormationProblem> = mutableListOf()
@@ -47,12 +48,11 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       return
     }
 
-    val typeName = resourceType.value.value
-    if (typeName.isEmpty()) {
+    val typeName = (resourceType.value as? CfnStringValueNode)?.value
+    if (typeName == null || typeName.isEmpty()) {
       addProblem(resource.name, "Type value is required")
       return
     }
-
 
     val isCustomResourceType = isCustomResourceType(typeName)
     val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(
