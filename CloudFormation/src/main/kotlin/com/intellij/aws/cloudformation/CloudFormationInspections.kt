@@ -1,5 +1,6 @@
 package com.intellij.aws.cloudformation
 
+import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
@@ -17,7 +18,13 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   private fun addProblem(element: CfnNode, description: String) {
     // TODO check psi element mapping not exists
-    problems.add(CloudFormationProblem(parsed.getPsiElement(element), description))
+    val psiElement = if (element is CfnNamedNode && element.name != null) {
+      parsed.getPsiElement(element.name)
+    } else {
+      parsed.getPsiElement(element)
+    }
+
+    problems.add(CloudFormationProblem(psiElement, description))
   }
 
   /*private fun addProblemOnNameElement(property: JsonProperty, description: String) {
@@ -27,30 +34,30 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
   }
 */
 
+  // TODO check outputs, mappings, parameters, resources name for correctness
+
   fun outputs(outputsNode: CfnOutputsNode) {
     if (outputsNode.properties.isEmpty()) {
-      addProblem(
-          outputsNode.name,
-          "Outputs section must declare at least one stack output")
+      addProblem(outputsNode, "Outputs section must declare at least one stack output")
     }
 
     if (outputsNode.properties.size > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
-      addProblem(
-          outputsNode.name,
-          CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
+      addProblem(outputsNode, CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
     }
   }
 
   fun resource(resource: CfnResourceNode) {
     val resourceType = resource.type
     if (resourceType == null) {
-      addProblem(resource.name, "Type property is required for resource")
+      addProblem(resource, "Type property is required for resource")
       return
     }
 
-    val typeName = (resourceType.value as? CfnStringValueNode)?.value
-    if (typeName == null || typeName.isEmpty()) {
-      addProblem(resource.name, "Type value is required")
+    val resourceTypeValue = resourceType.value
+
+    val typeName = (resourceTypeValue as? CfnStringValueNode)?.value
+    if (resourceTypeValue == null || typeName == null || typeName.isEmpty()) {
+      addProblem(resource, "Type value is required")
       return
     }
 
@@ -59,7 +66,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         if (isCustomResourceType) CloudFormationConstants.CustomResourceType else typeName)
 
     if (!isCustomResourceType && resourceTypeMetadata == null) {
-      addProblem(resourceType.value, CloudFormationBundle.getString("format.unknown.type", typeName))
+      addProblem(resourceTypeValue, CloudFormationBundle.getString("format.unknown.type", typeName))
     }
 
     if (resourceTypeMetadata != null) {
@@ -67,25 +74,25 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       if (propertiesNode == null) {
         val requiredProperties = resourceTypeMetadata.requiredProperties.joinToString(" ")
         if (requiredProperties.isNotEmpty()) {
-          addProblem(resource.name, CloudFormationBundle.getString("format.required.resource.properties.are.not.set", requiredProperties))
+          addProblem(resource, CloudFormationBundle.getString("format.required.resource.properties.are.not.set", requiredProperties))
         }
       } else {
         propertiesNode.properties.forEach {
-          val propertyName = it.name.value
-          if (propertyName.isNotEmpty() &&
+          val propertyName = it.name?.value
+          if (propertyName != null &&
               propertyName != CloudFormationConstants.CommentResourcePropertyName &&
               !isCustomResourceType &&
               resourceTypeMetadata.findProperty(propertyName) == null) {
-            addProblem(it.name, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName))
+            addProblem(it, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName))
           }
         }
 
         val missingProperties = resourceTypeMetadata.requiredProperties.filter {
-          required -> propertiesNode.properties.none { required == it.name.value }
+          required -> propertiesNode.properties.none { required == it.name?.value }
         }.joinToString(separator = " ")
 
         if (missingProperties.isNotEmpty()) {
-          addProblem(propertiesNode.name, CloudFormationBundle.getString("format.required.resource.properties.are.not.set", missingProperties))
+          addProblem(propertiesNode, CloudFormationBundle.getString("format.required.resource.properties.are.not.set", missingProperties))
         }
       }
     }
@@ -93,7 +100,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   fun resources(resourcesNode: CfnResourcesNode) {
     if (resourcesNode.resources.isEmpty()) {
-      addProblem(resourcesNode.name, "Resources section should declare at least one resource")
+      addProblem(resourcesNode, "Resources section should declare at least one resource")
       return
     }
 

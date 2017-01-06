@@ -59,7 +59,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
               @Suppress("LoopToCallChain")
               for ((propertyName) in resourceTypeMetadata.properties.values) {
                 if (resourcePropertyNameMatch.resource.properties != null &&
-                    resourcePropertyNameMatch.resource.properties.properties.any { it.name.value == propertyName }) {
+                    resourcePropertyNameMatch.resource.properties.properties.any { it.name?.value == propertyName }) {
                   continue
                 }
 

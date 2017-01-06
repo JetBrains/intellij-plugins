@@ -3,7 +3,7 @@ package com.intellij.aws.cloudformation.model
 abstract class CfnExpressionNode : CfnNode()
 abstract class CfnScalarValueNode : CfnExpressionNode()
 
-class CfnMissingOrInvalidValueNode() : CfnScalarValueNode()
+class CfnMissingOrInvalidValueNode : CfnScalarValueNode()
 class CfnNumberValueNode(val value: String) : CfnScalarValueNode()
 class CfnBooleanValueNode(val value: Boolean) : CfnScalarValueNode()
 class CfnStringValueNode(val value: String) : CfnScalarValueNode()
