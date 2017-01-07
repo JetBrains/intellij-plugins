@@ -55,7 +55,7 @@ conditional ::= ('ifeq'|'ifneq'|'ifndef') condition comment? branch ('else' comm
 
 branch ::= (conditional|command)*
 
-meta variable-assignment ::= variable assignment variable-value? {pin=2}
+meta variable-assignment ::= variable assignment variable-value? {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
 meta variable-value ::= line (split line)*

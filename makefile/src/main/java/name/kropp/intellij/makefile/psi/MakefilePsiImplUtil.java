@@ -45,7 +45,26 @@ public class MakefilePsiImplUtil {
     }
 
     private static TokenSet ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN);
+    private static TokenSet LINE = TokenSet.create(MakefileTypes.LINE);
     private static TokenSet VARIABLE_VALUE_LINE = TokenSet.create(MakefileTypes.VARIABLE_VALUE_LINE);
+
+    @Nullable
+    public static PsiElement getAssignment(MakefileVariableAssignment element) {
+        ASTNode node = element.getNode().findChildByType(ASSIGNMENT);
+        if (node == null)
+            return null;
+        return node.getPsi();
+    }
+
+    @Nullable
+    public static String getValue(MakefileVariableAssignment element) {
+        MakefileVariableValue value = element.getVariableValue();
+        if (value == null) {
+            return "";
+        }
+        ASTNode[] nodes = value.getNode().getChildren(LINE);
+        return Arrays.stream(nodes).map(ASTNode::getText).collect(Collectors.joining("\n"));
+    }
 
     @Nullable
     public static PsiElement getAssignment(MakefileDefine element) {
