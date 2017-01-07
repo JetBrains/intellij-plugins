@@ -29,6 +29,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == BRANCH) {
       r = branch(b, 0);
     }
+    else if (t == COMMAND) {
+      r = command(b, 0);
+    }
     else if (t == CONDITIONAL) {
       r = conditional(b, 0);
     }
@@ -156,7 +159,42 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = conditional(b, l + 1);
-    if (!r) r = consumeToken(b, COMMAND);
+    if (!r) r = command(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // command-line (line-split command-line)*
+  public static boolean command(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command")) return false;
+    if (!nextTokenIs(b, COMMAND_LINE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMAND_LINE);
+    r = r && command_1(b, l + 1);
+    exit_section_(b, m, COMMAND, r);
+    return r;
+  }
+
+  // (line-split command-line)*
+  private static boolean command_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!command_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "command_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // line-split command-line
+  private static boolean command_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "command_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, LINE_SPLIT, COMMAND_LINE);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -574,7 +612,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = conditional(b, l + 1);
-    if (!r) r = consumeToken(b, COMMAND);
+    if (!r) r = command(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -821,8 +859,43 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // variable-value?
   private static boolean variable_assignment_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable_assignment_2")) return false;
-    consumeToken(b, VARIABLE_VALUE);
+    variable_value(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // variable-value-line (line-split variable-value-line)*
+  public static boolean variable_value(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_value")) return false;
+    if (!nextTokenIs(b, VARIABLE_VALUE_LINE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, VARIABLE_VALUE_LINE);
+    r = r && variable_value_1(b, l + 1);
+    exit_section_(b, m, VARIABLE_VALUE, r);
+    return r;
+  }
+
+  // (line-split variable-value-line)*
+  private static boolean variable_value_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_value_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!variable_value_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "variable_value_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // line-split variable-value-line
+  private static boolean variable_value_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_value_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, LINE_SPLIT, VARIABLE_VALUE_LINE);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */

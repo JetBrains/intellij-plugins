@@ -6,6 +6,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import name.kropp.intellij.makefile.psi.MakefileBranch;
+import name.kropp.intellij.makefile.psi.MakefileCommand;
 import name.kropp.intellij.makefile.psi.MakefileConditional;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,12 @@ public class MakefileBranchImpl extends ASTWrapperPsiElement implements Makefile
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @NotNull
+  public List<MakefileCommand> getCommandList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileCommand.class);
   }
 
   @Override

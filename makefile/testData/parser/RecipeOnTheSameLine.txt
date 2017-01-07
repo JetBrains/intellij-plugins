@@ -11,4 +11,5 @@ Makefile
           <empty list>
     PsiElement(;)(';')
     MakefileRecipeImpl(RECIPE)
-      PsiElement(command)(' echo hello')
+      MakefileCommandImpl(COMMAND)
+        PsiElement(command-line)(' echo hello')

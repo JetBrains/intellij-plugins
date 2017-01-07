@@ -25,16 +25,16 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 
 EOL=[\r\n]+
 SPACES=[ \t]+
+BACKSLASHCRLF="\\"\r?\n?
 TAB=\t
 COMMENT="#"[^\r\n]*
-VARIABLE_VALUE=[^\r\n]
+VARIABLE_VALUE=[^\\\r\n]
 COLON=":"
 SEMICOLON=";"
 PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 FILENAME_CHARACTER=[^:=+!?\ \r\n\t]
-COMMAND=[^\r\n]+
 
 %state PREREQUISITES INCLUDES COMMANDS VARIABLE DEFINE DEFINEBODY CONDITIONALS
 
@@ -82,10 +82,15 @@ COMMAND=[^\r\n]+
 }
 
 
-<COMMANDS> {COMMAND}                   { yybegin(YYINITIAL); return COMMAND; }
+<COMMANDS> {
+    {BACKSLASHCRLF}         { return LINE_SPLIT; }
+    {VARIABLE_VALUE}+       { return COMMAND_LINE; }
+    {EOL}                   { yybegin(YYINITIAL); return WHITE_SPACE; }
+}
 
 <VARIABLE> {
-    {VARIABLE_VALUE}+           { return VARIABLE_VALUE; }
+    {BACKSLASHCRLF}             { return LINE_SPLIT; }
+    {VARIABLE_VALUE}+           { return VARIABLE_VALUE_LINE; }
     {EOL}                       { yybegin(YYINITIAL); return WHITE_SPACE; }
 }
 

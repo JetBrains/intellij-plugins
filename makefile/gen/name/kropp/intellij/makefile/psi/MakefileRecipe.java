@@ -9,6 +9,9 @@ import java.util.List;
 public interface MakefileRecipe extends PsiElement {
 
   @NotNull
+  List<MakefileCommand> getCommandList();
+
+  @NotNull
   List<MakefileConditional> getConditionalList();
 
 }

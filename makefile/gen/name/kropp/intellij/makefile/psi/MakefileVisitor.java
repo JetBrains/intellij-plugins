@@ -15,6 +15,10 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitCommand(@NotNull MakefileCommand o) {
+    visitPsiElement(o);
+  }
+
   public void visitConditional(@NotNull MakefileConditional o) {
     visitPsiElement(o);
   }
@@ -100,6 +104,10 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitVariableAssignment(@NotNull MakefileVariableAssignment o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVariableValue(@NotNull MakefileVariableValue o) {
     visitPsiElement(o);
   }
 

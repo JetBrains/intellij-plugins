@@ -10,6 +10,7 @@ public interface MakefileTypes {
 
   IElementType BLOCK = new MakefileElementType("BLOCK");
   IElementType BRANCH = new MakefileElementType("BRANCH");
+  IElementType COMMAND = new MakefileElementType("COMMAND");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType DIRECTORY = new MakefileElementType("DIRECTORY");
@@ -32,11 +33,12 @@ public interface MakefileTypes {
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
+  IElementType VARIABLE_VALUE = new MakefileElementType("VARIABLE_VALUE");
   IElementType VPATH = new MakefileElementType("VPATH");
 
   IElementType ASSIGN = new MakefileTokenType("=");
   IElementType COLON = new MakefileTokenType(":");
-  IElementType COMMAND = new MakefileTokenType("command");
+  IElementType COMMAND_LINE = new MakefileTokenType("command-line");
   IElementType COMMENT = new MakefileTokenType("comment");
   IElementType CONDITION = new MakefileTokenType("condition");
   IElementType EOL = new MakefileTokenType("EOL");
@@ -55,9 +57,9 @@ public interface MakefileTypes {
   IElementType KEYWORD_PRIVATE = new MakefileTokenType("private");
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType KEYWORD_VPATH = new MakefileTokenType("vpath");
+  IElementType LINE_SPLIT = new MakefileTokenType("line-split");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
-  IElementType VARIABLE_VALUE = new MakefileTokenType("variable-value");
   IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");
 
   class Factory {
@@ -68,6 +70,9 @@ public interface MakefileTypes {
       }
       else if (type == BRANCH) {
         return new MakefileBranchImpl(node);
+      }
+      else if (type == COMMAND) {
+        return new MakefileCommandImpl(node);
       }
       else if (type == CONDITIONAL) {
         return new MakefileConditionalImpl(node);
@@ -134,6 +139,9 @@ public interface MakefileTypes {
       }
       else if (type == VARIABLE_ASSIGNMENT) {
         return new MakefileVariableAssignmentImpl(node);
+      }
+      else if (type == VARIABLE_VALUE) {
+        return new MakefileVariableValueImpl(node);
       }
       else if (type == VPATH) {
         return new MakefileVpathImpl(node);
