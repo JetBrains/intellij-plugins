@@ -24,11 +24,11 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 %unicode
 
 EOL=[\r\n]+
-SPACES=[ \t]+
-BACKSLASHCRLF="\\"\r?\n?
+SPACES=" "+
+BACKSLASHCRLF="\\"(\r|\n|\r\n)
 TAB=\t
 COMMENT="#"[^\r\n]*
-VARIABLE_VALUE=[^\\\r\n]
+VARIABLE_VALUE=[^\r\n]+[^\\\r\n]
 COLON=":"
 SEMICOLON=";"
 PIPE="|"
@@ -84,7 +84,7 @@ FILENAME_CHARACTER=[^:=+!?\ \r\n\t]
 
 <SOURCE> {
     {BACKSLASHCRLF}         { return SPLIT; }
-    {VARIABLE_VALUE}+       { return LINE; }
+    {VARIABLE_VALUE}        { return LINE; }
     {EOL}                   { yybegin(YYINITIAL); return WHITE_SPACE; }
 }
 
@@ -97,7 +97,7 @@ FILENAME_CHARACTER=[^:=+!?\ \r\n\t]
 
 <DEFINEBODY> {
     "endef"                { yybegin(YYINITIAL); return KEYWORD_ENDEF; }
-    {VARIABLE_VALUE}+      { return VARIABLE_VALUE_LINE; }
+    {VARIABLE_VALUE}       { return VARIABLE_VALUE_LINE; }
     {EOL}                  { return WHITE_SPACE; }
 }
 
