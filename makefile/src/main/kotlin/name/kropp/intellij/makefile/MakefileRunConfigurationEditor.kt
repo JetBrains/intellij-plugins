@@ -1,6 +1,5 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -15,7 +14,7 @@ import javax.swing.event.DocumentEvent
 
 class MakefileRunConfigurationEditor(private val project: Project) : SettingsEditor<MakefileRunConfiguration>() {
   private val filenameField = TextFieldWithBrowseButton()
-  private val targetCompletionProvider = TextFieldWithAutoCompletion.StringsCompletionProvider(emptyList(), AllIcons.Toolwindows.ToolWindowRun)
+  private val targetCompletionProvider = TextFieldWithAutoCompletion.StringsCompletionProvider(emptyList(), MakefileTargetIcon)
   private val targetField = TextFieldWithAutoCompletion<String>(project, targetCompletionProvider, true, "")
 
   private val panel: JPanel by lazy {

@@ -9,7 +9,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.lifecycle.PeriodicalTasksCloser
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.getOrCreate
 import org.jdom.Element
@@ -38,7 +38,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
   }
 
   override fun getState(executor: Executor, executionEnvironment: ExecutionEnvironment): RunProfileState? {
-    val makePath = PeriodicalTasksCloser.getInstance().safeGetService(project, MakefileProjectSettings::class.java).settings?.path ?: DEFAULT_MAKE_PATH
+    val makePath = ServiceManager.getService(project, MakefileProjectSettings::class.java).settings?.path ?: DEFAULT_MAKE_PATH
     return object : CommandLineState(executionEnvironment) {
       override fun startProcess(): ProcessHandler {
         val cmd = GeneralCommandLine()

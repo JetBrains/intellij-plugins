@@ -1,9 +1,11 @@
 package name.kropp.intellij.makefile
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.fileTypes.*
 import com.intellij.openapi.util.IconLoader
 
 val MakefileIcon = IconLoader.getIcon("/name/kropp/intellij/makefile/makefile.png")
+val MakefileTargetIcon = AllIcons.General.Run
 
 object MakefileFileType : LanguageFileType(MakefileLanguage) {
   override fun getIcon() = MakefileIcon

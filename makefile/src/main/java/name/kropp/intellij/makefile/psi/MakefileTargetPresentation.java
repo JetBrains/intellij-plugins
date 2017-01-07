@@ -1,7 +1,7 @@
 package name.kropp.intellij.makefile.psi;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.navigation.ItemPresentation;
+import name.kropp.intellij.makefile.MakefileFileTypeKt;
 
 import javax.swing.*;
 
@@ -24,6 +24,6 @@ class MakefileTargetPresentation implements ItemPresentation {
 
     @Override
     public Icon getIcon(boolean b) {
-        return AllIcons.Toolwindows.ToolWindowRun;
+        return MakefileFileTypeKt.getMakefileTargetIcon();
     }
 }

@@ -1,7 +1,6 @@
 package name.kropp.intellij.makefile
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
@@ -38,7 +37,7 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
 
   override fun getVariants()
       = (prerequisite.containingFile as MakefileFile).targets.map {
-    LookupElementBuilder.create(it).withIcon(AllIcons.Toolwindows.ToolWindowRun)
+    LookupElementBuilder.create(it).withIcon(MakefileTargetIcon)
   }.toTypedArray()
 
   override fun resolve()
