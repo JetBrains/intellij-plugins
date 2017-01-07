@@ -3,13 +3,13 @@ package name.kropp.intellij.makefile
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
-import name.kropp.intellij.makefile.psi.MakefilePrerequisite
-import name.kropp.intellij.makefile.psi.MakefileTarget
-import name.kropp.intellij.makefile.psi.MakefileTargetLine
-import name.kropp.intellij.makefile.psi.MakefileVariable
+import com.intellij.psi.tree.TokenSet
+import name.kropp.intellij.makefile.psi.*
 
 
 class MakefileAnnotator : Annotator {
+  private val lineTokenSet = TokenSet.create(MakefileTypes.LINE)
+
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element is MakefileTarget) {
       holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.TARGET
@@ -25,6 +25,10 @@ class MakefileAnnotator : Annotator {
       }
     } else if (element is MakefileVariable) {
       holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE
+    } else if (element is MakefileVariableValue) {
+      element.node.getChildren(lineTokenSet).forEach {
+        holder.createInfoAnnotation(it, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE_VALUE
+      }
     }
   }
 }

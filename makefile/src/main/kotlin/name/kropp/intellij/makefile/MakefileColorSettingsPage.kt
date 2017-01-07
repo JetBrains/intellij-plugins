@@ -20,7 +20,8 @@ class MakefileColorSettingsPage : ColorSettingsPage {
       AttributesDescriptor("Separator", MakefileSyntaxHighlighter.SEPARATOR),
       AttributesDescriptor("Prerequisite", MakefileSyntaxHighlighter.PREREQUISITE),
       AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE),
-      AttributesDescriptor("Variable Value", MakefileSyntaxHighlighter.VARIABLE_VALUE)
+      AttributesDescriptor("Variable Value", MakefileSyntaxHighlighter.VARIABLE_VALUE),
+      AttributesDescriptor("Line Split", MakefileSyntaxHighlighter.LINE_SPLIT)
   )
 
   override fun getAttributeDescriptors() = DESCRIPTORS
@@ -33,11 +34,13 @@ include make.mk
 
 <target>hello</target>: <prerequisite>hello.o</prerequisite> <prerequisite>world.o</prerequisite>
 
-<variableName>GCC</variableName> = gcc
+<variableName>GCC</variableName> = gcc \
+           -O2
 
 <target>.o.c</target>:
 ifeq ($(FOO),'bar')
-${'\t'}$(GCC) -c qwe
+${'\t'}$(GCC) -c qwe \
+              -Wall
 else
 ${'\t'}echo "Hello World"
 endif"""
