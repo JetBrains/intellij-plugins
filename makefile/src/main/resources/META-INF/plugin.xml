@@ -32,6 +32,7 @@
     <projectService serviceImplementation="name.kropp.intellij.makefile.MakefileProjectSettings"/>
     <projectConfigurable groupId="build.tools" groupWeight="110" id="reference.settingsdialog.project.make"
                          instance="name.kropp.intellij.makefile.MakeConfigurable"/>
+    <runLineMarkerContributor implementationClass="name.kropp.intellij.makefile.MakefileTargetRunLineMarkerContributor"/>
   </extensions>
 
   <actions>
