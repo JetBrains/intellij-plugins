@@ -29,4 +29,4 @@ Makefile
     PsiWhiteSpace('\t')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
-        PsiElement(command-line)('$(GCC) -c hello.c')
+        PsiElement(line)('$(GCC) -c hello.c')

@@ -38,7 +38,6 @@ public interface MakefileTypes {
 
   IElementType ASSIGN = new MakefileTokenType("=");
   IElementType COLON = new MakefileTokenType(":");
-  IElementType COMMAND_LINE = new MakefileTokenType("command-line");
   IElementType COMMENT = new MakefileTokenType("comment");
   IElementType CONDITION = new MakefileTokenType("condition");
   IElementType EOL = new MakefileTokenType("EOL");
@@ -57,9 +56,10 @@ public interface MakefileTypes {
   IElementType KEYWORD_PRIVATE = new MakefileTokenType("private");
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType KEYWORD_VPATH = new MakefileTokenType("vpath");
-  IElementType LINE_SPLIT = new MakefileTokenType("line-split");
+  IElementType LINE = new MakefileTokenType("line");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
+  IElementType SPLIT = new MakefileTokenType("split");
   IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");
 
   class Factory {

@@ -36,18 +36,18 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 FILENAME_CHARACTER=[^:=+!?\ \r\n\t]
 
-%state PREREQUISITES INCLUDES COMMANDS VARIABLE DEFINE DEFINEBODY CONDITIONALS
+%state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS
 
 %%
 
 {COMMENT}              { return COMMENT; }
 
 <YYINITIAL> {
-    {TAB}+             { yybegin(COMMANDS); return WHITE_SPACE; }
+    {TAB}+             { yybegin(SOURCE); return WHITE_SPACE; }
     {EOL}              { return WHITE_SPACE; }
     {SPACES}           { return WHITE_SPACE; }
     {COLON}            { yybegin(PREREQUISITES); return COLON; }
-    {ASSIGN}           { yybegin(VARIABLE); return ASSIGN; }
+    {ASSIGN}           { yybegin(SOURCE); return ASSIGN; }
     "include"          { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
     "-include"         { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
     "sinclude"         { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
@@ -67,7 +67,7 @@ FILENAME_CHARACTER=[^:=+!?\ \r\n\t]
 
 <PREREQUISITES> {
     {PIPE}                  { return PIPE; }
-    {SEMICOLON}             { yybegin(COMMANDS); return SEMICOLON; }
+    {SEMICOLON}             { yybegin(SOURCE); return SEMICOLON; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
@@ -82,16 +82,10 @@ FILENAME_CHARACTER=[^:=+!?\ \r\n\t]
 }
 
 
-<COMMANDS> {
-    {BACKSLASHCRLF}         { return LINE_SPLIT; }
-    {VARIABLE_VALUE}+       { return COMMAND_LINE; }
+<SOURCE> {
+    {BACKSLASHCRLF}         { return SPLIT; }
+    {VARIABLE_VALUE}+       { return LINE; }
     {EOL}                   { yybegin(YYINITIAL); return WHITE_SPACE; }
-}
-
-<VARIABLE> {
-    {BACKSLASHCRLF}             { return LINE_SPLIT; }
-    {VARIABLE_VALUE}+           { return VARIABLE_VALUE_LINE; }
-    {EOL}                       { yybegin(YYINITIAL); return WHITE_SPACE; }
 }
 
 <DEFINE> {

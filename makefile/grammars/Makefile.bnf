@@ -40,7 +40,7 @@ private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line (';' comment? EOL? | comment? EOL) recipe
 recipe ::= (conditional|command)*
-command ::= command-line (line-split command-line)*
+command ::= line (split line)*
 
 target_line ::= targets ':' prerequisites {pin=2 methods=[getTargetName]}
 targets ::= target+
@@ -58,7 +58,7 @@ branch ::= (conditional|command)*
 meta variable-assignment ::= variable assignment variable-value? {pin=2}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
-meta variable-value ::= variable-value-line (line-split variable-value-line)*
+meta variable-value ::= line (split line)*
 define ::= 'define' variable assignment? variable-value-line* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable comment? EOL {pin=1}
 override ::= 'override' variable-assignment comment? {pin=1}
