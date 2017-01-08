@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>name.kropp.intellij.makefile</id>
   <name>Makefile support</name>
-  <version>0.5.1</version>
+  <version>0.6</version>
   <vendor email="victor.kropp@gmail.com" url="https://victor.kropp.name">Victor Kropp</vendor>
 
   <description><![CDATA[
@@ -9,10 +9,11 @@
     ]]></description>
 
   <change-notes><![CDATA[
+  Initial support for Run Configurations.
     ]]>
   </change-notes>
 
-  <idea-version since-build="163" />
+  <idea-version since-build="163.0" until-build="171.*"/>
 
   <depends>com.intellij.modules.lang</depends>
 

@@ -5,7 +5,7 @@ Get it from plugin repository: https://plugins.jetbrains.com/idea/plugin/9333
 
 Plugin for Makefile support in IntelliJ-based IDEs.
 
-Fully supports GNU Make syntax. Provides syntax highlighting, keywords & target names completion, find usages and Go To Symbol navigation for targets, rules folding, quick fix to create new rule from unresolved prerequisite.
+Fully supports GNU Make syntax. Provides syntax highlighting, keywords & target names completion, run configurations to run specific targets, find usages and Go To Symbol navigation for targets, rules folding, quick fix to create new rule from unresolved prerequisite.
 
 Work in progress.
 
