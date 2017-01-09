@@ -62,16 +62,16 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
     }
   }
 
-  public void temporaryBreakpointAdded(String isolateId, Breakpoint breakpoint) {
-    getIsolateInfo(isolateId).addTemporaryBreakpoint(breakpoint.getId());
+  public void temporaryBreakpointAdded(String isolateId, Breakpoint vmBreakpoint) {
+    getIsolateInfo(isolateId).temporaryVmBreakpointAdded(vmBreakpoint.getId());
   }
 
   public void removeTemporaryBreakpoints(String isolateId) {
     getIsolateInfo(isolateId).removeTemporaryBreakpoints();
   }
 
-  public void removeAllVMBreakpoints(@NotNull String isolateId) {
-    final Set<String> vmBreakpoints = getIsolateInfo(isolateId).removeAllVMBreakpoints();
+  public void removeAllVmBreakpoints(@NotNull String isolateId) {
+    final Set<String> vmBreakpoints = getIsolateInfo(isolateId).removeAllVmBreakpoints();
     for (String vmBreakpointId : vmBreakpoints) {
       myVmBreakpointIdToXBreakpointMap.remove(vmBreakpointId);
     }
@@ -108,7 +108,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 class IsolateBreakpointInfo {
   private final String myIsolateId;
   private final DartVmServiceDebugProcess myDebugProcess;
-  List<String> myTemporaryBreakpoints = new ArrayList<>();
+  List<String> myTemporaryVmBreakpointIds = new ArrayList<>();
   private final Map<XLineBreakpoint<XBreakpointProperties>, Set<String>> myXBreakpointToVmBreakpointIdsMap = new THashMap<>();
 
   IsolateBreakpointInfo(@NotNull String isolateId, @NotNull DartVmServiceDebugProcess debugProcess) {
@@ -117,13 +117,13 @@ class IsolateBreakpointInfo {
   }
 
   public void removeTemporaryBreakpoints() {
-    for (String breakpointId : myTemporaryBreakpoints) {
+    for (String breakpointId : myTemporaryVmBreakpointIds) {
       myDebugProcess.getVmServiceWrapper().removeBreakpoint(myIsolateId, breakpointId);
     }
-    myTemporaryBreakpoints.clear();
+    myTemporaryVmBreakpointIds.clear();
   }
 
-  public Set<String> removeAllVMBreakpoints() {
+  public Set<String> removeAllVmBreakpoints() {
     if (!myDebugProcess.isIsolateAlive(myIsolateId)) {
       return new HashSet<>();
     }
@@ -144,8 +144,8 @@ class IsolateBreakpointInfo {
     return allVmBreakpoints;
   }
 
-  public void addTemporaryBreakpoint(String breakpointId) {
-    myTemporaryBreakpoints.add(breakpointId);
+  public void temporaryVmBreakpointAdded(String vmBreakpointId) {
+    myTemporaryVmBreakpointIds.add(vmBreakpointId);
   }
 
   public void vmBreakpointAdded(XLineBreakpoint<XBreakpointProperties> xBreakpoint, Breakpoint vmBreakpoint) {

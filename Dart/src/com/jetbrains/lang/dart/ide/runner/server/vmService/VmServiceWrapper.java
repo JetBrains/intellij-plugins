@@ -285,7 +285,7 @@ public class VmServiceWrapper implements Disposable {
    */
   public void restoreBreakpointsForIsolate(@NotNull final String isolateId) {
     // Remove all existing VM breakpoints for this isolate.
-    myBreakpointHandler.removeAllVMBreakpoints(isolateId);
+    myBreakpointHandler.removeAllVmBreakpoints(isolateId);
 
     // Re-set existing breakpoints.
     final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
