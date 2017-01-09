@@ -44,15 +44,12 @@ public final class TsLintLanguageService extends JSLanguageServiceBase implement
     mySettings = TsLintConfiguration.getInstance(myProject);
   }
 
-  @Nullable
-  @Override
-  public final Future<List<JSAnnotationError>> highlight(@NotNull PsiFile file, @NotNull JSFileHighlightingInfo info) {
+  public final Future<List<JSAnnotationError>> highlightImpl(@NotNull PsiFile file, VirtualFile virtualFile, String content) {
     JSLanguageServiceQueue process = getProcess();
     if (process == null) {
       return null;
     }
 
-    VirtualFile virtualFile = file.getVirtualFile();
     String path = virtualFile == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
     if (path == null) {
       return null;
@@ -64,10 +61,21 @@ public final class TsLintLanguageService extends JSLanguageServiceBase implement
       return null;
     }
 
-    Document document = info.updateContext.getOpenContents().get(virtualFile);
 
-    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(path, configPath, document.getText());
+    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(path, configPath, content);
     return process.execute(command, createProcessor(path));
+  }
+
+  @Nullable
+  @Override
+  public final Future<List<JSAnnotationError>> highlight(@NotNull PsiFile file, @NotNull JSFileHighlightingInfo info) {
+    VirtualFile virtualFile = file.getVirtualFile();
+    Document document = info.updateContext.getOpenContents().get(virtualFile);
+    if (document == null) {
+      return null;
+    }
+
+    return highlightImpl(file, virtualFile, document.getText());
   }
 
   @NotNull

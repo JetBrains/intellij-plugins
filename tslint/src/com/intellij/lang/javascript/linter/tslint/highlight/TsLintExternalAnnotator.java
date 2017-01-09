@@ -12,8 +12,6 @@ import com.intellij.lang.javascript.linter.tslint.execution.TsLintExternalRunner
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.service.JSFileHighlightingInfo;
-import com.intellij.lang.javascript.service.JSHighlightingInfoBuilder;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -87,10 +85,9 @@ public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintSta
 
     if (!StringUtil.isEmpty(System.getProperty("use.tslint.new"))) {
       TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
-      JSFileHighlightingInfo context = JSHighlightingInfoBuilder
-        .createInfoWithUnSavedFiles(collectedInfo.getProject(), collectedInfo.getVirtualFile(), service.getAcceptableFilesFilter());
 
-      Future<List<JSAnnotationError>> highlight = service.highlight(collectedInfo.getPsiFile(), context);
+      Future<List<JSAnnotationError>> highlight =
+        service.highlightImpl(collectedInfo.getPsiFile(), collectedInfo.getVirtualFile(), collectedInfo.getFileContent());
       List<JSAnnotationError> annotationErrors = JSLanguageServiceUtil.awaitFuture(highlight);
       if (annotationErrors == null) {
         return null;
