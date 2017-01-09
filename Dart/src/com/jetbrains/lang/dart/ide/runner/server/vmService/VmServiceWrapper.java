@@ -282,10 +282,7 @@ public class VmServiceWrapper implements Disposable {
   }
 
   /**
-   * Reloaded scripts need to have their breakpoints reapplied.
-   *
-   * Re-set all existing breakpoints. This method waits until we've received a response for the
-   * breakpoint requests.
+   * Reloaded scripts need to have their breakpoints reapplied. Re-set all existing breakpoints.
    */
   public void restoreBreakpointsForIsolate(@NotNull final String isolateId) {
     // Remove all existing VM breakpoints for this isolate.
@@ -293,33 +290,23 @@ public class VmServiceWrapper implements Disposable {
 
     // Re-set existing breakpoints.
     final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
-    final CountDownLatch latch = new CountDownLatch(xBreakpoints.size());
 
     for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
       addBreakpoint(isolateId, xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
-          latch.countDown();
         }
 
         @Override
         public void received(Breakpoint vmBreakpoint) {
           myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
-          latch.countDown();
         }
 
         @Override
         public void onError(RPCError error) {
           myBreakpointHandler.breakpointFailed(xBreakpoint);
-          latch.countDown();
         }
       });
-    }
-
-    try {
-      latch.await();
-    }
-    catch (InterruptedException ignore) {
     }
   }
 
