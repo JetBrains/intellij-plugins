@@ -34,7 +34,7 @@ SEMICOLON=";"
 PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
-FILENAME_CHARACTER=[^:=+!?\ \r\n\t]
+FILENAME_CHARACTER=[^:=!?\ \r\n\t]
 
 %state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS
 
@@ -71,25 +71,26 @@ FILENAME_CHARACTER=[^:=+!?\ \r\n\t]
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
-    {SPACES}                { return WHITE_SPACE; }
+    {SPACES}|{TAB}+         { return WHITE_SPACE; }
 }
 
 <INCLUDES> {
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
-    {SPACES}                { return WHITE_SPACE; }
+    {SPACES}|{TAB}+         { return WHITE_SPACE; }
 }
 
 
 <SOURCE> {
+    {SPACES}|{TAB}+         { return WHITE_SPACE; }
     {BACKSLASHCRLF}         { return SPLIT; }
     {VARIABLE_VALUE}        { return LINE; }
     {EOL}                   { yybegin(YYINITIAL); return WHITE_SPACE; }
 }
 
 <DEFINE> {
-    {SPACES}                    { return WHITE_SPACE; }
+    {SPACES}|{TAB}+             { return WHITE_SPACE; }
     {EOL}                       { yybegin(DEFINEBODY); return WHITE_SPACE; }
     {ASSIGN}                    { return ASSIGN; }
     {FILENAME_CHARACTER}+       { return IDENTIFIER; }

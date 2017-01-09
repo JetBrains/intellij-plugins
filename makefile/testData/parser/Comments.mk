@@ -4,7 +4,7 @@ all:
 
 some: hello #end of line comment
 
-hello world: hello.o world.o
+hello world: hello.o world.o	#comment
 
 GCC = gcc
 SHELL := /bin/bash

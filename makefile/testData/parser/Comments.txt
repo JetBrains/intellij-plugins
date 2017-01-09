@@ -46,6 +46,8 @@ Makefile
           PsiWhiteSpace(' ')
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('world.o')
+    PsiWhiteSpace('\t')
+    PsiComment(comment)('#comment')
     PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
