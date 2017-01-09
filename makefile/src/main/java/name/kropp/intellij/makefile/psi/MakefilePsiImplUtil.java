@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
+import kotlin.text.Regex;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -42,6 +43,11 @@ public class MakefilePsiImplUtil {
 
     public static ItemPresentation getPresentation(MakefileTarget element) {
         return new MakefileTargetPresentation(element);
+    }
+
+    public static boolean isSpecialTarget(MakefileTarget element) {
+        String name = element.getName();
+        return name != null && name.matches("^.[A-Z]*");
     }
 
     private static TokenSet ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN);

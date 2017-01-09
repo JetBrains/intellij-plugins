@@ -18,8 +18,8 @@ class MakefileFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, M
       get() = PsiTreeUtil.findChildrenOfType(this, MakefileTarget::class.java)
 
   val targets: Collection<MakefileTarget>
-      get() = PsiTreeUtil.findChildrenOfType(this, MakefileTarget::class.java).filter { it.name?.startsWith(".") == false }
+      get() = PsiTreeUtil.findChildrenOfType(this, MakefileTarget::class.java).filter { !it.isSpecialTarget }
 
   val specialTargets: Collection<MakefileTarget>
-      get() = PsiTreeUtil.findChildrenOfType(this, MakefileTarget::class.java).filter { it.name?.startsWith(".") == true }
+      get() = PsiTreeUtil.findChildrenOfType(this, MakefileTarget::class.java).filter { it.isSpecialTarget }
 }

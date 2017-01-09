@@ -44,4 +44,8 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
     return MakefilePsiImplUtil.getPresentation(this);
   }
 
+  public boolean isSpecialTarget() {
+    return MakefilePsiImplUtil.isSpecialTarget(this);
+  }
+
 }

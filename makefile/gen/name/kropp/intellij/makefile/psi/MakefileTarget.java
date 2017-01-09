@@ -19,4 +19,6 @@ public interface MakefileTarget extends MakefileNamedElement, NavigationItem {
 
   ItemPresentation getPresentation();
 
+  boolean isSpecialTarget();
+
 }

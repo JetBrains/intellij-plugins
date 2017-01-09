@@ -17,7 +17,7 @@ class MakefileAnnotator : Annotator {
       val reference = element.reference!!
       if (reference.resolve() == null) {
         val targets = (element.parent.parent.parent as MakefileTargetLine).targets
-        if (targets.targetList.firstOrNull()?.name?.startsWith('.') == false) {
+        if (targets.targetList.firstOrNull()?.isSpecialTarget == false) {
           holder.createErrorAnnotation(element, "Unresolved prerequisite").registerFix(CreateRuleFix(element))
         }
       } else {

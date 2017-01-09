@@ -44,7 +44,7 @@ command ::= line (split line)*
 
 target_line ::= targets ':' prerequisites {pin=2 methods=[getTargetName]}
 targets ::= target+
-target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement,com.intellij.navigation.NavigationItem" methods=[getName setName getNameIdentifier getPresentation]}
+target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement,com.intellij.navigation.NavigationItem" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget]}
 
 prerequisites ::= normal_prerequisites ('|' order_only_prerequisites)?
 normal_prerequisites ::= (prerequisite+ (split prerequisite*)*) | prerequisite*
