@@ -1,10 +1,12 @@
 package org.jetbrains.plugins.ruby.motion;
 
 import com.intellij.facet.ui.ValidationResult;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
@@ -82,8 +84,11 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
 
   @NotNull
   @Override
-  public JPanel getSettingsPanel(RubyMotionSettingsHolder settings) {
-    if (myGeneratorTab == null) myGeneratorTab = new RubyMotionGeneratorTabBase(settings);
+  public JPanel getSettingsPanel(RubyMotionSettingsHolder settings, @NotNull Disposable parentDisposable) {
+    if (myGeneratorTab == null) {
+      myGeneratorTab = new RubyMotionGeneratorTabBase(settings);
+      Disposer.register(parentDisposable, () -> myGeneratorTab = null);
+    }
     mySettings = settings;
     final JComponent generatorTabComponent = myGeneratorTab.createComponent();
     return (JPanel)generatorTabComponent;
