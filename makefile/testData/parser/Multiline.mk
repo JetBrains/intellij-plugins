@@ -5,7 +5,8 @@ SRCS_C  = tar.c create.c extract.c buffer.c   \
           regex.c
 
 .PHONY: shar
-shar: $(SRCS) $(AUX)
+shar: $(SRCS) $(AUX) \
+        another set of deps
 	shar $(SRCS) $(AUX) | compress \
              > tar-`sed -e '/version_string/!d' \
              -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \

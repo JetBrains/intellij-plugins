@@ -66,6 +66,7 @@ FILENAME_CHARACTER=[^:=!?\ \r\n\t]
 }
 
 <PREREQUISITES> {
+    {BACKSLASHCRLF}         { return SPLIT; }
     {PIPE}                  { return PIPE; }
     {SEMICOLON}             { yybegin(SOURCE); return SEMICOLON; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
