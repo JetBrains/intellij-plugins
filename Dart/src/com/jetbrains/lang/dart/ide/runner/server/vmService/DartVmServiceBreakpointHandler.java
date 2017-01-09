@@ -108,7 +108,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 class IsolateBreakpointInfo {
   private final String myIsolateId;
   private final DartVmServiceDebugProcess myDebugProcess;
-  List<String> myTemporaryVmBreakpointIds = new ArrayList<>();
+  private final List<String> myTemporaryVmBreakpointIds = new ArrayList<>();
   private final Map<XLineBreakpoint<XBreakpointProperties>, Set<String>> myXBreakpointToVmBreakpointIdsMap = new THashMap<>();
 
   IsolateBreakpointInfo(@NotNull String isolateId, @NotNull DartVmServiceDebugProcess debugProcess) {
@@ -158,6 +158,8 @@ class IsolateBreakpointInfo {
         myDebugProcess.getVmServiceWrapper().removeBreakpoint(myIsolateId, vmBreakpointId);
       }
     }
+
+    myXBreakpointToVmBreakpointIdsMap.remove(xBreakpoint);
   }
 
   private Set<String> getVmBreakpoints(XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
