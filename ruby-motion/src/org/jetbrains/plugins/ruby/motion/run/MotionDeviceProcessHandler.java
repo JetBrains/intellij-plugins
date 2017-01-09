@@ -39,7 +39,7 @@ public class MotionDeviceProcessHandler extends RubyProcessHandler implements De
   }
 
   @Override
-  public void coloredTextAvailable(String text, Key attributes) {
+  public void coloredTextAvailable(@NotNull String text, @NotNull Key attributes) {
     if (text.trim().endsWith(".ipa") && !myLocalPath.isDone()) {
       myLocalPath.set(text.replace(".ipa", ".app").trim());
       myExecutableName.set(text.substring(text.lastIndexOf("/") + 1, text.lastIndexOf(".")).replace("_spec", ""));

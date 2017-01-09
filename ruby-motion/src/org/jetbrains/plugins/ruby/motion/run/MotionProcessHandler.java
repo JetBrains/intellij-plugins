@@ -54,7 +54,7 @@ public class MotionProcessHandler extends RubyProcessHandler implements ProcessH
   }
 
   @Override
-  public void coloredTextAvailable(String text, Key attributes) {
+  public void coloredTextAvailable(@NotNull String text, @NotNull Key attributes) {
     mySimulateStarted |= text.contains(isOSX ? "Run" : "Simulate");
     final String[] lines = text.split("\r");
     SimulatorConsoleProcessHandler.findPid(lines, mySimulateStarted, myPIDResult);
