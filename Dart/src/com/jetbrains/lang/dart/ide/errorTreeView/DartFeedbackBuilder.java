@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class DartFeedbackBuilder {
   public static final int MAX_URL_LENGTH = 4000;
-  // TODO(messick): Change ShowPrompt to a Dart preference
   private static boolean ShowPrompt = true;
 
   private static ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
