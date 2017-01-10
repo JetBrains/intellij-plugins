@@ -42,7 +42,6 @@ public interface MakefileTypes {
   IElementType CONDITION = new MakefileTokenType("condition");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
-  IElementType IF = new MakefileTokenType("if");
   IElementType KEYWORD_DEFINE = new MakefileTokenType("define");
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");
   IElementType KEYWORD_ENDEF = new MakefileTokenType("endef");
@@ -60,6 +59,7 @@ public interface MakefileTypes {
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");
+  IElementType TAB = new MakefileTokenType("\\t");
   IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");
 
   class Factory {

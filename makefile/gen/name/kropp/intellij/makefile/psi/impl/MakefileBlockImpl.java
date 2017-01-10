@@ -27,51 +27,63 @@ public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileB
   }
 
   @Override
-  @Nullable
-  public MakefileDefine getDefine() {
-    return findChildByClass(MakefileDefine.class);
+  @NotNull
+  public List<MakefileDefine> getDefineList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileDefine.class);
   }
 
   @Override
-  @Nullable
-  public MakefileExport getExport() {
-    return findChildByClass(MakefileExport.class);
+  @NotNull
+  public List<MakefileExport> getExportList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileExport.class);
   }
 
   @Override
-  @Nullable
-  public MakefileInclude getInclude() {
-    return findChildByClass(MakefileInclude.class);
+  @NotNull
+  public List<MakefileInclude> getIncludeList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileInclude.class);
   }
 
   @Override
-  @Nullable
-  public MakefileOverride getOverride() {
-    return findChildByClass(MakefileOverride.class);
+  @NotNull
+  public List<MakefileOverride> getOverrideList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileOverride.class);
   }
 
   @Override
-  @Nullable
-  public MakefilePrivatevar getPrivatevar() {
-    return findChildByClass(MakefilePrivatevar.class);
+  @NotNull
+  public List<MakefilePrivatevar> getPrivatevarList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefilePrivatevar.class);
   }
 
   @Override
-  @Nullable
-  public MakefileUndefine getUndefine() {
-    return findChildByClass(MakefileUndefine.class);
+  @NotNull
+  public List<MakefileRule> getRuleList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileRule.class);
   }
 
   @Override
-  @Nullable
-  public MakefileVariableAssignment getVariableAssignment() {
-    return findChildByClass(MakefileVariableAssignment.class);
+  @NotNull
+  public List<MakefileTopconditional> getTopconditionalList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileTopconditional.class);
   }
 
   @Override
-  @Nullable
-  public MakefileVpath getVpath() {
-    return findChildByClass(MakefileVpath.class);
+  @NotNull
+  public List<MakefileUndefine> getUndefineList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileUndefine.class);
+  }
+
+  @Override
+  @NotNull
+  public List<MakefileVariableAssignment> getVariableAssignmentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableAssignment.class);
+  }
+
+  @Override
+  @NotNull
+  public List<MakefileVpath> getVpathList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVpath.class);
   }
 
 }

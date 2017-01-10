@@ -12,6 +12,7 @@
   tokenTypeClass = "name.kropp.intellij.makefile.psi.MakefileTokenType"
 
   tokens = [
+    TAB = "\t"
     COLON = ":"
     SEMICOLON = ";"
     ASSIGN = "="
@@ -34,13 +35,15 @@
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
 }
 
-makefile ::= (rule|variable-assignment|directive|topconditional|comment)*
+makefile ::= any
+
+private any ::= (rule|variable-assignment|directive|topconditional|comment)*
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line (';' comment? EOL? | comment? EOL) recipe
 recipe ::= (conditional|command)*
-command ::= line (split line)*
+command ::= '\t'* line (split line)*
 
 target_line ::= targets ':' prerequisites {pin=2 methods=[getTargetName]}
 targets ::= target+
@@ -73,4 +76,4 @@ pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
 topconditional ::= ('ifeq'|'ifneq'|'ifndef') condition comment? block ('else' comment? block)* 'endif' comment? {pin=1}
-block ::= variable-assignment|directive|if|comment
+block ::= any

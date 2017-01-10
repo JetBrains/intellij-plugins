@@ -1,0 +1,20 @@
+Makefile
+  MakefileTopconditionalImpl(TOPCONDITIONAL)
+    PsiElement(ifndef)('ifndef')
+    PsiWhiteSpace(' ')
+    PsiElement(condition)('VERBOSE')
+    PsiWhiteSpace('\n')
+    MakefileBlockImpl(BLOCK)
+      MakefileRuleImpl(RULE)
+        MakefileTargetLineImpl(TARGET_LINE)
+          MakefileTargetsImpl(TARGETS)
+            MakefileTargetImpl(TARGET)
+              PsiElement(identifier)('.SILENT')
+          PsiElement(:)(':')
+          MakefilePrerequisitesImpl(PREREQUISITES)
+            MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+              <empty list>
+        PsiElement(EOL)('\n')
+        MakefileRecipeImpl(RECIPE)
+          <empty list>
+    PsiElement(endif)('endif')

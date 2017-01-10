@@ -7,28 +7,34 @@ import com.intellij.psi.PsiElement;
 
 public interface MakefileBlock extends PsiElement {
 
-  @Nullable
-  MakefileDefine getDefine();
+  @NotNull
+  List<MakefileDefine> getDefineList();
 
-  @Nullable
-  MakefileExport getExport();
+  @NotNull
+  List<MakefileExport> getExportList();
 
-  @Nullable
-  MakefileInclude getInclude();
+  @NotNull
+  List<MakefileInclude> getIncludeList();
 
-  @Nullable
-  MakefileOverride getOverride();
+  @NotNull
+  List<MakefileOverride> getOverrideList();
 
-  @Nullable
-  MakefilePrivatevar getPrivatevar();
+  @NotNull
+  List<MakefilePrivatevar> getPrivatevarList();
 
-  @Nullable
-  MakefileUndefine getUndefine();
+  @NotNull
+  List<MakefileRule> getRuleList();
 
-  @Nullable
-  MakefileVariableAssignment getVariableAssignment();
+  @NotNull
+  List<MakefileTopconditional> getTopconditionalList();
 
-  @Nullable
-  MakefileVpath getVpath();
+  @NotNull
+  List<MakefileUndefine> getUndefineList();
+
+  @NotNull
+  List<MakefileVariableAssignment> getVariableAssignmentList();
+
+  @NotNull
+  List<MakefileVpath> getVpathList();
 
 }

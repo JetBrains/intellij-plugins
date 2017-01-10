@@ -26,7 +26,6 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 EOL=[\r\n]+
 SPACES=" "+
 BACKSLASHCRLF="\\"(\r|\n|\r\n)
-TAB=\t
 COMMENT="#"[^\r\n]*
 VARIABLE_VALUE=[^\r\n]+[^\\\r\n]
 COLON=":"
@@ -43,7 +42,7 @@ FILENAME_CHARACTER=[^:=!?\ \r\n\t]
 {COMMENT}              { return COMMENT; }
 
 <YYINITIAL> {
-    {TAB}+             { yybegin(SOURCE); return WHITE_SPACE; }
+    \t+                { yybegin(SOURCE); return TAB; }
     {EOL}              { return WHITE_SPACE; }
     {SPACES}           { return WHITE_SPACE; }
     {COLON}            { yybegin(PREREQUISITES); return COLON; }
@@ -72,26 +71,26 @@ FILENAME_CHARACTER=[^:=!?\ \r\n\t]
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
-    {SPACES}|{TAB}+         { return WHITE_SPACE; }
+    {SPACES}|\t+            { return WHITE_SPACE; }
 }
 
 <INCLUDES> {
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
-    {SPACES}|{TAB}+         { return WHITE_SPACE; }
+    {SPACES}|\t+            { return WHITE_SPACE; }
 }
 
 
 <SOURCE> {
-    {SPACES}|{TAB}+         { return WHITE_SPACE; }
+    {SPACES}|\t+            { return WHITE_SPACE; }
     {BACKSLASHCRLF}         { return SPLIT; }
     {VARIABLE_VALUE}        { return LINE; }
     {EOL}                   { yybegin(YYINITIAL); return WHITE_SPACE; }
 }
 
 <DEFINE> {
-    {SPACES}|{TAB}+             { return WHITE_SPACE; }
+    {SPACES}|\t+                { return WHITE_SPACE; }
     {EOL}                       { yybegin(DEFINEBODY); return WHITE_SPACE; }
     {ASSIGN}                    { return ASSIGN; }
     {FILENAME_CHARACTER}+       { return IDENTIFIER; }

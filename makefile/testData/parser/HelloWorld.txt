@@ -31,7 +31,7 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
     PsiElement(EOL)('\n')
-    PsiWhiteSpace('\t')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
+        PsiElement(\t)('\t')
         PsiElement(line)('$(GCC) -c hello.c')

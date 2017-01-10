@@ -18,6 +18,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testVPath() { doTest(true) }
   fun testComments() { doTest(true) }
   fun testMultiline() { doTest(true) }
+  fun testTargetInsideConditional() { doTest(true) }
 
   fun testIssue7() { doTest(true) }
 
