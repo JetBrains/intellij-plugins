@@ -317,11 +317,13 @@ public class VmService extends VmServiceBase {
    * The [resume] RPC is used to resume execution of a paused isolate.
    *
    * @param step This parameter is optional and may be null.
+   * @param frameIndex This parameter is optional and may be null.
    */
-  public void resume(String isolateId, StepOption step, SuccessConsumer consumer) {
+  public void resume(String isolateId, StepOption step, Integer frameIndex, SuccessConsumer consumer) {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     if (step != null) params.addProperty("step", step.name());
+    if (frameIndex != null) params.addProperty("frameIndex", frameIndex);
     request("resume", params, consumer);
   }
 

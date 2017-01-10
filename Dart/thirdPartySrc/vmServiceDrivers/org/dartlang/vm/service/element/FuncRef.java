@@ -42,9 +42,9 @@ public class FuncRef extends ObjRef {
     JsonObject elem = (JsonObject)json.get("owner");
     if (elem == null) return null;
 
-    if (elem.get("type").getAsString() == "@Library") return new LibraryRef(elem);
-    if (elem.get("type").getAsString() == "@Class") return new ClassRef(elem);
-    if (elem.get("type").getAsString() == "@Func") return new FuncRef(elem);
+    if (elem.get("type").getAsString().equals("@Library")) return new LibraryRef(elem);
+    if (elem.get("type").getAsString().equals("@Class")) return new ClassRef(elem);
+    if (elem.get("type").getAsString().equals("@Func")) return new FuncRef(elem);
     return null;
   }
 
