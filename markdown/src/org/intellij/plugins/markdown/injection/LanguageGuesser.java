@@ -50,7 +50,12 @@ public enum LanguageGuesser {
 
   @Nullable
   public Language guessLanguage(@NotNull String languageName) {
-    final Language languageFromMap = langIdToLanguage.getValue().get(languageName.toLowerCase(Locale.US));
+    languageName = languageName.toLowerCase(Locale.US);
+
+    // Add support for rmarkdown chunks (see http://rmarkdown.rstudio.com/authoring_rcodechunks.html)
+    languageName = languageName.startsWith("{r ") ? "r" : languageName;
+
+    final Language languageFromMap = langIdToLanguage.getValue().get(languageName);
     if (languageFromMap != null) {
       return languageFromMap;
     }
