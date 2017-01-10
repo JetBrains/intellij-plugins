@@ -3,10 +3,12 @@ package org.intellij.plugins.markdown.injection;
 import com.intellij.lang.Language;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
@@ -19,6 +21,15 @@ public enum LanguageGuesser {
       @Override
       protected List<EmbeddedTokenTypesProvider> compute() {
         return Arrays.asList(Extensions.getExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME));
+      }
+    };
+
+  private ClearableLazyValue<List<CodeFenceLanguageProvider>> codeFenceLanguageProviders =
+    new ClearableLazyValue<List<CodeFenceLanguageProvider>>() {
+      @NotNull
+      @Override
+      protected List<CodeFenceLanguageProvider> compute() {
+        return Arrays.asList(Extensions.getExtensions(CodeFenceLanguageProvider.EP_NAME));
       }
     };
 
@@ -48,8 +59,25 @@ public enum LanguageGuesser {
     return Collections.unmodifiableMap(langIdToLanguage.getValue());
   }
 
+  @NotNull
+  public List<CodeFenceLanguageProvider> getCodeFenceLanguageProviders() {
+    return codeFenceLanguageProviders.getValue();
+  }
+
+  @TestOnly
+  public void resetCodeFenceLanguageProviders() {
+    codeFenceLanguageProviders.drop();
+  }
+
   @Nullable
   public Language guessLanguage(@NotNull String languageName) {
+    for (CodeFenceLanguageProvider provider : codeFenceLanguageProviders.getValue()) {
+      final Language languageByProvider = provider.getLanguageByInfoString(languageName);
+      if (languageByProvider != null) {
+        return languageByProvider;
+      }
+    }
+
     final Language languageFromMap = langIdToLanguage.getValue().get(languageName.toLowerCase(Locale.US));
     if (languageFromMap != null) {
       return languageFromMap;

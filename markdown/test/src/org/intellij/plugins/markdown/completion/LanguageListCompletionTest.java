@@ -1,15 +1,24 @@
 package org.intellij.plugins.markdown.completion;
 
 import com.intellij.codeInsight.completion.CompletionAutoPopupTestCase;
+import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.fileTypes.PlainTextParserDefinition;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.MarkdownTestingUtil;
+import org.intellij.plugins.markdown.injection.CodeFenceLanguageProvider;
+import org.intellij.plugins.markdown.injection.LanguageGuesser;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
@@ -75,6 +84,38 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
     assertContainsElements(myFixture.getLookupElementStrings(), "js", "javascript");
     myFixture.type("s\t");
     checkResult();
+  }
+
+  public void testCustomCompletionProvider() {
+    try {
+      PlatformTestUtil.registerExtension(CodeFenceLanguageProvider.EP_NAME, new CodeFenceLanguageProvider() {
+        @Nullable
+        @Override
+        public Language getLanguageByInfoString(@NotNull String infoString) {
+          return null;
+        }
+
+        @NotNull
+        @Override
+        public List<LookupElement> getCompletionVariantsForInfoString(@NotNull CompletionParameters parameters) {
+          return Collections.singletonList(LookupElementBuilder.create("{js is a great ecma}")
+          .withInsertHandler((context, item) -> {
+            context.getDocument().insertString(context.getEditor().getCaretModel().getOffset(), "Customized insertion");
+            context.getEditor().getCaretModel().moveCaretRelatively("Customized insertion".length(), 0, true, false, true);
+          }));
+        }
+      }, getTestRootDisposable());
+
+      LanguageGuesser.INSTANCE.resetCodeFenceLanguageProviders();
+      configure();
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "js", "javascript", "{js is a great ecma}");
+      myFixture.type("ecm\t");
+      checkResult();
+    }
+    finally {
+      LanguageGuesser.INSTANCE.resetCodeFenceLanguageProviders();
+    }
   }
 
   public static class AutopopupTest extends CompletionAutoPopupTestCase {

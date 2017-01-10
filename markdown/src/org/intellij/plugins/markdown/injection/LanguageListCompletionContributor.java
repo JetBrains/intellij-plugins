@@ -1,10 +1,9 @@
 package org.intellij.plugins.markdown.injection;
 
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionInitializationContext;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupElementDecorator;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.TextRange;
@@ -17,6 +16,7 @@ import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 public class LanguageListCompletionContributor extends CompletionContributor {
@@ -42,6 +42,16 @@ public class LanguageListCompletionContributor extends CompletionContributor {
   }
 
   private static void doFillVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
+    for (CodeFenceLanguageProvider provider : LanguageGuesser.INSTANCE.getCodeFenceLanguageProviders()) {
+      final List<LookupElement> lookups = provider.getCompletionVariantsForInfoString(parameters);
+      for (LookupElement lookupElement : lookups) {
+        result.addElement(LookupElementDecorator.withInsertHandler(lookupElement, (context, item) -> {
+          new MyInsertHandler(parameters).handleInsert(context, item);
+          lookupElement.handleInsert(context);
+        }));
+      }
+    }
+
     for (Map.Entry<String, Language> entry : LanguageGuesser.INSTANCE.getLangToLanguageMap().entrySet()) {
       final Language language = entry.getValue();
 
@@ -51,12 +61,7 @@ public class LanguageListCompletionContributor extends CompletionContributor {
           return fileType != null ? fileType.getIcon() : null;
         }))
           .withTypeText(language.getDisplayName(), true)
-          .withInsertHandler((context, item) -> {
-            if (isInMiddleOfUncollapsedFence(parameters.getOriginalPosition(), context.getStartOffset())) {
-              context.getDocument().insertString(context.getTailOffset(), "\n\n");
-              context.getEditor().getCaretModel().moveCaretRelatively(1, 0, false, false, false);
-            }
-          });
+          .withInsertHandler(new MyInsertHandler(parameters));
 
       result.addElement(lookupElementBuilder);
     }
@@ -79,5 +84,21 @@ public class LanguageListCompletionContributor extends CompletionContributor {
     }
 
     return false;
+  }
+
+  private static class MyInsertHandler implements InsertHandler<LookupElement> {
+    private final CompletionParameters myParameters;
+
+    public MyInsertHandler(CompletionParameters parameters) {
+      myParameters = parameters;
+    }
+
+    @Override
+    public void handleInsert(InsertionContext context, LookupElement item) {
+      if (isInMiddleOfUncollapsedFence(myParameters.getOriginalPosition(), context.getStartOffset())) {
+        context.getDocument().insertString(context.getTailOffset(), "\n\n");
+        context.getEditor().getCaretModel().moveCaretRelatively(1, 0, false, false, false);
+      }
+    }
   }
 }
