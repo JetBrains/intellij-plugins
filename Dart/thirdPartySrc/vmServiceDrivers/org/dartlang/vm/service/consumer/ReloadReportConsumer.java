@@ -11,27 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dartlang.vm.service.element;
+package org.dartlang.vm.service.consumer;
 
 // This is a generated file.
 
-/**
- * A {@link StepOption} indicates which form of stepping is requested in a resume RPC.
- */
-public enum StepOption {
+import org.dartlang.vm.service.element.ReloadReport;
 
-  Into,
+public interface ReloadReportConsumer extends Consumer {
 
-  Out,
-
-  Over,
-
-  OverAsyncSuspension,
-
-  Rewind,
-
-  /**
-   * Represents a value returned by the VM but unknown to this client
-   */
-  Unknown
+  public void received(ReloadReport response);
 }

@@ -277,6 +277,33 @@ public class VmService extends VmServiceBase {
   }
 
   /**
+   * The [reloadSources] RPC is used to perform a hot reload of an Isolate's sources.
+   *
+   * @param force This parameter is optional and may be null.
+   * @param pause This parameter is optional and may be null.
+   * @param rootLibUri This parameter is optional and may be null.
+   * @param packagesUri This parameter is optional and may be null.
+   */
+  public void reloadSources(String isolateId, Boolean force, Boolean pause, String rootLibUri, String packagesUri, ReloadReportConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    if (force != null) params.addProperty("force", force);
+    if (pause != null) params.addProperty("pause", pause);
+    if (rootLibUri != null) params.addProperty("rootLibUri", rootLibUri);
+    if (packagesUri != null) params.addProperty("packagesUri", packagesUri);
+    request("reloadSources", params, consumer);
+  }
+
+  /**
+   * The [reloadSources] RPC is used to perform a hot reload of an Isolate's sources.
+   */
+  public void reloadSources(String isolateId, ReloadReportConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    request("reloadSources", params, consumer);
+  }
+
+  /**
    * The [removeBreakpoint] RPC is used to remove a breakpoint by its [id].
    */
   public void removeBreakpoint(String isolateId, String breakpointId, SuccessConsumer consumer) {
@@ -290,11 +317,13 @@ public class VmService extends VmServiceBase {
    * The [resume] RPC is used to resume execution of a paused isolate.
    *
    * @param step This parameter is optional and may be null.
+   * @param frameIndex This parameter is optional and may be null.
    */
-  public void resume(String isolateId, StepOption step, SuccessConsumer consumer) {
+  public void resume(String isolateId, StepOption step, Integer frameIndex, SuccessConsumer consumer) {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     if (step != null) params.addProperty("step", step.name());
+    if (frameIndex != null) params.addProperty("frameIndex", frameIndex);
     request("resume", params, consumer);
   }
 
@@ -475,6 +504,12 @@ public class VmService extends VmServiceBase {
       }
       if (responseType.equals("TypeArguments")) {
         ((GetObjectConsumer) consumer).received(new TypeArguments(json));
+        return;
+      }
+    }
+    if (consumer instanceof ReloadReportConsumer) {
+      if (responseType.equals("ReloadReport")) {
+        ((ReloadReportConsumer) consumer).received(new ReloadReport(json));
         return;
       }
     }

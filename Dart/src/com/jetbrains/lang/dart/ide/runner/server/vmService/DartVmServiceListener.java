@@ -59,6 +59,8 @@ public class DartVmServiceListener implements VmServiceListener {
       case IsolateExit:
         myDebugProcess.isolateExit(event.getIsolate());
         break;
+      case IsolateReload:
+        break;
       case IsolateRunnable:
         break;
       case IsolateStart:

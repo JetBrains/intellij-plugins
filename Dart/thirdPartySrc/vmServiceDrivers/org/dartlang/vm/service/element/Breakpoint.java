@@ -51,8 +51,8 @@ public class Breakpoint extends Obj {
     JsonObject elem = (JsonObject)json.get("location");
     if (elem == null) return null;
 
-    if (elem.get("type").getAsString() == "SourceLocation") return new SourceLocation(elem);
-    if (elem.get("type").getAsString() == "UnresolvedSourceLocation") return new UnresolvedSourceLocation(elem);
+    if (elem.get("type").getAsString().equals("SourceLocation")) return new SourceLocation(elem);
+    if (elem.get("type").getAsString().equals("UnresolvedSourceLocation")) return new UnresolvedSourceLocation(elem);
     return null;
   }
 
