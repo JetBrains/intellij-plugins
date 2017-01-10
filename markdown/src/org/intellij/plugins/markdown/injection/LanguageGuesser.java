@@ -50,6 +50,8 @@ public enum LanguageGuesser {
 
   @Nullable
   public Language guessLanguage(@NotNull String languageName) {
+    languageName = languageName.toLowerCase(Locale.US);
+
     // Add support for rmarkdown chunks (see http://rmarkdown.rstudio.com/authoring_rcodechunks.html)
     languageName = languageName.startsWith("{r ") ? "r" : languageName;
 
