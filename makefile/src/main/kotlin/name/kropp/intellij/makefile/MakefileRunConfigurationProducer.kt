@@ -8,6 +8,9 @@ import name.kropp.intellij.makefile.psi.MakefileTarget
 
 class MakefileRunConfigurationProducer : RunConfigurationProducer<MakefileRunConfiguration>(MakefileRunConfigurationType()) {
   override fun setupConfigurationFromContext(configuration : MakefileRunConfiguration, context: ConfigurationContext, sourceElement: Ref<PsiElement>?): Boolean {
+    if (context.psiLocation?.containingFile !is MakefileFile) {
+      return false
+    }
     configuration.filename = context.location?.virtualFile?.path ?: ""
     configuration.target = findTarget(context)?.name ?: ""
     configuration.name = configuration.target
