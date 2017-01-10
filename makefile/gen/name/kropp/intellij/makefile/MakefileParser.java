@@ -163,7 +163,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (conditional|command)*
+  // (conditional|command|variable-assignment)*
   public static boolean branch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "branch")) return false;
     Marker m = enter_section_(b, l, _NONE_, BRANCH, "<branch>");
@@ -177,13 +177,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // conditional|command
+  // conditional|command|variable-assignment
   private static boolean branch_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "branch_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = conditional(b, l + 1);
     if (!r) r = command(b, l + 1);
+    if (!r) r = variable_assignment(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

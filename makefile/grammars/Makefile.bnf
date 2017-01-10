@@ -56,7 +56,7 @@ prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.Makefi
 
 conditional ::= ('ifeq'|'ifneq'|'ifndef') condition comment? branch ('else' comment? branch)* 'endif' comment? {pin=1}
 
-branch ::= (conditional|command)*
+branch ::= (conditional|command|variable-assignment)*
 
 meta variable-assignment ::= variable assignment variable-value? {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')

@@ -13,4 +13,7 @@ public interface MakefileBranch extends PsiElement {
   @NotNull
   List<MakefileConditional> getConditionalList();
 
+  @NotNull
+  List<MakefileVariableAssignment> getVariableAssignmentList();
+
 }

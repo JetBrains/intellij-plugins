@@ -38,4 +38,10 @@ public class MakefileBranchImpl extends ASTWrapperPsiElement implements Makefile
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileConditional.class);
   }
 
+  @Override
+  @NotNull
+  public List<MakefileVariableAssignment> getVariableAssignmentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableAssignment.class);
+  }
+
 }
