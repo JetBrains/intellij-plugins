@@ -100,7 +100,7 @@ public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintSta
     VirtualFile config = myConfigFileSearcher.getConfig(collectedInfo.getState(), file);
 
     Future<List<JSAnnotationError>> highlight =
-      service.highlightImpl(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
+      service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
     List<JSAnnotationError> annotationErrors = JSLanguageServiceUtil.awaitFuture(highlight);
     if (annotationErrors == null) {
       return null;
