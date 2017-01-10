@@ -29,41 +29,20 @@ import java.util.concurrent.Future;
 
 public final class TsLintLanguageService extends JSLanguageServiceBase implements JSLanguageService {
 
+  @NotNull
   private final TsLintConfiguration mySettings;
 
   public static TsLintLanguageService getService(@NotNull Project project) {
     return ServiceManager.getService(project, TsLintLanguageService.class);
   }
 
-
+  @NotNull
   private final TsLintConfigFileSearcher myConfigFileSearcher;
 
   public TsLintLanguageService(@NotNull Project project) {
     super(project);
     myConfigFileSearcher = new TsLintConfigFileSearcher();
     mySettings = TsLintConfiguration.getInstance(myProject);
-  }
-
-  public final Future<List<JSAnnotationError>> highlightImpl(@NotNull PsiFile file, VirtualFile virtualFile, String content) {
-    JSLanguageServiceQueue process = getProcess();
-    if (process == null) {
-      return null;
-    }
-
-    String path = virtualFile == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
-    if (path == null) {
-      return null;
-    }
-
-    VirtualFile config = myConfigFileSearcher.getConfig(mySettings.getExtendedState().getState(), file);
-    String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
-    if (configPath == null) {
-      return null;
-    }
-
-
-    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(path, configPath, content);
-    return process.execute(command, createProcessor(path));
   }
 
   @Nullable
@@ -75,7 +54,34 @@ public final class TsLintLanguageService extends JSLanguageServiceBase implement
       return null;
     }
 
-    return highlightImpl(file, virtualFile, document.getText());
+
+    VirtualFile config = myConfigFileSearcher.getConfig(mySettings.getExtendedState().getState(), file);
+
+    return highlightImpl(virtualFile, config, document.getText());
+  }
+
+  public final Future<List<JSAnnotationError>> highlightImpl(@Nullable VirtualFile virtualFile,
+                                                             @Nullable VirtualFile config,
+                                                             @Nullable String content) {
+    JSLanguageServiceQueue process = getProcess();
+    if (process == null) {
+      return null;
+    }
+
+
+    String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
+    if (configPath == null) {
+      return null;
+    }
+
+    String path = virtualFile == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
+    if (path == null) {
+      return null;
+    }
+
+
+    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(path, configPath, content);
+    return process.execute(command, createProcessor(path));
   }
 
   @NotNull
