@@ -1,5 +1,16 @@
+/build/
+.gradle
+
 .idea/workspace.xml
-/intellij-markdown
+.idea/modules.xml
+.idea/misc.xml
+.idea/gradle.xml
+.idea/compiler.xml
+.idea/shelf/
+.idea/libraries/
+.idea/.name
+.idea/*.png
+*.iml
 
 /out
 

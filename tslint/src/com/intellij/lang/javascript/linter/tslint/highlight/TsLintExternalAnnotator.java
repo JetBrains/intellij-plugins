@@ -1,21 +1,25 @@
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.integration.JSAnnotationError;
 import com.intellij.lang.javascript.linter.*;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintBinFileVersionManager;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
-import com.intellij.lang.javascript.linter.tslint.execution.TsLintExternalRunner;
+import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,15 +32,11 @@ import java.util.stream.Collectors;
  * @author Irina.Chernushina on 6/3/2015.
  */
 public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintState> {
-  private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
 
   private static final TsLintExternalAnnotator INSTANCE_FOR_BATCH_INSPECTION = new TsLintExternalAnnotator(false);
-  private static final String TSLINT_CODE_TEMP_FILE_MAP_KEY_NAME = "TSLINT_CODE_TEMP_FILE_MAP_KEY";
-  private static final String TSLINT_CONFIG_TEMP_FILE_MAP_KEY_NAME = "TSLINT_CONFIG_TEMP_FILE_MAP_KEY";
 
-  private final FilesMirror myCodeFilesMirror;
-  private final FilesMirror myConfigFilesMirror;
-  private final TsLintBinFileVersionManager myBinFileVersionManager;
+  @NotNull
+  private final TsLintConfigFileSearcher myConfigFileSearcher;
 
   @NotNull
   public static TsLintExternalAnnotator getInstanceForBatchInspection() {
@@ -50,9 +50,7 @@ public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintSta
 
   public TsLintExternalAnnotator(boolean onTheFly) {
     super(onTheFly);
-    myCodeFilesMirror = new FilesMirror(TSLINT_CODE_TEMP_FILE_MAP_KEY_NAME, "tslint");
-    myConfigFilesMirror = new FilesMirror(TSLINT_CONFIG_TEMP_FILE_MAP_KEY_NAME, "tslint");
-    myBinFileVersionManager = new TsLintBinFileVersionManager();
+    myConfigFileSearcher = new TsLintConfigFileSearcher();
   }
 
   @NotNull
@@ -80,32 +78,66 @@ public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintSta
 
   @Nullable
   @Override
-  public JSLinterAnnotationResult<TsLintState> doAnnotate(@Nullable JSLinterInput<TsLintState> collectedInfo) {
-    if (collectedInfo == null) return null;
-
-    if (!StringUtil.isEmpty(System.getProperty("use.tslint.new"))) {
-      TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
-
-      Future<List<JSAnnotationError>> highlight =
-        service.highlightImpl(collectedInfo.getPsiFile(), collectedInfo.getVirtualFile(), collectedInfo.getFileContent());
-      List<JSAnnotationError> annotationErrors = JSLanguageServiceUtil.awaitFuture(highlight);
-      if (annotationErrors == null) {
-        return null;
-      }
-
-      List<JSLinterError> errors = annotationErrors
-        .stream()
-        .map(el -> ((JSLinterError)el)).collect(Collectors.toList());
-
-      return JSLinterAnnotationResult.createLinterResult(collectedInfo, errors, null);
+  protected JSLinterInput<TsLintState> collectInformation(@NotNull PsiFile psiFile, @Nullable Editor editor) {
+    JSLinterInput<TsLintState> result = super.collectInformation(psiFile, editor);
+    if (result == null) {
+      return null;
+    }
+    VirtualFile config = myConfigFileSearcher.getConfig(result.getState(), psiFile);
+    boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), psiFile, config);
+    if (skipProcessing) {
+      return null;
     }
 
-    return new TsLintExternalRunner(collectedInfo,
-                                    myCodeFilesMirror,
-                                    myConfigFilesMirror,
-                                    myBinFileVersionManager,
-                                    collectedInfo.getProject()).execute();
+    return result;
   }
+
+  @Nullable
+  @Override
+  public JSLinterAnnotationResult<TsLintState> annotate(@NotNull JSLinterInput<TsLintState> collectedInfo) {
+    TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
+    PsiFile file = collectedInfo.getPsiFile();
+    VirtualFile config = myConfigFileSearcher.getConfig(collectedInfo.getState(), file);
+
+    Future<List<JSAnnotationError>> highlight =
+      service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
+    List<JSAnnotationError> annotationErrors = JSLanguageServiceUtil.awaitFuture(highlight);
+    if (annotationErrors == null) {
+      return null;
+    }
+
+    List<JSLinterError> errors = annotationErrors
+      .stream()
+      .map(el -> ((JSLinterError)el)).collect(Collectors.toList());
+
+    return JSLinterAnnotationResult.createLinterResult(collectedInfo, errors, config);
+  }
+
+  public boolean saveConfigFileAndReturnSkipProcessing(@NotNull Project project,
+                                                       @NotNull PsiFile file,
+                                                       @NotNull VirtualFile config) {
+    return ReadAction.compute(() -> {
+      final FileDocumentManager manager = FileDocumentManager.getInstance();
+      Document document = manager.getCachedDocument(config);
+      if (document != null) {
+        boolean unsaved = manager.isDocumentUnsaved(document);
+        if (unsaved) {
+          ApplicationManager.getApplication().invokeLater(() -> {
+            Document newDocument = manager.getCachedDocument(config);
+            if (newDocument != null) {
+              FileDocumentManager.getInstance().saveDocument(newDocument);
+            }
+
+            DaemonCodeAnalyzer.getInstance(project).restart();
+          }, project.getDisposed());
+        }
+
+        return unsaved;
+      }
+      return false;
+    });
+  }
+
 
   @Override
   public void apply(@NotNull PsiFile file,

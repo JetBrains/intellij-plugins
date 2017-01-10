@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.IdeEventQueue;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NotNullLazyValue;
@@ -70,7 +71,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
 
-    ApplicationManager.getApplication().invokeLater(() -> PlatformImpl.startup(() -> {
+    ApplicationManager.getApplication().invokeLater(() -> runFX(() -> PlatformImpl.startup(() -> {
       myWebView = new WebView();
 
       updateFontSmoothingType(myWebView,
@@ -83,9 +84,10 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
       final Scene scene = new Scene(myWebView);
 
-      ApplicationManager.getApplication().invokeLater(() -> {
+      ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
         myPanel = new JFXPanelWrapper();
-        myPanel.setScene(scene);
+
+        Platform.runLater(() -> myPanel.setScene(scene));
 
         setHtml("");
         for (Runnable action : myInitActions) {
@@ -95,10 +97,14 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
         myPanelWrapper.add(myPanel, BorderLayout.CENTER);
         myPanelWrapper.repaint();
-      });
-    }));
+      }));
+    })));
 
     subscribeForGrayscaleSetting();
+  }
+
+  private static void runFX(@NotNull Runnable r) {
+    IdeEventQueue.unsafeNonblockingExecute(r);
   }
   
   private void runInPlatformWhenAvailable(@NotNull Runnable runnable) {

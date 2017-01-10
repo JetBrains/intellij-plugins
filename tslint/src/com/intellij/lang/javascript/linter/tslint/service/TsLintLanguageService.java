@@ -3,21 +3,16 @@ package com.intellij.lang.javascript.linter.tslint.service;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.lang.javascript.integration.JSAnnotationError;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
-import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser;
 import com.intellij.lang.javascript.linter.tslint.service.commands.TsLintGetErrorsCommand;
 import com.intellij.lang.javascript.linter.tslint.service.protocol.TsLintLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject;
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
@@ -27,26 +22,30 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 
-public final class TsLintLanguageService extends JSLanguageServiceBase implements JSLanguageService {
+public final class TsLintLanguageService extends JSLanguageServiceBase {
 
-  private final TsLintConfiguration mySettings;
 
   public static TsLintLanguageService getService(@NotNull Project project) {
     return ServiceManager.getService(project, TsLintLanguageService.class);
   }
 
 
-  private final TsLintConfigFileSearcher myConfigFileSearcher;
-
   public TsLintLanguageService(@NotNull Project project) {
     super(project);
-    myConfigFileSearcher = new TsLintConfigFileSearcher();
-    mySettings = TsLintConfiguration.getInstance(myProject);
   }
 
-  public final Future<List<JSAnnotationError>> highlightImpl(@NotNull PsiFile file, VirtualFile virtualFile, String content) {
+
+  public final Future<List<JSAnnotationError>> highlight(@Nullable VirtualFile virtualFile,
+                                                         @Nullable VirtualFile config,
+                                                         @Nullable String content) {
     JSLanguageServiceQueue process = getProcess();
     if (process == null) {
+      return null;
+    }
+
+
+    String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
+    if (configPath == null) {
       return null;
     }
 
@@ -55,27 +54,9 @@ public final class TsLintLanguageService extends JSLanguageServiceBase implement
       return null;
     }
 
-    VirtualFile config = myConfigFileSearcher.getConfig(mySettings.getExtendedState().getState(), file);
-    String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
-    if (configPath == null) {
-      return null;
-    }
 
-
-    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(path, configPath, content);
+    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(path, configPath, StringUtil.notNullize(content));
     return process.execute(command, createProcessor(path));
-  }
-
-  @Nullable
-  @Override
-  public final Future<List<JSAnnotationError>> highlight(@NotNull PsiFile file, @NotNull JSFileHighlightingInfo info) {
-    VirtualFile virtualFile = file.getVirtualFile();
-    Document document = info.updateContext.getOpenContents().get(virtualFile);
-    if (document == null) {
-      return null;
-    }
-
-    return highlightImpl(file, virtualFile, document.getText());
   }
 
   @NotNull
@@ -97,17 +78,6 @@ public final class TsLintLanguageService extends JSLanguageServiceBase implement
         return ContainerUtil.newArrayList(parser.getErrors());
       }
     };
-  }
-
-  @Override
-  public final boolean canHighlight(@NotNull PsiFile file) {
-    return TsLintConfiguration.getInstance(myProject).getExtendedState().isEnabled();
-  }
-
-  @NotNull
-  @Override
-  public final Condition<VirtualFile> getAcceptableFilesFilter() {
-    return TypeScriptLanguageServiceUtil.FILES_TO_PROCESS;
   }
 
   @Nullable
