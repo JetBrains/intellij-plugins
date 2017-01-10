@@ -370,7 +370,7 @@ abstract class VmServiceBase implements VmServiceConst {
         return;
       }
       if (!"streamNotify".equals(method)) {
-        Logging.getLogger().logError("Unkown event " + METHOD + ": " + method);
+        Logging.getLogger().logError("Unknown event " + METHOD + ": " + method);
         return;
       }
       JsonObject params;

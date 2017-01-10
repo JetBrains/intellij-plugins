@@ -305,7 +305,7 @@ public class VmServiceWrapper implements Disposable {
   public void resumeIsolate(@NotNull final String isolateId, @Nullable final StepOption stepOption) {
     addRequest(() -> {
       myLatestStep = stepOption;
-      myVmService.resume(isolateId, stepOption, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+      myVmService.resume(isolateId, stepOption, null, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
     });
   }
 

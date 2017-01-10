@@ -62,7 +62,6 @@ public interface Logger {
    * Log the given informational message.
    * 
    * @param message an explanation of why the error occurred or what it means
-   * @param exception the exception being logged
    */
   public void logInformation(String message);
 
