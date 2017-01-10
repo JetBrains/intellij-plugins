@@ -280,6 +280,46 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
+  /**
+   * Reloaded scripts need to have their breakpoints re-applied; re-set all existing breakpoints.
+   */
+  public void restoreBreakpointsForIsolate(@NotNull final String isolateId, Runnable onFinished) {
+    // Remove all existing VM breakpoints for this isolate.
+    myBreakpointHandler.removeAllVmBreakpoints(isolateId);
+
+    // Re-set existing breakpoints.
+    final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
+
+    final AtomicInteger counter = new AtomicInteger(xBreakpoints.size());
+
+    for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
+      addBreakpoint(isolateId, xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
+        @Override
+        void sourcePositionNotApplicable() {
+          checkDone();
+        }
+
+        @Override
+        public void received(Breakpoint vmBreakpoint) {
+          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
+          checkDone();
+        }
+
+        @Override
+        public void onError(RPCError error) {
+          myBreakpointHandler.breakpointFailed(xBreakpoint);
+          checkDone();
+        }
+
+        private void checkDone() {
+          if (counter.decrementAndGet() == 0 && onFinished != null) {
+            onFinished.run();
+          }
+        }
+      });
+    }
+  }
+
   public void addTemporaryBreakpoint(@NotNull final XSourcePosition position,
                                      @NotNull final String isolateId) {
     addBreakpoint(isolateId, position, new VmServiceConsumers.BreakpointConsumerWrapper() {
@@ -414,6 +454,7 @@ public class VmServiceWrapper implements Disposable {
     }));
   }
 
+  @SuppressWarnings("SameParameterValue")
   public void evaluateInTargetContext(@NotNull final String isolateId,
                                       @NotNull final String targetId,
                                       @NotNull final String expression,
