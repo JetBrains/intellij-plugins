@@ -197,7 +197,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     });
   }
 
-  private void scheduleConnect(@NotNull final String url) {
+  protected void scheduleConnect(@NotNull final String url) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       long timeout = (long)myTimeout;
       long startTime = System.currentTimeMillis();
