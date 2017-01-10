@@ -16,7 +16,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * @author Irina.Chernushina on 6/3/2015.
  */
-public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintState> {
+public final class TsLintExternalAnnotator extends JSLinterWithInspectionExternalAnnotator<TsLintState, TsLinterInput> {
 
   private static final TsLintExternalAnnotator INSTANCE_FOR_BATCH_INSPECTION = new TsLintExternalAnnotator(false);
 
@@ -78,26 +78,27 @@ public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintSta
 
   @Nullable
   @Override
-  protected JSLinterInput<TsLintState> collectInformation(@NotNull PsiFile psiFile, @Nullable Editor editor) {
-    JSLinterInput<TsLintState> result = super.collectInformation(psiFile, editor);
-    if (result == null) {
-      return null;
-    }
-    VirtualFile config = myConfigFileSearcher.getConfig(result.getState(), psiFile);
-    boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), psiFile, config);
+  protected TsLinterInput createInfo(Project project,
+                                     @NotNull PsiFile psiFile,
+                                     TsLintState state,
+                                     Document document,
+                                     String fileContent,
+                                     EditorColorsScheme colorsScheme) {
+    VirtualFile config = myConfigFileSearcher.getConfig(state, psiFile);
+    boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), config);
     if (skipProcessing) {
       return null;
     }
 
-    return result;
+    return new TsLinterInput(project, psiFile, document, fileContent, state, colorsScheme, config);
   }
+
 
   @Nullable
   @Override
-  public JSLinterAnnotationResult<TsLintState> annotate(@NotNull JSLinterInput<TsLintState> collectedInfo) {
+  public JSLinterAnnotationResult<TsLintState> annotate(@NotNull TsLinterInput collectedInfo) {
     TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
-    PsiFile file = collectedInfo.getPsiFile();
-    VirtualFile config = myConfigFileSearcher.getConfig(collectedInfo.getState(), file);
+    VirtualFile config = collectedInfo.getConfig();
 
     Future<List<JSAnnotationError>> highlight =
       service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
@@ -113,8 +114,11 @@ public class TsLintExternalAnnotator extends JSLinterExternalAnnotator<TsLintSta
     return JSLinterAnnotationResult.createLinterResult(collectedInfo, errors, config);
   }
 
+  protected void cleanNotification(@NotNull TsLinterInput collectedInfo) {
+    JSLinterEditorNotificationPanel.clearNotification(collectedInfo.getProject(), getInspectionClass(), collectedInfo.getVirtualFile());
+  }
+
   public boolean saveConfigFileAndReturnSkipProcessing(@NotNull Project project,
-                                                       @NotNull PsiFile file,
                                                        @NotNull VirtualFile config) {
     return ReadAction.compute(() -> {
       final FileDocumentManager manager = FileDocumentManager.getInstance();

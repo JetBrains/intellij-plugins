@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Irina.Chernushina on 6/3/2015.
  */
-public class TsLintInspection extends JSLinterInspection {
+public final class TsLintInspection extends JSLinterInspection {
   @NotNull
   @Override
   protected TsLintExternalAnnotator getExternalAnnotatorForBatchInspection() {
