@@ -8,6 +8,7 @@ import com.intellij.psi.PsiReference
 import name.kropp.intellij.makefile.psi.MakefileElementFactory
 import name.kropp.intellij.makefile.psi.MakefilePrerequisite
 import name.kropp.intellij.makefile.psi.MakefileTarget
+import name.kropp.intellij.makefile.psi.MakefileVariable
 
 class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiReference {
   override fun getElement() = prerequisite
@@ -17,6 +18,9 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
   override fun isReferenceTo(element: PsiElement?): Boolean {
     if (element is MakefileTarget) {
       return element.name == prerequisite.text
+    }
+    if (element is MakefileVariable) {
+      return "\$(${element.text})" == prerequisite.text
     }
     return false
   }
@@ -40,9 +44,18 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
     LookupElementBuilder.create(it).withIcon(MakefileTargetIcon)
   }.toTypedArray()
 
-  override fun resolve()
-      = (prerequisite.containingFile as MakefileFile).targets
-      .filter { it.name == prerequisite.text }
-      .map(::PsiElementResolveResult)
-      .firstOrNull()?.element
+  override fun resolve(): PsiElement? {
+    val match = Regex("\\\$\\((.*)\\)").find(prerequisite.text)
+    if (match != null) {
+      val name = match.groups[1]!!.value
+      return (prerequisite.containingFile as MakefileFile).variables
+          .filter { it.text == name }
+          .map(::PsiElementResolveResult)
+          .firstOrNull()?.element
+    }
+    return (prerequisite.containingFile as MakefileFile).targets
+        .filter { it.name == prerequisite.text }
+        .map(::PsiElementResolveResult)
+        .firstOrNull()?.element
+  }
 }
