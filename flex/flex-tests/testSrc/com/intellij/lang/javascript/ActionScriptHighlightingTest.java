@@ -2369,6 +2369,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     findAndInvokeActionWithExpectedCheck("Create Variable 'x'", "as", infoCollection);
   }
 
+  @JSTestOptions(JSTestOption.WithFlexSdk)
+  public void testCreateObjectVar() throws Exception {
+    final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
+    findAndInvokeActionWithExpectedCheck("Create Variable 'foo'", "as", infoCollection);
+  }
+
   public void testVectorWithSdk() throws Exception {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     FlexTestUtils.modifyConfigs(myProject, editor -> {
