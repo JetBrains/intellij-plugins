@@ -28,7 +28,7 @@ import java.util.Collections;
 /**
  * @author Irina.Chernushina on 6/3/2015.
  */
-public class TsLintView extends JSLinterBaseView<TsLintState> {
+public final class TsLintView extends JSLinterBaseView<TsLintState> {
   private static final JSLinterConfigFileTexts CONFIG_TEXTS = getConfigTexts();
 
   private final Project myProject;

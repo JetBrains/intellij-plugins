@@ -8,12 +8,20 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Irina.Chernushina on 6/4/2015.
  */
-public class TsLinterError extends JSLinterError implements JSAnnotationRangeError {
+public final class TsLinterError extends JSLinterError implements JSAnnotationRangeError {
+
+  @Nullable
   private final String myPath;
   private final int myEndLine;
   private final int myEndColumn;
 
-  public TsLinterError(String path, int line, int column, @NotNull String description, @Nullable String code, int endLine, int endColumn) {
+  public TsLinterError(@Nullable String path,
+                       int line,
+                       int column,
+                       int endLine,
+                       int endColumn,
+                       @NotNull String description,
+                       @Nullable String code) {
     super(line, column, description, code);
     myPath = path;
     myEndLine = endLine;

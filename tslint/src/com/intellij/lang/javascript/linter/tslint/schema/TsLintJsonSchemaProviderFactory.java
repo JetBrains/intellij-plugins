@@ -11,10 +11,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 
-public class TsLintJsonSchemaProviderFactory implements JsonSchemaProviderFactory {
+public final class TsLintJsonSchemaProviderFactory implements JsonSchemaProviderFactory {
 
-  public static final String TSLINT_SCHEMA_JSON = "tslint-schema.json";
-  public static final String TSLINT_JSON_SCHEMA_DIR = "/tslintJsonSchema";
+  private static final String TSLINT_SCHEMA_JSON = "tslint-schema.json";
+  private static final String TSLINT_JSON_SCHEMA_DIR = "/tslintJsonSchema";
 
   @NotNull
   private final List<JsonSchemaFileProvider> myProviders;

@@ -9,18 +9,24 @@ import org.jetbrains.annotations.Nullable;
  * @author Irina.Chernushina on 6/3/2015.
  */
 public class TsLintState implements JSLinterState {
-  private final boolean myCustomConfigFileUsed;
-  private String myCustomConfigFilePath;
+
+  @NotNull
   private final NodeJsInterpreterRef myInterpreterRef;
+
   private final String myPackagePath;
+
+  @Nullable
+  private String myCustomConfigFilePath;
+
+  private final boolean myCustomConfigFileUsed;
   @Nullable
   private final String myRulesDirectory;
 
-  public TsLintState(boolean customConfigFileUsed,
-                     String customConfigFilePath,
-                     NodeJsInterpreterRef nodePath,
-                     String packagePath,
-                     String rulesDirectory) {
+  public TsLintState(@NotNull NodeJsInterpreterRef nodePath,
+                     @Nullable String packagePath,
+                     boolean customConfigFileUsed,
+                     @Nullable String customConfigFilePath,
+                     @Nullable String rulesDirectory) {
     myCustomConfigFileUsed = customConfigFileUsed;
     myCustomConfigFilePath = customConfigFilePath;
     myInterpreterRef = nodePath;
@@ -32,14 +38,16 @@ public class TsLintState implements JSLinterState {
     return myCustomConfigFileUsed;
   }
 
+  @Nullable
   public String getCustomConfigFilePath() {
     return myCustomConfigFilePath;
   }
 
-  public void setCustomConfigFilePath(String customConfigFilePath) {
+  public void setCustomConfigFilePath(@Nullable String customConfigFilePath) {
     myCustomConfigFilePath = customConfigFilePath;
   }
 
+  @NotNull
   public NodeJsInterpreterRef getInterpreterRef() {
     return myInterpreterRef;
   }
@@ -58,8 +66,9 @@ public class TsLintState implements JSLinterState {
     private String myCustomConfigFilePath = "";
     private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
     private String myPackagePath = "";
+
     @Nullable
-    private String myRulesDirectory = null;
+    private String myRulesDirectory;
 
     public Builder() {
     }
@@ -98,7 +107,7 @@ public class TsLintState implements JSLinterState {
     }
 
     public TsLintState build() {
-      return new TsLintState(myCustomConfigFileUsed, myCustomConfigFilePath, myInterpreterRef, myPackagePath, myRulesDirectory);
+      return new TsLintState(myInterpreterRef, myPackagePath, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory);
     }
   }
 
@@ -115,7 +124,7 @@ public class TsLintState implements JSLinterState {
         : state.myCustomConfigFilePath != null) {
       return false;
     }
-    if (myInterpreterRef != null ? !myInterpreterRef.equals(state.myInterpreterRef) : state.myInterpreterRef != null) return false;
+    if (!myInterpreterRef.equals(state.myInterpreterRef)) return false;
     if (myPackagePath != null ? !myPackagePath.equals(state.myPackagePath) : state.myPackagePath != null) return false;
     if (myRulesDirectory != null ? !myRulesDirectory.equals(state.myRulesDirectory) : state.myRulesDirectory != null) return false;
 
@@ -126,7 +135,7 @@ public class TsLintState implements JSLinterState {
   public int hashCode() {
     int result = (myCustomConfigFileUsed ? 1 : 0);
     result = 31 * result + (myCustomConfigFilePath != null ? myCustomConfigFilePath.hashCode() : 0);
-    result = 31 * result + (myInterpreterRef != null ? myInterpreterRef.hashCode() : 0);
+    result = 31 * result + myInterpreterRef.hashCode();
     result = 31 * result + (myPackagePath != null ? myPackagePath.hashCode() : 0);
     result = 31 * result + (myRulesDirectory != null ? myRulesDirectory.hashCode() : 0);
     return result;
@@ -137,7 +146,7 @@ public class TsLintState implements JSLinterState {
     return "TsLintState{" +
            "myCustomConfigFileUsed=" + myCustomConfigFileUsed +
            ", myCustomConfigFilePath='" + myCustomConfigFilePath + '\'' +
-           ", myNodePath='" + myInterpreterRef + '\'' +
+           ", myNodePath='" + myInterpreterRef.getReferenceName() + '\'' +
            ", myPackagePath='" + myPackagePath + '\'' +
            ", myRulesDirectory='" + myRulesDirectory + '\'' +
            '}';

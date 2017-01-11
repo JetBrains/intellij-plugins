@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Irina.Chernushina on 11/24/2016.
  */
-public class TsLintDescriptor extends JSLinterDescriptor {
+public final class TsLintDescriptor extends JSLinterDescriptor {
 
   @Nullable
   @Override

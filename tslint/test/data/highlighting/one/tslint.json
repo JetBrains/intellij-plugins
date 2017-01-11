@@ -25,7 +25,7 @@
     "no-eval": true,
     "no-string-literal": true,
     "no-switch-case-fall-through": true,
-    "no-trailing-comma": true,
+    "trailing-comma": true,
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
     "no-unused-variable": false,

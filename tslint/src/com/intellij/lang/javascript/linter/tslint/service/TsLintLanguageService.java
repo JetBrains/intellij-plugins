@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
 
-
+  @NotNull
   public static TsLintLanguageService getService(@NotNull Project project) {
     return ServiceManager.getService(project, TsLintLanguageService.class);
   }

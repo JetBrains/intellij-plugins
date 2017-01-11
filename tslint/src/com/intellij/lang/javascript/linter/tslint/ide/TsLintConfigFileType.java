@@ -14,9 +14,7 @@ import javax.swing.*;
 public class TsLintConfigFileType extends LanguageFileType {
   public static final TsLintConfigFileType INSTANCE = new TsLintConfigFileType();
 
-  /**
-   * Creates a language file type for the specified language.
-   */
+
   protected TsLintConfigFileType() {
     super(JsonLanguage.INSTANCE);
   }

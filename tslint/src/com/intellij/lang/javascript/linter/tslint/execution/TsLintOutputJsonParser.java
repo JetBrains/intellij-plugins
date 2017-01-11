@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +20,14 @@ public final class TsLintOutputJsonParser {
 
   private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
 
+  @Nullable
   private final String myPath;
   private final boolean myMyZeroBasedRowCol;
 
   @NotNull
   private final List<TsLinterError> myErrors;
 
-  public TsLintOutputJsonParser(String path, final JsonElement root, boolean zeroBasedRowCol) {
+  public TsLintOutputJsonParser(@Nullable String path, final JsonElement root, boolean zeroBasedRowCol) {
     myPath = path;
     myMyZeroBasedRowCol = zeroBasedRowCol;
 
@@ -85,9 +87,11 @@ public final class TsLintOutputJsonParser {
     result.add(new TsLinterError(myPath,
                                  start.getFirst(),
                                  start.getSecond(),
+                                 end.getFirst(),
+                                 end.getSecond(),
                                  failure.getAsString(),
-                                 ruleName.getAsString(),
-                                 end.getFirst(), end.getSecond()));
+                                 ruleName.getAsString()
+    ));
 
     return result;
   }

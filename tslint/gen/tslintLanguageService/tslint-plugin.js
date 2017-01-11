@@ -20,6 +20,14 @@ var TSLintPlugin = (function () {
                 ("\"command\":\"" + command + "\",\"request_seq\":" + seq + "}");
             writer.write(resultJson);
         }
+        else {
+            var version = this.linterOptions.version;
+            var command = request.command;
+            var seq = request.seq;
+            var resultJson = ("{\"version\":\"" + version + "\",") +
+                ("\"command\":\"" + command + "\",\"request_seq\":" + seq + "}");
+            writer.write(resultJson);
+        }
     };
     TSLintPlugin.prototype.process = function (parsedObject) {
         switch (parsedObject.command) {

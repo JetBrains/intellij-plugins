@@ -36,6 +36,13 @@ export class TSLintPlugin implements LanguagePlugin {
                 `"command":"${command}","request_seq":${seq}}`;
 
             writer.write(resultJson);
+        } else {
+            let version = this.linterOptions.version;
+            let command = request.command;
+            let seq = request.seq;
+            let resultJson = `{"version":"${version}",` +
+                `"command":"${command}","request_seq":${seq}}`;
+            writer.write(resultJson);
         }
     }
 

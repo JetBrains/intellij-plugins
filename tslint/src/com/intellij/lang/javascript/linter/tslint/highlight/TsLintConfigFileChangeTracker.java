@@ -15,7 +15,7 @@ import static com.intellij.lang.javascript.linter.tslint.config.TsLintConfigurat
 /**
  * @author Irina.Chernushina on 6/4/2015.
  */
-public class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
+public final class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
 
   public TsLintConfigFileChangeTracker(@NotNull Project project) {
     super(project, JsonFileType.INSTANCE);
