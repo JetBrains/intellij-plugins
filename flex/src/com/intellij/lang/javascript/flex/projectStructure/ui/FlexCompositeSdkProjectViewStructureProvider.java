@@ -11,7 +11,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -71,11 +70,6 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
       }
     }
     return result;
-  }
-
-  @Override
-  public Object getData(final Collection<AbstractTreeNode> selected, final String dataName) {
-    return null;
   }
 
   private static class IndividualSdkOrderEntry implements ModuleJdkOrderEntry {

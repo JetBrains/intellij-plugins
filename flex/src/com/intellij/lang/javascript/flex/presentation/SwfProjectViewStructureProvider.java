@@ -298,9 +298,4 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
     String deeperSubpackage = getEmptyMiddlePackageQname(elements, from, to, currentSubpackage);
     return deeperSubpackage != null ? deeperSubpackage : currentSubpackage;
   }
-
-  @Override
-  public Object getData(Collection<AbstractTreeNode> selected, String dataName) {
-    return null;
-  }
 }

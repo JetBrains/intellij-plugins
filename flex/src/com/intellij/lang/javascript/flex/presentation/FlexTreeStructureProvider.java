@@ -110,11 +110,6 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
     return null;
   }
 
-  @Override
-  public Object getData(Collection<AbstractTreeNode> selected, String dataName) {
-    return null;
-  }
-
   private static final int INTERFACE_VALUE = 10;
   private static final int NAMESPACE_VALUE = 7;
   private static final int FUNCTION_VALUE = 5;

@@ -127,11 +127,6 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
     return FileUtil.toSystemDependentName(prevSlashIndex < 0 ? path : path.substring(prevSlashIndex + 1));
   }
 
-  @Nullable
-  public Object getData(final Collection<AbstractTreeNode> selected, final String dataName) {
-    return null;
-  }
-
   private static class SymlinkToLivePackageNode extends AbstractTreeNode<String> {
     @NotNull private final String mySymlinkPath;
 

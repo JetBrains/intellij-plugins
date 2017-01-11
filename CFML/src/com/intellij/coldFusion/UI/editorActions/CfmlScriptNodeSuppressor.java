@@ -51,10 +51,6 @@ public class CfmlScriptNodeSuppressor implements TreeStructureProvider, DumbAwar
     return result;
   }
 
-  public Object getData(Collection<AbstractTreeNode> selected, String dataName) {
-    return null;
-  }
-
   public static void suppress(VirtualFile file) {
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     file.putUserDataIfAbsent(MARKER, "");
