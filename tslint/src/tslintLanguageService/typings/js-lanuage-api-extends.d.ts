@@ -1,23 +1,60 @@
-interface PluginState {
-    tslintPackagePath: string;
-    additionalRootDirectory?: string;
-}
-
+/**
+ * NodeJS require function
+ */
 declare let require: any;
 
+/**
+ * Plugin state for starting the service
+ *
+ * see also js-language-service-api.d.ts
+ */
+interface PluginState {
+    /**
+     * TSLint nodejs package path
+     */
+    readonly tslintPackagePath: string;
+
+    /**
+     * TSLint configuration 'additional root' parameter
+     */
+    readonly additionalRootDirectory?: string;
+}
 
 interface TsLintRequest {
-    seq: number;
+    /**
+     * Unique id of the message
+     */
+    readonly seq: number;
 
-    type: string;
+    /**
+     * Message type (usually it is "request")
+     */
+    readonly type: string;
 
-    command: string;
+    /**
+     * Id of the command
+     */
+    readonly command: string;
 
-    arguments?: any;
+    /**
+     * Additional arguments
+     */
+    readonly arguments?: any;
 }
 
 interface GetErrorsArguments {
-    fileName: string;
-    configPath: string;
-    content: string;
+    /**
+     * Absolute path for the file to check
+     */
+    readonly fileName: string;
+
+    /**
+     * Absolute config path
+     */
+    readonly configPath: string;
+
+    /**
+     * Content of the file
+     */
+    readonly content: string;
 }
