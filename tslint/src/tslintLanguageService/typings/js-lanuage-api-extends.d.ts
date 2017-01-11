@@ -58,3 +58,15 @@ interface GetErrorsArguments {
      */
     readonly content: string;
 }
+
+interface FixErrorsArguments {
+    /**
+     * Absolute path for the file to check
+     */
+    readonly fileName: string;
+
+    /**
+     * Absolute config path
+     */
+    readonly configPath: string;
+}

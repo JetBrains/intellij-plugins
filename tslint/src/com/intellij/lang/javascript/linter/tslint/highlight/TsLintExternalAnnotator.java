@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
@@ -9,6 +10,7 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
+import com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -25,6 +27,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -84,7 +87,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                                      Document document,
                                      String fileContent,
                                      EditorColorsScheme colorsScheme) {
-    VirtualFile config = myConfigFileSearcher.getConfig(state, psiFile);
+    VirtualFile config = myConfigFileSearcher.getConfig(state, psiFile.getVirtualFile());
     boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), config);
     if (skipProcessing) {
       return null;
@@ -144,9 +147,31 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                     @Nullable JSLinterAnnotationResult<TsLintState> annotationResult,
                     @NotNull AnnotationHolder holder) {
     if (annotationResult == null) return;
+    TsLintConfigurable configurable = new TsLintConfigurable(file.getProject(), true);
+
+
+    IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
+    JSLinterStandardFixes fixes = new JSLinterStandardFixes() {
+      @Override
+      public List<IntentionAction> createListForError(@Nullable VirtualFile configFile,
+                                                      @NotNull UntypedJSLinterConfigurable configurable,
+                                                      @NotNull JSLinterErrorBase errorBase) {
+        List<IntentionAction> defaultIntentions = super.createListForError(configFile, configurable, errorBase);
+        if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
+          ArrayList<IntentionAction> result = ContainerUtil.newArrayList(defaultIntentions);
+          result.add(fixAllFileIntention);
+
+          return result;
+        }
+
+        return defaultIntentions;
+      }
+    };
+
+
     new JSLinterAnnotationsBuilder<>(file, annotationResult, holder, TsLintInspection.getHighlightDisplayKey(),
-                                     new TsLintConfigurable(file.getProject(), true), "TSLint: ",
-                                     getInspectionClass(), JSLinterStandardFixes.DEFAULT)
+                                     configurable, "TSLint: ",
+                                     getInspectionClass(), fixes)
       .setHighlightingGranularity(HighlightingGranularity.element).apply();
   }
 }

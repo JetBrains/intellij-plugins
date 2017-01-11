@@ -7,7 +7,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +32,7 @@ public final class TsLintConfigFileSearcher {
     return null;
   }
 
-  public VirtualFile getConfig(@NotNull TsLintState state, @NotNull PsiFile currentFile) {
+  public VirtualFile getConfig(@NotNull TsLintState state, @NotNull VirtualFile virtualFile) {
     if (state.isCustomConfigFileUsed()) {
       final String configFilePath = state.getCustomConfigFilePath();
       if (StringUtil.isEmptyOrSpaces(configFilePath)) {
@@ -43,7 +42,7 @@ public final class TsLintConfigFileSearcher {
       return VfsUtil.findFileByIoFile(configFile, false);
     }
 
-    return lookupParentConfig(currentFile.getVirtualFile());
+    return lookupParentConfig(virtualFile);
   }
 
   @Nullable

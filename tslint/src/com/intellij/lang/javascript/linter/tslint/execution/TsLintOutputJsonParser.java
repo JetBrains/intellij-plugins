@@ -19,6 +19,7 @@ import java.util.List;
 public final class TsLintOutputJsonParser {
 
   private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
+  public static final String FIX_PROPERTY = "fix";
 
   @Nullable
   private final String myPath;
@@ -90,7 +91,8 @@ public final class TsLintOutputJsonParser {
                                  end.getFirst(),
                                  end.getSecond(),
                                  failure.getAsString(),
-                                 ruleName.getAsString()
+                                 ruleName.getAsString(),
+                                 object.has(FIX_PROPERTY)
     ));
 
     return result;

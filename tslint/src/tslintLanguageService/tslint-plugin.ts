@@ -1,5 +1,6 @@
 namespace TsLintCommands {
     export let GetErrors: string = "GetErrors";
+    export let FixErrors: string = "FixErrors";
 }
 
 const enum TsLintVersion {
@@ -13,6 +14,7 @@ type LinerOptions = {
     linterConfiguration: any;
     version?: string
 }
+let fs = require("fs");
 
 export class TSLintPlugin implements LanguagePlugin {
 
@@ -22,6 +24,19 @@ export class TSLintPlugin implements LanguagePlugin {
     constructor(state: PluginState) {
         this.linterOptions = resolveTsLint(state);
         this.additionalRulesDirectory = state.additionalRootDirectory;
+    }
+
+    process(parsedObject: TsLintRequest): Object | null {
+        switch (parsedObject.command) {
+            case TsLintCommands.GetErrors: {
+                return this.getErrors(parsedObject.arguments);
+            }
+            case TsLintCommands.FixErrors: {
+                return this.fixErrors(parsedObject.arguments);
+            }
+        }
+
+        return null;
     }
 
     onMessage(p: string, writer: MessageWriter): void {
@@ -46,53 +61,56 @@ export class TSLintPlugin implements LanguagePlugin {
         }
     }
 
-    process(parsedObject: TsLintRequest): Object | null {
-        switch (parsedObject.command) {
-            case TsLintCommands.GetErrors: {
-                let result = this.getErrors(parsedObject.arguments);
-                return result;
-            }
-        }
-
-        return null;
+    getErrors(toProcess: GetErrorsArguments): {} {
+        let options = this.getOptions(false);
+        return this.processLinting(toProcess.fileName, toProcess.content, toProcess.configPath, options);
     }
 
-    getErrors(toProcess: GetErrorsArguments): {} {
-        let options = {
+    fixErrors(toProcess: FixErrorsArguments): {} {
+        let options = this.getOptions(true);
+
+        let contents = fs.readFileSync(toProcess.fileName, "utf8");
+
+        return this.processLinting(toProcess.fileName, contents, toProcess.configPath, options);
+    }
+
+    private getOptions(fix: boolean) {
+        return {
             formatter: "json",
-            fix: false,
+            fix: fix,
             rulesDirectory: this.additionalRulesDirectory,
             formattersDirectory: undefined
-        }
+        };
+    }
 
+    processLinting(fileName: string, content: string | null | undefined, configFileName: string, options: {}) {
         let linterOptions = this.linterOptions;
         let linter: any = this.linterOptions.linter;
         let result = {}
 
-        let configuration = this.getConfiguration(toProcess, linter);
+        let configuration = this.getConfiguration(fileName, configFileName, linter);
         if (linterOptions.versionKind == TsLintVersion.VERSION_4_AND_HIGHER) {
             let tslint = new linter(options);
-            tslint.lint(toProcess.fileName, toProcess.content, configuration);
+            tslint.lint(fileName, content, configuration);
             result = tslint.getResult();
         }
         else {
             (<any>options).configuration = configuration;
-            let tslint = new (<any>linter)(toProcess.fileName, toProcess.content, options);
+            let tslint = new (<any>linter)(fileName, content, options);
             result = tslint.lint();
         }
 
         return result;
     }
 
-    getConfiguration(toProcess: GetErrorsArguments, linter: any) {
+    getConfiguration(fileName: string, configFileName: string, linter: any) {
 
         let linterConfiguration = this.linterOptions.linterConfiguration;
-        ;
         let versionKind = this.linterOptions.versionKind;
         if (versionKind == TsLintVersion.VERSION_4_AND_HIGHER) {
-            let configurationResult: any = linterConfiguration.findConfiguration(toProcess.configPath, toProcess.fileName);
+            let configurationResult: any = linterConfiguration.findConfiguration(configFileName, fileName);
             if (!configurationResult) {
-                throw new Error("Cannot find configuration " + toProcess.configPath);
+                throw new Error("Cannot find configuration " + configFileName);
             }
             if (configurationResult && configurationResult.error) {
                 throw configurationResult.error;
@@ -100,7 +118,7 @@ export class TSLintPlugin implements LanguagePlugin {
 
             return configurationResult.results;
         } else {
-            return linter.findConfiguration(toProcess.configPath, toProcess.fileName);
+            return linter.findConfiguration(configFileName, fileName);
         }
     }
 }

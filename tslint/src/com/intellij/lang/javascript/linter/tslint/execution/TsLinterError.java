@@ -14,6 +14,7 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
   private final String myPath;
   private final int myEndLine;
   private final int myEndColumn;
+  private final boolean myHasFix;
 
   public TsLinterError(@Nullable String path,
                        int line,
@@ -21,11 +22,13 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
                        int endLine,
                        int endColumn,
                        @NotNull String description,
-                       @Nullable String code) {
+                       @Nullable String code,
+                       boolean hasFix) {
     super(line, column, description, code);
     myPath = path;
     myEndLine = endLine;
     myEndColumn = endColumn;
+    myHasFix = hasFix;
   }
 
   @Override
@@ -42,5 +45,9 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
   @Override
   public String getAbsoluteFilePath() {
     return myPath;
+  }
+
+  public boolean hasFix() {
+    return myHasFix;
   }
 }

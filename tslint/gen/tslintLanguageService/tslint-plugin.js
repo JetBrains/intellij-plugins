@@ -2,12 +2,25 @@
 var TsLintCommands;
 (function (TsLintCommands) {
     TsLintCommands.GetErrors = "GetErrors";
+    TsLintCommands.FixErrors = "FixErrors";
 })(TsLintCommands || (TsLintCommands = {}));
+var fs = require("fs");
 var TSLintPlugin = (function () {
     function TSLintPlugin(state) {
         this.linterOptions = resolveTsLint(state);
         this.additionalRulesDirectory = state.additionalRootDirectory;
     }
+    TSLintPlugin.prototype.process = function (parsedObject) {
+        switch (parsedObject.command) {
+            case TsLintCommands.GetErrors: {
+                return this.getErrors(parsedObject.arguments);
+            }
+            case TsLintCommands.FixErrors: {
+                return this.fixErrors(parsedObject.arguments);
+            }
+        }
+        return null;
+    };
     TSLintPlugin.prototype.onMessage = function (p, writer) {
         var request = JSON.parse(p);
         var result = this.process(request);
@@ -29,46 +42,48 @@ var TSLintPlugin = (function () {
             writer.write(resultJson);
         }
     };
-    TSLintPlugin.prototype.process = function (parsedObject) {
-        switch (parsedObject.command) {
-            case TsLintCommands.GetErrors: {
-                var result = this.getErrors(parsedObject.arguments);
-                return result;
-            }
-        }
-        return null;
-    };
     TSLintPlugin.prototype.getErrors = function (toProcess) {
-        var options = {
+        var options = this.getOptions(false);
+        return this.processLinting(toProcess.fileName, toProcess.content, toProcess.configPath, options);
+    };
+    TSLintPlugin.prototype.fixErrors = function (toProcess) {
+        var options = this.getOptions(true);
+        var contents = fs.readFileSync(toProcess.fileName, "utf8");
+        return this.processLinting(toProcess.fileName, contents, toProcess.configPath, options);
+    };
+    TSLintPlugin.prototype.getOptions = function (fix) {
+        return {
             formatter: "json",
-            fix: false,
+            fix: fix,
             rulesDirectory: this.additionalRulesDirectory,
             formattersDirectory: undefined
         };
+    };
+    TSLintPlugin.prototype.processLinting = function (fileName, content, configFileName, options) {
         var linterOptions = this.linterOptions;
         var linter = this.linterOptions.linter;
         var result = {};
-        var configuration = this.getConfiguration(toProcess, linter);
+        var configuration = this.getConfiguration(fileName, configFileName, linter);
         if (linterOptions.versionKind == 1 /* VERSION_4_AND_HIGHER */) {
             var tslint = new linter(options);
-            tslint.lint(toProcess.fileName, toProcess.content, configuration);
+            tslint.lint(fileName, content, configuration);
             result = tslint.getResult();
         }
         else {
             options.configuration = configuration;
-            var tslint = new linter(toProcess.fileName, toProcess.content, options);
+            var tslint = new linter(fileName, content, options);
             result = tslint.lint();
         }
         return result;
     };
-    TSLintPlugin.prototype.getConfiguration = function (toProcess, linter) {
+    TSLintPlugin.prototype.getConfiguration = function (fileName, configFileName, linter) {
         var linterConfiguration = this.linterOptions.linterConfiguration;
         ;
         var versionKind = this.linterOptions.versionKind;
         if (versionKind == 1 /* VERSION_4_AND_HIGHER */) {
-            var configurationResult = linterConfiguration.findConfiguration(toProcess.configPath, toProcess.fileName);
+            var configurationResult = linterConfiguration.findConfiguration(configFileName, fileName);
             if (!configurationResult) {
-                throw new Error("Cannot find configuration " + toProcess.configPath);
+                throw new Error("Cannot find configuration " + configFileName);
             }
             if (configurationResult && configurationResult.error) {
                 throw configurationResult.error;
@@ -76,7 +91,7 @@ var TSLintPlugin = (function () {
             return configurationResult.results;
         }
         else {
-            return linter.findConfiguration(toProcess.configPath, toProcess.fileName);
+            return linter.findConfiguration(configFileName, fileName);
         }
     };
     return TSLintPlugin;
