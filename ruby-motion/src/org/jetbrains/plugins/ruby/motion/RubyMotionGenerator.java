@@ -84,7 +84,7 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
 
   @NotNull
   @Override
-  public JPanel getSettingsPanel(RubyMotionSettingsHolder settings, @NotNull Disposable parentDisposable) {
+  public JPanel getSettingsPanel(@NotNull RubyMotionSettingsHolder settings, @NotNull Disposable parentDisposable) {
     if (myGeneratorTab == null) {
       myGeneratorTab = new RubyMotionGeneratorTabBase(settings);
       Disposer.register(parentDisposable, () -> myGeneratorTab = null);
@@ -98,11 +98,5 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
   @Override
   public String getParentGroupName() {
     return "Mobile";
-  }
-
-  @NotNull
-  @Override
-  public RubyMotionSettingsHolder getSavedSettings() {
-    return mySettings;
   }
 }
