@@ -15,7 +15,7 @@ class TsLintLanguageServiceProtocol(project: Project, readyConsumer: Consumer<*>
 
   override fun getNodeInterpreter(): String? {
     val extendedState = TsLintConfiguration.getInstance(myProject).extendedState
-    return JSLanguageServiceUtil.getInterpreterPathIfValid(extendedState.state.interpreterRef?.resolve(myProject))
+    return JSLanguageServiceUtil.getInterpreterPathIfValid(extendedState.state.interpreterRef.resolve(myProject))
   }
 
   override fun createState(): JSLanguageServiceInitialState {

@@ -2,8 +2,8 @@ package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.intellij.lang.javascript.integration.JSAnnotationError;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser;
+import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.service.commands.TsLintGetErrorsCommand;
 import com.intellij.lang.javascript.linter.tslint.service.protocol.TsLintLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.*;
@@ -35,7 +35,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
 
-  public final Future<List<JSAnnotationError>> highlight(@Nullable VirtualFile virtualFile,
+  public final Future<List<TsLinterError>> highlight(@Nullable VirtualFile virtualFile,
                                                          @Nullable VirtualFile config,
                                                          @Nullable String content) {
     JSLanguageServiceQueue process = getProcess();
@@ -60,11 +60,11 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @NotNull
-  private static JSLanguageServiceCommandProcessor<List<JSAnnotationError>> createProcessor(@NotNull String path) {
-    return new JSLanguageServiceCommandProcessor<List<JSAnnotationError>>() {
+  private static JSLanguageServiceCommandProcessor<List<TsLinterError>> createProcessor(@NotNull String path) {
+    return new JSLanguageServiceCommandProcessor<List<TsLinterError>>() {
       @Nullable
       @Override
-      public List<JSAnnotationError> process(@NotNull JSLanguageServiceObject serviceObject,
+      public List<TsLinterError> process(@NotNull JSLanguageServiceObject serviceObject,
                                              @NotNull JSLanguageServiceAnswer answer) {
         JsonObject element = answer.getElement();
         JsonElement body = element.get("body");
