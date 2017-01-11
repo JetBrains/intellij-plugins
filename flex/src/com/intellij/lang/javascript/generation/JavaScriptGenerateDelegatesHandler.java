@@ -207,9 +207,11 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
         attributeListWrapper.overrideAccessType(JSAttributeList.AccessType.PUBLIC);
         attributeListWrapper
           .overrideModifier(JSAttributeList.ModifierType.STATIC, field.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC));
-        attributeListWrapper.overrideModifiers(false, JSAttributeList.ModifierType.NATIVE, JSAttributeList.ModifierType.DYNAMIC,
-                                               JSAttributeList.ModifierType.FINAL, JSAttributeList.ModifierType.OVERRIDE,
-                                               JSAttributeList.ModifierType.VIRTUAL);
+        for (JSAttributeList.ModifierType modifierType : new JSAttributeList.ModifierType[]{JSAttributeList.ModifierType.NATIVE,
+          JSAttributeList.ModifierType.DYNAMIC, JSAttributeList.ModifierType.FINAL, JSAttributeList.ModifierType.OVERRIDE,
+          JSAttributeList.ModifierType.VIRTUAL}) {
+          attributeListWrapper.overrideModifier(modifierType, false);
+        }
       }
 
       @Override
