@@ -2,10 +2,10 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
-import com.intellij.lexer.HtmlLexer
+import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.psi.xml.XmlTokenType
 
-class VueLexer : HtmlLexer(), VueHandledLexer {
+class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
   init {
     registerHandler(XmlTokenType.XML_NAME, VueLangAttributeHandler())
   }
@@ -32,5 +32,4 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
   override fun setSeenStyleType() {
     seenStylesheetType = true
   }
-
 }
