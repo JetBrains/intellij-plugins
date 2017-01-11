@@ -15,7 +15,7 @@
 
 package com.intellij.struts2;
 
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.ApplicationComponentAdapter;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
@@ -34,14 +34,8 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsApplicationComponent implements ApplicationComponent {
-
-  @NonNls
-  @NotNull
-  public String getComponentName() {
-    return "Struts2ApplicationComponent";
-  }
-
+public class StrutsApplicationComponent implements ApplicationComponentAdapter {
+  @Override
   public void initComponent() {
     // TODO remove, this should not be needed --> DOM unique name highlighting not working
     ElementPresentationManager.registerNameProvider((NullableFunction<Object, String>)o -> {
@@ -53,9 +47,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     registerDocumentationProviders();
-  }
-
-  public void disposeComponent() {
   }
 
   private static void registerDocumentationProviders() {

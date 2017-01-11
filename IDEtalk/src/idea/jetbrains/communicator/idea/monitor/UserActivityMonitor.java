@@ -15,8 +15,9 @@
  */
 package jetbrains.communicator.idea.monitor;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.ApplicationComponentAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerAdapter;
@@ -26,12 +27,10 @@ import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.UserPresence;
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.event.AWTEventListener;
-import java.awt.event.KeyEvent;
 
 /**
  * @author Kir
@@ -40,7 +39,7 @@ import java.awt.event.KeyEvent;
  *
  * @see Transport#setOwnPresence(UserPresence)
  */
-public class UserActivityMonitor implements ApplicationComponent, Runnable {
+public class UserActivityMonitor implements ApplicationComponentAdapter, Disposable, Runnable {
   private static final Logger LOG = Logger.getLogger(UserActivityMonitor.class);
 
   private static final int REFRESH_INTERVAL = 60 * 1000;
@@ -56,13 +55,6 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
 
   public UserActivityMonitor(ProjectManager projectManager) {
     myProjectManager = projectManager;
-  }
-
-  @Override
-  @NotNull
-  @NonNls
-  public String getComponentName() {
-    return "UserActivityMonitor";
   }
 
   @Override
@@ -98,7 +90,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
   }
 
   @Override
-  public void disposeComponent() {
+  public void dispose() {
     myStop = true;
     try {
       while (!myThreadDisposed) {
