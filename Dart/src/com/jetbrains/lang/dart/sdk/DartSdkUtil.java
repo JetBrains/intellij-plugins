@@ -20,7 +20,6 @@ import com.intellij.util.BooleanFunction;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,9 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DartSdkUtil {
   private static final Map<Pair<File, Long>, String> ourVersions = new HashMap<>();
@@ -165,21 +162,12 @@ public class DartSdkUtil {
     }
 
     final String[] knownPaths = PropertiesComponent.getInstance().getValues(propertyKey);
-
     if (knownPaths != null && knownPaths.length > 0) {
-      final SmartList<String> validPaths = new SmartList<>();
       for (String path : knownPaths) {
-        if (pathChecker.fun(path)) {
-          validPaths.add(path);
-          validPathsForUI.add(FileUtil.toSystemDependentName(path));
+        final String pathSD = FileUtil.toSystemDependentName(path);
+        if (!pathSD.equals(currentPath) && pathChecker.fun(path)) {
+          validPathsForUI.add(pathSD);
         }
-      }
-
-      if (validPaths.size() == 0) {
-        PropertiesComponent.getInstance().unsetValue(propertyKey);
-      }
-      else if (validPaths.size() < knownPaths.length) {
-        PropertiesComponent.getInstance().setValues(propertyKey, ArrayUtil.toStringArray(validPaths));
       }
     }
 
@@ -196,7 +184,7 @@ public class DartSdkUtil {
   }
 
   private static void updateKnownPaths(@NotNull final String propertyKey, @Nullable final String oldPath, @NotNull final String newPath) {
-    final THashSet<String> knownPaths = new THashSet<>();
+    final List<String> knownPaths = new ArrayList<>();
 
     final String[] oldKnownPaths = PropertiesComponent.getInstance().getValues(propertyKey);
     if (oldKnownPaths != null) {
@@ -204,11 +192,12 @@ public class DartSdkUtil {
     }
 
     if (oldPath != null) {
-      knownPaths.add(oldPath);
+      knownPaths.remove(oldPath);
+      knownPaths.add(0, oldPath);
     }
 
-    // do not store current path - we do not need it as we know it anyway
     knownPaths.remove(newPath);
+    knownPaths.add(0, newPath);
 
     if (knownPaths.isEmpty()) {
       PropertiesComponent.getInstance().unsetValue(propertyKey);
