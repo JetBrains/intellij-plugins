@@ -1,6 +1,3 @@
-// import * as tslint from 'tslint';
-
-
 namespace TsLintCommands {
     export let GetErrors: string = "GetErrors";
 }
@@ -9,7 +6,13 @@ const enum TsLintVersion {
     VERSION_3_AND_BEFORE,
     VERSION_4_AND_HIGHER
 }
-type LinerOptions = {linter?: any, versionKind?: TsLintVersion, linterConfiguration: any, version?: string}
+
+type LinerOptions = {
+    linter?: any;
+    versionKind?: TsLintVersion;
+    linterConfiguration: any;
+    version?: string
+}
 
 export class TSLintPlugin implements LanguagePlugin {
 

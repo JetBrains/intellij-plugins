@@ -1,4 +1,3 @@
-// import * as tslint from 'tslint';
 "use strict";
 var TsLintCommands;
 (function (TsLintCommands) {
