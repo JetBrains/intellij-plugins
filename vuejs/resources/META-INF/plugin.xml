@@ -10,5 +10,6 @@
     <fileTypeFactory implementation="org.jetbrains.vuejs.VueFileTypeFactory" />
     <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.language.VueParserDefinition" />
     <lang.syntaxHighlighterFactory language="Vue" implementationClass="org.jetbrains.vuejs.language.VueSyntaxHighlighterFactory" />
+    <resolveScopeProvider implementation="org.jetbrains.vuejs.VueTypeScriptResolveScopeProvider" />
   </extensions>
 </idea-plugin>

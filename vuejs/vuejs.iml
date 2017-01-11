@@ -14,5 +14,7 @@
     <orderEntry type="module" module-name="xml-psi-impl" />
     <orderEntry type="module" module-name="core-impl" />
     <orderEntry type="module" module-name="analysis-impl" />
+    <orderEntry type="module" module-name="javascript-psi-impl" />
+    <orderEntry type="module" module-name="indexing-impl" />
   </component>
 </module>
