@@ -64,7 +64,7 @@ public class DartServerRootsHandler {
   }
 
   private void updateRoots() {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(myProject);
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
       DartAnalysisServerService.getInstance(myProject).stopServer();
     }

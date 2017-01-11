@@ -24,9 +24,12 @@ public class AnalysisServerStatusAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(AnActionEvent e) {
+    final Project project = e.getProject();
+    if (project == null) return;
+
     DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
     if (builder.showQuery(null)) {
-      builder.sendFeedback(e.getProject(), null, null);
+      builder.sendFeedback(project, null, null);
     }
   }
 

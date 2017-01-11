@@ -20,7 +20,7 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     return "Create an issue on GitHub?";
   }
 
-  public void sendFeedback(@Nullable Project project, @Nullable String errorMessage, @Nullable String serverLog) {
+  public void sendFeedback(@NotNull Project project, @Nullable String errorMessage, @Nullable String serverLog) {
     final ApplicationInfoEx appInfo = ApplicationInfoEx.getInstanceEx();
     boolean eap = appInfo.isEAP();
     String ijBuild = eap ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
@@ -51,12 +51,8 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     BrowserUtil.browse(urlTemplate, project);
   }
 
-  protected String getSdkVersion(@Nullable Project project) {
-    DartSdk sdk = getSdk(project);
+  protected String getSdkVersion(@NotNull Project project) {
+    DartSdk sdk = DartSdk.getDartSdk(project);
     return sdk == null ? "<NO SDK>" : sdk.getVersion();
-  }
-
-  protected DartSdk getSdk(@Nullable Project project) {
-    return project == null ? DartSdk.getGlobalDartSdk() : DartSdk.getDartSdk(project);
   }
 }

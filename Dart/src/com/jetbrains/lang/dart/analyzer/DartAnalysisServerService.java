@@ -1697,7 +1697,7 @@ public class DartAnalysisServerService implements Disposable {
             myPreviousTime = System.currentTimeMillis();
           });
           if (reportIt[0]) {
-            builder.sendFeedback(null, errorMessage, debugLog);
+            builder.sendFeedback(myProject, errorMessage, debugLog);
           }
           else {
             LOG.warn(errorMessage);
