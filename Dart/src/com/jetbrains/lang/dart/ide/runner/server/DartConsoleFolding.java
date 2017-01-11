@@ -7,7 +7,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +17,7 @@ import java.util.Locale;
 
 public class DartConsoleFolding extends ConsoleFolding {
 
-  public static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
+  private static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
   private static final String TEST_RUNNER_MARKER = "pub.dart.snapshot run test:test -r json "; // see DartTestRunningState.startProcess()
 
   @Override
@@ -26,10 +25,11 @@ public class DartConsoleFolding extends ConsoleFolding {
     // fold Dart VM command line created in DartCommandLineRunningState.createCommandLine() together with the following "Observatory listening on ..." message
     if (line.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) return true;
 
-    if (!line.contains(DART_MARKER)) return false;
+    final int index = line.indexOf(DART_MARKER);
+    if (index < 0) return false;
 
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    return sdk != null && line.startsWith(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)) + " ");
+    final String probablySdkPath = line.substring(0, index);
+    return DartSdkUtil.isDartSdkHome(probablySdkPath);
   }
 
   @Nullable
