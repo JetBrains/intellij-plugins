@@ -53,7 +53,7 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
     @NotNull final Module module)
   {
     final RubyMotionUtilImpl.ProjectType projectType = settings.getProjectType();
-    final Sdk sdk = settings.getSdk();
+    final Sdk sdk = settings.getRVMCheckboxGemsetSdk();
     RModuleUtil.getInstance().changeModuleSdk(sdk, module);
 
     module.putUserData(RubyMotionUtilImpl.PROJECT_TYPE, projectType);
