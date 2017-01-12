@@ -5,9 +5,9 @@ class C2a extends C2 {
   garvl(x) {
     m();
     if (x) n(); else {
+      int i=0;
       m();
     }
-<caret>    int i=0;
     do i++;
     while (i < 3);
   }

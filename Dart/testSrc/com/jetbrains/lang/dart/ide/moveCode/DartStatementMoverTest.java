@@ -11,7 +11,7 @@ public class DartStatementMoverTest extends DartCodeMoverTest {
   }
 
   public void testVarIfDo() {
-    doTest(); // Move VAR above IF and below DO
+    doTest(); // Move VAR into IF and below DO (moves up one line too far currently)
   }
 
   public void testDoIfBody() {
@@ -19,6 +19,18 @@ public class DartStatementMoverTest extends DartCodeMoverTest {
   }
 
   public void testVarIfCall() {
-    doTest(); // Move VAR above CALL and below IF
+    doTest(); // Move VAR above CALL and into IF
+  }
+
+  public void testNestedIf1() {
+    doTest(); // Move markForCheck() up one and down one
+  }
+
+  public void testNestedIf2() {
+    doTest(); // Move selectedItem up one and below nested IF
+  }
+
+  public void testNestedIf3() {
+    doTest(); // Move detectChanges() up above nexted IF and down one
   }
 }
