@@ -10,7 +10,6 @@ import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -24,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.indexing.FileBasedIndex;
 
 import java.io.File;
@@ -120,7 +118,8 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   public void testRenameMethodOfInterface2() throws Exception {
-    doTest("test2", "js2");
+    final String name = getTestName(false);
+    doTest("test2", name + "_after." + "js2", false, name + "." + "js2");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
