@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.linter.tslint.execution;
 
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError;
 import com.intellij.lang.javascript.linter.JSLinterError;
+import com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +15,9 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
   private final String myPath;
   private final int myEndLine;
   private final int myEndColumn;
-  private final boolean myHasFix;
+
+  @Nullable
+  private final TsLintFixInfo myFixInfo;
 
   public TsLinterError(@Nullable String path,
                        int line,
@@ -23,12 +26,12 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
                        int endColumn,
                        @NotNull String description,
                        @Nullable String code,
-                       boolean hasFix) {
+                       @Nullable TsLintFixInfo fixInfo) {
     super(line, column, description, code);
     myPath = path;
     myEndLine = endLine;
     myEndColumn = endColumn;
-    myHasFix = hasFix;
+    myFixInfo = fixInfo;
   }
 
   @Override
@@ -48,6 +51,11 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
   }
 
   public boolean hasFix() {
-    return myHasFix;
+    return myFixInfo != null;
+  }
+
+  @Nullable
+  public TsLintFixInfo getFixInfo() {
+    return myFixInfo;
   }
 }

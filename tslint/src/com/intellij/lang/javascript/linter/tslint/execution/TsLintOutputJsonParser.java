@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo.createTsLintFixInfo;
+
 public final class TsLintOutputJsonParser {
 
   private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
@@ -85,6 +87,8 @@ public final class TsLintOutputJsonParser {
     final Pair<Integer, Integer> end = parseLineColumn(endPosition.getAsJsonObject());
     if (start == null || end == null) return result;
 
+    JsonElement element = object.get(FIX_PROPERTY);
+
     result.add(new TsLinterError(myPath,
                                  start.getFirst(),
                                  start.getSecond(),
@@ -92,8 +96,7 @@ public final class TsLintOutputJsonParser {
                                  end.getSecond(),
                                  failure.getAsString(),
                                  ruleName.getAsString(),
-                                 object.has(FIX_PROPERTY)
-    ));
+                                 createTsLintFixInfo(element)));
 
     return result;
   }

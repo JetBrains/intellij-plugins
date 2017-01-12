@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
+import com.intellij.lang.javascript.linter.tslint.fix.TsLintErrorFixAction;
 import com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
@@ -22,6 +23,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -150,6 +152,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     TsLintConfigurable configurable = new TsLintConfigurable(file.getProject(), true);
 
 
+    final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
     JSLinterStandardFixes fixes = new JSLinterStandardFixes() {
       @Override
@@ -159,6 +162,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
         List<IntentionAction> defaultIntentions = super.createListForError(configFile, configurable, errorBase);
         if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
           ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
+          if (document != null) {
+            result.add(new TsLintErrorFixAction((TsLinterError)errorBase, document));
+          }
           result.add(fixAllFileIntention);
           result.addAll(defaultIntentions);
           return result;
@@ -172,6 +178,6 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     new JSLinterAnnotationsBuilder<>(file, annotationResult, holder, TsLintInspection.getHighlightDisplayKey(),
                                      configurable, "TSLint: ",
                                      getInspectionClass(), fixes)
-      .setHighlightingGranularity(HighlightingGranularity.element).apply();
+      .setHighlightingGranularity(HighlightingGranularity.element).apply(document);
   }
 }

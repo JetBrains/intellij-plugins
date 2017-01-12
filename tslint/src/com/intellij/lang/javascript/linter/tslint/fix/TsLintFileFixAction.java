@@ -32,7 +32,6 @@ public class TsLintFileFixAction extends JSLinterFixAction {
           "Fix all TSLint problems'", null);
   }
 
-
   @NotNull
   @Override
   protected JSLinterConfiguration getConfiguration(Project project) {
