@@ -33,7 +33,7 @@ SEMICOLON=";"
 PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
-FILENAME_CHARACTER=[^:=!?\ \r\n\t]
+FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
 
 %state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS
 
