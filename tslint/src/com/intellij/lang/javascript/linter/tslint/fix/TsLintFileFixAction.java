@@ -17,9 +17,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -40,7 +38,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   }
 
   @Override
-  protected Task createTask(@NotNull Project project, @NotNull Collection<VirtualFile> filesToProcess) {
+  protected Task createTask(@NotNull Project project, @NotNull Collection<VirtualFile> filesToProcess, @NotNull Runnable completeCallback) {
     LocalHistory
       .getInstance().putSystemLabel(project, JSBundle
       .message("javascript.linter.action.fix.problems.name.start", TsLintBundle.message("tslint.framework.title")));
@@ -57,11 +55,8 @@ public class TsLintFileFixAction extends JSLinterFixAction {
                                             JSLanguageServiceUtil.QUOTA_MILLS,
                                             indicator);
         }
-        VirtualFile[] files = ArrayUtil.toObjectArray(filesToProcess, VirtualFile.class);
-        VfsUtil.markDirtyAndRefresh(false, true, true, files);
-        LocalHistory
-          .getInstance().putSystemLabel(project, JSBundle
-          .message("javascript.linter.action.fix.problems.name.finish", TsLintBundle.message("tslint.framework.title")));
+
+        completeCallback.run();
       }
     };
   }
