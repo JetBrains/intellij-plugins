@@ -63,8 +63,7 @@ Prerequisites:
    - repeat the same with Working directory field - it must point to intellij-community/bin
 
 8. [Optional] To enable internal developer actions add "idea.is.internal=true"
-   to the [IDE installation]/bin/idea.properties
-   (on Mac: [IDE installation]/Contents/bin/idea.properties) file. The menu actions Tools ->
+   to the [idea.properties](https://www.jetbrains.com/help/idea/file-idea-properties.html) file. The menu actions Tools ->
    View PSI Structure... as well as the Tools -> Internal Actions should be
    visible after restarting.
 
@@ -133,8 +132,7 @@ configured: 3 ones for running tests and 'Dart plugin' that launches IntelliJ
 IDEA with the Dart plugin built from sources.
 
 6. [Optional] To enable internal developer actions add "idea.is.internal=true"
-to the [IDE installation]/bin/idea.properties (on Mac: [IDE
-installation]/Contents/bin/idea.properties) file. The menu actions Tools ->
+to the [idea.properties](https://www.jetbrains.com/help/idea/file-idea-properties.html) file. The menu actions Tools ->
 View PSI Structure... as well as the Tools -> Internal Actions should be
 visible after restarting.
 
@@ -148,8 +146,7 @@ Build Artifacts | All artifacts and then manually start WebStorm
     - create Remote run configuration, select Mode: Listen, add both
       artifacts in correct order to the Before Launch section.
     - add the line (starting from -agentlib...) shown in the Remote RC to
-      the [WebStorm]/bin/idea.properties
-      (on Mac: [WebStorm]/Contents/bin/idea.properties) file
+      the WebStorm's [idea.properties](https://www.jetbrains.com/help/idea/file-idea-properties.html) file
     - now to debug WebStorm with Dart you simply click Debug for this RC
       and manually launch WebStorm
 
@@ -158,7 +155,7 @@ Build Artifacts | All artifacts and then manually start WebStorm
     - create Remote run configuration, leave default Mode: Attach, nothing
       in Before Launch
     - add the line (starting from -agentlib...) shown in the Remote RC
-      to [WebStorm]/Contents/bin/idea.properties file
+      to the WebStorm's [idea.properties](https://www.jetbrains.com/help/idea/file-idea-properties.html) file
     - now to debug WebStorm you:
       - Build | Build Artifacts | All artifacts
       - manually run WebStorm
