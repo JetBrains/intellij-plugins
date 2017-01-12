@@ -2,7 +2,9 @@ package name.kropp.intellij.makefile
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
 import com.intellij.psi.tree.TokenSet
 import name.kropp.intellij.makefile.psi.*
 
@@ -14,14 +16,35 @@ class MakefileAnnotator : Annotator {
     if (element is MakefileTarget) {
       holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.TARGET
     } else if (element is MakefilePrerequisite) {
-      val reference = element.reference!!
-      if (reference.resolve() == null) {
-        val targets = (element.parent.parent.parent as MakefileTargetLine).targets
-        if (targets.targetList.firstOrNull()?.isSpecialTarget == false) {
+      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.PREREQUISITE
+
+      val targets = (element.parent.parent.parent as MakefileTargetLine).targets
+      if (targets.targetList.firstOrNull()?.isSpecialTarget == false) {
+        val targetReferences = element.references.filter { it is MakefileTargetReference && it.resolve() != null }.any()
+
+        var fileReferenceResolved = false
+        var unresolvedFile: TextRange? = null
+        element.references.filter { it is FileReference }.forEach {
+          if (it.resolve() == null) {
+            if (!targetReferences) {
+              val startOffset = element.textRange.startOffset
+              val start = startOffset + it.rangeInElement.startOffset
+              val end = startOffset + it.rangeInElement.endOffset
+              val textRange = TextRange.create(start, end)
+              unresolvedFile = unresolvedFile?.union(textRange) ?: textRange
+            }
+          } else {
+            fileReferenceResolved = true
+          }
+        }
+
+        if (unresolvedFile != null) {
+          holder.createErrorAnnotation(unresolvedFile!!, "File not found")
+        }
+
+        if (!targetReferences && !fileReferenceResolved) {
           holder.createErrorAnnotation(element, "Unresolved prerequisite").registerFix(CreateRuleFix(element))
         }
-      } else {
-        holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.PREREQUISITE
       }
     } else if (element is MakefileVariable) {
       holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE
