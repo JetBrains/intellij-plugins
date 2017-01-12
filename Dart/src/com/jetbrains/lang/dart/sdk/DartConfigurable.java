@@ -384,7 +384,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
         if (DartSdkUtil.isDartSdkHome(sdkHomePath)) {
           DartSdkUtil.updateKnownSdkPaths(myProject, sdkHomePath);
 
-          DartSdkLibUtil.ensureDartSdkConfigured(sdkHomePath);
+          DartSdkLibUtil.ensureDartSdkConfigured(myProject, sdkHomePath);
           DaemonCodeAnalyzer.getInstance(myProject).restart();
 
           final Module[] modules = DartSdkLibUtil.isIdeWithMultipleModuleSupport()

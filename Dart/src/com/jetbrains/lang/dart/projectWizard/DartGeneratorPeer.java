@@ -7,9 +7,6 @@ import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.roots.ModifiableModelsProvider;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Computable;
@@ -30,7 +27,6 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,15 +68,8 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
   public DartGeneratorPeer() {
     // set initial values before initDartSdkAndDartiumControls() because listeners should not be triggered on initialization
-
-    LibraryTable.ModifiableModel modifiableModel = ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel();
-    final Library[] libraries = modifiableModel.getLibraries();
-    ModifiableModelsProvider.SERVICE.getInstance().disposeLibraryTableModifiableModel(modifiableModel);
-
-    final DartSdk sdkInitial = DartSdk.findDartSdkAmongGlobalLibs(libraries);
-    final String sdkPathInitial = sdkInitial == null ? "" : FileUtil.toSystemDependentName(sdkInitial.getHomePath());
     mySdkPathComboWithBrowse.getComboBox().setEditable(true);
-    mySdkPathComboWithBrowse.getComboBox().getEditor().setItem(sdkPathInitial);
+    //mySdkPathComboWithBrowse.getComboBox().getEditor().setItem(...); initial sdk path will be correctly taken from known paths history
 
     final WebBrowser dartiumInitial = DartiumUtil.getDartiumBrowser();
     myDartiumSettingsCurrent = new ChromeSettings();

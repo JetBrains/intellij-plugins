@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
@@ -46,16 +46,13 @@ public class DartSdk {
     return myVersion;
   }
 
-  /**
-   * Returns the same as {@link #getGlobalDartSdk()} but much faster
-   */
   @Nullable
   public static DartSdk getDartSdk(@NotNull final Project project) {
     CachedValue<DartSdk> cachedValue = project.getUserData(CACHED_DART_SDK_KEY);
 
     if (cachedValue == null) {
       cachedValue = CachedValuesManager.getManager(project).createCachedValue(() -> {
-        final DartSdk sdk = getGlobalDartSdk();
+        final DartSdk sdk = findDartSdkAmongLibraries(ProjectLibraryTable.getInstance(project).getLibraries());
         if (sdk == null) {
           return new CachedValueProvider.Result<>(null, DartProjectComponent.getProjectRootsModificationTracker(project));
         }
@@ -75,13 +72,8 @@ public class DartSdk {
   }
 
   @Nullable
-  public static DartSdk getGlobalDartSdk() {
-    return findDartSdkAmongGlobalLibs(ApplicationLibraryTable.getApplicationTable().getLibraries());
-  }
-
-  @Nullable
-  public static DartSdk findDartSdkAmongGlobalLibs(final Library[] globalLibraries) {
-    for (final Library library : globalLibraries) {
+  private static DartSdk findDartSdkAmongLibraries(final Library[] libs) {
+    for (final Library library : libs) {
       if (DART_SDK_LIB_NAME.equals(library.getName())) {
         return getSdkByLibrary(library);
       }

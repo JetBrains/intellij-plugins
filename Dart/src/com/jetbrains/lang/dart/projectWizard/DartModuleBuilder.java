@@ -136,7 +136,7 @@ public class DartModuleBuilder extends ModuleBuilder {
         ModifiableModelsProvider.SERVICE.getInstance().disposeLibraryTableModifiableModel(libraryTableModifiableModel);
       }
 
-      modifiableRootModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.APPLICATION_LEVEL);
+      modifiableRootModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.PROJECT_LEVEL);
     }
 
     DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(wizardData.dartiumPath), wizardData.dartiumSettings);

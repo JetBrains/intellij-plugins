@@ -8,9 +8,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -34,7 +31,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,25 +86,8 @@ public class DartTestUtils {
     }
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      DartSdkLibUtil.ensureDartSdkConfigured(sdkHome);
+      DartSdkLibUtil.ensureDartSdkConfigured(module.getProject(), sdkHome);
       DartSdkLibUtil.enableDartSdk(module);
-    });
-
-    Disposer.register(disposable, new Disposable() {
-      @Override
-      public void dispose() {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          if (!module.isDisposed()) {
-            DartSdkLibUtil.disableDartSdk(Collections.singletonList(module));
-          }
-
-          ApplicationLibraryTable libraryTable = ApplicationLibraryTable.getApplicationTable();
-          final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
-          if (library != null) {
-            libraryTable.removeLibrary(library);
-          }
-        });
-      }
     });
   }
 

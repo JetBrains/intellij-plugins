@@ -5,7 +5,7 @@ import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -84,7 +84,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
   @Nullable
   private static GlobalSearchScope getDartSdkResolveScope(@NotNull final Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
-      final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
+      final Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
       final LibraryScope scope = library == null ? null : new LibraryScope(project, library);
       return new CachedValueProvider.Result<GlobalSearchScope>(scope, ProjectRootManager.getInstance(project));
     });

@@ -5,8 +5,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -29,11 +29,12 @@ public class DartSdkLibUtil {
     return PlatformUtils.isIntelliJ();
   }
 
-  public static void ensureDartSdkConfigured(@NotNull final String sdkHomePath) {
-    final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
+  public static void ensureDartSdkConfigured(@NotNull final Project project, @NotNull final String sdkHomePath) {
+    final LibraryTable libraryTable = ProjectLibraryTable.getInstance(project);
+    final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (library == null) {
-      final LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
-      createDartSdkGlobalLib(model, sdkHomePath);
+      final LibraryTable.ModifiableModel model = libraryTable.getModifiableModel();
+      createDartSdkLib(model, sdkHomePath);
       model.commit();
     }
     else {
@@ -48,7 +49,7 @@ public class DartSdkLibUtil {
                                              @NotNull final String sdkHomePath) {
     final Library library = libraryTableModel.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (library == null) {
-      createDartSdkGlobalLib(libraryTableModel, sdkHomePath);
+      createDartSdkLib(libraryTableModel, sdkHomePath);
     }
     else {
       final DartSdk sdk = DartSdk.getSdkByLibrary(library);
@@ -58,8 +59,8 @@ public class DartSdkLibUtil {
     }
   }
 
-  private static void createDartSdkGlobalLib(@NotNull final LibraryTable.ModifiableModel libraryTableModel,
-                                             @NotNull final String sdkHomePath) {
+  private static void createDartSdkLib(@NotNull final LibraryTable.ModifiableModel libraryTableModel,
+                                       @NotNull final String sdkHomePath) {
     final Library existingLib = libraryTableModel.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (existingLib != null) {
       setupDartSdkRoots(existingLib, sdkHomePath);
@@ -118,7 +119,7 @@ public class DartSdkLibUtil {
 
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
-      modifiableModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.APPLICATION_LEVEL);
+      modifiableModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.PROJECT_LEVEL);
       modifiableModel.commit();
     }
     catch (Exception e) {
@@ -177,7 +178,7 @@ public class DartSdkLibUtil {
       }
 
       if (mustHaveDart && !hasDart) {
-        modifiableModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.APPLICATION_LEVEL);
+        modifiableModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.PROJECT_LEVEL);
       }
 
       if (modifiableModel.isChanged()) {
@@ -193,7 +194,7 @@ public class DartSdkLibUtil {
 
   private static boolean isDartSdkOrderEntry(@NotNull final OrderEntry orderEntry) {
     return orderEntry instanceof LibraryOrderEntry &&
-           LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
+           LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
            DartSdk.DART_SDK_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
   }
 }
