@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterFixAction;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
@@ -28,8 +29,8 @@ import java.util.concurrent.Future;
 public class TsLintFileFixAction extends JSLinterFixAction {
 
   public TsLintFileFixAction() {
-    super("TSLint",
-          "Fix all TSLint problems'", null);
+    super(TsLintBundle.message("tslint.framework.title"),
+          TsLintBundle.message("tslint.action.fix.all.problem.title"), null);
   }
 
   @NotNull
@@ -41,8 +42,9 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   @Override
   protected Task createTask(Project project, Collection<VirtualFile> filesToProcess) {
     LocalHistory
-      .getInstance().putSystemLabel(project, JSBundle.message("javascript.linter.action.fix.problems.name.start", "TSLint"));
-    return new Task.Backgroundable(project, "TSLint Fixes", true) {
+      .getInstance().putSystemLabel(project, JSBundle
+      .message("javascript.linter.action.fix.problems.name.start", TsLintBundle.message("tslint.framework.title")));
+    return new Task.Backgroundable(project, TsLintBundle.message("tslint.action.background.title"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         TsLintLanguageService service = TsLintLanguageService.getService(project);
@@ -58,7 +60,8 @@ public class TsLintFileFixAction extends JSLinterFixAction {
         VirtualFile[] files = ArrayUtil.toObjectArray(filesToProcess, VirtualFile.class);
         VfsUtil.markDirtyAndRefresh(false, true, true, files);
         LocalHistory
-          .getInstance().putSystemLabel(project, JSBundle.message("javascript.linter.action.fix.problems.name.finish", "TSLint"));
+          .getInstance().putSystemLabel(project, JSBundle
+          .message("javascript.linter.action.fix.problems.name.finish", TsLintBundle.message("tslint.framework.title")));
       }
     };
   }

@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.fix;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -35,7 +36,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
   @Override
   public String getText() {
     //noinspection DialogTitleCapitalization
-    return "TSLint: Fix current error";
+    return TsLintBundle.message("tslint.action.fix.problems.current.text");
   }
 
   @Nls

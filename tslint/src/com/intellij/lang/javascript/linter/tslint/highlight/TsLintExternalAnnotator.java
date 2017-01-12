@@ -6,6 +6,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
@@ -176,7 +177,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
 
     new JSLinterAnnotationsBuilder<>(file, annotationResult, holder, TsLintInspection.getHighlightDisplayKey(),
-                                     configurable, "TSLint: ",
+                                     configurable, TsLintBundle.message("tslint.framework.title") + ": ",
                                      getInspectionClass(), fixes)
       .setHighlightingGranularity(HighlightingGranularity.element).apply(document);
   }

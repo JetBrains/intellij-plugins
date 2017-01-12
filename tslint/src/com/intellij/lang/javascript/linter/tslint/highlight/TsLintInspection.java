@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ public final class TsLintInspection extends JSLinterInspection {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "TSLint";
+    return TsLintBundle.message("tslint.framework.title");
   }
 
   @NotNull
