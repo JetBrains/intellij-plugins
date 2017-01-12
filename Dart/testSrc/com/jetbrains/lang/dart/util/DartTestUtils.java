@@ -23,7 +23,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -90,8 +90,8 @@ public class DartTestUtils {
     }
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      DartSdkGlobalLibUtil.ensureDartSdkConfigured(sdkHome);
-      DartSdkGlobalLibUtil.enableDartSdk(module);
+      DartSdkLibUtil.ensureDartSdkConfigured(sdkHome);
+      DartSdkLibUtil.enableDartSdk(module);
     });
 
     Disposer.register(disposable, new Disposable() {
@@ -99,7 +99,7 @@ public class DartTestUtils {
       public void dispose() {
         ApplicationManager.getApplication().runWriteAction(() -> {
           if (!module.isDisposed()) {
-            DartSdkGlobalLibUtil.disableDartSdk(Collections.singletonList(module));
+            DartSdkLibUtil.disableDartSdk(Collections.singletonList(module));
           }
 
           ApplicationLibraryTable libraryTable = ApplicationLibraryTable.getApplicationTable();

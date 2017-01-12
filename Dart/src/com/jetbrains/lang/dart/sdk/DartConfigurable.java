@@ -200,7 +200,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   }
 
   private void initModulesPanel() {
-    if (!DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
+    if (!DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       myModulesPanel.setVisible(false);
       return;
     }
@@ -272,7 +272,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     if (myDartiumInitial != null && !myDartiumSettingsCurrent.equals(myDartiumInitial.getSpecificSettings())) return true;
 
-    if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
+    if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final Module[] selectedModules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
       if (selectedModules.length != myModulesWithDartSdkLibAttachedInitial.size()) return true;
 
@@ -301,7 +301,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     myModulesWithDartSdkLibAttachedInitial.clear();
 
     if (mySdkInitial != null) {
-      myModulesWithDartSdkLibAttachedInitial.addAll(DartSdkGlobalLibUtil.getModulesWithDartSdkEnabled(myProject));
+      myModulesWithDartSdkLibAttachedInitial.addAll(DartSdkLibUtil.getModulesWithDartSdkEnabled(myProject));
     }
 
     myDartSupportEnabledInitial = !myModulesWithDartSdkLibAttachedInitial.isEmpty();
@@ -340,7 +340,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     //final boolean checkedMode = myDartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
     //myCheckedModeCheckBox.setSelected(checkedMode);
 
-    if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
+    if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
       rootNode.setChecked(false);
       final Enumeration children = rootNode.children();
@@ -384,13 +384,13 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
         if (DartSdkUtil.isDartSdkHome(sdkHomePath)) {
           DartSdkUtil.updateKnownSdkPaths(myProject, sdkHomePath);
 
-          DartSdkGlobalLibUtil.ensureDartSdkConfigured(sdkHomePath);
+          DartSdkLibUtil.ensureDartSdkConfigured(sdkHomePath);
           DaemonCodeAnalyzer.getInstance(myProject).restart();
 
-          final Module[] modules = DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
+          final Module[] modules = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
                                    ? myModulesCheckboxTreeTable.getCheckedNodes(Module.class)
                                    : ModuleManager.getInstance(myProject).getModules();
-          DartSdkGlobalLibUtil.enableDartSdkForSpecifiedModulesAndDisableForOthers(myProject, modules);
+          DartSdkLibUtil.enableDartSdkForSpecifiedModulesAndDisableForOthers(myProject, modules);
         }
 
         final boolean flutter = FlutterUtil.getFlutterRoot(sdkHomePath) != null;
@@ -406,7 +406,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       }
       else {
         if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
-          DartSdkGlobalLibUtil.disableDartSdk(myModulesWithDartSdkLibAttachedInitial);
+          DartSdkLibUtil.disableDartSdk(myModulesWithDartSdkLibAttachedInitial);
         }
       }
     };
@@ -458,7 +458,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     message = DartiumUtil.getErrorMessageIfWrongDartiumPath(getTextFromCombo(myDartiumPathComboWithBrowse));
     if (message != null) return message;
 
-    if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
+    if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final Module[] modules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
       if (modules.length == 0) {
         return DartBundle.message("warning.no.modules.selected.dart.support.will.be.disabled");

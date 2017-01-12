@@ -36,7 +36,7 @@ import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.ide.actions.DartPubGetAction;
 import com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.Nls;
@@ -70,7 +70,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(holder.getFile());
     final DartSdk sdk = DartSdk.getDartSdk(holder.getProject());
-    if (module == null || sdk == null || !DartSdkGlobalLibUtil.isDartSdkEnabled(module)) {
+    if (module == null || sdk == null || !DartSdkLibUtil.isDartSdkEnabled(module)) {
       return super.buildVisitor(holder, isOnTheFly);
     }
 
@@ -208,7 +208,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
     private static void showSuccessNotification(@NotNull final Module module, @NotNull final VirtualFile root) {
       final String title = DartBundle.message("content.root.added.title");
       final String message =
-        DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
+        DartSdkLibUtil.isIdeWithMultipleModuleSupport()
         ? DartBundle.message("content.root.added.to.module", module.getName(), FileUtil.toSystemDependentName(root.getPath()))
         : DartBundle.message("content.root.added.to.project", FileUtil.toSystemDependentName(root.getPath()), CommonBundle.settingsTitle(),
                              getProjectRootsConfigurableName());

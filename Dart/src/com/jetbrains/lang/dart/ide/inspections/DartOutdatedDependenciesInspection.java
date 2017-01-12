@@ -18,7 +18,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -48,7 +48,7 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
     final Module module = ModuleUtilCore.findModuleForFile(file, project);
-    if (module == null || sdk == null || !DartSdkGlobalLibUtil.isDartSdkEnabled(module)) return null;
+    if (module == null || sdk == null || !DartSdkLibUtil.isDartSdkEnabled(module)) return null;
 
     final VirtualFile pubspecFile = PubspecYamlUtil.findPubspecYamlFile(project, file);
     if (pubspecFile == null || myIgnoredPubspecPaths.contains(pubspecFile.getPath())) return null;

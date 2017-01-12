@@ -26,7 +26,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -129,7 +129,7 @@ public class DartFileListener extends VirtualFileAdapter {
           removeDartPackagesLibraryAndDependencies(project);
         }
         else {
-          final Condition<Module> moduleFilter = module -> DartSdkGlobalLibUtil.isDartSdkEnabled(module);
+          final Condition<Module> moduleFilter = module -> DartSdkLibUtil.isDartSdkEnabled(module);
 
           updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
         }
@@ -174,7 +174,7 @@ public class DartFileListener extends VirtualFileAdapter {
       if (dotPackagesFile != null &&
           !dotPackagesFile.isDirectory() &&
           module != null &&
-          DartSdkGlobalLibUtil.isDartSdkEnabled(module)) {
+          DartSdkLibUtil.isDartSdkEnabled(module)) {
         final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
         if (packagesMap != null) {
           for (Map.Entry<String, String> entry : packagesMap.entrySet()) {

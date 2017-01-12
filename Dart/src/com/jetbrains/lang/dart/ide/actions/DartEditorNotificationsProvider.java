@@ -18,7 +18,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import icons.DartIcons;
@@ -52,7 +52,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     if (PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(vFile.getName())) {
       final DartSdk sdk = DartSdk.getDartSdk(myProject);
       final Module module = ModuleUtilCore.findModuleForFile(vFile, myProject);
-      if (module != null && sdk != null && DartSdkGlobalLibUtil.isDartSdkEnabled(module)) {
+      if (module != null && sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
         return new PubActionsPanel();
       }
     }
@@ -78,8 +78,8 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       if (module == null) return null;
 
       // SDK not enabled for this module
-      if (!DartSdkGlobalLibUtil.isDartSdkEnabled(module)) {
-        final String message = DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
+      if (!DartSdkLibUtil.isDartSdkEnabled(module)) {
+        final String message = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
                                ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
                                : DartBundle.message("dart.support.is.not.enabled.for.project");
         final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
@@ -123,7 +123,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
     @Override
     public void run() {
-      ApplicationManager.getApplication().runWriteAction(() -> DartSdkGlobalLibUtil.enableDartSdk(myModule));
+      ApplicationManager.getApplication().runWriteAction(() -> DartSdkLibUtil.enableDartSdk(myModule));
     }
   }
 

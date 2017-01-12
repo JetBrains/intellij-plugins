@@ -31,7 +31,7 @@ import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.HighlightRegionType;
@@ -159,7 +159,7 @@ public class DartAnnotator implements Annotator {
     if (fileIndex.isInLibraryClasses(file)) return true;
 
     final Module module = fileIndex.getModuleForFile(file);
-    return module != null && DartSdkGlobalLibUtil.isDartSdkEnabled(module);
+    return module != null && DartSdkLibUtil.isDartSdkEnabled(module);
   }
 
   public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath,

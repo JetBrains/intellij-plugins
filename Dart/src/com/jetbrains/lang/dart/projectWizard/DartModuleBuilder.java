@@ -28,7 +28,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.DartPubGetAction;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import icons.DartIcons;
@@ -127,7 +127,7 @@ public class DartModuleBuilder extends ModuleBuilder {
       final LibraryTable.ModifiableModel libraryTableModifiableModel =
         ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel();
 
-      DartSdkGlobalLibUtil.ensureDartSdkConfigured(libraryTableModifiableModel, wizardData.dartSdkPath);
+      DartSdkLibUtil.ensureDartSdkConfigured(libraryTableModifiableModel, wizardData.dartSdkPath);
 
       if (libraryTableModifiableModel.isChanged()) {
         libraryTableModifiableModel.commit();

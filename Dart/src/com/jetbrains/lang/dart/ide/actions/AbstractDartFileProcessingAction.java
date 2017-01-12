@@ -42,7 +42,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,7 +179,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     final Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module == null) return false;
 
-    if (!DartSdkGlobalLibUtil.isDartSdkEnabled(module)) return false;
+    if (!DartSdkLibUtil.isDartSdkEnabled(module)) return false;
 
     if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(project, file)) return false;
 
@@ -192,7 +192,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null) return false;
 
-    if (!DartSdkGlobalLibUtil.isDartSdkEnabled(module)) return false;
+    if (!DartSdkLibUtil.isDartSdkEnabled(module)) return false;
 
     if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return false;
 

@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-public class DartSdkGlobalLibUtil {
-  private static final Logger LOG = Logger.getInstance(DartSdkGlobalLibUtil.class.getName());
+public class DartSdkLibUtil {
+  private static final Logger LOG = Logger.getInstance(DartSdkLibUtil.class.getName());
 
   public static boolean isIdeWithMultipleModuleSupport() {
     return PlatformUtils.isIntelliJ();

@@ -17,7 +17,7 @@ import com.intellij.util.SmartList;
 import com.intellij.util.io.URLUtil;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +79,7 @@ public class DartServerRootsHandler {
         newExcludedRoots.add(FileUtil.toSystemDependentName(dotIdeaPath));
       }
 
-      for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkEnabled(myProject)) {
+      for (Module module : DartSdkLibUtil.getModulesWithDartSdkEnabled(myProject)) {
         final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);
 
         for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
