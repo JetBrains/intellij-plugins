@@ -7,11 +7,13 @@ class VueLangAttributeHandler : BaseHtmlLexer.TokenHandler {
   override fun handleElement(lexer: Lexer) {
     val handled = lexer as VueHandledLexer
     val seenScript = handled.seenScript()
+    val seenTemplate = handled.seenTemplate()
     val seenStyle = handled.seenStyle()
     if (!handled.seenTag()) {
-      if (seenScript) {
+      if (seenScript || seenTemplate) {
         if ("lang" == lexer.tokenText) {
           handled.setSeenScriptType()
+          handled.setSeenScript()
         }
       }
       else if (seenStyle) {
