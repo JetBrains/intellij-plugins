@@ -158,9 +158,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                                                       @NotNull JSLinterErrorBase errorBase) {
         List<IntentionAction> defaultIntentions = super.createListForError(configFile, configurable, errorBase);
         if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
-          ArrayList<IntentionAction> result = ContainerUtil.newArrayList(defaultIntentions);
+          ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
           result.add(fixAllFileIntention);
-
+          result.addAll(defaultIntentions);
           return result;
         }
 
