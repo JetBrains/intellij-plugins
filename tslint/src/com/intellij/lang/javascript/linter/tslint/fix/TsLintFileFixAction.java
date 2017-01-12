@@ -40,7 +40,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   }
 
   @Override
-  protected Task createTask(Project project, Collection<VirtualFile> filesToProcess) {
+  protected Task createTask(@NotNull Project project, @NotNull Collection<VirtualFile> filesToProcess) {
     LocalHistory
       .getInstance().putSystemLabel(project, JSBundle
       .message("javascript.linter.action.fix.problems.name.start", TsLintBundle.message("tslint.framework.title")));
