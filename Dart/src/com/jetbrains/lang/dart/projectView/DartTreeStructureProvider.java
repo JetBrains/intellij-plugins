@@ -38,8 +38,8 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
       return ContainerUtil.map(children, node -> {
         if (node instanceof NamedLibraryElementNode &&
             (DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(node.getName()) ||
-             DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(node.getName()))) {
-          final boolean isSdkRoot = DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(node.getName());
+             DartSdk.DART_SDK_LIB_NAME.equals(node.getName()))) {
+          final boolean isSdkRoot = DartSdk.DART_SDK_LIB_NAME.equals(node.getName());
 
           return new NamedLibraryElementNode(node.getProject(), ((NamedLibraryElementNode)node).getValue(), settings) {
             @Override
@@ -62,8 +62,8 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
     if (parentNode instanceof NamedLibraryElementNode &&
         (DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(parentNode.getName()) ||
-         DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(parentNode.getName()))) {
-      final boolean isSdkRoot = DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(parentNode.getName());
+         DartSdk.DART_SDK_LIB_NAME.equals(parentNode.getName()))) {
+      final boolean isSdkRoot = DartSdk.DART_SDK_LIB_NAME.equals(parentNode.getName());
 
       return ContainerUtil.map(children, node -> {
         final VirtualFile dir = node instanceof PsiDirectoryNode ? ((PsiDirectoryNode)node).getVirtualFile() : null;

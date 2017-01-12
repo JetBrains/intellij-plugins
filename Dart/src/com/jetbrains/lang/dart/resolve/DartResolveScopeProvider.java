@@ -16,7 +16,6 @@ import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.PairConsumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartFileType;
@@ -85,7 +84,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
   @Nullable
   private static GlobalSearchScope getDartSdkResolveScope(@NotNull final Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
-      final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
+      final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
       final LibraryScope scope = library == null ? null : new LibraryScope(project, library);
       return new CachedValueProvider.Result<GlobalSearchScope>(scope, ProjectRootManager.getInstance(project));
     });

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DartSdk {
-  public static final String DART_SDK_GLOBAL_LIB_NAME = "Dart SDK";
+  public static final String DART_SDK_LIB_NAME = "Dart SDK";
   private static final String UNKNOWN_VERSION = "unknown";
   private static final Key<CachedValue<DartSdk>> CACHED_DART_SDK_KEY = Key.create("CACHED_DART_SDK_KEY");
 
@@ -82,7 +82,7 @@ public class DartSdk {
   @Nullable
   public static DartSdk findDartSdkAmongGlobalLibs(final Library[] globalLibraries) {
     for (final Library library : globalLibraries) {
-      if (DART_SDK_GLOBAL_LIB_NAME.equals(library.getName())) {
+      if (DART_SDK_LIB_NAME.equals(library.getName())) {
         return getSdkByLibrary(library);
       }
     }

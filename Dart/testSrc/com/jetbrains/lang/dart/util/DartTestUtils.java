@@ -18,7 +18,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.PsiTestCase;
-import com.intellij.testFramework.ThreadTracker;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
@@ -104,7 +103,7 @@ public class DartTestUtils {
           }
 
           ApplicationLibraryTable libraryTable = ApplicationLibraryTable.getApplicationTable();
-          final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
+          final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
           if (library != null) {
             libraryTable.removeLibrary(library);
           }
