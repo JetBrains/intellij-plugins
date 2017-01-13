@@ -1,0 +1,1 @@
+var test:ResolveTest2 = new Resolve<ref>Test2("s", 1);

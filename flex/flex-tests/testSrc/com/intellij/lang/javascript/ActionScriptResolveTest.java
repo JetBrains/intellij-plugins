@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSLocalVariable;
 import com.intellij.lang.javascript.psi.JSNamedElement;
@@ -23,6 +24,11 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
   @Override
   protected String getSampleName() {
     return "__sample.as";
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("resolve/");
   }
 
   private static void checkResolvedToClass(final ResolveResult[] resolveResults) {
