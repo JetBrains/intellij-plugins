@@ -6,8 +6,8 @@ class C2a extends C2 {
     m();
     n();
     if (x) n(); else {
-      int i=0;
       m();
+      int i=0;
     }
     do i++;
     while (i < 3);

@@ -7,9 +7,9 @@ class C2a extends C2 {
     n();
     int i=0;
     if (x) n(); else {
+      m();
       do i++;
       while (i < 3);
-      m();
     }
   }
 }

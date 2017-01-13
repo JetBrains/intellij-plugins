@@ -198,8 +198,9 @@ public class DartStatementMover extends LineMover {
               elementToSurround = element;
             }
           }
-          else if ((element.getNode().getElementType() == DartTokenTypes.RBRACE
-                    && element.getParent() instanceof IDartBlock && !isStatement(element.getParent().getParent()))
+          else if ((element.getNode().getElementType() == DartTokenTypes.RBRACE &&
+                    element.getParent() instanceof IDartBlock &&
+                    (!isStatement(element.getParent().getParent()) || statementCanBePlacedAlong(element.getParent().getParent())))
                    || (!down && element instanceof DartStatements)) {
             // Before/after code block closing/opening brace.
             found = true;

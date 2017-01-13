@@ -11,7 +11,7 @@ public class DartStatementMoverTest extends DartCodeMoverTest {
   }
 
   public void testVarIfDo() {
-    doTest(); // Move VAR into IF and below DO (moves up one line too far currently)
+    doTest(); // Move VAR into IF and below DO
   }
 
   public void testDoIfBody() {
