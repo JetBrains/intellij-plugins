@@ -33,4 +33,8 @@ public class DartStatementMoverTest extends DartCodeMoverTest {
   public void testNestedIf3() {
     doTest(); // Move detectChanges() up above nexted IF and down one
   }
+
+  public void testMinimalMain() {
+    doTest(); // Ensure nothing happens even when destLine == 0
+  }
 }

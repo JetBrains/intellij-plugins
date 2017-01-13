@@ -224,7 +224,7 @@ public class DartStatementMover extends LineMover {
         element = element.getParent();
       }
       destLine += down ? 1 : -1;
-      if (destLine == 0 || destLine >= editor.getDocument().getLineCount()) {
+      if (destLine <= 0 || destLine >= editor.getDocument().getLineCount()) {
         return false;
       }
     }
