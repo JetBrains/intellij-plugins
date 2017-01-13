@@ -58,7 +58,7 @@ public class DartStatementMover extends LineMover {
     if (statements.length == 0) return false;
     range.firstElement = statements[0];
     range.lastElement = statements[statements.length - 1];
-    info.indentTarget = false;
+    info.indentTarget = true;
     if (!checkMovingInsideOutside(file, editor, info, down)) {
       info.toMove2 = null;
     }
@@ -74,7 +74,17 @@ public class DartStatementMover extends LineMover {
       if (first != null && last != null) {
         PsiElement statement = first.getFirstChild();
         if (statement != null) {
-          psiRange = Pair.create(statement, psiRange.getSecond());
+          psiRange = Pair.create(statement, last);
+        }
+      }
+    }
+    if (psiRange.getSecond() instanceof DartStatements) {
+      PsiElement first = psiRange.getFirst();
+      PsiElement last = psiRange.getSecond();
+      if (PsiTreeUtil.isAncestor(last, first, false)) {
+        PsiElement statement = last.getLastChild();
+        if (statement != null) {
+          psiRange = Pair.create(first, statement);
         }
       }
     }
@@ -161,11 +171,21 @@ public class DartStatementMover extends LineMover {
 
     int startLine = down ? range.endLine : range.startLine - 1;
     if (destLine < 0 || startLine < 0) return false;
+    boolean firstTime = true;
     while (true) {
       final int offset = editor.logicalPositionToOffset(new LogicalPosition(destLine, 0));
       PsiElement element = firstNonWhiteElement(offset, file, true);
-      if (element instanceof DartStatements) element = element.getFirstChild();
+      if (firstTime) {
+        if (element != null && element.getNode().getElementType() == (down ? DartTokenTypes.RBRACE : DartTokenTypes.LBRACE)) {
+          PsiElement elementParent = element.getParent();
+          if (elementParent != null && (isStatement(elementParent) || elementParent instanceof DartBlock)) {
+            return true;
+          }
+        }
+        firstTime = false;
+      }
 
+      if (element instanceof DartStatements) element = element.getFirstChild();
       while (element != null && !(element instanceof PsiFile)) {
         TextRange elementTextRange = element.getTextRange();
         if (elementTextRange.isEmpty() || !elementTextRange.grown(-1).shiftRight(1).contains(offset)) {
@@ -178,9 +198,10 @@ public class DartStatementMover extends LineMover {
               elementToSurround = element;
             }
           }
-          else if (element.getNode().getElementType() == DartTokenTypes.RBRACE
-                   && element.getParent() instanceof IDartBlock && !isStatement(element.getParent().getParent())) {
-            // Before code block closing brace.
+          else if ((element.getNode().getElementType() == DartTokenTypes.RBRACE
+                    && element.getParent() instanceof IDartBlock && !isStatement(element.getParent().getParent()))
+                   || (!down && element instanceof DartStatements)) {
+            // Before/after code block closing/opening brace.
             found = true;
           }
           if (found) {
@@ -313,9 +334,10 @@ public class DartStatementMover extends LineMover {
     return false;
   }
 
-  private static boolean isSameStatement(PsiElement element, PsiElement statement) {
-    if (element == statement) return true;
-    return expressionStatementTeminator(statement) == element;
+  private static boolean isSameStatement(PsiElement element, PsiElement statementOrBlock) {
+    if (element == statementOrBlock) return true;
+    if (PsiTreeUtil.findCommonParent(statementOrBlock, element) == statementOrBlock) return true;
+    return expressionStatementTeminator(statementOrBlock) == element;
   }
 
   private static boolean isStatement(PsiElement element) {
