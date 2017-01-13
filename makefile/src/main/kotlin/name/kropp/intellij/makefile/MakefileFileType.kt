@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.*
 import com.intellij.openapi.util.IconLoader
 
 val MakefileIcon = IconLoader.getIcon("/name/kropp/intellij/makefile/makefile.png")
-val MakefileTargetIcon = AllIcons.General.Run
+val MakefileTargetIcon = AllIcons.General.Run!!
 
 object MakefileFileType : LanguageFileType(MakefileLanguage) {
   override fun getIcon() = MakefileIcon
@@ -16,6 +16,6 @@ object MakefileFileType : LanguageFileType(MakefileLanguage) {
 
 object MakefileFileTypeFactory : FileTypeFactory() {
   override fun createFileTypes(consumer: FileTypeConsumer) {
-    consumer.consume(MakefileFileType, ExactFileNameMatcher("Makefile"), ExtensionFileNameMatcher("mk"))
+    consumer.consume(MakefileFileType, ExactFileNameMatcher("Makefile"), ExtensionFileNameMatcher("mk"), ExactFileNameMatcher("makefile"), ExactFileNameMatcher("GNUmakefile"))
   }
 }
