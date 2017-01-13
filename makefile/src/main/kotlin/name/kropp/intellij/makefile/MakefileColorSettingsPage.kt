@@ -4,15 +4,15 @@ import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 
-private val tags = mapOf(
-    "target" to MakefileSyntaxHighlighter.TARGET,
-    "variableName" to MakefileSyntaxHighlighter.VARIABLE,
-    "prerequisite" to MakefileSyntaxHighlighter.PREREQUISITE
-)
-
 class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getDisplayName() = MakefileLanguage.displayName
   override fun getIcon() = MakefileIcon
+
+  private val tags = mapOf(
+      "target" to MakefileSyntaxHighlighter.TARGET,
+      "variableName" to MakefileSyntaxHighlighter.VARIABLE,
+      "prerequisite" to MakefileSyntaxHighlighter.PREREQUISITE
+  )
 
   private val DESCRIPTORS = arrayOf(
       AttributesDescriptor("Keyword", MakefileSyntaxHighlighter.KEYWORD),
@@ -21,7 +21,8 @@ class MakefileColorSettingsPage : ColorSettingsPage {
       AttributesDescriptor("Prerequisite", MakefileSyntaxHighlighter.PREREQUISITE),
       AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE),
       AttributesDescriptor("Variable Value", MakefileSyntaxHighlighter.VARIABLE_VALUE),
-      AttributesDescriptor("Line Split", MakefileSyntaxHighlighter.LINE_SPLIT)
+      AttributesDescriptor("Line Split", MakefileSyntaxHighlighter.LINE_SPLIT),
+      AttributesDescriptor("Tab", MakefileSyntaxHighlighter.TAB)
   )
 
   override fun getAttributeDescriptors() = DESCRIPTORS

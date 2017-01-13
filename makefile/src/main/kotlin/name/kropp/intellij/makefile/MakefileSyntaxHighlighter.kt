@@ -19,6 +19,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     val VARIABLE = createTextAttributesKey("MAKEFILE_VARIABLE", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE)
     val VARIABLE_VALUE = createTextAttributesKey("MAKEFILE_VARIABLE_VALUE", DefaultLanguageHighlighterColors.STRING)
     val LINE_SPLIT = createTextAttributesKey("MAKEFILE_LINE_SPLIT", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
+    val TAB = createTextAttributesKey("MAKEFILE_TAB", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
     val BAD_CHARACTER = createTextAttributesKey("MAKEFILE_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
 
     private val BAD_CHAR_KEYS = arrayOf(BAD_CHARACTER)
@@ -29,6 +30,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     private val VARIABLE_KEYS = arrayOf(VARIABLE)
     private val VARIABLE_VALUE_KEYS = arrayOf(VARIABLE_VALUE)
     private val LINE_SPLIT_KEYS = arrayOf(LINE_SPLIT)
+    private val TAB_KEYS = arrayOf(TAB)
     private val COMMENT_KEYS = arrayOf(COMMENT)
     private val EMPTY_KEYS = emptyArray<TextAttributesKey>()
   }
@@ -42,6 +44,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     MakefileTypes.VARIABLE -> VARIABLE_KEYS
     MakefileTypes.VARIABLE_VALUE -> VARIABLE_VALUE_KEYS
     MakefileTypes.SPLIT -> LINE_SPLIT_KEYS
+    MakefileTypes.TAB -> TAB_KEYS
     TokenType.BAD_CHARACTER -> BAD_CHAR_KEYS
     else -> EMPTY_KEYS
   }
