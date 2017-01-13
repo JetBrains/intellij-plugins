@@ -1,10 +1,19 @@
-# [TSLint](https://palantir.github.io/tslint/) plugin for Jetbrains IDEs
+#### [TSLint](https://palantir.github.io/tslint/) plugin for Jetbrains IDEs
+
+
+##### Key features
+
+* Config **tslint.json** code completion
+* TSLint errors in the editor 
+* TSLint fixes
+* Quick navigation to **tslint.json** from errors
 
 
 
-## Issues/Feature Requests
+
+##### Issues/Feature Requests
 Issues and feature requests are managed at [https://youtrack.jetbrains.com/issues/WEB](https://youtrack.jetbrains.com/issues/WEB)
 
-## Code contributions
+##### Code contributions
 See the [development environment setup instructions](developer_environment.md) to get up and running.
 
