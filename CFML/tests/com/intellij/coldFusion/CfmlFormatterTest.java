@@ -179,6 +179,14 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     myTestStyleSettings.SPACE_AROUND_ADDITIVE_OPERATORS = false;
     doTest();
   }
+  
+  
+  public void testIndentOptions() throws Exception {
+    CommonCodeStyleSettings.IndentOptions indentOptions = myTestStyleSettings.getIndentOptions();
+    assertNotNull(indentOptions);
+    indentOptions.INDENT_SIZE = 2;
+    doTest();
+  }
 
 
   private void setTestStyleSettings() {

@@ -20,10 +20,13 @@ package com.intellij.coldFusion.model.formatter;
  * User: Nadya.Zabrodina
  */
 
+import com.intellij.application.options.IndentOptionsEditor;
+import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.lang.Language;
 import com.intellij.psi.codeStyle.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
 
@@ -130,11 +133,18 @@ public class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
   @Override
   public CommonCodeStyleSettings getDefaultCommonSettings() {
     CommonCodeStyleSettings commonSettings = new CommonCodeStyleSettings(CfmlLanguage.INSTANCE);
+    commonSettings.initIndentOptions();
     commonSettings.CLASS_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     commonSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     commonSettings.SPECIAL_ELSE_IF_TREATMENT = false;
     commonSettings.SPACE_AFTER_TYPE_CAST = false;
     return commonSettings;
+  }
+
+  @Nullable
+  @Override
+  public IndentOptionsEditor getIndentOptionsEditor() {
+    return new SmartIndentOptionsEditor();
   }
 
   private static final String SPACING_CODE_SAMPLE = "<cffunction name=\"test\">\n" +
