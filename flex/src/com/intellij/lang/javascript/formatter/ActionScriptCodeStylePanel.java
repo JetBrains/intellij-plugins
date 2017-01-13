@@ -42,7 +42,6 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
     @NonNls String baseName = "field";
     @NonNls String propertyName = (myPropertyPrefixTextField != null ? myPropertyPrefixTextField.getText() : jsCodeStyleSettings.PROPERTY_PREFIX) + baseName;
     @NonNls String varName = (myFieldPrefixTextField != null ? myFieldPrefixTextField.getText() : jsCodeStyleSettings.FIELD_PREFIX) + baseName;
-    @NonNls String semiColon = (mySemicolonsCombobox != null ? useSemicolonSelected() : jsCodeStyleSettings.USE_SEMICOLON_AFTER_STATEMENT) ? ";":"";
 
     return "/*\n" +
            "    Multiline\n" +
@@ -50,15 +49,15 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
            "            Comment\n" +
            "*/\n" +
            "package aaa {\nclass XXX {\n" +
-           "private var " + varName + ":int" + semiColon + "\n" +
-           "function get " +  propertyName + "():int {\nreturn " + varName +  semiColon + "}\n" +
+           "private var " + varName + ":int" + "\n" +
+           "function get " +  propertyName + "():int {\nreturn " + varName + "}\n" +
            "function set " +  propertyName + "(val:int):void {\n" +
            " var myLink = {\n" +
            "    img : \"btn.gif\",\n" +
            "    text : \"Button\",\n" +
            "    width : 128\n" +
            "}" +
-           "varName = val" + semiColon + "\n" +
+           "varName = val" + "\n" +
            "}\n" +
            "}";
   }
