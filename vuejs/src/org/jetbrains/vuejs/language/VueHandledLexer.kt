@@ -13,6 +13,8 @@ interface VueHandledLexer {
   fun seenStyle():Boolean
   fun setSeenStyleType()
   fun seenTag():Boolean
+  fun setSeenTag(tag:Boolean)
+  fun inTagState():Boolean
   fun seenAttribute():Boolean
   fun getScriptType(): String?
   fun getStyleType(): String?
@@ -33,4 +35,5 @@ interface VueHandledLexer {
     }
     return null
   }
+
 }
