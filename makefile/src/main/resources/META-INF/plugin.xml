@@ -34,6 +34,7 @@
                          instance="name.kropp.intellij.makefile.MakeConfigurable"/>
     <!--<runLineMarkerContributor language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileTargetRunLineMarkerContributor"/>-->
     <runConfigurationProducer implementation="name.kropp.intellij.makefile.MakefileRunConfigurationProducer"/>
+    <langCodeStyleSettingsProvider implementation="name.kropp.intellij.makefile.MakefileCodeStyleSettingsProvider"/>
   </extensions>
 
   <actions>
