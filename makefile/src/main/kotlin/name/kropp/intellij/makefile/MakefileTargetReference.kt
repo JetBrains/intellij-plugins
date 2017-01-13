@@ -53,7 +53,7 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
           .map(::PsiElementResolveResult)
           .firstOrNull()?.element
     }
-    return (prerequisite.containingFile as MakefileFile).targets
+    return (prerequisite.containingFile as MakefileFile).allTargets
         .filter { it.name == prerequisite.text }
         .map(::PsiElementResolveResult)
         .firstOrNull()?.element

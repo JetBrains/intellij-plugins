@@ -38,12 +38,10 @@ class MakefileAnnotator : Annotator {
           }
         }
 
-        if (unresolvedFile != null) {
-          holder.createErrorAnnotation(unresolvedFile!!, "File not found")
-        }
-
         if (!targetReferences && !fileReferenceResolved) {
           holder.createErrorAnnotation(element, "Unresolved prerequisite").registerFix(CreateRuleFix(element))
+        } else if (unresolvedFile != null) {
+          holder.createErrorAnnotation(unresolvedFile!!, "File not found")
         }
       }
     } else if (element is MakefileVariable) {
