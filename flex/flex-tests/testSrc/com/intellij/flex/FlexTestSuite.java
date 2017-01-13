@@ -26,6 +26,7 @@ public class FlexTestSuite extends TestCase {
 
     testSuite.addTestSuite(ActionScriptCompletionTest.class);
     testSuite.addTestSuite(ActionScriptHighlightingTest.class);
+    testSuite.addTestSuite(ActionScriptResolveTest.class);
     testSuite.addTestSuite(FlexHighlightingTest.class);
     testSuite.addTestSuite(FlexCompletionTest.class);
     testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
