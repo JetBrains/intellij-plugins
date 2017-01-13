@@ -42,7 +42,7 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
     @NonNls String baseName = "field";
     @NonNls String propertyName = (myPropertyPrefixTextField != null ? myPropertyPrefixTextField.getText() : jsCodeStyleSettings.PROPERTY_PREFIX) + baseName;
     @NonNls String varName = (myFieldPrefixTextField != null ? myFieldPrefixTextField.getText() : jsCodeStyleSettings.FIELD_PREFIX) + baseName;
-    @NonNls String semiColon = (myUseSemicolon != null ? myUseSemicolon.isSelected() : jsCodeStyleSettings.USE_SEMICOLON_AFTER_STATEMENT) ? ";":"";
+    @NonNls String semiColon = (mySemicolonsCombobox != null ? useSemicolonSelected() : jsCodeStyleSettings.USE_SEMICOLON_AFTER_STATEMENT) ? ";":"";
 
     return "/*\n" +
            "    Multiline\n" +
