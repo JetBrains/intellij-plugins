@@ -1,9 +1,9 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi;
 
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import name.kropp.intellij.makefile.psi.impl.*;
 
 public interface MakefileTypes {
@@ -47,6 +47,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_ENDEF = new MakefileTokenType("endef");
   IElementType KEYWORD_ENDIF = new MakefileTokenType("endif");
   IElementType KEYWORD_EXPORT = new MakefileTokenType("export");
+  IElementType KEYWORD_IFDEF = new MakefileTokenType("ifdef");
   IElementType KEYWORD_IFEQ = new MakefileTokenType("ifeq");
   IElementType KEYWORD_IFNDEF = new MakefileTokenType("ifndef");
   IElementType KEYWORD_IFNEQ = new MakefileTokenType("ifneq");

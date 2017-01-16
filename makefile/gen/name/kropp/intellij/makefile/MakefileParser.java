@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
-import com.intellij.lang.LightPsiParser;
+import com.intellij.psi.tree.IElementType;
+
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class MakefileParser implements PsiParser, LightPsiParser {
@@ -238,7 +238,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('ifeq'|'ifneq'|'ifndef') condition comment? branch ('else' comment? branch)* 'endif' comment?
+  // ('ifeq'|'ifneq'|'ifdef'|'ifndef') condition comment? branch ('else' comment? branch)* 'endif' comment?
   public static boolean conditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional")) return false;
     boolean r, p;
@@ -255,13 +255,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // 'ifeq'|'ifneq'|'ifndef'
+  // 'ifeq'|'ifneq'|'ifdef'|'ifndef'
   private static boolean conditional_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_IFEQ);
     if (!r) r = consumeToken(b, KEYWORD_IFNEQ);
+    if (!r) r = consumeToken(b, KEYWORD_IFDEF);
     if (!r) r = consumeToken(b, KEYWORD_IFNDEF);
     exit_section_(b, m, null, r);
     return r;

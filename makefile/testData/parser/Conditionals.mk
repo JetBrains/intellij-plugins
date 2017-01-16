@@ -13,3 +13,10 @@ else
 else
 	rm -rf dependencies
 endif
+
+target:
+ifdef VARIABLE_NAME
+	cmd
+else
+	else-cmd
+endif

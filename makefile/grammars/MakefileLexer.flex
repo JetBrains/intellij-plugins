@@ -55,6 +55,7 @@ FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
     "undefine"         { yybegin(INCLUDES); return KEYWORD_UNDEFINE; }
     "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }
     "ifneq"            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ; }
+    "ifdef"            { yybegin(CONDITIONALS); return KEYWORD_IFDEF; }
     "ifndef"           { yybegin(CONDITIONALS); return KEYWORD_IFNDEF; }
     "else"             { return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }

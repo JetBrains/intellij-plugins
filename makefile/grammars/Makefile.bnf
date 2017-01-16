@@ -20,6 +20,7 @@
     KEYWORD_INCLUDE = "include"
     KEYWORD_IFEQ = "ifeq"
     KEYWORD_IFNEQ = "ifneq"
+    KEYWORD_IFDEF = "ifdef"
     KEYWORD_IFNDEF = "ifndef"
     KEYWORD_ELSE = "else"
     KEYWORD_ENDIF = "endif"
@@ -54,7 +55,7 @@ normal_prerequisites ::= (prerequisite+ (split prerequisite*)*) | prerequisite*
 order_only_prerequisites ::= prerequisite+ (split prerequisite*)*
 prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin"}
 
-conditional ::= ('ifeq'|'ifneq'|'ifndef') condition comment? branch ('else' comment? branch)* 'endif' comment? {pin=1}
+conditional ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef') condition comment? branch ('else' comment? branch)* 'endif' comment? {pin=1}
 
 branch ::= (conditional|command|variable-assignment)*
 

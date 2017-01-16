@@ -39,7 +39,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     MakefileTypes.COMMENT -> COMMENT_KEYS
     MakefileTypes.TARGET -> TARGET_KEYS
     MakefileTypes.COLON, MakefileTypes.ASSIGN, MakefileTypes.SEMICOLON, MakefileTypes.PIPE -> SEPARATOR_KEYS
-    MakefileTypes.KEYWORD_INCLUDE, MakefileTypes.KEYWORD_IFEQ, MakefileTypes.KEYWORD_IFNEQ, MakefileTypes.KEYWORD_IFNDEF, MakefileTypes.KEYWORD_ELSE, MakefileTypes.KEYWORD_ENDIF, MakefileTypes.KEYWORD_DEFINE, MakefileTypes.KEYWORD_ENDEF, MakefileTypes.KEYWORD_UNDEFINE, MakefileTypes.KEYWORD_OVERRIDE, MakefileTypes.KEYWORD_EXPORT, MakefileTypes.KEYWORD_PRIVATE, MakefileTypes.KEYWORD_VPATH -> KEYWORD_KEYS
+    MakefileTypes.KEYWORD_INCLUDE, MakefileTypes.KEYWORD_IFEQ, MakefileTypes.KEYWORD_IFNEQ, MakefileTypes.KEYWORD_IFDEF, MakefileTypes.KEYWORD_IFNDEF, MakefileTypes.KEYWORD_ELSE, MakefileTypes.KEYWORD_ENDIF, MakefileTypes.KEYWORD_DEFINE, MakefileTypes.KEYWORD_ENDEF, MakefileTypes.KEYWORD_UNDEFINE, MakefileTypes.KEYWORD_OVERRIDE, MakefileTypes.KEYWORD_EXPORT, MakefileTypes.KEYWORD_PRIVATE, MakefileTypes.KEYWORD_VPATH -> KEYWORD_KEYS
     MakefileTypes.PREREQUISITE -> PREREQUISITE_KEYS
     MakefileTypes.VARIABLE -> VARIABLE_KEYS
     MakefileTypes.VARIABLE_VALUE -> VARIABLE_VALUE_KEYS
