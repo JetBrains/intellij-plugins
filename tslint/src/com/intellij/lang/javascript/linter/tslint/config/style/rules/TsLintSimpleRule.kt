@@ -5,31 +5,33 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 
 
-abstract class TsLintSimpleRule(val optionId: String) : TsLintRule {
+abstract class TsLintSimpleRule<T>(val optionId: String) : TsLintRule {
   override fun isAvailable(project: Project,
                            languageSettings: CommonCodeStyleSettings,
                            codeStyleSettings: JSCodeStyleSettings,
                            config: TsLintConfigWrapper): Boolean {
     if (!hasOption(config)) return false
 
-    return !getValue(languageSettings, codeStyleSettings)
+    val configValue = getConfigValue(config)
+    return configValue != null && getSettingsValue(languageSettings, codeStyleSettings) != configValue
   }
+
+  abstract fun getConfigValue(config: TsLintConfigWrapper): T?
 
   override fun apply(project: Project,
                      languageSettings: CommonCodeStyleSettings,
                      codeStyleSettings: JSCodeStyleSettings,
                      config: TsLintConfigWrapper) {
-    setValue(languageSettings, codeStyleSettings)
+    val value = getConfigValue(config) ?: return
+
+    setValue(languageSettings, codeStyleSettings, value)
   }
 
-  fun hasOption(config: TsLintConfigWrapper): Boolean {
-    val option = config.getOption(optionId)
-    return option?.isTrue() ?: false
-  }
+  open fun hasOption(config: TsLintConfigWrapper): Boolean = config.getOption(optionId)?.isTrue() ?: false
 
-  abstract fun getValue(languageSettings: CommonCodeStyleSettings,
-                        codeStyleSettings: JSCodeStyleSettings): Boolean
+  abstract fun getSettingsValue(languageSettings: CommonCodeStyleSettings,
+                                codeStyleSettings: JSCodeStyleSettings): T
 
   abstract fun setValue(languageSettings: CommonCodeStyleSettings,
-                        codeStyleSettings: JSCodeStyleSettings)
+                        codeStyleSettings: JSCodeStyleSettings, value: T)
 }

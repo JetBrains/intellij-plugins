@@ -28,5 +28,36 @@ class TsLintConfigWrapper(config: JsonObject) {
 }
 
 class TsLintConfigOption(val element: JsonElement) {
-  fun isTrue(): Boolean = element.isJsonPrimitive && element.asJsonPrimitive.isBoolean && element.asBoolean
+  fun isTrue(): Boolean {
+    if (element.isJsonPrimitive) {
+      return element.asBoolean
+    }
+
+    if (element.isJsonArray) {
+      val jsonArray = element.asJsonArray
+      if (jsonArray.count() == 0) {
+        return false
+      }
+
+      val value = jsonArray[0]
+
+      return value.isJsonPrimitive && value.asBoolean
+    }
+
+    return false
+  }
+
+  fun getStringValues(): Collection<String> {
+    if (element.isJsonArray) {
+      val jsonArray = element.asJsonArray
+      if (jsonArray.count() == 0) {
+        return emptyList()
+      }
+      val first = jsonArray[0]
+
+      return jsonArray.mapNotNull { if (first != it && it.isJsonPrimitive) it.asString else null }
+    }
+
+    return emptyList()
+  }
 }
