@@ -48,7 +48,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return editor.getDocument().getModificationStamp() == myModificationStamp && myError.getFixInfo() != null;
+    return editor != null && editor.getDocument().getModificationStamp() == myModificationStamp && myError.getFixInfo() != null;
   }
 
   @Override

@@ -10,6 +10,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
 
+    <editorNotificationProvider  implementation="com.intellij.lang.javascript.linter.tslint.editor.TsLintCodeStyleEditorNotificationProvider"/>
     <projectConfigurable id="settings.javascript.linters.tslint"
                          parentId="settings.typescriptcompiler"
                          instance="com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable"
