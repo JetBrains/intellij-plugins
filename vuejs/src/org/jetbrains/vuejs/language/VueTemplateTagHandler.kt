@@ -13,5 +13,8 @@ class VueTemplateTagHandler : BaseHtmlLexer.TokenHandler {
     if (!handled.seenTag() && handled.inTagState() && "template" == lexer.tokenText) {
       handled.setSeenTemplate(true)
     }
+    if (handled.seenTag() && handled.inTagState() && "template" == lexer.tokenText) {
+      handled.setSeenTag(false)
+    }
   }
 }

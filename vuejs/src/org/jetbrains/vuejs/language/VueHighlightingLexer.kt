@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lexer.HtmlHighlightingLexer
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
 class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
@@ -15,6 +16,12 @@ class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
     val scriptCleaner = VueTemplateCleaner()
     registerHandler(XmlTokenType.XML_END_TAG_START, scriptCleaner)
     registerHandler(XmlTokenType.XML_EMPTY_ELEMENT_END, scriptCleaner)
+  }
+
+  override fun getTokenType(): IElementType? {
+    val type = super.getTokenType()
+    if (type == XmlTokenType.TAG_WHITE_SPACE && baseState() == 0) return XmlTokenType.XML_REAL_WHITE_SPACE
+    return type
   }
 
   override fun findScriptContentProvider(mimeType: String?): HtmlScriptContentProvider? {
@@ -33,8 +40,7 @@ class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
   override fun seenAttribute() = seenAttribute
   override fun getScriptType() = scriptType
   override fun getStyleType() = styleType
-  override fun inTagState(): Boolean = isHtmlTagState(state and BASE_STATE_MASK)
-
+  override fun inTagState(): Boolean = isHtmlTagState(baseState())
 
   override fun setSeenScriptType() {
     seenContentType = true
@@ -70,5 +76,7 @@ class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
     return super.endOfTheEmbeddment(name) ||
            seenTemplate && "template" == name
   }
+
+  private fun baseState() = state and BASE_STATE_MASK
 }
 
