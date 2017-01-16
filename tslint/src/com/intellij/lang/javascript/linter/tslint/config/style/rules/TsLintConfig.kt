@@ -60,4 +60,29 @@ class TsLintConfigOption(val element: JsonElement) {
 
     return emptyList()
   }
+
+  fun getSecondIndexValues(): Map<String, String> {
+    if (element.isJsonArray) {
+      val jsonArray = element.asJsonArray
+      if (jsonArray.count() < 2) {
+        return emptyMap()
+      }
+      val first = jsonArray[1]
+
+      if (!first.isJsonObject) {
+        return emptyMap()
+      }
+      val resultObject = first.asJsonObject
+      val result = mutableMapOf<String, String>()
+      resultObject.entrySet().forEach {
+        if (it.value.isJsonPrimitive) {
+          result.put(it.key, it.value.asString)
+        }
+      }
+
+      return result
+    }
+
+    return emptyMap()
+  }
 }
