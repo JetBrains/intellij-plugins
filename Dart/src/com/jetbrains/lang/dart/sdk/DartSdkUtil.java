@@ -151,6 +151,15 @@ public class DartSdkUtil {
     //});
   }
 
+  @Nullable
+  public static String getFirstKnownDartSdkPath() {
+    final String[] knownPaths = PropertiesComponent.getInstance().getValues(DART_SDK_KNOWN_PATHS);
+    if (knownPaths != null && knownPaths.length > 0 && isDartSdkHome(knownPaths[0])) {
+      return knownPaths[0];
+    }
+    return null;
+  }
+
   private static void addKnownPathsToCombo(@NotNull final JComboBox combo,
                                            @NotNull final String propertyKey,
                                            @NotNull final BooleanFunction<String> pathChecker) {

@@ -192,7 +192,7 @@ public class DartSdkLibUtil {
     DartProjectComponent.commitModifiableModels(project, modelsToCommit);
   }
 
-  private static boolean isDartSdkOrderEntry(@NotNull final OrderEntry orderEntry) {
+  public static boolean isDartSdkOrderEntry(@NotNull final OrderEntry orderEntry) {
     return orderEntry instanceof LibraryOrderEntry &&
            LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
            DartSdk.DART_SDK_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName());

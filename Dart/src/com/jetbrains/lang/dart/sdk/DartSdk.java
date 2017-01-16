@@ -83,7 +83,7 @@ public class DartSdk {
   }
 
   @Nullable
-  static DartSdk getSdkByLibrary(@NotNull final Library library) {
+  public static DartSdk getSdkByLibrary(@NotNull final Library library) {
     final VirtualFile[] roots = library.getFiles(OrderRootType.CLASSES);
     if (roots.length == 1 && DartSdkLibraryPresentationProvider.isDartSdkLibRoot(roots[0])) {
       final String homePath = roots[0].getParent().getPath();
