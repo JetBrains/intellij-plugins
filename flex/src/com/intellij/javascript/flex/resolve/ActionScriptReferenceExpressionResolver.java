@@ -17,18 +17,24 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Konstantin.Ulitin
  */
-public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressionResolver implements JSResolveUtil.Resolver<JSReferenceExpressionImpl> {
+public class ActionScriptReferenceExpressionResolver
+  extends JSReferenceExpressionResolver
+  implements ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> {
+
   public ActionScriptReferenceExpressionResolver(JSReferenceExpressionImpl expression, PsiFile file) {
     super(expression, file);
   }
 
-  public ResolveResult[] doResolve() {
+  @NotNull
+  @Override
+  public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
     PsiElement currentParent = JSResolveUtil.getTopReferenceParent(myParent);

@@ -17,6 +17,7 @@ import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,8 +40,9 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     return result;
   }
 
+  @NotNull
   @Override
-  public ResolveResult[] doResolve() {
+  public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
     if (myRef.getParent() instanceof JSDefinitionExpression) {
       final PsiElement sibling = PsiTreeUtil.prevVisibleLeaf(myRef);
@@ -76,6 +78,6 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
         return ContainerUtil.map2Array(localVariables, JSResolveResult.class, item -> new JSResolveResult(item));
       }
     }
-    return super.doResolve();
+    return super.resolve(expression, incompleteCode);
   }
 }
