@@ -4,10 +4,13 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.folding.FoldingBuilderEx
 import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import name.kropp.intellij.makefile.psi.MakefileDefine
 import name.kropp.intellij.makefile.psi.MakefileRule
+import name.kropp.intellij.makefile.psi.MakefileTypes
 import name.kropp.intellij.makefile.psi.MakefileVariableAssignment
 
 class MakefileFoldingBuilder : FoldingBuilderEx() {
@@ -29,22 +32,30 @@ class MakefileFoldingBuilder : FoldingBuilderEx() {
   companion object {
     fun cutValue(value: String?): String {
       return value?.let {
-        if (it.length > 50) {
-          it.substring(0, 32) + "..."
+        if (it.length > 60) {
+          it.substring(0, 42) + "..."
         } else {
           it
         }
       }?.trim() ?: ""
     }
+
+    fun PsiElement.trimmedTextRange(): TextRange {
+      var last = lastChild
+      while (last != null && (last is PsiWhiteSpace || last.node.elementType == MakefileTypes.EOL || last.textRange.isEmpty)) {
+        last = last.prevSibling
+      }
+      return TextRange.create(textRange.startOffset, last.textRange.endOffset )
+    }
   }
 
-  class MakefileRuleFoldingDescriptor(private val rule: MakefileRule) : FoldingDescriptor(rule, rule.textRange) {
+  class MakefileRuleFoldingDescriptor(private val rule: MakefileRule) : FoldingDescriptor(rule, rule.trimmedTextRange()) {
     override fun getPlaceholderText() = rule.targetLine.targets.text + ":"
   }
-  class MakefileVariableFoldingDescriptor(private val variable: MakefileVariableAssignment) : FoldingDescriptor(variable, variable.textRange) {
-    override fun getPlaceholderText() = "${variable.variable.text} ${variable.assignment?.text ?: "="} ${cutValue(variable.value)}"
+  class MakefileVariableFoldingDescriptor(private val variable: MakefileVariableAssignment) : FoldingDescriptor(variable, variable.trimmedTextRange()) {
+    override fun getPlaceholderText() = "${variable.variable.text}${variable.assignment?.text ?: "="}${cutValue(variable.value)}"
   }
-  class MakefileDefineFoldingDescriptor(private val define: MakefileDefine) : FoldingDescriptor(define, define.textRange) {
-    override fun getPlaceholderText() = "${define.variable?.text} ${define.assignment?.text ?: "="} ${cutValue(define.value)}"
+  class MakefileDefineFoldingDescriptor(private val define: MakefileDefine) : FoldingDescriptor(define, define.trimmedTextRange()) {
+    override fun getPlaceholderText() = "${define.variable?.text}${define.assignment?.text ?: "="}${cutValue(define.value)}"
   }
 }
