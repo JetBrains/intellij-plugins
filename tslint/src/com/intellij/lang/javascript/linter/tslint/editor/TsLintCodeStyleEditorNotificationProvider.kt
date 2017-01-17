@@ -6,6 +6,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintConfigWrapper
+import com.intellij.lang.javascript.linter.tslint.config.style.rules.TsLintRule
 import com.intellij.lang.javascript.linter.tslint.config.style.rules.TslintRulesSet
 import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
@@ -14,6 +15,7 @@ import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -87,10 +89,7 @@ class TsLintCodeStyleEditorNotificationProvider : EditorNotifications.Provider<E
       init {
         setText(TsLintBundle.message("tslint.code.style.apply.message"))
         val okAction: Runnable = Runnable {
-          WriteAction.run<RuntimeException> {
-            rules.forEach { rule -> rule.apply(project, languageSettings, jsCodeStyleSettings, wrapper) }
-          }
-          EditorNotifications.getInstance(project).updateAllNotifications()
+          runWriteActionAndUpdateNotifications(project, wrapper, rules)
         }
         createActionLabel(TsLintBundle.message("tslint.code.style.apply.text"), okAction)
 
@@ -101,6 +100,23 @@ class TsLintCodeStyleEditorNotificationProvider : EditorNotifications.Provider<E
         createActionLabel(TsLintBundle.message("tslint.code.style.dismiss.text"), dismissAction)
       }
     }
+  }
+
+  private fun runWriteActionAndUpdateNotifications(project: Project,
+                                                   wrapper: TsLintConfigWrapper,
+                                                   rules: Collection<TsLintRule>) {
+    WriteAction.run<RuntimeException> {
+      val settingsManager = CodeStyleSettingsManager.getInstance(project)
+      if (!settingsManager.USE_PER_PROJECT_SETTINGS) {
+        settingsManager.PER_PROJECT_SETTINGS = settingsManager.currentSettings.clone()
+        settingsManager.USE_PER_PROJECT_SETTINGS = true
+      }
+      val newSettings = settingsManager.currentSettings
+      val newLanguageSettings = newSettings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT)
+      val newJsCodeStyleSettings = newSettings.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
+      rules.forEach { rule -> rule.apply(project, newLanguageSettings, newJsCodeStyleSettings, wrapper) }
+    }
+    EditorNotifications.getInstance(project).updateAllNotifications()
   }
 
 
