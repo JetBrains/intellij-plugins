@@ -10,23 +10,20 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartNamedElementNode extends PsiElementMemberChooserObject implements ClassMember {
-  public DartNamedElementNode(final DartComponent haxeNamedComponent) {
-    super(haxeNamedComponent, buildPresentationText(haxeNamedComponent), haxeNamedComponent.getIcon(Iconable.ICON_FLAG_VISIBILITY));
+  public DartNamedElementNode(final DartComponent dartComponent) {
+    super(dartComponent, buildPresentationText(dartComponent), dartComponent.getIcon(Iconable.ICON_FLAG_VISIBILITY));
   }
 
   @Nullable
-  private static String buildPresentationText(DartComponent haxeNamedComponent) {
-    final ItemPresentation presentation = haxeNamedComponent.getPresentation();
+  private static String buildPresentationText(DartComponent dartComponent) {
+    final ItemPresentation presentation = dartComponent.getPresentation();
     if (presentation == null) {
-      return haxeNamedComponent.getName();
+      return dartComponent.getName();
     }
     final StringBuilder result = new StringBuilder();
-    if (haxeNamedComponent instanceof DartClass) {
-      result.append(haxeNamedComponent.getName());
+    if (dartComponent instanceof DartClass) {
+      result.append(dartComponent.getName());
       final String location = presentation.getLocationString();
       if (location != null && !location.isEmpty()) {
         result.append(" ").append(location);
