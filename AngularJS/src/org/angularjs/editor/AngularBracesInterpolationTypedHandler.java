@@ -64,7 +64,7 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
             return Result.STOP;
           }
         }
-        else {
+        else if (offset > 0) {
           charAt = document.getCharsSequence().charAt(offset - 1);
           if (charAt != '}') {
             EditorModificationUtil.insertStringAtCaret(editor, "}}", true, 2);
