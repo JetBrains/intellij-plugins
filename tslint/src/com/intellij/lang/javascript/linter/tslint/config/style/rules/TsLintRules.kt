@@ -27,6 +27,7 @@ val TslintRulesSet = setOf(ImportDestructuringSpacingRule(),
                            WhitespaceMultplyOperatorRule(),
                            WhitespaceShiftOperatorRule(),
                            WhitespaceCommaRule(),
+                           MaxLineLengthRule(),
                            IndentRule()
 )
 
@@ -440,6 +441,21 @@ class IndentRule() : TsLintSimpleRule<String>("indent") {
       "tabs" -> indentOptions.USE_TAB_CHARACTER = true
       "spaces" -> indentOptions.USE_TAB_CHARACTER = false
     }
+  }
+}
+
+class MaxLineLengthRule : TsLintSimpleRule<Int>("max-line-length") {
+  override fun getConfigValue(config: TsLintConfigWrapper): Int? {
+    val option = config.getOption(optionId) ?: return null
+    return option.getSecondNumberValue()
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Int {
+    return languageSettings.RIGHT_MARGIN
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Int) {
+    languageSettings.RIGHT_MARGIN = value
   }
 
 }
