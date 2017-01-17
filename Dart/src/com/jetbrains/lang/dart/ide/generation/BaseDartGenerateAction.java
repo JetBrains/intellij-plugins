@@ -21,6 +21,11 @@ import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfType;
 
 public abstract class BaseDartGenerateAction extends AnAction {
 
+  @Override
+  public boolean startInTransaction() {
+    return true;
+  }
+
   public void actionPerformed(final AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     assert project != null;
