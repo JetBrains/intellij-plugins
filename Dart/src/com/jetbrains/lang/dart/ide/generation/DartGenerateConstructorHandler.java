@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.generation;
 
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -27,4 +26,8 @@ public class DartGenerateConstructorHandler extends BaseDartGenerateHandler {
                                             component -> DartComponentType.typeOf(component) == DartComponentType.FIELD));
   }
 
+  @Override
+  protected boolean doAllowEmptySelection() {
+    return true;
+  }
 }
