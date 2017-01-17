@@ -5,9 +5,9 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 
 val TslintRulesSet = setOf(ImportDestructuringSpacingRule(),
                            QuotemarkRule(),
+                           ForceQuotemarkRule(),
                            SemicolonRule(),
-                           ForceAlwaysSemicolonRule(),
-                           ForceNeverSemicolonRule(),
+                           ForceSemicolonRule(),
                            OneLineCatchRule(),
                            OneLineElseRule(),
                            OneLineFinallyRule(),
@@ -65,7 +65,32 @@ class QuotemarkRule : TsLintSimpleRule<String>("quotemark") {
                         value: String) {
     codeStyleSettings.USE_DOUBLE_QUOTES = value == "\""
   }
+}
 
+class ForceQuotemarkRule : TsLintSimpleRule<Boolean>("quotemark") {
+  override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
+    val option = config.getOption(optionId) ?: return null
+
+    val stringValues = option.getStringValues()
+    if (stringValues.contains("avoid-escape")) return null
+
+
+    if (stringValues.contains("single")) return true
+    if (stringValues.contains("double")) return true
+
+    return null
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings,
+                                codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return codeStyleSettings.FORCE_QUOTE_STYlE
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings,
+                        codeStyleSettings: JSCodeStyleSettings,
+                        value: Boolean) {
+    codeStyleSettings.FORCE_QUOTE_STYlE = value
+  }
 }
 
 class SemicolonRule() : TsLintSimpleRule<Boolean>("semicolon") {
@@ -89,19 +114,17 @@ class SemicolonRule() : TsLintSimpleRule<Boolean>("semicolon") {
 
 }
 
-open class ForceAlwaysSemicolonRule() : TsLintSimpleRule<Boolean>("semicolon") {
+open class ForceSemicolonRule() : TsLintSimpleRule<Boolean>("semicolon") {
   override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
     val option = config.getOption(optionId) ?: return null
 
     val stringValues = option.getStringValues()
-    if (stringValues.contains(getCode())) return true
+    if (stringValues.contains("always")) return true
+    if (stringValues.contains("never")) return true
 
     return null
   }
 
-  open fun getCode(): String {
-    return "always"
-  }
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return codeStyleSettings.FORCE_SEMICOLON_STYLE
@@ -109,12 +132,6 @@ open class ForceAlwaysSemicolonRule() : TsLintSimpleRule<Boolean>("semicolon") {
 
   override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
     codeStyleSettings.FORCE_SEMICOLON_STYLE = value
-  }
-}
-
-class ForceNeverSemicolonRule() : ForceAlwaysSemicolonRule() {
-  override fun getCode(): String {
-    return "never"
   }
 }
 
