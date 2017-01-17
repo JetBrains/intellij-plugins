@@ -158,7 +158,7 @@
 
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <completion.contributor language="HTML" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
-    <weigher key="completion" id="DartServerCompletionWeigher" order="after prefix"
+    <weigher key="completion" id="DartServerCompletionWeigher" order="after prefix, after stats"
              implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionWeigher"/>
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
