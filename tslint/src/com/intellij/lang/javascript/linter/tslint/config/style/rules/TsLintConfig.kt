@@ -61,6 +61,25 @@ class TsLintConfigOption(val element: JsonElement) {
     return emptyList()
   }
 
+
+  fun getSecondNumberValue():Int? {
+    if (element.isJsonArray) {
+      val jsonArray = element.asJsonArray
+      if (jsonArray.count() < 2) {
+        return null
+      }
+      val first = jsonArray[1]
+
+      if (!first.isJsonPrimitive) {
+        return null
+      }
+
+      return first.asInt
+    }
+
+    return null
+  }
+
   fun getSecondIndexValues(): Map<String, String> {
     if (element.isJsonArray) {
       val jsonArray = element.asJsonArray
