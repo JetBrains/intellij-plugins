@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.editor
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonParser
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.javascript.JavaScriptSupportLoader
@@ -29,7 +30,17 @@ val RULES_TO_APPLY: ParameterizedCachedValueProvider<TsLintConfigWrapper, PsiFil
     return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(null, it)
   }
 
-  val jsonElement = JsonParser().parse(it.text)
+  var jsonElement: JsonElement? = null
+  try {
+    jsonElement = JsonParser().parse(it.text)
+  }
+  catch (e: Exception) {
+    //do nothing
+  }
+  if (jsonElement == null) {
+    return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(null, it)
+  }
+
   val result = (if (jsonElement.isJsonObject) TsLintConfigWrapper(jsonElement.asJsonObject) else null)
 
   return@ParameterizedCachedValueProvider CachedValueProvider.Result.create(result, it)
