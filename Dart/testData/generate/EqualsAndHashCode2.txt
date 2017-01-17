@@ -1,15 +1,11 @@
 class EqualsAndHashCode2 {
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    return other is EqualsAndHashCode2;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is EqualsAndHashCode2 &&
+              runtimeType == other.runtimeType;
 
   @override
-  int get hashCode {
-    return 0;
-  }<caret>
-}
+  int get hashCode => 0;
+<caret>}

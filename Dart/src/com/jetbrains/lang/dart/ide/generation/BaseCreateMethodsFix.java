@@ -27,11 +27,11 @@ import java.util.*;
 abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   protected static final String DART_TEMPLATE_GROUP = "Dart";
   private final Set<T> elementsToProcess = new LinkedHashSet<>();
-  protected final DartClass myDartClass;
+  @NotNull protected final DartClass myDartClass;
   protected final DartGenericSpecialization specializations;
   protected PsiElement anchor = null;
 
-  public BaseCreateMethodsFix(final DartClass dartClass) {
+  public BaseCreateMethodsFix(@NotNull final DartClass dartClass) {
     myDartClass = dartClass;
     specializations = DartClassResolveResult.create(dartClass).getSpecialization();
   }
@@ -78,7 +78,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     processElements(project, editor, getElementsToProcess());
   }
 
-  protected void processElements(@NotNull Project project, @NotNull Editor editor, Set<T> elementsToProcess) {
+  protected void processElements(@NotNull Project project, @NotNull Editor editor, @NotNull Set<T> elementsToProcess) {
     if (elementsToProcess.isEmpty()) {
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         HintManager.getInstance().showErrorHint(editor, getNothingFoundMessage());
@@ -125,6 +125,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     }
   }
 
+  @NotNull
   public Set<T> getElementsToProcess() {
     //noinspection unchecked,SuspiciousToArrayCall
     final T[] objects = (T[])elementsToProcess.toArray(new DartComponent[elementsToProcess.size()]);
