@@ -14,4 +14,7 @@
     <!--<directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGeneraator"/>-->
     <!--<projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>-->
   </extensions>
+  <extensions defaultExtensionNs="JavaScript">
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler"/>
+  </extensions>
 </idea-plugin>
