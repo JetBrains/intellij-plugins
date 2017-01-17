@@ -24,7 +24,8 @@ val TslintRulesSet = setOf(ImportDestructuringSpacingRule(),
                            WhitespaceAdditiveOperatorRule(),
                            WhitespaceMultplyOperatorRule(),
                            WhitespaceShiftOperatorRule(),
-                           WhitespaceCommaRule()
+                           WhitespaceCommaRule(),
+                           IndentRule()
 )
 
 class ImportDestructuringSpacingRule : TsLintSimpleRule<Boolean>("import-destructuring-spacing") {
@@ -362,3 +363,35 @@ class WhitespaceCommaRule() : MergedArrayRule("whitespace") {
   override fun getCode(): String = "check-separator"
 }
 
+class IndentRule() : TsLintSimpleRule<String>("indent") {
+  override fun getConfigValue(config: TsLintConfigWrapper): String? {
+    val option = config.getOption(optionId) ?: return null
+    val stringValues = option.getStringValues()
+
+    if (stringValues.contains("spaces")) return "spaces"
+    if (stringValues.contains("tabs")) return "tabs"
+
+    return null
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): String {
+    var indentOptions = languageSettings.indentOptions
+    if (indentOptions == null) {
+      indentOptions = languageSettings.initIndentOptions()
+    }
+
+    return if (indentOptions.USE_TAB_CHARACTER) "tabs" else "spaces"
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: String) {
+    var indentOptions = languageSettings.indentOptions
+    if (indentOptions == null) {
+      indentOptions = languageSettings.initIndentOptions()
+    }
+    when (value) {
+      "tabs" -> indentOptions.USE_TAB_CHARACTER = true
+      "spaces" -> indentOptions.USE_TAB_CHARACTER = false
+    }
+  }
+
+}
