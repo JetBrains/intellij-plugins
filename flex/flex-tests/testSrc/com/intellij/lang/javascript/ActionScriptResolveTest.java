@@ -64,7 +64,7 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
                       "function m() {}";
 
     JSReferenceExpression ref = (JSReferenceExpression)configureByFileText(fileText, "sample.js2");
-    ResolveResult[] results = ref.multiResolve(true);
+    ResolveResult[] results = ref.multiResolve(false);
     assertEquals(2, results.length);
   }
 

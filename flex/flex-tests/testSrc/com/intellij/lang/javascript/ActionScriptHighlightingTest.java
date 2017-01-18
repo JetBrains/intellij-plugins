@@ -755,7 +755,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
     final PsiReference ref = myFile.findReferenceAt(myEditor.getCaretModel().getOffset());
     assertTrue(ref instanceof PsiPolyVariantReference);
-    final ResolveResult[] resolveResults = ((PsiPolyVariantReference)ref).multiResolve(true);
+    final ResolveResult[] resolveResults = ((PsiPolyVariantReference)ref).multiResolve(false);
     assertTrue(2 == resolveResults.length);
   }
 
