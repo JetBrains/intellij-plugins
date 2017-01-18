@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.sdk;
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
-import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +21,7 @@ public class DartSdkLibraryPresentationProvider extends LibraryPresentationProvi
 
   @Nullable
   @Override
-  public Icon getIcon(@Nullable LibraryProperties properties) {
+  public Icon getIcon(@Nullable DummyLibraryProperties properties) {
     return DartIcons.Dart_16;
   }
 
