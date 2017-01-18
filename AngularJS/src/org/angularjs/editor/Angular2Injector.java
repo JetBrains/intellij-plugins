@@ -4,6 +4,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl;
 import com.intellij.openapi.project.Project;
@@ -89,6 +90,7 @@ public class Angular2Injector implements MultiHostInjector {
 
         final TextRange range = ElementManipulators.getValueTextRange(context);
         registrar.startInjecting(language).addPlace(null, null, (PsiLanguageInjectionHost)context, range).doneInjecting();
+        JSInjectionController.setReformattableInjection(context);
       }
     }
     return false;
