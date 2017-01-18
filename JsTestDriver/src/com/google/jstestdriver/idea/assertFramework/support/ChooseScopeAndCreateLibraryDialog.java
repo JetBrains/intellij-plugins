@@ -15,6 +15,8 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.util.ui.JBInsets;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.ScriptingFrameworkDescriptor;
@@ -51,7 +53,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
 
     setTitle("Coding Assistance For " + desiredLibraryName);
 
-    myModuleSelector = new ModuleScopeSelectorComponent(project, requestor);
+    myModuleSelector = new ModuleScopeSelectorComponent(project, requestor, true, true);
     myLibraryNameTextField = createTextField(myLibraryHelper);
     List<Component> components = Lists.newArrayList();
     if (!myLibraryHelper.hasReusableLibraryModel()) {
@@ -107,7 +109,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
       0.0, 0.0,
       GridBagConstraints.WEST,
       GridBagConstraints.NONE,
-      new Insets(0, 0, 0, 5),
+      new JBInsets(0, 0, 0, 5),
       0, 0
     ));
     libraryNamePanel.add(myLibraryNameTextField, new GridBagConstraints(
@@ -116,7 +118,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
       1.0, 0.0,
       GridBagConstraints.WEST,
       GridBagConstraints.HORIZONTAL,
-      new Insets(0, 0, 0, 0),
+      JBUI.emptyInsets(),
       0, 0
     ));
     return libraryNamePanel;
