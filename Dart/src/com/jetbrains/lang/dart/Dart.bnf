@@ -430,6 +430,7 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.
                                | yieldEachStatement
                                | yieldStatement
                                | ';'
+                               | '=>' // for better recovery
 private statementFollowedBySemiColon ::= (varDeclarationList | expression) ';' {pin=1}
 
 label::= componentName ':'

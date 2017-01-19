@@ -4644,6 +4644,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                | yieldEachStatement
   //                                | yieldStatement
   //                                | ';'
+  //                                | '=>'
   static boolean nonLabelledStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "nonLabelledStatement")) return false;
     boolean r;
@@ -4665,6 +4666,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = yieldEachStatement(b, l + 1);
     if (!r) r = yieldStatement(b, l + 1);
     if (!r) r = consumeToken(b, SEMICOLON);
+    if (!r) r = consumeToken(b, EXPRESSION_BODY_DEF);
     exit_section_(b, m, null, r);
     return r;
   }
