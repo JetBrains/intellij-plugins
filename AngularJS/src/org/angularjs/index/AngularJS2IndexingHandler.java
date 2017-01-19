@@ -4,7 +4,6 @@ import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
@@ -23,8 +22,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
@@ -56,6 +53,9 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       if (isPipe(name)) {
         addPipe(callExpression, (JSElementIndexingDataImpl)outData, getPropertyName(callExpression, NAME));
       }
+      if (isModule(name)) {
+        addImplicitElementToModules(callExpression, (JSElementIndexingDataImpl)outData, determineModuleName(callExpression));
+      }
      }
   }
 
@@ -85,80 +85,15 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       final ASTNode name = ref.getLastChildNode();
       if (name != null && name.getElementType() == JSTokenTypes.IDENTIFIER) {
         final String referencedName = name.getText();
-        return isDirective(referencedName) || isPipe(referencedName);
+        return isDirective(referencedName) || isPipe(referencedName) || isModule(referencedName);
       }
     }
     return false;
   }
 
-  @Override
-  public JSElementIndexingDataImpl processDecorator(ES6Decorator decorator, JSElementIndexingDataImpl outData) {
-    final String name = getDecoratorName(decorator);
-    if (name != null) {
-      if (isDirective(name)) {
-        outData = addImplicitElement(decorator, outData, getDecoratorPropertyValue(decorator, SELECTOR));
-      }
-      if (isPipe(name)) {
-        outData = addPipe(decorator, outData, getDecoratorPropertyValue(decorator, NAME));
-      }
-      // module name should be used
-      if (isModule(name)) {
-        outData = addImplicitElementToModules(decorator, outData, determineModuleName(decorator));
-      }
-    }
-    return outData;
-  }
-
-  @Nullable
-  private static String getDecoratorName(@NotNull ES6Decorator decorator) {
-    final ASTNode callExpressionNode = getDecoratorCallExpression(decorator);
-    if (callExpressionNode == null) return null;
-    final ASTNode referenceNode = callExpressionNode.getFirstChildNode();
-    if (!expect(referenceNode, JSElementTypes.REFERENCE_EXPRESSION)) return null;
-    final ASTNode identifierNode = referenceNode.getFirstChildNode();
-    if (!expect(identifierNode, JSTokenTypes.IDENTIFIER)) return null;
-    return identifierNode.getText();
-  }
-
-  @Nullable
-  private static ASTNode getDecoratorCallExpression(@NotNull ES6Decorator decorator) {
-    final ASTNode decoratorNode = decorator.getNode();
-    final ASTNode decoratorNodeFirstChildNode = decoratorNode.getFirstChildNode();
-    if (!expect(decoratorNodeFirstChildNode, JSTokenTypes.AT)) return null;
-    final ASTNode decoratorNodeLastChildNode = decoratorNode.getLastChildNode();
-    if (!expect(decoratorNodeLastChildNode, JSStubElementTypes.CALL_EXPRESSION)) return null;
-    return decoratorNodeLastChildNode;
-  }
-
-  @Nullable
-  private static String getDecoratorPropertyValue(@NotNull ES6Decorator decorator, @NotNull final String name) {
-    final ASTNode callExpressionNode = getDecoratorCallExpression(decorator);
-    if (callExpressionNode == null) return null;
-    final ASTNode argumentListNode = callExpressionNode.getLastChildNode();
-    if (!expect(argumentListNode, JSElementTypes.ARGUMENT_LIST)) return null;
-    final ASTNode objectArgument = argumentListNode.findChildByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION);
-    if (objectArgument == null) return null;
-    final ASTNode[] properties = objectArgument.getChildren(TokenSet.create(JSStubElementTypes.PROPERTY));
-    for (ASTNode property : properties) {
-      final ASTNode nameNode = property.getFirstChildNode();
-      if (expect(nameNode, JSTokenTypes.IDENTIFIER) && name.equals(nameNode.getText())) {
-        ASTNode node = nameNode.getTreeNext();
-        while (node != null && (JSTokenTypes.WHITE_SPACE.equals(node.getElementType()) || JSTokenTypes.COLON.equals(node.getElementType()))) {
-          node = node.getTreeNext();
-        }
-        if (expect(node, JSStubElementTypes.LITERAL_EXPRESSION)) {
-          if (expect(node.getFirstChildNode(), JSTokenTypes.STRING_LITERAL)) return StringUtil.unquoteString(node.getFirstChildNode().getText());
-        } else if (expect(node, JSTokenTypes.STRING_LITERAL)) return StringUtil.unquoteString(node.getText());
-      }
-    }
-    return null;
-  }
-
-  private static boolean expect(@Nullable ASTNode node, @NotNull IElementType type) {
-    return node != null && type.equals(node.getElementType());
-  }
-
-  private static String determineModuleName(@NotNull ES6Decorator decorator) {
+  private static String determineModuleName(@NotNull JSCallExpression callExpression) {
+    if (!(callExpression.getParent() instanceof ES6Decorator)) return null;
+    final ES6Decorator decorator = (ES6Decorator)callExpression.getParent();
     final PsiElement owner = decorator.getOwner();
     if (owner instanceof JSClass) return ((JSClass)owner).getName();
     return null;
@@ -178,18 +113,16 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     }
   }
 
-  private static JSElementIndexingDataImpl addImplicitElementToModules(PsiElement decorator,
-                                                                       JSElementIndexingDataImpl outData,
-                                                                       String selector) {
-    if (selector == null) return outData;
-    if (outData == null) outData = new JSElementIndexingDataImpl();
+  private static void addImplicitElementToModules(PsiElement decorator,
+                                                  @NotNull JSElementIndexingDataImpl outData,
+                                                  String selector) {
+    if (selector == null) return;
     JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(selector, decorator)
       .setUserString(AngularJSIndexingHandler.ANGULAR_MODULE_INDEX_USER_STRING);
     outData.addImplicitElement(elementBuilder.toImplicitElement());
-    return outData;
   }
 
-  private static JSElementIndexingDataImpl addImplicitElement(PsiElement decorator,
+  private static JSElementIndexingDataImpl addImplicitElement(PsiElement element,
                                                               JSElementIndexingDataImpl outData,
                                                               String selector) {
     if (selector == null) return outData;
@@ -205,7 +138,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         for (String attr : StringUtil.split(selectorName, "]", false)) {
           if (added.contains(attr)) continue;
           final String restrict = selectorName.startsWith("[") ? "A" : "E";
-          elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
+          elementBuilder = new JSImplicitElementImpl.Builder(attr, element)
             .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
           elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
           ref.get().addImplicitElement(elementBuilder.toImplicitElement());
@@ -213,10 +146,10 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
         }
         if (end > start) {
           final String attributeName = selectorName.substring(1, end);
-          final String prefix = isTemplate(decorator) ? "*" : "";
+          final String prefix = isTemplate(element) ? "*" : "";
           final String attr = prefix + attributeName;
           if (added.contains(attr)) return;
-          elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
+          elementBuilder = new JSImplicitElementImpl.Builder(attr, element)
             .setType(JSImplicitElement.Type.Class).setTypeString("A;;;");
           elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
           ref.get().addImplicitElement(elementBuilder.toImplicitElement());
@@ -227,13 +160,11 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     return ref.get();
   }
 
-  private static JSElementIndexingDataImpl addPipe(PsiElement expression, JSElementIndexingDataImpl outData, String pipe) {
-    if (pipe == null) return outData;
-    if (outData == null) outData = new JSElementIndexingDataImpl();
+  private static void addPipe(PsiElement expression, @NotNull JSElementIndexingDataImpl outData, String pipe) {
+    if (pipe == null) return;
     JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(pipe, expression).setUserString(
       ANGULAR_FILTER_INDEX_USER_STRING);
     outData.addImplicitElement(elementBuilder.toImplicitElement());
-    return outData;
   }
 
 

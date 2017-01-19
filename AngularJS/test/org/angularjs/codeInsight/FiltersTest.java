@@ -67,7 +67,7 @@ public class FiltersTest extends LightPlatformCodeInsightFixtureTestCase {
       PsiElement resolve = ref.resolve();
       assertNotNull(resolve);
       assertEquals("custom.ts", resolve.getContainingFile().getName());
-      assertEquals("@Pipe({\n" +
+      assertEquals("Pipe({\n" +
                    "    name: \"filta\"\n" +
                    "})", resolve.getParent().getText());
     });
