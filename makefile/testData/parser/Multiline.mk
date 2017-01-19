@@ -12,3 +12,7 @@ shar: $(SRCS) $(AUX) \
              -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
              -e q \
              version.c`.shar.Z
+
+test: \
+        hello \
+        world

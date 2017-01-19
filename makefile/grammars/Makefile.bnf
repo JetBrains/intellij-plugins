@@ -51,8 +51,8 @@ targets ::= target+
 target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement,com.intellij.navigation.NavigationItem" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget]}
 
 prerequisites ::= normal_prerequisites ('|' order_only_prerequisites)?
-normal_prerequisites ::= (prerequisite+ (split prerequisite*)*) | prerequisite*
-order_only_prerequisites ::= prerequisite+ (split prerequisite*)*
+normal_prerequisites ::= prerequisite* (split prerequisite*)*
+order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin"}
 
 conditional ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef') condition comment? branch ('else' comment? branch)* 'endif' comment? {pin=1}
