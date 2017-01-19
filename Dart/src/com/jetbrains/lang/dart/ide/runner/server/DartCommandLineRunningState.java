@@ -133,13 +133,12 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
-    setupParameters(sdk, commandLine, overriddenMainFilePath);
+    setupParameters(commandLine, overriddenMainFilePath);
 
     return commandLine;
   }
 
-  private void setupParameters(@NotNull final DartSdk sdk,
-                               @NotNull final GeneralCommandLine commandLine,
+  private void setupParameters(@NotNull final GeneralCommandLine commandLine,
                                @Nullable final String overriddenMainFilePath) throws ExecutionException {
     int customObservatoryPort = -1;
 

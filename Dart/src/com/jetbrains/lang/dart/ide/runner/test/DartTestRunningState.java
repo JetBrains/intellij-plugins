@@ -22,10 +22,8 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
@@ -33,16 +31,15 @@ import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartTestRunningState extends DartCommandLineRunningState {
   public static final String DART_FRAMEWORK_NAME = "DartTestRunner";
-  private static final String PUB_SNAPSHOT_PATH = "/bin/snapshots/pub.dart.snapshot";
   private static final String RUN_COMMAND = "run";
-  private static final String TEST_PACKAGE_SPEC = "test:test";
+  private static final String TEST_PACKAGE_SPEC = "test";
   private static final String EXPANDED_REPORTER_OPTION = "-r json";
 
   public DartTestRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
@@ -144,16 +141,11 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     params.setArguments(builder.toString());
     // working directory is not configurable in UI because there's only one valid value that we calculate ourselves
     params.setWorkingDirectory(params.computeProcessWorkingDirectory(project));
-    return doStartProcess(pathToDartUrl(sdk.getHomePath() + PUB_SNAPSHOT_PATH));
+    return doStartProcess(DartSdkUtil.getPubSnapshotPath(sdk));
   }
 
   DartTestRunnerParameters getParameters() {
     return (DartTestRunnerParameters)myRunnerParameters;
-  }
-
-  private static String pathToDartUrl(@NonNls @NotNull String path) {
-    final String url = VfsUtilCore.pathToUrl(path);
-    return SystemInfo.isWindows ? url.replace("file://", "file:///") : url;
   }
 
   private static class DartConsoleProperties extends SMTRunnerConsoleProperties implements SMCustomMessagesParsing {
