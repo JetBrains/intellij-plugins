@@ -348,6 +348,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('{', "var a = '''$<caret>'''", "var a = '''${<caret>}'''");
     doTypingTest('{', "var a = '${}<caret>'", "var a = '${}{<caret>'");
     doTypingTest('{', "<caret>", "{<caret>}");
+    doTypingTest('{', "foo(){if(a) <caret> return; }", "foo(){if(a) {<caret> return; }");
   }
 
   public void testRBraceInString() {
