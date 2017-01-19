@@ -28,7 +28,6 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
-import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +93,17 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   protected ProcessHandler doStartProcess(final @Nullable String overriddenMainFilePath) throws ExecutionException {
     final GeneralCommandLine commandLine = createCommandLine(overriddenMainFilePath);
-    final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
+
+    // Workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
+    final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
+      @Override
+      public void coloredTextAvailable(@NotNull String text, @NotNull Key attributes) {
+        if (text.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
+          text += "\n";
+        }
+        super.coloredTextAvailable(text, attributes);
+      }
+    };
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
@@ -106,18 +115,6 @@ public class DartCommandLineRunningState extends CommandLineState {
         }
       }
     });
-
-    // Commented out code is a workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
-    // The problem is not actual at the moment because Observatory is not turned on for tests
-    //final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
-    //  @Override
-    //  public void coloredTextAvailable(String text, Key attributes) {
-    //    if (text.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
-    //      text += "\n";
-    //    }
-    //    super.coloredTextAvailable(text, attributes);
-    //  }
-    //};
 
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
     return processHandler;
@@ -187,7 +184,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     if (customObservatoryPort > 0) {
       myObservatoryPort = customObservatoryPort;
     }
-    else if (!(myRunnerParameters instanceof DartTestRunnerParameters)) {
+    else {
       try {
         myObservatoryPort = NetUtils.findAvailableSocketPort();
       }

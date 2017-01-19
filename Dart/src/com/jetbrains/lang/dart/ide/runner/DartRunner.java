@@ -26,6 +26,7 @@ import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfiguration;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,9 @@ public class DartRunner extends GenericProgramRunner {
   @Override
   public boolean canRun(final @NotNull String executorId, final @NotNull RunProfile profile) {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
-           (profile instanceof DartCommandLineRunConfiguration || profile instanceof DartRemoteDebugConfiguration);
+           (profile instanceof DartCommandLineRunConfiguration ||
+            profile instanceof DartTestRunConfiguration ||
+            profile instanceof DartRemoteDebugConfiguration);
   }
 
   @Override
