@@ -22,7 +22,7 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
-import com.intellij.webcore.libraries.ui.ModuleScopeSelectorComponent;
+import com.intellij.webcore.libraries.ui.ModuleScopeSelectionView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
   private static final Logger LOG = Logger.getInstance(ChooseScopeAndCreateLibraryDialog.class);
 
   private final Project myProject;
-  private final ModuleScopeSelectorComponent myModuleSelector;
+  private final ModuleScopeSelectionView myModuleSelector;
   private final JTextField myLibraryNameTextField;
   private final JPanel myComponent;
   private final JsLibraryHelper myLibraryHelper;
@@ -53,7 +53,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
 
     setTitle("Coding Assistance For " + desiredLibraryName);
 
-    myModuleSelector = new ModuleScopeSelectorComponent(project, requestor, true, true);
+    myModuleSelector = new ModuleScopeSelectionView(project, requestor, true, true);
     myLibraryNameTextField = createTextField(myLibraryHelper);
     List<Component> components = Lists.newArrayList();
     if (!myLibraryHelper.hasReusableLibraryModel()) {
