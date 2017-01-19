@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -60,8 +61,15 @@ public class DartTypeHandler extends TypedHandlerDelegate {
         return Result.CONTINUE;
       }
 
-      if (PsiTreeUtil.getParentOfType(element, DartLazyParseableBlock.class, false) != null) {
-        // Use case: manually wrapping code with {} in 'if', 'while', etc (if (a) <caret>return;). Closing '}' will be auto-inserted on Enter.
+      PsiElement nextLeaf = element == null ? null : PsiTreeUtil.nextLeaf(element);
+      if (nextLeaf instanceof PsiWhiteSpace) {
+        nextLeaf = PsiTreeUtil.nextLeaf(nextLeaf);
+      }
+
+      if (PsiTreeUtil.getParentOfType(element, DartLazyParseableBlock.class, false) != null ||
+          nextLeaf != null && nextLeaf.getText().equals("=>")) {
+        // Use case 1: manually wrapping code with {} in 'if', 'while', etc (if (a) <caret>return;). Closing '}' will be auto-inserted on Enter.
+        // Use case 2: manual transformation of arrow block to standard (foo()<caret> => 499;)
         EditorModificationUtil.insertStringAtCaret(editor, "{");
         return Result.STOP;
       }
