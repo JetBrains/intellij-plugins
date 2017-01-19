@@ -18,12 +18,10 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartTokenTypes;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartDefaultCase;
-import com.jetbrains.lang.dart.psi.DartSwitchCase;
-import com.jetbrains.lang.dart.psi.DartType;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DartTypeHandler extends TypedHandlerDelegate {
   private boolean myAfterTypeOrComponentName = false;
@@ -52,10 +50,21 @@ public class DartTypeHandler extends TypedHandlerDelegate {
       return Result.CONTINUE;
     }
 
-    if (c == '{' && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
+    if (c == '{') {
       TypedHandler.commitDocumentIfCurrentCaretIsNotTheFirstOne(editor, project);
-      myAfterDollarInStringInterpolation = isAfterDollarInStringInterpolation(file, editor.getCaretModel().getOffset());
-      return Result.CONTINUE;
+
+      final PsiElement element = file.findElementAt(editor.getCaretModel().getOffset() - 1);
+
+      if (CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET && isAfterDollarInStringInterpolation(element)) {
+        myAfterDollarInStringInterpolation = true;
+        return Result.CONTINUE;
+      }
+
+      if (PsiTreeUtil.getParentOfType(element, DartLazyParseableBlock.class, false) != null) {
+        // Use case: manually wrapping code with {} in 'if', 'while', etc (if (a) <caret>return;). Closing '}' will be auto-inserted on Enter.
+        EditorModificationUtil.insertStringAtCaret(editor, "{");
+        return Result.STOP;
+      }
     }
 
     return Result.CONTINUE;
@@ -92,9 +101,9 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     return PsiTreeUtil.getParentOfType(previousElement, DartType.class, DartComponentName.class) != null;
   }
 
-  private static boolean isAfterDollarInStringInterpolation(@NotNull final PsiFile file, final int offset) {
-    final PsiElement element = file.findElementAt(offset - 1);
-    return element != null && element.getNode().getElementType() == DartTokenTypes.SHORT_TEMPLATE_ENTRY_START;
+  private static boolean isAfterDollarInStringInterpolation(@Nullable final PsiElement elementAtOffsetMinusOne) {
+    return elementAtOffsetMinusOne != null &&
+           elementAtOffsetMinusOne.getNode().getElementType() == DartTokenTypes.SHORT_TEMPLATE_ENTRY_START;
   }
 
   // similar to com.intellij.codeInsight.editorActions.JavaTypedHandler.autoIndentCase()
