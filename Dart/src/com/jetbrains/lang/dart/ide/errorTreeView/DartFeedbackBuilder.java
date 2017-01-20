@@ -4,16 +4,22 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.notification.impl.NotificationsManagerImpl;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.ui.BalloonLayout;
+import com.intellij.ui.BalloonLayoutData;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
 import static com.intellij.notification.NotificationDisplayType.STICKY_BALLOON;
@@ -29,10 +35,6 @@ public abstract class DartFeedbackBuilder {
                                                                                       STICKY_BALLOON, true);
 
   private static ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
-
-  static {
-    Notifications.Bus.register(ourNotificationGroup.getDisplayId(), null);
-  }
 
   @NotNull
   public static DartFeedbackBuilder getFeedbackBuilder() {
@@ -71,7 +73,7 @@ public abstract class DartFeedbackBuilder {
    *
    * @param project      the current project
    * @param errorMessage additional information for the issue, such as a tack trace
-   * @param serverLog recent requests made to the analysis server
+   * @param serverLog    recent requests made to the analysis server
    */
   public abstract void sendFeedback(@NotNull Project project, @Nullable String errorMessage, @Nullable String serverLog);
 
@@ -91,25 +93,44 @@ public abstract class DartFeedbackBuilder {
   /**
    * Show a notification that allows the user to submit a feedback issue.
    *
-   * @param message      optional, an additional message to display before the prompt
-   * @param project      optional, the current project
+   * @param message      an additional message to display before the prompt
+   * @param project      the current project
    * @param errorMessage optional, may be used for stack trace
+   * @param debugLog     optional, server traffic log for debugging
    */
-  public void showNotification(String message, @NotNull Project project, String errorMessage, String debugLog) {
-    // TODO(messick) work in progress
-    IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
+  public void showNotification(@NotNull String message,
+                               @NotNull Project project,
+                               @Nullable String errorMessage,
+                               @Nullable String debugLog) {
     String link = "<a href=\"\">" + prompt() + "</a>";
-    Notifications.Bus.notify(
+    Notification note =
       new Notification(
         ourNotificationGroup.getDisplayId(),
         title(),
-        message == null ? link : message + "<br>" + link,
+        message + "<br>" + link,
         NotificationType.ERROR,
         (notification, event) -> {
           if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             notification.expire();
             sendFeedback(project, errorMessage, debugLog);
           }
-        }));
+        });
+    ApplicationManager.getApplication()
+      .invokeLater(() -> showErrorNotification(note, project));
+  }
+
+  private static void showErrorNotification(@NotNull Notification notification, @NotNull Project project) {
+    // Adapted from IdeMessagePanel.showErrorNotification()
+    IdeFrame myFrame = WindowManager.getInstance().getIdeFrame(project);
+    BalloonLayout layout = myFrame.getBalloonLayout();
+    assert layout != null;
+
+    BalloonLayoutData layoutData = BalloonLayoutData.createEmpty();
+    layoutData.fadeoutTime = 5000;
+    layoutData.fillColor = new JBColor(0XF5E6E7, 0X593D41);
+    layoutData.borderColor = new JBColor(0XE0A8A9, 0X73454B);
+
+    Balloon myBalloon = NotificationsManagerImpl.createBalloon(myFrame, notification, false, false, new Ref<>(layoutData), project);
+    layout.add(myBalloon);
   }
 }
