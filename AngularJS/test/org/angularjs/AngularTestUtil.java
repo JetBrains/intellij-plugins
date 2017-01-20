@@ -12,7 +12,8 @@ import static org.junit.Assert.assertTrue;
 public class AngularTestUtil {
 
   public static String getBaseTestDataPath(Class clazz) {
-    return PathManager.getJarPathForClass(clazz) + "/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
+    String homePath = PathManager.getHomePath();
+    return homePath + "/contrib/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
   }
 
   public static int findOffsetBySignature(String signature, final PsiFile psiFile) {
