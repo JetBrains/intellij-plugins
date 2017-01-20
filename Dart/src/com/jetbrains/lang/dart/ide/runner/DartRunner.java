@@ -98,7 +98,7 @@ public class DartRunner extends GenericProgramRunner {
     final int observatoryPort;
 
     if (runConfiguration instanceof DartRunConfigurationBase) {
-      contextFileOrDir = ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().getDartFile();
+      contextFileOrDir = ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().getDartFileOrDirectory();
 
       final String cwd =
         ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().computeProcessWorkingDirectory(env.getProject());
