@@ -1,6 +1,14 @@
+//single line component
 @Component({
     selector: 'todo-cmp',
-    template: `<span></span>`
+    template: `<span>Single line</span>`
 })
-export class TodoCmp {
-}
+
+//multiline component
+@Component({
+    selector: 'todo-cmp',
+    template: `
+        <div>
+            <span>Hello, world</span>
+        </div>`
+})
