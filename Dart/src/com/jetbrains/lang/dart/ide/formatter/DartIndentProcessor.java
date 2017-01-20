@@ -125,7 +125,11 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
     if (parentType == ARGUMENTS) {
-      return Indent.getNoneIndent();
+      ASTNode last = node.getLastChildNode();
+      if (last == null) return Indent.getNoneIndent();
+        return last.getElementType() == COMMA && superParentType != METADATA
+             ? Indent.getNormalIndent()
+             : Indent.getNoneIndent();
     }
     if (parentType == ARGUMENT_LIST) {
       // see https://github.com/dart-lang/dart_style/issues/551
