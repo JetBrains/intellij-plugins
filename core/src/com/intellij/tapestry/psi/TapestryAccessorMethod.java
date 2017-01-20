@@ -259,7 +259,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       return myParameters;
     }
 
-    public int getParameterIndex(PsiParameter parameter) {
+    public int getParameterIndex(@NotNull PsiParameter parameter) {
       LOG.assertTrue(parameter.getParent() == this);
       return PsiImplUtil.getParameterIndex(parameter, this);
     }
