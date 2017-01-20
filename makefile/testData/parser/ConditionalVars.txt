@@ -1,8 +1,7 @@
 Makefile
   MakefileTopconditionalImpl(TOPCONDITIONAL)
     PsiElement(ifeq)('ifeq')
-    PsiWhiteSpace(' ')
-    PsiElement(condition)('($(BUILD_TYPE),QA)')
+    PsiElement(condition)(' ($(BUILD_TYPE),QA)')
     PsiWhiteSpace('\n')
     MakefileBlockImpl(BLOCK)
       MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)

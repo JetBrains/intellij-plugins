@@ -1,8 +1,7 @@
 Makefile
   MakefileTopconditionalImpl(TOPCONDITIONAL)
     PsiElement(ifndef)('ifndef')
-    PsiWhiteSpace(' ')
-    PsiElement(condition)('VERBOSE')
+    PsiElement(condition)(' VERBOSE')
     PsiWhiteSpace('\n')
     MakefileBlockImpl(BLOCK)
       MakefileRuleImpl(RULE)

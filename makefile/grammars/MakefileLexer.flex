@@ -27,13 +27,14 @@ EOL=[\r\n]+
 SPACES=" "+
 BACKSLASHCRLF="\\"(\r|\n|\r\n)
 COMMENT="#"[^\r\n]*
-VARIABLE_VALUE=[^\r\n]+[^\\\r\n]
+VARIABLE_VALUE=[^\r\n]*[^\\\r\n]
 COLON=":"
 SEMICOLON=";"
 PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
+CONDITION_CHARACTER=[^#\r\n]
 
 %state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS
 
@@ -104,8 +105,8 @@ FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
 }
 
 <CONDITIONALS> {
-    {FILENAME_CHARACTER}+      { yybegin(YYINITIAL); return CONDITION; }
     {SPACES}                   { return WHITE_SPACE; }
+    {CONDITION_CHARACTER}+     { yybegin(YYINITIAL); return CONDITION; }
     {EOL}                      { yybegin(YYINITIAL); return WHITE_SPACE; }
 }
 
