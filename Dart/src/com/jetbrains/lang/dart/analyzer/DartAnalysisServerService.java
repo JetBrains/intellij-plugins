@@ -1693,16 +1693,7 @@ public class DartAnalysisServerService implements Disposable {
           DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
           final boolean[] reportIt = new boolean[1];
           myDisruptionCount++;
-          ApplicationManager.getApplication().invokeAndWait(() -> {
-            reportIt[0] = builder.showQuery(DartBundle.message("dart.analysis.server.error"));
-            myPreviousTime = System.currentTimeMillis();
-          });
-          if (reportIt[0]) {
-            builder.sendFeedback(myProject, errorMessage, debugLog);
-          }
-          else {
-            LOG.warn(errorMessage);
-          }
+          builder.showNotification(DartBundle.message("dart.analysis.server.error"), myProject, errorMessage, debugLog);
         });
       }
       myPreviousMessage = errorMessage;
