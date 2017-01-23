@@ -214,9 +214,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       }
 
       ApplicationManager.getApplication().runWriteAction(() -> {
-        final ModifiableRootModel[] rootModels =
-          moduleToModifiableModelMap.values().toArray(new ModifiableRootModel[moduleToModifiableModelMap.size()]);
-        ModifiableModelCommitter.multiCommit(rootModels, moduleModel);
+        ModifiableModelCommitter.multiCommit(moduleToModifiableModelMap.values(), moduleModel);
       });
     }
 
