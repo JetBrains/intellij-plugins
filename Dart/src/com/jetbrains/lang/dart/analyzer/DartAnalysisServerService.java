@@ -1521,7 +1521,9 @@ public class DartAnalysisServerService implements Disposable {
       myServerData.clearData();
       myRootsHandler.reset();
 
-      ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(), ModalityState.NON_MODAL);
+      if (myProject.isOpen() && !myProject.isDisposed()) {
+        ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL, myProject.getDisposed());
+      }
     }
   }
 
