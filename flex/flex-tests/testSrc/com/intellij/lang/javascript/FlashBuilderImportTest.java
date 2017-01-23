@@ -127,7 +127,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
   protected void importProject(final String dotActionScriptPropertiesFileContent, final @Nullable String flashBuilderWorkspacePath)
     throws IOException, ConfigurationException {
-    importProject(dotActionScriptPropertiesFileContent, Collections.<String>emptyList(), flashBuilderWorkspacePath);
+    importProject(dotActionScriptPropertiesFileContent, Collections.emptyList(), flashBuilderWorkspacePath);
   }
 
   protected void importProject(final String dotActionScriptPropertiesFileContent,
@@ -159,12 +159,12 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
     final ModifiableRootModel rootModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
     final FlashBuilderSdkFinder sdkFinder = new FlashBuilderSdkFinder(myProject, StringUtil.notNullize(flashBuilderWorkspacePath),
-                                                                      Collections.<FlashBuilderProject>singletonList(flashBuilderProject));
+                                                                      Collections.singletonList(flashBuilderProject));
     final FlexProjectConfigurationEditor flexEditor =
       FlexProjectConfigurationEditor.createEditor(myProject, Collections.singletonMap(myModule, rootModel), null, null);
     new FlashBuilderModuleImporter(myProject, flexEditor, allFBProjects, sdkFinder).setupModule(rootModel, flashBuilderProject);
     flexEditor.commit();
-    ApplicationManager.getApplication().runWriteAction(() -> ModifiableModelCommitter.multiCommit(new ModifiableRootModel[]{rootModel}, moduleModel));
+    ApplicationManager.getApplication().runWriteAction(() -> ModifiableModelCommitter.multiCommit(Collections.singletonList(rootModel), moduleModel));
   }
 
   protected static String getSomeAbsoluteFolderPath() {
@@ -280,7 +280,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
       "</actionScriptProperties>";
     importProject(dotProjectFileContent,
                   dotActionScriptPropertiesFileContent,
-                  Collections.<String>emptyList(), null);
+                  Collections.emptyList(), null);
     final String contentRootUrl = myFlashBuilderProjectDir.getUrl();
     checkContentRoots(contentRootUrl, VfsUtilCore.pathToUrl(someAbsoluteFolderPath + "/other1"));
     checkSourceRoots(contentRootUrl + "/src1", contentRootUrl + "/subdir/src2", VfsUtilCore.pathToUrl(someAbsoluteFolderPath + "/other1"),
