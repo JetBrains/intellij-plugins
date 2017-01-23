@@ -139,6 +139,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     }
 
     params.setArguments(builder.toString());
+    params.setCheckedMode(false);
     // working directory is not configurable in UI because there's only one valid value that we calculate ourselves
     params.setWorkingDirectory(params.computeProcessWorkingDirectory(project));
     return doStartProcess(DartSdkUtil.getPubSnapshotPath(sdk));
