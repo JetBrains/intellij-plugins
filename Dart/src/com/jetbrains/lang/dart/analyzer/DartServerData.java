@@ -42,8 +42,12 @@ public class DartServerData {
     myService = service;
   }
 
-  void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean restartHighlighting) {
-    if (myFilePathsWithUnsentChanges.contains(filePath)) return;
+  /**
+   * @return <code>true</code> if <code>errors</code> were processes, <code>false</code> if ignored;
+   * errors are ignored if the file has been edited and new contents has not yet been sent to the server.
+   */
+  boolean computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean restartHighlighting) {
+    if (myFilePathsWithUnsentChanges.contains(filePath)) return false;
 
     final List<DartError> newErrors = new ArrayList<>(errors.size());
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
@@ -59,6 +63,8 @@ public class DartServerData {
     if (restartHighlighting) {
       forceFileAnnotation(file, false);
     }
+
+    return true;
   }
 
   void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {

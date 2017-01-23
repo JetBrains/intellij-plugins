@@ -193,8 +193,9 @@ public class DartAnalysisServerService implements Disposable {
       if (oldHash == newHash) return;
 
       final boolean visible = myVisibleFiles.contains(filePathSD);
-      myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible);
-      onErrorsUpdated(filePathSI, errorsWithoutTodo, hasSevereProblems, newHash);
+      if (myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible)) {
+        onErrorsUpdated(filePathSI, errorsWithoutTodo, hasSevereProblems, newHash);
+      }
     }
 
     @Override
