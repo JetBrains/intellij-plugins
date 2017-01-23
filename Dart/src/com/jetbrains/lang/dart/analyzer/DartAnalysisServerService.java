@@ -1691,7 +1691,6 @@ public class DartAnalysisServerService implements Disposable {
         String debugLog = debugLogContent();
         myErrorReporter.add(() -> {
           DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
-          final boolean[] reportIt = new boolean[1];
           myDisruptionCount++;
           builder.showNotification(DartBundle.message("dart.analysis.server.error"), myProject, errorMessage, debugLog);
         });

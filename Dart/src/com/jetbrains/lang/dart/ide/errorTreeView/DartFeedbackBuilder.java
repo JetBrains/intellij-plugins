@@ -1,9 +1,6 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
+import com.intellij.notification.*;
 import com.intellij.notification.impl.NotificationsManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -22,8 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 
-import static com.intellij.notification.NotificationDisplayType.STICKY_BALLOON;
-
 /**
  * Plugins may define alternative implementations that cause issues to be opened
  * for projects other than the Dart plugin. For example, the Flutter plugin may
@@ -31,8 +26,11 @@ import static com.intellij.notification.NotificationDisplayType.STICKY_BALLOON;
  */
 public abstract class DartFeedbackBuilder {
   public static final int MAX_URL_LENGTH = 4000;
-  private static final NotificationGroup ourNotificationGroup = new NotificationGroup("Dart Analyzer Error",
-                                                                                      STICKY_BALLOON, true);
+
+  // NOTIFICATION_GROUP is used to add an error to Event Log tool window. Red balloon is shown separately, like for IDE fatal errors.
+  // We do not show standard balloon using this NOTIFICATION_GROUP because it is not red enough.
+  private static final NotificationGroup NOTIFICATION_GROUP =
+    new NotificationGroup("Dart Analyzer Error", NotificationDisplayType.NONE, true);
 
   private static ExtensionPointName<DartFeedbackBuilder> EP_NAME = ExtensionPointName.create("Dart.feedbackBuilder");
 
@@ -82,12 +80,11 @@ public abstract class DartFeedbackBuilder {
    *
    * @param message optional, an additional message to display before the prompt
    */
-  public boolean showQuery(String message) {
-    return
-      (MessageDialogBuilder.yesNo(title(), message == null ? prompt() : message + "\n" + prompt())
-         .icon(Messages.getQuestionIcon())
-         .yesText(label())
-         .show() == Messages.YES);
+  public boolean showQuery(@Nullable String message) {
+    return (MessageDialogBuilder.yesNo(title(), message == null ? prompt() : message + "\n" + prompt())
+              .icon(Messages.getQuestionIcon())
+              .yesText(label())
+              .show() == Messages.YES);
   }
 
   /**
@@ -102,21 +99,25 @@ public abstract class DartFeedbackBuilder {
                                @NotNull Project project,
                                @Nullable String errorMessage,
                                @Nullable String debugLog) {
-    String link = "<a href=\"\">" + prompt() + "</a>";
-    Notification note =
-      new Notification(
-        ourNotificationGroup.getDisplayId(),
-        title(),
-        message + "<br>" + link,
-        NotificationType.ERROR,
-        (notification, event) -> {
-          if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            notification.expire();
-            sendFeedback(project, errorMessage, debugLog);
-          }
-        });
-    ApplicationManager.getApplication()
-      .invokeLater(() -> showErrorNotification(note, project));
+    String content = message + "<br><a href=\"\">" + prompt() + "</a>";
+
+    NotificationListener listener = new NotificationListener.Adapter() {
+      @Override
+      protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+        notification.expire();
+        sendFeedback(project, errorMessage, debugLog);
+      }
+    };
+
+    Notification notification =
+      NOTIFICATION_GROUP.createNotification(NOTIFICATION_GROUP.getDisplayId(), content, NotificationType.ERROR, listener);
+
+    // this writes to Event Log tool window, but doesn't show balloon (standard balloon is not red enough,
+    // we want to show a different balloon similar to the IDE fatal error)
+    notification.notify(project);
+
+    // this shows red balloon line in case of an IDE fatal error
+    ApplicationManager.getApplication().invokeLater(() -> showErrorNotification(notification, project));
   }
 
   private static void showErrorNotification(@NotNull Notification notification, @NotNull Project project) {
@@ -130,7 +131,7 @@ public abstract class DartFeedbackBuilder {
     layoutData.fillColor = new JBColor(0XF5E6E7, 0X593D41);
     layoutData.borderColor = new JBColor(0XE0A8A9, 0X73454B);
 
-    Balloon myBalloon = NotificationsManagerImpl.createBalloon(myFrame, notification, false, false, new Ref<>(layoutData), project);
-    layout.add(myBalloon);
+    Balloon balloon = NotificationsManagerImpl.createBalloon(myFrame, notification, false, false, new Ref<>(layoutData), project);
+    layout.add(balloon);
   }
 }
