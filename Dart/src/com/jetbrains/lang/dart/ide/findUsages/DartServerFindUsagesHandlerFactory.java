@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,13 @@ import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartLanguage;
-import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartServerFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   @Override
   public boolean canFindUsages(@NotNull final PsiElement element) {
-    if (DartResolver.isServerDrivenResolution()) {
-      return element.getLanguage() == DartLanguage.INSTANCE && !(element instanceof PsiFile);
-    }
-    return false;
+    return element.getLanguage() == DartLanguage.INSTANCE && !(element instanceof PsiFile);
   }
 
   @Nullable

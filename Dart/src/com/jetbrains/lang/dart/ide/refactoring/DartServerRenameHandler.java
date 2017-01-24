@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
-import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
 
 // todo implement ContextAwareActionHandler?
@@ -52,8 +51,6 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
 
   @Override
   public boolean isAvailableOnDataContext(@NotNull final DataContext dataContext) {
-    if (!DartResolver.isServerDrivenResolution()) return false;
-
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     if (editor == null) return false;
 
