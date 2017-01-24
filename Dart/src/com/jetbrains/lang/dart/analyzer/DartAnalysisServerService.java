@@ -271,11 +271,7 @@ public class DartAnalysisServerService implements Disposable {
         "Dart analysis server, SDK version " + mySdkVersion +
         ", server version " + myServerVersion +
         ", " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace;
-      myErrorReporter.report(errorMessage); // TODO(messick): Collect server request/response traffic and add to error message.
-
-      if (isFatal) {
-        stopServer();
-      }
+      myErrorReporter.report(errorMessage);
     }
 
     @Override
