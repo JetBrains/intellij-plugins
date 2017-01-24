@@ -27,6 +27,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.IdeaTestCase
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.facet.OsmorcFacet
 import java.io.File
@@ -100,8 +101,7 @@ class BndProjectImporterTest : IdeaTestCase() {
     myImporter.resolve(false)
 
     val modules = ModuleManager.getInstance(myProject).modules
-    assertEquals(3, modules.size)
-    assertEquals(setOf("hello.provider", "hello.consumer", "hello.tests"), modules.map { it.name }.toSet())
+    assertThat(modules.map { it.name }).containsExactlyInAnyOrder("hello.provider", "hello.consumer", "hello.tests")
 
     modules.forEach {
       val rootManager = ModuleRootManager.getInstance(it)
@@ -111,9 +111,9 @@ class BndProjectImporterTest : IdeaTestCase() {
 
       val dependencies = getDependencies(it)
       when (it.name) {
-        "hello.provider" -> assertEquals(listOf("<jdk>", "<src>"), dependencies)
-        "hello.consumer" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider"), dependencies)
-        "hello.tests" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), dependencies)
+        "hello.provider" -> assertThat(dependencies).containsExactly("<jdk>", "<src>")
+        "hello.consumer" -> assertThat(dependencies).containsExactly("<jdk>", "<src>", "hello.provider")
+        "hello.tests" -> assertThat(dependencies).containsExactly("<jdk>", "<src>", "hello.provider", "hello.consumer")
       }
 
       val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(LanguageLevelModuleExtension::class.java).languageLevel
@@ -144,7 +144,7 @@ class BndProjectImporterTest : IdeaTestCase() {
 
     assertEquals(LanguageLevel.JDK_1_8, LanguageLevelProjectExtension.getInstance(myProject).languageLevel)
     val module = ModuleManager.getInstance(myProject).findModuleByName("hello.tests")!!
-    assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), getDependencies(module))
+    assertThat(getDependencies(module)).containsExactly("<jdk>", "<src>", "hello.provider", "hello.consumer")
     assertNull(OsmorcFacet.getInstance(module))
 
     FileUtil.writeToFile(File(myProject.basePath!!, "cnf/build.bnd"), "javac.source: 1.7\njavac.target: 1.8")
@@ -152,7 +152,7 @@ class BndProjectImporterTest : IdeaTestCase() {
     BndProjectImporter.reimportWorkspace(myProject)
 
     assertEquals(LanguageLevel.JDK_1_7, LanguageLevelProjectExtension.getInstance(myProject).languageLevel)
-    assertEquals(listOf("<jdk>", "<src>", "hello.provider"), getDependencies(module))
+    assertThat(getDependencies(module)).containsExactly("<jdk>", "<src>", "hello.provider")
     assertNotNull(OsmorcFacet.getInstance(module))
   }
 
@@ -160,11 +160,12 @@ class BndProjectImporterTest : IdeaTestCase() {
   private fun getDependencies(it: Module): List<String> {
     val dependencies: MutableList<String> = arrayListOf()
     ModuleRootManager.getInstance(it).orderEntries().forEach {
-      dependencies.add(when (it) {
+      dependencies += when (it) {
         is ModuleSourceOrderEntry -> "<src>"
         is JdkOrderEntry -> "<jdk>"
         else -> it.presentableName
-      })
+      }
+      true
     }
     return dependencies
   }
