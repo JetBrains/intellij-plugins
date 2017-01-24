@@ -23,7 +23,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.IdeaTestCase
@@ -33,23 +32,24 @@ import org.osmorc.facet.OsmorcFacet
 import java.io.File
 
 class BndProjectImporterTest : IdeaTestCase() {
+  private lateinit var myProjectDir: String
   private lateinit var myWorkspace: Workspace
   private lateinit var myImporter: BndProjectImporter
 
   override fun setUp() {
     super.setUp()
 
-    val path = myProject.basePath!!
-    File(path, "cnf/ext").mkdirs()
-    FileUtil.writeToFile(File(path, "cnf/build.bnd"), "javac.source: 1.8\njavac.target: 1.8")
-    File(path, "hello.provider/src").mkdirs()
-    FileUtil.writeToFile(File(path, "hello.provider/bnd.bnd"), "javac.source: 1.7\njavac.target: 1.7")
-    File(path, "hello.consumer/src").mkdirs()
-    FileUtil.writeToFile(File(path, "hello.consumer/bnd.bnd"), "-buildpath: hello.provider")
-    File(path, "hello.tests/src").mkdirs()
-    FileUtil.writeToFile(File(path, "hello.tests/bnd.bnd"), "-nobundles: true\n-testpath: hello.provider,hello.consumer")
+    myProjectDir = myProject.basePath!!
+    File(myProjectDir, "cnf/ext").mkdirs()
+    File(myProjectDir, "cnf/build.bnd").writeText("javac.source: 1.8\njavac.target: 1.8")
+    File(myProjectDir, "hello.provider/src").mkdirs()
+    File(myProjectDir, "hello.provider/bnd.bnd").writeText("javac.source: 1.7\njavac.target: 1.7")
+    File(myProjectDir, "hello.consumer/src").mkdirs()
+    File(myProjectDir, "hello.consumer/bnd.bnd").writeText("-buildpath: hello.provider")
+    File(myProjectDir, "hello.tests/src").mkdirs()
+    File(myProjectDir, "hello.tests/bnd.bnd").writeText("-nobundles: true\n-testpath: hello.provider,hello.consumer")
 
-    myWorkspace = Workspace.getWorkspace(File(path), BndProjectImporter.CNF_DIR)
+    myWorkspace = Workspace.getWorkspace(File(myProjectDir), BndProjectImporter.CNF_DIR)
     myImporter = BndProjectImporter(myProject, myWorkspace, BndProjectImporter.getWorkspaceProjects(myWorkspace))
   }
 
@@ -147,8 +147,8 @@ class BndProjectImporterTest : IdeaTestCase() {
     assertThat(getDependencies(module)).containsExactly("<jdk>", "<src>", "hello.provider", "hello.consumer")
     assertNull(OsmorcFacet.getInstance(module))
 
-    FileUtil.writeToFile(File(myProject.basePath!!, "cnf/build.bnd"), "javac.source: 1.7\njavac.target: 1.8")
-    FileUtil.writeToFile(File(myProject.basePath!!, "hello.tests/bnd.bnd"), "-testpath: hello.provider")
+    File(myProjectDir, "cnf/build.bnd").writeText("javac.source: 1.7\njavac.target: 1.8")
+    File(myProjectDir, "hello.tests/bnd.bnd").writeText("-testpath: hello.provider")
     BndProjectImporter.reimportWorkspace(myProject)
 
     assertEquals(LanguageLevel.JDK_1_7, LanguageLevelProjectExtension.getInstance(myProject).languageLevel)
