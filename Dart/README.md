@@ -39,8 +39,6 @@ Prerequisites:
 3. On Welcome screen click Configure | Settings (Preferences), look for Path Variables and add the following vars there:
    - IDEA_ULTIMATE_PLUGINS pointing to [IntelliJ IDEA Ultimate Installation]/Contents/plugins
      (on Windows: [IntelliJ IDEA Ultimate Installation]/plugins)
-   - ADDITIONAL_PLUGINS pointing to IntelliJ IDEA Plugins folder (parent folder of WebComponents, GrammarKit and others)
-     See here how to find this folder: https://intellij-support.jetbrains.com/hc/en-us/articles/206544519-Directories-used-by-the-IDE-to-store-settings-caches-plugins-and-logs
 
 4. Open intellij-community project, compile it.
    Open File | Project Structure | Modules | [+] | Import Module, select intellij-plugins/Dart/Dart-community.iml.

@@ -3,6 +3,7 @@ package com.jetbrains.dart.analysisServer;
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -28,6 +29,7 @@ public class DartMethodHierarchyTest extends HierarchyViewTestBase {
   public void setUp() throws Exception {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(), getTestDataPath() + "/analysisServer/methodHierarchy/");
     // Some tests do this here but resolution does not work if the server is initialized prior to copying the files.
     //DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
   }

@@ -77,24 +77,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$IDEA_ULTIMATE_PLUGINS$/yaml/lib/yaml.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$IDEA_ULTIMATE_PLUGINS$/yaml/lib/resources_en.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="yaml" />
     <orderEntry type="module" module-name="copyright" />
     <orderEntry type="module" module-name="spellchecker" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
@@ -102,7 +85,7 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar://$ADDITIONAL_PLUGINS$/WebComponents/lib/WebComponents.jar!/" />
+          <root url="jar://$APPLICATION_PLUGINS_DIR$/WebComponents/lib/WebComponents.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
