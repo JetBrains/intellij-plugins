@@ -16,7 +16,6 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartImportStatement;
-import com.jetbrains.lang.dart.psi.DartUriBasedDirective;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -44,9 +43,6 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    final PsiElement parent = getParent();
-    assert parent instanceof DartUriBasedDirective : parent;
-
     final Pair<String, TextRange> uriAndRange = getUriStringAndItsRange();
     final String uri = uriAndRange.first;
     final int uriOffset = uriAndRange.second.getStartOffset();
@@ -85,7 +81,7 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
         @Override
         protected Condition<PsiFileSystemItem> getReferenceCompletionFilter() {
           return item -> item.isDirectory() && !DartUrlResolver.PACKAGES_FOLDER_NAME.equals(item.getName()) ||
-                 item instanceof DartFile && item != containingFile;
+                         item instanceof DartFile && item != containingFile;
         }
 
         @Override
