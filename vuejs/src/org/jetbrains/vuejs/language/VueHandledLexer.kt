@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageHtmlScriptContentProvider
+import com.intellij.openapi.fileTypes.FileTypeManager
 
 interface VueHandledLexer {
   fun seenScript():Boolean
@@ -21,10 +22,18 @@ interface VueHandledLexer {
 
   fun scriptContentViaLang(): HtmlScriptContentProvider? {
     return Language.getRegisteredLanguages()
-      .filter { getScriptType()!!.equals(it.id, ignoreCase = true) ||
-                (getScriptType()!!.equals("pug", ignoreCase = true) && "Jade" == it.id)}
+      .filter { languageMatches(it) }
       .map { LanguageHtmlScriptContentProvider.getScriptContentProvider(it) }
       .firstOrNull { it != null }
+  }
+
+  fun languageMatches(language: Language): Boolean {
+    val scriptType = getScriptType()!!
+    if (scriptType.equals(language.id, ignoreCase = true)) {
+      return true
+    }
+    val fileType = FileTypeManager.getInstance().getFileTypeByExtension(scriptType)
+    return fileType == language.associatedFileType
   }
 
   fun styleViaLang(default: Language?): Language? {
