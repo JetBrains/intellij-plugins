@@ -596,6 +596,23 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
+  public void testEnterInMultiLineArg() {
+    doTypingTest('\n',
+                 "m(l) {\n" +
+                 "  return new X(\n" +
+                 "    1,\n" +
+                 "    2,<caret>\n" +
+                 "  );\n" +
+                 "}",
+                 "m(l) {\n" +
+                 "  return new X(\n" +
+                 "    1,\n" +
+                 "    2,\n" +
+                 "    <caret>\n" +
+                 "  );\n" +
+                 "}");
+  }
+
   public void testEnterInMultilineString() {
     doTypingTest('\n', "var a = <caret>r''' ''';", "var a = \n<caret>r''' ''';"); // indent should be here, need to fix formatter
     doTypingTest('\n', "var a = r<caret>''' ''';", "var a = r\n<caret>''' ''';"); // indent should be here, need to fix formatter
