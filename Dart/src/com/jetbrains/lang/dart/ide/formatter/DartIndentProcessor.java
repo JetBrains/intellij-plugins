@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.formatter;
 
+import com.intellij.formatting.FormattingMode;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -31,7 +32,7 @@ public class DartIndentProcessor {
     this.settings = settings;
   }
 
-  public Indent getChildIndent(final ASTNode node) {
+  public Indent getChildIndent(final ASTNode node, final FormattingMode mode) {
     final IElementType elementType = node.getElementType();
     final ASTNode prevSibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(node);
     final IElementType prevSiblingType = prevSibling == null ? null : prevSibling.getElementType();
@@ -125,7 +126,16 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
     if (parentType == ARGUMENTS) {
-      return Indent.getNoneIndent();
+      if (mode == FormattingMode.ADJUST_INDENT_ON_ENTER) {
+        ASTNode last = node.getLastChildNode();
+        if (last == null) return Indent.getNoneIndent();
+        return last.getElementType() == COMMA && superParentType != METADATA
+               ? Indent.getNormalIndent()
+               : Indent.getNoneIndent();
+      }
+      else {
+        return Indent.getNoneIndent();
+      }
     }
     if (parentType == ARGUMENT_LIST) {
       // see https://github.com/dart-lang/dart_style/issues/551
@@ -242,7 +252,8 @@ public class DartIndentProcessor {
     return Indent.getNoneIndent();
   }
 
-  private static boolean isBetweenBraces(@NotNull final ASTNode node) {
+  private static boolean isBetweenBraces(@NotNull
+                                         final ASTNode node) {
     final IElementType elementType = node.getElementType();
     if (elementType == LBRACE || elementType == RBRACE) return false;
 
