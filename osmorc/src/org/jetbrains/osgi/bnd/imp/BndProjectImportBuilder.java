@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@ package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Condition;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.util.containers.ContainerUtil;
@@ -99,15 +98,11 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
       model = ModuleManager.getInstance(project).getModifiableModel();
       try {
         List<Module> result = commit(project, model, modulesProvider, artifactModel);
-        commitModel(model);
+        WriteAction.run(model::commit);
         return result;
       }
-      catch (RuntimeException e) {
-        disposeModel(model);
-        throw e;
-      }
-      catch (Error e) {
-        disposeModel(model);
+      catch (RuntimeException | Error e) {
+        model.dispose();
         throw e;
       }
     }
@@ -128,14 +123,6 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
       BndProjectImporter.reimportProjects(project, Collections.singleton(file.getPath()));
       return Collections.emptyList();
     }
-  }
-
-  private static void commitModel(final ModifiableModuleModel moduleModel) {
-    ApplicationManager.getApplication().runWriteAction(() -> moduleModel.commit());
-  }
-
-  private static void disposeModel(final ModifiableModuleModel moduleModel) {
-    ApplicationManager.getApplication().runWriteAction(() -> moduleModel.dispose());
   }
 
   @Override

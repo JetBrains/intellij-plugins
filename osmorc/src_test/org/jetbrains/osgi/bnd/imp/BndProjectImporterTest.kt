@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,36 +19,37 @@ import aQute.bnd.build.Workspace
 import com.intellij.compiler.CompilerConfiguration
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration
 import com.intellij.ide.actions.ImportModuleAction
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.IdeaTestCase
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.facet.OsmorcFacet
 import java.io.File
 
 class BndProjectImporterTest : IdeaTestCase() {
+  private lateinit var myProjectDir: String
   private lateinit var myWorkspace: Workspace
   private lateinit var myImporter: BndProjectImporter
 
   override fun setUp() {
     super.setUp()
 
-    val path = myProject.basePath!!
-    File(path, "cnf/ext").mkdirs()
-    FileUtil.writeToFile(File(path, "cnf/build.bnd"), "javac.source: 1.8\njavac.target: 1.8")
-    File(path, "hello.provider/src").mkdirs()
-    FileUtil.writeToFile(File(path, "hello.provider/bnd.bnd"), "javac.source: 1.7\njavac.target: 1.7")
-    File(path, "hello.consumer/src").mkdirs()
-    FileUtil.writeToFile(File(path, "hello.consumer/bnd.bnd"), "-buildpath: hello.provider")
-    File(path, "hello.tests/src").mkdirs()
-    FileUtil.writeToFile(File(path, "hello.tests/bnd.bnd"), "-nobundles: true\n-testpath: hello.provider,hello.consumer")
+    myProjectDir = myProject.basePath!!
+    File(myProjectDir, "cnf/ext").mkdirs()
+    File(myProjectDir, "cnf/build.bnd").writeText("javac.source: 1.8\njavac.target: 1.8")
+    File(myProjectDir, "hello.provider/src").mkdirs()
+    File(myProjectDir, "hello.provider/bnd.bnd").writeText("javac.source: 1.7\njavac.target: 1.7")
+    File(myProjectDir, "hello.consumer/src").mkdirs()
+    File(myProjectDir, "hello.consumer/bnd.bnd").writeText("-buildpath: hello.provider")
+    File(myProjectDir, "hello.tests/src").mkdirs()
+    File(myProjectDir, "hello.tests/bnd.bnd").writeText("-nobundles: true\n-testpath: hello.provider,hello.consumer")
 
-    myWorkspace = Workspace.getWorkspace(File(path), BndProjectImporter.CNF_DIR)
+    myWorkspace = Workspace.getWorkspace(File(myProjectDir), BndProjectImporter.CNF_DIR)
     myImporter = BndProjectImporter(myProject, myWorkspace, BndProjectImporter.getWorkspaceProjects(myWorkspace))
   }
 
@@ -66,23 +67,20 @@ class BndProjectImporterTest : IdeaTestCase() {
   }
 
   fun testRootModule() {
-
     val model = ModuleManager.getInstance(myProject).modifiableModel
-    ApplicationManager.getApplication().runWriteAction {
-      val rootModule: Module
-      try {
-        rootModule = myImporter.createRootModule(model)
-        model.commit()
-      }
-      catch (e: Throwable) {
-        model.dispose()
-        throw e
-      }
-      val rootManager = ModuleRootManager.getInstance(rootModule)
-      assertEquals(1, rootManager.contentRootUrls.size)
-      assertEquals(0, rootManager.sourceRootUrls.size)
-      assertNull(OsmorcFacet.getInstance(rootModule))
+    val rootModule = try {
+      val module = myImporter.createRootModule(model)
+      runWriteAction { model.commit() }
+      module
     }
+    catch (t: Throwable) {
+      model.dispose()
+      throw t
+    }
+    val rootManager = ModuleRootManager.getInstance(rootModule)
+    assertEquals(1, rootManager.contentRootUrls.size)
+    assertEquals(0, rootManager.sourceRootUrls.size)
+    assertNull(OsmorcFacet.getInstance(rootModule))
   }
 
   fun testProjectSetup() {
@@ -103,8 +101,7 @@ class BndProjectImporterTest : IdeaTestCase() {
     myImporter.resolve(false)
 
     val modules = ModuleManager.getInstance(myProject).modules
-    assertEquals(3, modules.size)
-    assertEquals(setOf("hello.provider", "hello.consumer", "hello.tests"), modules.map { it.name }.toSet())
+    assertThat(modules.map { it.name }).containsExactlyInAnyOrder("hello.provider", "hello.consumer", "hello.tests")
 
     modules.forEach {
       val rootManager = ModuleRootManager.getInstance(it)
@@ -114,9 +111,9 @@ class BndProjectImporterTest : IdeaTestCase() {
 
       val dependencies = getDependencies(it)
       when (it.name) {
-        "hello.provider" -> assertEquals(listOf("<jdk>", "<src>"), dependencies)
-        "hello.consumer" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider"), dependencies)
-        "hello.tests" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), dependencies)
+        "hello.provider" -> assertThat(dependencies).containsExactly("<jdk>", "<src>")
+        "hello.consumer" -> assertThat(dependencies).containsExactly("<jdk>", "<src>", "hello.provider")
+        "hello.tests" -> assertThat(dependencies).containsExactly("<jdk>", "<src>", "hello.provider", "hello.consumer")
       }
 
       val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(LanguageLevelModuleExtension::class.java).languageLevel
@@ -147,15 +144,15 @@ class BndProjectImporterTest : IdeaTestCase() {
 
     assertEquals(LanguageLevel.JDK_1_8, LanguageLevelProjectExtension.getInstance(myProject).languageLevel)
     val module = ModuleManager.getInstance(myProject).findModuleByName("hello.tests")!!
-    assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), getDependencies(module))
+    assertThat(getDependencies(module)).containsExactly("<jdk>", "<src>", "hello.provider", "hello.consumer")
     assertNull(OsmorcFacet.getInstance(module))
 
-    FileUtil.writeToFile(File(myProject.basePath!!, "cnf/build.bnd"), "javac.source: 1.7\njavac.target: 1.8")
-    FileUtil.writeToFile(File(myProject.basePath!!, "hello.tests/bnd.bnd"), "-testpath: hello.provider")
+    File(myProjectDir, "cnf/build.bnd").writeText("javac.source: 1.7\njavac.target: 1.8")
+    File(myProjectDir, "hello.tests/bnd.bnd").writeText("-testpath: hello.provider")
     BndProjectImporter.reimportWorkspace(myProject)
 
     assertEquals(LanguageLevel.JDK_1_7, LanguageLevelProjectExtension.getInstance(myProject).languageLevel)
-    assertEquals(listOf("<jdk>", "<src>", "hello.provider"), getDependencies(module))
+    assertThat(getDependencies(module)).containsExactly("<jdk>", "<src>", "hello.provider")
     assertNotNull(OsmorcFacet.getInstance(module))
   }
 
@@ -163,11 +160,12 @@ class BndProjectImporterTest : IdeaTestCase() {
   private fun getDependencies(it: Module): List<String> {
     val dependencies: MutableList<String> = arrayListOf()
     ModuleRootManager.getInstance(it).orderEntries().forEach {
-      dependencies.add(when (it) {
+      dependencies += when (it) {
         is ModuleSourceOrderEntry -> "<src>"
         is JdkOrderEntry -> "<jdk>"
         else -> it.presentableName
-      })
+      }
+      true
     }
     return dependencies
   }
