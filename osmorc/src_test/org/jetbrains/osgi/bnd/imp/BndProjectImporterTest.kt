@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import aQute.bnd.build.Workspace
 import com.intellij.compiler.CompilerConfiguration
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration
 import com.intellij.ide.actions.ImportModuleAction
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
@@ -66,23 +66,20 @@ class BndProjectImporterTest : IdeaTestCase() {
   }
 
   fun testRootModule() {
-
     val model = ModuleManager.getInstance(myProject).modifiableModel
-    ApplicationManager.getApplication().runWriteAction {
-      val rootModule: Module
-      try {
-        rootModule = myImporter.createRootModule(model)
-        model.commit()
-      }
-      catch (e: Throwable) {
-        model.dispose()
-        throw e
-      }
-      val rootManager = ModuleRootManager.getInstance(rootModule)
-      assertEquals(1, rootManager.contentRootUrls.size)
-      assertEquals(0, rootManager.sourceRootUrls.size)
-      assertNull(OsmorcFacet.getInstance(rootModule))
+    val rootModule = try {
+      val module = myImporter.createRootModule(model)
+      runWriteAction { model.commit() }
+      module
     }
+    catch (t: Throwable) {
+      model.dispose()
+      throw t
+    }
+    val rootManager = ModuleRootManager.getInstance(rootModule)
+    assertEquals(1, rootManager.contentRootUrls.size)
+    assertEquals(0, rootManager.sourceRootUrls.size)
+    assertNull(OsmorcFacet.getInstance(rootModule))
   }
 
   fun testProjectSetup() {
