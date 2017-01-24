@@ -157,33 +157,28 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testHighlightExtends() throws Exception {
     doTestFor(true, null, () -> {
-      HighlightUsagesHandlerBase<PsiElement> handler = HighlightUsagesHandler.createCustomHandler(myEditor, myFile);
-      assertNotNull(handler);
-      List<PsiElement> targets = handler.getTargets();
+      JSTestUtils.HighlightUsagesInfo handler = JSTestUtils.getFindUsagesHandlerHighlights(myEditor, myFile);
+      List<PsiElement> targets = handler.targets;
       assertEquals(1, targets.size());
-      assertTrue(targets.get(0).getText().indexOf("class Foo") != -1);
-      handler.computeUsages(targets);
-      List<TextRange> readUsages = handler.getReadUsages();
+      assertTrue(targets.get(0).getText().contains("class Foo"));
+      List<String> readUsages = handler.readUsages;
       assertEquals(1, readUsages.size());
-      String text = myFile.getText();
-      assertEquals("foo", fileTextOfRange(readUsages.get(0)));
+      assertEquals("foo", readUsages.get(0));
     }, getTestName(false) + ".js2");
   }
 
   public void testHighlightImplements() throws Exception {
     doTestFor(true, null, () -> {
-      HighlightUsagesHandlerBase<PsiElement> handler = HighlightUsagesHandler.createCustomHandler(myEditor, myFile);
+      JSTestUtils.HighlightUsagesInfo handler = JSTestUtils.getFindUsagesHandlerHighlights(myEditor, myFile);
       assertNotNull(handler);
-      List<PsiElement> targets = handler.getTargets();
+      List<PsiElement> targets = handler.targets;
       assertEquals(2, targets.size());
-      assertTrue(targets.get(0).getText().indexOf("interface IFoo") != -1);
-      assertTrue(targets.get(1).getText().indexOf("interface IBar") != -1);
-      handler.computeUsages(targets);
-      List<TextRange> readUsages = handler.getReadUsages();
+      assertTrue(targets.get(0).getText().contains("interface IFoo"));
+      assertTrue(targets.get(1).getText().contains("interface IBar"));
+      List<String> readUsages = handler.readUsages;
       assertEquals(2, readUsages.size());
-      String text = myFile.getText();
-      assertEquals("foo", fileTextOfRange(readUsages.get(0)));
-      assertEquals("baz", fileTextOfRange(readUsages.get(1)));
+      assertEquals("foo", readUsages.get(0));
+      assertEquals("baz", readUsages.get(1));
     }, getTestName(false) + ".js2");
   }
 
