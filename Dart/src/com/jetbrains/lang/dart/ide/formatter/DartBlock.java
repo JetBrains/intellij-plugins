@@ -33,19 +33,21 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
   private final DartWrappingProcessor myWrappingProcessor;
   private final DartAlignmentProcessor myAlignmentProcessor;
   private final CodeStyleSettings mySettings;
+  private final DartBlockContext myContext;
   private Wrap myChildWrap = null;
   private final Indent myIndent;
   private BlockWithParent myParent;
   private List<DartBlock> mySubDartBlocks;
 
-  protected DartBlock(ASTNode node, Wrap wrap, Alignment alignment, CodeStyleSettings settings) {
+  protected DartBlock(ASTNode node, Wrap wrap, Alignment alignment, CodeStyleSettings settings, DartBlockContext context) {
     super(node, wrap, alignment);
     mySettings = settings;
-    myIndentProcessor = new DartIndentProcessor(mySettings.getCommonSettings(DartLanguage.INSTANCE));
-    mySpacingProcessor = new DartSpacingProcessor(node, mySettings.getCommonSettings(DartLanguage.INSTANCE));
-    myWrappingProcessor = new DartWrappingProcessor(node, mySettings.getCommonSettings(DartLanguage.INSTANCE));
-    myAlignmentProcessor = new DartAlignmentProcessor(node, mySettings.getCommonSettings(DartLanguage.INSTANCE));
-    myIndent = myIndentProcessor.getChildIndent(myNode);
+    myContext = context;
+    myIndentProcessor = new DartIndentProcessor(context.getDartSettings());
+    mySpacingProcessor = new DartSpacingProcessor(node, context.getDartSettings());
+    myWrappingProcessor = new DartWrappingProcessor(node, context.getDartSettings());
+    myAlignmentProcessor = new DartAlignmentProcessor(node, context.getDartSettings());
+    myIndent = myIndentProcessor.getChildIndent(myNode, context.getMode());
   }
 
   @Override
@@ -66,7 +68,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     final ArrayList<Block> tlChildren = new ArrayList<>();
     for (ASTNode childNode = getNode().getFirstChildNode(); childNode != null; childNode = childNode.getTreeNext()) {
       if (FormatterUtil.containsWhiteSpacesOnly(childNode)) continue;
-      final DartBlock childBlock = new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings);
+      final DartBlock childBlock = new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings, myContext);
       childBlock.setParent(this);
       tlChildren.add(childBlock);
     }
