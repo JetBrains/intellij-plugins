@@ -124,9 +124,6 @@ public class DartProblemsView {
   public void updateErrorsForFile(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
     synchronized (myLock) {
       if (myScheduledFilePathToErrors.isEmpty()) {
-        final int cancelled = myAlarm.cancelAllRequests();
-        LOG.assertTrue(cancelled == 0, cancelled + " requests cancelled");
-
         myAlarm.addRequest(myUpdateRunnable, TABLE_REFRESH_PERIOD, ModalityState.NON_MODAL);
       }
 
