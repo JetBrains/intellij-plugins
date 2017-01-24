@@ -252,8 +252,7 @@ public class DartIndentProcessor {
     return Indent.getNoneIndent();
   }
 
-  private static boolean isBetweenBraces(@NotNull
-                                         final ASTNode node) {
+  private static boolean isBetweenBraces(@NotNull final ASTNode node) {
     final IElementType elementType = node.getElementType();
     if (elementType == LBRACE || elementType == RBRACE) return false;
 

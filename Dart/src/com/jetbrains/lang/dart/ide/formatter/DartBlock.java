@@ -10,7 +10,6 @@ import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +67,8 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     final ArrayList<Block> tlChildren = new ArrayList<>();
     for (ASTNode childNode = getNode().getFirstChildNode(); childNode != null; childNode = childNode.getTreeNext()) {
       if (FormatterUtil.containsWhiteSpacesOnly(childNode)) continue;
-      final DartBlock childBlock = new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings, myContext);
+      final DartBlock childBlock =
+        new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings, myContext);
       childBlock.setParent(this);
       tlChildren.add(childBlock);
     }

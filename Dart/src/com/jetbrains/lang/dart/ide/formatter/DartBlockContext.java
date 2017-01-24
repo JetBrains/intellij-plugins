@@ -5,7 +5,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.jetbrains.lang.dart.DartLanguage;
 
-public class DartBlockContext {
+class DartBlockContext {
   private final CodeStyleSettings mySettings;
   private final FormattingMode myMode;
   private final CommonCodeStyleSettings myDartSettings;
