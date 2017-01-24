@@ -19,7 +19,6 @@ import com.intellij.util.BooleanValueHolder;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.ide.index.*;
@@ -47,7 +46,7 @@ public class DartResolveUtil {
     if (psiFile instanceof XmlFile) {
       return findDartRootsInXml((XmlFile)psiFile);
     }
-    return psiFile instanceof DartFile ? Collections.<PsiElement>singletonList(psiFile) : Collections.<PsiElement>emptyList();
+    return psiFile instanceof DartFile ? Collections.singletonList(psiFile) : Collections.emptyList();
   }
 
   private static List<PsiElement> findDartRootsInXml(XmlFile xmlFile) {
@@ -152,38 +151,6 @@ public class DartResolveUtil {
     return DartClassResolveResult.create(parent instanceof DartClass ? (DartClass)parent : null);
   }
 
-  public static List<DartClass> findClassesByParent(@NotNull final DartClass superClass, @Nullable PsiElement context) {
-    if (context == null) {
-      return Collections.emptyList();
-    }
-    final DartClass[] classesInFile = PsiTreeUtil.getChildrenOfType(context, DartClass.class);
-    if (classesInFile == null) {
-      return Collections.emptyList();
-    }
-    return ContainerUtil.filter(classesInFile, dartClass -> checkInheritanceBySuperAndImplementationList(dartClass, superClass));
-  }
-
-  private static boolean checkInheritanceBySuperAndImplementationList(DartClass dartClass, DartClass superCandidate) {
-    final DartType superClass = dartClass.getSuperClass();
-    if (superClass == null && OBJECT.equals(superCandidate.getName())) return true;
-    if (typeResolvesToClass(superClass, superCandidate)) return true;
-    for (DartType dartType : getImplementsAndMixinsList(dartClass)) {
-      if (typeResolvesToClass(dartType, superCandidate)) return true;
-    }
-    return false;
-  }
-
-  public static boolean typeResolvesToClass(@Nullable DartType dartType, DartClass classCandidate) {
-    if (dartType == null) {
-      return false;
-    }
-    final String typeName = dartType.getReferenceExpression().getText();
-    if (!typeName.equals(classCandidate.getName())) {
-      return false;
-    }
-    return resolveClassByType(dartType).getDartClass() == classCandidate;
-  }
-
   @NotNull
   public static String getLibraryName(@NotNull final PsiFile psiFile) {
     for (PsiElement root : findDartRoots(psiFile)) {
@@ -211,32 +178,6 @@ public class DartResolveUtil {
     }
 
     return result;
-  }
-
-  public static boolean processDeclarationsInImportedFileByImportPrefix(@NotNull final PsiElement context,
-                                                                        @NotNull final String importPrefix,
-                                                                        @NotNull final DartPsiScopeProcessor processor,
-                                                                        @Nullable final String componentNameHint) {
-    final Project project = context.getProject();
-
-    for (VirtualFile virtualFile : findLibrary(context.getContainingFile())) {
-      for (DartImportOrExportInfo importOrExportInfo : DartImportAndExportIndex.getImportAndExportInfos(project, virtualFile)) {
-        if (importOrExportInfo.getKind() == Kind.Import && importPrefix.equals(importOrExportInfo.getImportPrefix())) {
-          final VirtualFile importedFile = getImportedFile(project, virtualFile, importOrExportInfo.getUri());
-          if (importedFile != null) {
-            processor.importedFileProcessingStarted(importedFile, importOrExportInfo);
-            final boolean continueProcessing = processTopLevelDeclarations(context, processor, importedFile, componentNameHint);
-            processor.importedFileProcessingFinished(importedFile);
-
-            if (!continueProcessing) {
-              return false;
-            }
-          }
-        }
-      }
-    }
-
-    return true;
   }
 
   public static void processTopLevelDeclarations(final @NotNull PsiElement context,
@@ -338,7 +279,7 @@ public class DartResolveUtil {
       final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(context.getProject(), DART_CORE_URI);
       if (dartCoreLib != null) {
         final DartImportOrExportInfo implicitImportInfo =
-          new DartImportOrExportInfo(Kind.Import, DART_CORE_URI, null, Collections.<String>emptySet(), Collections.<String>emptySet());
+          new DartImportOrExportInfo(Kind.Import, DART_CORE_URI, null, Collections.emptySet(), Collections.emptySet());
         processor.importedFileProcessingStarted(dartCoreLib, implicitImportInfo);
         final boolean continueProcessing =
           processTopLevelDeclarationsImpl(context, processor, dartCoreLib, filesOfInterest, alreadyProcessed, false);
@@ -630,22 +571,10 @@ public class DartResolveUtil {
     return result;
   }
 
-  public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields, boolean filterPrivate) {
-    return getComponentNames(filterPrivate ? ContainerUtil.filter(fields, new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return component.isPublic();
-      }
-    }) : fields);
-  }
-
   public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields) {
-    return ContainerUtil.filter(ContainerUtil.map(fields, new Function<DartComponent, DartComponentName>() {
-      @Override
-      public DartComponentName fun(DartComponent component) {
-        return component.getComponentName();
-      }
-    }), Condition.NOT_NULL);
+    return ContainerUtil
+      .filter(ContainerUtil.map(fields, (Function<DartComponent, DartComponentName>)component -> component.getComponentName()),
+              Condition.NOT_NULL);
   }
 
   public static DartComponentName[] getComponentNameArray(List<? extends DartComponent> components) {
@@ -700,10 +629,6 @@ public class DartResolveUtil {
       return Collections.emptyList();
     }
     return typeList.getTypeList();
-  }
-
-  public static List<DartClassResolveResult> resolveClassesByTypes(List<DartType> types) {
-    return ContainerUtil.map(types, dartType -> resolveClassByType(dartType));
   }
 
   @NotNull
@@ -840,27 +765,6 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  public static DartComponentName findParameterByName(@Nullable DartFormalParameterList parameterList, final String name) {
-    if (parameterList == null) {
-      return null;
-    }
-
-    for (DartNormalFormalParameter parameter : parameterList.getNormalFormalParameterList()) {
-      final DartComponentName componentName = parameter.findComponentName();
-      if (componentName != null && name.equals(componentName.getText())) return componentName;
-    }
-
-    final DartOptionalFormalParameters optionalFormalParameters = parameterList.getOptionalFormalParameters();
-    if (optionalFormalParameters == null) return null;
-
-    for (DartDefaultFormalNamedParameter namedParameter : optionalFormalParameters.getDefaultFormalNamedParameterList()) {
-      final DartComponentName parameterName = namedParameter.getNormalFormalParameter().findComponentName();
-      if (parameterName != null && name.equals(parameterName.getText())) return parameterName;
-    }
-    return null;
-  }
-
-  @Nullable
   private static PsiElement findParameter(@Nullable PsiElement element, int index) {
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
     if (parameterList == null) {
@@ -986,18 +890,6 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  public static DartClass suggestType(PsiElement element) {
-    DartAssignExpression assignExpression = PsiTreeUtil.getParentOfType(element, DartAssignExpression.class);
-    if (assignExpression != null) {
-      DartReference[] references = PsiTreeUtil.getChildrenOfType(assignExpression, DartReference.class);
-      if (references != null && references.length > 1) {
-        return references[1].resolveDartClass().getDartClass();
-      }
-    }
-    return null;
-  }
-
-  @Nullable
   public static DartComponent findReferenceAndComponentTarget(@Nullable PsiElement element) {
     DartReference reference = PsiTreeUtil.getNonStrictParentOfType(element, DartReference.class);
     PsiElement target = reference == null ? null : reference.resolve();
@@ -1019,12 +911,7 @@ public class DartResolveUtil {
     if (elements == null) {
       return ResolveResult.EMPTY_ARRAY;
     }
-    elements = ContainerUtil.filter(elements, new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement element) {
-        return element != null;
-      }
-    });
+    elements = ContainerUtil.filter(elements, (Condition<PsiElement>)element -> element != null);
     final ResolveResult[] result = new ResolveResult[elements.size()];
     for (int i = 0, size = elements.size(); i < size; i++) {
       result[i] = new PsiElementResolveResult(elements.get(i));
@@ -1032,31 +919,7 @@ public class DartResolveUtil {
     return result;
   }
 
-  public static void treeWalkUpAndTopLevelDeclarations(final @NotNull PsiElement context, final @NotNull DartPsiScopeProcessor processor) {
-    PsiTreeUtil.treeWalkUp(processor, context, null, ResolveState.initial());
-    processTopLevelDeclarations(context, processor, findLibrary(context.getContainingFile()), null);
-  }
-
   public static List<DartType> getImplementsAndMixinsList(DartClass dartClass) {
     return ContainerUtil.concat(dartClass.getImplementsList(), dartClass.getMixinsList());
-  }
-
-  public static List<DartComponent> findNamedSuperComponents(@Nullable DartClass dartClass) {
-    if (dartClass == null) {
-      return ContainerUtilRt.emptyList();
-    }
-    final List<DartClass> supers = new ArrayList<>();
-    final DartClassResolveResult dartClassResolveResult = dartClass.getSuperClassResolvedOrObjectClass();
-    if (dartClassResolveResult.getDartClass() != null) {
-      supers.add(dartClassResolveResult.getDartClass());
-    }
-    List<DartClassResolveResult> implementsAndMixinsList = resolveClassesByTypes(getImplementsAndMixinsList(dartClass));
-    for (DartClassResolveResult resolveResult : implementsAndMixinsList) {
-      final DartClass resolveResultDartClass = resolveResult.getDartClass();
-      if (resolveResultDartClass != null) {
-        supers.add(resolveResultDartClass);
-      }
-    }
-    return findNamedSubComponents(supers.toArray(new DartClass[supers.size()]));
   }
 }

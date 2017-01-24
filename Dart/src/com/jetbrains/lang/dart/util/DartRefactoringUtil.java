@@ -2,14 +2,12 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
@@ -69,31 +67,6 @@ public class DartRefactoringUtil {
       }
     });
     return occurrences;
-  }
-
-  @Nullable
-  public static PsiElement findOccurrenceUnderCaret(List<PsiElement> occurrences, Editor editor) {
-    if (occurrences.isEmpty()) {
-      return null;
-    }
-    int offset = editor.getCaretModel().getOffset();
-    for (PsiElement occurrence : occurrences) {
-      if (occurrence.getTextRange().contains(offset)) {
-        return occurrence;
-      }
-    }
-    int line = editor.getDocument().getLineNumber(offset);
-    for (PsiElement occurrence : occurrences) {
-      if (occurrence.isValid() && editor.getDocument().getLineNumber(occurrence.getTextRange().getStartOffset()) == line) {
-        return occurrence;
-      }
-    }
-    for (PsiElement occurrence : occurrences) {
-      if (occurrence.isValid()) {
-        return occurrence;
-      }
-    }
-    return null;
   }
 
   public static PsiElement[] findStatementsInRange(PsiFile file, int startOffset, int endOffset) {
