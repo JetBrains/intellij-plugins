@@ -2,14 +2,13 @@ package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
-import com.jetbrains.lang.dart.psi.DartLibraryStatement;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
@@ -82,31 +81,9 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    if (DartResolver.isServerDrivenResolution()) {
-      final List<? extends PsiElement> elements =
-        ResolveCache.getInstance(getProject()).resolveWithCaching(this, DartResolver.INSTANCE, true, incompleteCode);
-      return DartResolveUtil.toCandidateInfoArray(elements);
-    }
-
-    final String libraryName = getText();
-
-    final List<VirtualFile> libFiles = DartResolveUtil.findLibraryByName(this, libraryName);
-    if (libFiles.isEmpty()) return ResolveResult.EMPTY_ARRAY;
-
-    final List<ResolveResult> result = new SmartList<>();
-
-    for (VirtualFile libFile : libFiles) {
-      final PsiFile psiFile = getManager().findFile(libFile);
-      for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
-        final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
-        final DartLibraryNameElement libraryNameElement = libraryStatement == null ? null : libraryStatement.getLibraryNameElement();
-        if (libraryNameElement != null) {
-          result.add(new PsiElementResolveResult(libraryNameElement));
-        }
-      }
-    }
-
-    return result.toArray(new ResolveResult[result.size()]);
+    final List<? extends PsiElement> elements =
+      ResolveCache.getInstance(getProject()).resolveWithCaching(this, DartResolver.INSTANCE, true, incompleteCode);
+    return DartResolveUtil.toCandidateInfoArray(elements);
   }
 
   @NotNull
