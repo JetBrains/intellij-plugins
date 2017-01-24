@@ -21,11 +21,10 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
   public static final String DISPLAY_NAME = "Flex";
 
   private final CommonContentEntriesEditor myEntriesEditor;
-  private final Module myModule;
 
   public FlexModuleEditor(ModuleConfigurationState state) {
-    myModule = state.getRootModel().getModule();
-    myEntriesEditor = new CommonContentEntriesEditor(myModule.getName(), state, JavaSourceRootType.SOURCE, JavaSourceRootType.TEST_SOURCE) {
+    Module module = state.getRootModel().getModule();
+    myEntriesEditor = new CommonContentEntriesEditor(module.getName(), state, JavaSourceRootType.SOURCE, JavaSourceRootType.TEST_SOURCE) {
       @Override
       protected List<ContentEntry> addContentEntries(VirtualFile[] files) {
         List<ContentEntry> entries = super.addContentEntries(files);
@@ -73,15 +72,6 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
   @Override
   public void reset() {
     myEntriesEditor.reset();
-  }
-
-  @Override
-  public void saveData() {
-  }
-
-  @Override
-  public void moduleStateChanged() {
-    // TODO
   }
 
   @Override

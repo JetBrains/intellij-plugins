@@ -193,8 +193,9 @@ public class DartAnalysisServerService implements Disposable {
       if (oldHash == newHash) return;
 
       final boolean visible = myVisibleFiles.contains(filePathSD);
-      myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible);
-      onErrorsUpdated(filePathSI, errorsWithoutTodo, hasSevereProblems, newHash);
+      if (myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible)) {
+        onErrorsUpdated(filePathSI, errorsWithoutTodo, hasSevereProblems, newHash);
+      }
     }
 
     @Override
@@ -1690,18 +1691,8 @@ public class DartAnalysisServerService implements Disposable {
         String debugLog = debugLogContent();
         myErrorReporter.add(() -> {
           DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
-          final boolean[] reportIt = new boolean[1];
           myDisruptionCount++;
-          ApplicationManager.getApplication().invokeAndWait(() -> {
-            reportIt[0] = builder.showQuery(DartBundle.message("dart.analysis.server.error"));
-            myPreviousTime = System.currentTimeMillis();
-          });
-          if (reportIt[0]) {
-            builder.sendFeedback(myProject, errorMessage, debugLog);
-          }
-          else {
-            LOG.warn(errorMessage);
-          }
+          builder.showNotification(DartBundle.message("dart.analysis.server.error"), myProject, errorMessage, debugLog);
         });
       }
       myPreviousMessage = errorMessage;
