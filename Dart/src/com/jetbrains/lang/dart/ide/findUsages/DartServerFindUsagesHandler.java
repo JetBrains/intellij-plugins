@@ -18,6 +18,7 @@ package com.jetbrains.lang.dart.ide.findUsages;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -59,7 +60,8 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
                                       @NotNull final Processor<UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
     final SearchScope scope = options.searchScope;
-    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getProject());
+    final Project project = ApplicationManager.getApplication().runReadAction((Computable<Project>)() -> getProject());
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
 
     final ReadActionConsumer<SearchResult> searchResultProcessor = new ReadActionConsumer<SearchResult>() {
       @Override
@@ -91,12 +93,8 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
       }
     };
 
-    final VirtualFile file = ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
-      @Override
-      public VirtualFile compute() {
-        return elementToSearch.getContainingFile().getVirtualFile();
-      }
-    });
+    final VirtualFile file = ApplicationManager.getApplication()
+      .runReadAction((Computable<VirtualFile>)() -> elementToSearch.getContainingFile().getVirtualFile());
 
     final int offset = elementToSearch.getTextRange().getStartOffset();
     service.search_findElementReferences(file, offset, searchResultProcessor);
