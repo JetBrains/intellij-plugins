@@ -16,6 +16,7 @@ import com.intellij.ui.EditorNotifications;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
@@ -50,6 +51,12 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     }
 
     if (PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(vFile.getName())) {
+
+      // Defer to the Flutter plugin for package management and SDK configuration if appropriate.
+      if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.hasFlutterModule(myProject)) {
+        return null;
+      }
+
       final DartSdk sdk = DartSdk.getDartSdk(myProject);
       final Module module = ModuleUtilCore.findModuleForFile(vFile, myProject);
       if (module != null && sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
