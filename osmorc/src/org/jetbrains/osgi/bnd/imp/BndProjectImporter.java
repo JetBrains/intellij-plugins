@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -440,7 +440,11 @@ public class BndProjectImporter {
         if (module == null) {
           throw new IllegalArgumentException("Unknown module '" + name + "'");
         }
-        entry = rootModel.addModuleOrderEntry(module);
+        entry = (ModuleOrderEntry)ContainerUtil.find(
+          rootModel.getOrderEntries(), e -> e instanceof ModuleOrderEntry && ((ModuleOrderEntry)e).getModule() == module);
+        if (entry == null) {
+          entry = rootModel.addModuleOrderEntry(module);
+        }
         break;
       }
 

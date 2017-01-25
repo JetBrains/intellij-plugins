@@ -138,6 +138,22 @@ class BndProjectImporterTest : IdeaTestCase() {
     }
   }
 
+  fun testSubBundles() {
+    File(myProjectDir, "hello.provider/bnd.bnd").writeText("-sub: *.bnd")
+    File(myProjectDir, "hello.provider/a.bnd").writeText("")
+    File(myProjectDir, "hello.provider/b.bnd").writeText("")
+    File(myProjectDir, "hello.consumer/bnd.bnd").writeText("-buildpath: hello.provider.a,hello.provider.b")
+    File(myProjectDir, "hello.tests/bnd.bnd").writeText("-nobundles: true\n-testpath: hello.provider.a,hello.provider.b")
+
+    assertNotNull(BndProjectImporter.findWorkspace(myProject))
+    BndProjectImporter.reimportWorkspace(myProject)
+
+    val consumer = ModuleManager.getInstance(myProject).modules.find { it.name == "hello.consumer" }!!
+    assertThat(getDependencies(consumer)).containsExactly("<jdk>", "<src>", "hello.provider")
+    val tests = ModuleManager.getInstance(myProject).modules.find { it.name == "hello.tests" }!!
+    assertThat(getDependencies(tests)).containsExactly("<jdk>", "<src>", "hello.provider")
+  }
+
   fun testReimport() {
     assertNotNull(BndProjectImporter.findWorkspace(myProject))
     BndProjectImporter.reimportWorkspace(myProject)
