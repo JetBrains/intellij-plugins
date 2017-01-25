@@ -100,8 +100,8 @@ public class DartAnalysisServerService implements Disposable {
 
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
   private static final String STACK_TRACE_MARKER = "#0";
-  private static final long MIN_DISRUPTION_TIME = 10000L; // 10 seconds minimum between error report queries
-  private static final int MAX_DISRUPTIONS_PER_SESSION = 5; // Do not annoy the user too many times
+  private static final long MIN_DISRUPTION_TIME = 5000L; // 5 seconds minimum between error report balloons
+  private static final int MAX_DISRUPTIONS_PER_SESSION = 20; // Do not annoy the user too many times
 
   private static final int DEBUG_LOG_CAPACITY = 30;
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
