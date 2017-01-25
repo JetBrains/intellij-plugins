@@ -1,7 +1,6 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.javascript.psi.JSParameter;
-import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -40,8 +39,7 @@ public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
       final WalkUpResolveProcessor processor = new WalkUpResolveProcessor(
         name,
         psiFile,
-        getElement(),
-        BaseJSSymbolProcessor.MatchMode.Any
+        getElement()
       );
       processor.allowPartialResults();
 
