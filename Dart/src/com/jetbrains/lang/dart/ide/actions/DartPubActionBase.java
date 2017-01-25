@@ -83,8 +83,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
   private static boolean shouldSuppressForFlutter(@NotNull final AnActionEvent e) {
     if (FlutterUtil.isFlutterPluginInstalled()) {
-      final Project project = e.getProject();
-      return project != null && FlutterUtil.hasFlutterModule(project);
+      final Module module = LangDataKeys.MODULE.getData(e.getDataContext());
+      return module != null && FlutterUtil.isFlutterModule(module);
     }
     return false;
   }

@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -53,8 +54,11 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     if (PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(vFile.getName())) {
 
       // Defer to the Flutter plugin for package management and SDK configuration if appropriate.
-      if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.hasFlutterModule(myProject)) {
-        return null;
+      if (FlutterUtil.isFlutterPluginInstalled()) {
+        final Module module = ModuleUtil.findModuleForFile(vFile, myProject);
+        if (module != null && FlutterUtil.isFlutterModule(module)) {
+          return null;
+        }
       }
 
       final DartSdk sdk = DartSdk.getDartSdk(myProject);

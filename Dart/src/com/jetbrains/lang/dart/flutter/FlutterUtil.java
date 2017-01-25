@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class FlutterUtil {
 
   private static final String FLUTTER_MODULE_TYPE_ID = "FLUTTER_MODULE_TYPE";
-  private static PluginId FLUTTER_PLUGIN_ID = PluginId.getId("io.flutter");
+  private static final boolean ourIsFlutterPluginInstalled = PluginManager.isPluginInstalled(PluginId.getId("io.flutter"));
 
   /**
    * Get the Flutter root relative to the given Dart SDK.
@@ -22,16 +22,6 @@ public class FlutterUtil {
   public static String getFlutterRoot(@NotNull final String dartSdkPath) {
     final String suffix = "/bin/cache/dart-sdk";
     return dartSdkPath.endsWith(suffix) ? dartSdkPath.substring(0, dartSdkPath.length() - suffix.length()) : null;
-  }
-
-  /**
-   * Test if the given project defines a Flutter module.
-   *
-   * @param module the project to test
-   * @return true if the given project has a Flutter module, false otherwise.
-   */
-  public static boolean hasFlutterModule(@NotNull project) {
-    return Arrays.stream(ModuleManager.getInstance(project).getModules()).anyMatch(FlutterUtil::isFlutterModule);
   }
 
   /**
@@ -51,6 +41,6 @@ public class FlutterUtil {
    * @return true if the the Flutter plugin is installed, false otherwise.
    */
   public static boolean isFlutterPluginInstalled() {
-    return PluginManager.isPluginInstalled(FLUTTER_PLUGIN_ID);
+    return ourIsFlutterPluginInstalled;
   }
 }
