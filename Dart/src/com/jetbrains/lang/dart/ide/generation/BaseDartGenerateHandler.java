@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.generation;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.openapi.application.ApplicationManager;
@@ -43,7 +42,6 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
   }
 
   public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file, final int offset) {
-    if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
     final DartClass dartClass = PsiTreeUtil.getParentOfType(file.findElementAt(offset), DartClassDefinition.class);
     if (dartClass == null) return;
 
@@ -158,11 +156,6 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
   @Nullable
   protected JComponent getOptionsComponent(DartClass jsClass, final Collection<DartComponent> candidates) {
     return null;
-  }
-
-  @Override
-  public boolean startInWriteAction() {
-    return true;
   }
 
   protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(@NotNull final Project project,
