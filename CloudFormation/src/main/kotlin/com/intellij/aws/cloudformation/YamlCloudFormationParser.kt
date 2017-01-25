@@ -4,7 +4,6 @@ import com.google.common.collect.HashBiMap
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnExpressionNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
-import com.intellij.aws.cloudformation.model.CfnMissingOrInvalidValueNode
 import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
@@ -142,7 +141,7 @@ class YamlCloudFormationParser private constructor () {
     }
   }
 
-  private fun keyName(property: YAMLKeyValue): CfnStringValueNode {
+  private fun keyName(property: YAMLKeyValue): CfnStringValueNode? {
     if (property.key != null) {
       return CfnStringValueNode(property.keyText).registerNode(property.key!!)
     } else {
@@ -238,11 +237,9 @@ class YamlCloudFormationParser private constructor () {
 
       val propertyNameNode = keyName(property)
 
-      val jsonValueNode = property.value
-      val valueNode = if (jsonValueNode != null) {
-        expression(jsonValueNode)
-      } else {
-        CfnMissingOrInvalidValueNode()
+      val yamlValueNode = property.value
+      val valueNode = if (yamlValueNode == null) null else {
+        expression(yamlValueNode)
       }
 
       return@mapNotNull CfnResourcePropertyNode(propertyNameNode, valueNode).registerNode(property)
@@ -251,7 +248,7 @@ class YamlCloudFormationParser private constructor () {
     return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty)
   }
 
-  private fun expression(value: YAMLValue): CfnExpressionNode {
+  private fun expression(value: YAMLValue): CfnExpressionNode? {
     return when (value) {
       is YAMLScalarText -> CfnStringValueNode(value.textValue).registerNode(value)
       // TODO boolean in yaml: is YAMLBoo -> CfnBooleanValueNode(value.value).registerNode(value)
@@ -266,29 +263,27 @@ class YamlCloudFormationParser private constructor () {
       is YAMLMapping -> {
         if (value.keyValues.size == 1 && CloudFormationIntrinsicFunctions.allNames.contains(value.keyValues.single().keyText)) {
           val single = value.keyValues.single()
-          val nameNode = keyName(single)
+          val nameNode = keyName(single)!!
 
-          val jsonValueNode = single.value
-          if (jsonValueNode is YAMLSequence) {
-            val items = jsonValueNode.items.mapNotNull {
+          val yamlValueNode = single.value
+          if (yamlValueNode is YAMLSequence) {
+            val items = yamlValueNode.items.mapNotNull {
               val itemValue = it.value
               if (itemValue != null) expression(itemValue) else null
             }
             CfnFunctionNode(nameNode, items).registerNode(value)
-          } else if (jsonValueNode == null){
+          } else if (yamlValueNode == null){
             CfnFunctionNode(nameNode, listOf()).registerNode(value)
           } else {
-            CfnFunctionNode(nameNode, listOf(expression(jsonValueNode))).registerNode(value)
+            CfnFunctionNode(nameNode, listOf(expression(yamlValueNode))).registerNode(value)
           }
         } else {
           val properties = value.keyValues.map {
             val nameNode = keyName(it)
 
-            val jsonValueNode = it.value
-            val valueNode = if (jsonValueNode != null) {
-              expression(jsonValueNode)
-            } else {
-              CfnMissingOrInvalidValueNode()
+            val yamlValueNode = it.value
+            val valueNode = if (yamlValueNode == null) null else {
+              expression(yamlValueNode)
             }
 
             Pair(nameNode, valueNode)
@@ -299,7 +294,7 @@ class YamlCloudFormationParser private constructor () {
       }
       else -> {
         addProblem(value, CloudFormationBundle.getString("format.unknown.value", value.javaClass.simpleName))
-        CfnMissingOrInvalidValueNode()
+        null
       }
     }
   }
@@ -307,7 +302,7 @@ class YamlCloudFormationParser private constructor () {
   private fun resourceType(typeProperty: YAMLKeyValue): CfnResourceTypeNode {
     val nameNode = keyName(typeProperty)
     val value = checkAndGetStringValue(typeProperty.value) ?:
-        return CfnResourceTypeNode(nameNode, CfnStringValueNode("")).registerNode(typeProperty)
+        return CfnResourceTypeNode(nameNode, null).registerNode(typeProperty)
 
     val valueNode = CfnStringValueNode(value).registerNode(typeProperty.value!!)
     return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty)

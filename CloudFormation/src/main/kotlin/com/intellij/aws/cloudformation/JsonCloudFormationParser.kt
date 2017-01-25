@@ -5,7 +5,6 @@ import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnBooleanValueNode
 import com.intellij.aws.cloudformation.model.CfnExpressionNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
-import com.intellij.aws.cloudformation.model.CfnMissingOrInvalidValueNode
 import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
@@ -234,6 +233,7 @@ class JsonCloudFormationParser private constructor () {
 
     val propertyNodes = properties.propertyList.mapNotNull { property ->
       val propertyName = property.name
+      // TODO make a node?
       if (propertyName == CloudFormationConstants.CommentResourcePropertyName) {
         return@mapNotNull null
       }
@@ -241,10 +241,8 @@ class JsonCloudFormationParser private constructor () {
       val propertyNameNode = keyName(property)
 
       val jsonValueNode = property.value
-      val valueNode = if (jsonValueNode != null) {
+      val valueNode = if (jsonValueNode == null) null else {
         expression(jsonValueNode)
-      } else {
-        CfnMissingOrInvalidValueNode()
       }
 
       return@mapNotNull CfnResourcePropertyNode(propertyNameNode, valueNode).registerNode(property)
@@ -253,13 +251,13 @@ class JsonCloudFormationParser private constructor () {
     return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty)
   }
 
-  private fun expression(value: JsonValue): CfnExpressionNode {
+  private fun expression(value: JsonValue): CfnExpressionNode? {
     return when (value) {
       is JsonStringLiteral -> CfnStringValueNode(value.value).registerNode(value)
       is JsonBooleanLiteral -> CfnBooleanValueNode(value.value).registerNode(value)
       is JsonNumberLiteral -> CfnNumberValueNode(value.text).registerNode(value)
       is JsonArray -> {
-        val items = value.valueList.map { expression(it) }
+        val items = value.valueList.mapNotNull { expression(it) }
         CfnArrayValueNode(items).registerNode(value)
       }
       is JsonObject -> {
@@ -281,10 +279,8 @@ class JsonCloudFormationParser private constructor () {
             val nameNode = CfnStringValueNode(it.name).registerNode(it.nameElement)
 
             val jsonValueNode = it.value
-            val valueNode = if (jsonValueNode != null) {
+            val valueNode = if (jsonValueNode == null) null else {
               expression(jsonValueNode)
-            } else {
-              CfnMissingOrInvalidValueNode()
             }
 
             Pair(nameNode, valueNode)
@@ -295,7 +291,7 @@ class JsonCloudFormationParser private constructor () {
       }
       else -> {
         addProblem(value, CloudFormationBundle.getString("format.unknown.value", value.javaClass.simpleName))
-        CfnMissingOrInvalidValueNode()
+        return null
       }
     }
   }

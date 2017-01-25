@@ -10,7 +10,8 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 
 object CloudFormationPsiUtils {
   fun isCloudFormationFile(element: PsiElement): Boolean =
-      element.containingFile.fileType === JsonCloudFormationFileType.INSTANCE
+      element.containingFile.fileType === JsonCloudFormationFileType.INSTANCE ||
+      element.containingFile.fileType === YamlCloudFormationFileType.INSTANCE
 
   fun getRootExpression(file: PsiFile): JsonObject? {
     var cur: PsiElement? = file.firstChild
