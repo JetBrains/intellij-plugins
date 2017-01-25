@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.jetbrains.osgi.jps.util;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
@@ -59,16 +58,13 @@ public class OsgiBuildUtil {
 
   private static void collectMavenProjectProperties(CompileContext context, JpsModule module, final Properties result) {
     BuildDataPaths dataPaths = context.getProjectDescriptor().dataManager.getDataPaths();
-    final MavenProjectConfiguration projectConfig = JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
+    MavenProjectConfiguration projectConfig = JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
     if (projectConfig != null) {
-      JpsJavaExtensionService.dependencies(module).recursively().productionOnly().processModules(new Consumer<JpsModule>() {
-        @Override
-        public void consume(JpsModule module) {
-          MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());
-          if (moduleConfig != null) {
-            for (Map.Entry<String, String> entry : moduleConfig.properties.entrySet()) {
-              result.setProperty(entry.getKey(), entry.getValue());
-            }
+      JpsJavaExtensionService.dependencies(module).recursively().productionOnly().processModules(module1 -> {
+        MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module1.getName());
+        if (moduleConfig != null) {
+          for (Map.Entry<String, String> entry : moduleConfig.properties.entrySet()) {
+            result.setProperty(entry.getKey(), entry.getValue());
           }
         }
       });
