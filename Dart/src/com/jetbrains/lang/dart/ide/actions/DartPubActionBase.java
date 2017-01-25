@@ -76,9 +76,17 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   @Override
   public void update(@NotNull final AnActionEvent e) {
     //e.getPresentation().setText(getTitle());  "Pub: Build..." action name set in plugin.xml is different from its "Pub: Build" title
-    final boolean visible = getModuleAndPubspecYamlFile(e) != null;
+    final boolean visible = getModuleAndPubspecYamlFile(e) != null && !shouldSuppressForFlutter(e);
     e.getPresentation().setVisible(visible);
     e.getPresentation().setEnabled(visible && !isInProgress());
+  }
+
+  private static boolean shouldSuppressForFlutter(@NotNull final AnActionEvent e) {
+    if (FlutterUtil.isFlutterPluginInstalled()) {
+      final Module module = LangDataKeys.MODULE.getData(e.getDataContext());
+      return module != null && FlutterUtil.isFlutterModule(module);
+    }
+    return false;
   }
 
   @Nullable
