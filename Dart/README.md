@@ -103,13 +103,13 @@ repositories...', find plugins and install them. Restart IDE.
   4.2. Rename Plugin SDK to 'IDEA Ultimate'.
 
   4.3. Add some jars to the Plugin SDK Classpath:
-* [IDEA Installation]/plugins/coverage/lib/\*.jar
-* [IDEA Installation]/plugins/copyright/lib/\*.jar
-* [IDEA Installation]/plugins/JavaScriptDebugger/lib/\*.jar
-* [IDEA Installation]/plugins/JavaScriptLanguage/lib/\*.jar
-* [IDEA Installation]/plugins/CSS/lib/\*.jar
-* [IDEA Installation]/plugins/yaml/lib/\*.jar
-* [IDEA Plugins folder]/WebComponents/lib/\*.jar (see [here](https://intellij-support.jetbrains.com/entries/23358108) how to locate [IDEA Plugins folder])
+        - [IDEA Installation]/plugins/coverage/lib/\*.jar
+        - [IDEA Installation]/plugins/copyright/lib/\*.jar
+        - [IDEA Installation]/plugins/JavaScriptDebugger/lib/\*.jar
+        - [IDEA Installation]/plugins/JavaScriptLanguage/lib/\*.jar
+        - [IDEA Installation]/plugins/CSS/lib/\*.jar
+        - [IDEA Installation]/plugins/yaml/lib/\*.jar
+        - [IDEA Plugins folder]/WebComponents/lib/\*.jar (see [here](https://intellij-support.jetbrains.com/entries/23358108) how to locate [IDEA Plugins folder])
 
   4.4. Clone IntelliJ IDEA Community Edition repo (git clone
   https://github.com/JetBrains/intellij-community) anywhere on the computer
