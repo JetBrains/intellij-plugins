@@ -308,7 +308,7 @@ public class DartAnalysisServerService implements Disposable {
     final Task.Backgroundable task = new Task.Backgroundable(myProject, DartBundle.message("dart.analysis.progress.title"), false) {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
-        if (myProject.isDisposed()) return;
+        if (DartAnalysisServerService.this.myProject.isDisposed()) return;
         if (!myAnalysisInProgress && !myPubListInProgress) return;
 
         indicator.setText(DartBundle.message("dart.analysis.progress.title"));
