@@ -4,7 +4,7 @@
   <id>com.intellij.flex.uiDesigner</id>
   <version>999.999</version>
   <vendor url="https://www.jetbrains.com">JetBrains</vendor>
-  <idea-version since-build="138.0"/>
+  <idea-version since-build="171.2687"/>
 
   <resource-bundle>messages.FlashUIDesignerBundle</resource-bundle>
 
