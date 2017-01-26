@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,9 @@ public class BndLaunchUtil {
     Project project = configuration.getProject();
 
     JavaParameters parameters = new JavaParameters();
-    parameters.setWorkingDirectory(project.getBasePath());
+
+    File launcherDir = launcher.getCwd();
+    parameters.setWorkingDirectory(launcherDir != null ? launcherDir.getPath() : project.getBasePath());
 
     String jreHome = configuration.useAlternativeJre ? configuration.alternativeJrePath : null;
     JavaParametersUtil.configureProject(project, parameters, JavaParameters.JDK_ONLY, jreHome);
