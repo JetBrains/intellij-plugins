@@ -1,5 +1,7 @@
 package com.jetbrains.dart.analysisServer;
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -344,5 +346,25 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
                                                     "    <warning>invalid-option</warning>: <warning>invalid-value</warning>");
     myFixture.openFileInEditor(file.getVirtualFile());
     myFixture.checkHighlighting();
+  }
+
+  public void testErrorsUpdatedOnTypingAndUndo() throws Exception {
+    myFixture.configureByText("foo.dart", "main(){\n" +
+                                          "  <warning>Ra<caret>ndom</warning> <warning>r</warning> = new <warning>Random</warning>();\n" +
+                                          "}");
+    myFixture.checkHighlighting();
+    final List<HighlightInfo> highlighting = myFixture.doHighlighting(HighlightSeverity.WARNING);
+
+    myFixture.type(" ");
+    myFixture.type('\b'); // backspace
+
+    assertSameElements(highlighting, myFixture.doHighlighting(HighlightSeverity.WARNING));
+  }
+
+  public void testErrorsRemoved() throws Exception {
+    myFixture.configureByText("foo.dart", "<caret>import <warning>'dart:math'</warning>;");
+    myFixture.checkHighlighting();
+    myFixture.type("//");
+    assertEmpty(myFixture.doHighlighting(HighlightSeverity.WEAK_WARNING));
   }
 }

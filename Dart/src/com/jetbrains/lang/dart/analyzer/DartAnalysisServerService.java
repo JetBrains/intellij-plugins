@@ -190,7 +190,7 @@ public class DartAnalysisServerService implements Disposable {
 
       final int newHash = errorsWithoutTodo.isEmpty() ? 0 : ensureNotZero(errorsWithoutTodo.hashCode());
       // do nothing if errors are the same as were already handled previously
-      if (oldHash == newHash) return;
+      if (oldHash == newHash && !myServerData.isErrorInfoLost(filePathSI)) return;
 
       final boolean visible = myVisibleFiles.contains(filePathSD);
       if (myServerData.computedErrors(filePathSI, errorsWithoutTodo, visible)) {

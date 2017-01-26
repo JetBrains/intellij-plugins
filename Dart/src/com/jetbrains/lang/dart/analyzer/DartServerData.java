@@ -38,8 +38,15 @@ public class DartServerData {
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
+  // keeps track of files in which error regions have been deleted by DocumentListener (typing inside an error region)
+  private final Set<String> myFilePathsWithLostErrorInfo = Sets.newConcurrentHashSet();
+
   DartServerData(@NotNull final DartAnalysisServerService service) {
     myService = service;
+  }
+
+  boolean isErrorInfoLost(@NotNull final String filePath) {
+    return myFilePathsWithLostErrorInfo.contains(filePath);
   }
 
   /**
@@ -58,6 +65,7 @@ public class DartServerData {
       newErrors.add(new DartError(error, offset, length));
     }
 
+    myFilePathsWithLostErrorInfo.remove(filePath);
     myErrorData.put(filePath, newErrors);
 
     if (restartHighlighting) {
@@ -287,7 +295,10 @@ public class DartServerData {
     final String filePath = file.getPath();
     myFilePathsWithUnsentChanges.add(filePath);
 
-    updateRegionsDeletingTouched(filePath, myErrorData.get(filePath), e);
+    boolean someRegionDeleted = updateRegionsDeletingTouched(filePath, myErrorData.get(filePath), e);
+    if (someRegionDeleted) {
+      myFilePathsWithLostErrorInfo.add(filePath);
+    }
     updateRegionsUpdatingTouched(myHighlightData.get(filePath), e);
     updateRegionsDeletingTouched(filePath, myNavigationData.get(filePath), e);
     updateRegionsDeletingTouched(filePath, myOverrideData.get(filePath), e);
@@ -295,10 +306,15 @@ public class DartServerData {
     updateRegionsDeletingTouched(filePath, myImplementedMemberData.get(filePath), e);
   }
 
-  private static void updateRegionsDeletingTouched(@NotNull final String filePath,
-                                                   @Nullable final List<? extends DartRegion> regions,
-                                                   @NotNull final DocumentEvent e) {
-    if (regions == null) return;
+  /**
+   * @return <code>true</code> if at least one region has been deleted, <code>false</code> if updated only or nothing done at all
+   */
+  private static boolean updateRegionsDeletingTouched(@NotNull final String filePath,
+                                                      @Nullable final List<? extends DartRegion> regions,
+                                                      @NotNull final DocumentEvent e) {
+    if (regions == null) return false;
+
+    boolean regionDeleted = false;
 
     // delete touched regions, shift untouched
     final int eventOffset = e.getOffset();
@@ -324,6 +340,7 @@ public class DartServerData {
         }
         else if (region.myOffset < eventOffset && eventOffset < region.myOffset + region.myLength) {
           iterator.remove();
+          regionDeleted = true;
         }
       }
       else if (deltaLength < 0) {
@@ -335,9 +352,12 @@ public class DartServerData {
         }
         else if (eventOffset < region.myOffset + region.myLength) {
           iterator.remove();
+          regionDeleted = true;
         }
       }
     }
+
+    return regionDeleted;
   }
 
   private static void updateRegionsUpdatingTouched(@Nullable final List<? extends DartRegion> regions,
