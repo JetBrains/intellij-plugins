@@ -121,4 +121,9 @@ public class BundleCompiler implements Reporter {
   public void debug(@NotNull String message) {
     LOG.debug(message);
   }
+
+  @Override
+  public String setReportSource(String source) {
+    return null;
+  }
 }

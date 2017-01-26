@@ -29,6 +29,7 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
+import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 
 import java.io.File;
 import java.util.Collection;
@@ -109,8 +110,28 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   @Override
   public Collection<File> getOutputRoots(CompileContext context) {
     if (myOutputRoots == null) {
-      String jarFileLocation = myExtension.getJarFileLocation();
-      myOutputRoots = jarFileLocation.isEmpty() ? Collections.emptyList() : Collections.singletonList(new File(jarFileLocation));
+      String location = myExtension.getJarFileLocation();
+      if (!location.isEmpty()) {
+        myOutputRoots = ContainerUtil.newArrayList();
+
+        if (myExtension.isUseBndFile()) {
+          File bndFile = OsgiBuildUtil.findFileInModuleContentRoots(myModule, myExtension.getBndFileLocation());
+          if (bndFile != null && bndFile.isFile()) {
+            List<String> bundleNames = BndWrapper.getBundleNames(bndFile);
+            if (!bundleNames.isEmpty()) {
+              String bundleDir = new File(location).getParent();
+              bundleNames.stream().map(name -> new File(bundleDir, name)).forEach(myOutputRoots::add);
+            }
+          }
+        }
+
+        if (myOutputRoots.isEmpty()) {
+          myOutputRoots.add(new File(location));
+        }
+      }
+      else {
+        myOutputRoots = Collections.emptyList();
+      }
     }
 
     return myOutputRoots;

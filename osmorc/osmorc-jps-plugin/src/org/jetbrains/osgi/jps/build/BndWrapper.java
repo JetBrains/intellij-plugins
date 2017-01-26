@@ -25,9 +25,11 @@
 package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.build.Project;
+import aQute.bnd.build.ProjectBuilder;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.*;
 import aQute.service.reporter.Report;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -38,14 +40,12 @@ import org.jetbrains.osgi.jps.util.OrderedProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Class which wraps bnd and integrates it into IntelliJ.
@@ -200,18 +200,40 @@ public class BndWrapper {
     Workspace workspace = Workspace.findWorkspace(bndFile);
     if (workspace != null) {
       try (Project project = new Project(workspace, null, bndFile);
-           Builder builder = new ReportingProjectBuilder(myReporter, project)) {
-        builder.setBase(bndFile.getParentFile());
-        doBuild(builder, outputFile);
+           ProjectBuilder projectBuilder = project.getBuilder(null)) {
+        for (Builder sub : projectBuilder.getSubBuilders()) {
+          File source = sub == projectBuilder ? bndFile : sub.getPropertiesFile();
+          String prevSource = myReporter.setReportSource(source.getPath());
+          try (Builder builder = new ReportingProjectBuilder(myReporter, (ProjectBuilder)sub)) {
+            builder.setProperties(source);
+            File output = sub == projectBuilder ? outputFile : new File(outputFile.getParent(), sub.getBsn() + ".jar");
+            doBuild(builder, output);
+          }
+          finally {
+            myReporter.setReportSource(prevSource);
+          }
+        }
       }
     }
     else {
-      try (Builder builder = new ReportingBuilder(myReporter)) {
-        builder.setProperties(bndFile);
-        builder.setPedantic(false);
-        builder.setClasspath(classPath);
-        builder.setSourcepath(srcPath);
-        doBuild(builder, outputFile);
+      try (Builder mainBuilder = new Builder()) {
+        mainBuilder.setProperties(bndFile);
+        mainBuilder.setPedantic(false);
+        for (Builder sub : mainBuilder.getSubBuilders()) {
+          File source = sub == mainBuilder ? bndFile : sub.getPropertiesFile();
+          String prevSource = myReporter.setReportSource(source.getPath());
+          try (Builder builder = new ReportingBuilder(myReporter, sub)) {
+            builder.setProperties(source);
+            builder.setPedantic(false);
+            builder.setClasspath(classPath);
+            builder.setSourcepath(srcPath);
+            File output = sub == mainBuilder ? outputFile : new File(outputFile.getParent(), sub.getBsn() + ".jar");
+            doBuild(builder, output);
+          }
+          finally {
+            myReporter.setReportSource(prevSource);
+          }
+        }
       }
     }
   }
@@ -273,5 +295,22 @@ public class BndWrapper {
       throw new OsgiBuildException("Can't create output directory '" + outputDir + "'. Please check file permissions.");
     }
     return outputDir;
+  }
+
+  @NotNull
+  public static List<String> getBundleNames(@NotNull File bndFile) {
+    try (Builder builder = new Builder()) {
+      builder.setProperties(bndFile);
+      builder.setPedantic(false);
+      List<Builder> subs = builder.getSubBuilders();
+      if (subs.size() > 0 && subs.get(0) != builder) {
+        return subs.stream().map(sub -> sub.getBsn() + ".jar").collect(Collectors.toList());
+      }
+    }
+    catch (Exception e) {
+      Logger.getInstance(BndWrapper.class).warn(e);
+    }
+
+    return Collections.emptyList();
   }
 }

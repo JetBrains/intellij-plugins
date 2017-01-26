@@ -39,6 +39,12 @@ public class ReportingBuilder extends Builder {
     myReporter = reporter;
   }
 
+  public ReportingBuilder(@NotNull Reporter reporter, @NotNull Builder parent) {
+    super(parent);
+    myReporter = reporter;
+    use(parent);
+  }
+
   @Override
   public SetLocation exception(Throwable t, String format, Object... args) {
     Logger.getInstance(myReporter.getClass()).warn(formatArrays(format, args), t);

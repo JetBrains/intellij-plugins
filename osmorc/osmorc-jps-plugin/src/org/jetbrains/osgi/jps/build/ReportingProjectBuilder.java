@@ -15,7 +15,6 @@
  */
 package org.jetbrains.osgi.jps.build;
 
-import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +22,10 @@ import org.jetbrains.annotations.NotNull;
 public class ReportingProjectBuilder extends ProjectBuilder {
   private final Reporter myReporter;
 
-  public ReportingProjectBuilder(@NotNull Reporter reporter, @NotNull Project project) {
-    super(project);
+  public ReportingProjectBuilder(@NotNull Reporter reporter, @NotNull ProjectBuilder parent) {
+    super(parent);
     myReporter = reporter;
+    use(parent);
   }
 
   @Override

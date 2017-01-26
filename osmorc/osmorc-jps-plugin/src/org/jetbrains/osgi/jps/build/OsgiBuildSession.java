@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,7 @@ import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -55,11 +52,13 @@ import static com.intellij.util.ObjectUtils.coalesce;
 public class OsgiBuildSession implements Reporter {
   private static final Logger LOG = Logger.getInstance(OsgiBuildSession.class);
 
+  private OsmorcBuildTarget myTarget;
   private CompileContext myContext;
   private JpsOsmorcModuleExtension myExtension;
   private JpsModule myModule;
   private String myMessagePrefix;
   private File myOutputJarFile;
+  private Collection<File> myOutputJarFiles;
   private File myModuleOutputDir;
   private File[] myClasses;
   private File[] mySources;
@@ -67,6 +66,7 @@ public class OsgiBuildSession implements Reporter {
   private String mySourceToReport = null;
 
   public void build(@NotNull OsmorcBuildTarget target, @NotNull CompileContext context) throws IOException {
+    myTarget = target;
     myContext = context;
     myExtension = target.getExtension();
     myModule = target.getModule();
@@ -83,14 +83,16 @@ public class OsgiBuildSession implements Reporter {
       return;
     }
 
-    if (!myOutputJarFile.exists()) {
-      error("Bundle was not built", null, null, -1);
-      return;
+    for (File jarFile : myOutputJarFiles) {
+      if (!jarFile.exists()) {
+        error("Bundle was not built: " + jarFile, null, null, -1);
+        return;
+      }
     }
 
     ProjectBuilderLogger logger = context.getLoggingManager().getProjectBuilderLogger();
     if (logger.isEnabled()) {
-      logger.logCompiledFiles(Collections.singleton(myOutputJarFile), OsmorcBuilder.ID, "Built OSGi bundles:");
+      logger.logCompiledFiles(myOutputJarFiles, OsmorcBuilder.ID, "Built OSGi bundles:");
     }
 
     context.processMessage(DoneSomethingNotification.INSTANCE);
@@ -108,11 +110,15 @@ public class OsgiBuildSession implements Reporter {
     }
 
     myOutputJarFile = new File(jarFileLocation);
-    if (!FileUtil.delete(myOutputJarFile)) {
-      throw new OsgiBuildException("Can't delete bundle file '" + myOutputJarFile + "'.");
+    myOutputJarFiles = myTarget.getOutputRoots(myContext);
+
+    for (File jarFile : myOutputJarFiles) {
+      if (!FileUtil.delete(jarFile)) {
+        throw new OsgiBuildException("Can't delete bundle file '" + jarFile + "'.");
+      }
     }
     if (!FileUtil.createParentDirs(myOutputJarFile)) {
-      throw new OsgiBuildException("Cannot create directory for bundle file '" + myOutputJarFile + "'.");
+      throw new OsgiBuildException("Cannot create a directory for bundles '" + myOutputJarFile.getParent() + "'.");
     }
 
     List<File> classes = ContainerUtil.newSmartList();
@@ -150,7 +156,7 @@ public class OsgiBuildSession implements Reporter {
     if (myExtension.isUseBndFile()) {
       String bndPath = myExtension.getBndFileLocation();
       File bndFile = OsgiBuildUtil.findFileInModuleContentRoots(myModule, bndPath);
-      if (bndFile == null || !bndFile.canRead()) {
+      if (bndFile == null || !bndFile.isFile()) {
         throw new OsgiBuildException("Bnd file missing '" + bndPath + "' - please check OSGi facet settings.");
       }
 
@@ -333,5 +339,12 @@ public class OsgiBuildSession implements Reporter {
   @Override
   public void debug(@NotNull String message) {
     LOG.debug(message);
+  }
+
+  @Override
+  public String setReportSource(String source) {
+    String prevSource = mySourceToReport;
+    mySourceToReport = source;
+    return prevSource;
   }
 }

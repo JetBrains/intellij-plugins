@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.osgi.jps
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry
+import java.io.File
 
 class OsgiBuildTest : OsgiBuildTestCase() {
   private lateinit var myModule: JpsModule
@@ -199,5 +200,38 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     bndBuild(myModule)
     createFile("main/bnd.bnd", "-fixupmessages: \"No value *\";is:=ignore\nBad-Property\n")
     buildAllModules().assertSuccessful()
+  }
+
+  fun testBndtoolsSubBundles() {
+    bndBuild(myModule)
+    createFile("cnf/build.bnd", "src=src\nbin=out")
+    createFile("main/src/main/a/A.java", "package main.a;\npublic class A { }")
+    createFile("main/src/main/b/B.java", "package main.b;\npublic class B { }")
+    createFile("main/bnd.bnd", "-sub: *.bnd")
+    createFile("main/a.bnd", "Bundle-Version=1.0.0\nExport-Package: main.a")
+    createFile("main/b.bnd", "Bundle-Version=1.0.1\nExport-Package: main.b")
+    buildAllModules().assertBundlesCompiled(myModule, "main.a.jar", "main.b.jar")
+
+    assertFalse(File(extension(myModule).jarFileLocation).exists())
+    assertJar(myModule, "main.a.jar", setOf("META-INF/MANIFEST.MF", "OSGI-OPT/src/main/a/A.java", "main/a/A.class"))
+    assertManifest(myModule, "main.a.jar", setOf("Bundle-Name=main.a", "Bundle-SymbolicName=main.a", "Bundle-Version=1.0.0", "Export-Package=main.a;version=\"1.0.0\""))
+    assertJar(myModule, "main.b.jar", setOf("META-INF/MANIFEST.MF", "OSGI-OPT/src/main/b/B.java", "main/b/B.class"))
+    assertManifest(myModule, "main.b.jar", setOf("Bundle-Name=main.b", "Bundle-SymbolicName=main.b", "Bundle-Version=1.0.1", "Export-Package=main.b;version=\"1.0.1\""))
+  }
+
+  fun testSubBundles() {
+    bndBuild(myModule)
+    createFile("main/src/main/a/A.java", "package main.a;\npublic class A { }")
+    createFile("main/src/main/b/B.java", "package main.b;\npublic class B { }")
+    createFile("main/bnd.bnd", "-sub: *.bnd")
+    createFile("main/a.bnd", "Bundle-Version=1.0.0\nExport-Package: main.a")
+    createFile("main/b.bnd", "Bundle-Version=1.0.1\nExport-Package: main.b")
+    buildAllModules().assertBundlesCompiled(myModule, "main.a.jar", "main.b.jar")
+
+    assertFalse(File(extension(myModule).jarFileLocation).exists())
+    assertJar(myModule, "main.a.jar", setOf("META-INF/MANIFEST.MF", "main/a/A.class"))
+    assertManifest(myModule, "main.a.jar", setOf("Bundle-Name=main.a", "Bundle-SymbolicName=main.a", "Bundle-Version=1.0.0", "Export-Package=main.a;version=\"1.0.0\""))
+    assertJar(myModule, "main.b.jar", setOf("META-INF/MANIFEST.MF", "main/b/B.class"))
+    assertManifest(myModule, "main.b.jar", setOf("Bundle-Name=main.b", "Bundle-SymbolicName=main.b", "Bundle-Version=1.0.1", "Export-Package=main.b;version=\"1.0.1\""))
   }
 }

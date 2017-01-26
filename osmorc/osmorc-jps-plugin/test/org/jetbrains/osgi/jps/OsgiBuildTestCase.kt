@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl
 import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties
+import java.io.File
 import java.util.jar.JarFile
 
 abstract class OsgiBuildTestCase : JpsBuildTestCase() {
@@ -72,27 +73,39 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     assertCompiled(OsmorcBuilder.ID, "${module.name}/${extension(module).properties.myJarFileLocation}")
   }
 
-  fun assertJar(module: JpsModule, expected: Set<String>) {
-    JarFile(extension(module).jarFileLocation).use {
-      val actual = it.entries().asSequence().filter { !it.isDirectory }.map { it.name }.toSet()
-      assertEquals(expected, actual)
-    }
+  fun BuildResult.assertBundlesCompiled(module: JpsModule, vararg bundles: String) {
+    assertSuccessful()
+    val bundlesDir = File("${module.name}/${extension(module).properties.myJarFileLocation}").parent
+    val bundlePaths = bundles.map { bundlesDir + '/' + it }.toTypedArray()
+    assertCompiled(OsmorcBuilder.ID, *bundlePaths)
   }
 
-  fun assertManifest(module: JpsModule, toCheck: Set<String>) {
-    JarFile(extension(module).jarFileLocation).use {
-      val expected = toCheck + "Manifest-Version=1.0"
-      val actual = it.manifest!!.mainAttributes!!.asSequence()
-          .map { it.key.toString() to it.value.toString() }
-          .filter { it.first !in instrumental }
-          .map { "${it.first}=${if (it.first in needSorting) it.second.split(',').sorted().joinToString(",") else it.second}" }
-          .toSet()
-      assertEquals(expected, actual)
-    }
+  fun assertJar(module: JpsModule, expected: Set<String>) =
+    assertJar(File(extension(module).jarFileLocation), expected)
+
+  fun assertJar(module: JpsModule, bundle: String, expected: Set<String>) =
+    assertJar(File(File(extension(module).jarFileLocation).parent, bundle), expected)
+
+  fun assertManifest(module: JpsModule, toCheck: Set<String>) =
+    assertManifest(File(extension(module).jarFileLocation), toCheck)
+
+  fun assertManifest(module: JpsModule, bundle: String, toCheck: Set<String>) =
+    assertManifest(File(File(extension(module).jarFileLocation).parent, bundle), toCheck)
+
+  private fun assertJar(file: File, expected: Set<String>) {
+    val actual = JarFile(file).use { it.entries().asSequence().filter { !it.isDirectory }.map { it.name }.toSet() }
+    assertEquals(expected, actual)
   }
 
-  // Kotlin still have troubles with mapping JarFile to Closeable
-  private fun JarFile.use(block: (JarFile) -> Unit) {
-    try { block(this) } finally { close() }
+  private fun assertManifest(file: File, toCheck: Set<String>) {
+    val expected = toCheck + "Manifest-Version=1.0"
+    val actual = JarFile(file).use {
+      it.manifest!!.mainAttributes!!.asSequence()
+        .map { it.key.toString() to it.value.toString() }
+        .filter { it.first !in instrumental }
+        .map { "${it.first}=${if (it.first in needSorting) it.second.split(',').sorted().joinToString(",") else it.second}" }
+        .toSet()
+    }
+    assertEquals(expected, actual)
   }
 }
