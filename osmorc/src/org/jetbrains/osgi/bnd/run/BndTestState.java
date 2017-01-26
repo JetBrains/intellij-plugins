@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.events.*;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -52,10 +53,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -79,7 +77,7 @@ public class BndTestState extends JavaCommandLineState {
 
     myConfiguration = configuration;
 
-    final File runFile = new File(myConfiguration.bndRunFile);
+    File runFile = new File(myConfiguration.bndRunFile);
     if (!runFile.isFile()) {
       throw new CantRunException(message("bnd.run.configuration.invalid", runFile));
     }
@@ -203,32 +201,15 @@ public class BndTestState extends JavaCommandLineState {
     }
 
     private void startProtocolListener() {
-      new Thread("Bnd test state") {
-        @Override
-        public void run() {
-          try {
-            Socket socket = mySocket.accept();
-            try {
-              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-              try {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                  processEventLine(line);
-                }
-              }
-              finally {
-                reader.close();
-              }
-            }
-            finally {
-              socket.close();
-            }
-          }
-          catch (IOException e) {
-            LOG.debug(e);
-          }
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        try (Socket socket = mySocket.accept();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+          reader.lines().forEach(this::processEventLine);
         }
-      }.start();
+        catch (IOException e) {
+          LOG.debug(e);
+        }
+      });
     }
 
     @Override

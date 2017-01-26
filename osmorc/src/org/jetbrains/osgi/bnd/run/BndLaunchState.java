@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
     }
     myNotifications = notificationGroup;
 
-    final File runFile = new File(myConfiguration.bndRunFile);
+    File runFile = new File(myConfiguration.bndRunFile);
     if (!runFile.isFile()) {
       throw new CantRunException(message("bnd.run.configuration.invalid", runFile));
     }
@@ -116,10 +116,10 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   protected OSProcessHandler startProcess() throws ExecutionException {
     OSProcessHandler handler = super.startProcess();
 
-    final MessageBusConnection connection = myProject.getMessageBus().connect();
+    MessageBusConnection connection = myProject.getMessageBus().connect();
     connection.subscribe(CompilerTopics.COMPILATION_STATUS, this);
 
-    final HotSwapUI hotSwapManager = HotSwapUI.getInstance(myProject);
+    HotSwapUI hotSwapManager = HotSwapUI.getInstance(myProject);
     hotSwapManager.addListener(this);
 
     handler.addProcessListener(new ProcessAdapter() {
