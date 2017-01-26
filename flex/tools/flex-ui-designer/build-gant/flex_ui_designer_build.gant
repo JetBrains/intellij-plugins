@@ -3,7 +3,6 @@
 // this is called to build artifacts to be used when running from sources
 target('default': "Build Flex UI Designer artifacts") {
   home = guessHome(this)
-  home = "$home/../../.."; // IDEA\flex\tools\flex-ui-designer is detected
   doExecute("$home", "$home/out", "$home/out/classes/production/flex-ui-designer")
 }
 
@@ -14,15 +13,7 @@ binding.setVariable("includeFile", {String filepath ->
 })
 
 def guessHome(Script script) {
-  File home = new File(script["gant.file"].substring("file:".length()))
-
-  while (home != null) {
-    if (home.isDirectory()) {
-      if (new File(home, ".idea").exists()) return home.getCanonicalPath()
-    }
-    home = home.getParentFile()
-  }
-  return null
+  return new File(script["gant.file"].substring("file:".length())).parentFile.parentFile.parentFile.parentFile.parentFile.parent
 }
 
 def execute(home, sandbox, targetFolder) {
@@ -46,7 +37,7 @@ class SwfDescriptor {
 }
 
 private def doExecute(home, sandbox, targetFolder) {
-  flexBuildHome = "$home/flex/tools/flex-ui-designer/build-gant";
+  flexBuildHome = "$home/contrib/flex/tools/flex-ui-designer/build-gant";
   flexSandbox = "$sandbox/flex-ui-designer"
 
   ant.delete(dir: "$flexSandbox")
