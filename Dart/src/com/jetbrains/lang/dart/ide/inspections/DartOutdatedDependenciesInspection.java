@@ -15,6 +15,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -49,6 +50,7 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     final Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module == null || sdk == null || !DartSdkLibUtil.isDartSdkEnabled(module)) return null;
+    if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isFlutterModule(module)) return null;
 
     final VirtualFile pubspecFile = PubspecYamlUtil.findPubspecYamlFile(project, file);
     if (pubspecFile == null || myIgnoredPubspecPaths.contains(pubspecFile.getPath())) return null;
