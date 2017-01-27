@@ -122,7 +122,7 @@ public final class TsLintOutputJsonParser {
   }
 
   private static void logError(String s) {
-    LOG.error("TSLint result parsing: " + s);
+    LOG.info("TSLint result parsing: " + s);
   }
 
   public static boolean isVersionZeroBased(SemVer tsLintVersion) {
