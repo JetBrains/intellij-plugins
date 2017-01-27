@@ -162,6 +162,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     return FlexModuleType.getInstance();
   }
 
+  @NotNull
   @Override
   protected Module createMainModule() throws IOException {
     final Module module = super.createMainModule();
@@ -173,7 +174,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
         PsiTestUtil.addContentRoot(module, moduleDir);
         PsiTestUtil.addSourceRoot(module, src);
       }
-    }.execute().getResultObject();
+    }.execute();
     return module;
   }
 
@@ -210,12 +211,10 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
                       final CompilerOptions moduleLevelOptions, final CompilerOptions projectLevelOptions,
                       final String suffix,
                       @Nullable Map<String, String> additionalMacros) throws Exception {
-    final Sdk testSdk = WriteCommandAction.runWriteCommandAction(null, new Computable<Sdk>() {
-      public Sdk compute() {
-        final Sdk testSdk = createTestSdk(sdkVersion);
-        ProjectJdkTable.getInstance().addJdk(testSdk);
-        return testSdk;
-      }
+    final Sdk testSdk = WriteCommandAction.runWriteCommandAction(null, (Computable<Sdk>)() -> {
+      final Sdk testSdk1 = createTestSdk(sdkVersion);
+      ProjectJdkTable.getInstance().addJdk(testSdk1);
+      return testSdk1;
     });
 
     try {
@@ -246,32 +245,39 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
 
   private Sdk createTestSdk(final String sdkVersion) {
     return new Sdk() {
+      @Override
       @NotNull
       public SdkType getSdkType() {
         return FlexSdkType2.getInstance();
       }
 
+      @Override
       @NotNull
       public String getName() {
         return TEST_FLEX_SDK_NAME;
       }
 
+      @Override
       public String getVersionString() {
         return sdkVersion;
       }
 
+      @Override
       public String getHomePath() {
         return getTestDataPath() +
                (sdkVersion.startsWith("AIR SDK ") ? "air_sdk" : "flex_sdk_" + sdkVersion.substring(0, "0.0.0".length()));
       }
 
+      @Override
       public VirtualFile getHomeDirectory() {
         return null;
       }
 
+      @Override
       @NotNull
       public RootProvider getRootProvider() {
         return new RootProviderBaseImpl() {
+          @Override
           @NotNull
           public String[] getUrls(@NotNull final OrderRootType rootType) {
             final String[] relPaths = sdkVersion.startsWith("AIR SDK ")
@@ -290,6 +296,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
             return urls;
           }
 
+          @Override
           @NotNull
           public VirtualFile[] getFiles(@NotNull final OrderRootType rootType) {
             return VirtualFile.EMPTY_ARRAY;
@@ -297,22 +304,27 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
         };
       }
 
+      @Override
       @NotNull
       public SdkModificator getSdkModificator() {
         return null;
       }
 
+      @Override
       public SdkAdditionalData getSdkAdditionalData() {
         return null;
       }
 
+      @Override
       public <T> T getUserData(@NotNull final Key<T> key) {
         return null;
       }
 
+      @Override
       public <T> void putUserData(@NotNull final Key<T> key, @Nullable final T value) {
       }
 
+      @Override
       @NotNull
       public Object clone() throws CloneNotSupportedException {
         return super.clone();
@@ -424,7 +436,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     final ModifiableFlexBuildConfiguration bc = createBuildConfiguration(TargetPlatform.Web, false, OutputType.Application, "11.1");
     VirtualFile f = getVirtualFile(getTestName(false) + "_config.xml");
     ApplicationManager.getApplication().runWriteAction(() -> {
-      VirtualFile additionalConfigFile = null;
+      VirtualFile additionalConfigFile;
       try {
         additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
                                                             replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion),
