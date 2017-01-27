@@ -4,6 +4,7 @@ import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -15,7 +16,6 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
-import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.lang.AngularJSLanguage;
@@ -29,11 +29,6 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "injections";
-  }
-
-  @Override
-  protected boolean isWriteActionRequired() {
-    return getTestName(true).contains("Completion");
   }
 
   public void testNgInitCompletion() {

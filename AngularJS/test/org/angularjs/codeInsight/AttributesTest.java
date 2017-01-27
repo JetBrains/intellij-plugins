@@ -29,11 +29,6 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "attributes";
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return getTestName(true).contains("Completion");
-  }
-
   private static String getDirectiveDefinitionText(PsiElement resolve) {
     return resolve.getParent().getText();
   }

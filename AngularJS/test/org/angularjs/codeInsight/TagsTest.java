@@ -20,11 +20,6 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "tags";
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return getTestName(true).contains("Completion");
-  }
-
   public void testStandardTagsCompletion() {
     myFixture.testCompletion("standard.html", "standard.after.html", "angular.js");
   }

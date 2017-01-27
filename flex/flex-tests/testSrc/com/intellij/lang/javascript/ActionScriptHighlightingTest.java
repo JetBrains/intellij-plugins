@@ -2,8 +2,6 @@ package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
-import com.intellij.codeInsight.highlighting.HighlightUsagesHandler;
-import com.intellij.codeInsight.highlighting.HighlightUsagesHandlerBase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -51,7 +49,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -266,10 +263,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
     for (LookupElement l : lookup.getItems()) {
       if (variantName.equals(l.getLookupString())) {
-        lookup.setCurrentItem(l);
         selected = true;
-        WriteCommandAction.runWriteCommandAction(null, () -> ((LookupImpl)lookup).finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR));
-
+        ((LookupImpl)lookup).finishLookup(Lookup.AUTO_INSERT_SELECT_CHAR, l);
       }
     }
 

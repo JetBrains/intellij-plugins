@@ -21,11 +21,6 @@ public class DependencyInjectionTest extends LightPlatformCodeInsightFixtureTest
   }
 
   @Override
-  protected boolean isWriteActionRequired() {
-    return getTestName(true).contains("Completion");
-  }
-
-  @Override
   protected void setUp() throws Exception {
     super.setUp();
     JSTestUtils.forbidStubAstSwitch(myFixture::getFile, getProject(), this);

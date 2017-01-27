@@ -20,7 +20,6 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction;
 import com.intellij.lang.ognl.OgnlFileType;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
 /**
@@ -48,6 +47,6 @@ public class OgnlLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
     new ListTemplatesAction().actionPerformedImpl(myFixture.getProject(), myFixture.getEditor());
     LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(myFixture.getEditor());
     assertNotNull(lookup);
-    WriteCommandAction.runWriteCommandAction(getProject(), () -> lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR));
+    lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR);
   }
 }
