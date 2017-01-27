@@ -64,6 +64,11 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
       return Condition.TRUE;
     }
 
+    @Override
+    public boolean isSoft() {
+      return true;
+    }
+
     @NotNull
     @Override
     public Object[] getVariants() {

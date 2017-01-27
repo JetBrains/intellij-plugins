@@ -63,6 +63,11 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
       return list.toArray(new ResolveResult[list.size()]);
     }
 
+    @Override
+    public boolean isSoft() {
+      return true;
+    }
+
     @NotNull
     @Override
     public Object[] getVariants() {
