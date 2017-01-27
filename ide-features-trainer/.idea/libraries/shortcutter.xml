@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="shortcutter">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/shortcutter.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
