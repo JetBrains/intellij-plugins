@@ -55,6 +55,10 @@ module.exports = function(config) {
   var originalAutoWatch = config.autoWatch;
   config.autoWatch = false;
   config.autoWatchBatchDelay = 0;
+  var angularCli = config.angularCli;
+  if (angularCli != null && typeof angularCli.sourcemap === 'undefined') {
+    angularCli.sourcemap = true;
+  }
 
   setBasePath(config);
 
