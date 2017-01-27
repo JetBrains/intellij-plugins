@@ -11,6 +11,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -285,7 +286,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   private static boolean hasRevealFramework(@NotNull BuildConfiguration buildConfiguration) {
-    return ApplicationManager.getApplication().runReadAction((Computable<Boolean>)() -> {
+    return ReadAction.compute(() -> {
       List<String> flags = buildConfiguration.getBuildSetting(BuildSettingNames.OTHER_LDFLAGS).getStringList();
       return flags.stream().anyMatch(flag -> KNOWN_FRAMEWORK_NAMES.contains(StringUtil.unquoteString(flag)));
     });
