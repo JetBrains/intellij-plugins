@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartFunctionSignature extends DartComponent {
+public interface DartFunctionFormalParameter extends DartComponent {
 
   @NotNull
   DartComponentName getComponentName();

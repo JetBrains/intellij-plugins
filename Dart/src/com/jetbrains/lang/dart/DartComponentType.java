@@ -97,7 +97,7 @@ public enum DartComponentType {
         || element instanceof DartFactoryConstructorDeclaration) {
       return CONSTRUCTOR;
     }
-    if (element instanceof DartFunctionSignature
+    if (element instanceof DartFunctionFormalParameter
         || element instanceof DartFunctionDeclarationWithBody
         || element instanceof DartFunctionDeclarationWithBodyOrNative
         || element instanceof DartFunctionExpression) {

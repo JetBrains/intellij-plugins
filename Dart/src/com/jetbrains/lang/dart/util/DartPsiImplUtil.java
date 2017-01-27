@@ -199,11 +199,11 @@ public class DartPsiImplUtil {
 
   @Nullable
   public static DartComponentName findComponentName(final @NotNull DartNormalFormalParameter normalFormalParameter) {
-    final DartFunctionSignature functionDeclaration = normalFormalParameter.getFunctionSignature();
+    final DartFunctionFormalParameter functionFormalParameter = normalFormalParameter.getFunctionFormalParameter();
     final DartFieldFormalParameter fieldFormalParameter = normalFormalParameter.getFieldFormalParameter();
     final DartSimpleFormalParameter simpleFormalParameter = normalFormalParameter.getSimpleFormalParameter();
 
-    if (functionDeclaration != null) return functionDeclaration.getComponentName();
+    if (functionFormalParameter != null) return functionFormalParameter.getComponentName();
     if (fieldFormalParameter != null) return null;
     if (simpleFormalParameter != null) return simpleFormalParameter.getComponentName();
 

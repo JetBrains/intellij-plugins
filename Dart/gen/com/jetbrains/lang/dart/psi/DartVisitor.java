@@ -200,7 +200,7 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitFunctionSignature(@NotNull DartFunctionSignature o) {
+  public void visitFunctionFormalParameter(@NotNull DartFunctionFormalParameter o) {
     visitComponent(o);
   }
 

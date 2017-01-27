@@ -11,7 +11,7 @@ public interface DartNormalFormalParameter extends DartPsiCompositeElement {
   DartFieldFormalParameter getFieldFormalParameter();
 
   @Nullable
-  DartFunctionSignature getFunctionSignature();
+  DartFunctionFormalParameter getFunctionFormalParameter();
 
   @Nullable
   DartSimpleFormalParameter getSimpleFormalParameter();

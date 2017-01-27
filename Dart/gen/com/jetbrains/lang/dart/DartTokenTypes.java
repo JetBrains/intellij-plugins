@@ -54,7 +54,7 @@ public interface DartTokenTypes {
   IElementType FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE = new DartElementType("FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE");
   IElementType FUNCTION_EXPRESSION = new DartElementType("FUNCTION_EXPRESSION");
   IElementType FUNCTION_EXPRESSION_BODY = new DartElementType("FUNCTION_EXPRESSION_BODY");
-  IElementType FUNCTION_SIGNATURE = new DartElementType("FUNCTION_SIGNATURE");
+  IElementType FUNCTION_FORMAL_PARAMETER = new DartElementType("FUNCTION_FORMAL_PARAMETER");
   IElementType FUNCTION_TYPE = new DartElementType("FUNCTION_TYPE");
   IElementType FUNCTION_TYPE_ALIAS = new DartElementType("FUNCTION_TYPE_ALIAS");
   IElementType GETTER_DECLARATION = new DartElementType("GETTER_DECLARATION");
@@ -408,8 +408,8 @@ public interface DartTokenTypes {
       else if (type == FUNCTION_EXPRESSION_BODY) {
         return new DartFunctionExpressionBodyImpl(node);
       }
-      else if (type == FUNCTION_SIGNATURE) {
-        return new DartFunctionSignatureImpl(node);
+      else if (type == FUNCTION_FORMAL_PARAMETER) {
+        return new DartFunctionFormalParameterImpl(node);
       }
       else if (type == FUNCTION_TYPE) {
         return new DartFunctionTypeImpl(node);

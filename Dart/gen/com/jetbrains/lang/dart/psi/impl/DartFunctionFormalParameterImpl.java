@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartFunctionSignatureImpl extends AbstractDartComponentImpl implements DartFunctionSignature {
+public class DartFunctionFormalParameterImpl extends AbstractDartComponentImpl implements DartFunctionFormalParameter {
 
-  public DartFunctionSignatureImpl(ASTNode node) {
+  public DartFunctionFormalParameterImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitFunctionSignature(this);
+    visitor.visitFunctionFormalParameter(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

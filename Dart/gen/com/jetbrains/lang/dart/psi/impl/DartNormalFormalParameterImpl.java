@@ -34,8 +34,8 @@ public class DartNormalFormalParameterImpl extends DartPsiCompositeElementImpl i
 
   @Override
   @Nullable
-  public DartFunctionSignature getFunctionSignature() {
-    return findChildByClass(DartFunctionSignature.class);
+  public DartFunctionFormalParameter getFunctionFormalParameter() {
+    return findChildByClass(DartFunctionFormalParameter.class);
   }
 
   @Override
