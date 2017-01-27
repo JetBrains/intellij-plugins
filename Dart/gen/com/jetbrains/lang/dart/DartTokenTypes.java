@@ -163,6 +163,7 @@ public interface DartTokenTypes {
   IElementType COMMA = new DartElementType(",");
   IElementType CONST = new DartElementType("const");
   IElementType CONTINUE = new DartElementType("continue");
+  IElementType COVARIANT = new DartElementType("covariant");
   IElementType DEFAULT = new DartElementType("default");
   IElementType DEFERRED = new DartElementType("deferred");
   IElementType DIV = new DartElementType("/");

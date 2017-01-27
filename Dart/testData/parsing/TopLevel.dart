@@ -13,6 +13,8 @@ int topLevelListTypedVariable, a, b;
 var topLevelListUnTypedVariable, a, b;
 var topLevelInitializedVariable = 2;
 final topLevelInitializedVariable2 = const Foo();
+covariant covariant;
+var covariant;
 
 // Top level setters
 get topLevelGetter {}
