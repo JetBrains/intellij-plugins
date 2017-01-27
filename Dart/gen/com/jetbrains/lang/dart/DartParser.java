@@ -161,8 +161,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == FUNCTION_EXPRESSION_BODY) {
       r = functionExpressionBody(b, 0);
     }
-    else if (t == FUNCTION_SIGNATURE) {
-      r = functionSignature(b, 0);
+    else if (t == FUNCTION_FORMAL_PARAMETER) {
+      r = functionFormalParameter(b, 0);
     }
     else if (t == FUNCTION_TYPE) {
       r = functionType(b, 0);
@@ -2620,57 +2620,6 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList
-  static boolean functionDeclarationPrivate(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionDeclarationPrivate")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = functionDeclarationPrivate_0(b, l + 1);
-    if (!r) r = functionDeclarationPrivate_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // returnType componentName typeParameters? formalParameterList
-  private static boolean functionDeclarationPrivate_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionDeclarationPrivate_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = returnType(b, l + 1);
-    r = r && componentName(b, l + 1);
-    r = r && functionDeclarationPrivate_0_2(b, l + 1);
-    r = r && formalParameterList(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // typeParameters?
-  private static boolean functionDeclarationPrivate_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionDeclarationPrivate_0_2")) return false;
-    typeParameters(b, l + 1);
-    return true;
-  }
-
-  // componentName typeParameters? formalParameterList
-  private static boolean functionDeclarationPrivate_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionDeclarationPrivate_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = componentName(b, l + 1);
-    r = r && functionDeclarationPrivate_1_1(b, l + 1);
-    r = r && formalParameterList(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // typeParameters?
-  private static boolean functionDeclarationPrivate_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionDeclarationPrivate_1_1")) return false;
-    typeParameters(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
   // metadata*  (returnType componentName typeParameters? formalParameterList | componentName typeParameters? formalParameterList) functionBody
   public static boolean functionDeclarationWithBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBody")) return false;
@@ -2873,6 +2822,84 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // metadata* returnType componentName typeParameters? formalParameterList |
+  //                             metadata* componentName typeParameters? formalParameterList
+  public static boolean functionFormalParameter(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionFormalParameter")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION_FORMAL_PARAMETER, "<function formal parameter>");
+    r = functionFormalParameter_0(b, l + 1);
+    if (!r) r = functionFormalParameter_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // metadata* returnType componentName typeParameters? formalParameterList
+  private static boolean functionFormalParameter_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionFormalParameter_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionFormalParameter_0_0(b, l + 1);
+    r = r && returnType(b, l + 1);
+    r = r && componentName(b, l + 1);
+    r = r && functionFormalParameter_0_3(b, l + 1);
+    r = r && formalParameterList(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // metadata*
+  private static boolean functionFormalParameter_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionFormalParameter_0_0")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "functionFormalParameter_0_0", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // typeParameters?
+  private static boolean functionFormalParameter_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionFormalParameter_0_3")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // metadata* componentName typeParameters? formalParameterList
+  private static boolean functionFormalParameter_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionFormalParameter_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionFormalParameter_1_0(b, l + 1);
+    r = r && componentName(b, l + 1);
+    r = r && functionFormalParameter_1_2(b, l + 1);
+    r = r && formalParameterList(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // metadata*
+  private static boolean functionFormalParameter_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionFormalParameter_1_0")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "functionFormalParameter_1_0", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // typeParameters?
+  private static boolean functionFormalParameter_1_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionFormalParameter_1_2")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // 'native' (stringLiteralExpression ';' | ';' | stringLiteralExpression functionBody)
   static boolean functionNative(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionNative")) return false;
@@ -2940,30 +2967,6 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  /* ********************************************************** */
-  // metadata* functionDeclarationPrivate
-  public static boolean functionSignature(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionSignature")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, FUNCTION_SIGNATURE, "<function signature>");
-    r = functionSignature_0(b, l + 1);
-    r = r && functionDeclarationPrivate(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // metadata*
-  private static boolean functionSignature_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionSignature_0")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!metadata(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "functionSignature_0", c)) break;
-      c = current_position_(b);
-    }
-    return true;
   }
 
   /* ********************************************************** */
@@ -4672,7 +4675,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // functionSignature
+  // functionFormalParameter
   //                         | fieldFormalParameter
   //                         | simpleFormalParameter
   //                         | incorrectNormalFormalParameter
@@ -4680,7 +4683,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "normalFormalParameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, NORMAL_FORMAL_PARAMETER, "<normal formal parameter>");
-    r = functionSignature(b, l + 1);
+    r = functionFormalParameter(b, l + 1);
     if (!r) r = fieldFormalParameter(b, l + 1);
     if (!r) r = simpleFormalParameter(b, l + 1);
     if (!r) r = incorrectNormalFormalParameter(b, l + 1);

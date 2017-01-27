@@ -130,11 +130,11 @@ public class DartResolveUtil {
       return findType(((DartDefaultFormalNamedParameter)element).getNormalFormalParameter());
     }
     if (element instanceof DartNormalFormalParameter) {
-      final DartFunctionSignature functionSignature = ((DartNormalFormalParameter)element).getFunctionSignature();
+      final DartFunctionFormalParameter functionFormalParameter = ((DartNormalFormalParameter)element).getFunctionFormalParameter();
       final DartFieldFormalParameter fieldFormalParameter = ((DartNormalFormalParameter)element).getFieldFormalParameter();
       final DartSimpleFormalParameter simpleFormalParameter = ((DartNormalFormalParameter)element).getSimpleFormalParameter();
 
-      if (functionSignature != null) {
+      if (functionFormalParameter != null) {
         // todo return some FUNCTION type?
       }
       if (fieldFormalParameter != null) return fieldFormalParameter.getType();
@@ -800,7 +800,7 @@ public class DartResolveUtil {
       final PsiElement target = callReference == null ? null : callReference.resolve();
       final PsiElement argument = target == null ? null : findParameter(target.getParent(), argumentIndex);
       if (argument instanceof DartNormalFormalParameter) {
-        final DartType dartType = findParameterType(((DartNormalFormalParameter)argument).getFunctionSignature(), parameterIndex);
+        final DartType dartType = findParameterType(((DartNormalFormalParameter)argument).getFunctionFormalParameter(), parameterIndex);
         final DartClassResolveResult callClassResolveResult = getLeftClassResolveResult(callReference);
         return getDartClassResolveResult(dartType, callClassResolveResult.getSpecialization());
       }
@@ -877,7 +877,7 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  private static DartType findParameterType(PsiElement element, int index) {
+  private static DartType findParameterType(@Nullable PsiElement element, int index) {
     final PsiElement target = findParameter(element, index);
     return findType(target);
   }

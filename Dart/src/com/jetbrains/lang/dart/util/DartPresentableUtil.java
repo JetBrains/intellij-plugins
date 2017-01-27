@@ -95,20 +95,20 @@ public class DartPresentableUtil {
                                                            final boolean displayFinalKeyword) {
     final StringBuilder result = new StringBuilder();
 
-    final DartFunctionSignature functionSignature = parameter.getFunctionSignature();
+    final DartFunctionFormalParameter functionFormalParameter = parameter.getFunctionFormalParameter();
     final DartFieldFormalParameter fieldFormalParameter = parameter.getFieldFormalParameter();
     final DartSimpleFormalParameter simpleFormalParameter = parameter.getSimpleFormalParameter();
 
-    if (functionSignature != null) {
-      final DartReturnType returnType = functionSignature.getReturnType();
+    if (functionFormalParameter != null) {
+      final DartReturnType returnType = functionFormalParameter.getReturnType();
       if (!functionalStyleSignature && returnType != null) {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), returnType, specialization));
         result.append(SPACE);
       }
 
-      result.append(functionSignature.getName());
+      result.append(functionFormalParameter.getName());
       result.append("(");
-      result.append(getPresentableParameterList(functionSignature, specialization, functionalStyleSignature, displayDefaultValues,
+      result.append(getPresentableParameterList(functionFormalParameter, specialization, functionalStyleSignature, displayDefaultValues,
                                                 displayFinalKeyword));
       result.append(")");
 

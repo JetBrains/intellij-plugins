@@ -146,7 +146,7 @@ Dart File
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  FUNCTION_SIGNATURE
+                  FUNCTION_FORMAL_PARAMETER
                     RETURN_TYPE
                       TYPE
                         REFERENCE_EXPRESSION
@@ -191,7 +191,7 @@ Dart File
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  FUNCTION_SIGNATURE
+                  FUNCTION_FORMAL_PARAMETER
                     RETURN_TYPE
                       TYPE
                         REFERENCE_EXPRESSION
@@ -219,7 +219,7 @@ Dart File
               PsiElement(,)(',')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  FUNCTION_SIGNATURE
+                  FUNCTION_FORMAL_PARAMETER
                     RETURN_TYPE
                       TYPE
                         REFERENCE_EXPRESSION
@@ -264,7 +264,7 @@ Dart File
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  FUNCTION_SIGNATURE
+                  FUNCTION_FORMAL_PARAMETER
                     RETURN_TYPE
                       TYPE
                         REFERENCE_EXPRESSION
@@ -303,7 +303,7 @@ Dart File
               PsiElement(,)(',')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  FUNCTION_SIGNATURE
+                  FUNCTION_FORMAL_PARAMETER
                     RETURN_TYPE
                       TYPE
                         REFERENCE_EXPRESSION

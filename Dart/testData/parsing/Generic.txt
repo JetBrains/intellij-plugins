@@ -423,7 +423,7 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              FUNCTION_SIGNATURE
+              FUNCTION_FORMAL_PARAMETER
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('param')
