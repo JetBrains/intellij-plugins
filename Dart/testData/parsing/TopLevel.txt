@@ -209,6 +209,23 @@ Dart File
           PsiElement(()('(')
           PsiElement())(')')
   PsiElement(;)(';')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(covariant)('covariant')
+      COMPONENT_NAME
+        ID
+          PsiElement(covariant)('covariant')
+  PsiElement(;)(';')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(covariant)('covariant')
+  PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// Top level setters')
   GETTER_DECLARATION
     PsiElement(get)('get')
