@@ -24,7 +24,7 @@
   ],
   "dependencies": {},
   "peerDependencies": {
-    "karma": ">=0.9.7"
+    "karma": ">=1.4.0"
   },
   "licenses": [
     {
