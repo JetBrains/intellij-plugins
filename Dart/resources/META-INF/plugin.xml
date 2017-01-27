@@ -149,6 +149,7 @@
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <weigher key="completion" id="DartServerCompletionWeigher" order="after prefix"
              implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionWeigher"/>
+    <lookup.charFilter implementation="com.jetbrains.lang.dart.ide.completion.DartCharFilter"/>
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 
