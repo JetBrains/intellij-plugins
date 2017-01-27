@@ -62,6 +62,7 @@
 // BUILT_IN_IDENTIFIER
   ABSTRACT="abstract"
   AS="as"
+  COVARIANT="covariant"
   DEFERRED="deferred"
   EXPORT="export"
   EXTERNAL="external"
@@ -164,7 +165,7 @@ private topLevelDefinition ::= libraryStatement
                              {recoverWhile="top_level_recover"}
 private top_level_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'enum' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void')
 
-incompleteDeclaration ::= metadata* ('external' | 'static' | 'final' | 'const')* type | metadata+;
+incompleteDeclaration ::= metadata* ('external' | 'static' | 'final' | 'const' | 'covariant')* type | metadata+;
 
 partOfStatement ::= metadata* 'part' 'of' (libraryId | uriElement)';' {
   pin=4
@@ -216,7 +217,11 @@ metadata ::= '@' simpleQualifiedReferenceExpression <<argumentsWrapper>>?
 
 uriElement ::= stringLiteralExpression {mixin="com.jetbrains.lang.dart.psi.impl.DartUriElementBase"   methods = [ getUriStringAndItsRange ]}
 
-varAccessDeclaration ::= metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName <<failIfItLooksLikeConstantObjectExpression>> | type !asExpression componentName | 'var' componentName)
+varAccessDeclaration ::= metadata* 'static'? ('covariant'? finalOrConst type               componentName |
+                                              'covariant'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>> |
+                                              'covariant'               type !asExpression componentName |
+                                                                        type !asExpression componentName |
+                                              'covariant'? 'var'                           componentName)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private finalOrConst ::= 'final' | 'const'
 private varDeclarationListWithSemicolon ::= varDeclarationList ';'{pin=1}
@@ -378,23 +383,25 @@ normalFormalParameter ::= functionFormalParameter
 }
 private incorrectNormalFormalParameter ::= '<' + <<nonStrictID>> + '>' <<nonStrictID>> // because Analysis Server gives syntactically incorrect quick fixes, e.g. "void foo(<bottom> arg0) {\n}"
 
-functionFormalParameter ::= metadata* returnType componentName typeParameters? formalParameterList |
-                            metadata* componentName typeParameters? formalParameterList
+functionFormalParameter ::= metadata*                         componentName typeParameters? formalParameterList |
+                            metadata* 'covariant'? returnType componentName typeParameters? formalParameterList |
+                            metadata* 'covariant'             componentName typeParameters? formalParameterList
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-simpleFormalParameter ::= declaredIdentifier | metadata* componentName
+simpleFormalParameter ::= declaredIdentifier | metadata* componentName | metadata* 'covariant' componentName
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private declaredIdentifier ::= metadata* finalConstVarOrTypeAndComponentName;
 
 returnType ::= 'void' | type
 
 private finalConstVarVoidOrType ::= 'final' type? | 'const' type? | 'var' | 'void' | type // Be careful on using it! It may erroneously consume 'type?'. See finalConstVarOrTypeAndComponentName
-private finalConstVarOrTypeAndComponentName ::= 'final' type componentName |
-                                                'final'      componentName |
-                                                'const' type componentName |
-                                                'const'      componentName |
-                                                'var'        componentName |
-                                                        type componentName
+private finalConstVarOrTypeAndComponentName ::= 'covariant'? 'final' type componentName |
+                                                'covariant'? 'final'      componentName |
+                                                'covariant'? 'const' type componentName |
+                                                'covariant'? 'const'      componentName |
+                                                'covariant'? 'var'        componentName |
+                                                'covariant'          type componentName |
+                                                                     type componentName
 
 componentName ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartNamedElementImpl" implements="com.jetbrains.lang.dart.psi.DartNamedElement"}

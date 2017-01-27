@@ -18,4 +18,9 @@ class WithNamedArguments {
     foo(n1:x, n2:x);
     foo(n1:x, n2:x, n3:x);
   }
+
+  foo(covariant Foo param(), covariant param2(), covariant()) {}
+  bar(covariant, covariant param, covariant Foo param2, covariant final Foo param3) {}
+  covariant Foo a, b;
+  covariant var c, d;
 }
