@@ -13,10 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
-import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.*;
 import com.intellij.openapi.wm.impl.StripeButton;
 import com.intellij.openapi.wm.impl.ToolWindowsPane;
 import com.intellij.ui.GotItMessage;
@@ -41,6 +38,9 @@ public class LearnProjectComponent implements ProjectComponent {
     private static final Logger LOG = Logger.getInstance(LearnProjectComponent.class.getName());
     private final Project myProject;
 
+    private final static String SHOW_TOOLWINDOW_INFO = "learn.toolwindow.button.info.shown";
+
+
     private LearnProjectComponent(@NotNull Project project) {
         myProject = project;
     }
@@ -52,12 +52,15 @@ public class LearnProjectComponent implements ProjectComponent {
 //        startTrackActivity(myProject);
         CourseManager.getInstance().updateToolWindow(myProject);
 
-        StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
-            @Override
-            public void run() {
-                pluginFirstStart();
-            }
-        });
+        //show where learn tool window locates only on the first start
+        if (!PropertiesComponent.getInstance().isTrueValue(SHOW_TOOLWINDOW_INFO)) {
+            StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
+                @Override
+                public void run() {
+                    pluginFirstStart();
+                }
+            });
+        }
 
     }
 
@@ -143,36 +146,27 @@ public class LearnProjectComponent implements ProjectComponent {
         }, 30000);
     }
 
-    public void pluginFirstStart() {
+    private void pluginFirstStart() {
 
         //do not show popups in test mode
         if (ApplicationManager.getApplication().isUnitTestMode()) return;
 
-        final String key = "learn.toolwindow.button.info.shown";
         if (UISettings.getInstance().HIDE_TOOL_STRIPES) {
             UISettings.getInstance().HIDE_TOOL_STRIPES = false;
             UISettings.getInstance().fireUISettingsChanged();
         }
 
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                final StripeButton learnStripeButton = getLearnStripeButton();
-                if (learnStripeButton == null) return;
+        ApplicationManager.getApplication().invokeLater(() -> {
+            final StripeButton learnStripeButton = getLearnStripeButton();
+            if (learnStripeButton == null) return;
 
-                if (!PropertiesComponent.getInstance().isTrueValue(key)) {
-                    PropertiesComponent.getInstance().setValue(key, String.valueOf(true));
-                    final Alarm alarm = new Alarm();
-                    alarm.addRequest(new Runnable() {
-                        @Override
-                        public void run() {
-                            GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"), LearnBundle.message("learn.tool.window.quick.access.message"))
-                                    .show(new RelativePoint(learnStripeButton, new Point(learnStripeButton.getBounds().width, learnStripeButton.getBounds().height / 2)), Balloon.Position.atRight);
-                            Disposer.dispose(alarm);
-                        }
-                    }, 5000);
-                }
-            }
+            PropertiesComponent.getInstance().setValue(SHOW_TOOLWINDOW_INFO, String.valueOf(true));
+            final Alarm alarm = new Alarm();
+            alarm.addRequest(() -> {
+                GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"), LearnBundle.message("learn.tool.window.quick.access.message"))
+                        .show(new RelativePoint(learnStripeButton, new Point(learnStripeButton.getBounds().width, learnStripeButton.getBounds().height / 2)), Balloon.Position.atRight);
+                Disposer.dispose(alarm);
+            }, 5000);
         });
     }
 
@@ -180,7 +174,12 @@ public class LearnProjectComponent implements ProjectComponent {
     private StripeButton getLearnStripeButton() {
 
         StripeButton learnStripeButton = null;
-        final JRootPane rootPane = ((JFrame) WindowManager.getInstance().getIdeFrame(myProject)).getRootPane();
+        WindowManager wm = WindowManager.getInstance();
+        if (wm == null) return null;
+        IdeFrame ideFrame = wm.getIdeFrame(myProject);
+        if (ideFrame == null) return null;
+
+        final JRootPane rootPane = ((JFrame) ideFrame).getRootPane();
         ToolWindowsPane pane = UIUtil.findComponentOfType(rootPane, ToolWindowsPane.class);
         final java.util.List<StripeButton> componentsOfType = UIUtil.findComponentsOfType(pane, StripeButton.class);
         for (StripeButton stripeButton : componentsOfType) {
