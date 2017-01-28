@@ -1,82 +1,52 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Parameters:
-Resources:
-  WebServer:
-    Type: AWS::EC2::Instance
-    Metadata:
-      AWS::CloudFormation::Init:
-        install_cfn:
-          files:
-            /etc/cfn/cfn-hup.conf:
-              content: !Sub |
-                [main]
-                stack= ${AWS::StackId}
-                region=${AWS::Region}
-Outputs:
-  A:
-    Description: EC2 public IP
-    Value: !GetAtt WebServer.PublicIp
-  B:
-    Description: EC2 public IP
-    Value: !Base64
-      - "Fn::Sub": string
-  C:
-    Description: EC2 public IP
-    Value:
-      "Fn::Base64":
-        !Sub string
-  D:
-    Description: WordPress Website
-    Value: !Sub "http://${WebServer.PublicDnsName}/wordpress"
-
+No problems
 CfnRootNode{
   resourcesNode=CfnResourcesNode{
     resources=[
       CfnResourceNode{
         type=CfnResourceTypeNode{
-          value=CfnStringValueNode{
+          value=CfnScalarValueNode{
             value=AWS::EC2::Instance
           }
-          name=CfnStringValueNode{
+          name=CfnScalarValueNode{
             value=Type
           }
         }
         properties=<null>
-        name=CfnStringValueNode{
+        name=CfnScalarValueNode{
           value=WebServer
         }
       }
     ]
-    name=CfnStringValueNode{
+    name=CfnScalarValueNode{
       value=Resources
     }
   }
   outputsNode=CfnOutputsNode{
     properties=[
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=A
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Description
               }
-              second=CfnStringValueNode{
+              second=CfnScalarValueNode{
                 value=EC2 public IP
               }
             },
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
               second=CfnFunctionNode{
-                name=CfnStringValueNode{
+                name=CfnScalarValueNode{
                   value=GetAtt
                 }
                 args=[
-                  CfnStringValueNode{
+                  CfnScalarValueNode{
                     value=WebServer.PublicIp
                   }
                 ]
@@ -86,34 +56,34 @@ CfnRootNode{
         }
       },
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=B
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Description
               }
-              second=CfnStringValueNode{
+              second=CfnScalarValueNode{
                 value=EC2 public IP
               }
             },
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
               second=CfnFunctionNode{
-                name=CfnStringValueNode{
+                name=CfnScalarValueNode{
                   value=Base64
                 }
                 args=[
                   CfnFunctionNode{
-                    name=CfnStringValueNode{
+                    name=CfnScalarValueNode{
                       value=Fn::Sub
                     }
                     args=[
-                      CfnStringValueNode{
+                      CfnScalarValueNode{
                         value=string
                       }
                     ]
@@ -125,34 +95,34 @@ CfnRootNode{
         }
       },
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=C
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Description
               }
-              second=CfnStringValueNode{
+              second=CfnScalarValueNode{
                 value=EC2 public IP
               }
             },
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
               second=CfnFunctionNode{
-                name=CfnStringValueNode{
+                name=CfnScalarValueNode{
                   value=Fn::Base64
                 }
                 args=[
                   CfnFunctionNode{
-                    name=CfnStringValueNode{
+                    name=CfnScalarValueNode{
                       value=Sub
                     }
                     args=[
-                      CfnStringValueNode{
+                      CfnScalarValueNode{
                         value=string
                       }
                     ]
@@ -164,29 +134,29 @@ CfnRootNode{
         }
       },
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=D
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Description
               }
-              second=CfnStringValueNode{
+              second=CfnScalarValueNode{
                 value=WordPress Website
               }
             },
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
               second=CfnFunctionNode{
-                name=CfnStringValueNode{
+                name=CfnScalarValueNode{
                   value=Sub
                 }
                 args=[
-                  CfnStringValueNode{
+                  CfnScalarValueNode{
                     value=http://${WebServer.PublicDnsName}/wordpress
                   }
                 ]
@@ -196,7 +166,7 @@ CfnRootNode{
         }
       }
     ]
-    name=CfnStringValueNode{
+    name=CfnScalarValueNode{
       value=Outputs
     }
   }
