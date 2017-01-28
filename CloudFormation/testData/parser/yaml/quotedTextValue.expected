@@ -37,8 +37,7 @@ CfnRootNode{
                 value=Value
               }
               second=CfnScalarValueNode{
-                value=folded "to a space,
-to a line feed, or 	 	non-content
+                value=folded \"to a space,\nto a line feed, or \t \tnon-content
               }
             }
           ]
@@ -60,8 +59,7 @@ to a line feed, or 	 	non-content
                 }
                 args=[
                   CfnScalarValueNode{
-                    value=folded "to a space,
-to a line feed, or 	 	non-content
+                    value=folded \"to a space,\nto a line feed, or \t \tnon-content
                   }
                 ]
               }
