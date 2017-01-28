@@ -39,6 +39,6 @@ class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE), File
     private val EXTENSION1 = "yml"
     private val EXTENSION2 = "yaml"
 
-    private val FILE_SIGNATURE = CloudFormationSections.FormatVersion.id.toByteArray(Charsets.US_ASCII)
+    private val FILE_SIGNATURE = CloudFormationSection.FormatVersion.id.toByteArray(Charsets.US_ASCII)
   }
 }

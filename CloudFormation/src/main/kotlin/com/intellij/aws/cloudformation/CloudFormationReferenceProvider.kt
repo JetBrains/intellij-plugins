@@ -27,7 +27,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
   }
 
   companion object {
-    val ParametersAndResourcesSections = listOf(CloudFormationSections.Parameters, CloudFormationSections.Resources)
+    val ParametersAndResourcesSections = listOf(CloudFormationSection.Parameters, CloudFormationSection.Resources)
 
     fun buildFromElement(element: PsiElement): PsiReference? {
       val stringLiteral = element as? JsonStringLiteral ?: return null
@@ -48,7 +48,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       }
 
       if (isInCondition(stringLiteral)) {
-        return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null)
+        return CloudFormationEntityReference(stringLiteral, CloudFormationSection.ConditionsSingletonList, null)
       }
 
       val parametersArray = element.parent as? JsonArray
@@ -66,15 +66,15 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
               val properties = obj.propertyList
               if (properties.size == 1) {
                 if (isGetAtt) {
-                  return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ResourcesSingletonList, null)
+                  return CloudFormationEntityReference(stringLiteral, CloudFormationSection.ResourcesSingletonList, null)
                 }
 
                 if (isFindInMap) {
-                  return CloudFormationEntityReference(stringLiteral, CloudFormationSections.MappingsSingletonList, null)
+                  return CloudFormationEntityReference(stringLiteral, CloudFormationSection.MappingsSingletonList, null)
                 }
 
                 if (isIf) {
-                  return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null)
+                  return CloudFormationEntityReference(stringLiteral, CloudFormationSection.ConditionsSingletonList, null)
                 }
               }
             } else if (allParameters.size > 1 && element === allParameters[1]) {
@@ -111,7 +111,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       }
 
       if (isInConditionOnResource(element)) {
-        return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null)
+        return CloudFormationEntityReference(stringLiteral, CloudFormationSection.ConditionsSingletonList, null)
       }
 
       return null
@@ -173,7 +173,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
         return null
       }
 
-      return CloudFormationEntityReference(element, CloudFormationSections.ResourcesSingletonList, listOf(resource.name))
+      return CloudFormationEntityReference(element, CloudFormationSection.ResourcesSingletonList, listOf(resource.name))
     }
 
     fun isInConditionOnResource(element: PsiElement): Boolean {
@@ -221,14 +221,14 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
       excludes.add(resource.name)
 
-      return CloudFormationEntityReference(element, CloudFormationSections.ResourcesSingletonList, excludes)
+      return CloudFormationEntityReference(element, CloudFormationSection.ResourcesSingletonList, excludes)
     }
 
     private fun isResourceElement(element: JsonProperty): Boolean {
       val resourcesProperties = element.parent as? JsonObject ?: return false
 
       val resourcesProperty = resourcesProperties.parent as? JsonProperty
-      if (resourcesProperty == null || CloudFormationSections.Resources.id != resourcesProperty.name) {
+      if (resourcesProperty == null || CloudFormationSection.Resources.id != resourcesProperty.name) {
         return false
       }
 
@@ -244,7 +244,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
       if (!isAWSCloudFormationInterfaceProperty(parameterLabelsProperty, CloudFormationConstants.CloudFormationInterfaceParameterLabels)) return null
 
-      return CloudFormationEntityReference(element, CloudFormationSections.ParametersSingletonList, CloudFormationMetadataProvider.METADATA.predefinedParameters)
+      return CloudFormationEntityReference(element, CloudFormationSection.ParametersSingletonList, CloudFormationMetadataProvider.METADATA.predefinedParameters)
     }
 
     private fun handleCloudFormationInterfaceParameterGroups(element: JsonStringLiteral): PsiReference? {
@@ -259,7 +259,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
       if (!isAWSCloudFormationInterfaceProperty(parameterGroupsElement, CloudFormationConstants.CloudFormationInterfaceParameterGroups)) return null
 
-      return CloudFormationEntityReference(element, CloudFormationSections.ParametersSingletonList, CloudFormationMetadataProvider.METADATA.predefinedParameters)
+      return CloudFormationEntityReference(element, CloudFormationSection.ParametersSingletonList, CloudFormationMetadataProvider.METADATA.predefinedParameters)
     }
 
     private fun isAWSCloudFormationInterfaceProperty(element: JsonProperty?, name: String): Boolean {
@@ -276,7 +276,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
       val metadataSectionObject = element.parent as? JsonObject
       val metadataSectionElement = metadataSectionObject?.parent as? JsonProperty
-      if (metadataSectionElement == null || metadataSectionElement.name != CloudFormationSections.Metadata.id) return false
+      if (metadataSectionElement == null || metadataSectionElement.name != CloudFormationSection.Metadata.id) return false
 
       return CloudFormationPsiUtils.getRootExpression(element.containingFile) === metadataSectionElement.parent
     }

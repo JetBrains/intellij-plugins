@@ -1,6 +1,6 @@
 package com.intellij.aws.cloudformation
 
-enum class CloudFormationSections(val id: String) {
+enum class CloudFormationSection(val id: String) {
   Resources("Resources"),
   Parameters("Parameters"),
   Mappings("Mappings"),

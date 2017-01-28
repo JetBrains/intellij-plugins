@@ -13,7 +13,7 @@ object CloudFormationResolve {
 
   fun getTargetName(element: JsonStringLiteral): String = StringUtil.unquoteString(element.text ?: "")
 
-  fun resolveEntity(file: PsiFile, entityName: String, sections: Collection<CloudFormationSections>): JsonProperty? {
+  fun resolveEntity(file: PsiFile, entityName: String, sections: Collection<CloudFormationSection>): JsonProperty? {
     return sections
         .map { getSectionNode(file, it.id) }
         .filterNotNull()
@@ -28,7 +28,7 @@ object CloudFormationResolve {
       }.toSet()
 
   fun resolveTopLevelMappingKey(file: PsiFile, mappingName: String, topLevelKey: String): JsonProperty? {
-    val mappingExpression = resolveEntity(file, mappingName, CloudFormationSections.MappingsSingletonList)?.value as? JsonObject
+    val mappingExpression = resolveEntity(file, mappingName, CloudFormationSection.MappingsSingletonList)?.value as? JsonObject
     return mappingExpression?.findProperty(topLevelKey)
   }
 
@@ -38,7 +38,7 @@ object CloudFormationResolve {
   }
 
   fun getTopLevelMappingKeys(file: PsiFile, mappingName: String): List<String>? {
-    val mappingElement = resolveEntity(file, mappingName, CloudFormationSections.MappingsSingletonList)
+    val mappingElement = resolveEntity(file, mappingName, CloudFormationSection.MappingsSingletonList)
     val objectLiteralExpression = mappingElement?.value as? JsonObject
     return getPropertiesName(objectLiteralExpression?.propertyList)
   }

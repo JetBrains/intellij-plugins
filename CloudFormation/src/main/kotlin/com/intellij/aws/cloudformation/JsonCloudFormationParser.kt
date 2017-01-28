@@ -59,34 +59,34 @@ class JsonCloudFormationParser private constructor () {
         continue
       }
 
-      val section = safeValueOf<CloudFormationSections>(name)
+      val section = safeValueOf<CloudFormationSection>(name)
 
-      if (CloudFormationSections.FormatVersion == section) {
+      if (CloudFormationSection.FormatVersion == section) {
         formatVersion(value)
-      } else if (CloudFormationSections.Transform == section) {
+      } else if (CloudFormationSection.Transform == section) {
         checkAndGetUnquotedStringText(value)
-      } else if (CloudFormationSections.Description == section) {
+      } else if (CloudFormationSection.Description == section) {
         description(value)
-      } else if (CloudFormationSections.Parameters == section) {
+      } else if (CloudFormationSection.Parameters == section) {
         parameters(value)
-      } else if (CloudFormationSections.Resources == section) {
+      } else if (CloudFormationSection.Resources == section) {
         if (resourcesNode == null) {
           resourcesNode = resources(property)
         } else {
           addProblem(property, "Duplicate Resources node")
         }
-      } else if (CloudFormationSections.Conditions == section) {
+      } else if (CloudFormationSection.Conditions == section) {
         // TODO
-      } else if (CloudFormationSections.Metadata == section) {
+      } else if (CloudFormationSection.Metadata == section) {
         // Generic content inside, no need to check
         // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
-      } else if (CloudFormationSections.Outputs == section) {
+      } else if (CloudFormationSection.Outputs == section) {
         if (outputsNode == null) {
           outputsNode = outputs(property)
         } else {
           addProblem(property, "Duplicate Outputs node")
         }
-      } else if (CloudFormationSections.Mappings == section) {
+      } else if (CloudFormationSection.Mappings == section) {
         mappings(value)
       } else {
         addProblemOnNameElement(

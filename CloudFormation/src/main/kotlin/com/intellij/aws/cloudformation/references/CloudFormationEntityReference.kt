@@ -2,13 +2,13 @@ package com.intellij.aws.cloudformation.references
 
 import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
 import com.intellij.aws.cloudformation.CloudFormationResolve
-import com.intellij.aws.cloudformation.CloudFormationSections
+import com.intellij.aws.cloudformation.CloudFormationSection
 import com.intellij.json.psi.JsonLiteral
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 
 class CloudFormationEntityReference(element: JsonLiteral,
-                                    private val myPossibleSections: Collection<CloudFormationSections>,
+                                    private val myPossibleSections: Collection<CloudFormationSection>,
                                     private val myExcludeFromVariants: Collection<String>?) : CloudFormationReferenceBase(element) {
 
   init {
@@ -23,7 +23,7 @@ class CloudFormationEntityReference(element: JsonLiteral,
   override fun getCompletionVariants(): List<String> {
     val entities = CloudFormationResolve.getEntities(myElement.containingFile, myPossibleSections.map { it.id }).toMutableSet()
 
-    if (myPossibleSections.contains(CloudFormationSections.Parameters)) {
+    if (myPossibleSections.contains(CloudFormationSection.Parameters)) {
       entities.addAll(CloudFormationMetadataProvider.METADATA.predefinedParameters)
     }
 

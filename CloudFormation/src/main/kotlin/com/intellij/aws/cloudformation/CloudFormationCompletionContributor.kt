@@ -123,7 +123,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   }
 
   private fun completeAttribute(file: PsiFile, rs: CompletionResultSet, quoteResult: Boolean, resourceName: String) {
-    val resource = CloudFormationResolve.resolveEntity(file, resourceName, CloudFormationSections.ResourcesSingletonList) ?: return
+    val resource = CloudFormationResolve.resolveEntity(file, resourceName, CloudFormationSection.ResourcesSingletonList) ?: return
 
     val resourceProperties = resource.value as? JsonObject ?: return
 
