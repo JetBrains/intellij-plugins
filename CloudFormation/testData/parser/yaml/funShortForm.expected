@@ -1,0 +1,203 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+Resources:
+  WebServer:
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        install_cfn:
+          files:
+            /etc/cfn/cfn-hup.conf:
+              content: !Sub |
+                [main]
+                stack= ${AWS::StackId}
+                region=${AWS::Region}
+Outputs:
+  A:
+    Description: EC2 public IP
+    Value: !GetAtt WebServer.PublicIp
+  B:
+    Description: EC2 public IP
+    Value: !Base64
+      - "Fn::Sub": string
+  C:
+    Description: EC2 public IP
+    Value:
+      "Fn::Base64":
+        !Sub string
+  D:
+    Description: WordPress Website
+    Value: !Sub "http://${WebServer.PublicDnsName}/wordpress"
+
+CfnRootNode{
+  resourcesNode=CfnResourcesNode{
+    resources=[
+      CfnResourceNode{
+        type=CfnResourceTypeNode{
+          value=CfnStringValueNode{
+            value=AWS::EC2::Instance
+          }
+          name=CfnStringValueNode{
+            value=Type
+          }
+        }
+        properties=<null>
+        name=CfnStringValueNode{
+          value=WebServer
+        }
+      }
+    ]
+    name=CfnStringValueNode{
+      value=Resources
+    }
+  }
+  outputsNode=CfnOutputsNode{
+    properties=[
+      Pair{
+        first=CfnStringValueNode{
+          value=A
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Description
+              }
+              second=CfnStringValueNode{
+                value=EC2 public IP
+              }
+            },
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnFunctionNode{
+                name=CfnStringValueNode{
+                  value=GetAtt
+                }
+                args=[
+                  CfnStringValueNode{
+                    value=WebServer.PublicIp
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      Pair{
+        first=CfnStringValueNode{
+          value=B
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Description
+              }
+              second=CfnStringValueNode{
+                value=EC2 public IP
+              }
+            },
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnFunctionNode{
+                name=CfnStringValueNode{
+                  value=Base64
+                }
+                args=[
+                  CfnFunctionNode{
+                    name=CfnStringValueNode{
+                      value=Fn::Sub
+                    }
+                    args=[
+                      CfnStringValueNode{
+                        value=string
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      Pair{
+        first=CfnStringValueNode{
+          value=C
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Description
+              }
+              second=CfnStringValueNode{
+                value=EC2 public IP
+              }
+            },
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnFunctionNode{
+                name=CfnStringValueNode{
+                  value=Fn::Base64
+                }
+                args=[
+                  CfnFunctionNode{
+                    name=CfnStringValueNode{
+                      value=Sub
+                    }
+                    args=[
+                      CfnStringValueNode{
+                        value=string
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      Pair{
+        first=CfnStringValueNode{
+          value=D
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Description
+              }
+              second=CfnStringValueNode{
+                value=WordPress Website
+              }
+            },
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnFunctionNode{
+                name=CfnStringValueNode{
+                  value=Sub
+                }
+                args=[
+                  CfnStringValueNode{
+                    value=http://${WebServer.PublicDnsName}/wordpress
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+    name=CfnStringValueNode{
+      value=Outputs
+    }
+  }
+}

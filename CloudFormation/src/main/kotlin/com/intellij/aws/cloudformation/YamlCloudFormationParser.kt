@@ -15,17 +15,24 @@ import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
 import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
-import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.aws.cloudformation.model.CfnStringValueNode
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.TokenType
+import com.intellij.psi.impl.source.tree.CompositeElement
+import com.intellij.psi.impl.source.tree.TreeElement
+import org.jetbrains.yaml.YAMLElementTypes
+import org.jetbrains.yaml.YAMLTokenTypes
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.YAMLKeyValue
 import org.jetbrains.yaml.psi.YAMLMapping
-import org.jetbrains.yaml.psi.YAMLScalarText
+import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequence
 import org.jetbrains.yaml.psi.YAMLValue
+import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
+import org.jetbrains.yaml.psi.impl.YAMLQuotedTextImpl
 import java.util.ArrayList
 
 class YamlCloudFormationParser private constructor () {
@@ -209,14 +216,7 @@ class YamlCloudFormationParser private constructor () {
         val nameNode = keyName(property)
 
         val valueElement = property.value
-        val valueNode = if (valueElement == null) null else {
-          val node = expression(valueElement) as? CfnScalarValueNode
-          if (node == null) {
-            addProblemOnNameElement(property, "Expected one value")
-          }
-
-          node
-        }
+        val valueNode = valueElement?.let { expression(valueElement) }
 
         topLevelProperties.put(propertyName, CfnNameValueNode(nameNode, valueNode).registerNode(property))
       }
@@ -248,22 +248,95 @@ class YamlCloudFormationParser private constructor () {
     return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty)
   }
 
+  private fun YAMLScalar.cfnPatchedTextValue(): String {
+    if (this is YAMLQuotedTextImpl) {
+      if (node.firstChildNode == null) {
+        return ""
+      }
+
+      val startNode = if (node.firstChildNode.elementType == YAMLTokenTypes.TAG) {
+        var node: ASTNode? = node.firstChildNode
+        while (node != null && (node.elementType == YAMLTokenTypes.TAG || node.elementType == TokenType.WHITE_SPACE)) {
+          node = node.treeNext
+        }
+        node
+      } else {
+        node.firstChildNode
+      } ?: return ""
+
+      val composite = CompositeElement(YAMLElementTypes.SCALAR_QUOTED_STRING)
+      composite.rawAddChildrenWithoutNotifications(startNode as TreeElement)
+      return YAMLQuotedTextImpl(composite).textValue
+    } else {
+      return textValue
+    }
+  }
+
   private fun expression(value: YAMLValue): CfnExpressionNode? {
-    return when (value) {
-      is YAMLScalarText -> CfnStringValueNode(value.textValue).registerNode(value)
+    val tag = value.tag
+
+    if (tag != null) {
+      val functionName = tag.text.trimStart('!')
+      val functionId = CloudFormationIntrinsicFunctions.shortNames[functionName]
+
+      if (functionId == null) {
+        addProblem(tag, "Unknown CloudFormation function: $functionName")
+        return null
+      }
+
+      val tagNode = CfnStringValueNode(functionName).registerNode(tag)
+
+      return when {
+        value is YAMLScalar -> {
+          val parameterNode = CfnStringValueNode(value.cfnPatchedTextValue()).registerNode(value)
+          CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value)
+        }
+
+        value.javaClass == YAMLCompoundValueImpl::class.java -> {
+          addProblem(value, "Too many values")
+          null
+        }
+
+        value is YAMLSequence -> {
+          val items = value.items.mapNotNull {
+            val itemValue = it.value
+            if (itemValue != null) expression(itemValue) else null
+          }
+          CfnFunctionNode(tagNode, functionId, items).registerNode(value)
+        }
+
+        value is YAMLMapping -> {
+          addProblem(tag, "CloudFormation function expects a scalar value or a sequence")
+          null
+        }
+
+        else -> {
+          addProblem(value, CloudFormationBundle.getString("format.unknown.value", value.javaClass.simpleName))
+          null
+        }
+      }
+    }
+
+    return when {
+      value is YAMLScalar -> CfnStringValueNode(value.cfnPatchedTextValue()).registerNode(value)
+      value.javaClass == YAMLCompoundValueImpl::class.java -> {
+        addProblem(value, "Too many values")
+        null
+      }
       // TODO boolean in yaml: is YAMLBoo -> CfnBooleanValueNode(value.value).registerNode(value)
       // TODO number in yaml: is YAMLScalar -> CfnNumberValueNode(value.text).registerNode(value)
-      is YAMLSequence -> {
+      value is YAMLSequence -> {
         val items = value.items.mapNotNull {
           val itemValue = it.value
           if (itemValue != null) expression(itemValue) else null
         }
         CfnArrayValueNode(items).registerNode(value)
       }
-      is YAMLMapping -> {
-        if (value.keyValues.size == 1 && CloudFormationIntrinsicFunctions.allNames.contains(value.keyValues.single().keyText)) {
+      value is YAMLMapping -> {
+        if (value.keyValues.size == 1 && CloudFormationIntrinsicFunctions.fullNames.containsKey(value.keyValues.single().keyText)) {
           val single = value.keyValues.single()
           val nameNode = keyName(single)!!
+          val functionId = CloudFormationIntrinsicFunctions.fullNames[single.keyText]!!
 
           val yamlValueNode = single.value
           if (yamlValueNode is YAMLSequence) {
@@ -271,11 +344,11 @@ class YamlCloudFormationParser private constructor () {
               val itemValue = it.value
               if (itemValue != null) expression(itemValue) else null
             }
-            CfnFunctionNode(nameNode, items).registerNode(value)
+            CfnFunctionNode(nameNode, functionId, items).registerNode(value)
           } else if (yamlValueNode == null){
-            CfnFunctionNode(nameNode, listOf()).registerNode(value)
+            CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
           } else {
-            CfnFunctionNode(nameNode, listOf(expression(yamlValueNode))).registerNode(value)
+            CfnFunctionNode(nameNode, functionId, listOf(expression(yamlValueNode))).registerNode(value)
           }
         } else {
           val properties = value.keyValues.map {
@@ -334,13 +407,19 @@ class YamlCloudFormationParser private constructor () {
       return null
     }
 
-    val literal = expression as? YAMLScalarText
-    if (literal == null) {
+    val scalar = expression as? YAMLScalar
+    if (scalar == null) {
       addProblem(expression, "A string literal is expected")
       return null
     }
 
-    return literal.textValue
+    val tag = scalar.tag
+    if (tag != null) {
+      addProblem(expression, "Unexpected tag: ${tag.text}")
+      return null
+    }
+
+    return scalar.cfnPatchedTextValue()
   }
 
   fun file(psiFile: PsiFile): CfnRootNode {

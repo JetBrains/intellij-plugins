@@ -1,6 +1,7 @@
 package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationProblem
+import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -34,8 +35,10 @@ object TestUtil {
     return relativePathToIdeaHome
   }
 
+  fun nodeToString(node: CfnNode): String = MyToStringStyle.toString(node, arrayOf("allTopLevelProperties", "functionId"))
+
   fun checkContent(expectFile: File, actualContent: String) {
-    val actualNormalized = StringUtil.convertLineSeparators(actualContent)
+    val actualNormalized = StringUtil.trimEnd(StringUtil.convertLineSeparators(actualContent), '\n') + '\n'
 
     if (!expectFile.exists()) {
       expectFile.writeText(actualNormalized)

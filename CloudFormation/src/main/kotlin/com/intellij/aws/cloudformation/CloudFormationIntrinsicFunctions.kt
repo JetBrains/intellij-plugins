@@ -8,9 +8,13 @@ enum class CloudFormationIntrinsicFunctions(val id: String) {
   FnJoin("Fn::Join"),
   FnSelect("Fn::Select"),
   FnIf("Fn::If"),
+  FnSub("Fn::Sub"),
   Ref("Ref");
 
+  val shortForm = if (this.id.startsWith("Fn::")) id.substring("Fn::".length) else id
+
   companion object {
-    val allNames = CloudFormationIntrinsicFunctions.values().map { it.id }.toSet()
+    val fullNames = CloudFormationIntrinsicFunctions.values().map { Pair(it.id, it) }.toMap()
+    val shortNames = CloudFormationIntrinsicFunctions.values().map { Pair(it.shortForm, it) }.toMap()
   }
 }

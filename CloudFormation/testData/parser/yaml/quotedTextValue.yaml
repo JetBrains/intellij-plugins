@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+Outputs:
+  A:
+    Value: "folded \"to a space,\n\
+                      to a line feed, \
+                      or \t \tnon-content"
+  B:
+    Value: !Sub "folded \"to a space,\n\
+                      to a line feed, \
+                      or \t \tnon-content"
+  C:
+    Value: !Sub "aaa" "folded \"to a space,\n\
+                      to a line feed, \
+                      or \t \tnon-content"
+  D:
+    Value: !Sub 'http://${WebServer.PublicDnsName}/wordpress'
+  E:
+    Value: 'http://${WebServer.PublicDnsName}/wordpress'
+  F:
+    Value: !Sub ABC

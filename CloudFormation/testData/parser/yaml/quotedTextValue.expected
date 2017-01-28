@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+Outputs:
+  A:
+    Value: "folded \"to a space,\n\
+                      to a line feed, \
+                      or \t \tnon-content"
+  B:
+    Value: !Sub "folded \"to a space,\n\
+                      to a line feed, \
+                      or \t \tnon-content"
+  C:
+    Value: 0@<!Sub "aaa" "folded \"to a space,\n\
+                      to a line feed, \
+                      or \t \tnon-content">
+  D:
+    Value: !Sub 'http://${WebServer.PublicDnsName}/wordpress'
+  E:
+    Value: 'http://${WebServer.PublicDnsName}/wordpress'
+  F:
+    Value: !Sub ABC
+
+0: Too many values
+
+CfnRootNode{
+  resourcesNode=<null>
+  outputsNode=CfnOutputsNode{
+    properties=[
+      Pair{
+        first=CfnStringValueNode{
+          value=A
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnStringValueNode{
+                value=folded "to a space,
+to a line feed, or 	 	non-content
+              }
+            }
+          ]
+        }
+      },
+      Pair{
+        first=CfnStringValueNode{
+          value=B
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnFunctionNode{
+                name=CfnStringValueNode{
+                  value=Sub
+                }
+                args=[
+                  CfnStringValueNode{
+                    value=folded "to a space,
+to a line feed, or 	 	non-content
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      Pair{
+        first=CfnStringValueNode{
+          value=C
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=<null>
+            }
+          ]
+        }
+      },
+      Pair{
+        first=CfnStringValueNode{
+          value=D
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnFunctionNode{
+                name=CfnStringValueNode{
+                  value=Sub
+                }
+                args=[
+                  CfnStringValueNode{
+                    value=http://${WebServer.PublicDnsName}/wordpress
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      Pair{
+        first=CfnStringValueNode{
+          value=E
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnStringValueNode{
+                value=http://${WebServer.PublicDnsName}/wordpress
+              }
+            }
+          ]
+        }
+      },
+      Pair{
+        first=CfnStringValueNode{
+          value=F
+        }
+        second=CfnObjectValueNode{
+          properties=[
+            Pair{
+              first=CfnStringValueNode{
+                value=Value
+              }
+              second=CfnFunctionNode{
+                name=CfnStringValueNode{
+                  value=Sub
+                }
+                args=[
+                  CfnStringValueNode{
+                    value=ABC
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+    name=CfnStringValueNode{
+      value=Outputs
+    }
+  }
+}

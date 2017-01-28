@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+Resources:
+  WebServer:
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        install_cfn:
+          files:
+            /etc/cfn/cfn-hup.conf:
+              content: !Sub |
+                [main]
+                stack= ${AWS::StackId}
+                region=${AWS::Region}
+Outputs:
+  A:
+    Description: EC2 public IP
+    Value: !GetAtt WebServer.PublicIp
+  B:
+    Description: EC2 public IP
+    Value: !Base64
+      - "Fn::Sub": string
+  C:
+    Description: EC2 public IP
+    Value:
+      "Fn::Base64":
+        !Sub string
+  D:
+    Description: WordPress Website
+    Value: !Sub "http://${WebServer.PublicDnsName}/wordpress"
