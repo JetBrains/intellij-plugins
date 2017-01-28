@@ -63,7 +63,7 @@ class YamlCloudFormationParser private constructor () {
         continue
       }
 
-      val section = safeValueOf<CloudFormationSection>(name)
+      val section = CloudFormationSection.id2enum[name]
 
       if (CloudFormationSection.FormatVersion == section) {
         formatVersion(value)

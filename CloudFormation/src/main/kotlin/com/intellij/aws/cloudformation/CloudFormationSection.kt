@@ -17,5 +17,7 @@ enum class CloudFormationSection(val id: String) {
     val MappingsSingletonList = listOf(Mappings)
     val ResourcesSingletonList = listOf(Resources)
     val ParametersSingletonList = listOf(Parameters)
+
+    val id2enum = CloudFormationSection.values().map { Pair(it.id, it) }.toMap()
   }
 }
