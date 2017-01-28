@@ -193,18 +193,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
       @Override
       public String getLocationString() {
-        if (!isValid()) {
-          return "";
-        }
-        if (!(AbstractDartComponentImpl.this instanceof DartClass)) {
-          final DartClass dartClass = PsiTreeUtil.getParentOfType(AbstractDartComponentImpl.this, DartClass.class);
-          if (dartClass != null) {
-            return dartClass.getName();
-          }
-        }
-        DartExecutionScope root = PsiTreeUtil.getTopmostParentOfType(AbstractDartComponentImpl.this, DartExecutionScope.class);
-        DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
-        return partOfStatement == null ? null : partOfStatement.getLibraryName();
+        return "";
       }
 
       @Override
