@@ -1,0 +1,17 @@
+# https://raw.githubusercontent.com/tomcook/codedeploy-python-helloworld/ac8da2b83b33277c47c2aea1c5eb28391f1a7747/samTemplate.yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Prints Hello World
+Resources:
+  HelloWorldLambda:
+    Type: 0@<AWS::Serverless::Function>
+    Properties:
+      Handler: main.handle
+      Runtime: python2.7
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(5 minutes)
+
+0: Unknown CloudFormation resource type: AWS::Serverless::Function

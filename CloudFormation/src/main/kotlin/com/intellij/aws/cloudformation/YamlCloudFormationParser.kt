@@ -206,7 +206,7 @@ class YamlCloudFormationParser private constructor () {
     }
 
     for (property in obj.keyValues) {
-      val propertyName = property.keyText
+      val propertyName = property.keyText.trim()
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyName)) {
         addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyName))
@@ -254,14 +254,16 @@ class YamlCloudFormationParser private constructor () {
         return ""
       }
 
-      val startNode = if (node.firstChildNode.elementType == YAMLTokenTypes.TAG) {
-        var node: ASTNode? = node.firstChildNode
-        while (node != null && (node.elementType == YAMLTokenTypes.TAG || node.elementType == TokenType.WHITE_SPACE)) {
-          node = node.treeNext
+      val clone = node.clone() as ASTNode
+
+      val startNode = if (clone.firstChildNode.elementType == YAMLTokenTypes.TAG) {
+        var current: ASTNode? = clone.firstChildNode
+        while (current != null && (current.elementType == YAMLTokenTypes.TAG || current.elementType == TokenType.WHITE_SPACE)) {
+          current = current.treeNext
         }
-        node
+        current
       } else {
-        node.firstChildNode
+        clone.firstChildNode
       } ?: return ""
 
       val composite = CompositeElement(YAMLElementTypes.SCALAR_QUOTED_STRING)

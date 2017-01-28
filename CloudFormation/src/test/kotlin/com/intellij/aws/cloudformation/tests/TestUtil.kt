@@ -72,6 +72,10 @@ object TestUtil {
   }
 
   fun renderProblems(file: PsiFile, problems: List<CloudFormationProblem>): String {
+    if (problems.isEmpty()) {
+      return "No problems"
+    }
+
     val writer = StringWriter()
 
     val markers = problems.mapIndexed { n, problem ->
