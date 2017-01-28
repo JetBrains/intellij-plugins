@@ -2,13 +2,11 @@ package com.intellij.aws.cloudformation
 
 import com.google.common.collect.HashBiMap
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
-import com.intellij.aws.cloudformation.model.CfnBooleanValueNode
 import com.intellij.aws.cloudformation.model.CfnExpressionNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
-import com.intellij.aws.cloudformation.model.CfnNumberValueNode
 import com.intellij.aws.cloudformation.model.CfnObjectValueNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
@@ -17,7 +15,7 @@ import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
 import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
-import com.intellij.aws.cloudformation.model.CfnStringValueNode
+import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.json.psi.JsonArray
 import com.intellij.json.psi.JsonBooleanLiteral
 import com.intellij.json.psi.JsonNumberLiteral
@@ -146,8 +144,8 @@ class JsonCloudFormationParser private constructor () {
     }
   }
 
-  private fun keyName(property: JsonProperty): CfnStringValueNode {
-    return CfnStringValueNode(property.name).registerNode(property.nameElement)
+  private fun keyName(property: JsonProperty): CfnScalarValueNode {
+    return CfnScalarValueNode(property.name).registerNode(property.nameElement)
   }
 
   private fun description(value: JsonValue) {
@@ -155,7 +153,7 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun resources(property: JsonProperty): CfnResourcesNode? {
-    val nameNode = CfnStringValueNode(property.name).registerNode(property.nameElement)
+    val nameNode = CfnScalarValueNode(property.name).registerNode(property.nameElement)
     val obj = checkAndGetObject(property.value!!) ?: return CfnResourcesNode(nameNode, emptyList()).registerNode(property)
 
     val resourcesList = obj.propertyList.mapNotNull { property ->
@@ -211,13 +209,13 @@ class JsonCloudFormationParser private constructor () {
       }
 
       if (!topLevelProperties.containsKey(propertyName)) {
-        val nameNode = CfnStringValueNode(propertyName).registerNode(property.nameElement)
+        val nameNode = CfnScalarValueNode(propertyName).registerNode(property.nameElement)
 
         val valueElement = property.value
         val valueNode = if (valueElement != null) {
-          CfnStringValueNode(propertyName).registerNode(valueElement)
+          CfnScalarValueNode(propertyName).registerNode(valueElement)
         } else {
-          CfnStringValueNode("")
+          CfnScalarValueNode("")
         }
 
         topLevelProperties.put(propertyName, CfnNameValueNode(nameNode, valueNode).registerNode(property))
@@ -228,7 +226,7 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun resourceProperties(propertiesProperty: JsonProperty): CfnResourcePropertiesNode {
-    val nameNode = CfnStringValueNode(propertiesProperty.name).registerNode(propertiesProperty.nameElement)
+    val nameNode = CfnScalarValueNode(propertiesProperty.name).registerNode(propertiesProperty.nameElement)
     val properties = propertiesProperty.value as JsonObject
 
     val propertyNodes = properties.propertyList.mapNotNull { property ->
@@ -253,9 +251,9 @@ class JsonCloudFormationParser private constructor () {
 
   private fun expression(value: JsonValue): CfnExpressionNode? {
     return when (value) {
-      is JsonStringLiteral -> CfnStringValueNode(value.value).registerNode(value)
-      is JsonBooleanLiteral -> CfnBooleanValueNode(value.value).registerNode(value)
-      is JsonNumberLiteral -> CfnNumberValueNode(value.text).registerNode(value)
+      is JsonStringLiteral -> CfnScalarValueNode(value.value).registerNode(value)
+      is JsonBooleanLiteral -> CfnScalarValueNode(value.text).registerNode(value)
+      is JsonNumberLiteral -> CfnScalarValueNode(value.text).registerNode(value)
       is JsonArray -> {
         val items = value.valueList.mapNotNull { expression(it) }
         CfnArrayValueNode(items).registerNode(value)
@@ -263,7 +261,7 @@ class JsonCloudFormationParser private constructor () {
       is JsonObject -> {
         if (value.propertyList.size == 1 && CloudFormationIntrinsicFunctions.fullNames.contains(value.propertyList.single().name)) {
           val single = value.propertyList.single()
-          val nameNode = CfnStringValueNode(single.name).registerNode(single.nameElement)
+          val nameNode = CfnScalarValueNode(single.name).registerNode(single.nameElement)
           val functionId = CloudFormationIntrinsicFunctions.fullNames[single.name]!!
 
           val jsonValueNode = single.value
@@ -277,7 +275,7 @@ class JsonCloudFormationParser private constructor () {
           }
         } else {
           val properties = value.propertyList.map {
-            val nameNode = CfnStringValueNode(it.name).registerNode(it.nameElement)
+            val nameNode = CfnScalarValueNode(it.name).registerNode(it.nameElement)
 
             val jsonValueNode = it.value
             val valueNode = if (jsonValueNode == null) null else {
@@ -298,11 +296,11 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun resourceType(typeProperty: JsonProperty): CfnResourceTypeNode {
-    val nameNode = CfnStringValueNode(typeProperty.name).registerNode(typeProperty.nameElement)
+    val nameNode = CfnScalarValueNode(typeProperty.name).registerNode(typeProperty.nameElement)
     val value = checkAndGetUnquotedStringText(typeProperty.value) ?:
-        return CfnResourceTypeNode(nameNode, CfnStringValueNode("")).registerNode(typeProperty)
+        return CfnResourceTypeNode(nameNode, CfnScalarValueNode("")).registerNode(typeProperty)
 
-    val valueNode = CfnStringValueNode(value).registerNode(typeProperty.value!!)
+    val valueNode = CfnScalarValueNode(value).registerNode(typeProperty.value!!)
     return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty)
   }
 

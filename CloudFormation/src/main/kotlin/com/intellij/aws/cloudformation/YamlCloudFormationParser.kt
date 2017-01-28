@@ -15,7 +15,7 @@ import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
 import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
-import com.intellij.aws.cloudformation.model.CfnStringValueNode
+import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -148,12 +148,12 @@ class YamlCloudFormationParser private constructor () {
     }
   }
 
-  private fun keyName(property: YAMLKeyValue): CfnStringValueNode? {
+  private fun keyName(property: YAMLKeyValue): CfnScalarValueNode? {
     if (property.key != null) {
-      return CfnStringValueNode(property.keyText).registerNode(property.key!!)
+      return CfnScalarValueNode(property.keyText).registerNode(property.key!!)
     } else {
       addProblem(property, "Expected a name")
-      return CfnStringValueNode("").registerNode(property)
+      return CfnScalarValueNode("").registerNode(property)
     }
   }
 
@@ -163,7 +163,7 @@ class YamlCloudFormationParser private constructor () {
 
   private fun resources(property: YAMLKeyValue): CfnResourcesNode? {
     val keyElement = property.key
-    val nameNode = if (keyElement == null) null else CfnStringValueNode(property.keyText).registerNode(keyElement)
+    val nameNode = if (keyElement == null) null else CfnScalarValueNode(property.keyText).registerNode(keyElement)
 
     val obj = checkAndGetMapping(property.value!!) ?: return CfnResourcesNode(nameNode, emptyList()).registerNode(property)
 
@@ -286,11 +286,11 @@ class YamlCloudFormationParser private constructor () {
         return null
       }
 
-      val tagNode = CfnStringValueNode(functionName).registerNode(tag)
+      val tagNode = CfnScalarValueNode(functionName).registerNode(tag)
 
       return when {
         value is YAMLScalar -> {
-          val parameterNode = CfnStringValueNode(value.cfnPatchedTextValue()).registerNode(value)
+          val parameterNode = CfnScalarValueNode(value.cfnPatchedTextValue()).registerNode(value)
           CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value)
         }
 
@@ -320,13 +320,11 @@ class YamlCloudFormationParser private constructor () {
     }
 
     return when {
-      value is YAMLScalar -> CfnStringValueNode(value.cfnPatchedTextValue()).registerNode(value)
+      value is YAMLScalar -> CfnScalarValueNode(value.cfnPatchedTextValue()).registerNode(value)
       value.javaClass == YAMLCompoundValueImpl::class.java -> {
         addProblem(value, "Too many values")
         null
       }
-      // TODO boolean in yaml: is YAMLBoo -> CfnBooleanValueNode(value.value).registerNode(value)
-      // TODO number in yaml: is YAMLScalar -> CfnNumberValueNode(value.text).registerNode(value)
       value is YAMLSequence -> {
         val items = value.items.mapNotNull {
           val itemValue = it.value
@@ -379,7 +377,7 @@ class YamlCloudFormationParser private constructor () {
     val value = checkAndGetStringValue(typeProperty.value) ?:
         return CfnResourceTypeNode(nameNode, null).registerNode(typeProperty)
 
-    val valueNode = CfnStringValueNode(value).registerNode(typeProperty.value!!)
+    val valueNode = CfnScalarValueNode(value).registerNode(typeProperty.value!!)
     return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty)
   }
 

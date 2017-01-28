@@ -27,16 +27,16 @@ CfnRootNode{
   outputsNode=CfnOutputsNode{
     properties=[
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=A
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
-              second=CfnStringValueNode{
+              second=CfnScalarValueNode{
                 value=folded "to a space,
 to a line feed, or 	 	non-content
               }
@@ -45,21 +45,21 @@ to a line feed, or 	 	non-content
         }
       },
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=B
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
               second=CfnFunctionNode{
-                name=CfnStringValueNode{
+                name=CfnScalarValueNode{
                   value=Sub
                 }
                 args=[
-                  CfnStringValueNode{
+                  CfnScalarValueNode{
                     value=folded "to a space,
 to a line feed, or 	 	non-content
                   }
@@ -70,13 +70,13 @@ to a line feed, or 	 	non-content
         }
       },
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=C
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
               second=<null>
@@ -85,21 +85,21 @@ to a line feed, or 	 	non-content
         }
       },
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=D
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
               second=CfnFunctionNode{
-                name=CfnStringValueNode{
+                name=CfnScalarValueNode{
                   value=Sub
                 }
                 args=[
-                  CfnStringValueNode{
+                  CfnScalarValueNode{
                     value=http://${WebServer.PublicDnsName}/wordpress
                   }
                 ]
@@ -109,16 +109,16 @@ to a line feed, or 	 	non-content
         }
       },
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=E
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
-              second=CfnStringValueNode{
+              second=CfnScalarValueNode{
                 value=http://${WebServer.PublicDnsName}/wordpress
               }
             }
@@ -126,21 +126,21 @@ to a line feed, or 	 	non-content
         }
       },
       Pair{
-        first=CfnStringValueNode{
+        first=CfnScalarValueNode{
           value=F
         }
         second=CfnObjectValueNode{
           properties=[
             Pair{
-              first=CfnStringValueNode{
+              first=CfnScalarValueNode{
                 value=Value
               }
               second=CfnFunctionNode{
-                name=CfnStringValueNode{
+                name=CfnScalarValueNode{
                   value=Sub
                 }
                 args=[
-                  CfnStringValueNode{
+                  CfnScalarValueNode{
                     value=ABC
                   }
                 ]
@@ -150,7 +150,7 @@ to a line feed, or 	 	non-content
         }
       }
     ]
-    name=CfnStringValueNode{
+    name=CfnScalarValueNode{
       value=Outputs
     }
   }
