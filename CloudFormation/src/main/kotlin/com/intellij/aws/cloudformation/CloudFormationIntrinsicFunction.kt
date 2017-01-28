@@ -1,6 +1,6 @@
 package com.intellij.aws.cloudformation
 
-enum class CloudFormationIntrinsicFunctions(val id: String) {
+enum class CloudFormationIntrinsicFunction(val id: String) {
   FnBase64("Fn::Base64"),
   FnFindInMap("Fn::FindInMap"),
   FnGetAtt("Fn::GetAtt"),
@@ -14,7 +14,7 @@ enum class CloudFormationIntrinsicFunctions(val id: String) {
   val shortForm = if (this.id.startsWith("Fn::")) id.substring("Fn::".length) else id
 
   companion object {
-    val fullNames = CloudFormationIntrinsicFunctions.values().map { Pair(it.id, it) }.toMap()
-    val shortNames = CloudFormationIntrinsicFunctions.values().map { Pair(it.shortForm, it) }.toMap()
+    val fullNames = CloudFormationIntrinsicFunction.values().map { Pair(it.id, it) }.toMap()
+    val shortNames = CloudFormationIntrinsicFunction.values().map { Pair(it.shortForm, it) }.toMap()
   }
 }

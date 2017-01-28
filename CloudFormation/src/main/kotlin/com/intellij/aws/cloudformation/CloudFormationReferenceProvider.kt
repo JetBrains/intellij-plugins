@@ -54,9 +54,9 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       val parametersArray = element.parent as? JsonArray
       if (parametersArray != null) {
         val funcProperty = parametersArray.parent as? JsonProperty
-        val isFindInMap = funcProperty != null && CloudFormationIntrinsicFunctions.FnFindInMap.id == funcProperty.name
-        val isGetAtt = funcProperty != null && CloudFormationIntrinsicFunctions.FnGetAtt.id == funcProperty.name
-        val isIf = funcProperty != null && CloudFormationIntrinsicFunctions.FnIf.id == funcProperty.name
+        val isFindInMap = funcProperty != null && CloudFormationIntrinsicFunction.FnFindInMap.id == funcProperty.name
+        val isGetAtt = funcProperty != null && CloudFormationIntrinsicFunction.FnGetAtt.id == funcProperty.name
+        val isIf = funcProperty != null && CloudFormationIntrinsicFunction.FnIf.id == funcProperty.name
 
         if (isGetAtt || isFindInMap || isIf) {
           val obj = funcProperty!!.parent as? JsonObject
@@ -119,7 +119,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
     fun handleRef(element: JsonStringLiteral): PsiReference? {
       val refProperty = element.parent as? JsonProperty
-      if (refProperty == null || CloudFormationIntrinsicFunctions.Ref.id != refProperty.name) {
+      if (refProperty == null || CloudFormationIntrinsicFunction.Ref.id != refProperty.name) {
         return null
       }
 

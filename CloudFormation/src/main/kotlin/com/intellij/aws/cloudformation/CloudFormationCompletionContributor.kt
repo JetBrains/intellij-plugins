@@ -109,7 +109,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
     }
 
     val getattProperty = getattParameters.parent as? JsonProperty
-    if (getattProperty == null || CloudFormationIntrinsicFunctions.FnGetAtt.id != getattProperty.name) {
+    if (getattProperty == null || CloudFormationIntrinsicFunction.FnGetAtt.id != getattProperty.name) {
       return null
     }
 

@@ -281,7 +281,7 @@ class YamlCloudFormationParser private constructor () {
 
     if (tag != null) {
       val functionName = tag.text.trimStart('!')
-      val functionId = CloudFormationIntrinsicFunctions.shortNames[functionName]
+      val functionId = CloudFormationIntrinsicFunction.shortNames[functionName]
 
       if (functionId == null) {
         addProblem(tag, "Unknown CloudFormation function: $functionName")
@@ -335,10 +335,10 @@ class YamlCloudFormationParser private constructor () {
         CfnArrayValueNode(items).registerNode(value)
       }
       value is YAMLMapping -> {
-        if (value.keyValues.size == 1 && CloudFormationIntrinsicFunctions.fullNames.containsKey(value.keyValues.single().keyText)) {
+        if (value.keyValues.size == 1 && CloudFormationIntrinsicFunction.fullNames.containsKey(value.keyValues.single().keyText)) {
           val single = value.keyValues.single()
           val nameNode = keyName(single)!!
-          val functionId = CloudFormationIntrinsicFunctions.fullNames[single.keyText]!!
+          val functionId = CloudFormationIntrinsicFunction.fullNames[single.keyText]!!
 
           val yamlValueNode = single.value
           if (yamlValueNode is YAMLSequence) {

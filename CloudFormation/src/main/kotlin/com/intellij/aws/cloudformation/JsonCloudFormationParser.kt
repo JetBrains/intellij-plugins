@@ -261,10 +261,10 @@ class JsonCloudFormationParser private constructor () {
         CfnArrayValueNode(items).registerNode(value)
       }
       is JsonObject -> {
-        if (value.propertyList.size == 1 && CloudFormationIntrinsicFunctions.fullNames.contains(value.propertyList.single().name)) {
+        if (value.propertyList.size == 1 && CloudFormationIntrinsicFunction.fullNames.contains(value.propertyList.single().name)) {
           val single = value.propertyList.single()
           val nameNode = CfnScalarValueNode(single.name).registerNode(single.nameElement)
-          val functionId = CloudFormationIntrinsicFunctions.fullNames[single.name]!!
+          val functionId = CloudFormationIntrinsicFunction.fullNames[single.name]!!
 
           val jsonValueNode = single.value
           if (jsonValueNode is JsonArray) {
