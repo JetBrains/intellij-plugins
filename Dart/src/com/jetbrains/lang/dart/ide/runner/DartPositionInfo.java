@@ -8,17 +8,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DartPositionInfo {
 
+  private static final Pattern URL_PATTERN =
+    Pattern.compile("\\(?\\b(https?://|www[.])[-A-Za-z0-9+&amp;@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&amp;@#/%=~_()|]");
+
   public enum Type {
-    FILE, DART, PACKAGE;
+    FILE, DART, PACKAGE, URL;
 
     @Nullable
-    public static Type getType(final String type) {
+    private static Type getType(final String type) {
       if ("file".equals(type)) return FILE;
       if ("dart".equals(type)) return DART;
       if ("package".equals(type)) return PACKAGE;
+      // Type detection for URLs is done while URL prefix parsing
       return null;
     }
   }
@@ -30,12 +36,12 @@ public class DartPositionInfo {
   public final int line;
   public final int column;
 
-  public DartPositionInfo(final @NotNull Type type,
-                          final @NotNull String path,
-                          final int highlightingStartIndex,
-                          final int highlightingEndIndex,
-                          final int line,
-                          final int column) {
+  private DartPositionInfo(final @NotNull Type type,
+                           final @NotNull String path,
+                           final int highlightingStartIndex,
+                           final int highlightingEndIndex,
+                           final int line,
+                           final int column) {
     this.type = type;
     this.path = path;
     this.highlightingStartIndex = highlightingStartIndex;
@@ -61,10 +67,17 @@ public class DartPositionInfo {
   */
   @Nullable
   public static DartPositionInfo parsePositionInfo(final @NotNull String text) {
-    Couple<Integer> pathStartAndEnd = parseUrlStartAndEnd(text, "package:");
-    if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "dart:");
-    if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "file:");
-    if (pathStartAndEnd == null) pathStartAndEnd = parseDartLibUrlStartAndEnd(text);
+    Couple<Integer> pathStartAndEnd = parseUriStartAndEnd(text, "package:");
+    if (pathStartAndEnd == null) pathStartAndEnd = parseUriStartAndEnd(text, "dart:");
+    if (pathStartAndEnd == null) pathStartAndEnd = parseUriStartAndEnd(text, "file:");
+    if (pathStartAndEnd == null) pathStartAndEnd = parseDartLibUriStartAndEnd(text);
+    if (pathStartAndEnd == null) {
+      pathStartAndEnd = parseOtherUrl(text);
+      if (pathStartAndEnd != null) {
+        return new DartPositionInfo(Type.URL, text.substring(pathStartAndEnd.first, pathStartAndEnd.second), pathStartAndEnd.first,
+                                    pathStartAndEnd.second, -1, -1);
+      }
+    }
     if (pathStartAndEnd == null) return null;
 
     final Integer urlStartIndex = pathStartAndEnd.first;
@@ -96,10 +109,25 @@ public class DartPositionInfo {
     return result != null ? result : parseLineAndColumnInTextFormat(text);
   }
 
+  @Nullable
+  private static Couple<Integer> parseOtherUrl(final String text) {
+
+    final Matcher matcher = URL_PATTERN.matcher(text);
+    if (!matcher.find()) {
+      return null;
+    }
+    String url = matcher.group();
+    if (url.startsWith("(") && url.endsWith(")")) {
+      url = url.substring(1, url.length() - 1);
+    }
+    final int startIndex = text.indexOf(url);
+    return Couple.of(startIndex, startIndex + url.length());
+  }
+
   // WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL PREFIX PATH_ENDING_WITH_DOT_DART WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
   // Example:   'package:DartSample2/mylib.dart': error: line 7 pos 1: 'myLibPart' is already defined
   @Nullable
-  private static Couple<Integer> parseUrlStartAndEnd(final String text, final String prefix) {
+  private static Couple<Integer> parseUriStartAndEnd(final String text, final String prefix) {
     final int pathStartIndex = text.indexOf(prefix);
     if (pathStartIndex < 0 ||
         pathStartIndex > 0 && !isCharAllowedBeforePath(text.charAt(pathStartIndex - 1))) {
@@ -126,7 +154,7 @@ public class DartPositionInfo {
 
   //   #0      min (dart:math:70)
   @Nullable
-  private static Couple<Integer> parseDartLibUrlStartAndEnd(final String text) {
+  private static Couple<Integer> parseDartLibUriStartAndEnd(final String text) {
     final int pathStartIndex = text.indexOf("dart:");
     if (pathStartIndex < 0 ||
         pathStartIndex > 0 && !isCharAllowedBeforePath(text.charAt(pathStartIndex - 1))) {

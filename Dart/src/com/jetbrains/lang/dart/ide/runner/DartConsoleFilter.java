@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner;
 
+import com.intellij.execution.filters.BrowserHyperlinkInfo;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
@@ -82,6 +83,10 @@ public class DartConsoleFilter implements Filter {
           file = inPackage;
         }
         break;
+      case URL:
+        final int highlightStartOffset = entireLength - line.length() + info.highlightingStartIndex;
+        final int highlightEndOffset = entireLength - line.length() + info.highlightingEndIndex;
+        return new Result(highlightStartOffset, highlightEndOffset, new BrowserHyperlinkInfo(info.path));
       default:
         file = null;
     }

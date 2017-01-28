@@ -23,8 +23,10 @@ public class DartConsoleFilterTest extends TestCase {
     final DartPositionInfo info = DartPositionInfo.parsePositionInfo(text);
     assertNotNull(info);
     assertEquals(type, info.type);
-    final boolean trimSlash = type == Type.FILE && SystemInfo.isWindows && pathOnUnix.startsWith("/");
-    assertEquals(trimSlash ? pathOnUnix.substring(1) : pathOnUnix, info.path);
+    if (pathOnUnix != null) {
+      final boolean trimSlash = type == Type.FILE && SystemInfo.isWindows && pathOnUnix.startsWith("/");
+      assertEquals(trimSlash ? pathOnUnix.substring(1) : pathOnUnix, info.path);
+    }
     assertEquals(highlightedText, text.substring(info.highlightingStartIndex, info.highlightingEndIndex));
     assertEquals(line, info.line);
     assertEquals(column, info.column);
@@ -102,4 +104,15 @@ public class DartConsoleFilterTest extends TestCase {
     doPositiveRelativePathsFilterTest("../foo\\bar.dart 4:15 x", "../foo\\bar.dart", 3, 14);
     doPositiveRelativePathsFilterTest("web\\foo.dart:566:1:", "web\\foo.dart", 565, 0);
   }
+
+
+  public void testUrlParsing() throws Exception {
+    doPositiveTest("View the dumped .info.json file at https://dart-lang.github.io/dump-info-visualizer", Type.URL, "https://dart-lang.github.io/dump-info-visualizer", null, -1, -1);
+    doPositiveTest("http://dartlang.org (leading)", Type.URL, "http://dartlang.org", null, -1, -1);
+    doPositiveTest("And http://dartlang.org in the middle", Type.URL, "http://dartlang.org", null, -1, -1);
+    doPositiveTest("Sites in parens (http://dartlang.org) should work too", Type.URL, "http://dartlang.org", null, -1, -1);
+    doPositiveTest("Without a protocol identifier (www.dartlang.org) should be OK too)", Type.URL, "www.dartlang.org", null, -1, -1);
+  }
+
+
 }
