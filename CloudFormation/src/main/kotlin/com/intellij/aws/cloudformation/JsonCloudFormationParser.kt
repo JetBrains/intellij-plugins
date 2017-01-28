@@ -59,32 +59,34 @@ class JsonCloudFormationParser private constructor () {
         continue
       }
 
-      if (CloudFormationSections.FormatVersion == name) {
+      val section = safeValueOf<CloudFormationSections>(name)
+
+      if (CloudFormationSections.FormatVersion == section) {
         formatVersion(value)
-      } else if (CloudFormationSections.Transform == name) {
+      } else if (CloudFormationSections.Transform == section) {
         checkAndGetUnquotedStringText(value)
-      } else if (CloudFormationSections.Description == name) {
+      } else if (CloudFormationSections.Description == section) {
         description(value)
-      } else if (CloudFormationSections.Parameters == name) {
+      } else if (CloudFormationSections.Parameters == section) {
         parameters(value)
-      } else if (CloudFormationSections.Resources == name) {
+      } else if (CloudFormationSections.Resources == section) {
         if (resourcesNode == null) {
           resourcesNode = resources(property)
         } else {
           addProblem(property, "Duplicate Resources node")
         }
-      } else if (CloudFormationSections.Conditions == name) {
+      } else if (CloudFormationSections.Conditions == section) {
         // TODO
-      } else if (CloudFormationSections.Metadata == name) {
+      } else if (CloudFormationSections.Metadata == section) {
         // Generic content inside, no need to check
         // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
-      } else if (CloudFormationSections.Outputs == name) {
+      } else if (CloudFormationSections.Outputs == section) {
         if (outputsNode == null) {
           outputsNode = outputs(property)
         } else {
           addProblem(property, "Duplicate Outputs node")
         }
-      } else if (CloudFormationSections.Mappings == name) {
+      } else if (CloudFormationSections.Mappings == section) {
         mappings(value)
       } else {
         addProblemOnNameElement(

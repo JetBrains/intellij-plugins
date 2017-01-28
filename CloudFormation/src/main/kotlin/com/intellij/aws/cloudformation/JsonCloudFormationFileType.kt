@@ -37,6 +37,6 @@ class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), File
     val INSTANCE = JsonCloudFormationFileType()
 
     private val EXTENSION = "template"
-    private val SIGNATURE = CloudFormationSections.FormatVersion.toByteArray(Charsets.US_ASCII)
+    private val SIGNATURE = CloudFormationSections.FormatVersion.id.toByteArray(Charsets.US_ASCII)
   }
 }

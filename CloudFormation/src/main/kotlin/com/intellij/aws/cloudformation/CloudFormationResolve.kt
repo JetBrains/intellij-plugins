@@ -13,9 +13,9 @@ object CloudFormationResolve {
 
   fun getTargetName(element: JsonStringLiteral): String = StringUtil.unquoteString(element.text ?: "")
 
-  fun resolveEntity(file: PsiFile, entityName: String, sections: Collection<String>): JsonProperty? {
+  fun resolveEntity(file: PsiFile, entityName: String, sections: Collection<CloudFormationSections>): JsonProperty? {
     return sections
-        .map { getSectionNode(file, it) }
+        .map { getSectionNode(file, it.id) }
         .filterNotNull()
         .map { it.findProperty(entityName) }
         .filterNotNull()

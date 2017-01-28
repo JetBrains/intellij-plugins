@@ -208,6 +208,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       }
 
       val excludes = HashSet<String>()
+      @Suppress("LoopToCallChain")
       for (childExpression in refArray.valueList) {
         if (childExpression === element) {
           continue
@@ -227,7 +228,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       val resourcesProperties = element.parent as? JsonObject ?: return false
 
       val resourcesProperty = resourcesProperties.parent as? JsonProperty
-      if (resourcesProperty == null || CloudFormationSections.Resources != resourcesProperty.name) {
+      if (resourcesProperty == null || CloudFormationSections.Resources.id != resourcesProperty.name) {
         return false
       }
 
@@ -275,7 +276,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
       val metadataSectionObject = element.parent as? JsonObject
       val metadataSectionElement = metadataSectionObject?.parent as? JsonProperty
-      if (metadataSectionElement == null || metadataSectionElement.name != CloudFormationSections.Metadata) return false
+      if (metadataSectionElement == null || metadataSectionElement.name != CloudFormationSections.Metadata.id) return false
 
       return CloudFormationPsiUtils.getRootExpression(element.containingFile) === metadataSectionElement.parent
     }

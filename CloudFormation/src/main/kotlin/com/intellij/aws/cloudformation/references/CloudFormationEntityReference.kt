@@ -8,11 +8,11 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 
 class CloudFormationEntityReference(element: JsonLiteral,
-                                    private val myPossibleSections: Collection<String>,
+                                    private val myPossibleSections: Collection<CloudFormationSections>,
                                     private val myExcludeFromVariants: Collection<String>?) : CloudFormationReferenceBase(element) {
 
   init {
-    assert(myPossibleSections.size > 0)
+    assert(myPossibleSections.isNotEmpty())
   }
 
   override fun resolve(): PsiElement? {
@@ -21,7 +21,7 @@ class CloudFormationEntityReference(element: JsonLiteral,
   }
 
   override fun getCompletionVariants(): List<String> {
-    val entities = CloudFormationResolve.getEntities(myElement.containingFile, myPossibleSections).toMutableSet()
+    val entities = CloudFormationResolve.getEntities(myElement.containingFile, myPossibleSections.map { it.id }).toMutableSet()
 
     if (myPossibleSections.contains(CloudFormationSections.Parameters)) {
       entities.addAll(CloudFormationMetadataProvider.METADATA.predefinedParameters)

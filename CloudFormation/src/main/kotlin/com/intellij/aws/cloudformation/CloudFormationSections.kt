@@ -1,21 +1,21 @@
 package com.intellij.aws.cloudformation
 
-object CloudFormationSections {
-  val Resources = "Resources"
-  val Parameters = "Parameters"
-  val Mappings = "Mappings"
-  val Metadata = "Metadata"
-  val Conditions = "Conditions"
-  val Outputs = "Outputs"
+enum class CloudFormationSections(val id: String) {
+  Resources("Resources"),
+  Parameters("Parameters"),
+  Mappings("Mappings"),
+  Metadata("Metadata"),
+  Conditions("Conditions"),
+  Outputs("Outputs"),
 
-  val ResourcesSingletonList = listOf(Resources)
-  val ParametersSingletonList = listOf(Parameters)
-  val MappingsSingletonList = listOf(Mappings)
-  val MetadataSingletonList = listOf(Metadata)
-  val ConditionsSingletonList = listOf(Conditions)
-  val OutputsSingletonList = listOf(Outputs)
+  FormatVersion("AWSTemplateFormatVersion"),
+  Transform("Transform"),
+  Description("Description");
 
-  val FormatVersion = "AWSTemplateFormatVersion"
-  val Transform = "Transform"
-  val Description = "Description"
+  companion object {
+    val ConditionsSingletonList = listOf(Conditions)
+    val MappingsSingletonList = listOf(Mappings)
+    val ResourcesSingletonList = listOf(Resources)
+    val ParametersSingletonList = listOf(Parameters)
+  }
 }

@@ -13,6 +13,10 @@ fun findSubArray(array: ByteArray, subArray: ByteArray): Int {
   return Collections.indexOfSubList(Arrays.asList(*ArrayUtils.toObject(array)), Arrays.asList(*ArrayUtils.toObject(subArray)))
 }
 
+inline fun <reified T : kotlin.Enum<T>> safeValueOf(type: String?): T? {
+  return java.lang.Enum.valueOf(T::class.java, type)
+}
+
 fun detectFileTypeFromContent(file: VirtualFile, signatureBytes: ByteArray): Boolean {
   if (file is StubVirtualFile) {
     // Helps New -> File get correct file type
