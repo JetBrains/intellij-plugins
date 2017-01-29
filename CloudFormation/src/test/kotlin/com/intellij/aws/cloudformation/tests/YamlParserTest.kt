@@ -8,6 +8,7 @@ import java.io.File
 class YamlParserTest : LightPlatformCodeInsightTestCase() {
   fun testFunShortForm() = runTest("funShortForm")
   fun testQuotedTextValue() = runTest("quotedTextValue")
+  fun testCompactSequences() = runTest("compactSequences")
 
   fun runTest(name: String) {
     configureByFile("$name.yaml")
