@@ -68,6 +68,7 @@ class JsonCloudFormationParser private constructor () {
       } else if (CloudFormationSection.Description == section) {
         description(value)
       } else if (CloudFormationSection.Parameters == section) {
+        // TODO
         parameters(value)
       } else if (CloudFormationSection.Resources == section) {
         if (resourcesNode == null) {
@@ -96,7 +97,7 @@ class JsonCloudFormationParser private constructor () {
       }
     }
 
-    return CfnRootNode(resourcesNode, outputsNode, null).registerNode(root)
+    return CfnRootNode(null, resourcesNode, outputsNode, null).registerNode(root)
   }
 
   private fun outputs(outputs: JsonProperty): CfnOutputsNode {

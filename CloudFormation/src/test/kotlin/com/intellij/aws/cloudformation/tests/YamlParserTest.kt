@@ -10,6 +10,7 @@ class YamlParserTest : LightPlatformCodeInsightTestCase() {
   fun testQuotedTextValue() = runTest("quotedTextValue")
   fun testCompactSequences() = runTest("compactSequences")
   fun testMappings() = runTest("mappings")
+  fun testParameters() = runTest("parameters")
 
   fun runTest(name: String) {
     configureByFile("$name.yaml")

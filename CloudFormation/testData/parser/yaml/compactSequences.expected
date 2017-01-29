@@ -1,5 +1,6 @@
 No problems
 CfnRootNode{
+  parametersNode=<null>
   resourcesNode=<null>
   outputsNode=CfnOutputsNode{
     properties=[

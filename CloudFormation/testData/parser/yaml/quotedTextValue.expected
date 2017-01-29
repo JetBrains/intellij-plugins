@@ -1,5 +1,4 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Parameters:
 Outputs:
   A:
     Value: "folded \"to a space,\n\
@@ -23,6 +22,7 @@ Outputs:
 0: Too many values
 
 CfnRootNode{
+  parametersNode=<null>
   resourcesNode=<null>
   outputsNode=CfnOutputsNode{
     properties=[
