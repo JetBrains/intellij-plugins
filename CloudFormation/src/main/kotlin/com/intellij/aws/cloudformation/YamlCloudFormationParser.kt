@@ -178,18 +178,11 @@ class YamlCloudFormationParser private constructor () {
     }
   }
 
-  private fun resources(property: YAMLKeyValue): CfnResourcesNode {
-    val keyElement = property.key
-    val nameNode = if (keyElement == null) null else CfnScalarValueNode(property.keyText).registerNode(keyElement)
-
-    val obj = checkAndGetMapping(property.value!!) ?: return CfnResourcesNode(nameNode, emptyList()).registerNode(property)
-
-    val resourcesList = obj.keyValues.mapNotNull { property ->
-      return@mapNotNull if (property.keyText.isEmpty() || property.value == null) null else resource(property)
-    }
-
-    return CfnResourcesNode(nameNode, resourcesList).registerNode(property)
-  }
+  private fun resources(resources: YAMLKeyValue): CfnResourcesNode = parseNameValues(
+      resources,
+      { resource -> resource(resource) },
+      { nameNode, list -> CfnResourcesNode(nameNode, list) }
+  )
 
   private fun resource(resourceProperty: YAMLKeyValue): CfnResourceNode {
     val key = keyName(resourceProperty)
@@ -407,7 +400,6 @@ class YamlCloudFormationParser private constructor () {
 
     return obj
   }
-
 
   private fun formatVersion(value: YAMLValue) {
     val version = checkAndGetStringValue(value) ?: return

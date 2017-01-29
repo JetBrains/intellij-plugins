@@ -167,23 +167,11 @@ class JsonCloudFormationParser private constructor () {
     return CfnScalarValueNode(property.name).registerNode(property.nameElement)
   }
 
-  private fun resources(property: JsonProperty): CfnResourcesNode? {
-    val nameNode = CfnScalarValueNode(property.name).registerNode(property.nameElement)
-    val obj = checkAndGetObject(property.value!!) ?: return CfnResourcesNode(nameNode, emptyList()).registerNode(property)
-
-    val resourcesList = obj.propertyList.mapNotNull { property ->
-      val resourceName = property.name
-      val resourceObj = property.value
-
-      if (resourceName.isEmpty() || resourceObj == null) {
-        return@mapNotNull null
-      }
-
-      return@mapNotNull resource(property)
-    }
-
-    return CfnResourcesNode(nameNode, resourcesList).registerNode(property)
-  }
+  private fun resources(resources: JsonProperty): CfnResourcesNode = parseNameValues(
+      resources,
+      { resource -> resource(resource) },
+      { nameNode, list -> CfnResourcesNode(nameNode, list) }
+  )
 
   private fun resource(resourceProperty: JsonProperty): CfnResourceNode {
     val key = keyName(resourceProperty)
