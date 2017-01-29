@@ -28,7 +28,7 @@ interface VueHandledLexer {
   }
 
   fun languageMatches(language: Language): Boolean {
-    val scriptType = getScriptType()!!
+    val scriptType = getScriptType() ?: return false
     if (scriptType.equals(language.id, ignoreCase = true)) {
       return true
     }
