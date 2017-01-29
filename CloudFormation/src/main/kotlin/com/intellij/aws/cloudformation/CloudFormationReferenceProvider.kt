@@ -122,7 +122,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
     }
 
     fun handleRef(parsed: CloudFormationParsedFile, scalarNode: CfnScalarValueNode, element: PsiElement): CloudFormationReferenceBase? {
-      val parentFunction = CloudFormationPsiUtils.getParent(scalarNode, parsed) as? CfnFunctionNode
+      val parentFunction = scalarNode.parent(parsed) as? CfnFunctionNode
       if (parentFunction == null ||
           parentFunction.functionId != CloudFormationIntrinsicFunction.Ref ||
           parentFunction.args.singleOrNull() != scalarNode) {

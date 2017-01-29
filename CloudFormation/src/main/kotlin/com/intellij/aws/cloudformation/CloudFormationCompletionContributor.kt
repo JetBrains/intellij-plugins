@@ -90,8 +90,8 @@ class CloudFormationCompletionContributor : CompletionContributor() {
 
   private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quoteResult: Boolean, parsed: CloudFormationParsedFile) {
     val nameNode = parsed.getCfnNodes(element).ofType<CfnScalarValueNode>().singleOrNull() ?: return
-    val namedNode = CloudFormationPsiUtils.getParent(nameNode, parsed) as? CfnNamedNode ?: return
-    val resourceNode = CloudFormationPsiUtils.getParent(namedNode, parsed) as? CfnResourceNode ?: return
+    val namedNode = nameNode.parent(parsed) as? CfnNamedNode ?: return
+    val resourceNode = namedNode.parent(parsed) as? CfnResourceNode ?: return
 
     if (namedNode.name != nameNode || !resourceNode.allTopLevelProperties.values.contains(namedNode)) return
 

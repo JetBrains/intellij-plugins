@@ -10,6 +10,33 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 
+fun CfnNode.parent(parser: CloudFormationParsedFile): CfnNode? {
+  val baseElement = parser.getPsiElement(this)
+
+  // handle corner case with !Ref "xxxx" or !Sub "yyy"
+  if (this is CfnScalarValueNode) {
+    val baseNodes = parser.getCfnNodes(baseElement).filter { it != this }
+    if (baseNodes.isNotEmpty()) {
+      val otherNode = baseNodes.single()
+      assert(otherNode is CfnFunctionNode)
+      return otherNode
+    }
+  }
+
+  var element = baseElement.parent
+  while (element != null) {
+    val parentNodes = parser.getCfnNodes(element)
+    if (parentNodes.size > 1) {
+      error("Multiple matches while searching for parent of $this: " + parentNodes.joinToString())
+    }
+    if (parentNodes.size == 1) return parentNodes.single()
+
+    element = element.parent
+  }
+
+  return null
+}
+
 object CloudFormationPsiUtils {
   fun isCloudFormationFile(element: PsiElement): Boolean {
     val fileType = element.containingFile.viewProvider.fileType
@@ -23,33 +50,6 @@ object CloudFormationPsiUtils {
         return cur
       }
       cur = cur.nextSibling
-    }
-
-    return null
-  }
-
-  fun getParent(node: CfnNode, parser: CloudFormationParsedFile): CfnNode? {
-    val baseElement = parser.getPsiElement(node)
-
-    // handle corner case with !Ref "xxxx" or !Sub "yyy"
-    if (node is CfnScalarValueNode) {
-      val baseNodes = parser.getCfnNodes(baseElement).filter { it != node }
-      if (baseNodes.isNotEmpty()) {
-        val otherNode = baseNodes.single()
-        assert(otherNode is CfnFunctionNode)
-        return otherNode
-      }
-    }
-
-    var element = baseElement.parent
-    while (element != null) {
-      val parentNodes = parser.getCfnNodes(element)
-      if (parentNodes.size > 1) {
-        error("Multiple matches while searching for parent of $node: " + parentNodes.joinToString())
-      }
-      if (parentNodes.size == 1) return parentNodes.single()
-
-      element = element.parent
     }
 
     return null

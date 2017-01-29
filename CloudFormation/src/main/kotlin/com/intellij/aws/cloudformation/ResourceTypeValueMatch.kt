@@ -12,12 +12,12 @@ class ResourceTypeValueMatch private constructor(
     fun match(position: PsiElement, parsed: CloudFormationParsedFile): ResourceTypeValueMatch? {
       val valueNode = parsed.getCfnNodes(position).ofType<CfnScalarValueNode>().singleOrNull() ?: return null
 
-      val resourceTypeNode = CloudFormationPsiUtils.getParent(valueNode, parsed)
+      val resourceTypeNode = valueNode.parent(parsed)
       if (resourceTypeNode !is CfnResourceTypeNode || resourceTypeNode.value != valueNode) {
         return null
       }
 
-      val resourceNode = CloudFormationPsiUtils.getParent(resourceTypeNode, parsed) as? CfnResourceNode ?: return null
+      val resourceNode = resourceTypeNode.parent(parsed) as? CfnResourceNode ?: return null
       if (resourceNode.type != resourceTypeNode) {
         return null
       }
