@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Mappings:
+  RegionMap:
+    us-east-1:
+      32: "ami-6411e20d"
+      64: "ami-7a11e213"
+    us-west-1:
+      32: "ami-c9c7978c"
+      64: "ami-cfc7978a"

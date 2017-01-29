@@ -87,6 +87,7 @@ class JsonCloudFormationParser private constructor () {
           addProblem(property, "Duplicate Outputs node")
         }
       } else if (CloudFormationSection.Mappings == section) {
+        // TODO
         mappings(value)
       } else {
         addProblemOnNameElement(
@@ -95,7 +96,7 @@ class JsonCloudFormationParser private constructor () {
       }
     }
 
-    return CfnRootNode(resourcesNode, outputsNode).registerNode(root)
+    return CfnRootNode(resourcesNode, outputsNode, null).registerNode(root)
   }
 
   private fun outputs(outputs: JsonProperty): CfnOutputsNode {

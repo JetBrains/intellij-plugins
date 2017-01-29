@@ -3,7 +3,10 @@ package com.intellij.aws.cloudformation
 import com.google.common.collect.HashBiMap
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnExpressionNode
+import com.intellij.aws.cloudformation.model.CfnFirstLevelMappingNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
+import com.intellij.aws.cloudformation.model.CfnMappingValue
+import com.intellij.aws.cloudformation.model.CfnMappingsNode
 import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
@@ -16,6 +19,7 @@ import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
+import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -54,6 +58,7 @@ class YamlCloudFormationParser private constructor () {
   private fun root(root: YAMLMapping): CfnRootNode {
     var resourcesNode: CfnResourcesNode? = null
     var outputsNode: CfnOutputsNode? = null
+    var mappingsNode: CfnMappingsNode? = null
 
     for (property in root.keyValues) {
       val name = property.keyText
@@ -91,7 +96,11 @@ class YamlCloudFormationParser private constructor () {
           addProblem(property, "Duplicate Outputs node")
         }
       } else if (CloudFormationSection.Mappings == section) {
-        mappings(value)
+        if (mappingsNode == null) {
+          mappingsNode = mappings(property)
+        } else {
+          addProblem(property, "Duplicate Mappings node")
+        }
       } else {
         addProblemOnNameElement(
             property,
@@ -99,7 +108,7 @@ class YamlCloudFormationParser private constructor () {
       }
     }
 
-    return CfnRootNode(resourcesNode, outputsNode).registerNode(root)
+    return CfnRootNode(resourcesNode, outputsNode, mappingsNode).registerNode(root)
   }
 
   private fun outputs(outputs: YAMLKeyValue): CfnOutputsNode {
@@ -134,21 +143,56 @@ class YamlCloudFormationParser private constructor () {
     }
   }
 
-  private fun mappings(mappingsExpression: YAMLValue) {
-    val obj = checkAndGetMapping(mappingsExpression) ?: return
+  private fun <ResultNodeType : CfnNode, ValueNodeType: CfnNode> parseNameValues(
+      keyValueElement: YAMLKeyValue,
+      valueFactory: (YAMLKeyValue) -> ValueNodeType,
+      resultFactory: (CfnScalarValueNode?, List<ValueNodeType>) -> ResultNodeType,
+      mappingCheck: (YAMLMapping) -> Unit = {}): ResultNodeType
+  {
+    val keyElement = keyValueElement.key
+    val nameNode = if (keyElement == null) null else CfnScalarValueNode(keyValueElement.keyText).registerNode(keyElement)
 
-    if (obj.keyValues.isEmpty()) {
-      addProblemOnNameElement(
-          obj.parent as YAMLKeyValue,
-          CloudFormationBundle.getString("format.no.mappings.declared"))
+    val obj = checkAndGetMapping(keyValueElement.value!!) ?: return resultFactory(nameNode, emptyList()).registerNode(keyValueElement)
+
+    mappingCheck(obj)
+
+    val list = obj.keyValues.mapNotNull { value ->
+      return@mapNotNull if (value.keyText.isEmpty() || value.value == null) null else valueFactory(value)
     }
 
-    if (obj.keyValues.size > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
-      addProblemOnNameElement(
-          obj.parent as YAMLKeyValue,
-          CloudFormationBundle.getString("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
-    }
+    return resultFactory(nameNode, list).registerNode(keyValueElement)
   }
+
+  private fun mappings(mappings: YAMLKeyValue): CfnMappingsNode = parseNameValues(
+      mappings,
+      { mapping -> firstLevelMapping(mapping) },
+      { nameNode, list -> CfnMappingsNode(nameNode, list) },
+      mappingCheck = {
+        if (it.keyValues.isEmpty()) {
+          addProblemOnNameElement(
+              it.parent as YAMLKeyValue,
+              CloudFormationBundle.getString("format.no.mappings.declared"))
+        }
+
+        if (it.keyValues.size > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
+          addProblemOnNameElement(
+              it.parent as YAMLKeyValue,
+              CloudFormationBundle.getString("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
+        }
+      }
+  )
+
+  private fun firstLevelMapping(mapping: YAMLKeyValue): CfnFirstLevelMappingNode = parseNameValues(
+      mapping,
+      { mapping -> secondLevelMapping(mapping) },
+      { nameNode, list -> CfnFirstLevelMappingNode(nameNode, list) }
+  )
+
+  private fun secondLevelMapping(mapping: YAMLKeyValue): CfnSecondLevelMappingNode = parseNameValues(
+      mapping,
+      { node -> CfnMappingValue(keyName(node), checkAndGetStringElement(node.value)) },
+      { nameNode, list -> CfnSecondLevelMappingNode(nameNode, list) }
+  )
 
   private fun keyName(property: YAMLKeyValue): CfnScalarValueNode? {
     if (property.key != null) {
@@ -403,7 +447,7 @@ class YamlCloudFormationParser private constructor () {
     }
   }
 
-  private fun checkAndGetStringValue(expression: YAMLValue?): String? {
+  private fun checkAndGetScalarNode(expression: YAMLValue?): YAMLScalar? {
     if (expression == null) {
       // Do not threat value absence as error
       return null
@@ -421,6 +465,16 @@ class YamlCloudFormationParser private constructor () {
       return null
     }
 
+    return scalar
+  }
+
+  private fun checkAndGetStringElement(expression: YAMLValue?): CfnScalarValueNode? {
+    val scalar = checkAndGetScalarNode(expression) ?: return null
+    return CfnScalarValueNode(scalar.cfnPatchedTextValue()).registerNode(scalar)
+  }
+
+  private fun checkAndGetStringValue(expression: YAMLValue?): String? {
+    val scalar = checkAndGetScalarNode(expression) ?: return null
     return scalar.cfnPatchedTextValue()
   }
 
@@ -440,13 +494,13 @@ class YamlCloudFormationParser private constructor () {
     val topLevelValue = yamlDocument.topLevelValue
     if (topLevelValue == null) {
       addProblem(yamlDocument, "Expected non-empty YAML document")
-      return CfnRootNode(null, null).registerNode(yamlDocument)
+      return CfnRootNode(null, null, null).registerNode(yamlDocument)
     }
 
     val yamlMapping = topLevelValue as? YAMLMapping
     if (yamlMapping == null) {
       addProblem(topLevelValue, "Expected YAML mapping")
-      return CfnRootNode(null, null).registerNode(topLevelValue)
+      return CfnRootNode(null, null, null).registerNode(topLevelValue)
     }
 
     return root(yamlMapping)
