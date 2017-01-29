@@ -27,19 +27,16 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Description
-              }
-              second=CfnScalarValueNode{
+            CfnNameValueNode{
+              value=CfnScalarValueNode{
                 value=EC2 public IP
               }
-            },
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
+              name=CfnScalarValueNode{
+                value=Description
               }
-              second=CfnFunctionNode{
+            },
+            CfnNameValueNode{
+              value=CfnFunctionNode{
                 name=CfnScalarValueNode{
                   value=GetAtt
                 }
@@ -48,6 +45,9 @@ CfnRootNode{
                     value=WebServer.PublicIp
                   }
                 ]
+              }
+              name=CfnScalarValueNode{
+                value=Value
               }
             }
           ]
@@ -59,19 +59,16 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Description
-              }
-              second=CfnScalarValueNode{
+            CfnNameValueNode{
+              value=CfnScalarValueNode{
                 value=EC2 public IP
               }
-            },
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
+              name=CfnScalarValueNode{
+                value=Description
               }
-              second=CfnFunctionNode{
+            },
+            CfnNameValueNode{
+              value=CfnFunctionNode{
                 name=CfnScalarValueNode{
                   value=Base64
                 }
@@ -88,6 +85,9 @@ CfnRootNode{
                   }
                 ]
               }
+              name=CfnScalarValueNode{
+                value=Value
+              }
             }
           ]
         }
@@ -98,19 +98,16 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Description
-              }
-              second=CfnScalarValueNode{
+            CfnNameValueNode{
+              value=CfnScalarValueNode{
                 value=EC2 public IP
               }
-            },
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
+              name=CfnScalarValueNode{
+                value=Description
               }
-              second=CfnFunctionNode{
+            },
+            CfnNameValueNode{
+              value=CfnFunctionNode{
                 name=CfnScalarValueNode{
                   value=Fn::Base64
                 }
@@ -127,6 +124,9 @@ CfnRootNode{
                   }
                 ]
               }
+              name=CfnScalarValueNode{
+                value=Value
+              }
             }
           ]
         }
@@ -137,19 +137,16 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Description
-              }
-              second=CfnScalarValueNode{
+            CfnNameValueNode{
+              value=CfnScalarValueNode{
                 value=WordPress Website
               }
-            },
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
+              name=CfnScalarValueNode{
+                value=Description
               }
-              second=CfnFunctionNode{
+            },
+            CfnNameValueNode{
+              value=CfnFunctionNode{
                 name=CfnScalarValueNode{
                   value=Sub
                 }
@@ -158,6 +155,9 @@ CfnRootNode{
                     value=http://${WebServer.PublicDnsName}/wordpress
                   }
                 ]
+              }
+              name=CfnScalarValueNode{
+                value=Value
               }
             }
           ]

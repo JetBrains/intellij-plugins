@@ -369,7 +369,7 @@ class YamlCloudFormationParser private constructor () {
               expression(yamlValueNode)
             }
 
-            Pair(nameNode, valueNode)
+            CfnNameValueNode(nameNode, valueNode).registerNode(it)
           }
 
           CfnObjectValueNode(properties).registerNode(value)

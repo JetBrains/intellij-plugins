@@ -285,7 +285,7 @@ class JsonCloudFormationParser private constructor () {
               expression(jsonValueNode)
             }
 
-            Pair(nameNode, valueNode)
+            CfnNameValueNode(nameNode, valueNode).registerNode(it)
           }
 
           CfnObjectValueNode(properties).registerNode(value)

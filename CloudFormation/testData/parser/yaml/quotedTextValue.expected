@@ -29,12 +29,12 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
-              }
-              second=CfnScalarValueNode{
+            CfnNameValueNode{
+              value=CfnScalarValueNode{
                 value=folded \"to a space,\nto a line feed, or \t \tnon-content
+              }
+              name=CfnScalarValueNode{
+                value=Value
               }
             }
           ]
@@ -46,11 +46,8 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
-              }
-              second=CfnFunctionNode{
+            CfnNameValueNode{
+              value=CfnFunctionNode{
                 name=CfnScalarValueNode{
                   value=Sub
                 }
@@ -59,6 +56,9 @@ CfnRootNode{
                     value=folded \"to a space,\nto a line feed, or \t \tnon-content
                   }
                 ]
+              }
+              name=CfnScalarValueNode{
+                value=Value
               }
             }
           ]
@@ -70,11 +70,11 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
+            CfnNameValueNode{
+              value=<null>
+              name=CfnScalarValueNode{
                 value=Value
               }
-              second=<null>
             }
           ]
         }
@@ -85,11 +85,8 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
-              }
-              second=CfnFunctionNode{
+            CfnNameValueNode{
+              value=CfnFunctionNode{
                 name=CfnScalarValueNode{
                   value=Sub
                 }
@@ -98,6 +95,9 @@ CfnRootNode{
                     value=http://${WebServer.PublicDnsName}/wordpress
                   }
                 ]
+              }
+              name=CfnScalarValueNode{
+                value=Value
               }
             }
           ]
@@ -109,12 +109,12 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
-              }
-              second=CfnScalarValueNode{
+            CfnNameValueNode{
+              value=CfnScalarValueNode{
                 value=http://${WebServer.PublicDnsName}/wordpress
+              }
+              name=CfnScalarValueNode{
+                value=Value
               }
             }
           ]
@@ -126,11 +126,8 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
-              }
-              second=CfnFunctionNode{
+            CfnNameValueNode{
+              value=CfnFunctionNode{
                 name=CfnScalarValueNode{
                   value=Sub
                 }
@@ -139,6 +136,9 @@ CfnRootNode{
                     value=ABC
                   }
                 ]
+              }
+              name=CfnScalarValueNode{
+                value=Value
               }
             }
           ]

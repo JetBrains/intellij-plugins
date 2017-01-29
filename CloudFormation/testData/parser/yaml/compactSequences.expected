@@ -7,11 +7,8 @@ CfnRootNode{
       CfnOutputNode{
         value=CfnObjectValueNode{
           properties=[
-            Pair{
-              first=CfnScalarValueNode{
-                value=Value
-              }
-              second=CfnFunctionNode{
+            CfnNameValueNode{
+              value=CfnFunctionNode{
                 name=CfnScalarValueNode{
                   value=If
                 }
@@ -39,6 +36,9 @@ CfnRootNode{
                     ]
                   }
                 ]
+              }
+              name=CfnScalarValueNode{
+                value=Value
               }
             }
           ]
