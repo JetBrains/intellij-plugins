@@ -11,6 +11,7 @@ import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnObjectValueNode
+import com.intellij.aws.cloudformation.model.CfnOutputNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
 import com.intellij.aws.cloudformation.model.CfnParameterNode
 import com.intellij.aws.cloudformation.model.CfnParametersNode
@@ -60,46 +61,44 @@ class YamlCloudFormationParser private constructor () {
   inline private fun <reified T> lookupSection(sections: List<CfnNode>): T? = sections.singleOrNull { it is T } as T?
 
   private fun root(root: YAMLMapping): CfnRootNode {
-    val sections = mutableListOf<CfnNode>()
-
-    for (property in root.keyValues) {
+    val sections = root.keyValues.mapNotNull { property ->
       val name = property.keyText
       val value = property.value
 
       if (name.isEmpty() || value == null) {
-        continue
+        return@mapNotNull null
       }
 
       val section = CloudFormationSection.id2enum[name]
 
-      if (CloudFormationSection.FormatVersion == section) {
-        formatVersion(value)
-      } else if (CloudFormationSection.Transform == section) {
-        checkAndGetStringValue(value)
-      } else if (CloudFormationSection.Description == section) {
-        description(value)
-      } else if (CloudFormationSection.Parameters == section) {
-        sections.add(parameters(property))
-      } else if (CloudFormationSection.Resources == section) {
-        sections.add(resources(property))
-      } else if (CloudFormationSection.Conditions == section) {
-        // TODO
-      } else if (CloudFormationSection.Metadata == section) {
-        // Generic content inside, no need to check
-        // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
-      } else if (CloudFormationSection.Outputs == section) {
-        sections.add(outputs(property))
-      } else if (CloudFormationSection.Mappings == section) {
-        sections.add(mappings(property))
-      } else {
-        addProblemOnNameElement(
-            property,
-            CloudFormationBundle.getString("format.unknown.section", name))
+      return@mapNotNull when (section) {
+        CloudFormationSection.FormatVersion -> { formatVersion(value); null }
+        CloudFormationSection.Transform -> { checkAndGetStringValue(value); null }
+        CloudFormationSection.Description -> { checkAndGetStringValue(value); null }
+        CloudFormationSection.Parameters -> parameters(property)
+        CloudFormationSection.Resources -> resources(property)
+        CloudFormationSection.Conditions -> {
+          // TODO
+          null
+        }
+        CloudFormationSection.Metadata -> {
+          // Generic content inside, no need to check
+          // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
+          null
+        }
+        CloudFormationSection.Outputs -> outputs(property)
+        CloudFormationSection.Mappings -> mappings(property)
+        else -> {
+          addProblemOnNameElement(
+              property,
+              CloudFormationBundle.getString("format.unknown.section", name))
+          null
+        }
       }
     }
 
     // Duplicate keys should be handled by YAML support,
-    // known issue: https://youtrack.jetbrains.com/issue/RUBY-19094
+    // TODO known issue: https://youtrack.jetbrains.com/issue/RUBY-19094
     return CfnRootNode(
         lookupSection<CfnParametersNode>(sections),
         lookupSection<CfnResourcesNode>(sections),
@@ -108,27 +107,34 @@ class YamlCloudFormationParser private constructor () {
     ).registerNode(root)
   }
 
-  private fun outputs(outputs: YAMLKeyValue): CfnOutputsNode {
-    val obj = checkAndGetMapping(outputs.value!!) ?: return CfnOutputsNode(keyName(outputs), emptyList())
+  private fun outputs(outputs: YAMLKeyValue): CfnOutputsNode = parseNameValues(
+      outputs,
+      { output -> CfnOutputNode(keyName(output), expression(output.value!!)) },
+      { nameNode, list -> CfnOutputsNode(nameNode, list) },
+      mappingCheck = { obj ->
+        // TODO move to inspections
 
-    val properties = obj.keyValues.mapNotNull { property ->
-      val value = property.value
-      if (value == null) {
-        addProblem(property, "Property value is expected")
-        return@mapNotNull null
+        if (obj.keyValues.isEmpty()) {
+          addProblemOnNameElement(
+              obj.parent as YAMLKeyValue,
+              CloudFormationBundle.getString("format.no.outputs.declared"))
+        }
+
+        if (obj.keyValues.size > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
+          addProblemOnNameElement(
+              obj.parent as YAMLKeyValue,
+              CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
+        }
       }
-
-      Pair(keyName(property), expression(value))
-    }
-
-    return CfnOutputsNode(keyName(outputs), properties).registerNode(outputs.value!!)
-  }
+  )
 
   private fun parameters(parameters: YAMLKeyValue): CfnParametersNode = parseNameValues(
       parameters,
       { parameter -> parameter(parameter) },
       { nameNode, list -> CfnParametersNode(nameNode, list) },
       mappingCheck = { obj ->
+        // TODO move to inspections
+
         if (obj.keyValues.isEmpty()) {
           addProblemOnNameElement(
               obj.parent as YAMLKeyValue,
@@ -163,7 +169,17 @@ class YamlCloudFormationParser private constructor () {
     mappingCheck(obj)
 
     val list = obj.keyValues.mapNotNull { value ->
-      return@mapNotNull if (value.keyText.isEmpty() || value.value == null) null else valueFactory(value)
+      if (value.keyText.isEmpty()) {
+        addProblemOnNameElement(value, "A non-empty key is expected")
+        return@mapNotNull null
+      }
+
+      if (value.value == null) {
+        addProblemOnNameElement(value, "A value is expected")
+        return@mapNotNull null
+      }
+
+      return@mapNotNull valueFactory(value)
     }
 
     return resultFactory(nameNode, list).registerNode(keyValueElement)
@@ -174,6 +190,8 @@ class YamlCloudFormationParser private constructor () {
       { mapping -> firstLevelMapping(mapping) },
       { nameNode, list -> CfnMappingsNode(nameNode, list) },
       mappingCheck = {
+        // TODO move to inspections
+
         if (it.keyValues.isEmpty()) {
           addProblemOnNameElement(
               it.parent as YAMLKeyValue,
@@ -207,10 +225,6 @@ class YamlCloudFormationParser private constructor () {
       addProblem(property, "Expected a name")
       return CfnScalarValueNode("").registerNode(property)
     }
-  }
-
-  private fun description(value: YAMLValue) {
-    checkAndGetStringValue(value)
   }
 
   private fun resources(property: YAMLKeyValue): CfnResourcesNode {

@@ -8,6 +8,7 @@ import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnObjectValueNode
+import com.intellij.aws.cloudformation.model.CfnOutputNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertiesNode
@@ -110,7 +111,7 @@ class JsonCloudFormationParser private constructor () {
         return@mapNotNull null
       }
 
-      Pair(keyName(property), expression(value))
+      CfnOutputNode(keyName(property), expression(value))
     }
 
     return CfnOutputsNode(keyName(outputs), properties).registerNode(outputs.value!!)

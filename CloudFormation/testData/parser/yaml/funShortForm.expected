@@ -24,11 +24,8 @@ CfnRootNode{
   }
   outputsNode=CfnOutputsNode{
     properties=[
-      Pair{
-        first=CfnScalarValueNode{
-          value=A
-        }
-        second=CfnObjectValueNode{
+      CfnOutputNode{
+        value=CfnObjectValueNode{
           properties=[
             Pair{
               first=CfnScalarValueNode{
@@ -55,12 +52,12 @@ CfnRootNode{
             }
           ]
         }
-      },
-      Pair{
-        first=CfnScalarValueNode{
-          value=B
+        name=CfnScalarValueNode{
+          value=A
         }
-        second=CfnObjectValueNode{
+      },
+      CfnOutputNode{
+        value=CfnObjectValueNode{
           properties=[
             Pair{
               first=CfnScalarValueNode{
@@ -94,12 +91,12 @@ CfnRootNode{
             }
           ]
         }
-      },
-      Pair{
-        first=CfnScalarValueNode{
-          value=C
+        name=CfnScalarValueNode{
+          value=B
         }
-        second=CfnObjectValueNode{
+      },
+      CfnOutputNode{
+        value=CfnObjectValueNode{
           properties=[
             Pair{
               first=CfnScalarValueNode{
@@ -133,12 +130,12 @@ CfnRootNode{
             }
           ]
         }
-      },
-      Pair{
-        first=CfnScalarValueNode{
-          value=D
+        name=CfnScalarValueNode{
+          value=C
         }
-        second=CfnObjectValueNode{
+      },
+      CfnOutputNode{
+        value=CfnObjectValueNode{
           properties=[
             Pair{
               first=CfnScalarValueNode{
@@ -164,6 +161,9 @@ CfnRootNode{
               }
             }
           ]
+        }
+        name=CfnScalarValueNode{
+          value=D
         }
       }
     ]

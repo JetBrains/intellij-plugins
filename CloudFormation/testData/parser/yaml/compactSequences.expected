@@ -4,11 +4,8 @@ CfnRootNode{
   resourcesNode=<null>
   outputsNode=CfnOutputsNode{
     properties=[
-      Pair{
-        first=CfnScalarValueNode{
-          value=A
-        }
-        second=CfnObjectValueNode{
+      CfnOutputNode{
+        value=CfnObjectValueNode{
           properties=[
             Pair{
               first=CfnScalarValueNode{
@@ -45,6 +42,9 @@ CfnRootNode{
               }
             }
           ]
+        }
+        name=CfnScalarValueNode{
+          value=A
         }
       }
     ]
