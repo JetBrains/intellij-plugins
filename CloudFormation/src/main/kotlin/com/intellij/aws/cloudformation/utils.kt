@@ -1,5 +1,6 @@
 package com.intellij.aws.cloudformation
 
+import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.newvfs.FileSystemInterface
@@ -12,6 +13,8 @@ import java.util.Collections
 fun findSubArray(array: ByteArray, subArray: ByteArray): Int {
   return Collections.indexOfSubList(Arrays.asList(*ArrayUtils.toObject(array)), Arrays.asList(*ArrayUtils.toObject(subArray)))
 }
+
+inline fun <reified T> lookupSection(sections: List<CfnNode>): T? = sections.singleOrNull { it is T } as T?
 
 fun detectFileTypeFromContent(file: VirtualFile, signatureBytes: ByteArray): Boolean {
   if (file is StubVirtualFile) {

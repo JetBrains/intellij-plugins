@@ -1,8 +1,10 @@
 package com.intellij.aws.cloudformation
 
+import com.intellij.aws.cloudformation.model.CfnMappingsNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
+import com.intellij.aws.cloudformation.model.CfnParametersNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
@@ -43,6 +45,26 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
     if (outputsNode.properties.size > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
       addProblem(outputsNode, CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
+    }
+  }
+
+  fun parameters(node: CfnParametersNode) {
+    if (node.parameters.isEmpty()) {
+      addProblem(node, "Parameters section must declare at least one parameter")
+    }
+
+    if (node.parameters.size > CloudFormationMetadataProvider.METADATA.limits.maxParameters) {
+      addProblem(node, CloudFormationBundle.getString("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters))
+    }
+  }
+
+  fun mappings(node: CfnMappingsNode) {
+    if (node.mappings.isEmpty()) {
+      addProblem(node, "Mappings section must declare at least one parameter")
+    }
+
+    if (node.mappings.size > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
+      addProblem(node, CloudFormationBundle.getString("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
     }
   }
 
@@ -113,6 +135,8 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     val root = parsed.root
 
     root.outputsNode?.let { outputs(it) }
+    root.mappingsNode?.let { mappings(it) }
+    root.parametersNode?.let { parameters(it) }
 
     val resourcesNode = root.resourcesNode
     if (resourcesNode == null) {

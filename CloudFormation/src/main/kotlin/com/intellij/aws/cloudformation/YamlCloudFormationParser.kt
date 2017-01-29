@@ -58,7 +58,6 @@ class YamlCloudFormationParser private constructor () {
   private fun addProblemOnNameElement(property: YAMLKeyValue, description: String) =
     addProblem(property.key ?: property, description)
 
-  inline private fun <reified T> lookupSection(sections: List<CfnNode>): T? = sections.singleOrNull { it is T } as T?
 
   private fun root(root: YAMLMapping): CfnRootNode {
     val sections = root.keyValues.mapNotNull { property ->
@@ -110,43 +109,13 @@ class YamlCloudFormationParser private constructor () {
   private fun outputs(outputs: YAMLKeyValue): CfnOutputsNode = parseNameValues(
       outputs,
       { output -> CfnOutputNode(keyName(output), expression(output.value!!)) },
-      { nameNode, list -> CfnOutputsNode(nameNode, list) },
-      mappingCheck = { obj ->
-        // TODO move to inspections
-
-        if (obj.keyValues.isEmpty()) {
-          addProblemOnNameElement(
-              obj.parent as YAMLKeyValue,
-              CloudFormationBundle.getString("format.no.outputs.declared"))
-        }
-
-        if (obj.keyValues.size > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
-          addProblemOnNameElement(
-              obj.parent as YAMLKeyValue,
-              CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
-        }
-      }
+      { nameNode, list -> CfnOutputsNode(nameNode, list) }
   )
 
   private fun parameters(parameters: YAMLKeyValue): CfnParametersNode = parseNameValues(
       parameters,
       { parameter -> parameter(parameter) },
-      { nameNode, list -> CfnParametersNode(nameNode, list) },
-      mappingCheck = { obj ->
-        // TODO move to inspections
-
-        if (obj.keyValues.isEmpty()) {
-          addProblemOnNameElement(
-              obj.parent as YAMLKeyValue,
-              CloudFormationBundle.getString("format.no.parameters.declared"))
-        }
-
-        if (obj.keyValues.size > CloudFormationMetadataProvider.METADATA.limits.maxParameters) {
-          addProblemOnNameElement(
-              obj.parent as YAMLKeyValue,
-              CloudFormationBundle.getString("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters))
-        }
-      }
+      { nameNode, list -> CfnParametersNode(nameNode, list) }
   )
 
   private fun parameter(parameter: YAMLKeyValue): CfnParameterNode = parseNameValues(
@@ -158,15 +127,12 @@ class YamlCloudFormationParser private constructor () {
   private fun <ResultNodeType : CfnNode, ValueNodeType: CfnNode> parseNameValues(
       keyValueElement: YAMLKeyValue,
       valueFactory: (YAMLKeyValue) -> ValueNodeType,
-      resultFactory: (CfnScalarValueNode?, List<ValueNodeType>) -> ResultNodeType,
-      mappingCheck: (YAMLMapping) -> Unit = {}): ResultNodeType
+      resultFactory: (CfnScalarValueNode?, List<ValueNodeType>) -> ResultNodeType): ResultNodeType
   {
     val keyElement = keyValueElement.key
     val nameNode = if (keyElement == null) null else CfnScalarValueNode(keyValueElement.keyText).registerNode(keyElement)
 
     val obj = checkAndGetMapping(keyValueElement.value!!) ?: return resultFactory(nameNode, emptyList()).registerNode(keyValueElement)
-
-    mappingCheck(obj)
 
     val list = obj.keyValues.mapNotNull { value ->
       if (value.keyText.isEmpty()) {
@@ -188,22 +154,7 @@ class YamlCloudFormationParser private constructor () {
   private fun mappings(mappings: YAMLKeyValue): CfnMappingsNode = parseNameValues(
       mappings,
       { mapping -> firstLevelMapping(mapping) },
-      { nameNode, list -> CfnMappingsNode(nameNode, list) },
-      mappingCheck = {
-        // TODO move to inspections
-
-        if (it.keyValues.isEmpty()) {
-          addProblemOnNameElement(
-              it.parent as YAMLKeyValue,
-              CloudFormationBundle.getString("format.no.mappings.declared"))
-        }
-
-        if (it.keyValues.size > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
-          addProblemOnNameElement(
-              it.parent as YAMLKeyValue,
-              CloudFormationBundle.getString("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
-        }
-      }
+      { nameNode, list -> CfnMappingsNode(nameNode, list) }
   )
 
   private fun firstLevelMapping(mapping: YAMLKeyValue): CfnFirstLevelMappingNode = parseNameValues(

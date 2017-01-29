@@ -3,13 +3,18 @@ package com.intellij.aws.cloudformation
 import com.google.common.collect.HashBiMap
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnExpressionNode
+import com.intellij.aws.cloudformation.model.CfnFirstLevelMappingNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
+import com.intellij.aws.cloudformation.model.CfnMappingValue
+import com.intellij.aws.cloudformation.model.CfnMappingsNode
 import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnObjectValueNode
 import com.intellij.aws.cloudformation.model.CfnOutputNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
+import com.intellij.aws.cloudformation.model.CfnParameterNode
+import com.intellij.aws.cloudformation.model.CfnParametersNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertiesNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
@@ -17,6 +22,7 @@ import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
 import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
+import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
 import com.intellij.json.psi.JsonArray
 import com.intellij.json.psi.JsonBooleanLiteral
 import com.intellij.json.psi.JsonNumberLiteral
@@ -49,112 +55,116 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun root(root: JsonObject): CfnRootNode {
-    var resourcesNode: CfnResourcesNode? = null
-    var outputsNode: CfnOutputsNode? = null
-
-    for (property in root.propertyList) {
+    val sections = root.propertyList.mapNotNull { property ->
       val name = property.name
       val value = property.value
 
       if (name.isEmpty() || value == null) {
-        continue
+        return@mapNotNull null
       }
 
       val section = CloudFormationSection.id2enum[name]
 
-      if (CloudFormationSection.FormatVersion == section) {
-        formatVersion(value)
-      } else if (CloudFormationSection.Transform == section) {
-        checkAndGetUnquotedStringText(value)
-      } else if (CloudFormationSection.Description == section) {
-        description(value)
-      } else if (CloudFormationSection.Parameters == section) {
-        // TODO
-        parameters(value)
-      } else if (CloudFormationSection.Resources == section) {
-        if (resourcesNode == null) {
-          resourcesNode = resources(property)
-        } else {
-          addProblem(property, "Duplicate Resources node")
+      return@mapNotNull when (section) {
+        CloudFormationSection.FormatVersion -> { formatVersion(value); null }
+        CloudFormationSection.Transform -> { checkAndGetUnquotedStringText(value); null }
+        CloudFormationSection.Description -> { checkAndGetUnquotedStringText(value); null }
+        CloudFormationSection.Parameters -> parameters(property)
+        CloudFormationSection.Resources -> resources(property)
+        CloudFormationSection.Conditions -> {
+          // TODO
+          null
         }
-      } else if (CloudFormationSection.Conditions == section) {
-        // TODO
-      } else if (CloudFormationSection.Metadata == section) {
-        // Generic content inside, no need to check
-        // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
-      } else if (CloudFormationSection.Outputs == section) {
-        if (outputsNode == null) {
-          outputsNode = outputs(property)
-        } else {
-          addProblem(property, "Duplicate Outputs node")
+        CloudFormationSection.Metadata -> {
+          // Generic content inside, no need to check
+          // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
+          null
         }
-      } else if (CloudFormationSection.Mappings == section) {
-        // TODO
-        mappings(value)
-      } else {
-        addProblemOnNameElement(
-            property,
-            CloudFormationBundle.getString("format.unknown.section", name))
+        CloudFormationSection.Outputs -> outputs(property)
+        CloudFormationSection.Mappings -> mappings(property)
+        else -> {
+          addProblemOnNameElement(
+              property,
+              CloudFormationBundle.getString("format.unknown.section", name))
+          null
+        }
       }
     }
 
-    return CfnRootNode(null, resourcesNode, outputsNode, null).registerNode(root)
+    // Duplicate keys should be handled by YAML support,
+    // TODO known issue: https://youtrack.jetbrains.com/issue/RUBY-19094
+    return CfnRootNode(
+        lookupSection<CfnParametersNode>(sections),
+        lookupSection<CfnResourcesNode>(sections),
+        lookupSection<CfnOutputsNode>(sections),
+        lookupSection<CfnMappingsNode>(sections)
+    ).registerNode(root)
   }
 
-  private fun outputs(outputs: JsonProperty): CfnOutputsNode {
-    val obj = checkAndGetObject(outputs.value!!) ?: return CfnOutputsNode(keyName(outputs), emptyList())
+  private fun <ResultNodeType : CfnNode, ValueNodeType: CfnNode> parseNameValues(
+      property: JsonProperty,
+      valueFactory: (JsonProperty) -> ValueNodeType,
+      resultFactory: (CfnScalarValueNode?, List<ValueNodeType>) -> ResultNodeType): ResultNodeType
+  {
+    val nameNode = keyName(property)
 
-    val properties = obj.propertyList.mapNotNull { property ->
-      val value = property.value
-      if (value == null) {
-        addProblem(property, "Property value is expected")
+    val obj = checkAndGetObject(property.value!!) ?: return resultFactory(nameNode, emptyList()).registerNode(property)
+
+    val list = obj.propertyList.mapNotNull { value ->
+      if (value.name.isEmpty()) {
+        addProblemOnNameElement(value, "A non-empty key is expected")
         return@mapNotNull null
       }
 
-      CfnOutputNode(keyName(property), expression(value))
+      if (value.value == null) {
+        addProblemOnNameElement(value, "A value is expected")
+        return@mapNotNull null
+      }
+
+      return@mapNotNull valueFactory(value)
     }
 
-    return CfnOutputsNode(keyName(outputs), properties).registerNode(outputs.value!!)
+    return resultFactory(nameNode, list).registerNode(property)
   }
 
-  private fun parameters(parametersExpression: JsonValue) {
-    val obj = checkAndGetObject(parametersExpression) ?: return
+  private fun outputs(outputs: JsonProperty): CfnOutputsNode = parseNameValues(
+      outputs,
+      { output -> CfnOutputNode(keyName(output), expression(output.value!!)) },
+      { nameNode, list -> CfnOutputsNode(nameNode, list) }
+  )
 
-    if (obj.propertyList.size == 0) {
-      addProblemOnNameElement(
-          obj.parent as JsonProperty,
-          CloudFormationBundle.getString("format.no.parameters.declared"))
-    }
+  private fun parameters(parameters: JsonProperty): CfnParametersNode = parseNameValues(
+      parameters,
+      { parameter -> parameter(parameter) },
+      { nameNode, list -> CfnParametersNode(nameNode, list) }
+  )
 
-    if (obj.propertyList.size > CloudFormationMetadataProvider.METADATA.limits.maxParameters) {
-      addProblemOnNameElement(
-          obj.parent as JsonProperty,
-          CloudFormationBundle.getString("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters))
-    }
-  }
+  private fun parameter(parameter: JsonProperty): CfnParameterNode = parseNameValues(
+      parameter,
+      { node -> CfnNameValueNode(keyName(node), node.value?.let { expression(it) }) },
+      { nameNode, list -> CfnParameterNode(nameNode, list) }
+  )
 
-  private fun mappings(mappingsExpression: JsonValue) {
-    val obj = checkAndGetObject(mappingsExpression) ?: return
+  private fun mappings(mappings: JsonProperty): CfnMappingsNode = parseNameValues(
+      mappings,
+      { mapping -> firstLevelMapping(mapping) },
+      { nameNode, list -> CfnMappingsNode(nameNode, list) }
+  )
 
-    if (obj.propertyList.size == 0) {
-      addProblemOnNameElement(
-          obj.parent as JsonProperty,
-          CloudFormationBundle.getString("format.no.mappings.declared"))
-    }
+  private fun firstLevelMapping(mapping: JsonProperty): CfnFirstLevelMappingNode = parseNameValues(
+      mapping,
+      { mapping -> secondLevelMapping(mapping) },
+      { nameNode, list -> CfnFirstLevelMappingNode(nameNode, list) }
+  )
 
-    if (obj.propertyList.size > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
-      addProblemOnNameElement(
-          obj.parent as JsonProperty,
-          CloudFormationBundle.getString("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
-    }
-  }
+  private fun secondLevelMapping(mapping: JsonProperty): CfnSecondLevelMappingNode = parseNameValues(
+      mapping,
+      { node -> CfnMappingValue(keyName(node), checkAndGetStringElement(node.value)) },
+      { nameNode, list -> CfnSecondLevelMappingNode(nameNode, list) }
+  )
 
   private fun keyName(property: JsonProperty): CfnScalarValueNode {
     return CfnScalarValueNode(property.name).registerNode(property.nameElement)
-  }
-
-  private fun description(value: JsonValue) {
-    checkAndGetUnquotedStringText(value)
   }
 
   private fun resources(property: JsonProperty): CfnResourcesNode? {
@@ -332,7 +342,7 @@ class JsonCloudFormationParser private constructor () {
     }
   }
 
-  private fun checkAndGetUnquotedStringText(expression: JsonValue?): String? {
+  private fun checkAndGetScalarNode(expression: JsonValue?): JsonStringLiteral? {
     if (expression == null) {
       // Do not threat value absence as error
       return null
@@ -344,7 +354,17 @@ class JsonCloudFormationParser private constructor () {
       return null
     }
 
-    return literal.value
+    return literal
+  }
+
+  private fun checkAndGetStringElement(expression: JsonValue?): CfnScalarValueNode? {
+    val scalar = checkAndGetScalarNode(expression) ?: return null
+    return CfnScalarValueNode(scalar.value).registerNode(scalar)
+  }
+
+  private fun checkAndGetUnquotedStringText(expression: JsonValue?): String? {
+    val literal = checkAndGetScalarNode(expression)
+    return literal?.value
   }
 
   fun file(psiFile: PsiFile): CfnRootNode {
