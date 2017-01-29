@@ -1,0 +1,8 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+Resources:
+  WebServer:
+    Type: AWS::EC2::Instance
+Outputs:
+  A:
+    Value: !Ref Web<ref>Server

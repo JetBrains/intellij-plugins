@@ -4,7 +4,7 @@ import com.intellij.aws.cloudformation.references.CloudFormationMappingTopLevelK
 
 class MappingTopLevelKeyReferenceResolveTests : ResolveTestsBase(CloudFormationMappingTopLevelKeyReference::class.java) {
   fun testFindInMapRefToTopLevelKey() {
-    assertEntityResolve("findInMapRefToTopLevelKey", "m2.xlarge")
+    assertEntityResolve("findInMapRefToTopLevelKey.template", "m2.xlarge")
   }
 
   override fun getTestDataPath(): String {

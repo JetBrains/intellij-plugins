@@ -8,8 +8,8 @@ import com.intellij.psi.PsiElement
 class CloudFormationMappingSecondLevelKeyReference(element: JsonStringLiteral, private val mappingName: String, private val topLevelKey: String) : CloudFormationReferenceBase(element) {
   override fun resolve(): PsiElement? {
     val parsed = CloudFormationParser.parse(element.containingFile)
-    val entityName = myElement.value
-    val key = CloudFormationResolve.resolveSecondLevelMappingKey(parsed, mappingName, topLevelKey, entityName) ?: return null
+
+    val key = CloudFormationResolve.resolveSecondLevelMappingKey(parsed, mappingName, topLevelKey, scalarNode.value) ?: return null
     return parsed.getPsiElement(key)
   }
 

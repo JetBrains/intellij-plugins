@@ -4,7 +4,7 @@ import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLev
 
 class MappingSecondLevelKeyReferenceResolveTests : ResolveTestsBase(CloudFormationMappingSecondLevelKeyReference::class.java) {
   fun testFindInMapRefToSecondLevelKey() {
-    assertEntityResolve("findInMapRefToSecondLevelKey", "Arch")
+    assertEntityResolve("findInMapRefToSecondLevelKey.template", "Arch")
   }
 
   override fun getTestDataPath(): String {

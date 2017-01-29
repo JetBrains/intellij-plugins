@@ -4,63 +4,63 @@ import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
 
 class EntityResolveTests : ResolveTestsBase(CloudFormationEntityReference::class.java) {
   fun testDependsOnSingle() {
-    assertEntityResolve("dependsOnSingle", "WebServerUser")
+    assertEntityResolve("dependsOnSingle.template", "WebServerUser")
   }
 
   fun testDependsOnMulti() {
-    assertEntityResolve("dependsOnMulti", "WebServerUser1", "WebServerUser2")
+    assertEntityResolve("dependsOnMulti.template", "WebServerUser1", "WebServerUser2")
   }
 
   fun testFindInMapRefToResource() {
-    assertEntityResolve("findInMapRefToResource", NotResolved)
+    assertEntityResolve("findInMapRefToResource.template", NotResolved)
   }
 
   fun testFindInMapRefToMapping() {
-    assertEntityResolve("findInMapRefToMapping", "AWSInstanceType2Arch")
+    assertEntityResolve("findInMapRefToMapping.template", "AWSInstanceType2Arch")
   }
 
   fun testGetAttrParameterRef() {
-    assertEntityResolve("getAttrParameterRef", NotResolved)
+    assertEntityResolve("getAttrParameterRef.template", NotResolved)
   }
 
   fun testGetAttrResourceRef() {
-    assertEntityResolve("getAttrResourceRef", "WebServerUser")
+    assertEntityResolve("getAttrResourceRef.template", "WebServerUser")
   }
 
   fun testRefToResource() {
-    assertEntityResolve("refToResource", "WebServerUser")
+    assertEntityResolve("refToResource.template", "WebServerUser")
   }
 
   fun testRefToParameter() {
-    assertEntityResolve("refToParameter", "WebServerInstanceType")
+    assertEntityResolve("refToParameter.template", "WebServerInstanceType")
   }
 
   fun testRefToParameterInCloudFormationInterfaceParameterLabels() {
-    assertEntityResolve("refToParameterInCloudFormationInterfaceParameterLabels", "WebServer12InstanceType1", "WebServer12InstanceType2", NotResolved)
+    assertEntityResolve("refToParameterInCloudFormationInterfaceParameterLabels.template", "WebServer12InstanceType1", "WebServer12InstanceType2", NotResolved)
   }
 
   fun testRefToParameterInCloudFormationInterfaceParameterGroups() {
-    assertEntityResolve("refToParameterInCloudFormationInterfaceParameterGroups", NotResolved, "WebServerInstanceType1", "WebServerInstanceType2")
+    assertEntityResolve("refToParameterInCloudFormationInterfaceParameterGroups.template", NotResolved, "WebServerInstanceType1", "WebServerInstanceType2")
   }
 
   fun testRefToMapping() {
-    assertEntityResolve("refToMapping", NotResolved)
+    assertEntityResolve("refToMapping.template", NotResolved)
   }
 
   fun testRefToOutput() {
-    assertEntityResolve("refToOutput", NotResolved, NotResolved)
+    assertEntityResolve("refToOutput.template", NotResolved, NotResolved)
   }
 
-  fun testConditionOnResource() {
-    assertEntityResolve("conditionOnResource", "CreateProdResources")
-  }
+  fun testConditionOnResource() = assertEntityResolve("conditionOnResource.template", "CreateProdResources")
+
+  fun testShortRef() = assertEntityResolve("shortRef.yaml", "WebServer")
 
   fun testCondition() {
-    assertEntityResolve("condition", "CreateProdResources")
+    assertEntityResolve("condition.template", "CreateProdResources")
   }
 
   fun testConditionInIf() {
-    assertEntityResolve("conditionInIf", "CreateProdResources")
+    assertEntityResolve("conditionInIf.template", "CreateProdResources")
   }
 
   override fun getTestDataPath(): String {

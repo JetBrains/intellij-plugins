@@ -4,22 +4,18 @@ import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
 import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.CloudFormationResolve
 import com.intellij.aws.cloudformation.CloudFormationSection
-import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.psi.PsiElement
 
-class CloudFormationEntityReference(element: JsonStringLiteral,
+class CloudFormationEntityReference(element: PsiElement,
                                     private val myPossibleSections: Collection<CloudFormationSection>,
                                     private val myExcludeFromVariants: Collection<String>?) : CloudFormationReferenceBase(element) {
-
   init {
     assert(myPossibleSections.isNotEmpty())
   }
 
   override fun resolve(): PsiElement? {
-    val entityName = myElement.value
     val parsed = CloudFormationParser.parse(element.containingFile)
-
-    val node = CloudFormationResolve.resolveEntity(parsed, entityName, myPossibleSections) ?: return null
+    val node = CloudFormationResolve.resolveEntity(parsed, scalarNode.value, myPossibleSections) ?: return null
     return parsed.getPsiElement(node)
   }
 

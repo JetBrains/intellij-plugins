@@ -1,11 +1,20 @@
 package com.intellij.aws.cloudformation.references
 
+import com.intellij.aws.cloudformation.CloudFormationParser
+import com.intellij.aws.cloudformation.model.CfnScalarValueNode
+import com.intellij.aws.cloudformation.ofType
 import com.intellij.json.psi.JsonElementGenerator
-import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceBase
 
-abstract class CloudFormationReferenceBase(element: JsonStringLiteral) : PsiReferenceBase<JsonStringLiteral>(element) {
+abstract class CloudFormationReferenceBase(element: PsiElement) : PsiReferenceBase<PsiElement>(element) {
+  val scalarNode: CfnScalarValueNode
+
+  init {
+    val parsed = CloudFormationParser.parse(element.containingFile)
+    scalarNode = parsed.getCfnNodes(element).ofType<CfnScalarValueNode>().single()
+  }
+
   override fun getVariants(): Array<Any> {
     return getCompletionVariants().toTypedArray()
   }

@@ -18,11 +18,9 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
   protected val NotResolved = Object()
 
   protected fun assertEntityResolve(testName: String, vararg entityNames: Any) {
-    val templateFileName = testName + ".template"
+    FileUtil.copy(File(testDataPath, testName), File(myProject.basePath, testName))
 
-    FileUtil.copy(File(testDataPath, templateFileName), File(myProject.basePath, templateFileName))
-
-    val vFile = myProject.baseDir.findChild(templateFileName)!!
+    val vFile = myProject.baseDir.findChild(testName)!!
 
     var fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile))
 

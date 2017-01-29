@@ -1,6 +1,8 @@
 package com.intellij.aws.cloudformation
 
+import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnNode
+import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.json.psi.JsonObject
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.psi.PsiDocumentManager
@@ -27,13 +29,25 @@ object CloudFormationPsiUtils {
   }
 
   fun getParent(node: CfnNode, parser: CloudFormationParsedFile): CfnNode? {
-    var element = parser.getPsiElement(node).parent
+    val baseElement = parser.getPsiElement(node)
+
+    // handle corner case with !Ref "xxxx" or !Sub "yyy"
+    if (node is CfnScalarValueNode) {
+      val baseNodes = parser.getCfnNodes(baseElement).filter { it != node }
+      if (baseNodes.isNotEmpty()) {
+        val otherNode = baseNodes.single()
+        assert(otherNode is CfnFunctionNode)
+        return otherNode
+      }
+    }
+
+    var element = baseElement.parent
     while (element != null) {
-      val parentNodes = parser.getCfnNodes(element).filter { it != node }
+      val parentNodes = parser.getCfnNodes(element)
       if (parentNodes.size > 1) {
         error("Multiple matches while searching for parent of $node: " + parentNodes.joinToString())
       }
-      if (parentNodes.size == 1) return parentNodes[0]
+      if (parentNodes.size == 1) return parentNodes.single()
 
       element = element.parent
     }
