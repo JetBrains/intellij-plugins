@@ -5,6 +5,7 @@ import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingTopLevelKeyReference
+import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.json.psi.JsonArray
 import com.intellij.json.psi.JsonLiteral
 import com.intellij.json.psi.JsonObject
@@ -35,17 +36,8 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       val parsed = CloudFormationParser.parse(element.containingFile)
       val scalarNode = parsed.getCfnNodes(element).ofType<CfnScalarValueNode>().singleOrNull() ?: return null
 
-      val parentFunction = CloudFormationPsiUtils.getParent(scalarNode, parsed) as? CfnFunctionNode
-      if (parentFunction != null &&
-          parentFunction.functionId == CloudFormationIntrinsicFunction.Ref &&
-          parentFunction.args.singleOrNull() == scalarNode) {
-        val targetName = scalarNode.value
-        if (CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName)) {
-          return null
-        }
-
-        return CloudFormationEntityReference(element, ParametersAndResourcesSections, null)
-      }
+      val handleRef = handleRef(parsed, scalarNode, element)
+      if (handleRef != null) return handleRef
 
       val stringLiteral = element as? JsonStringLiteral ?: return null
 
@@ -127,6 +119,22 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       }
 
       return null
+    }
+
+    fun handleRef(parsed: CloudFormationParsedFile, scalarNode: CfnScalarValueNode, element: PsiElement): CloudFormationReferenceBase? {
+      val parentFunction = CloudFormationPsiUtils.getParent(scalarNode, parsed) as? CfnFunctionNode
+      if (parentFunction == null ||
+          parentFunction.functionId != CloudFormationIntrinsicFunction.Ref ||
+          parentFunction.args.singleOrNull() != scalarNode) {
+        return null
+      }
+
+      val targetName = scalarNode.value
+      if (CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName)) {
+        return null
+      }
+
+      return CloudFormationEntityReference(element, ParametersAndResourcesSections, null)
     }
 
     fun isInCondition(element: JsonLiteral): Boolean {
