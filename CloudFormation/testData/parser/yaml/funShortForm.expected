@@ -1,6 +1,9 @@
 No problems
 CfnRootNode{
+  metadataNode=<null>
   parametersNode=<null>
+  mappingsNode=<null>
+  conditionsNode=<null>
   resourcesNode=CfnResourcesNode{
     resources=[
       CfnResourceNode{
@@ -171,5 +174,4 @@ CfnRootNode{
       value=Outputs
     }
   }
-  mappingsNode=<null>
 }

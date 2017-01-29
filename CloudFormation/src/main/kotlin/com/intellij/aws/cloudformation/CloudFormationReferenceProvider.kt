@@ -1,5 +1,6 @@
 package com.intellij.aws.cloudformation
 
+import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingTopLevelKeyReference
@@ -30,6 +31,9 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
     val ParametersAndResourcesSections = listOf(CloudFormationSection.Parameters, CloudFormationSection.Resources)
 
     fun buildFromElement(element: PsiElement): PsiReference? {
+      val parsed = CloudFormationParser.parse(element.containingFile)
+      val scalarNode = parsed.getCfnNodes(element).ofType<CfnScalarValueNode>().singleOrNull() ?: return null
+
       val stringLiteral = element as? JsonStringLiteral ?: return null
 
       val handleRef = handleRef(stringLiteral)
@@ -81,7 +85,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
               if (isFindInMap) {
                 val mappingNameExpression = allParameters[0] as? JsonStringLiteral
                 if (mappingNameExpression != null) {
-                  return CloudFormationMappingTopLevelKeyReference(stringLiteral, CloudFormationResolve.getTargetName(mappingNameExpression))
+                  return CloudFormationMappingTopLevelKeyReference(stringLiteral, mappingNameExpression.value)
                 }
               }
             } else if (allParameters.size > 2 && element === allParameters[2]) {
@@ -91,8 +95,8 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
                 if (mappingNameExpression != null && topLevelKeyExpression != null) {
                   return CloudFormationMappingSecondLevelKeyReference(
                       stringLiteral,
-                      CloudFormationResolve.getTargetName(mappingNameExpression),
-                      CloudFormationResolve.getTargetName(topLevelKeyExpression))
+                      mappingNameExpression.value,
+                      topLevelKeyExpression.value)
                 }
               }
             }
@@ -134,7 +138,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
         return null
       }
 
-      val targetName = CloudFormationResolve.getTargetName(element)
+      val targetName = element.value
       if (CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName)) {
         return null
       }
@@ -156,7 +160,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       return obj != null && obj.propertyList.size == 1
     }
 
-    fun handleDependsOnSingle(element: JsonLiteral): PsiReference? {
+    fun handleDependsOnSingle(element: JsonStringLiteral): PsiReference? {
       val dependsOnProperty = element.parent as? JsonProperty
       if (dependsOnProperty == null || CloudFormationConstants.DependsOnPropertyName != dependsOnProperty.name) {
         return null
@@ -192,7 +196,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       return resource != null && isResourceElement(resource)
     }
 
-    fun handleDependsOnMultiple(element: JsonLiteral): PsiReference? {
+    fun handleDependsOnMultiple(element: JsonStringLiteral): PsiReference? {
       val refArray = element.parent as? JsonArray ?: return null
 
       val dependsOnProperty = refArray.parent as? JsonProperty

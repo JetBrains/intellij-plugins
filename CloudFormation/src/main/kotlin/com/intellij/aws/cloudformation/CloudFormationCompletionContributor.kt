@@ -89,7 +89,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   }
 
   private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quoteResult: Boolean, parsed: CloudFormationParsedFile) {
-    val nameNode = parsed.getCfnNode(element) as? CfnScalarValueNode ?: return
+    val nameNode = parsed.getCfnNodes(element).ofType<CfnScalarValueNode>().singleOrNull() ?: return
     val namedNode = CloudFormationPsiUtils.getParent(nameNode, parsed) as? CfnNamedNode ?: return
     val resourceNode = CloudFormationPsiUtils.getParent(namedNode, parsed) as? CfnResourceNode ?: return
 
@@ -123,17 +123,10 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   }
 
   private fun completeAttribute(file: PsiFile, rs: CompletionResultSet, quoteResult: Boolean, resourceName: String) {
-    val resource = CloudFormationResolve.resolveEntity(file, resourceName, CloudFormationSection.ResourcesSingletonList) ?: return
+    val parsed = CloudFormationParser.parse(file)
+    val resource = CloudFormationResolve.resolveResource(parsed, resourceName) ?: return
 
-    val resourceProperties = resource.value as? JsonObject ?: return
-
-    val typeProperty = resourceProperties.findProperty(CloudFormationConstants.TypePropertyName)
-    if (typeProperty == null || typeProperty.value == null) {
-      return
-    }
-
-    val resourceTypeName = StringUtil.stripQuotesAroundValue(typeProperty.value!!.text)
-
+    val resourceTypeName = resource.typeName ?: return
     val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName) ?: return
 
     resourceType.attributes.values.forEach {

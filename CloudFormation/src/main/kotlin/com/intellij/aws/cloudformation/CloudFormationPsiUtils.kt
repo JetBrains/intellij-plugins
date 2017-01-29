@@ -26,16 +26,14 @@ object CloudFormationPsiUtils {
     return null
   }
 
-  fun getObjectLiteralExpressionChild(parent: JsonObject?, childName: String): JsonObject? {
-    val property = parent?.findProperty(childName) ?: return null
-    return property.value as? JsonObject
-  }
-
   fun getParent(node: CfnNode, parser: CloudFormationParsedFile): CfnNode? {
     var element = parser.getPsiElement(node).parent
     while (element != null) {
-      val parentNode = parser.getCfnNode(element)
-      if (parentNode != null) return parentNode
+      val parentNodes = parser.getCfnNodes(element).filter { it != node }
+      if (parentNodes.size > 1) {
+        error("Multiple matches while searching for parent of $node: " + parentNodes.joinToString())
+      }
+      if (parentNodes.size == 1) return parentNodes[0]
 
       element = element.parent
     }

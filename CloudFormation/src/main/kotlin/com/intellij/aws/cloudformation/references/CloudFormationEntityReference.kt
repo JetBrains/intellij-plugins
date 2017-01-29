@@ -1,13 +1,13 @@
 package com.intellij.aws.cloudformation.references
 
 import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
+import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.CloudFormationResolve
 import com.intellij.aws.cloudformation.CloudFormationSection
-import com.intellij.json.psi.JsonLiteral
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.psi.PsiElement
 
-class CloudFormationEntityReference(element: JsonLiteral,
+class CloudFormationEntityReference(element: JsonStringLiteral,
                                     private val myPossibleSections: Collection<CloudFormationSection>,
                                     private val myExcludeFromVariants: Collection<String>?) : CloudFormationReferenceBase(element) {
 
@@ -16,12 +16,16 @@ class CloudFormationEntityReference(element: JsonLiteral,
   }
 
   override fun resolve(): PsiElement? {
-    val entityName = StringUtil.stripQuotesAroundValue(StringUtil.notNullize(myElement.text))
-    return CloudFormationResolve.resolveEntity(myElement.containingFile, entityName, myPossibleSections)
+    val entityName = myElement.value
+    val parsed = CloudFormationParser.parse(element.containingFile)
+
+    val node = CloudFormationResolve.resolveEntity(parsed, entityName, myPossibleSections) ?: return null
+    return parsed.getPsiElement(node)
   }
 
   override fun getCompletionVariants(): List<String> {
-    val entities = CloudFormationResolve.getEntities(myElement.containingFile, myPossibleSections.map { it.id }).toMutableSet()
+    val parsed = CloudFormationParser.parse(element.containingFile)
+    val entities = CloudFormationResolve.getEntities(parsed, myPossibleSections).toMutableSet()
 
     if (myPossibleSections.contains(CloudFormationSection.Parameters)) {
       entities.addAll(CloudFormationMetadataProvider.METADATA.predefinedParameters)

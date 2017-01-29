@@ -1,12 +1,16 @@
 package com.intellij.aws.cloudformation
 
-import com.google.common.collect.HashBiMap
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Multimap
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
+import com.intellij.aws.cloudformation.model.CfnConditionNode
+import com.intellij.aws.cloudformation.model.CfnConditionsNode
 import com.intellij.aws.cloudformation.model.CfnExpressionNode
 import com.intellij.aws.cloudformation.model.CfnFirstLevelMappingNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnMappingValue
 import com.intellij.aws.cloudformation.model.CfnMappingsNode
+import com.intellij.aws.cloudformation.model.CfnMetadataNode
 import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
@@ -37,10 +41,16 @@ import java.util.ArrayList
 
 class JsonCloudFormationParser private constructor () {
   private val myProblems = ArrayList<CloudFormationProblem>()
-  private val myNodesMap = HashBiMap.create<PsiElement, CfnNode>()
+  private val node2psi = mutableMapOf<CfnNode, PsiElement>()
+  private val psi2node: Multimap<PsiElement, CfnNode> = ArrayListMultimap.create()
 
   private fun <T : CfnNode> T.registerNode(psiElement: PsiElement): T {
-    myNodesMap.put(psiElement, this)
+    assert(!psi2node.containsKey(psiElement)) { "Psi Elements map already has $psiElement" } // No known exceptions in JSON
+    assert(!node2psi.containsKey(this)) { "Nodes map already has $psiElement" }
+
+    psi2node.put(psiElement, this)
+    node2psi.put(this, psiElement)
+
     return this
   }
 
@@ -71,15 +81,8 @@ class JsonCloudFormationParser private constructor () {
         CloudFormationSection.Description -> { checkAndGetUnquotedStringText(value); null }
         CloudFormationSection.Parameters -> parameters(property)
         CloudFormationSection.Resources -> resources(property)
-        CloudFormationSection.Conditions -> {
-          // TODO
-          null
-        }
-        CloudFormationSection.Metadata -> {
-          // Generic content inside, no need to check
-          // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
-          null
-        }
+        CloudFormationSection.Conditions -> conditions(property)
+        CloudFormationSection.Metadata -> metadata(property)
         CloudFormationSection.Outputs -> outputs(property)
         CloudFormationSection.Mappings -> mappings(property)
         else -> {
@@ -94,10 +97,12 @@ class JsonCloudFormationParser private constructor () {
     // Duplicate keys should be handled by YAML support,
     // TODO known issue: https://youtrack.jetbrains.com/issue/RUBY-19094
     return CfnRootNode(
+        lookupSection<CfnMetadataNode>(sections),
         lookupSection<CfnParametersNode>(sections),
+        lookupSection<CfnMappingsNode>(sections),
+        lookupSection<CfnConditionsNode>(sections),
         lookupSection<CfnResourcesNode>(sections),
-        lookupSection<CfnOutputsNode>(sections),
-        lookupSection<CfnMappingsNode>(sections)
+        lookupSection<CfnOutputsNode>(sections)
     ).registerNode(root)
   }
 
@@ -127,9 +132,18 @@ class JsonCloudFormationParser private constructor () {
     return resultFactory(nameNode, list).registerNode(property)
   }
 
+  private fun metadata(metadata: JsonProperty): CfnMetadataNode =
+      CfnMetadataNode(keyName(metadata), expression(metadata.value!!)).registerNode(metadata)
+
+  private fun conditions(conditions: JsonProperty): CfnConditionsNode = parseNameValues(
+      conditions,
+      { node -> CfnConditionNode(keyName(node), expression(node.value!!)).registerNode(node) },
+      { nameNode, list -> CfnConditionsNode(nameNode, list) }
+  )
+
   private fun outputs(outputs: JsonProperty): CfnOutputsNode = parseNameValues(
       outputs,
-      { output -> CfnOutputNode(keyName(output), expression(output.value!!)) },
+      { output -> CfnOutputNode(keyName(output), expression(output.value!!)).registerNode(output) },
       { nameNode, list -> CfnOutputsNode(nameNode, list) }
   )
 
@@ -141,7 +155,7 @@ class JsonCloudFormationParser private constructor () {
 
   private fun parameter(parameter: JsonProperty): CfnParameterNode = parseNameValues(
       parameter,
-      { node -> CfnNameValueNode(keyName(node), node.value?.let { expression(it) }) },
+      { node -> CfnNameValueNode(keyName(node), node.value?.let { expression(it) }).registerNode(node) },
       { nameNode, list -> CfnParameterNode(nameNode, list) }
   )
 
@@ -159,7 +173,7 @@ class JsonCloudFormationParser private constructor () {
 
   private fun secondLevelMapping(mapping: JsonProperty): CfnSecondLevelMappingNode = parseNameValues(
       mapping,
-      { node -> CfnMappingValue(keyName(node), checkAndGetStringElement(node.value)) },
+      { node -> CfnMappingValue(keyName(node), checkAndGetStringElement(node.value)).registerNode(node) },
       { nameNode, list -> CfnSecondLevelMappingNode(nameNode, list) }
   )
 
@@ -213,13 +227,7 @@ class JsonCloudFormationParser private constructor () {
 
       if (!topLevelProperties.containsKey(propertyName)) {
         val nameNode = CfnScalarValueNode(propertyName).registerNode(property.nameElement)
-
-        val valueElement = property.value
-        val valueNode = if (valueElement != null) {
-          CfnScalarValueNode(propertyName).registerNode(valueElement)
-        } else {
-          CfnScalarValueNode("")
-        }
+        val valueNode = property.value?.let { expression(it) }
 
         topLevelProperties.put(propertyName, CfnNameValueNode(nameNode, valueNode).registerNode(property))
       }
@@ -367,7 +375,7 @@ class JsonCloudFormationParser private constructor () {
       val parser = JsonCloudFormationParser()
       val rootNode = parser.file(psiFile)
 
-      return CloudFormationParsedFile(parser.myProblems, parser.myNodesMap, rootNode)
+      return CloudFormationParsedFile(parser.myProblems, parser.node2psi, parser.psi2node, rootNode, psiFile.modificationStamp)
     }
   }
 }

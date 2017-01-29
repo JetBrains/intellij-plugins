@@ -22,7 +22,10 @@ Outputs:
 0: Too many values
 
 CfnRootNode{
+  metadataNode=<null>
   parametersNode=<null>
+  mappingsNode=<null>
+  conditionsNode=<null>
   resourcesNode=<null>
   outputsNode=CfnOutputsNode{
     properties=[
@@ -152,5 +155,4 @@ CfnRootNode{
       value=Outputs
     }
   }
-  mappingsNode=<null>
 }

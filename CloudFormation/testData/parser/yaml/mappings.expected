@@ -1,8 +1,7 @@
 No problems
 CfnRootNode{
+  metadataNode=<null>
   parametersNode=<null>
-  resourcesNode=<null>
-  outputsNode=<null>
   mappingsNode=CfnMappingsNode{
     mappings=[
       CfnFirstLevelMappingNode{
@@ -63,4 +62,7 @@ CfnRootNode{
       value=Mappings
     }
   }
+  conditionsNode=<null>
+  resourcesNode=<null>
+  outputsNode=<null>
 }

@@ -1,11 +1,11 @@
 package com.intellij.aws.cloudformation.references
 
 import com.intellij.json.psi.JsonElementGenerator
-import com.intellij.json.psi.JsonLiteral
+import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceBase
 
-abstract class CloudFormationReferenceBase(element: JsonLiteral) : PsiReferenceBase<JsonLiteral>(element) {
+abstract class CloudFormationReferenceBase(element: JsonStringLiteral) : PsiReferenceBase<JsonStringLiteral>(element) {
   override fun getVariants(): Array<Any> {
     return getCompletionVariants().toTypedArray()
   }

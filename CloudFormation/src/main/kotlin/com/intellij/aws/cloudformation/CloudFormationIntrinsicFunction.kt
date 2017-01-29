@@ -7,9 +7,15 @@ enum class CloudFormationIntrinsicFunction(val id: String) {
   FnGetAZs("Fn::GetAZs"),
   FnJoin("Fn::Join"),
   FnSelect("Fn::Select"),
-  FnIf("Fn::If"),
   FnSub("Fn::Sub"),
-  Ref("Ref");
+  Ref("Ref"),
+
+  // Conditions
+  FnAnd("Fn::And"),
+  FnEquals("Fn::Equals"),
+  FnIf("Fn::If"),
+  FnNot("Fn::Not"),
+  FnOr("Fn::Or");
 
   val shortForm = if (this.id.startsWith("Fn::")) id.substring("Fn::".length) else id
 

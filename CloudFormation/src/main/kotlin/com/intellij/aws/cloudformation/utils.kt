@@ -16,6 +16,8 @@ fun findSubArray(array: ByteArray, subArray: ByteArray): Int {
 
 inline fun <reified T> lookupSection(sections: List<CfnNode>): T? = sections.singleOrNull { it is T } as T?
 
+inline fun <reified T : Any> Collection<*>.ofType(): Collection<T> = this.mapNotNull { it as? T }
+
 fun detectFileTypeFromContent(file: VirtualFile, signatureBytes: ByteArray): Boolean {
   if (file is StubVirtualFile) {
     // Helps New -> File get correct file type
