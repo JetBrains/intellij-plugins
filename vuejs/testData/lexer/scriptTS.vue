@@ -1,0 +1,3 @@
+<script lang="typescript">
+(() => {})();
+</script>

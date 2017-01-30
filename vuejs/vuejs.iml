@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -20,5 +21,11 @@
     <orderEntry type="module" module-name="javascript-psi-impl" />
     <orderEntry type="module" module-name="indexing-impl" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
+    <orderEntry type="module" module-name="Jade" scope="TEST" />
+    <orderEntry type="module" module-name="css-api" scope="TEST" />
+    <orderEntry type="module" module-name="sass" scope="TEST" />
+    <orderEntry type="module" module-name="testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="JavaScriptDebugger" />
+    <orderEntry type="module" module-name="css-psi-impl" scope="TEST" />
   </component>
 </module>
