@@ -18,4 +18,14 @@ class Foo {
   Foo({bar: "", baz: ""}) {
     a.hashCode;
   }
+
+  double foo({
+  int firstIndex,
+  int lastIndex,
+    });
+
+  double foo([
+  int firstIndex,
+  int lastIndex,
+    ]);
 }
