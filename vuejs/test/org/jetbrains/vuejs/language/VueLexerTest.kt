@@ -1,6 +1,7 @@
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.LanguageHtmlScriptContentProvider
+import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.dialects.ECMA6SyntaxHighlighterFactory
@@ -16,6 +17,7 @@ import com.intellij.testFramework.TestDataPath
 import com.jetbrains.plugins.jade.JadeLanguage
 import com.jetbrains.plugins.jade.psi.impl.JadeScriptContentProvider
 import org.jetbrains.plugins.sass.SASSLanguage
+import org.jetbrains.plugins.sass.SASSParserDefinition
 import org.jetbrains.plugins.sass.SassTokenTypesProvider
 import org.jetbrains.plugins.sass.highlighting.SASSSyntaxHighlighterFactory
 
@@ -37,6 +39,7 @@ open class VueLexerTest : LexerTestCase() {
       }
       val extensionPoint = area.getExtensionPoint<EmbeddedTokenTypesProvider>(extensionName)
       extensionPoint.registerExtension(SassTokenTypesProvider())
+      LanguageParserDefinitions.INSTANCE.addExplicitExtension(SASSLanguage.INSTANCE, SASSParserDefinition())
     }
 
     fun registerScriptTokens() {
@@ -55,6 +58,7 @@ open class VueLexerTest : LexerTestCase() {
 
   fun testStyleEmpty() = doFileTest("vue")
   fun testStyleSass() = doFileTest("vue")
+  fun testStyleSassAfterTemplate() = doFileTest("vue")
 
   fun testTemplateEmpty() = doFileTest("vue")
   fun testTemplateJade() = doFileTest("vue")
