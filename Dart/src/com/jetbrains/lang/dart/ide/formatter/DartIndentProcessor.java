@@ -126,7 +126,7 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
     if (parentType == ARGUMENTS) {
-      if (mode == FormattingMode.ADJUST_INDENT_ON_ENTER) {
+      if (mode == FormattingMode.ADJUST_INDENT) {
         ASTNode last = node.getLastChildNode();
         if (last == null) return Indent.getNoneIndent();
         return last.getElementType() == COMMA && superParentType != METADATA
