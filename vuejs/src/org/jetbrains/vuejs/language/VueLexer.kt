@@ -12,6 +12,7 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
   init {
     registerHandler(XmlTokenType.XML_NAME, VueLangAttributeHandler())
     registerHandler(XmlTokenType.XML_NAME, VueTemplateTagHandler())
+    registerHandler(XmlTokenType.XML_TAG_END, VueTagClosedHandler())
     val scriptCleaner = VueTemplateCleaner()
     registerHandler(XmlTokenType.XML_END_TAG_START, scriptCleaner)
     registerHandler(XmlTokenType.XML_EMPTY_ELEMENT_END, scriptCleaner)
