@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.fixes;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.annotator.DartProblemGroup;
 import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
@@ -22,8 +23,7 @@ public class DartQuickFixSet {
   @NotNull private final String myErrorSeverity;
 
   @NotNull private final List<DartQuickFix> myQuickFixes = new ArrayList<>(MAX_QUICK_FIXES);
-  private long myPsiModCount;
-
+  private volatile long myPsiModCountWhenRequestSent;
 
   public DartQuickFixSet(@NotNull final PsiManager psiManager,
                          @NotNull final VirtualFile file,
@@ -46,32 +46,42 @@ public class DartQuickFixSet {
     return myQuickFixes;
   }
 
-  void ensureInitialized() {
+  synchronized void ensureInitialized() {
     final long modCount = myPsiManager.getModificationTracker().getModificationCount();
-    if (myPsiModCount == modCount) return;
+    if (myPsiModCountWhenRequestSent == modCount) {
+      return;
+    }
 
-    myPsiModCount = modCount;
+    myPsiModCountWhenRequestSent = modCount;
 
     for (DartQuickFix fix : myQuickFixes) {
       fix.setSourceChange(null);
     }
 
-    final List<AnalysisErrorFixes> fixes = DartAnalysisServerService.getInstance(myPsiManager.getProject()).edit_getFixes(myFile, myOffset);
-    if (fixes == null || fixes.isEmpty()) {
-      if (myErrorCode != null) {
-        myQuickFixes.get(0).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, false));
-        myQuickFixes.get(1).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, true));
+    final Consumer<List<AnalysisErrorFixes>> consumer = fixes -> {
+      final long modCountWhenReceivedFixes = myPsiManager.getModificationTracker().getModificationCount();
+      if (myPsiModCountWhenRequestSent != modCountWhenReceivedFixes) {
+        return;
       }
-    }
-    else {
-      int index = 0;
-      for (AnalysisErrorFixes fix : fixes) {
-        for (SourceChange sourceChange : fix.getFixes()) {
-          myQuickFixes.get(index).setSourceChange(sourceChange);
-          index++;
-          if (index == MAX_QUICK_FIXES) return;
+
+      if (fixes == null || fixes.isEmpty()) {
+        if (myErrorCode != null) {
+          myQuickFixes.get(0).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, false));
+          myQuickFixes.get(1).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, true));
         }
       }
-    }
+      else {
+        int index = 0;
+        for (AnalysisErrorFixes fix : fixes) {
+          for (SourceChange sourceChange : fix.getFixes()) {
+            myQuickFixes.get(index).setSourceChange(sourceChange);
+            index++;
+            if (index == MAX_QUICK_FIXES) return;
+          }
+        }
+      }
+    };
+
+    DartAnalysisServerService.getInstance(myPsiManager.getProject()).askForFixesAndWaitABitIfReceivedQuickly(myFile, myOffset, consumer);
   }
 }

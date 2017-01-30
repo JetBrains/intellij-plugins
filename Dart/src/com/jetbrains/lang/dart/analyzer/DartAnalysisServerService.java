@@ -930,20 +930,24 @@ public class DartAnalysisServerService implements Disposable {
     return results;
   }
 
-  @Nullable
-  public List<AnalysisErrorFixes> edit_getFixes(@NotNull final VirtualFile file, final int _offset) {
+  /**
+   * If server responds in less than <code>GET_FIXES_TIMEOUT</code> then this method can be considered synchronous: when exiting this method
+   * <code>consumer</code> is already notified. Otherwise this method is async.
+   */
+  public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
+                                                      final int _offset,
+                                                      @NotNull final Consumer<List<AnalysisErrorFixes>> consumer) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
-    if (server == null) return null;
+    if (server == null) return;
 
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.edit_getFixes(filePath, offset, new GetFixesConsumer() {
       @Override
       public void computedFixes(final List<AnalysisErrorFixes> fixes) {
-        resultRef.set(fixes);
+        consumer.consume(fixes);
         latch.countDown();
       }
 
@@ -955,7 +959,6 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, GET_FIXES_TIMEOUT);
-    return resultRef.get();
   }
 
   public void search_findElementReferences(@NotNull final VirtualFile file,
