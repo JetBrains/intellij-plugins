@@ -10,7 +10,10 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.JavaSdk;
+import com.intellij.openapi.projectRoots.JavaSdkVersion;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -24,7 +27,12 @@ import org.jetbrains.annotations.Nullable;
 import training.actions.OpenLessonAction;
 import training.learn.exceptons.*;
 import training.learn.log.GlobalLessonLog;
-import training.ui.*;
+import training.ui.FeedbackManager;
+import training.ui.LearnToolWindow;
+import training.ui.LearnToolWindowFactory;
+import training.ui.views.FeedbackFormPanel;
+import training.ui.views.LearnPanel;
+import training.ui.views.ModulesPanel;
 import training.util.GenModuleXml;
 
 import java.awt.*;
@@ -49,7 +57,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private Project learnProject;
     private LearnPanel myLearnPanel;
     public final static String LEARN_PROJECT_NAME = "LearnProject";
-    private MainLearnPanel mainLearnPanel;
+    private ModulesPanel modulesPanel;
     public static final String NOTIFICATION_ID = "Training plugin";
 
     CourseManager() {
@@ -120,7 +128,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
         final Component focusOwner = IdeFocusManager.getInstance(project).getFocusOwner();
         DataContext parent = DataManager.getInstance().getDataContext(focusOwner);
-        final DataContext context = SimpleDataContext.getSimpleContext(OpenLessonAction.LESSON_DATA_KEY.getName(), lesson, parent);
+        final DataContext context = SimpleDataContext.getSimpleContext(OpenLessonAction.Companion.getLESSON_DATA_KEY().getName(), lesson, parent);
         final AnActionEvent event = AnActionEvent.createFromAnAction(action, null, "", context);
 
         ActionUtil.performActionDumbAware(action, event);
@@ -214,12 +222,12 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return myLearnPanel;
     }
 
-    public void setMainLearnPanel(MainLearnPanel mainLearnPanel) {
-        this.mainLearnPanel = mainLearnPanel;
+    public void setModulesPanel(ModulesPanel modulesPanel) {
+        this.modulesPanel = modulesPanel;
     }
 
-    public MainLearnPanel getMainLearnPanel() {
-        return mainLearnPanel;
+    public ModulesPanel getModulesPanel() {
+        return modulesPanel;
     }
 
     public void updateToolWindowScrollPane() {
@@ -332,11 +340,11 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     public void setModulesView() {
-        MainLearnPanel mainLearnPanel = getMainLearnPanel();
-        mainLearnPanel.updateMainPanel();
+        ModulesPanel modulesPanel = getModulesPanel();
+        modulesPanel.updateMainPanel();
         final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
-        scrollPane.setViewportView(mainLearnPanel);
+        scrollPane.setViewportView(modulesPanel);
         scrollPane.revalidate();
         scrollPane.repaint();
     }

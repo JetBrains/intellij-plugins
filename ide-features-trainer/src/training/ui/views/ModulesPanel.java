@@ -1,10 +1,8 @@
-package training.ui;
+package training.ui.views;
 
-import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.LinkLabel;
@@ -12,13 +10,14 @@ import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.learn.LearnBundle;
-import training.learn.Module;
 import training.learn.CourseManager;
+import training.learn.LearnBundle;
 import training.learn.Lesson;
+import training.learn.Module;
+import training.ui.LearnIcons;
+import training.ui.LearnUIManager;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -29,7 +28,7 @@ import java.awt.event.MouseListener;
 /**
  * Created by karashevich on 26/06/15.
  */
-public class MainLearnPanel extends JPanel {
+public class ModulesPanel extends JPanel {
 
     private static SimpleAttributeSet REGULAR = new SimpleAttributeSet();
     private static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
@@ -40,7 +39,7 @@ public class MainLearnPanel extends JPanel {
 
     private BidirectionalMap<Module, LinkLabel> module2linklabel;
 
-    MainLearnPanel() {
+    public ModulesPanel() {
         super();
         module2linklabel = new BidirectionalMap<>();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

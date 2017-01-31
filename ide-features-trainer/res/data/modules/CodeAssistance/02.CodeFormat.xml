@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Code Formatting" passed="false" version="0.1" subtype="aimless" projectTree="hide">
+<xml type="Scenario" name="Code Formatting" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
         <CopyText>class CodeFormatDemo{
 
     final static int a_const = 10000;

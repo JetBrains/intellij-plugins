@@ -3,8 +3,8 @@ package training.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.wm.ToolWindowManager;
-import training.ui.LearnPanel;
 import training.ui.LearnToolWindowFactory;
+import training.ui.views.LearnPanel;
 
 import java.awt.*;
 
