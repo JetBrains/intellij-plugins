@@ -338,27 +338,22 @@ class OpenLessonAction : AnAction() {
                 }
 
             }
-            //Set language level for LearnProject
-            LanguageLevelProjectExtensionImpl.getInstanceImpl(myLearnProject).currentLevel = LanguageLevel.JDK_1_6
+
+            LangManager.getInstance().mySupportedLanguage!!.applyToProjectAfterConfigure().invoke(myLearnProject!!)
         }
 
-        if (myLearnProject != null) {
+        CourseManager.getInstance().learnProject = myLearnProject
 
-            CourseManager.getInstance().learnProject = myLearnProject
+        assert(CourseManager.getInstance().learnProject != null)
+        assert(CourseManager.getInstance().learnProject!!.projectFile != null)
+        assert(CourseManager.getInstance().learnProject!!.projectFile!!.parent != null)
+        assert(CourseManager.getInstance().learnProject!!.projectFile!!.parent.parent != null)
 
-            assert(CourseManager.getInstance().learnProject != null)
-            assert(CourseManager.getInstance().learnProject!!.projectFile != null)
-            assert(CourseManager.getInstance().learnProject!!.projectFile!!.parent != null)
-            assert(CourseManager.getInstance().learnProject!!.projectFile!!.parent.parent != null)
+        CourseManager.getInstance().learnProjectPath = CourseManager.getInstance().learnProject!!.basePath
+        //Hide LearnProject from Recent projects
+        RecentProjectsManager.getInstance().removePath(CourseManager.getInstance().learnProject!!.presentableUrl)
 
-            CourseManager.getInstance().learnProjectPath = CourseManager.getInstance().learnProject!!.basePath
-            //Hide LearnProject from Recent projects
-            RecentProjectsManager.getInstance().removePath(CourseManager.getInstance().learnProject!!.presentableUrl)
-
-            return myLearnProject
-        }
-
-        return null
+        return myLearnProject
 
     }
 //

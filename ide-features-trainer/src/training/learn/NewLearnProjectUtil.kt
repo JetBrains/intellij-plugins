@@ -77,8 +77,8 @@ object NewLearnProjectUtil {
             }
 
             newProject.save()
-
             return newProject
+
         } finally {
             projectBuilder.cleanup()
         }
