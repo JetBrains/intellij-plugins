@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <idea-plugin>
 
     <extensions defaultExtensionNs="training">
-        <TrainingLangExtension implementation="training.lang.PythonLangSupport" />
+        <TrainingLangExtension language="Python" implementationClass="training.lang.PythonLangSupport"/>
     </extensions>
 
 </idea-plugin>

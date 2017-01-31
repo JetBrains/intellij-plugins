@@ -6,7 +6,9 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
+import com.intellij.openapi.roots.impl.LanguageLevelProjectExtensionImpl
 import com.intellij.openapi.util.Computable
+import com.intellij.pom.java.LanguageLevel
 import training.learn.Lesson
 import training.util.JdkSetupUtil
 import java.util.*
@@ -23,21 +25,17 @@ class JavaLangSupport : LangSupport {
     override val FILE_EXTENSION: String
         get() = "java"
 
-    override fun initLearnProject(project: Project?): Project {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getLangName() = "Java"
-
-    override fun openLessonInFile(lesson: Lesson) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     override fun applyProjectSdk(): (Project) -> Unit = { newProject ->
         val projectSdk = getJavaSdkInWA()
         if (projectSdk != null) {
             CommandProcessor.getInstance().executeCommand(newProject, { ApplicationManager.getApplication().runWriteAction { NewProjectUtil.applyJdkToProject(newProject, projectSdk) } }, null, null)
         }
+    }
+
+    override fun applyToProjectAfterConfigure(): (Project) -> Unit = { newProject ->
+        //Set language level for LearnProject
+        LanguageLevelProjectExtensionImpl.getInstanceImpl(newProject).currentLevel = LanguageLevel.JDK_1_6
     }
 
 

@@ -8,14 +8,7 @@ import training.learn.Lesson
  */
 class MockLangSupport(override val FILE_EXTENSION: String) : LangSupport {
 
-    override fun getLangName() = FILE_EXTENSION
-
-    override fun openLessonInFile(lesson: Lesson) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-
-    override fun initLearnProject(project: Project?): Project {
+    override fun applyToProjectAfterConfigure(): (Project) -> Unit {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

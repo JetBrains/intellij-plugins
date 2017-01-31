@@ -1,13 +1,13 @@
 package training.lang
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import training.learn.Lesson
 
 /**
  * @author Sergey Karashevich
  */
 class PythonLangSupport: LangSupport {
-
 
     private val acceptableExtensions = setOf("py", "html")
 
@@ -16,17 +16,12 @@ class PythonLangSupport: LangSupport {
     override val FILE_EXTENSION: String
         get() = "py"
 
-    override fun getLangName() = "Python"
+    override fun applyProjectSdk(): (Project) -> Unit = { project ->
+        val rootManager = ProjectRootManagerEx.getInstanceEx(project)
+//        rootManager.projectSdk = sdk
 
-    override fun applyProjectSdk(): (Project) -> Unit = {}
-
-    override fun initLearnProject(project: Project?): Project {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-
-    override fun openLessonInFile(lesson: Lesson) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun applyToProjectAfterConfigure(): (Project) -> Unit = {}
 
 }
