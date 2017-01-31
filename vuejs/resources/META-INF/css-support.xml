@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <css.embeddedCssProvider implementation="org.jetbrains.vuejs.codeInsight.VueEmbeddedCssProvider"/>
+  </extensions>
+</idea-plugin>
