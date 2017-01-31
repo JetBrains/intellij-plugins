@@ -35,7 +35,7 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
       SchemaPrefix attribute = findAttributeSchema(context, namespacePrefix, 0);
       if (attribute != null) return attribute;
     }
-    if (namespacePrefix != null && namespacePrefix.startsWith("(")) {
+    if (namespacePrefix != null && (namespacePrefix.startsWith("(") || namespacePrefix.startsWith("["))) {
       SchemaPrefix attribute = findAttributeSchema(context, namespacePrefix, 1);
       if (attribute != null) return attribute;
     }

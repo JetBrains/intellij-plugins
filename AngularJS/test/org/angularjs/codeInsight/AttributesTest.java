@@ -677,6 +677,15 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testEventNamespace() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("eventNamespace.html", "angular2.js");
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(XmlUnboundNsPrefixInspection.class);
+      myFixture.checkHighlighting();
+    });
+  }
+
   public void testCssExternalReference20() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("cssExtRef.ts", "angular2.js", "css.css");
