@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement
 import name.kropp.intellij.makefile.psi.MakefileTarget
 
 class MakefileRunConfigurationProducer : RunConfigurationProducer<MakefileRunConfiguration>(MakefileRunConfigurationType()) {
-  override fun setupConfigurationFromContext(configuration : MakefileRunConfiguration, context: ConfigurationContext, sourceElement: Ref<PsiElement>?): Boolean {
+  public override fun setupConfigurationFromContext(configuration : MakefileRunConfiguration, context: ConfigurationContext, sourceElement: Ref<PsiElement>?): Boolean {
     if (context.psiLocation?.containingFile !is MakefileFile) {
       return false
     }
