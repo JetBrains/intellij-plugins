@@ -1,4 +1,4 @@
-package training.ui;
+package training.ui.views;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -12,6 +12,10 @@ import training.learn.CourseManager;
 import training.learn.LearnBundle;
 import training.learn.Lesson;
 import training.learn.Module;
+import training.ui.LearnIcons;
+import training.ui.LearnUIManager;
+import training.ui.LessonMessagePane;
+import training.ui.Message;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -47,7 +51,7 @@ public class LearnPanel extends JPanel {
     //modulePanel UI
     private BoxLayout lessonPanelBoxLayout;
 
-    LearnPanel() {
+    public LearnPanel() {
         super();
         boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(boxLayout);

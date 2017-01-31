@@ -3,7 +3,9 @@ package training.ui;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.popup.*;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.BalloonBuilder;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -12,11 +14,10 @@ import training.learn.CourseManager;
 import training.learn.LearnBundle;
 import training.statistic.FeedbackEvent;
 import training.statistic.FeedbackSender;
+import training.ui.views.FeedbackFormPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
-
-import static training.util.PerformActionUtil.performAction;
 
 /**
  * Created by karashevich on 18/07/16.
@@ -82,10 +83,10 @@ public class FeedbackManager {
         return myFeedbackFormPanel;
     }
 
-    class RateQuestion{
-        String question;
-        String lowRate;
-        String maxRate;
+    public class RateQuestion{
+        public String question;
+        public String lowRate;
+        public String maxRate;
 
         RateQuestion(@NotNull String question, @Nullable String lowRate, @Nullable String maxRate){
             this.question = question;
@@ -107,7 +108,7 @@ public class FeedbackManager {
         }
         CourseManager.getInstance().setModulesView();
         try {
-            showBalloon(CourseManager.getInstance().getMainLearnPanel().getSendFeedbackPosition(), LearnBundle.message("learn.feedback.submit.success"), MessageType.WARNING.getPopupBackground());
+            showBalloon(CourseManager.getInstance().getModulesPanel().getSendFeedbackPosition(), LearnBundle.message("learn.feedback.submit.success"), MessageType.WARNING.getPopupBackground());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

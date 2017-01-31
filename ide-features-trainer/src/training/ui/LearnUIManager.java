@@ -5,6 +5,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.SimpleAttributeSet;
@@ -94,8 +95,10 @@ public class LearnUIManager {
         checkRightIndent = 5;
         leftIndent = 17;
 
-        fontFace = UISettings.getInstance().FONT_FACE;
-        fontSize = UISettings.getInstance().FONT_SIZE;
+        fontFace = UISettings.getShadowInstance().FONT_FACE;
+        if (fontFace == null) fontFace = (new JLabel()).getFont().getFontName();
+        fontSize = UISettings.getShadowInstance().FONT_SIZE;
+        if (fontSize == 0) fontSize = 13;
     }
 
     private void initGaps() {

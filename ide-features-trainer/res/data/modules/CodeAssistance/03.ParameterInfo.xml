@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Parameter Info" passed="false" version="0.1" subtype="aimless" projectTree="hide">
+<xml type="Scenario" name="Parameter Info" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
     <MouseBlock><CopyText>import javax.swing.*;
 
 class FrameDemo {

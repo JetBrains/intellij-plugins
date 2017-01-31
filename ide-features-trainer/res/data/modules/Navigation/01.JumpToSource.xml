@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Jump to Source" passed="false" version="0.1" subtype="aimless" projectTree="hide">
+<xml type="Scenario" name="Jump to Source" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
     <MouseBlock><CopyText>import java.lang.String;
 import java.util.HashMap;
 
