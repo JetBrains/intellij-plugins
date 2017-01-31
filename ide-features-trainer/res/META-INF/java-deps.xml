@@ -4,7 +4,7 @@
 <idea-plugin>
 
     <extensions defaultExtensionNs="training">
-        <TrainingLangExtension implementation="training.lang.JavaLangSupport" />
+        <TrainingLangExtension language="JAVA" implementationClass="training.lang.JavaLangSupport"/>
     </extensions>
 
 </idea-plugin>

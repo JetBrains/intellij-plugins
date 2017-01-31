@@ -23,11 +23,10 @@ class StartLearnAction : AnAction(LearnBundle.message("learn.WelcomeScreen.Start
         if (LangManager.getInstance().isLangUndefined()) {
             val dialog = MyDialog().initialize()
             with (dialog) {
-//                if (showAndGet()) {
-//                    LangManager.getInstance().mySupportedLanguage = this.myLangChoosePanel.getActiveLangSupport()
-//                    doAction()
-//                }
-                show()
+                if (showAndGet()) {
+                    LangManager.getInstance().mySupportedLanguage = this.myLangChoosePanel.getActiveLangSupport()
+                    doAction()
+                }
             }
         } else
            doAction()

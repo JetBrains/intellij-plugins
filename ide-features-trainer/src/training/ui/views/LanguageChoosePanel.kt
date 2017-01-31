@@ -1,5 +1,6 @@
 package training.ui.views
 
+import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.util.containers.HashMap
 import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
@@ -31,7 +32,7 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
     private var gotoModulesViewButton: JButton? = null
     private val myAddButton: Boolean = addButton
 
-    private val myRadioButtonMap = HashMap<JRadioButton, LangSupport>()
+    private val myRadioButtonMap = HashMap<JRadioButton, LanguageExtensionPoint<LangSupport>>()
     private val buttonGroup = ButtonGroup()
 
     init {
@@ -136,9 +137,9 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         radioButtonPanel.border = EmptyBorder(0, 12, 0, 0)
         radioButtonPanel.layout = BoxLayout(radioButtonPanel, BoxLayout.PAGE_AXIS)
 
-        for (langSupport in LangManager.getInstance().supportedLanguages) {
+        for (langSupport in LangManager.getInstance().supportedLanguagesExtensions) {
 
-            val jrb = JRadioButton(langSupport.getLangName())
+            val jrb = JRadioButton(langSupport.language)
             buttonGroup.add(jrb)
             //add radio buttons
             myRadioButtonMap.put(jrb, langSupport)
@@ -190,7 +191,7 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         val activeButton: AbstractButton = buttonGroup.elements.toList().find { button -> button.isSelected } ?: throw Exception("Unable to get active language")
         assert (activeButton is JRadioButton)
         assert (myRadioButtonMap.containsKey(activeButton))
-        return myRadioButtonMap[activeButton]!!
+        return myRadioButtonMap[activeButton]!!.instance
     }
 
     companion object {
