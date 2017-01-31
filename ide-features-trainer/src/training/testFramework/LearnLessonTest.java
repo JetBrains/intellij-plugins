@@ -6,20 +6,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
+import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.commands.BadCommandException;
-import training.learn.Module;
 import training.learn.CourseManager;
 import training.learn.Lesson;
-
-import java.util.concurrent.ExecutionException;
+import training.learn.Module;
 
 /**
  * Created by karashevich on 28/10/15.
@@ -104,11 +101,14 @@ public abstract class LearnLessonTest extends UsefulTestCase implements LessonSo
             while(!myLesson.getPassed()){
                 //pumpEvents
                 com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
-                EdtTestUtil.runInEdtAndWait((Runnable) () -> {
-                    try {
-                        solveStep();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
+                    @Override
+                    public void run() {
+                        try {
+                            solveStep();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }

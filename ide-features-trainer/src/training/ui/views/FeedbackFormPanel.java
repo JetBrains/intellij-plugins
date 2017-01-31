@@ -1,4 +1,4 @@
-package training.ui;
+package training.ui.views;
 
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ui.components.labels.LinkLabel;
@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import training.learn.CourseManager;
 import training.learn.LearnBundle;
 import training.statistic.FeedbackEvent;
+import training.ui.FeedbackManager;
+import training.ui.LearnUIManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -46,7 +48,7 @@ public class FeedbackFormPanel extends JPanel {
 
     private JButton submitFeedbackButton;
     private JPanel submitFeedbackButtonPanel;
-    AsyncProcessIcon submitFeedbackAsyncProcessIcon;
+    public AsyncProcessIcon submitFeedbackAsyncProcessIcon;
 
 
     public FeedbackFormPanel() {
@@ -296,12 +298,12 @@ public class FeedbackFormPanel extends JPanel {
         else return UIUtil.getPanelBackground();
     }
 
-    Point getButtonPosition() {
+    public Point getButtonPosition() {
         Point locationOnScreen = submitFeedbackButton.getLocationOnScreen();
         return new Point(locationOnScreen.x + submitFeedbackButton.getWidth() / 2, locationOnScreen.y);
     }
 
-    void setButtonActive() {
+    public void setButtonActive() {
         submitFeedbackButton.setEnabled(true);
     }
 

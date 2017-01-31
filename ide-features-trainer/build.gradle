@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlinVersion='1.0.2'
+    ext.kotlinVersion='1.0.6'
     repositories {
         mavenLocal()
         mavenCentral()
@@ -34,9 +34,11 @@ apply plugin: "kotlin"
 
 sourceCompatibility = 1.8
 
-intellij{
-//    alternativeIdePath="path/to/locally/installed/AppCode.app"
-    version '2016.2'
+intellij {
+//    alternativeIdePath="/Users/jetbrains/Library/Application Support/JetBrains/Toolbox/apps/PyCharm-C/ch-0/163.8233.8/PyCharm CE.app"
+//    version '2016.3'
+    type 'IU'
+//    type 'WS'
     updateSinceUntilBuild = false
     publish {
         username repoUser

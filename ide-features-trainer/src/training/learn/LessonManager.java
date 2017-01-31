@@ -5,20 +5,14 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
 import training.editor.MouseListenerHolder;
 import training.editor.actions.BlockCaretAction;
 import training.editor.actions.LearnActions;
 import training.ui.LearnBalloonBuilder;
-import training.ui.LearnPanel;
 import training.ui.Message;
+import training.ui.views.LearnPanel;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**

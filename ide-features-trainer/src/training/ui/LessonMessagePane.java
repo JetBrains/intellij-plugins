@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Created by karashevich on 01/09/15.
  */
 
-class LessonMessagePane extends JTextPane {
+public class LessonMessagePane extends JTextPane {
 
     //Style Attributes for LessonMessagePane(JTextPane)
     private static SimpleAttributeSet REGULAR = new SimpleAttributeSet();
@@ -37,7 +37,7 @@ class LessonMessagePane extends JTextPane {
     private String fontFamily;
 
     //, fontFace, check_width + check_right_indent
-    LessonMessagePane() {
+    public LessonMessagePane() {
         super();
         initStyleConstants();
         setEditable(false);
@@ -85,7 +85,7 @@ class LessonMessagePane extends JTextPane {
         this.setParagraphAttributes(PARAGRAPH_STYLE, true);
     }
 
-    void addMessage(String text) {
+    public void addMessage(String text) {
         try {
             int start = getDocument().getLength();
             getDocument().insertString(getDocument().getLength(), text, REGULAR);
@@ -97,7 +97,7 @@ class LessonMessagePane extends JTextPane {
         }
     }
 
-    void addMessage(Message[] messages) {
+    public void addMessage(Message[] messages) {
 
         int start = getDocument().getLength();
         if (lessonMessages.size() > 0) {
@@ -152,7 +152,7 @@ class LessonMessagePane extends JTextPane {
     /**
      * inserts a checkmark icon to the end of the LessonMessagePane document as a styled label.
      */
-    void passPreviousMessages() throws BadLocationException {
+    public void passPreviousMessages() throws BadLocationException {
         if (lessonMessages.size() > 0) {
             final LessonMessage lessonMessage = lessonMessages.get(lessonMessages.size() - 1);
             lessonMessage.setPassed(true);

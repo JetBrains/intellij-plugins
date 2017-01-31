@@ -2,9 +2,10 @@ package training.learn;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.learn.exceptons.BadModuleException;
 import training.learn.exceptons.BadLessonException;
+import training.learn.exceptons.BadModuleException;
 import training.learn.exceptons.LessonIsOpenedException;
 import training.learn.exceptons.NoProjectException;
 import training.learn.log.LessonLog;
@@ -71,6 +72,7 @@ public class Lesson {
         this.targetPath = targetPath;
     }
 
+    @NotNull
     public String getLang(){
         return getScn().getLang();
     }
