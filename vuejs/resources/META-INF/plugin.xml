@@ -4,6 +4,7 @@
   <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>
+  <depends>JavaScriptDebugger</depends>
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -18,5 +19,8 @@
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.jetbrains">
+    <javaScriptDebugAware implementation="org.jetbrains.vuejs.run.VueDebugAware"/>
   </extensions>
 </idea-plugin>
