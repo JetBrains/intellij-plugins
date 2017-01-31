@@ -64,9 +64,10 @@ public class AngularJSInjector implements MultiHostInjector {
 
       final String text = context.getText();
       int endIndex = -1;
+      int afterStart = -1;
       while (true) {
-        final int startIdx = text.indexOf(start, endIndex);
-        int afterStart = startIdx < 0 ? -1 : (startIdx + start.length());
+        final int startIdx = text.indexOf(start, Math.max(endIndex, afterStart));
+        afterStart = startIdx < 0 ? -1 : (startIdx + start.length());
         if (afterStart < 0) return;
         endIndex = afterStart;
         endIndex = InjectorMatchingEndFinder.findMatchingEnd(start, end, text, endIndex);
