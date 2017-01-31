@@ -37,4 +37,32 @@ public class DartStatementMoverTest extends DartCodeMoverTest {
   public void testMinimalMain() {
     doTest(); // Ensure nothing happens even when destLine == 0
   }
+
+  public void testListExpr1() {
+    doTest();
+  }
+
+  public void testListExpr2() {
+    doTest();
+  }
+
+  public void testListExpr3() {
+    doTest();
+  }
+
+  public void testListExpr4() {
+    doTest();
+  }
+
+  public void testListExpr5() {
+    doTest();
+  }
+
+  public void testListExpr6() {
+    doTest(); // Do nothing when no trailing comma
+  }
+
+  public void testListExpr7() {
+    doTest(); // Do nothing when no trailing comma
+  }
 }

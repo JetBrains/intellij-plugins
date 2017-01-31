@@ -2,11 +2,13 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveState;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -23,7 +25,7 @@ import java.util.Set;
 
 public class DartRefactoringUtil {
   public static Set<String> collectUsedNames(PsiElement context) {
-    return new THashSet<>(ContainerUtil.map(collectUsedComponents(context), componentName -> componentName.getName()));
+    return new THashSet<>(ContainerUtil.map(collectUsedComponents(context), NavigationItem::getName));
   }
 
   public static Set<DartComponentName> collectUsedComponents(PsiElement context) {
@@ -69,6 +71,7 @@ public class DartRefactoringUtil {
     return occurrences;
   }
 
+  @NotNull
   public static PsiElement[] findStatementsInRange(PsiFile file, int startOffset, int endOffset) {
     PsiElement element1 = file.findElementAt(startOffset);
     PsiElement element2 = file.findElementAt(endOffset - 1);
@@ -95,7 +98,7 @@ public class DartRefactoringUtil {
 
     // don't forget about leafs (ex. ';')
     final ASTNode[] astResult = UsefulPsiTreeUtil.findChildrenRange(statements.getNode().getChildren(null), startOffset, endOffset);
-    return ContainerUtil.map2Array(astResult, PsiElement.class, node -> node.getPsi());
+    return ContainerUtil.map2Array(astResult, PsiElement.class, ASTNode::getPsi);
   }
 
   @Nullable
@@ -112,5 +115,50 @@ public class DartRefactoringUtil {
     if (expression == null || expression.getTextRange().getEndOffset() != endOffset) return null;
     if (expression instanceof DartReference && expression.getParent() instanceof DartCallExpression) return null;
     return expression;
+  }
+
+  @NotNull
+  public static PsiElement[] findListExpressionInRange(@NotNull PsiFile file, int startOffset, int endOffset) {
+    // startOffset and endOffset are at the beginning of lines
+    // return an expression that spans those lines, plus optional comma if any
+    PsiElement element1 = file.findElementAt(startOffset);
+    PsiElement element2 = file.findElementAt(endOffset - 1);
+    if (element1 instanceof PsiWhiteSpace) {
+      startOffset = element1.getTextRange().getEndOffset();
+    }
+    if (element2 instanceof PsiWhiteSpace) {
+      endOffset = element2.getTextRange().getStartOffset();
+    }
+    DartExpression expression = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, DartExpression.class);
+    if (expression == null) {
+      return PsiElement.EMPTY_ARRAY;
+    }
+    if (expression.getTextRange().getEndOffset() != endOffset) {
+      element2 = file.findElementAt(endOffset - 1);
+      if (isComma(element2)) {
+        PsiElement prev = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(element2, true);
+        if (prev instanceof DartExpressionList) {
+          prev = prev.getLastChild();
+        }
+        if (prev == expression) {
+          return new PsiElement[]{expression, element2};
+        }
+        else {
+          return PsiElement.EMPTY_ARRAY;
+        }
+      }
+      else {
+        return PsiElement.EMPTY_ARRAY;
+      }
+    }
+    return new PsiElement[]{expression};
+  }
+
+  public static boolean isRightParen(PsiElement element) {
+    return element instanceof LeafPsiElement && element.getText().equals(")");
+  }
+
+  public static boolean isComma(PsiElement element) {
+    return element instanceof LeafPsiElement && element.getText().equals(",");
   }
 }
