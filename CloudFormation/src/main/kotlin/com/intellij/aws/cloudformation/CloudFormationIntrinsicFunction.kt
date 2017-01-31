@@ -5,12 +5,14 @@ enum class CloudFormationIntrinsicFunction(val id: String) {
   FnFindInMap("Fn::FindInMap"),
   FnGetAtt("Fn::GetAtt"),
   FnGetAZs("Fn::GetAZs"),
+  FnImportValue("Fn::ImportValue"),
   FnJoin("Fn::Join"),
   FnSelect("Fn::Select"),
   FnSub("Fn::Sub"),
   Ref("Ref"),
 
   // Conditions
+  Condition("Condition"),
   FnAnd("Fn::And"),
   FnEquals("Fn::Equals"),
   FnIf("Fn::If"),

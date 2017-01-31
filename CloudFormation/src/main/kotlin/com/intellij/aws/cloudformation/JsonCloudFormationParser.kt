@@ -19,6 +19,8 @@ import com.intellij.aws.cloudformation.model.CfnOutputNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
 import com.intellij.aws.cloudformation.model.CfnParameterNode
 import com.intellij.aws.cloudformation.model.CfnParametersNode
+import com.intellij.aws.cloudformation.model.CfnResourceConditionNode
+import com.intellij.aws.cloudformation.model.CfnResourceDependsOnNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertiesNode
 import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
@@ -132,18 +134,20 @@ class JsonCloudFormationParser private constructor () {
     return resultFactory(nameNode, list).registerNode(property)
   }
 
-  private fun metadata(metadata: JsonProperty): CfnMetadataNode =
-      CfnMetadataNode(keyName(metadata), expression(metadata.value!!)).registerNode(metadata)
+  private fun metadata(metadata: JsonProperty): CfnMetadataNode {
+    val valueNode = checkAndGetObject(metadata.value)
+    return CfnMetadataNode(keyName(metadata), valueNode?.let { expression(valueNode, AllowFunctions.False) } as? CfnObjectValueNode).registerNode(metadata)
+  }
 
   private fun conditions(conditions: JsonProperty): CfnConditionsNode = parseNameValues(
       conditions,
-      { node -> CfnConditionNode(keyName(node), expression(node.value!!)).registerNode(node) },
+      { node -> CfnConditionNode(keyName(node), expression(node.value!!, AllowFunctions.True)).registerNode(node) },
       { nameNode, list -> CfnConditionsNode(nameNode, list) }
   )
 
   private fun outputs(outputs: JsonProperty): CfnOutputsNode = parseNameValues(
       outputs,
-      { output -> CfnOutputNode(keyName(output), expression(output.value!!)).registerNode(output) },
+      { output -> CfnOutputNode(keyName(output), expression(output.value!!, AllowFunctions.True)).registerNode(output) },
       { nameNode, list -> CfnOutputsNode(nameNode, list) }
   )
 
@@ -155,7 +159,7 @@ class JsonCloudFormationParser private constructor () {
 
   private fun parameter(parameter: JsonProperty): CfnParameterNode = parseNameValues(
       parameter,
-      { node -> CfnNameValueNode(keyName(node), node.value?.let { expression(it) }).registerNode(node) },
+      { node -> CfnNameValueNode(keyName(node), node.value?.let { expression(it, AllowFunctions.False) }).registerNode(node) },
       { nameNode, list -> CfnParameterNode(nameNode, list) }
   )
 
@@ -190,99 +194,107 @@ class JsonCloudFormationParser private constructor () {
   private fun resource(resourceProperty: JsonProperty): CfnResourceNode {
     val key = keyName(resourceProperty)
 
-    val value = resourceProperty.value ?: return CfnResourceNode(key, null, emptyMap(), null).registerNode(resourceProperty)
-    val obj = checkAndGetObject(value) ?: return CfnResourceNode(key, null, emptyMap(), null).registerNode(resourceProperty)
+    val obj = checkAndGetObject(resourceProperty.value) ?:
+        return CfnResourceNode(key, null, null, null, null, emptyMap()).registerNode(resourceProperty)
 
-    val typeNode: CfnResourceTypeNode?
     val topLevelProperties: MutableMap<String, CfnNamedNode> = hashMapOf()
-
-    val typeProperty = obj.findProperty(CloudFormationConstants.TypePropertyName)
-    if (typeProperty != null) {
-      typeNode = resourceType(typeProperty)
-      topLevelProperties.put(typeProperty.name, typeNode)
-    } else {
-      typeNode = null
-    }
-
-    val properties: CfnResourcePropertiesNode?
-
-    val propertiesProperty = obj.findProperty(CloudFormationConstants.PropertiesPropertyName)
-    if (propertiesProperty != null && propertiesProperty.value is JsonObject) {
-      properties = resourceProperties(propertiesProperty)
-      topLevelProperties.put(propertiesProperty.name, properties)
-    } else {
-      if (propertiesProperty != null && propertiesProperty.value !is JsonObject) {
-        addProblemOnNameElement(propertiesProperty, CloudFormationBundle.getString("format.properties.property.should.properties.list"))
-      }
-
-      properties = null
-    }
 
     for (property in obj.propertyList) {
       val propertyName = property.name
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyName)) {
         addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyName))
+        continue
       }
 
-      if (!topLevelProperties.containsKey(propertyName)) {
-        val nameNode = CfnScalarValueNode(propertyName).registerNode(property.nameElement)
-        val valueNode = property.value?.let { expression(it) }
+      val node = when (propertyName) {
+        CloudFormationConstants.DependsOnPropertyName -> dependsOn(property)
+        CloudFormationConstants.TypePropertyName -> resourceType(property)
+        CloudFormationConstants.ConditionPropertyName -> condition(property)
+        CloudFormationConstants.PropertiesPropertyName -> resourceProperties(property)
+        else -> {
+          CfnNameValueNode(keyName(property), property.value?.let { expression(it, AllowFunctions.True) }).registerNode(property)
+        }
+      }
 
-        topLevelProperties.put(propertyName, CfnNameValueNode(nameNode, valueNode).registerNode(property))
+      topLevelProperties.put(propertyName, node)
+    }
+
+    val properties: Collection<CfnNode> = topLevelProperties.values
+    return CfnResourceNode(
+        key,
+        lookupSection<CfnResourceTypeNode>(properties),
+        lookupSection<CfnResourcePropertiesNode>(properties),
+        lookupSection<CfnResourceConditionNode>(properties),
+        lookupSection<CfnResourceDependsOnNode>(properties),
+        topLevelProperties
+    ).registerNode(resourceProperty)
+  }
+
+  private fun dependsOn(property: JsonProperty): CfnResourceDependsOnNode {
+    val value = property.value
+    val valuesNodes = when(value) {
+      null -> emptyList()
+      is JsonArray -> value.valueList.mapNotNull { checkAndGetStringElement(it) }
+      is JsonStringLiteral -> listOf(CfnScalarValueNode(value.value).registerNode(value))
+      else -> {
+        addProblemOnNameElement(property, "Expected a string or an array of strings")
+        emptyList()
       }
     }
 
-    return CfnResourceNode(key, typeNode, topLevelProperties, properties).registerNode(resourceProperty)
+    return CfnResourceDependsOnNode(keyName(property), valuesNodes).registerNode(property)
   }
 
-  private fun resourceProperties(propertiesProperty: JsonProperty): CfnResourcePropertiesNode {
-    val nameNode = CfnScalarValueNode(propertiesProperty.name).registerNode(propertiesProperty.nameElement)
-    val properties = propertiesProperty.value as JsonObject
+  private fun condition(property: JsonProperty): CfnResourceConditionNode =
+      CfnResourceConditionNode(keyName(property), checkAndGetStringElement(property.value)).registerNode(property)
 
-    val propertyNodes = properties.propertyList.mapNotNull { property ->
-      val propertyName = property.name
+  private fun resourceProperties(propertiesProperty: JsonProperty): CfnResourcePropertiesNode {
+    val value = checkAndGetObject(propertiesProperty.value)
+        ?: return CfnResourcePropertiesNode(keyName(propertiesProperty), emptyList()).registerNode(propertiesProperty)
+
+    val propertyNodes = value.propertyList.mapNotNull { property ->
       // TODO make a node?
-      if (propertyName == CloudFormationConstants.CommentResourcePropertyName) {
+      if (property.name == CloudFormationConstants.CommentResourcePropertyName) {
         return@mapNotNull null
       }
 
-      val propertyNameNode = keyName(property)
-
-      val jsonValueNode = property.value
-      val valueNode = if (jsonValueNode == null) null else {
-        expression(jsonValueNode)
-      }
-
-      return@mapNotNull CfnResourcePropertyNode(propertyNameNode, valueNode).registerNode(property)
+      return@mapNotNull CfnResourcePropertyNode(keyName(property), property.value?.let { expression(it, AllowFunctions.True) }).registerNode(property)
     }
 
-    return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty)
+    return CfnResourcePropertiesNode(keyName(propertiesProperty), propertyNodes).registerNode(propertiesProperty)
   }
 
-  private fun expression(value: JsonValue): CfnExpressionNode? {
+  enum class AllowFunctions {
+    True,
+    False
+  }
+
+  private fun expression(value: JsonValue, allowFunctions: AllowFunctions): CfnExpressionNode? {
     return when (value) {
       is JsonStringLiteral -> CfnScalarValueNode(value.value).registerNode(value)
       is JsonBooleanLiteral -> CfnScalarValueNode(value.text).registerNode(value)
       is JsonNumberLiteral -> CfnScalarValueNode(value.text).registerNode(value)
       is JsonArray -> {
-        val items = value.valueList.mapNotNull { expression(it) }
+        val items = value.valueList.mapNotNull { expression(it, allowFunctions) }
         CfnArrayValueNode(items).registerNode(value)
       }
       is JsonObject -> {
-        if (value.propertyList.size == 1 && CloudFormationIntrinsicFunction.fullNames.contains(value.propertyList.single().name)) {
+        if (allowFunctions == AllowFunctions.True &&
+            value.propertyList.size == 1 &&
+            CloudFormationIntrinsicFunction.fullNames.contains(value.propertyList.single().name)) {
           val single = value.propertyList.single()
           val nameNode = CfnScalarValueNode(single.name).registerNode(single.nameElement)
           val functionId = CloudFormationIntrinsicFunction.fullNames[single.name]!!
 
           val jsonValueNode = single.value
           if (jsonValueNode is JsonArray) {
-            val items = jsonValueNode.valueList.map { expression(it) }
+            val items = jsonValueNode.valueList.map { expression(it, allowFunctions) }
             CfnFunctionNode(nameNode, functionId, items).registerNode(value)
           } else if (jsonValueNode == null){
             CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
           } else {
-            CfnFunctionNode(nameNode, functionId, listOf(expression(jsonValueNode))).registerNode(value)
+            CfnFunctionNode(nameNode, functionId, listOf(expression(jsonValueNode, allowFunctions))).registerNode(value)
           }
         } else {
           val properties = value.propertyList.map {
@@ -290,7 +302,7 @@ class JsonCloudFormationParser private constructor () {
 
             val jsonValueNode = it.value
             val valueNode = if (jsonValueNode == null) null else {
-              expression(jsonValueNode)
+              expression(jsonValueNode, allowFunctions)
             }
 
             CfnNameValueNode(nameNode, valueNode).registerNode(it)
@@ -307,15 +319,15 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun resourceType(typeProperty: JsonProperty): CfnResourceTypeNode {
-    val nameNode = CfnScalarValueNode(typeProperty.name).registerNode(typeProperty.nameElement)
-    val value = checkAndGetUnquotedStringText(typeProperty.value) ?:
-        return CfnResourceTypeNode(nameNode, CfnScalarValueNode("")).registerNode(typeProperty)
-
-    val valueNode = CfnScalarValueNode(value).registerNode(typeProperty.value!!)
-    return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty)
+    return CfnResourceTypeNode(
+        keyName(typeProperty),
+        checkAndGetStringElement(typeProperty.value)
+    ).registerNode(typeProperty)
   }
 
-  private fun checkAndGetObject(expression: JsonValue): JsonObject? {
+  private fun checkAndGetObject(expression: JsonValue?): JsonObject? {
+    if (expression == null) return null
+
     val obj = expression as? JsonObject
     if (obj == null) {
       addProblem(

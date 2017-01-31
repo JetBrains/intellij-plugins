@@ -29,7 +29,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
 
     TestUtil.checkContent(
         File(testDataPath, "$fileName.expected"),
-        TestUtil.renderProblems(myFile, parsed.problems + inspectedProblems)
+        TestUtil.renderProblems(myFile, parsed.problems + inspectedProblems.problems)
     )
   }
 

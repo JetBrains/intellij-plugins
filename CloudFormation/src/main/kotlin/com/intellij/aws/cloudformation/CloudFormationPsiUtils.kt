@@ -15,7 +15,7 @@ fun CfnNode.parent(parser: CloudFormationParsedFile): CfnNode? {
 
   // handle corner case with !Ref "xxxx" or !Sub "yyy"
   if (this is CfnScalarValueNode) {
-    val baseNodes = parser.getCfnNodes(baseElement).filter { it != this }
+    val baseNodes = parser.getCfnNodes(baseElement).filter { it !== this }
     if (baseNodes.isNotEmpty()) {
       val otherNode = baseNodes.single()
       assert(otherNode is CfnFunctionNode)

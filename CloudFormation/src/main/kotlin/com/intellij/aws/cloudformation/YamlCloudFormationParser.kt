@@ -118,8 +118,10 @@ class YamlCloudFormationParser private constructor () {
     ).registerNode(root)
   }
 
-  private fun metadata(metadata: YAMLKeyValue): CfnMetadataNode =
-      CfnMetadataNode(keyName(metadata), expression(metadata.value!!)).registerNode(metadata)
+  private fun metadata(metadata: YAMLKeyValue): CfnMetadataNode {
+    val mapping = checkAndGetMapping(metadata.value!!)
+    return CfnMetadataNode(keyName(metadata), mapping?.let { expression(it) } as? CfnObjectValueNode).registerNode(metadata)
+  }
 
   private fun conditions(conditions: YAMLKeyValue): CfnConditionsNode = parseNameValues(
       conditions,
@@ -208,8 +210,8 @@ class YamlCloudFormationParser private constructor () {
   private fun resource(resourceProperty: YAMLKeyValue): CfnResourceNode {
     val key = keyName(resourceProperty)
 
-    val value = resourceProperty.value ?: return CfnResourceNode(key, null, emptyMap(), null).registerNode(resourceProperty)
-    val obj = checkAndGetMapping(value) ?: return CfnResourceNode(key, null, emptyMap(), null).registerNode(resourceProperty)
+    val value = resourceProperty.value ?: return CfnResourceNode(key, null, null, null, null, emptyMap()).registerNode(resourceProperty)
+    val obj = checkAndGetMapping(value) ?: return CfnResourceNode(key, null, null, null, null, emptyMap()).registerNode(resourceProperty)
 
     val typeNode: CfnResourceTypeNode?
     val topLevelProperties: MutableMap<String, CfnNamedNode> = hashMapOf()
@@ -251,7 +253,8 @@ class YamlCloudFormationParser private constructor () {
       }
     }
 
-    return CfnResourceNode(key, typeNode, topLevelProperties, properties).registerNode(resourceProperty)
+    // TODO do-do-do
+    return CfnResourceNode(key, typeNode, null, null, null, topLevelProperties).registerNode(resourceProperty)
   }
 
   private fun resourceProperties(propertiesProperty: YAMLKeyValue): CfnResourcePropertiesNode {

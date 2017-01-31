@@ -14,7 +14,7 @@ fun findSubArray(array: ByteArray, subArray: ByteArray): Int {
   return Collections.indexOfSubList(Arrays.asList(*ArrayUtils.toObject(array)), Arrays.asList(*ArrayUtils.toObject(subArray)))
 }
 
-inline fun <reified T> lookupSection(sections: List<CfnNode>): T? = sections.singleOrNull { it is T } as T?
+inline fun <reified T> lookupSection(sections: Collection<CfnNode>): T? = sections.singleOrNull { it is T } as T?
 
 inline fun <reified T : Any> Collection<*>.ofType(): Collection<T> = this.mapNotNull { it as? T }
 

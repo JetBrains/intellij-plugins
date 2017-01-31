@@ -19,7 +19,7 @@ class CloudFormationInspectionsTests : LightPlatformCodeInsightTestCase() {
     UsefulTestCase.assertEmpty(parsed.problems)
 
     val actualProblems = CloudFormationInspections.inspectFile(parsed)
-    val actualProblemsString = TestUtil.renderProblems(myFile, actualProblems)
+    val actualProblemsString = TestUtil.renderProblems(myFile, actualProblems.problems)
 
     TestUtil.checkContent(File(testDataPath, fileName.removeSuffix(".template") + ".expected"), actualProblemsString)
   }

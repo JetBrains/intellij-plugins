@@ -83,11 +83,11 @@
   <problem>
     <file>notObjExpr1.template</file>
     <line>11</line>
-    <description>Expected properties list</description>
+    <description>Expected JSON object</description>
   </problem>
   <problem>
     <file>notObjExpr1.template</file>
-    <line>9</line>
+    <line>11</line>
     <description>Required resource properties are not set: UserName</description>
   </problem>
   <problem>

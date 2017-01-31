@@ -20,7 +20,7 @@ class FormatViolationInspection : LocalInspectionTool() {
     val parsed = CloudFormationParser.parse(file)
     val inspected = CloudFormationInspections.inspectFile(parsed)
 
-    val problems = parsed.problems.plus(inspected).map {
+    val problems = parsed.problems.plus(inspected.problems).map {
       manager.createProblemDescriptor(
           it.element,
           it.description,

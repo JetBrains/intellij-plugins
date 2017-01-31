@@ -1,3 +1,15 @@
 package com.intellij.aws.cloudformation.model
 
-class CfnResourceTypeNode(name: CfnScalarValueNode?, value: CfnScalarValueNode?) : CfnNameValueNode(name, value)
+import com.intellij.aws.cloudformation.CloudFormationConstants
+import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
+
+class CfnResourceTypeNode(name: CfnScalarValueNode?, val value: CfnScalarValueNode?) : CfnNamedNode(name) {
+  fun metadata(): CloudFormationResourceType? {
+    val typeName = value?.value ?: return null
+
+    return CloudFormationMetadataProvider.METADATA.findResourceType(
+          if (isCustomResourceType(typeName)) CloudFormationConstants.CustomResourceType else typeName)
+  }
+}
