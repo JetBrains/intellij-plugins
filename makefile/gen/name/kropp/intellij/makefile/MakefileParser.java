@@ -238,12 +238,12 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('ifeq'|'ifneq'|'ifdef'|'ifndef') condition comment? branch ('else' comment? branch)* 'endif' comment?
+  // conditional-keyword condition comment? branch ('else' comment? branch)* 'endif' comment?
   public static boolean conditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CONDITIONAL, "<conditional>");
-    r = conditional_0(b, l + 1);
+    r = conditional_keyword(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, CONDITION));
     r = p && report_error_(b, conditional_2(b, l + 1)) && r;
@@ -253,19 +253,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = p && conditional_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  // 'ifeq'|'ifneq'|'ifdef'|'ifndef'
-  private static boolean conditional_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "conditional_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, KEYWORD_IFEQ);
-    if (!r) r = consumeToken(b, KEYWORD_IFNEQ);
-    if (!r) r = consumeToken(b, KEYWORD_IFDEF);
-    if (!r) r = consumeToken(b, KEYWORD_IFNDEF);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   // comment?
@@ -311,6 +298,20 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "conditional_6")) return false;
     consumeToken(b, COMMENT);
     return true;
+  }
+
+  /* ********************************************************** */
+  // 'ifeq'|'ifneq'|'ifdef'|'ifndef'
+  static boolean conditional_keyword(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conditional_keyword")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_IFEQ);
+    if (!r) r = consumeToken(b, KEYWORD_IFNEQ);
+    if (!r) r = consumeToken(b, KEYWORD_IFDEF);
+    if (!r) r = consumeToken(b, KEYWORD_IFNDEF);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -835,12 +836,12 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('ifeq'|'ifneq'|'ifndef') condition comment? block ('else' comment? block)* 'endif' comment?
+  // conditional-keyword condition comment? block ('else' comment? block)* 'endif' comment?
   public static boolean topconditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "topconditional")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, TOPCONDITIONAL, "<topconditional>");
-    r = topconditional_0(b, l + 1);
+    r = conditional_keyword(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, CONDITION));
     r = p && report_error_(b, topconditional_2(b, l + 1)) && r;
@@ -850,18 +851,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = p && topconditional_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  // 'ifeq'|'ifneq'|'ifndef'
-  private static boolean topconditional_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "topconditional_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, KEYWORD_IFEQ);
-    if (!r) r = consumeToken(b, KEYWORD_IFNEQ);
-    if (!r) r = consumeToken(b, KEYWORD_IFNDEF);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   // comment?

@@ -55,7 +55,9 @@ normal_prerequisites ::= prerequisite* (split prerequisite*)*
 order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin"}
 
-conditional ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef') condition comment? branch ('else' comment? branch)* 'endif' comment? {pin=1}
+conditional ::= conditional-keyword condition comment? branch ('else' comment? branch)* 'endif' comment? {pin=1}
+
+private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 
 branch ::= (conditional|command|variable-assignment)*
 
@@ -76,5 +78,5 @@ vpath ::= 'vpath' (pattern directory*)? comment? EOL {pin=1}
 pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-topconditional ::= ('ifeq'|'ifneq'|'ifndef') condition comment? block ('else' comment? block)* 'endif' comment? {pin=1}
+topconditional ::= conditional-keyword condition comment? block ('else' comment? block)* 'endif' comment? {pin=1}
 block ::= any
