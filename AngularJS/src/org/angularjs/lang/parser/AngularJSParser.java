@@ -209,6 +209,16 @@ public class AngularJSParser
         builder.advanceLexer();
       }
       parseExpression();
+      if (builder.lookAhead(1) == AngularJSTokenTypes.TRACK_BY_KEYWORD) {
+        builder.advanceLexer();
+        builder.advanceLexer();
+        if (builder.getTokenType() != JSTokenTypes.COLON) {
+          builder.error(JSBundle.message("javascript.parser.message.expected.colon"));
+        } else {
+          builder.advanceLexer();
+        }
+        parseExpression();
+      }
       expr.done(AngularJSElementTypes.FOR_EXPRESSION);
       return true;
     }

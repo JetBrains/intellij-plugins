@@ -52,6 +52,7 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   "as"                        { return AS_KEYWORD; }
   "of"                        { return OF_KEYWORD; }
   "track by"                  { return TRACK_BY_KEYWORD; }
+  "trackBy"                   { return TRACK_BY_KEYWORD; }
   "let"                       { return LET_KEYWORD; }
 
   "as"/(\.)                   { return IDENTIFIER; }
