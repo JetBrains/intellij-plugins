@@ -253,4 +253,23 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertContainsElements(variants, "a", "img", "my-customer");
     });
   }
+
+  public void testNgContainerCompletion20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        () -> myFixture.testCompletion("ngContainer.html", "ngContainer.after.html", "angular2.js"));
+  }
+
+
+  public void testNgContainerResolve20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      myFixture.configureByFiles("ngContainer.after.html", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>container", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("ngContainer.after.html", resolve.getContainingFile().getName());
+      assertEquals("<ng-container></ng-container>", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    });
+  }
 }

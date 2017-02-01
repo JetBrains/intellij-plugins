@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.XmlTagInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
@@ -24,6 +25,8 @@ import java.util.List;
  * @author Dennis.Ushakov
  */
 public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
+  private static final String NG_CONTAINER = "ng-container";
+
   @Override
   public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
     if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return;
@@ -33,6 +36,9 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       addLookupItem(elements, directive);
       return true;
     });
+    if (AngularIndexUtil.hasAngularJS2(project)) {
+      addLookupItem(elements, createContainerDirective(xmlTag));
+    }
   }
 
   private static void addLookupItem(List<LookupElement> elements, JSImplicitElement directive) {
@@ -44,7 +50,8 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   @Nullable
   @Override
   public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
-    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return null;
+    final Project project = xmlTag.getProject();
+    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(project))) return null;
 
     final String directiveName = DirectiveUtil.normalizeAttributeName(xmlTag.getName());
     final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
@@ -52,10 +59,17 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
       return null;
     }
+    if (NG_CONTAINER.equals(directiveName) && AngularIndexUtil.hasAngularJS2(project)) {
+      return new AngularJSTagDescriptor(NG_CONTAINER, createContainerDirective(xmlTag));
+    }
 
-    final Project project = xmlTag.getProject();
     final JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
 
     return directive != null ? new AngularJSTagDescriptor(directiveName, directive) : null;
+  }
+
+  @NotNull
+  private static JSImplicitElementImpl createContainerDirective(XmlTag xmlTag) {
+    return new JSImplicitElementImpl.Builder(NG_CONTAINER, xmlTag).setTypeString("E;;;").toImplicitElement();
   }
 }
