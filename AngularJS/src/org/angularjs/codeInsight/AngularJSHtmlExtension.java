@@ -24,6 +24,9 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
       if (("ng-" + attrName).equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
         return true;
       }
+      if (("[" + attrName + "]").equals(attribute.getName())) {
+        return true;
+      }
     }
 
     return super.isRequiredAttributeImplicitlyPresent(tag, attrName);
