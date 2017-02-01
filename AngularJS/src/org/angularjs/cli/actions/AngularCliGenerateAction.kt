@@ -9,6 +9,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -19,6 +20,7 @@ import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
@@ -43,6 +45,9 @@ import javax.swing.*
 class AngularCliGenerateAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
+
+    val file = e.getData(PlatformDataKeys.VIRTUAL_FILE)
+    val editor = e.getData(PlatformDataKeys.FILE_EDITOR)
 
     val model = DefaultListModel<Blueprint>()
     val list = JBList<Blueprint>(model)
@@ -103,18 +108,26 @@ class AngularCliGenerateAction : DumbAwareAction() {
       override fun keyPressed(e: KeyEvent?) {
         if (e?.keyCode == KeyEvent.VK_ENTER) {
           e?.consume()
-          askOptions(project, popup, list.selectedValue as Blueprint)
+          askOptions(project, popup, list.selectedValue as Blueprint, workingDir(editor, file))
         }
       }
     })
     object: DoubleClickListener() {
       override fun onDoubleClick(event: MouseEvent?): Boolean {
         if (list.selectedValue == null) return true
-        askOptions(project, popup, list.selectedValue as Blueprint)
+        askOptions(project, popup, list.selectedValue as Blueprint, workingDir(editor, file))
         return true
       }
     }.installOn(list)
     popup.showCenteredInCurrentWindow(project)
+  }
+
+  private fun workingDir(editor: FileEditor?, file: VirtualFile?): VirtualFile? {
+    if (editor == null && file != null) {
+      if (file.isDirectory) return file
+      return file.parent
+    }
+    return null
   }
 
   private fun updateList(list: JBList<Blueprint>, model: DefaultListModel<Blueprint>, project: Project) {
@@ -131,7 +144,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     })
   }
 
-  private fun askOptions(project: Project, popup: JBPopup, blueprint: Blueprint) {
+  private fun askOptions(project: Project, popup: JBPopup, blueprint: Blueprint, workingDir: VirtualFile?) {
     popup.closeOk(null)
     val dialog = object: DialogWrapper(project, true) {
       private lateinit var editor:EditorTextField
@@ -164,11 +177,11 @@ class AngularCliGenerateAction : DumbAwareAction() {
     }
 
     if (dialog.showAndGet()) {
-      runGenerator(project, blueprint, dialog.arguments())
+      runGenerator(project, blueprint, dialog.arguments(), workingDir)
     }
   }
 
-  private fun runGenerator(project: Project, blueprint: Blueprint, arguments: Array<String>) {
+  private fun runGenerator(project: Project, blueprint: Blueprint, arguments: Array<String>, workingDir: VirtualFile?) {
     val interpreter = NodeJsInterpreterManager.getInstance(project).default
     val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return
 
@@ -180,8 +193,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val filter = AngularCLIFilter(project, baseDir.path)
     AngularCLIProjectGenerator.generate(node, AngularCLIProjectGenerator.ng(module.virtualFile?.path!!),
-                                        project.baseDir, VfsUtilCore.virtualToIoFile(project.baseDir),
-                                        project, null, arrayOf(filter), "generate", blueprint.name, *arguments)
+                                        project.baseDir, VfsUtilCore.virtualToIoFile(workingDir ?: project.baseDir), project,
+                                        null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }
 
   override fun update(e: AnActionEvent?) {
