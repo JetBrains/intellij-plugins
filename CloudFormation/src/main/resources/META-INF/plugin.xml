@@ -57,7 +57,7 @@
     <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.unresolvedReference"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
-                     implementationClass="com.intellij.aws.cloudformation.inspections.UnresolvedReferencesInspection"/>
+                     implementationClass="com.intellij.aws.cloudformation.inspections.JsonUnresolvedReferencesInspection"/>
 
     <completion.contributor language="JSON"
                             order="first"

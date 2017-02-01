@@ -9,7 +9,7 @@ import com.intellij.json.psi.JsonElementVisitor
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.psi.PsiElementVisitor
 
-class UnresolvedReferencesInspection : LocalInspectionTool() {
+class JsonUnresolvedReferencesInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
     if (!CloudFormationPsiUtils.isCloudFormationFile(session.file)) {
       return super.buildVisitor(holder, isOnTheFly, session)
