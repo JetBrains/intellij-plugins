@@ -6,7 +6,10 @@ import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.PlatformTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -19,12 +22,9 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   @Override
   protected String getBasePath() {
-    return "/highlighting/";
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return TsLintTestUtil.BASE_TEST_DATA_PATH + getBasePath();
+    final String homePath = isCommunity() ? PlatformTestUtil.getCommunityPath() : PathManager.getHomePath();
+    final String path = TsLintTestUtil.BASE_TEST_DATA_PATH + "/highlighting/";
+    return File.separator + FileUtil.getRelativePath(new File(homePath), new File(path));
   }
 
   @NotNull
@@ -46,26 +46,22 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest) throws IOException {
     if (!myNodeLinterPackagePaths.checkPaths()) return;
 
-    final File tmp = FileUtil.createTempFile("tslint", ".json");
-    tmp.deleteOnExit();
-    FileUtil.copy(new File(getTestDataPath(), directoryToCopy + "/tslint.json"), tmp);
-
-    final TsLintState state = new TsLintState.Builder()
+    final TsLintState.Builder builder = new TsLintState.Builder()
       .setNodePath(NodeJsInterpreterRef.create(myNodeLinterPackagePaths.getNodePath().getAbsolutePath()))
-      .setPackagePath(myNodeLinterPackagePaths.getPackagePath().getPath())
-      .setCustomConfigFileUsed(true)
-      .setCustomConfigFilePath(tmp.getAbsolutePath())
-      .build();
+      .setPackagePath(myNodeLinterPackagePaths.getPackagePath().getPath());
 
-    runTest(directoryToCopy, filePathToTest, state);
+    runTest(builder, true, filePathToTest, directoryToCopy + "/tslint.json");
   }
 
-  private void runTest(String directoryToCopy, String filePathToTest, TsLintState state) {
+  private void runTest(TsLintState.Builder builder, boolean withConfig, String... filePathToTest) {
+    final PsiFile[] files = myFixture.configureByFiles(filePathToTest);
+    if (withConfig) {
+      builder.setCustomConfigFileUsed(true)
+        .setCustomConfigFilePath(FileUtil.toSystemDependentName(files[files.length - 1].getVirtualFile().getPath()));
+    }
     final TsLintConfiguration configuration = TsLintConfiguration.getInstance(getProject());
-    configuration.setExtendedState(true, state);
+    configuration.setExtendedState(true, builder.build());
 
-    myFixture.copyDirectoryToProject(directoryToCopy, myFixture.getTempDirPath());
-    myFixture.configureByFiles(filePathToTest);
     myFixture.testHighlighting(true, false, true);
   }
 }
