@@ -31,6 +31,8 @@ public class Angular2HTMLLexer extends HtmlLexer {
             seenAttribute = true;
             seenScript = true;
             seenAngularScript = true;
+          } else  {
+            seenAngularScript = false;
           }
         }
       }
