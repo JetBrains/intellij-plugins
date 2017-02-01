@@ -14,12 +14,12 @@ Resources:
               HTTPPort: 80
               HTTPSPort: 443
             DomainName:
-              'Fn::Join':
+              2@<'Fn::Join':
                 - ''
-                - - Ref: websiteBucket
+                - 3@<- Ref: websiteBucket
                   - .s3-website-
                   - Ref: 'AWS::Region'
-                  - .amazonaws.com
+                  - .amazonaws.com>>
             Id:
               Ref: websiteBucket
         Logging:
@@ -170,10 +170,10 @@ Resources:
         EvaluateTargetHealth: false
         HostedZoneId: Z2FDTNDATAQYW2
       HostedZoneName:
-        'Fn::Join':
+        4@<'Fn::Join':
           - ''
           - - Ref: hostedZoneName
-            - .
+            - .>
       Name:
         'Fn::Select':
           - 0
@@ -183,22 +183,22 @@ Resources:
     Type: 'AWS::Route53::RecordSet'
     Properties:
       Name:
-        'Fn::Join':
+        5@<'Fn::Join':
           - ''
           - 0@<- www.
             - Ref: hostedZoneName
-            - .>
+            - .>>
       Type: CNAME
       HostedZoneName:
-        'Fn::Join':
+        6@<'Fn::Join':
           - ''
           - - Ref: hostedZoneName
-            - .
+            - .>
       ResourceRecords:
-        - 'Fn::Join':
+        - 7@<'Fn::Join':
             - ''
             - - Ref: hostedZoneName
-              - .
+              - .>
       TTL: 30
   websiteS3Policy:
     Type: 'AWS::S3::BucketPolicy'
@@ -211,11 +211,11 @@ Resources:
               - 's3:GetObject'
             Effect: Allow
             Resource:
-              'Fn::Join':
+              8@<'Fn::Join':
                 - ''
                 - 1@<- 'arn:aws:s3:::'
                   - Ref: websiteBucket
-                  - /*>
+                  - /*>>
             Principal: '*'
 Outputs:
   acmCertificate:
@@ -268,3 +268,10 @@ Parameters:
 
 0: Too many values
 1: Too many values
+2: Join expects a string argument and an array argument
+3: Reference expects one string argument
+4: Join expects a string argument and an array argument
+5: Join expects a string argument and an array argument
+6: Join expects a string argument and an array argument
+7: Join expects a string argument and an array argument
+8: Join expects a string argument and an array argument

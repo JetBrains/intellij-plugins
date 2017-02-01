@@ -218,7 +218,7 @@ class YamlCloudFormationParser private constructor () {
     val topLevelProperties: MutableMap<String, CfnNamedNode> = hashMapOf()
 
     for (property in mapping.keyValues) {
-      val propertyKey = property.keyText
+      val propertyKey = property.keyText.trim()
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyKey)) {
         addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyKey))

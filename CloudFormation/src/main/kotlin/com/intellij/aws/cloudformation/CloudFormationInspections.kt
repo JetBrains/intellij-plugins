@@ -135,11 +135,11 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
             resourceName = arg0.value.substring(0, dotIndex)
             attributeName = arg0.value.substring(dotIndex + 1)
           }
-        } else if (function.args.size == 2 && arg0 is CfnScalarValueNode && function.name.value == CloudFormationIntrinsicFunction.FnGetAtt.id) {
+        } else if (function.args.size == 2 && arg0 is CfnScalarValueNode) {
           resourceName = arg0.value
           attributeName = if (arg1 is CfnScalarValueNode) arg1.value else null
         } else {
-          addProblem(function, "GetAtt requires two string arguments in full form and one string argument in short form")
+          addProblem(function, "GetAtt requires two string arguments in full form or one string argument in short form")
           resourceName = null
           attributeName = null
         }

@@ -16,13 +16,13 @@ Resources:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
         Uri:
-          Fn::Join:
+          1@<Fn::Join:
             - ""
             - 0@<- "arn:aws:apigateway:"
               - Ref: "AWS::Region"
               - ":lambda:path/2015-03-31/functions/"
               - "arn:aws:lambda:ap-southeast-2:650679463300:function:StemFlowLambda-StemflowRenderFunction-3KB1F0SLUGTY"
-              - "/invocations">
+              - "/invocations">>
       MethodResponses:
         - StatusCode: "200"
       ResourceId:
@@ -48,3 +48,4 @@ Resources:
         ThrottlingRateLimit: 1000
 
 0: Too many values
+1: Join expects a string argument and an array argument

@@ -16,6 +16,8 @@ CfnRootNode{
           }
         }
         properties=<null>
+        condition=<null>
+        dependsOn=<null>
         name=CfnScalarValueNode{
           value=WebServer
         }
