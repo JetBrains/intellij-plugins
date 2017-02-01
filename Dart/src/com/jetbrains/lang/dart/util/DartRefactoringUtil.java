@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveState;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
 import gnu.trove.THashSet;
@@ -155,10 +155,10 @@ public class DartRefactoringUtil {
   }
 
   public static boolean isRightParen(PsiElement element) {
-    return element instanceof LeafPsiElement && element.getText().equals(")");
+    return element.getNode().getElementType() == DartTokenTypes.RPAREN;
   }
 
   public static boolean isComma(PsiElement element) {
-    return element instanceof LeafPsiElement && element.getText().equals(",");
+    return element.getNode().getElementType() == DartTokenTypes.COMMA;
   }
 }
