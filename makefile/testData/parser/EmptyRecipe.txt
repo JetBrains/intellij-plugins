@@ -10,7 +10,7 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('world')
-    PsiWhiteSpace(' ')
-    PsiElement(;)(';')
+      PsiWhiteSpace(' ')
+      PsiElement(;)(';')
     MakefileRecipeImpl(RECIPE)
       <empty list>

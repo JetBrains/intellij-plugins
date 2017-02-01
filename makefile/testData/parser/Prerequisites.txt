@@ -19,7 +19,7 @@ Makefile
           PsiWhiteSpace(' ')
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('only')
-    PsiElement(EOL)('\n\n')
+      PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
   MakefileRuleImpl(RULE)
@@ -31,7 +31,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
-    PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
   MakefileRuleImpl(RULE)
@@ -43,7 +43,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
-    PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
   MakefileRuleImpl(RULE)

@@ -8,7 +8,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
-    PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')

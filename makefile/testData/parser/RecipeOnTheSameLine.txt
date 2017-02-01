@@ -9,7 +9,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
-    PsiElement(;)(';')
+      PsiElement(;)(';')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(line)(' echo hello')

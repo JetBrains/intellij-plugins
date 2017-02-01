@@ -10,7 +10,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
-    PsiElement(EOL)('\n\n')
+      PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
   MakefileRuleImpl(RULE)
@@ -24,9 +24,9 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('hello')
-    PsiWhiteSpace(' ')
-    PsiComment(comment)('#end of line comment')
-    PsiElement(EOL)('\n\n')
+      PsiWhiteSpace(' ')
+      PsiComment(comment)('#end of line comment')
+      PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
   MakefileRuleImpl(RULE)
@@ -46,9 +46,9 @@ Makefile
           PsiWhiteSpace(' ')
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('world.o')
-    PsiWhiteSpace('\t')
-    PsiComment(comment)('#comment')
-    PsiElement(EOL)('\n\n')
+      PsiWhiteSpace('\t')
+      PsiComment(comment)('#comment')
+      PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
   MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
@@ -107,7 +107,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
-    PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
@@ -225,7 +225,7 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
-    PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')

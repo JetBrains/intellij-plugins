@@ -42,11 +42,11 @@ private any ::= (rule|variable-assignment|directive|topconditional|comment)*
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
-rule ::= target_line (';' comment? EOL? | comment? EOL) recipe
+rule ::= target_line recipe
 recipe ::= (conditional|command)*
 command ::= '\t'* line (split line)*
 
-target_line ::= targets ':' prerequisites {pin=2 methods=[getTargetName]}
+target_line ::= targets ':' (exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL)) {pin=2 methods=[getTargetName]}
 targets ::= target+
 target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement,com.intellij.navigation.NavigationItem" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget]}
 
@@ -69,6 +69,7 @@ define ::= 'define' variable assignment? variable-value-line* 'endef' {pin=1 met
 undefine ::= 'undefine' variable comment? EOL {pin=1}
 override ::= 'override' variable-assignment comment? {pin=1}
 export ::= 'export' (variable-assignment|variable)? comment? {pin=1}
+private exportvar ::= 'export' variable-assignment comment? {pin=1}
 privatevar ::= 'private' variable-assignment comment? {pin=1}
 
 include ::= ('include'|'-include'|'sinclude') filename+ EOL {pin=1}

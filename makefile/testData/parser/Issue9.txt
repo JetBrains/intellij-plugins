@@ -13,7 +13,7 @@ Makefile
           PsiWhiteSpace(' ')
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('run')
-    PsiElement(EOL)('\n\n')
+      PsiElement(EOL)('\n\n')
     MakefileRecipeImpl(RECIPE)
       MakefileConditionalImpl(CONDITIONAL)
         PsiElement(ifndef)('ifndef')

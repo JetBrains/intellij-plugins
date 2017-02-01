@@ -26,7 +26,7 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('shar')
-    PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
   MakefileRuleImpl(RULE)
@@ -57,7 +57,7 @@ Makefile
           PsiWhiteSpace(' ')
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('deps')
-    PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')

@@ -67,6 +67,9 @@ CONDITION_CHARACTER=[^#\r\n]
 }
 
 <PREREQUISITES> {
+    "override"              { yybegin(YYINITIAL); return KEYWORD_OVERRIDE; }
+    "export"                { yybegin(YYINITIAL); return KEYWORD_EXPORT; }
+    "private"               { yybegin(YYINITIAL); return KEYWORD_PRIVATE; }
     {BACKSLASHCRLF}         { return SPLIT; }
     {PIPE}                  { return PIPE; }
     {SEMICOLON}             { yybegin(SOURCE); return SEMICOLON; }

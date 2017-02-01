@@ -10,7 +10,7 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('b')
-    PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
