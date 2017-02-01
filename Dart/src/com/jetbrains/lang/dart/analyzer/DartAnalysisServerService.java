@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.*;
@@ -145,12 +146,7 @@ public class DartAnalysisServerService implements Disposable {
   public long maxMillisToWaitForServerResponse = 0L;
   @NotNull private final InteractiveErrorReporter myErrorReporter = new InteractiveErrorReporter();
 
-  @NotNull private final LinkedHashMap<String, String> myDebugLog = new LinkedHashMap<String, String>(DEBUG_LOG_CAPACITY) {
-    @Override
-    protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-      return this.size() >= DEBUG_LOG_CAPACITY;
-    }
-  };
+  @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -1367,7 +1363,7 @@ public class DartAnalysisServerService implements Disposable {
         public void println(String str) {
           str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
           synchronized (myDebugLog) {
-            myDebugLog.put(str, str);
+            myDebugLog.add(str);
           }
         }
       };
@@ -1709,21 +1705,14 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     private String debugLogContent() {
-      ArrayList<String> reversedLines = new ArrayList<>();
       StringBuilder log = new StringBuilder();
+      log.append("```\n");
       synchronized (myDebugLog) {
-        Collection<String> logLines = myDebugLog.values();
-        logLines.iterator().forEachRemaining(reversedLines::add);
-      }
-      ListIterator<String> itr = reversedLines.listIterator(reversedLines.size());
-      if (itr.hasPrevious()) {
-        log.append("```\n");
-        while (itr.hasPrevious()) {
-          log.append(itr.previous());
-          log.append('\n');
+        for (String s : myDebugLog) {
+          log.append(s).append('\n');
         }
-        log.append("```\n");
       }
+      log.append("```\n");
       return log.toString();
     }
   }
