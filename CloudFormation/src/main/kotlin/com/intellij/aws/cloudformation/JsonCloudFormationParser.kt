@@ -204,13 +204,12 @@ class JsonCloudFormationParser private constructor () {
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyName)) {
         addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyName))
-        continue
       }
 
       val node = when (propertyName) {
-        CloudFormationConstants.DependsOnPropertyName -> dependsOn(property)
+        CloudFormationConstants.DependsOnPropertyName -> resourceDependsOn(property)
         CloudFormationConstants.TypePropertyName -> resourceType(property)
-        CloudFormationConstants.ConditionPropertyName -> condition(property)
+        CloudFormationConstants.ConditionPropertyName -> resourceCondition(property)
         CloudFormationConstants.PropertiesPropertyName -> resourceProperties(property)
         else -> {
           CfnNameValueNode(keyName(property), property.value?.let { expression(it, AllowFunctions.True) }).registerNode(property)
@@ -231,7 +230,7 @@ class JsonCloudFormationParser private constructor () {
     ).registerNode(resourceProperty)
   }
 
-  private fun dependsOn(property: JsonProperty): CfnResourceDependsOnNode {
+  private fun resourceDependsOn(property: JsonProperty): CfnResourceDependsOnNode {
     val value = property.value
     val valuesNodes = when(value) {
       null -> emptyList()
@@ -246,7 +245,7 @@ class JsonCloudFormationParser private constructor () {
     return CfnResourceDependsOnNode(keyName(property), valuesNodes).registerNode(property)
   }
 
-  private fun condition(property: JsonProperty): CfnResourceConditionNode =
+  private fun resourceCondition(property: JsonProperty): CfnResourceConditionNode =
       CfnResourceConditionNode(keyName(property), checkAndGetStringElement(property.value)).registerNode(property)
 
   private fun resourceProperties(propertiesProperty: JsonProperty): CfnResourcePropertiesNode {

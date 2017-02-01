@@ -20,14 +20,23 @@ import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.aws.cloudformation.model.CfnVisitor
+import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
+import com.intellij.aws.cloudformation.references.CloudFormationMappingFirstLevelKeyReference
+import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference
+import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.psi.PsiElement
 
 class CloudFormationInspections private constructor(val parsed: CloudFormationParsedFile): CfnVisitor() {
   val problems: MutableList<CloudFormationProblem> = mutableListOf()
-  val references: Multimap<PsiElement, CloudFormationReference> = ArrayListMultimap.create()
+  val references: Multimap<PsiElement, CloudFormationReferenceBase> = ArrayListMultimap.create()
 
-  private fun addReference(element: CfnNode, reference: CloudFormationReference) {
-    references.put(parsed.getPsiElement(element), reference)
+  private fun addReference(reference: CloudFormationReferenceBase) {
+    references.put(reference.element, reference)
+  }
+
+  private fun addEntityReference(element: CfnScalarValueNode, sections: Collection<CloudFormationSection>, excludeFromCompletion: Collection<String>? = null) {
+    val psiElement = parsed.getPsiElement(element)
+    addReference(CloudFormationEntityReference(psiElement, sections, excludeFromCompletion))
   }
 
 /*
@@ -69,7 +78,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           addProblem(function, "Reference expects one string argument")
         } else {
           if (!CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(arg0.value)) {
-            addReference(arg0, CloudFormationReference(arg0.value, ReferenceType.Ref))
+            addEntityReference(arg0, CloudFormationSection.ParametersAndResources)
           }
         }
 
@@ -77,7 +86,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         if (function.args.size != 1 || arg0 !is CfnScalarValueNode) {
           addProblem(function, "Condition reference expects one string argument")
         } else {
-          addReference(arg0, CloudFormationReference(arg0.value, ReferenceType.Condition))
+          addEntityReference(arg0, CloudFormationSection.ConditionsSingletonList)
         }
 
       CloudFormationIntrinsicFunction.FnBase64 ->
@@ -95,15 +104,21 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         val secondLevelKey = function.args[2]
 
         if (mappingName is CfnScalarValueNode) {
-          addReference(mappingName, CloudFormationReference(mappingName.value, ReferenceType.Mapping))
+          addEntityReference(mappingName, CloudFormationSection.MappingsSingletonList)
 
           val mapping = CloudFormationResolve.resolveMapping(parsed, mappingName.value)
           if (mapping != null && firstLevelKey is CfnScalarValueNode) {
-            // TODO addReference(firstLevelKey, CloudFormationReference(firstLevelKey, ))
+            val firstLevelKeyPsiElement = parsed.getPsiElement(firstLevelKey)
+            addReference(CloudFormationMappingFirstLevelKeyReference(firstLevelKeyPsiElement, mappingName.value))
+
+            // TODO resolve possible values if first level key is an expression
+
+            if (secondLevelKey is CfnScalarValueNode) {
+              val secondLevelKeyPsiElement = parsed.getPsiElement(secondLevelKey)
+              addReference(CloudFormationMappingSecondLevelKeyReference(secondLevelKeyPsiElement, mappingName.value, firstLevelKey.value))
+            }
           }
         }
-
-        // TODO add keys
       }
 
       CloudFormationIntrinsicFunction.FnGetAtt -> {
@@ -131,7 +146,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
         if (resourceName != null) {
           // TODO Add text range
-          addReference(arg0!!, CloudFormationReference(resourceName, ReferenceType.Resource))
+          addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList)
 
           if (attributeName != null) {
             // TODO resolve resource and get resource type
@@ -190,7 +205,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       CloudFormationIntrinsicFunction.FnIf ->
         if (function.args.size == 3) {
           if (arg0 is CfnScalarValueNode) {
-            addReference(arg0, CloudFormationReference(arg0.value, ReferenceType.Condition))
+            addEntityReference(arg0, CloudFormationSection.ConditionsSingletonList)
           } else {
             addProblem(function, "If's first argument should be a condition name")
           }
@@ -214,10 +229,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       currentResource!!.name?.value?.let { excludeFromCompletion.add(it) }
       resourceDependsOn.dependsOn.forEach { if (depend.value != it.value) excludeFromCompletion.add(it.value) }
 
-      addReference(depend, CloudFormationReference(
-          depend.value,
-          ReferenceType.Resource,
-          excludeFromCompletion = excludeFromCompletion))
+      addEntityReference(depend, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion)
     }
 
     super.resourceDependsOn(resourceDependsOn)
@@ -225,7 +237,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   override fun resourceCondition(resourceCondition: CfnResourceConditionNode) {
     resourceCondition.condition?.let {
-      addReference(it, CloudFormationReference(it.value, ReferenceType.Condition))
+      addEntityReference(it, CloudFormationSection.ConditionsSingletonList)
     }
 
     super.resourceCondition(resourceCondition)
@@ -358,7 +370,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
         for (parameter in parameters?.items ?: emptyList()) {
           if (parameter is CfnScalarValueNode) {
-            addReference(parameter, CloudFormationReference(parameter.value, ReferenceType.Parameter, excludeFromCompletion = predefinedParameters))
+            addEntityReference(parameter, CloudFormationSection.ParametersSingletonList, predefinedParameters)
           } else {
             addProblem(parameter, "Expected a string")
           }
@@ -369,7 +381,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           .singleOrNull { it.name?.value == CloudFormationConstants.CloudFormationInterfaceParameterLabels }
           ?.let { it.value as? CfnObjectValueNode }
       for (parameterName in parameterLabels?.properties?.mapNotNull { it.name } ?: emptyList()) {
-        addReference(parameterName, CloudFormationReference(parameterName.value, ReferenceType.Parameter, excludeFromCompletion = predefinedParameters))
+        addEntityReference(parameterName, CloudFormationSection.ParametersSingletonList, predefinedParameters)
       }
     }
 
@@ -384,7 +396,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     super.root(root)
   }
 
-  class InspectionResult(val problems: List<CloudFormationProblem>, val references: Multimap<PsiElement, CloudFormationReference>)
+  class InspectionResult(val problems: List<CloudFormationProblem>, val references: Multimap<PsiElement, CloudFormationReferenceBase>)
 
   companion object {
     fun inspectFile(parsed: CloudFormationParsedFile): InspectionResult {

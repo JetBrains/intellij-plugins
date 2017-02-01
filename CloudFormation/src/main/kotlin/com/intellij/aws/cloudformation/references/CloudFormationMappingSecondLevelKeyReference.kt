@@ -2,10 +2,9 @@ package com.intellij.aws.cloudformation.references
 
 import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.CloudFormationResolve
-import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.psi.PsiElement
 
-class CloudFormationMappingSecondLevelKeyReference(element: JsonStringLiteral, private val mappingName: String, private val topLevelKey: String) : CloudFormationReferenceBase(element) {
+class CloudFormationMappingSecondLevelKeyReference(element: PsiElement, private val mappingName: String, private val topLevelKey: String) : CloudFormationReferenceBase(element) {
   override fun resolve(): PsiElement? {
     val parsed = CloudFormationParser.parse(element.containingFile)
 
