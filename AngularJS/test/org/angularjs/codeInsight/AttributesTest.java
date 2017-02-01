@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
@@ -725,6 +726,14 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("case.html", "angular2.js");
       myFixture.completeBasic();
       myFixture.checkResultByFile("case.after.html");
+    });
+  }
+
+  public void testSrcInjection() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("srcInjection.html", "angular.js");
+      myFixture.enableInspections(HtmlUnknownTargetInspection.class);
+      myFixture.checkHighlighting();
     });
   }
 }
