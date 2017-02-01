@@ -1,5 +1,6 @@
 package com.intellij.aws.cloudformation
 
+import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
@@ -12,11 +13,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.json.JsonLanguage
-import com.intellij.json.psi.JsonArray
-import com.intellij.json.psi.JsonObject
-import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -69,7 +66,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
 
             completeResourceTopLevelProperty(rs, parent, quoteResult, parsed)
 
-            val attResourceName = getResourceNameFromGetAttAttributePosition(parent)
+            val attResourceName = getResourceNameFromGetAttAttributePosition(parent, parsed)
             if (attResourceName != null) {
               completeAttribute(parent.containingFile, rs, quoteResult, attResourceName)
             }
@@ -101,26 +98,17 @@ class CloudFormationCompletionContributor : CompletionContributor() {
         .forEach { rs.addElement(createLookupElement(it, quoteResult)) }
   }
 
-  private fun getResourceNameFromGetAttAttributePosition(element: PsiElement): String? {
-    val attributeExpression = element as? JsonStringLiteral ?: return null
+  private fun getResourceNameFromGetAttAttributePosition(element: PsiElement, parsed: CloudFormationParsedFile): String? {
+    val nodes = parsed.getCfnNodes(element)
+    val attrNode = nodes.ofType<CfnScalarValueNode>().singleOrNull() ?: return null
+    val functionNode = attrNode.parent(parsed) as? CfnFunctionNode ?: return null
 
-    val getattParameters = attributeExpression.parent as? JsonArray
-    if (getattParameters == null || getattParameters.valueList.size != 2) {
+    if (functionNode.functionId != CloudFormationIntrinsicFunction.FnGetAtt ||
+        functionNode.args.size != 2 || functionNode.args[1] !== attrNode) {
       return null
     }
 
-    val getattProperty = getattParameters.parent as? JsonProperty
-    if (getattProperty == null || CloudFormationIntrinsicFunction.FnGetAtt.id != getattProperty.name) {
-      return null
-    }
-
-    val getattFunc = getattProperty.parent as? JsonObject
-    if (getattFunc == null || getattFunc.propertyList.size != 1) {
-      return null
-    }
-
-    val text = getattParameters.valueList[0].text
-    return StringUtil.stripQuotesAroundValue(text)
+    return (functionNode.args[0] as? CfnScalarValueNode)?.value
   }
 
   private fun completeAttribute(file: PsiFile, rs: CompletionResultSet, quoteResult: Boolean, resourceName: String) {
