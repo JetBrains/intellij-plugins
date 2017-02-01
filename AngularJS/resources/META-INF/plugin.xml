@@ -94,7 +94,7 @@
     <elementDescriptionProvider order="first"
                                 implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor"/>
 
-    <findUsagesHandlerFactory id="JavaScript" implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory"/>
+    <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher"/>
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
