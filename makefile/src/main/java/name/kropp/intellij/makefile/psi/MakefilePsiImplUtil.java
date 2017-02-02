@@ -49,6 +49,11 @@ public class MakefilePsiImplUtil {
         return name != null && (name.matches("^\\.[A-Z_]*") || name.equals("FORCE"));
     }
 
+    public static boolean isPatternTarget(MakefileTarget element) {
+        String name = element.getName();
+        return name != null && name.contains("%");
+    }
+
     public static boolean matches(MakefileTarget element, String prerequisite) {
         String name = element.getName();
         if (name == null) {

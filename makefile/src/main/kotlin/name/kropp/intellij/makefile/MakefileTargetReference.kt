@@ -43,7 +43,7 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
   override fun isSoft() = false
 
   override fun getVariants()
-      = (prerequisite.containingFile as MakefileFile).targets.map {
+      = (prerequisite.containingFile as MakefileFile).targets.filterNot { it.isPatternTarget }.map {
     LookupElementBuilder.create(it).withIcon(MakefileTargetIcon)
   }.toTypedArray()
 

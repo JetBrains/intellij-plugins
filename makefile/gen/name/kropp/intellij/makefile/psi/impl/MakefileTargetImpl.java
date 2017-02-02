@@ -48,6 +48,10 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
     return MakefilePsiImplUtil.isSpecialTarget(this);
   }
 
+  public boolean isPatternTarget() {
+    return MakefilePsiImplUtil.isPatternTarget(this);
+  }
+
   public boolean matches(String prerequisite) {
     return MakefilePsiImplUtil.matches(this, prerequisite);
   }

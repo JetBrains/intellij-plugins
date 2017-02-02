@@ -20,6 +20,8 @@ public interface MakefileTarget extends MakefileNamedElement, NavigationItem {
 
   boolean isSpecialTarget();
 
+  boolean isPatternTarget();
+
   boolean matches(String prerequisite);
 
 }
