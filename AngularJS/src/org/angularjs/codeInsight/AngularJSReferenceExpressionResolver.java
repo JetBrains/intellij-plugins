@@ -1,8 +1,11 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptResolveProcessor;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
@@ -14,6 +17,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularJS2IndexingHandler;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -59,7 +63,14 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
       if (as != null) {
         if (PsiTreeUtil.isAncestor(as.getDefinition(), myRef, true)) return new JSResolveResult[]{new JSResolveResult(myRef)};
       }
-      return ResolveResult.EMPTY_ARRAY;
+      JSClass clazz = AngularJS2IndexingHandler.findDirectiveClass(myRef);
+      if (clazz != null && DialectDetector.isTypeScript(clazz)) {
+        final TypeScriptResolveProcessor localProcessor = new TypeScriptResolveProcessor(myReferencedName, myContainingFile, myRef, incompleteCode);
+        localProcessor.setToProcessHierarchy(true);
+        JSReferenceExpressionImpl.doProcessLocalDeclarations(clazz, myQualifier, localProcessor, false, false, null);
+
+        return localProcessor.getResultsAsResolveResults();
+      }
     }
 
     if (AngularJSAsExpression.isAsControllerRef(myRef, myRef.getParent())) {
