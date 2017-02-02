@@ -352,3 +352,34 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:EQ)('=')
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('last')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    AngularJSRepeatExpression
+      JSDefinitionExpression
+        PsiElement(JS:LET_KEYWORD)('let')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('item')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiWhiteSpace(' ')
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSBinaryExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('ops$')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          AngularJSFilterExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('async')
+        PsiElement(JS:RPAR)(')')
+      PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace(' ')
+      PsiElement(TRACK_BY_KEYWORD)('trackBy')
+      PsiElement(JS:COLON)(':')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('tracker')
