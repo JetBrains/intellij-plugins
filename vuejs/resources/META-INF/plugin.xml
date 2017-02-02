@@ -1,5 +1,6 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/vuejs">
   <name>Vue.js</name>
+  <id>org.jetbrains.plugins.vue</id>
   <description>Support for Vue.js</description>
   <vendor>JetBrains</vendor>
 
