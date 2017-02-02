@@ -35,16 +35,13 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.8
 
 intellij {
-//    alternativeIdePath="/Users/jetbrains/Library/Application Support/JetBrains/Toolbox/apps/PyCharm-C/ch-0/163.8233.8/PyCharm CE.app"
-//    version '2016.3'
     type 'IU'
     plugins 'Pythonid:2017.1.171.6'
-//    type 'WS'
     updateSinceUntilBuild = false
-    publish {
-        username repoUser
-        password repoPassword
-    }
+//    publish {
+//        username repoUser
+//        password repoPassword
+//    }
 }
 
 sourceSets {

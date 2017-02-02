@@ -8,13 +8,11 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.JavaSdkVersion;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
@@ -25,6 +23,8 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.actions.OpenLessonAction;
+import training.lang.LangManager;
+import training.lang.LangSupport;
 import training.learn.exceptons.*;
 import training.learn.log.GlobalLessonLog;
 import training.ui.FeedbackManager;
@@ -39,10 +39,12 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
- * Created by karashevich on 11/03/15.
+ * @author Sergey Karashevich
  */
 @State(
         name = "TrainingPluginModules",
@@ -156,47 +158,16 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
      * checking environment to start learning plugin. Checking SDK.
      *
      * @param project where lesson should be started
-     * @param module  learning module
      * @throws OldJdkException     - if project JDK version is not enough for this module
      * @throws InvalidSdkException - if project SDK is not suitable for module
      */
-    public void checkEnvironment(Project project, @Nullable Module module) throws OldJdkException, InvalidSdkException, NoSdkException, NoJavaModuleException {
+    public void checkEnvironment(@NotNull Project project) throws OldJdkException, InvalidSdkException, NoSdkException, NoJavaModuleException {
 
-        if (module == null) return;
-
-        final Sdk projectJdk = ProjectRootManager.getInstance(project).getProjectSdk();
-        if (projectJdk == null) throw new NoSdkException();
-
-        final SdkTypeId sdkType = projectJdk.getSdkType();
-        if (module.getSdkType() == Module.ModuleSdkType.JAVA) {
-            if (sdkType instanceof JavaSdk) {
-                final JavaSdkVersion version = ((JavaSdk) sdkType).getVersion(projectJdk);
-                if (version != null) {
-                    if (!version.isAtLeast(JavaSdkVersion.JDK_1_6)) throw new OldJdkException(JavaSdkVersion.JDK_1_6);
-                    try {
-                        checkJavaModule(project);
-                    } catch (NoJavaModuleException e) {
-                        throw e;
-                    }
-                }
-            } else if (sdkType.getName().equals("IDEA JDK")) {
-                try {
-                    checkJavaModule(project);
-                } catch (NoJavaModuleException e) {
-                    throw e;
-                }
-            } else {
-                throw new InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK");
-            }
-        }
-    }
-
-    private void checkJavaModule(Project project) throws NoJavaModuleException {
-
-        if (ModuleManager.getInstance(project).getModules().length == 0) {
-            throw new NoJavaModuleException();
-        }
-
+        final Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
+        if (sdk == null) throw new NoSdkException();
+        final SdkTypeId sdkType = sdk.getSdkType();
+        //noinspection ConstantConditions
+        LangManager.Companion.getInstance().getLangSupport().checkSdkCompatibility(sdk, sdkType);
     }
 
 
@@ -230,7 +201,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return modulesPanel;
     }
 
-    public void updateToolWindowScrollPane() {
+    void updateToolWindowScrollPane() {
         final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
         if (myLearnToolWindow == null) return;
         final JBScrollPane scrollPane = myLearnToolWindow.getScrollPane();
@@ -248,6 +219,11 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         myState.learnProjectPath = learnProjectPath;
     }
 
+    public void updateModules() {
+        Module[] modules = getModules();
+        if (modules == null) return;
+        for (Module module : modules) module.update();
+    }
 
     static class State {
         public final ArrayList<Module> modules = new ArrayList<>();
@@ -257,7 +233,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
         public State() {
         }
-
 
     }
 
@@ -349,7 +324,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         scrollPane.repaint();
     }
 
-    public void setFeedbackView(){
+    public void setFeedbackView() {
         FeedbackFormPanel feedbackFormPanel = FeedbackManager.getInstance().getFeedbackFormPanel();
         final LearnToolWindow myLearnToolWindow = LearnToolWindowFactory.getMyLearnToolWindow();
 
@@ -371,7 +346,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return result;
     }
 
-    public int calcPassedLessons(){
+    public int calcPassedLessons() {
         int result = 0;
         if (getModules() == null) return 0;
         for (Module module : getModules()) {
@@ -390,7 +365,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         Module module = currentLesson.getModule();
         assert module != null;
         assert module.getLessons() != null;
-        ArrayList<Lesson> lessons = module.getLessons();
+        List<Lesson> lessons = module.getLessons();
         int size = lessons.size();
         if (size == 1) return null;
 
@@ -405,6 +380,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     @Nullable
     Module giveNextModule(Lesson currentLesson) {
+        Module nextModule = null;
         Module module = currentLesson.getModule();
         Module[] modules = CourseManager.getInstance().getModules();
         if (modules == null) return null;
@@ -413,11 +389,20 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
         for (int i = 0; i < size; i++) {
             if (modules[i].equals(module)) {
-                if (i + 1 < size) return modules[i + 1];
-                else break;
+                if (i + 1 < size) nextModule = modules[i + 1];
+                break;
             }
         }
-        return null;
+        if (nextModule == null || nextModule.getLessons().size() == 0) return null;
+        return nextModule;
+    }
+
+    public int calcLessonsForLanguage(LangSupport langSupport) {
+        Ref<Integer> inc = new Ref<>(0);
+        Module[] inModules = getModules();
+        if (inModules == null) return 0;
+        Arrays.stream(inModules).forEach(module -> inc.set(inc.get() + module.filterLessonByLang(langSupport).size()));
+        return inc.get();
     }
 
 }

@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
+import training.lang.LangManager;
 import training.learn.LearnBundle;
 
 import javax.swing.*;
@@ -42,7 +43,7 @@ public class NoSdkProblemDialog extends DialogWrapper {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        final String warningMessage = LearnBundle.message("dialog.noSdk.message", necessarySdkVersion);
+        final String warningMessage = LearnBundle.message("dialog.noSdk.message", LangManager.Companion.getInstance().getLanguageDisplayName());
 
         gbc.insets = new Insets(4, 8, 4, 8);
         gbc.weighty = 1;

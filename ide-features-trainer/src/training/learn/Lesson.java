@@ -28,6 +28,8 @@ public class Lesson {
     private ArrayList<MyPair> statistic = new ArrayList<>();
     private short exerciseCount;
 
+    private String lang;
+
     private boolean passed;
     private boolean isOpen;
 
