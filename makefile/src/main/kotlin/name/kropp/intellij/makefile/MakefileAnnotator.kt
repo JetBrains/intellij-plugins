@@ -14,7 +14,7 @@ class MakefileAnnotator : Annotator {
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element is MakefileTarget) {
-      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.TARGET
+      holder.createInfoAnnotation(element, null).textAttributes = if (element.isSpecialTarget) MakefileSyntaxHighlighter.SPECIAL_TARGET else MakefileSyntaxHighlighter.TARGET
     } else if (element is MakefilePrerequisite) {
       holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.PREREQUISITE
 

@@ -10,6 +10,7 @@ class MakefileColorSettingsPage : ColorSettingsPage {
 
   private val tags = mapOf(
       "target" to MakefileSyntaxHighlighter.TARGET,
+      "specialTarget" to MakefileSyntaxHighlighter.SPECIAL_TARGET,
       "variableName" to MakefileSyntaxHighlighter.VARIABLE,
       "prerequisite" to MakefileSyntaxHighlighter.PREREQUISITE
   )
@@ -17,6 +18,7 @@ class MakefileColorSettingsPage : ColorSettingsPage {
   private val DESCRIPTORS = arrayOf(
       AttributesDescriptor("Keyword", MakefileSyntaxHighlighter.KEYWORD),
       AttributesDescriptor("Target", MakefileSyntaxHighlighter.TARGET),
+      AttributesDescriptor("Special Target", MakefileSyntaxHighlighter.SPECIAL_TARGET),
       AttributesDescriptor("Separator", MakefileSyntaxHighlighter.SEPARATOR),
       AttributesDescriptor("Prerequisite", MakefileSyntaxHighlighter.PREREQUISITE),
       AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE),
@@ -34,6 +36,7 @@ include make.mk
 <target>all</target>: <prerequisite>hello</prerequisite>
 
 <target>hello</target>: <prerequisite>hello.o</prerequisite> <prerequisite>world.o</prerequisite>
+<specialTarget>.PHONY: hello</specialTarget>
 
 <variableName>GCC</variableName> = gcc \
            -O2
