@@ -20,6 +20,7 @@ public class DartSdkLibraryPresentationProvider extends LibraryPresentationProvi
   }
 
   @Nullable
+  @Override
   public Icon getIcon(@Nullable DummyLibraryProperties properties) {
     return DartIcons.Dart_16;
   }
