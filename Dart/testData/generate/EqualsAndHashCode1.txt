@@ -5,18 +5,18 @@ class EqualsAndHashCode1 {
   static var s;
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    return other is EqualsAndHashCode1 &&
-        this.str == other.str &&
-        this.v == other.v &&
-        this.i == other.i;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is EqualsAndHashCode1 &&
+              runtimeType == other.runtimeType &&
+              str == other.str &&
+              v == other.v &&
+              i == other.i;
 
   @override
-  int get hashCode {
-    return str.hashCode ^ v.hashCode ^ i.hashCode;
-  }<caret>
+  int get hashCode =>
+      str.hashCode ^
+      v.hashCode ^
+      i.hashCode;
+  <caret>
 }

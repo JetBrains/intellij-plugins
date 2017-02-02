@@ -16,6 +16,7 @@
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.jetbrains.lang.dart.psi.DartClass;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartGenerateEqualsAndHashcodeAction extends BaseDartGenerateAction {
@@ -29,10 +30,14 @@ public class DartGenerateEqualsAndHashcodeAction extends BaseDartGenerateAction 
   }
 
   @Override
-  protected boolean doEnable(@Nullable DartClass dartClass) {
+  protected boolean doEnable(@Nullable final DartClass dartClass) {
     if (dartClass == null) {
       return false;
     }
-    return !doesClassContainMethod(dartClass, EQUALS_OP) && !doesClassContainGetter(dartClass, HASHCODE);
+    return !doesClassContainEqualsAndHashCode(dartClass);
+  }
+
+  public static boolean doesClassContainEqualsAndHashCode(@NotNull final DartClass dartClass) {
+    return doesClassContainMethod(dartClass, EQUALS_OP) && doesClassContainGetter(dartClass, HASHCODE);
   }
 }

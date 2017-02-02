@@ -19,21 +19,29 @@ import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartComponent> {
+
   public CreateEqualsAndHashcodeFix(@NotNull final DartClass dartClass) {
     super(dartClass);
   }
 
   @Override
-  protected void processElements(@NotNull Project project, @NotNull Editor editor, Set<DartComponent> elementsToProcess) {
+  protected void processElements(@NotNull final Project project,
+                                 @NotNull final Editor editor,
+                                 @NotNull final Set<DartComponent> elementsToProcess) {
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, elementsToProcess), anchor);
   }
@@ -44,44 +52,73 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
     return ""; // can't be called actually because processElements() is overridden
   }
 
-  protected Template buildFunctionsText(TemplateManager templateManager, Set<DartComponent> elementsToProcess) {
+  private static boolean doesSuperclassOverrideEqualEqualAndHashCode(@NotNull final DartClass dartClass) {
+    final Project project = dartClass.getProject();
+    final VirtualFile file = dartClass.getContainingFile().getVirtualFile();
+    final DartComponentName name = dartClass.getComponentName();
+    if (name == null) {
+      return false;
+    }
+
+    // runnable used by generator is called under write lock, so we have to skip the checkWriteLock unfortunately
+    final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(dartClass.getProject())
+      .search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), true, false);
+
+    // The first item is the Dart class the query was run on, so skip it
+    for (int i = 1; i < items.size(); i++) {
+      final DartClass superDartClass = DartHierarchyUtil.findDartClass(project, items.get(i));
+      if (superDartClass != null && superDartClass.getName() != null && !superDartClass.getName().equals("Object")) {
+        if (DartGenerateEqualsAndHashcodeAction.doesClassContainEqualsAndHashCode(superDartClass)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  protected Template buildFunctionsText(TemplateManager templateManager, @NotNull Set<DartComponent> elementsToProcess) {
+
+    boolean superclassOverridesEqualEqualAndHashCode = doesSuperclassOverrideEqualEqualAndHashCode(myDartClass);
+
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
-
 
     final boolean doInsertOverrideAnnotation = CodeStyleSettingsManager.getSettings(myDartClass.getProject()).INSERT_OVERRIDE_ANNOTATION;
     if (doInsertOverrideAnnotation) {
       template.addTextSegment("@override\n");
     }
-    template.addTextSegment("bool operator==(Object other) {\n");
-    template.addTextSegment("if (identical(this, other)) {\nreturn true;\n}\n");
-    template.addTextSegment("return other is " + myDartClass.getName());
-
+    template.addTextSegment("bool operator==(Object other) =>\nidentical(this, other) ||\n");
+    if (superclassOverridesEqualEqualAndHashCode) {
+      template.addTextSegment("super == other &&\n");
+    }
+    template.addTextSegment("other is " + myDartClass.getName() + " &&\n");
+    template.addTextSegment("runtimeType == other.runtimeType");
     for (DartComponent component : elementsToProcess) {
       template.addTextSegment(" &&\n");
-      template.addTextSegment("this." + component.getName() + " == other." + component.getName());
+      template.addTextSegment(component.getName() + " == other." + component.getName());
     }
-    template.addTextSegment(";\n}\n");
+    template.addTextSegment(";\n");
 
     if (doInsertOverrideAnnotation) {
       template.addTextSegment("@override\n");
     }
-    template.addTextSegment("int get hashCode {\n");
-    if (elementsToProcess.isEmpty()) {
-      template.addTextSegment("return 0;");
+    template.addTextSegment("int get hashCode => ");
+    boolean firstItem = true;
+    if (superclassOverridesEqualEqualAndHashCode) {
+      template.addTextSegment("\nsuper.hashCode");
+      firstItem = false;
     }
-    else {
-      template.addTextSegment("return ");
-      for (Iterator<DartComponent> iterator = elementsToProcess.iterator(); iterator.hasNext(); ) {
-        DartComponent component = iterator.next();
-        template.addTextSegment(component.getName() + ".hashCode");
-        if (iterator.hasNext()) {
-          template.addTextSegment(" ^");
-        }
+    for (DartComponent component : elementsToProcess) {
+      if (!firstItem) {
+        template.addTextSegment(" ^\n");
       }
-      template.addTextSegment(";\n");
+      template.addTextSegment(component.getName() + ".hashCode");
+      firstItem = false;
     }
-    template.addTextSegment("}");
+    if (!superclassOverridesEqualEqualAndHashCode && elementsToProcess.isEmpty()) {
+      template.addTextSegment("0");
+    }
+    template.addTextSegment(";\n");
     template.addEndVariable();
     template.addTextSegment(" "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
 
