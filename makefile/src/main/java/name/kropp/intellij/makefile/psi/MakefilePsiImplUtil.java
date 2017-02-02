@@ -49,6 +49,20 @@ public class MakefilePsiImplUtil {
         return name != null && (name.matches("^\\.[A-Z_]*") || name.equals("FORCE"));
     }
 
+    public static boolean matches(MakefileTarget element, String prerequisite) {
+        String name = element.getName();
+        if (name == null) {
+            return false;
+        }
+        if (name.startsWith("%")) {
+            return prerequisite.endsWith(name.substring(1));
+        }
+        if (name.endsWith("%")) {
+            return prerequisite.startsWith(name.substring(0, name.length()-1));
+        }
+        return name.equals(prerequisite);
+    }
+
     private static TokenSet ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN);
     private static TokenSet LINE = TokenSet.create(MakefileTypes.LINE);
     private static TokenSet VARIABLE_VALUE_LINE = TokenSet.create(MakefileTypes.VARIABLE_VALUE_LINE);

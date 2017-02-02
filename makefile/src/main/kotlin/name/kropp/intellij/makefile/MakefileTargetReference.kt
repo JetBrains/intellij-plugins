@@ -17,7 +17,7 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
 
   override fun isReferenceTo(element: PsiElement?): Boolean {
     if (element is MakefileTarget) {
-      return element.name == prerequisite.text
+      return element.matches(prerequisite.text)
     }
     if (element is MakefileVariable) {
       return "\$(${element.text})" == prerequisite.text
@@ -28,6 +28,9 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
   override fun getCanonicalText() = prerequisite.text ?: ""
 
   override fun handleElementRename(newName: String): PsiElement {
+    if (newName.contains("%")) {
+      return prerequisite
+    }
     val identifierNode = prerequisite.node.firstChildNode
     if (identifierNode != null) {
       val target = MakefileElementFactory.createTarget(prerequisite.project, newName)
@@ -54,7 +57,7 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
           .firstOrNull()?.element
     }
     return (prerequisite.containingFile as MakefileFile).allTargets
-        .filter { it.name == prerequisite.text }
+        .filter { it.matches(prerequisite.text) }
         .map(::PsiElementResolveResult)
         .firstOrNull()?.element
   }
