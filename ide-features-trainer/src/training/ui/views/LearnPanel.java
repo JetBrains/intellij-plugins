@@ -24,10 +24,10 @@ import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by karashevich on 26/06/15.
+ * @author Sergey Karashevich
  */
 public class LearnPanel extends JPanel {
 
@@ -345,7 +345,7 @@ public class LearnPanel extends JPanel {
             if (lesson == null) return;
             if (lesson.getModule() == null) return;
             Module module = lesson.getModule();
-            final ArrayList<Lesson> myLessons = module.getLessons();
+            final List<Lesson> myLessons = module.getLessons();
 
             //if module contains one lesson only
             if (myLessons.size() == 1) return;
@@ -376,7 +376,7 @@ public class LearnPanel extends JPanel {
             setMaximumSize(new Dimension(LearnUIManager.getInstance().getWidth(), modulePanel.getPreferredSize().height));
         }
 
-        private void buildLessonLabels(Lesson lesson, final ArrayList<Lesson> myLessons) {
+        private void buildLessonLabels(Lesson lesson, final List<Lesson> myLessons) {
             lessonLabelMap.clear();
             for (final Lesson currentLesson : myLessons) {
                 String lessonName = currentLesson.getName();

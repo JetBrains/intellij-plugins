@@ -84,7 +84,7 @@ public class ModulesPanel extends JPanel {
         lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.PAGE_AXIS));
         lessonPanel.setOpaque(false);
         lessonPanel.setFocusable(false);
-        initLessonPanel();
+        initModulesPanel();
         submitFeedbackPanel = new JPanel();
         submitFeedbackPanel.setLayout(new BoxLayout(submitFeedbackPanel, BoxLayout.LINE_AXIS));
         submitFeedbackPanel.setOpaque(false);
@@ -98,10 +98,11 @@ public class ModulesPanel extends JPanel {
         submitFeedbackPanel.setBorder(LearnUIManager.getInstance().getCheckmarkShiftBorder());
     }
 
-    private void initLessonPanel() {
+    private void initModulesPanel() {
         Module[] modules = CourseManager.getInstance().getModules();
         assert modules != null;
         for (Module module : modules) {
+            if (module.getLessons().size() == 0) continue;
             JPanel moduleHeader = new JPanel();
             moduleHeader.setFocusable(false);
             moduleHeader.setAlignmentX(LEFT_ALIGNMENT);
@@ -194,7 +195,7 @@ public class ModulesPanel extends JPanel {
 
     public void updateMainPanel() {
         lessonPanel.removeAll();
-        initLessonPanel();
+        initModulesPanel();
     }
 
     @Nullable

@@ -2,7 +2,7 @@ package training.learn
 
 import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.ide.impl.ProjectUtil
-import com.intellij.ide.util.projectWizard.JavaModuleBuilder
+import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
@@ -12,6 +12,7 @@ import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.ex.IdeFrameEx
 import com.intellij.openapi.wm.impl.IdeFrameImpl
+import training.lang.LangSupport
 import training.learn.dialogs.LearnProjectWarningDialog
 import java.io.File
 import java.io.IOException
@@ -22,10 +23,10 @@ import java.io.IOException
 object NewLearnProjectUtil {
 
     @Throws(IOException::class)
-    fun createLearnProject(projectName: String, projectToClose: Project?, applyProjectSdk: (Project) -> Unit): Project? {
+    fun createLearnProject(projectName: String, projectToClose: Project?, langSupport: LangSupport): Project? {
         val projectManager = ProjectManagerEx.getInstanceEx()
         val allProjectsDir = ProjectUtil.getBaseDir()
-        val projectBuilder = JavaModuleBuilder()
+        val moduleBuilder : ModuleBuilder = langSupport.getModuleBuilder()
 
         try {
             val projectFilePath = allProjectsDir + File.separator + projectName //Project dir
@@ -36,18 +37,18 @@ object NewLearnProjectUtil {
             FileUtil.ensureExists(ideaDir)
 
             val newProject: Project? =
-                    if (!projectBuilder.isUpdate) projectBuilder.createProject(projectName, projectFilePath)
+                    if (!moduleBuilder.isUpdate) moduleBuilder.createProject(projectName, projectFilePath)
                     else projectToClose
 
             if (newProject == null) return projectToClose!!
 
-            applyProjectSdk(newProject)
+            langSupport.applyProjectSdk(newProject)
 
             if (!ApplicationManager.getApplication().isUnitTestMode) {
                 newProject.save()
             }
 
-            if (!projectBuilder.validate(projectToClose, newProject)) {
+            if (!moduleBuilder.validate(projectToClose, newProject)) {
                 return projectToClose
             }
 
@@ -55,7 +56,7 @@ object NewLearnProjectUtil {
             if (newProject !== projectToClose && !ApplicationManager.getApplication().isUnitTestMode && projectToClose != null)
                 NewProjectUtil.closePreviousProject(projectToClose)
 
-            projectBuilder.commit(newProject, null, ModulesProvider.EMPTY_MODULES_PROVIDER)
+            moduleBuilder.commit(newProject, null, ModulesProvider.EMPTY_MODULES_PROVIDER)
 
             if (newProject !== projectToClose) {
                 ProjectUtil.updateLastProjectLocation(projectFilePath)
@@ -80,7 +81,7 @@ object NewLearnProjectUtil {
             return newProject
 
         } finally {
-            projectBuilder.cleanup()
+            moduleBuilder.cleanup()
         }
     }
 

@@ -12,14 +12,12 @@ import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.impl.LanguageLevelProjectExtensionImpl
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.pom.java.LanguageLevel
 import com.intellij.projectImport.ProjectImportBuilder.getCurrentProject
 import training.lang.LangManager
 import training.learn.*
@@ -34,16 +32,16 @@ import java.util.*
 import java.util.concurrent.ExecutionException
 
 /**
- * Created by karashevich on 20/05/16.
- */
+* @author Sergey Karashevich
+*/
 class OpenLessonAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
 
         val lesson = e.getData(LESSON_DATA_KEY);
-        val project = e.getProject()
+        val project = e.project
 
-        if (lesson != null) {
+        if (lesson != null && project != null) {
             openLesson(project, lesson)
         } else {
             //in case of starting from Welcome Screen
@@ -53,7 +51,7 @@ class OpenLessonAction : AnAction() {
     }
 
     @Synchronized @Throws(BadModuleException::class, BadLessonException::class, IOException::class, FontFormatException::class, InterruptedException::class, ExecutionException::class, LessonIsOpenedException::class)
-    fun openLesson(project: Project?, lesson: Lesson) {
+    fun openLesson(project: Project, lesson: Lesson) {
         var project = project
 
         try {
@@ -70,7 +68,7 @@ class OpenLessonAction : AnAction() {
             var vf: VirtualFile? = null
             val learnProject = CourseManager.getInstance().learnProject
             if (lesson.module!!.moduleType == Module.ModuleType.SCRATCH) {
-                CourseManager.getInstance().checkEnvironment(project, lesson.module)
+                CourseManager.getInstance().checkEnvironment(project)
                 vf = getScratchFile(myProject!!, lesson, scratchFileName)
             } else {
                 //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
@@ -103,7 +101,7 @@ class OpenLessonAction : AnAction() {
 
             if (vf == null) return  //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
             if (lesson.module!!.moduleType != Module.ModuleType.SCRATCH)
-                project = CourseManager.getInstance().learnProject
+                project = CourseManager.getInstance().learnProject!!
 
             //open next lesson if current is passed
             val currentProject = project
@@ -133,7 +131,7 @@ class OpenLessonAction : AnAction() {
 
 
             //Dispose balloon while scratch file is closing. InfoPanel still exists.
-            project!!.messageBus.connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerAdapter() {
+            project.messageBus.connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerAdapter() {
                 override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
                     lesson.close()
                 }
@@ -174,15 +172,13 @@ class OpenLessonAction : AnAction() {
             LessonProcessor.process(project, lesson, textEditor.editor, target)
 
         } catch (noSdkException: NoSdkException) {
-            Messages.showMessageDialog(project, LearnBundle.message("dialog.noSdk.message"), LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
-            ProjectSettingsService.getInstance(project!!).chooseAndSetSdk()
-            openLesson(project, lesson)
+            Messages.showMessageDialog(project, LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()), LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
+            if (ProjectSettingsService.getInstance(project).chooseAndSetSdk() != null) openLesson(project, lesson)
         } catch (noSdkException: InvalidSdkException) {
-            Messages.showMessageDialog(project, LearnBundle.message("dialog.noSdk.message"), LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
-            ProjectSettingsService.getInstance(project!!).chooseAndSetSdk()
-            openLesson(project, lesson)
+            Messages.showMessageDialog(project, LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()), LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
+            if (ProjectSettingsService.getInstance(project).chooseAndSetSdk() != null) openLesson(project, lesson)
         } catch (noJavaModuleException: NoJavaModuleException) {
-            showModuleProblemDialog(project!!)
+            showModuleProblemDialog(project)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -275,34 +271,39 @@ class OpenLessonAction : AnAction() {
     @Throws(IOException::class)
     private fun getFileInLearnProject(lesson: Lesson): VirtualFile {
 
-        val vf =  ApplicationManager.getApplication().runWriteAction({
-            val learnProject = CourseManager.getInstance().learnProject!!
-            val sourceRootFile = ProjectRootManager.getInstance(learnProject).contentSourceRoots[0]
-            val myLanguage = lesson.lang!!
-            val languageByID = Language.findLanguageByID(myLanguage)
-            val extensionFile = languageByID!!.associatedFileType!!.defaultExtension
+        val function = object: Computable<VirtualFile> {
 
-            var fileName = "Test." + extensionFile
-            if (lesson.module != null) {
-                fileName = lesson.module!!.nameWithoutWhitespaces + extensionFile
-            }
+            override fun compute(): VirtualFile {
+                val learnProject = CourseManager.getInstance().learnProject!!
+                val sourceRootFile = ProjectRootManager.getInstance(learnProject).contentSourceRoots[0]
+                val myLanguage = lesson.lang
+                val languageByID = Language.findLanguageByID(myLanguage)
+                val extensionFile = languageByID!!.associatedFileType!!.defaultExtension
 
-            var lessonVirtualFile = sourceRootFile.findChild(fileName)
-            if (lessonVirtualFile == null) {
-
-                try {
-                    lessonVirtualFile = sourceRootFile.createChildData(this, fileName)
-                } catch (e: IOException) {
-                    e.printStackTrace()
+                var fileName = "Test." + extensionFile
+                if (lesson.module != null) {
+                    fileName = lesson.module!!.nameWithoutWhitespaces + extensionFile
                 }
 
-            }
+                var lessonVirtualFile = sourceRootFile.findChild(fileName)
+                if (lessonVirtualFile == null) {
 
-            CourseManager.getInstance().registerVirtualFile(lesson.module, lessonVirtualFile)
-            lessonVirtualFile
-        } as Computable<*>)
+                    try {
+                        lessonVirtualFile = sourceRootFile.createChildData(this, fileName)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+
+                }
+
+                CourseManager.getInstance().registerVirtualFile(lesson.module, lessonVirtualFile)
+                return lessonVirtualFile!!
+            }
+        }
+
+        val vf =  ApplicationManager.getApplication().runWriteAction(function)
         assert(vf is VirtualFile)
-        return vf as VirtualFile
+        return vf
     }
 //
     private fun initLearnProject(projectToClose: Project?): Project? {
@@ -332,14 +333,14 @@ class OpenLessonAction : AnAction() {
 
             } else {
                 try {
-                    myLearnProject = NewLearnProjectUtil.createLearnProject(LEARN_PROJECT_NAME, projectToClose, LangManager.getInstance().mySupportedLanguage!!.applyProjectSdk())
+                    myLearnProject = NewLearnProjectUtil.createLearnProject(LEARN_PROJECT_NAME, projectToClose, LangManager.getInstance().getLangSupport()!!)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
 
             }
 
-            LangManager.getInstance().mySupportedLanguage!!.applyToProjectAfterConfigure().invoke(myLearnProject!!)
+            LangManager.getInstance().getLangSupport()!!.applyToProjectAfterConfigure().invoke(myLearnProject!!)
         }
 
         CourseManager.getInstance().learnProject = myLearnProject

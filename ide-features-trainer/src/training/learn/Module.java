@@ -11,8 +11,11 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.learn.exceptons.BadModuleException;
+import org.jetbrains.annotations.TestOnly;
+import training.lang.LangManager;
+import training.lang.LangSupport;
 import training.learn.exceptons.BadLessonException;
+import training.learn.exceptons.BadModuleException;
 import training.util.GenModuleXml;
 import training.util.MyClassLoader;
 
@@ -20,9 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.EventListener;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Created by karashevich on 29/01/15.
+ * @author Sergey Karashevich
  */
 @Tag("course")
 public class Module{
@@ -41,7 +47,12 @@ public class Module{
 
     public enum ModuleType {SCRATCH, PROJECT}
 
-    private ArrayList<Lesson> lessons;
+    //used for lessons filtered by LangManger chosen lang
+    private List<Lesson> lessons;
+    private ArrayList<Lesson> allLessons;
+
+    private List<ModuleUpdateListener> moduleUpdateListeners;
+
     @Nullable
     private String answersPath;
     @Nullable
@@ -67,11 +78,6 @@ public class Module{
         this.lessons = lessons;
     }
 
-    @Nullable
-    public ModuleSdkType getMySdkType() {
-        return mySdkType;
-    }
-
     public void setMySdkType(@Nullable ModuleSdkType mySdkType) {
         this.mySdkType = mySdkType;
     }
@@ -80,19 +86,24 @@ public class Module{
         this.name = name;
     }
 
-
     public void setModulePath(String modulePath) {
         this.modulePath = modulePath;
     }
 
+
+
+    @TestOnly
     public Module(){
         name = "Test";
         lessons = new ArrayList<>();
+        allLessons = new ArrayList<>();
+        moduleUpdateListeners = new ArrayList<>();
     }
 
-
-    public Module(@NotNull String name, @Nullable Element root) throws JDOMException, BadLessonException, BadModuleException, IOException, URISyntaxException {
+    private Module(@NotNull String name, @Nullable Element root) throws JDOMException, BadLessonException, BadModuleException, IOException, URISyntaxException {
         lessons = new ArrayList<>();
+        allLessons = new ArrayList<>();
+        moduleUpdateListeners = new ArrayList<>();
         this.name = name;
         this.root = root;
         modulePath = GenModuleXml.MODULE_MODULES_PATH;
@@ -113,8 +124,6 @@ public class Module{
             else if(attributeFileType.getValue().toUpperCase().equals(ModuleType.PROJECT.toString().toUpperCase())) moduleType = ModuleType.PROJECT;
             else throw new BadModuleException("Unable to recognise ModuleType (should be SCRATCH or PROJECT)");
         }
-
-
     }
 
     @NotNull
@@ -151,7 +160,7 @@ public class Module{
 
 
     @AbstractCollection(surroundWithTag = true)
-    public ArrayList<Lesson> getLessons() {
+    public List<Lesson> getLessons() {
         return lessons;
     }
 
@@ -164,9 +173,6 @@ public class Module{
 
             //retrieve list of xml files inside lessonspath directory
             String lessonsPath = getModulePath() + root.getAttribute(GenModuleXml.MODULE_LESSONS_PATH_ATTR).getValue();
-//            String lessonsFullpath = MyClassLoader.getInstance().getDataPath() + lessonsPath;
-//            URL url = Module.class.getResource(lessonsFullpath);
-//            File dir = new File(Module.class.getResource("/data/" + lessonsPath).toURI());
 
             for (Element lessonElement : root.getChildren()) {
                 if (!lessonElement.getName().equals(GenModuleXml.MODULE_LESSON_ELEMENT))
@@ -177,18 +183,29 @@ public class Module{
                 try {
                     Scenario scn = new Scenario(lessonPath);
                     Lesson lesson = new Lesson(scn, false, this);
-                    lessons.add(lesson);
+                    allLessons.add(lesson);
                 } catch (JDOMException e) {
                     //Lesson file is corrupted
-                    throw new BadLessonException("Probably lesson file is corrupted: " + lessonPath + " JDOMExceprion:" + e);
+                    throw new BadLessonException("Probably lesson file is corrupted: " + lessonPath + " JDOMException:" + e);
                 } catch (IOException e) {
                     //Lesson file cannot be read
                     throw new BadLessonException("Probably lesson file cannot be read: " + lessonPath);
                 }
             }
-
         }
+        lessons = filterLessonsByCurrentLang();
+    }
 
+
+    private List<Lesson> filterLessonsByCurrentLang() {
+        LangManager langManager = LangManager.Companion.getInstance();
+        if (langManager.isLangUndefined()) return allLessons;
+        //noinspection ConstantConditions
+        return filterLessonByLang(langManager.getLangSupport());
+    }
+
+    public List<Lesson> filterLessonByLang(LangSupport langSupport) {
+        return allLessons.stream().filter(lesson -> langSupport.acceptLang(lesson.getLang())).collect(Collectors.toList());
     }
 
     @Nullable
@@ -243,5 +260,22 @@ public class Module{
     @Nullable
     Element getModuleRoot(){
         return root;
+    }
+
+    public void update(){
+        lessons = filterLessonsByCurrentLang();
+        moduleUpdateListeners.forEach(ModuleUpdateListener::onUpdate);
+    }
+
+    public void registerListener(ModuleUpdateListener moduleUpdateListener) {
+        moduleUpdateListeners.add(moduleUpdateListener);
+    }
+
+    public void removeAllListeners() {
+        moduleUpdateListeners.clear();
+    }
+
+    public class ModuleUpdateListener implements EventListener {
+        void onUpdate() { }
     }
 }

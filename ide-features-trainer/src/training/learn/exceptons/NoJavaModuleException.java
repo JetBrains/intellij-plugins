@@ -1,7 +1,7 @@
 package training.learn.exceptons;
 
 /**
- * Created by karashevich on 12/01/16.
+ * @author Sergey Karashevich
  */
 public class NoJavaModuleException extends Exception {
     public NoJavaModuleException() {
