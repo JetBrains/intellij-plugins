@@ -34,18 +34,26 @@ class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
     fun init(project: Project) {
 
         myProject = project
-        myLearnPanel = LearnPanel()
-        modulesPanel = ModulesPanel()
-        CourseManager.getInstance().modulesPanel = modulesPanel
-        CourseManager.getInstance().learnPanel = myLearnPanel
+        reinitViewsInternal()
         if (LangManager.getInstance().isLangUndefined()) {
             val myLanguageChoosePanel = LanguageChoosePanel()
             scrollPane = JBScrollPane(myLanguageChoosePanel)
         } else {
             scrollPane = JBScrollPane(modulesPanel)
         }
-
         setContent(scrollPane)
+    }
+
+    private fun reinitViewsInternal() {
+        myLearnPanel = LearnPanel()
+        modulesPanel = ModulesPanel()
+        CourseManager.getInstance().modulesPanel = modulesPanel
+        CourseManager.getInstance().learnPanel = myLearnPanel
+    }
+
+    //do not call on modulesPanel view view or learnPanel view
+    public fun reinitViews() {
+        reinitViewsInternal()
     }
 
     override fun dispose() {

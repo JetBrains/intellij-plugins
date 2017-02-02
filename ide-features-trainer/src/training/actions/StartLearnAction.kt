@@ -24,7 +24,7 @@ class StartLearnAction : AnAction(LearnBundle.message("learn.WelcomeScreen.Start
             val dialog = MyDialog().initialize()
             with (dialog) {
                 if (showAndGet()) {
-                    LangManager.getInstance().mySupportedLanguage = this.myLangChoosePanel.getActiveLangSupport()
+                    LangManager.getInstance().updateLangSupport(this.myLangChoosePanel.getActiveLangSupport())
                     doAction()
                 }
             }

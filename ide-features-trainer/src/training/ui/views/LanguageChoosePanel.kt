@@ -1,10 +1,15 @@
 package training.ui.views
 
+import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.util.containers.HashMap
 import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
 import training.lang.LangSupport
+import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.ui.LearnUIManager
 import java.awt.Color
@@ -21,8 +26,8 @@ import javax.swing.text.StyleConstants
 
 
 /**
- * Created by karashevich on 18/07/16.
- */
+* @author Sergey Karashevich
+*/
 class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : JPanel() {
 
     private var caption: JLabel? = null
@@ -75,11 +80,16 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
                 }
             }
             gotoModulesViewButton!!.isOpaque = false
-            gotoModulesViewButton!!.text = LearnBundle.message("learn.choose.language.button")
-            gotoModulesViewButton!!.action = object: AbstractAction() {
+            gotoModulesViewButton!!.action = object: AbstractAction(LearnBundle.message("learn.choose.language.button")) {
                 override fun actionPerformed(e: ActionEvent?) {
                     val activeLangSupport = getActiveLangSupport()
-                    LangManager.getInstance().mySupportedLanguage = activeLangSupport
+                    LangManager.getInstance().updateLangSupport(activeLangSupport)
+
+                    val action = ActionManager.getInstance().getAction("learn.open.lesson")
+                    val context = com.intellij.openapi.actionSystem.DataContext.EMPTY_CONTEXT
+                    val event = AnActionEvent.createFromAnAction(action, null, "LearnToolWindow.ChooseLanguageView", context)
+
+                    ActionUtil.performActionDumbAware(action, event)
                 }
             }
         }
@@ -137,12 +147,16 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         radioButtonPanel.border = EmptyBorder(0, 12, 0, 0)
         radioButtonPanel.layout = BoxLayout(radioButtonPanel, BoxLayout.PAGE_AXIS)
 
-        for (langSupport in LangManager.getInstance().supportedLanguagesExtensions) {
+        val sortedLangSupportExtensions = LangManager.getInstance().supportedLanguagesExtensions.sortedBy {it.language}
 
-            val jrb = JRadioButton(langSupport.language)
+        for (langSupportExt in sortedLangSupportExtensions) {
+
+            val lessonsCount = CourseManager.getInstance().calcLessonsForLanguage(langSupportExt.instance)
+            val jrb = JRadioButton("${Language.findLanguageByID(langSupportExt.language)!!.displayName} ($lessonsCount lesson${if (lessonsCount != 1) "s" else ""}) ")
+            jrb.isOpaque = false
             buttonGroup.add(jrb)
             //add radio buttons
-            myRadioButtonMap.put(jrb, langSupport)
+            myRadioButtonMap.put(jrb, langSupportExt)
             radioButtonPanel.add(jrb, Component.LEFT_ALIGNMENT)
         }
         buttonGroup.setSelected(buttonGroup.elements.nextElement().model, true)

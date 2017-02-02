@@ -1,9 +1,9 @@
 package training.lang
 
-import com.intellij.lang.LanguageExtensionPoint
-import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.openapi.project.Project
-import training.learn.Lesson
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.SdkTypeId
 
 /**
  * @author Sergey Karashevich
@@ -16,8 +16,10 @@ interface LangSupport {
         val EP_NAME = "training.TrainingLangExtension"
     }
 
-    fun acceptExtension(ext: String): Boolean
-    fun applyProjectSdk(): (Project) -> Unit
+    fun acceptLang(ext: String): Boolean
+    fun applyProjectSdk(project: Project): Unit
     fun applyToProjectAfterConfigure(): (Project) -> Unit
+    fun getModuleBuilder(): ModuleBuilder
 
+    fun checkSdkCompatibility(sdk: Sdk, sdkTypeId: SdkTypeId)
 }
