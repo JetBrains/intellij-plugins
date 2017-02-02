@@ -1019,11 +1019,6 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull
   public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final VirtualFile file, final int _offset, final boolean superOnly) {
-    return search_getTypeHierarchy(file, _offset, superOnly, true);
-  }
-
-  @NotNull
-  public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final VirtualFile file, final int _offset, final boolean superOnly, final boolean checkWriteLock) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final List<TypeHierarchyItem> results = Lists.newArrayList();
 
@@ -1048,7 +1043,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_TYPE_HIERARCHY_TIMEOUT, checkWriteLock);
+    awaitForLatchCheckingCanceled(server, latch, GET_TYPE_HIERARCHY_TIMEOUT);
     return results;
   }
 

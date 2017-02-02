@@ -20,6 +20,7 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
@@ -34,8 +35,16 @@ import java.util.Set;
 
 public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartComponent> {
 
+  private boolean mySuperclassOverridesEqualEqualAndHashCode;
+
   public CreateEqualsAndHashcodeFix(@NotNull final DartClass dartClass) {
     super(dartClass);
+  }
+
+  @Override
+  public void beforeInvoke(@NotNull Project project, Editor editor, PsiElement file) {
+    super.beforeInvoke(project, editor, file);
+    mySuperclassOverridesEqualEqualAndHashCode = doesSuperclassOverrideEqualEqualAndHashCode(myDartClass);
   }
 
   @Override
@@ -60,9 +69,8 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
       return false;
     }
 
-    // runnable used by generator is called under write lock, so we have to skip the checkWriteLock unfortunately
     final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(dartClass.getProject())
-      .search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), true, false);
+      .search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), true);
 
     // The first item is the Dart class the query was run on, so skip it
     for (int i = 1; i < items.size(); i++) {
@@ -77,9 +85,6 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
   }
 
   protected Template buildFunctionsText(TemplateManager templateManager, @NotNull Set<DartComponent> elementsToProcess) {
-
-    boolean superclassOverridesEqualEqualAndHashCode = doesSuperclassOverrideEqualEqualAndHashCode(myDartClass);
-
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
 
@@ -88,7 +93,7 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
       template.addTextSegment("@override\n");
     }
     template.addTextSegment("bool operator==(Object other) =>\nidentical(this, other) ||\n");
-    if (superclassOverridesEqualEqualAndHashCode) {
+    if (mySuperclassOverridesEqualEqualAndHashCode) {
       template.addTextSegment("super == other &&\n");
     }
     template.addTextSegment("other is " + myDartClass.getName() + " &&\n");
@@ -104,7 +109,7 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
     }
     template.addTextSegment("int get hashCode => ");
     boolean firstItem = true;
-    if (superclassOverridesEqualEqualAndHashCode) {
+    if (mySuperclassOverridesEqualEqualAndHashCode) {
       template.addTextSegment("\nsuper.hashCode");
       firstItem = false;
     }
@@ -115,7 +120,7 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
       template.addTextSegment(component.getName() + ".hashCode");
       firstItem = false;
     }
-    if (!superclassOverridesEqualEqualAndHashCode && elementsToProcess.isEmpty()) {
+    if (!mySuperclassOverridesEqualEqualAndHashCode && elementsToProcess.isEmpty()) {
       template.addTextSegment("0");
     }
     template.addTextSegment(";\n");
