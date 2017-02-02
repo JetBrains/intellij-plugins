@@ -5,7 +5,7 @@ import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.LocatableConfigurationBase
 import com.intellij.execution.configurations.RunProfileState
-import com.intellij.execution.process.OSProcessHandler
+import com.intellij.execution.process.ColoredProcessHandler
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
@@ -45,7 +45,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
             .withExePath(makePath)
             .withWorkDirectory(project.basePath)
             .withParameters("-f", filename, target)
-        val processHandler = OSProcessHandler(cmd)
+        val processHandler = ColoredProcessHandler(cmd)
         ProcessTerminatedListener.attach(processHandler)
         return processHandler
       }
