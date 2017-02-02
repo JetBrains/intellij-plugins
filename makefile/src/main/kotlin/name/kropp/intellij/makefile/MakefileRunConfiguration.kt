@@ -41,10 +41,14 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     val makePath = ServiceManager.getService(project, MakefileProjectSettings::class.java).settings?.path ?: DEFAULT_MAKE_PATH
     return object : CommandLineState(executionEnvironment) {
       override fun startProcess(): ProcessHandler {
+        val args = mutableListOf("-f", filename)
+        if (!target.isNullOrEmpty()) {
+          args += target
+        }
         val cmd = GeneralCommandLine()
             .withExePath(makePath)
             .withWorkDirectory(project.basePath)
-            .withParameters("-f", filename, target)
+            .withParameters(args)
         val processHandler = ColoredProcessHandler(cmd)
         ProcessTerminatedListener.attach(processHandler)
         return processHandler
