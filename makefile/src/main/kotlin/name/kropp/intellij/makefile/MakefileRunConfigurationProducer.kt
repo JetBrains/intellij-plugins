@@ -27,6 +27,10 @@ class MakefileRunConfigurationProducer : RunConfigurationProducer<MakefileRunCon
     while (element != null && element !is MakefileTarget) {
       element = element.parent
     }
-    return element as? MakefileTarget
+    val target = element as? MakefileTarget
+    if (target?.isSpecialTarget == false) {
+      return target
+    }
+    return null
   }
 }

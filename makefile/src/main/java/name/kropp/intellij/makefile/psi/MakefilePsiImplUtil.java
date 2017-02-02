@@ -46,7 +46,7 @@ public class MakefilePsiImplUtil {
 
     public static boolean isSpecialTarget(MakefileTarget element) {
         String name = element.getName();
-        return name != null && name.matches("^\\.[A-Z]*");
+        return name != null && (name.matches("^\\.[A-Z_]*") || name.equals("FORCE"));
     }
 
     private static TokenSet ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN);
