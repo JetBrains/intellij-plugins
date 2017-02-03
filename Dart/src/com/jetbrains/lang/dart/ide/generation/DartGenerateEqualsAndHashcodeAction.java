@@ -25,6 +25,7 @@ public class DartGenerateEqualsAndHashcodeAction extends BaseDartGenerateAction 
   private static final String HASHCODE = "hashCode";
 
   @Override
+  @NotNull
   protected BaseDartGenerateHandler getGenerateHandler() {
     return new DartGenerateEqualsAndHashcodeHandler();
   }

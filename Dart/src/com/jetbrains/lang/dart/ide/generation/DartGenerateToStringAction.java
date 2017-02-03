@@ -16,6 +16,7 @@
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.jetbrains.lang.dart.psi.DartClass;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartGenerateToStringAction extends BaseDartGenerateAction {
@@ -23,6 +24,7 @@ public class DartGenerateToStringAction extends BaseDartGenerateAction {
   private static final String TO_STRING = "toString";
 
   @Override
+  @NotNull
   protected BaseDartGenerateHandler getGenerateHandler() {
     return new DartGenerateToStringHandler();
   }
@@ -34,5 +36,4 @@ public class DartGenerateToStringAction extends BaseDartGenerateAction {
     }
     return !doesClassContainMethod(dartClass, TO_STRING);
   }
-
 }

@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.generation;
 
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -15,11 +14,13 @@ import java.util.Map;
 
 public class DartImplementMethodHandler extends BaseDartGenerateHandler {
   @Override
+  @NotNull
   protected String getTitle() {
     return DartBundle.message("dart.implement.method");
   }
 
   @Override
+  @NotNull
   protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new OverrideImplementMethodFix(dartClass, true);
   }
@@ -41,5 +42,4 @@ public class DartImplementMethodHandler extends BaseDartGenerateHandler {
     candidates.addAll(ContainerUtil.findAll(result.values(),
                                             component -> component.isPublic() || DartResolveUtil.sameLibrary(dartClass, component)));
   }
-
 }

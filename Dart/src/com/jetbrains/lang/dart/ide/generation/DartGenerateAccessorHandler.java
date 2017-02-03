@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.generation;
 
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -19,6 +18,7 @@ public abstract class DartGenerateAccessorHandler extends BaseDartGenerateHandle
   }
 
   @Override
+  @NotNull
   protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new CreateGetterSetterFix(dartClass, myStrategy);
   }
@@ -28,6 +28,7 @@ public abstract class DartGenerateAccessorHandler extends BaseDartGenerateHandle
     final List<DartComponent> subComponents = DartResolveUtil.getNamedSubComponents(dartClass);
 
     candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass, true).values(),
-                                            component -> DartComponentType.typeOf(component) == DartComponentType.FIELD && myStrategy.accept(component.getName(), subComponents)));
+                                            component -> DartComponentType.typeOf(component) == DartComponentType.FIELD &&
+                                                         myStrategy.accept(component.getName(), subComponents)));
   }
 }

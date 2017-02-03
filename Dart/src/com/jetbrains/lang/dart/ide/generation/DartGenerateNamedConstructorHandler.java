@@ -26,11 +26,13 @@ import java.util.List;
 
 public class DartGenerateNamedConstructorHandler extends BaseDartGenerateHandler {
   @Override
+  @NotNull
   protected String getTitle() {
     return DartBundle.message("dart.generate.named.constructor");
   }
 
   @Override
+  @NotNull
   protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new CreateNamedConstructorFix(dartClass);
   }

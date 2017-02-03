@@ -11,11 +11,13 @@ import java.util.List;
 
 public class DartGenerateConstructorHandler extends BaseDartGenerateHandler {
   @Override
+  @NotNull
   protected String getTitle() {
     return DartBundle.message("dart.generate.constructor");
   }
 
   @Override
+  @NotNull
   protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new CreateConstructorFix(dartClass);
   }

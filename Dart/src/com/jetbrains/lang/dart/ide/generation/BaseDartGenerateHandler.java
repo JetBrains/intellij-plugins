@@ -37,7 +37,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+  public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
     invoke(project, editor, file, editor.getCaretModel().getOffset());
   }
 
@@ -60,15 +60,14 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
       selectedElements = chooser.getSelectedElements();
     }
 
-    final BaseCreateMethodsFix createMethodsFix = createFix(dartClass);
-    doInvoke(project, editor, file, selectedElements, createMethodsFix);
+    doInvoke(project, editor, file, selectedElements, createFix(dartClass));
   }
 
-  protected void doInvoke(final Project project,
-                          final Editor editor,
-                          final PsiFile file,
-                          final Collection<DartNamedElementNode> selectedElements,
-                          final BaseCreateMethodsFix createMethodsFix) {
+  protected void doInvoke(@NotNull final Project project,
+                          @NotNull final Editor editor,
+                          @NotNull final PsiFile file,
+                          @NotNull final Collection<DartNamedElementNode> selectedElements,
+                          @NotNull final BaseCreateMethodsFix createMethodsFix) {
     Runnable runnable = new Runnable() {
       public void run() {
         createMethodsFix.addElementsToProcessFrom(selectedElements);
@@ -95,11 +94,13 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     }
   }
 
-  protected abstract BaseCreateMethodsFix createFix(final DartClass dartClass);
+  @NotNull
+  protected abstract BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass);
 
+  @NotNull
   protected abstract String getTitle();
 
-  protected abstract void collectCandidates(final DartClass dartClass, final List<DartComponent> candidates);
+  protected abstract void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates);
 
   private final static Condition<DartComponent> NOT_CONSTRUCTOR_CONDITION =
     component -> DartComponentType.typeOf(component) != DartComponentType.CONSTRUCTOR;

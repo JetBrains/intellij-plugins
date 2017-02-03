@@ -15,7 +15,6 @@
  */
 package com.jetbrains.lang.dart.ide.generation;
 
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -27,11 +26,13 @@ import java.util.List;
 
 public class DartGenerateToStringHandler extends BaseDartGenerateHandler {
   @Override
+  @NotNull
   protected String getTitle() {
     return DartBundle.message("dart.generate.toString");
   }
 
   @Override
+  @NotNull
   protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new CreateToStringFix(dartClass);
   }

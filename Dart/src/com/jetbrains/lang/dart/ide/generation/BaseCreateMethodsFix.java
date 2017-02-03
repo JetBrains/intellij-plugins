@@ -78,7 +78,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     processElements(project, editor, getElementsToProcess());
   }
 
-  protected void processElements(@NotNull Project project, @NotNull Editor editor, @NotNull Set<T> elementsToProcess) {
+  protected void processElements(@NotNull final Project project, @NotNull final Editor editor, @NotNull final Set<T> elementsToProcess) {
     if (elementsToProcess.isEmpty()) {
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         HintManager.getInstance().showErrorHint(editor, getNothingFoundMessage());
@@ -97,10 +97,10 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   @Nullable
   protected abstract Template buildFunctionsText(TemplateManager templateManager, T e);
 
-  public PsiElement doAddMethodsForOne(@NotNull Editor editor,
-                                       @NotNull TemplateManager templateManager,
-                                       @Nullable Template functionTemplate,
-                                       @NotNull PsiElement anchor) throws IncorrectOperationException {
+  public PsiElement doAddMethodsForOne(@NotNull final Editor editor,
+                                       @NotNull final TemplateManager templateManager,
+                                       @Nullable final Template functionTemplate,
+                                       @NotNull final PsiElement anchor) throws IncorrectOperationException {
     if (functionTemplate != null) {
       setCaretSafe(editor, anchor.getTextRange().getEndOffset());
       templateManager.startTemplate(editor, functionTemplate);

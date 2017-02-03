@@ -17,7 +17,9 @@ public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
   }
 
   @Override
-  protected void processElements(@NotNull final Project project, @NotNull final Editor editor, Set<DartComponent> elementsToProcess) {
+  protected void processElements(@NotNull final Project project,
+                                 @NotNull final Editor editor,
+                                 @NotNull final Set<DartComponent> elementsToProcess) {
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, elementsToProcess), anchor);
   }

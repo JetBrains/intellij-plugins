@@ -41,6 +41,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
     return Pair.create(editor, psiFile);
   }
 
+  @NotNull
   protected abstract BaseDartGenerateHandler getGenerateHandler();
 
   @Override
@@ -84,8 +85,8 @@ public abstract class BaseDartGenerateAction extends AnAction {
     if (getterDeclarations == null) {
       return false;
     }
-    for (DartGetterDeclaration getterDecaration : getterDeclarations) {
-      if (getterName.equals(getterDecaration.getName())) {
+    for (DartGetterDeclaration getterDeclaration : getterDeclarations) {
+      if (getterName.equals(getterDeclaration.getName())) {
         return true;
       }
     }
@@ -100,5 +101,4 @@ public abstract class BaseDartGenerateAction extends AnAction {
     }
     return false;
   }
-
 }

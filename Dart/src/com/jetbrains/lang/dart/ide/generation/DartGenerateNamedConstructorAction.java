@@ -15,8 +15,11 @@
  */
 package com.jetbrains.lang.dart.ide.generation;
 
+import org.jetbrains.annotations.NotNull;
+
 public class DartGenerateNamedConstructorAction extends BaseDartGenerateAction {
   @Override
+  @NotNull
   protected BaseDartGenerateHandler getGenerateHandler() {
     return new DartGenerateNamedConstructorHandler();
   }

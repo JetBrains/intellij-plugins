@@ -35,7 +35,9 @@ public class CreateToStringFix extends BaseCreateMethodsFix<DartComponent> {
   }
 
   @Override
-  protected void processElements(@NotNull Project project, @NotNull Editor editor, Set<DartComponent> elementsToProcess) {
+  protected void processElements(@NotNull final Project project,
+                                 @NotNull final Editor editor,
+                                 @NotNull final Set<DartComponent> elementsToProcess) {
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, elementsToProcess), anchor);
   }

@@ -20,6 +20,7 @@ abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsigh
   protected void doGetterSetterTest(CreateGetterSetterFix.Strategy strategy) {
     doTest(new DartGenerateAccessorHandler(strategy) {
       @Override
+      @NotNull
       protected String getTitle() {
         return "";
       }
