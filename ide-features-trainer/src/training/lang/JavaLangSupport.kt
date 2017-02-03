@@ -15,7 +15,6 @@ import com.intellij.pom.java.LanguageLevel
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoJavaModuleException
 import training.learn.exceptons.NoSdkException
-import training.learn.exceptons.OldJdkException
 import training.util.JdkSetupUtil
 import java.util.*
 
@@ -88,9 +87,7 @@ class JavaLangSupport : LangSupport {
     override fun checkSdkCompatibility(sdk: Sdk, sdkTypeId: SdkTypeId) {
         if (sdkTypeId is JavaSdk) {
             val version = sdkTypeId.getVersion(sdk)
-            if (version != null && !version.isAtLeast(JavaSdkVersion.JDK_1_6)) throw OldJdkException(JavaSdkVersion.JDK_1_6)
-            else
-                throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
+            if (version != null && !version.isAtLeast(JavaSdkVersion.JDK_1_6)) throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
         } else {
             throw NoSdkException()
         }
