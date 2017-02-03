@@ -157,7 +157,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       }
 
       CloudFormationIntrinsicFunction.FnGetAZs ->
-        // TODO verify string agains known regions
+        // TODO verify string against known regions
         // TODO possibility for dataflow checks
         if (function.args.size != 1) {
           addProblem(function, "GetAZs expects one argument")
@@ -414,7 +414,11 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       val inspections = CloudFormationInspections(parsed)
       inspections.root(parsed.root)
-      return InspectionResult(inspections.problems, inspections.references, parsed.psiFile.modificationStamp)
+      val inspectionResult = InspectionResult(inspections.problems, inspections.references, parsed.psiFile.modificationStamp)
+
+      parsed.psiFile.putUserData(ANALYZED_KEY, inspectionResult)
+
+      return inspectionResult
     }
   }
 }

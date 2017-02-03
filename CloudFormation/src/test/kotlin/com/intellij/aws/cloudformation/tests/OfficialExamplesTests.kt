@@ -1,20 +1,19 @@
 package com.intellij.aws.cloudformation.tests
 
 import com.google.common.io.Files
-import com.intellij.aws.cloudformation.inspections.FormatViolationInspection
-import com.intellij.aws.cloudformation.inspections.UnresolvedReferencesInspection
+import com.intellij.aws.cloudformation.inspections.JsonFormatViolationInspection
+import com.intellij.aws.cloudformation.inspections.JsonUnresolvedReferencesInspection
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.testFramework.InspectionFixtureTestCase
-
 import java.io.File
 
 class OfficialExamplesTests : InspectionFixtureTestCase() {
   fun testFormatViolationInspection() {
-    runInspection("format", FormatViolationInspection())
+    runInspection("format", JsonFormatViolationInspection())
   }
 
   fun testUnresolvedReferencesInspection() {
-    runInspection("resolve", UnresolvedReferencesInspection())
+    runInspection("resolve", JsonUnresolvedReferencesInspection())
   }
 
   private fun runInspection(inspectionMoniker: String, inspectionTool: LocalInspectionTool) {

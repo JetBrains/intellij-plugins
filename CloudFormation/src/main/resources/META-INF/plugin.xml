@@ -54,20 +54,20 @@
     <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
-                     implementationClass="com.intellij.aws.cloudformation.inspections.FormatViolationInspection"/>
+                     implementationClass="com.intellij.aws.cloudformation.inspections.JsonFormatViolationInspection"/>
     <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.unresolvedReference"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
-                     implementationClass="com.intellij.aws.cloudformation.inspections.UnresolvedReferencesInspection"/>
+                     implementationClass="com.intellij.aws.cloudformation.inspections.JsonUnresolvedReferencesInspection"/>
 
     <localInspection language="yaml" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
-                     implementationClass="com.intellij.aws.cloudformation.inspections.FormatViolationInspection"/>
+                     implementationClass="com.intellij.aws.cloudformation.inspections.YamlFormatViolationInspection"/>
     <localInspection language="yaml" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.unresolvedReference"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
-                     implementationClass="com.intellij.aws.cloudformation.inspections.UnresolvedReferencesInspection"/>
+                     implementationClass="com.intellij.aws.cloudformation.inspections.YamlUnresolvedReferencesInspection"/>
 
     <completion.contributor language="JSON"
                             order="first"

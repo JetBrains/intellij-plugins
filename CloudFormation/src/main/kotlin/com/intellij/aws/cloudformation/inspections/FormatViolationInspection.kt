@@ -11,7 +11,9 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiFile
 
 
-class FormatViolationInspection : LocalInspectionTool() {
+abstract class FormatViolationInspection : LocalInspectionTool() {
+  override fun runForWholeFile(): Boolean = true
+
   override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
     if (!CloudFormationPsiUtils.isCloudFormationFile(file)) {
       return null
@@ -32,3 +34,6 @@ class FormatViolationInspection : LocalInspectionTool() {
     return problems.toTypedArray()
   }
 }
+
+class JsonFormatViolationInspection: FormatViolationInspection()
+class YamlFormatViolationInspection: FormatViolationInspection()

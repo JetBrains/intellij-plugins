@@ -10,7 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder.unresolvedReferenceMessage
 import com.intellij.psi.PsiFile
 
-class UnresolvedReferencesInspection : LocalInspectionTool() {
+abstract class UnresolvedReferencesInspection : LocalInspectionTool() {
   override fun runForWholeFile(): Boolean = true
   override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
     if (!CloudFormationPsiUtils.isCloudFormationFile(file)) {
@@ -31,3 +31,6 @@ class UnresolvedReferencesInspection : LocalInspectionTool() {
     }.toTypedArray()
   }
 }
+
+class JsonUnresolvedReferencesInspection: UnresolvedReferencesInspection()
+class YamlUnresolvedReferencesInspection: UnresolvedReferencesInspection()
