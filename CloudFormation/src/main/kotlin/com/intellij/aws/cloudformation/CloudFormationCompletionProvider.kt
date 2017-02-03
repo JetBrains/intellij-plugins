@@ -18,12 +18,10 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.ProcessingContext
+import org.jetbrains.yaml.YAMLLanguage
+import org.jetbrains.yaml.psi.YAMLScalar
 
-class CloudFormationCompletionContributor : CompletionContributor() {
-  init {
-    extend(CompletionType.BASIC,
-        PlatformPatterns.psiElement().withLanguage(JsonLanguage.INSTANCE),
-        object : CompletionProvider<CompletionParameters>() {
+class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters>() {
           public override fun addCompletions(parameters: CompletionParameters,
                                              context: ProcessingContext,
                                              rs: CompletionResultSet) {
@@ -37,7 +35,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
             rs.stopHere()
 
             val parsed = CloudFormationParser.parse(position.containingFile)
-            val parent = if (position.parent is JsonStringLiteral) position.parent else position
+            val parent = if (position.parent is JsonStringLiteral || position.parent is YAMLScalar) position.parent else position
 
             val quoteResult = false // parent instanceof JSReferenceExpression;
 
@@ -80,10 +78,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
                 }
               }
             }
-
           }
-        })
-  }
 
   private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quoteResult: Boolean, parsed: CloudFormationParsedFile) {
     val nodes = parsed.getCfnNodes(element)
@@ -127,4 +122,12 @@ class CloudFormationCompletionContributor : CompletionContributor() {
     val id = if (quote) "\"$value\"" else value
     return LookupElementBuilder.create(id)
   }
+}
+
+class JsonCloudFormationCompletionContributor : CompletionContributor() {
+  init { extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(JsonLanguage.INSTANCE), CloudFormationCompletionProvider()) }
+}
+
+class YamlCloudFormationCompletionContributor : CompletionContributor() {
+  init { extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(YAMLLanguage.INSTANCE), CloudFormationCompletionProvider()) }
 }

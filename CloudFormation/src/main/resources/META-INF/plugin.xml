@@ -69,9 +69,8 @@
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="com.intellij.aws.cloudformation.inspections.YamlUnresolvedReferencesInspection"/>
 
-    <completion.contributor language="JSON"
-                            order="first"
-                            implementationClass="com.intellij.aws.cloudformation.CloudFormationCompletionContributor"/>
+    <completion.contributor language="JSON" order="first" implementationClass="com.intellij.aws.cloudformation.JsonCloudFormationCompletionContributor"/>
+    <completion.contributor language="yaml" order="first" implementationClass="com.intellij.aws.cloudformation.YamlCloudFormationCompletionContributor"/>
 
     <internalFileTemplate name="AWS CloudFormation Template" />
 
