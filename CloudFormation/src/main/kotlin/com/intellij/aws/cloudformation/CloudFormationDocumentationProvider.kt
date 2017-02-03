@@ -3,6 +3,7 @@ package com.intellij.aws.cloudformation
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.psi.PsiElement
+import org.jetbrains.yaml.psi.YAMLScalar
 
 class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
   override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String? {
@@ -11,7 +12,7 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
       return null
     }
 
-    val docElement = if (originalElement.parent is JsonStringLiteral) originalElement.parent else originalElement
+    val docElement = if (originalElement.parent is JsonStringLiteral || originalElement.parent is YAMLScalar) originalElement.parent else originalElement
     val parsed = CloudFormationParser.parse(docElement.containingFile)
 
     val resourceTypeValueMatch = ResourceTypeValueMatch.match(docElement, parsed)
