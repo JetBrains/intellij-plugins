@@ -349,31 +349,30 @@ Dart File
                   RegExpBranchImpl: <[\\()$^.+[\]{}|]>
                     RegExpClassImpl: <[\\()$^.+[\]{}|]>
                       PsiElement(CLASS_BEGIN)('[')
-                      RegExpUnionImpl: <\\()$^.+[\]{}|>
-                        RegExpCharImpl: <\\>
-                          PsiElement(ESC_CHARACTER)('\\')
-                        RegExpCharImpl: <(>
-                          PsiElement(CHARACTER)('(')
-                        RegExpCharImpl: <)>
-                          PsiElement(CHARACTER)(')')
-                        RegExpCharImpl: <$>
-                          PsiElement(CHARACTER)('$')
-                        RegExpCharImpl: <^>
-                          PsiElement(CHARACTER)('^')
-                        RegExpCharImpl: <.>
-                          PsiElement(CHARACTER)('.')
-                        RegExpCharImpl: <+>
-                          PsiElement(CHARACTER)('+')
-                        RegExpCharImpl: <[>
-                          PsiElement(CHARACTER)('[')
-                        RegExpCharImpl: <\]>
-                          PsiElement(ESC_CHARACTER)('\]')
-                        RegExpCharImpl: <{>
-                          PsiElement(CHARACTER)('{')
-                        RegExpCharImpl: <}>
-                          PsiElement(CHARACTER)('}')
-                        RegExpCharImpl: <|>
-                          PsiElement(CHARACTER)('|')
+                      RegExpCharImpl: <\\>
+                        PsiElement(ESC_CHARACTER)('\\')
+                      RegExpCharImpl: <(>
+                        PsiElement(CHARACTER)('(')
+                      RegExpCharImpl: <)>
+                        PsiElement(CHARACTER)(')')
+                      RegExpCharImpl: <$>
+                        PsiElement(CHARACTER)('$')
+                      RegExpCharImpl: <^>
+                        PsiElement(CHARACTER)('^')
+                      RegExpCharImpl: <.>
+                        PsiElement(CHARACTER)('.')
+                      RegExpCharImpl: <+>
+                        PsiElement(CHARACTER)('+')
+                      RegExpCharImpl: <[>
+                        PsiElement(CHARACTER)('[')
+                      RegExpCharImpl: <\]>
+                        PsiElement(ESC_CHARACTER)('\]')
+                      RegExpCharImpl: <{>
+                        PsiElement(CHARACTER)('{')
+                      RegExpCharImpl: <}>
+                        PsiElement(CHARACTER)('}')
+                      RegExpCharImpl: <|>
+                        PsiElement(CHARACTER)('|')
                       PsiElement(CLASS_END)(']')
           PsiElement())(')')
   PsiElement(;)(';')
