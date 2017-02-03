@@ -1,19 +1,19 @@
 package org.intellij.plugins.markdown.editor;
 
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
 import org.jetbrains.annotations.NotNull;
 
-public class MarkdownQuoteHandlerTest extends LightCodeInsightFixtureTestCase {
+public class MarkdownQuoteHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
   private void doTest(@NotNull String text, char charToType, @NotNull String expectedResult) {
     final PsiFile file = myFixture.configureByText("test.md", text);
     assertInstanceOf(file, MarkdownFile.class);
-    
+
     myFixture.type(charToType);
     myFixture.checkResult(expectedResult);
   }
-  
+
   public void testSingleQuote() {
     doTest("Hello <caret> world", '\'', "Hello '<caret>' world");
   }
@@ -49,7 +49,7 @@ public class MarkdownQuoteHandlerTest extends LightCodeInsightFixtureTestCase {
   public void testBacktickAsAccent() {
     doTest("Hello dear<caret> world", '`', "Hello dear`<caret> world");
   }
-  
+
   public void testClosingQuote() {
     doTest("Hello '<caret>' world", '\'', "Hello ''<caret> world");
   }
@@ -57,7 +57,7 @@ public class MarkdownQuoteHandlerTest extends LightCodeInsightFixtureTestCase {
   public void testClosingQuoteWithWord() {
     doTest("Hello 'cool<caret>' world", '\'', "Hello 'cool'<caret> world");
   }
-  
+
   public void testBacktickShouldBeAdded() {
     final PsiFile file = myFixture.configureByText("test.md", "Hello <caret> world");
     assertInstanceOf(file, MarkdownFile.class);

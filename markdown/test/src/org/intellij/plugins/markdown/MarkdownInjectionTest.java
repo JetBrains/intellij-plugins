@@ -2,12 +2,12 @@ package org.intellij.plugins.markdown;
 
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.injection.LanguageGuesser;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 
-public class MarkdownInjectionTest extends LightCodeInsightFixtureTestCase {
+public class MarkdownInjectionTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testFenceWithLang() {
     doTest("```java\n" +
            "{\"foo\":\n" +
