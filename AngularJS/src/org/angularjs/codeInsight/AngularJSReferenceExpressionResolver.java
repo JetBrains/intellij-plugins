@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -30,8 +29,8 @@ import java.util.Collection;
  * @author Dennis.Ushakov
  */
 public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionResolver {
-  public AngularJSReferenceExpressionResolver(JSReferenceExpressionImpl expression, PsiFile file) {
-    super(expression, file);
+  public AngularJSReferenceExpressionResolver(JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits) {
+    super(expression, ignorePerformanceLimits);
   }
 
   public static Collection<JSPsiElementBase> getItemsByName(final String name, PsiElement element) {

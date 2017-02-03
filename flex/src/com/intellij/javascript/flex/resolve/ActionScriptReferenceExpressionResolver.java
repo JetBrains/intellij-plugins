@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
@@ -28,8 +27,8 @@ public class ActionScriptReferenceExpressionResolver
   extends JSReferenceExpressionResolver
   implements ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> {
 
-  public ActionScriptReferenceExpressionResolver(JSReferenceExpressionImpl expression, PsiFile file) {
-    super(expression, file);
+  public ActionScriptReferenceExpressionResolver(JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits) {
+    super(expression, ignorePerformanceLimits);
   }
 
   @NotNull

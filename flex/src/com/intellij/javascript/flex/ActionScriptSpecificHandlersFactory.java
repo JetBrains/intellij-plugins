@@ -32,8 +32,8 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   @NotNull
   @Override
   public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
-                                                                                                       PsiFile containingFile) {
-    return new ActionScriptReferenceExpressionResolver(referenceExpression, containingFile);
+                                                                                                       boolean ignorePerformanceLimits) {
+    return new ActionScriptReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
   }
 
   @NotNull

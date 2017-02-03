@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor;
 import com.intellij.lang.javascript.psi.resolve.ResolveResultSink;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.angularjs.index.AngularJS2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +18,9 @@ import org.jetbrains.annotations.NotNull;
 public class AngularJSSpecificHandlersFactory extends JavaScriptSpecificHandlersFactory {
   @NotNull
   @Override
-  public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
-                                                                                                       PsiFile containingFile) {
-    return new AngularJSReferenceExpressionResolver(referenceExpression, containingFile);
+  public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(
+    JSReferenceExpressionImpl referenceExpression, boolean ignorePerformanceLimits) {
+    return new AngularJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
   }
 
   @NotNull
