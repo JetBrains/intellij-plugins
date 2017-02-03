@@ -74,7 +74,9 @@ public class Angular2HTMLLexer extends HtmlLexer {
       while (type == XmlTokenType.XML_DATA_CHARACTERS ||
              type == XmlTokenType.XML_REAL_WHITE_SPACE ||
              type == XmlTokenType.XML_WHITE_SPACE ||
-             type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
+             type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN ||
+             type == XmlTokenType.XML_CHAR_ENTITY_REF ||
+             type == XmlTokenType.XML_ENTITY_REF_TOKEN) {
         text.append(super.getTokenText());
         super.advance();
         type = getTokenType();
