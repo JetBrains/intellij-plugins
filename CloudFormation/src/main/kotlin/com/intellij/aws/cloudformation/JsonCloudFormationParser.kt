@@ -386,7 +386,7 @@ class JsonCloudFormationParser private constructor () {
       val parser = JsonCloudFormationParser()
       val rootNode = parser.file(psiFile)
 
-      return CloudFormationParsedFile(parser.myProblems, parser.node2psi, parser.psi2node, rootNode, psiFile.modificationStamp)
+      return CloudFormationParsedFile(parser.myProblems, parser.node2psi, parser.psi2node, rootNode, psiFile, psiFile.modificationStamp)
     }
   }
 }

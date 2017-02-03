@@ -31,6 +31,7 @@
   <idea-version since-build="145.1" until-build="171.*"/>
 
   <depends>com.intellij.modules.lang</depends>
+  <depends>org.jetbrains.plugins.yaml</depends>
 
   <application-components>
   </application-components>
@@ -57,7 +58,16 @@
     <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.unresolvedReference"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
-                     implementationClass="com.intellij.aws.cloudformation.inspections.JsonUnresolvedReferencesInspection"/>
+                     implementationClass="com.intellij.aws.cloudformation.inspections.UnresolvedReferencesInspection"/>
+
+    <localInspection language="yaml" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+                     key="aws.cloudformation.inspections.formatViolation"
+                     groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.aws.cloudformation.inspections.FormatViolationInspection"/>
+    <localInspection language="yaml" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+                     key="aws.cloudformation.inspections.unresolvedReference"
+                     groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.aws.cloudformation.inspections.UnresolvedReferencesInspection"/>
 
     <completion.contributor language="JSON"
                             order="first"

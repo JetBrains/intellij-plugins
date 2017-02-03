@@ -1,7 +1,7 @@
 package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.inspections.FormatViolationInspection
-import com.intellij.aws.cloudformation.inspections.JsonUnresolvedReferencesInspection
+import com.intellij.aws.cloudformation.inspections.UnresolvedReferencesInspection
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.InspectionFixtureTestCase
@@ -22,5 +22,5 @@ class ExamplesTests : InspectionFixtureTestCase() {
   }
 
   fun testFormatViolationInspection() = runTestOnCopy("inspections", FormatViolationInspection())
-  fun testUnresolvedReferences() = runTestOnCopy("unresolved", JsonUnresolvedReferencesInspection())
+  fun testUnresolvedReferences() = runTestOnCopy("unresolved", UnresolvedReferencesInspection())
 }

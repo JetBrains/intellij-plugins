@@ -24,6 +24,7 @@ import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingFirstLevelKeyReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 
 class CloudFormationInspections private constructor(val parsed: CloudFormationParsedFile): CfnVisitor() {
@@ -396,13 +397,24 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     super.root(root)
   }
 
-  class InspectionResult(val problems: List<CloudFormationProblem>, val references: Multimap<PsiElement, CloudFormationReferenceBase>)
+  class InspectionResult(
+      val problems: List<CloudFormationProblem>,
+      val references: Multimap<PsiElement, CloudFormationReferenceBase>,
+      val fileModificationStamp: Long
+  )
 
   companion object {
+    private val ANALYZED_KEY = Key.create<InspectionResult>("CFN_ANALYZED_FILE")
+
     fun inspectFile(parsed: CloudFormationParsedFile): InspectionResult {
+      val cached = parsed.psiFile.getUserData(ANALYZED_KEY)
+      if (cached != null && cached.fileModificationStamp == parsed.psiFile.modificationStamp) {
+        return cached
+      }
+
       val inspections = CloudFormationInspections(parsed)
       inspections.root(parsed.root)
-      return InspectionResult(inspections.problems, inspections.references)
+      return InspectionResult(inspections.problems, inspections.references, parsed.psiFile.modificationStamp)
     }
   }
 }
