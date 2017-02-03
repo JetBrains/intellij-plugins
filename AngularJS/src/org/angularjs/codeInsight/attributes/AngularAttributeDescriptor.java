@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.stubs.StubIndexKey;
@@ -47,25 +48,27 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
   public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration,
                                                                   String decorator,
-                                                                  NotNullFunction<JSNamedElement, XmlAttributeDescriptor> factory) {
+                                                                  NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
     final JSClass clazz = PsiTreeUtil.getStubOrPsiParentOfType(declaration, JSClass.class);
     if (clazz != null) {
       JSField[] fields = clazz.getFields();
       final List<XmlAttributeDescriptor> result = new ArrayList<>(fields.length);
       for (JSField field : fields) {
-        if (!hasDecorator(field, decorator)) continue;
-        result.add(factory.fun(field));
+        String decoratedName = getDecoratedName(field, decorator);
+        if (decoratedName == null) continue;
+        result.add(factory.fun(Pair.create(field, decoratedName)));
       }
       for (JSFunction function : clazz.getFunctions()) {
-        if (!hasDecorator(function, decorator)) continue;
-        result.add(factory.fun(function));
+        String decoratedName = getDecoratedName(function, decorator);
+        if (decoratedName == null) continue;
+        result.add(factory.fun(Pair.create(function, decoratedName)));
       }
       return result.toArray(new XmlAttributeDescriptor[result.size()]);
     }
     return EMPTY;
   }
 
-  private static boolean hasDecorator(JSAttributeListOwner field, String name) {
+  private static String getDecoratedName(JSAttributeListOwner field, String name) {
     final JSAttributeList list = field.getAttributeList();
     if (list != null) {
       for (PsiElement candidate : list.getChildren()) {
@@ -75,14 +78,19 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
             final JSExpression expression = ((JSCallExpression)child).getMethodExpression();
             if (expression instanceof JSReferenceExpression &&
                 JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)expression, name)) {
-              return true;
+              JSExpression[] arguments = ((JSCallExpression)child).getArguments();
+              if (arguments.length > 0 && arguments[0] instanceof JSLiteralExpression) {
+                Object value = ((JSLiteralExpression)arguments[0]).getValue();
+                if (value instanceof String) return (String)value;
+              }
+              return field.getName();
             }
           }
         }
       }
     }
 
-    return false;
+    return null;
   }
 
   @NotNull

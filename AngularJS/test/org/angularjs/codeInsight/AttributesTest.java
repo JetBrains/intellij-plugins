@@ -357,6 +357,27 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertInstanceOf(resolve, JSField.class);
     });
   }
+
+  public void testBindingOverride2CompletionTypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("object_binding.html", "angular2.js", "objectOverride.ts");
+      myFixture.completeBasic();
+      myFixture.checkResultByFile("object_binding.after.html");
+    });
+  }
+
+  public void testBindingOverrideResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("object_binding.after.html", "angular2.js", "objectOverride.ts");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("objectOverride.ts", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSField.class);
+    });
+  }
   public void testBindingAttributeCompletion2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_binding.html", "angular2.js", "object.ts");
@@ -416,6 +437,27 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       PsiElement resolve = ref.resolve();
       assertNotNull(resolve);
       assertEquals("object.ts", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSField.class);
+    });
+  }
+
+  public void testEventHandlerOverrideCompletion2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("object_event.html", "angular2.js", "objectOverride.ts");
+      myFixture.completeBasic();
+      myFixture.checkResultByFile("object_event.after.html");
+    });
+  }
+
+  public void testEventHandlerOverrideResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("object_event.after.html", "angular2.js", "objectOverride.ts");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("(co<caret>mplete)", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("objectOverride.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
   }

@@ -1,9 +1,8 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.NotNullFunction;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.NonNls;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   public static final String INPUT = "Input";
-  public static final NotNullFunction<JSNamedElement, XmlAttributeDescriptor> FACTORY = dom -> createBinding(dom);
+  public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = dom -> createBinding(dom.first, dom.second);
   private final PsiElement myElement;
 
   public AngularBindingDescriptor(PsiElement element,
@@ -34,8 +33,8 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   }
 
   @NotNull
-  private static AngularBindingDescriptor createBinding(PsiNamedElement field) {
-    return new AngularBindingDescriptor(field, "[" + field.getName() + "]");
+  private static AngularBindingDescriptor createBinding(PsiElement field, String name) {
+    return new AngularBindingDescriptor(field, "[" + name + "]");
   }
 
   @Nullable

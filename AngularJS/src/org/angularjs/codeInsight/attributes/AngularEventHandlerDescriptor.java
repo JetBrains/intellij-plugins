@@ -1,9 +1,8 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.NotNullFunction;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.NonNls;
@@ -15,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
   public static final String OUTPUT = "Output";
-  public static final NotNullFunction<JSNamedElement, XmlAttributeDescriptor> FACTORY = function -> createEvenHandler(function);
+  public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = dom -> createEventHandler(dom.first, dom.second);
+
   private final PsiElement myElement;
 
   public AngularEventHandlerDescriptor(PsiElement element,
@@ -34,8 +34,8 @@ public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
   }
 
   @NotNull
-  private static AngularEventHandlerDescriptor createEvenHandler(PsiNamedElement field) {
-    return new AngularEventHandlerDescriptor(field, "(" + field.getName() + ")");
+  private static AngularEventHandlerDescriptor createEventHandler(PsiElement field, String name) {
+    return new AngularEventHandlerDescriptor(field, "(" + name + ")");
   }
 
   @Nullable
