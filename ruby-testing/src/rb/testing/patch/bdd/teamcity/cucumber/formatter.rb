@@ -44,6 +44,7 @@ module Teamcity
         cuke_version << "0"
       end
       cuke_version.each_with_index do |num, i|
+        num.strip!
         gnum = given_version[i]
         if num =~ /\d*/ && gnum =~ /\d*/
           diff = num.to_i - gnum.to_i
@@ -56,14 +57,14 @@ module Teamcity
           return true
         end
       end
-      false
+      true
     end
 
     # old formatter api, cucumber < 0.3.103
     # new formatter api, cucumber >= 0.3.103
 
     USE_OLD_API =  !same_or_newer?('1.2.0') && (defined? ::Cucumber::Ast::TreeWalker).nil?
-    CUCUMBER_VERSION_2 = (::Cucumber::VERSION.split('.')[0] == '2')
+    CUCUMBER_VERSION = ::Cucumber::VERSION.split('.')[0].to_i
 
     if USE_OLD_API
       require File.expand_path(File.dirname(__FILE__) + '/old_formatter')

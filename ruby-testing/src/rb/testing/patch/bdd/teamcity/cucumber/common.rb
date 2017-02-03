@@ -24,6 +24,11 @@ if Teamcity::Cucumber.same_or_newer?('2.0.0.0')
   require 'cucumber/core/ast/empty_multiline_argument'
 end
 
+if Teamcity::Cucumber.same_or_newer?('3.0.0.pre.1')
+  require 'cucumber/formatter/duration_extractor'
+  require 'cucumber/formatter/console_counts'
+end
+
 module Teamcity
   module Cucumber
     module FormatterCommons
@@ -87,8 +92,20 @@ module Teamcity
         @delim = delim
         @indent = 0
         @prefixes = options[:prefixes] || {}
+
+        if ::Teamcity::Cucumber::CUCUMBER_VERSION == 3
+          config = @step_mother.configuration
+          @total_duration = 0
+          @counts = ::Cucumber::Formatter::ConsoleCounts.new(config)
+          config.on_event :test_case_finished, &method(:on_test_case_finished)
+        end
       end
 
+      def on_test_case_finished(event)
+        test_case = event.test_case
+        result = event.result.with_filtered_backtrace(::Cucumber::Formatter::BacktraceFilter)
+        @total_duration += ::Cucumber::Formatter::DurationExtractor.new(result).result_duration
+      end
 
 ##################################################
 # For tags gathering
@@ -211,7 +228,7 @@ module Teamcity
 # @Processes: Scenario(real without examples' fake scenarios), ScenarioOutline
 # Here we can do cleanup for scenarios in current feature: Scenario, ScenarioOutline
       def scenario_outline?(feature_element)
-        if ::Teamcity::Cucumber::CUCUMBER_VERSION_2
+        if ::Teamcity::Cucumber::CUCUMBER_VERSION >= 2
           # API changed in Cucumber 2.0
           feature_element.class == ::Cucumber::Core::Ast::ScenarioOutline
         else
@@ -525,20 +542,24 @@ module Teamcity
           # cucumber < 0.3.8
           print_counts
         else
-          # cucumber >= 0.3.8
-          print_st_arity = method(:print_stats).arity
-          case print_st_arity
-            when 1, -2
-              # cucumber < 1.0.2
-              # print_stats(features)
-              # print_stats(features, profiles = [])
-              print_stats(features)
-            when 2
-              # cucumber >= 1.0.2
-              print_my_stats(features)
-            else
-              @io.puts("Unsupported cucumber API detected! Wrong number of arguments (#{print_st_arity}) (ArgumentError)")
-              @io.flush
+          if defined? print_stats
+            # cucumber >= 0.3.8
+            print_st_arity = method(:print_stats).arity
+            case print_st_arity
+              when 1, -2
+                # cucumber < 1.0.2
+                # print_stats(features)
+                # print_stats(features, profiles = [])
+                print_stats(features)
+              when 2
+                # cucumber >= 1.0.2
+                print_my_stats(features)
+              else
+                @io.puts("Unsupported cucumber API detected! Wrong number of arguments (#{print_st_arity}) (ArgumentError)")
+                @io.flush
+             end
+          else
+            print_statistics(@total_duration, @step_mother.configuration, @counts, [])
           end
 
           print_passing_wip(@options)
@@ -596,7 +617,7 @@ module Teamcity
       end
 
       def create_snippet_text(step_def_name, step_keyword, step_multiline_arg)
-        if ::Teamcity::Cucumber::CUCUMBER_VERSION_2
+        if ::Teamcity::Cucumber::CUCUMBER_VERSION == 2
           step_multiline_arg ||= ::Cucumber::Core::Ast::EmptyMultilineArgument.new
           @step_mother.snippet_text(step_keyword || '', step_def_name, step_multiline_arg)
         else
