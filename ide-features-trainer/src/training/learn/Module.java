@@ -74,7 +74,7 @@ public class Module{
         this.id = id;
     }
 
-    public void setLessons(ArrayList<Lesson> lessons) {
+    public void setLessons(List<Lesson> lessons) {
         this.lessons = lessons;
     }
 
