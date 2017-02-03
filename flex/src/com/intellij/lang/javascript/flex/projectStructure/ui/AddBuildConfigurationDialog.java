@@ -26,7 +26,6 @@ import java.text.MessageFormat;
 import java.util.Collection;
 
 public class AddBuildConfigurationDialog extends DialogWrapper {
-
   private JPanel myMainPanel;
   private JTextField myBCNameTextField;
   private JLabel myUpDownHint;
@@ -106,7 +105,7 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     final int size = combo.getModel().getSize();
     int next = combo.getSelectedIndex() + delta;
     if (next < 0 || next >= size) {
-      if (!UISettings.getInstance().CYCLE_SCROLLING) {
+      if (!UISettings.getInstance().getCycleScrolling()) {
         return;
       }
       next = (next + size) % size;
@@ -119,6 +118,7 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     BCUtils.initOutputTypeCombo(myOutputTypeCombo);
 
     final ActionListener actionListener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
       }
@@ -135,14 +135,17 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     updateControls();
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myBCNameTextField.isEditable() ? myBCNameTextField : myTargetPlatformCombo;
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   protected ValidationInfo doValidate() {
     final String name = getBCName();
 
