@@ -65,7 +65,7 @@ meta variable-assignment ::= variable assignment variable-value? {pin=2 methods=
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
 meta variable-value ::= line (split line)*
-define ::= 'define' variable assignment? variable-value-line* 'endef' {pin=1 methods=[getAssignment getValue]}
+define ::= 'define' variable assignment? (variable-value-line split?)* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable comment? EOL {pin=1}
 override ::= 'override' variable-assignment comment? {pin=1}
 export ::= 'export' (variable-assignment|variable)? comment? {pin=1}

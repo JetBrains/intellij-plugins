@@ -103,6 +103,7 @@ CONDITION_CHARACTER=[^#\r\n]
 
 <DEFINEBODY> {
     "endef"                { yybegin(YYINITIAL); return KEYWORD_ENDEF; }
+    {BACKSLASHCRLF}        { return SPLIT; }
     {VARIABLE_VALUE}       { return VARIABLE_VALUE_LINE; }
     {EOL}                  { return WHITE_SPACE; }
 }

@@ -16,3 +16,12 @@ shar: $(SRCS) $(AUX) \
 test: \
         hello \
         world
+
+
+define table_definition
+'CREATE TABLE `table_1` (\
+	`id` bigint unsigned NOT NULL AUTO_INCREMENT,\
+	`data` json,\
+	PRIMARY KEY (`id`)\
+) ENGINE=InnoDB DEFAULT CHARSET=utf8'
+endef

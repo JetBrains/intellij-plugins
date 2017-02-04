@@ -315,7 +315,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'define' variable assignment? variable-value-line* 'endef'
+  // 'define' variable assignment? (variable-value-line split?)* 'endef'
   public static boolean define(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "define")) return false;
     if (!nextTokenIs(b, KEYWORD_DEFINE)) return false;
@@ -338,15 +338,33 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // variable-value-line*
+  // (variable-value-line split?)*
   private static boolean define_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "define_3")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!consumeToken(b, VARIABLE_VALUE_LINE)) break;
+      if (!define_3_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "define_3", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // variable-value-line split?
+  private static boolean define_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "define_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, VARIABLE_VALUE_LINE);
+    r = r && define_3_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // split?
+  private static boolean define_3_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "define_3_0_1")) return false;
+    consumeToken(b, SPLIT);
     return true;
   }
 
