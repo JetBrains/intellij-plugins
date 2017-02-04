@@ -7,9 +7,13 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MakefilePsiImplUtil {
+    private static final Pattern suffixRule = Pattern.compile("^\\.[a-zA-Z]+(\\.[a-zA-Z]+)$");
+
     @Nullable
     public static String getTargetName(MakefileTargetLine element) {
         ASTNode targetNode = element.getNode().findChildByType(MakefileTypes.TARGET);
@@ -46,7 +50,7 @@ public class MakefilePsiImplUtil {
 
     public static boolean isSpecialTarget(MakefileTarget element) {
         String name = element.getName();
-        return name != null && (name.matches("^\\.[A-Z_]*") || name.equals("FORCE"));
+        return name != null && (name.matches("^\\.[A-Z_]*") || name.equals("FORCE") || suffixRule.matcher(name).matches());
     }
 
     public static boolean isPatternTarget(MakefileTarget element) {
@@ -64,6 +68,10 @@ public class MakefilePsiImplUtil {
         }
         if (name.endsWith("%")) {
             return prerequisite.startsWith(name.substring(0, name.length()-1));
+        }
+        Matcher matcher = suffixRule.matcher(name);
+        if (matcher.matches()) {
+            return prerequisite.endsWith(matcher.group(1));
         }
         return name.equals(prerequisite);
     }
