@@ -17,7 +17,7 @@ apply plugin: 'kotlin'
 apply plugin: 'java'
 
 group 'name.kropp.intellij'
-version '0.9'
+version '0.10'
 
 intellij {
     version '2016.3'
