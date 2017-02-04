@@ -61,6 +61,8 @@ open class VueLexerTest : LexerTestCase() {
   fun testStyleSassAfterTemplate() = doFileTest("vue")
 
   fun testTemplateEmpty() = doFileTest("vue")
+  fun testTemplateInner() = doFileTest("vue")
+  fun testTemplateInnerDouble() = doFileTest("vue")
   fun testTemplateJade() = doFileTest("vue")
 
   override fun createLexer(): Lexer = VueLexer()

@@ -4,6 +4,7 @@ import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.HtmlLexer
+import com.intellij.lexer._HtmlLexer
 import com.intellij.psi.xml.XmlTokenType
 
 class VueLexer : HtmlLexer(), VueHandledLexer {
@@ -34,7 +35,7 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
   override fun seenAttribute() = seenAttribute
   override fun getScriptType() = scriptType
   override fun getStyleType() = styleType
-  override fun inTagState(): Boolean = isHtmlTagState(state and HtmlHighlightingLexer.BASE_STATE_MASK)
+  override fun inTagState(): Boolean = (state and HtmlHighlightingLexer.BASE_STATE_MASK) == _HtmlLexer.START_TAG_NAME
 
   override fun setSeenScriptType() {
     seenContentType = true

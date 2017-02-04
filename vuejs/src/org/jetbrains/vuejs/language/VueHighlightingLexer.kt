@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lexer.HtmlHighlightingLexer
+import com.intellij.lexer.HtmlLexer
+import com.intellij.lexer._HtmlLexer
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
@@ -40,7 +42,7 @@ class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
   override fun seenAttribute() = seenAttribute
   override fun getScriptType() = scriptType
   override fun getStyleType() = styleType
-  override fun inTagState(): Boolean = isHtmlTagState(baseState())
+  override fun inTagState(): Boolean = baseState() == _HtmlLexer.START_TAG_NAME
 
   override fun setSeenScriptType() {
     seenContentType = true
