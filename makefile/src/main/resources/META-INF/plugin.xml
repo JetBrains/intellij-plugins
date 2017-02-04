@@ -2,14 +2,13 @@
   <id>name.kropp.intellij.makefile</id>
   <name>Makefile support</name>
   <version>0.10</version>
-  <vendor email="victor.kropp@gmail.com" url="https://victor.kropp.name">Victor Kropp</vendor>
+  <vendor email="victor.kropp@gmail.com" url="https://victor.kropp.name/projects/makefile/">Victor Kropp</vendor>
 
   <description><![CDATA[
   Support for UNIX Makefiles
     ]]></description>
 
   <change-notes><![CDATA[
-  Beta 2: Better support for special and pattern targets and old-fashioned suffix rules.
     ]]>
   </change-notes>
 
