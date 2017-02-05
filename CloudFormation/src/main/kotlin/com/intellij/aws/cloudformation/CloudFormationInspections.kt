@@ -182,7 +182,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
                 if (!it.attributes.containsKey(attributeName)) {
                   addProblem(
                       if (function.args.size == 1) arg0 else (arg1 ?: function),
-                      "Unknown attribute in resource type $typeName: $attributeName")
+                      "Unknown attribute in resource type '$typeName': $attributeName")
                 }
               }
             }
