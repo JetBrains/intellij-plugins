@@ -42,6 +42,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     val psiElement = parsed.getPsiElement(element)
     val entityReference = CloudFormationEntityReference(psiElement, sections, excludeFromCompletion)
 
+    // TODO check other cases at http://stackoverflow.com/a/21699210
     val scalarImpl = psiElement as? YAMLScalarImpl
     if (scalarImpl != null && scalarImpl.contentRanges.isNotEmpty()) {
       val tag = scalarImpl.tag
