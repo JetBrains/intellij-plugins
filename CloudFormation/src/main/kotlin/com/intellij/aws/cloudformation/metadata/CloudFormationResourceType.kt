@@ -16,5 +16,7 @@ data class CloudFormationResourceType(
     fun isCustomResourceType(value: String): Boolean {
       return value == CloudFormationConstants.CustomResourceType || value.startsWith(CloudFormationConstants.CustomResourceTypePrefix)
     }
+
+    fun isCloudFormationStack(value: String): Boolean = value == "AWS::CloudFormation::Stack"
   }
 }

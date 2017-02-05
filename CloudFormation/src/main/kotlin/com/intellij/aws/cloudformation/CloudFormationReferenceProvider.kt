@@ -19,9 +19,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
   companion object {
     fun buildFromElement(element: PsiElement): Collection<PsiReference> {
       val parsed = CloudFormationParser.parse(element.containingFile)
-      // val scalarNode = parsed.getCfnNodes(element).ofType<CfnScalarValueNode>().singleOrNull() ?: return null
 
-      // TODO Cache!!!
       val inspectionResult = CloudFormationInspections.inspectFile(parsed)
       val references = inspectionResult.references.get(element)
       return references

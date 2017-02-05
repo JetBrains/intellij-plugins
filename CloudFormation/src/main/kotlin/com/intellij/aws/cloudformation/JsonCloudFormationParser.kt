@@ -96,8 +96,6 @@ class JsonCloudFormationParser private constructor () {
       }
     }
 
-    // Duplicate keys should be handled by YAML support,
-    // TODO known issue: https://youtrack.jetbrains.com/issue/RUBY-19094
     return CfnRootNode(
         lookupSection<CfnMetadataNode>(sections),
         lookupSection<CfnParametersNode>(sections),

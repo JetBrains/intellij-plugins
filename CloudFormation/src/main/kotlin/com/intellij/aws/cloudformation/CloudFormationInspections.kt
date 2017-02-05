@@ -2,6 +2,7 @@ package com.intellij.aws.cloudformation
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
@@ -90,8 +91,6 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   var currentResource: CfnResourceNode? = null
 
-  // TODO check outputs, mappings, parameters, resources name for correctness
-
   override fun function(function: CfnFunctionNode) {
     val arg0 = function.args.getOrNull(0)
     val arg1 = function.args.getOrNull(1)
@@ -170,11 +169,23 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         }
 
         if (resourceName != null) {
+          // TODO calculate exact text range and add it to ReferencesTest
           addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList)
 
           if (attributeName != null) {
-            // TODO resolve resource and get resource type
-            // CloudFormationMetadataProvider.METADATA.resourceTypes
+            val resource = CloudFormationResolve.resolveResource(parsed, resourceName)
+            val typeName = resource?.typeName
+            if (typeName != null &&
+                !CloudFormationResourceType.isCustomResourceType(typeName) &&
+                !(CloudFormationResourceType.isCloudFormationStack(typeName) && attributeName.startsWith("Outputs."))) {
+              CloudFormationMetadataProvider.METADATA.resourceTypes[typeName]?.let {
+                if (!it.attributes.containsKey(attributeName)) {
+                  addProblem(
+                      if (function.args.size == 1) arg0 else (arg1 ?: function),
+                      "Unknown attribute in resource type $typeName: $attributeName")
+                }
+              }
+            }
           }
         }
       }
