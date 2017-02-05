@@ -1,0 +1,37 @@
+# https://raw.githubusercontent.com/microservices-today/IaC-ecs/256f2ccee05f26e8163d9f441b5db5bcf7c9cbd8/Services/Nginx.yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ECSCluster:
+    Type: String
+    Description: Name of an existing ECS Cluster.
+  TaskDefinition:
+    Type: String
+    Description: Name of Task Definition
+Resources:
+  service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref 0@<ECSCluster>
+      DesiredCount: '1'
+      TaskDefinition: !1@<Ref "TaskDefinition>"
+      TaskDefinition2: !Ref 2@<TaskDefinit\
+        ion>
+Outputs:
+  ecsservice:
+    Value: !3@<Ref 'service>'
+
+0: ECSCluster:
+    Type: String
+    Description: Name of an existing ECS Cluster.
+1: TaskDefinition:
+    Type: String
+    Description: Name of Task Definition
+2: not resolved
+3: service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref ECSCluster
+      DesiredCount: '1'
+      TaskDefinition: !Ref "TaskDefinition"
+      TaskDefinition2: !Ref TaskDefinit\
+        ion

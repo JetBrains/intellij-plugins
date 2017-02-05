@@ -25,7 +25,9 @@ import com.intellij.aws.cloudformation.references.CloudFormationMappingFirstLeve
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.yaml.psi.impl.YAMLScalarImpl
 
 class CloudFormationInspections private constructor(val parsed: CloudFormationParsedFile): CfnVisitor() {
   val problems: MutableList<CloudFormationProblem> = mutableListOf()
@@ -37,7 +39,16 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   private fun addEntityReference(element: CfnScalarValueNode, sections: Collection<CloudFormationSection>, excludeFromCompletion: Collection<String>? = null) {
     val psiElement = parsed.getPsiElement(element)
-    addReference(CloudFormationEntityReference(psiElement, sections, excludeFromCompletion))
+    val entityReference = CloudFormationEntityReference(psiElement, sections, excludeFromCompletion)
+
+    val scalarImpl = psiElement as? YAMLScalarImpl
+    if (scalarImpl != null && scalarImpl.contentRanges.isNotEmpty()) {
+      val startOffset = scalarImpl.contentRanges.first().startOffset
+      val endOffset = scalarImpl.contentRanges.last().endOffset
+      entityReference.rangeInElement = TextRange(startOffset, endOffset)
+    }
+
+    addReference(entityReference)
   }
 
 /*

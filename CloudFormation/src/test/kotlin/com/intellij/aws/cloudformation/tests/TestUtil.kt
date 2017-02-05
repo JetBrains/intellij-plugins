@@ -1,5 +1,7 @@
 package com.intellij.aws.cloudformation.tests
 
+import com.intellij.aws.cloudformation.CloudFormationInspections
+import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.CloudFormationProblem
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.openapi.application.PathManager
@@ -96,6 +98,43 @@ object TestUtil {
 
     for (problem in problems.withIndex()) {
       writer.appendln("${problem.index}: ${problem.value.description}")
+    }
+
+    return writer.toString()
+  }
+
+  fun renderReferences(file: PsiFile): String {
+    val parsed = CloudFormationParser.parse(file)
+    val inspected = CloudFormationInspections.inspectFile(parsed)
+    val referencesList = inspected.references.values().sortedBy { it.element.textOffset }
+
+    if (inspected.references.isEmpty) {
+      return "No references"
+    }
+
+    val writer = StringWriter()
+
+    val markers = referencesList.mapIndexed { n, ref ->
+      val el = ref.element
+      val rangeInEl = ref.rangeInElement
+      listOf(Pair(el.textOffset + rangeInEl.startOffset, "$n@<"), Pair(el.textOffset + rangeInEl.endOffset, ">"))
+    }.flatten()
+
+    val textWithMarkers = addMarkers(file.text, markers)
+
+    writer.append(textWithMarkers)
+    if (!textWithMarkers.endsWith("\n")) {
+      writer.appendln()
+    }
+
+    for (ref in referencesList.withIndex()) {
+      val result = ref.value.resolve()
+      writer.append("${ref.index}: ")
+      if (result == null) {
+        writer.appendln("not resolved")
+      } else {
+        writer.appendln(result.text)
+      }
     }
 
     return writer.toString()
