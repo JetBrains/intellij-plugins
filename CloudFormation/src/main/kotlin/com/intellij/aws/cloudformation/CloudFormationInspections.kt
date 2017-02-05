@@ -27,6 +27,7 @@ import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.yaml.psi.impl.YAMLQuotedTextImpl
 import org.jetbrains.yaml.psi.impl.YAMLScalarImpl
 
 class CloudFormationInspections private constructor(val parsed: CloudFormationParsedFile): CfnVisitor() {
@@ -43,8 +44,19 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
     val scalarImpl = psiElement as? YAMLScalarImpl
     if (scalarImpl != null && scalarImpl.contentRanges.isNotEmpty()) {
-      val startOffset = scalarImpl.contentRanges.first().startOffset
-      val endOffset = scalarImpl.contentRanges.last().endOffset
+      val tag = scalarImpl.tag
+
+      val startOffset: Int
+      val endOffset: Int
+      if (scalarImpl is YAMLQuotedTextImpl && tag != null) {
+        // Fix up for https://youtrack.jetbrains.com/issue/RUBY-19104
+        startOffset = tag.textLength + 1
+        endOffset = scalarImpl.textLength
+      } else {
+        startOffset = scalarImpl.contentRanges.first().startOffset
+        endOffset = scalarImpl.contentRanges.last().endOffset
+      }
+
       entityReference.rangeInElement = TextRange(startOffset, endOffset)
     }
 
@@ -157,7 +169,6 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         }
 
         if (resourceName != null) {
-          // TODO Add text range
           addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList)
 
           if (attributeName != null) {

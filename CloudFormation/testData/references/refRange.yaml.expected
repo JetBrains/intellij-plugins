@@ -13,12 +13,12 @@ Resources:
     Properties:
       Cluster: !Ref 0@<ECSCluster>
       DesiredCount: '1'
-      TaskDefinition: !1@<Ref "TaskDefinition>"
+      TaskDefinition: !Ref 1@<"TaskDefinition">
       TaskDefinition2: !Ref 2@<TaskDefinit\
         ion>
 Outputs:
   ecsservice:
-    Value: !3@<Ref 'service>'
+    Value: !Ref 3@<'service'>
 
 0: ECSCluster:
     Type: String
