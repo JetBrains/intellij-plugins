@@ -9,8 +9,10 @@ import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider{
   companion object {
-    val DEFAULT_BINDABLE = arrayOf("key", "ref", "slot", "is")
-    val DEFAULT = arrayOf("v-pre", "v-for", "v-if", "v-else", "v-else-if", "v-once").
+    val DEFAULT_BINDABLE = arrayOf("key", "is")
+    val DEFAULT = arrayOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
+                          "v-on", "v-bind", "v-model", "v-pre", "v-cloak","v-once",
+                          "slot", "ref").
                   plus(DEFAULT_BINDABLE.map { "v-bind:" + it }).
                   plus(DEFAULT_BINDABLE.map { ":" + it })
   }
