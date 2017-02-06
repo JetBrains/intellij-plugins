@@ -435,6 +435,12 @@ public class DartStatementMover extends LineMover {
         return true;
       }
     }
+    if (parent instanceof DartForStatement) {
+      PsiElement body = DartPsiImplUtil.getForBody((DartForStatement)parent);
+      if (isSameStatement(element, body)) {
+        return true;
+      }
+    }
     return false;
   }
 
