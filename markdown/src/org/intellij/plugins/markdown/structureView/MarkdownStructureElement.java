@@ -7,6 +7,7 @@ import com.intellij.ide.util.treeView.smartTree.SortableTreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.LocationPresentation;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.ui.Queryable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.PsiFileImpl;
@@ -18,14 +19,12 @@ import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets.*;
 
-public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> implements  SortableTreeElement, LocationPresentation {
+public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> implements SortableTreeElement, LocationPresentation,
+                                                                                        Queryable {
 
   private static final ItemPresentation DUMMY_PRESENTATION = new MarkdownBasePresentation() {
 
@@ -187,4 +186,13 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
   public String getLocationSuffix() {
     return "";
   }
+
+  @Override
+  public void putInfo(@NotNull Map<String, String> info) {
+    info.put("text", getPresentableText());
+    if (!(getElement() instanceof PsiFileImpl)) {
+      info.put("location", getLocationString());
+    }
+  }
+
 }
