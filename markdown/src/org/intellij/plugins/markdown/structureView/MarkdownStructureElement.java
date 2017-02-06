@@ -14,7 +14,6 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
-import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,8 +22,10 @@ import java.util.*;
 
 import static org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets.*;
 
-public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> implements SortableTreeElement, LocationPresentation,
-                                                                                        Queryable {
+class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> implements SortableTreeElement, LocationPresentation,
+                                                                                 Queryable {
+
+  static final TokenSet PRESENTABLE_TYPES = HEADERS;
 
   private static final ItemPresentation DUMMY_PRESENTATION = new MarkdownBasePresentation() {
 
@@ -41,37 +42,43 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
     }
   };
 
-  static final TokenSet PRESENTABLE_TYPES = TokenSet.orSet(MarkdownTokenTypeSets.HEADERS);
+  private static final List<TokenSet> HEADER_ORDER = Arrays.asList(
+    TokenSet.create(MarkdownElementTypes.MARKDOWN_FILE_ELEMENT_TYPE),
+    HEADER_LEVEL_1_SET,
+    HEADER_LEVEL_2_SET,
+    HEADER_LEVEL_3_SET,
+    HEADER_LEVEL_4_SET,
+    HEADER_LEVEL_5_SET,
+    HEADER_LEVEL_6_SET);
+
 
   MarkdownStructureElement(@NotNull PsiElement element) {
     super(element);
   }
 
-
   @Override
   public boolean canNavigate() {
-    return getElement() instanceof NavigationItem && ((NavigationItem) getElement()).canNavigate();
+    return getElement() instanceof NavigationItem && ((NavigationItem)getElement()).canNavigate();
   }
 
   @Override
   public boolean canNavigateToSource() {
-    return getElement() instanceof NavigationItem && ((NavigationItem) getElement()).canNavigateToSource();
+    return getElement() instanceof NavigationItem && ((NavigationItem)getElement()).canNavigateToSource();
   }
 
 
   @Override
   public void navigate(boolean requestFocus) {
     if (getElement() instanceof NavigationItem) {
-      ((NavigationItem) getElement()).navigate(requestFocus);
+      ((NavigationItem)getElement()).navigate(requestFocus);
     }
   }
-
 
   @NotNull
   @Override
   public String getAlphaSortKey() {
     return StringUtil.notNullize(getElement() instanceof NavigationItem ?
-            ((NavigationItem) getElement()).getName() : null);
+                                 ((NavigationItem)getElement()).getName() : null);
   }
 
   @Override
@@ -89,7 +96,6 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
     return getPresentation().getPresentableText();
   }
 
-
   @Override
   public String getLocationString() {
     return getPresentation().getLocationString();
@@ -99,12 +105,12 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
   @Override
   public ItemPresentation getPresentation() {
     if (getElement() instanceof PsiFileImpl) {
-      ItemPresentation filePresent = ((PsiFileImpl) getElement()).getPresentation();
-      return filePresent!=null ? filePresent : DUMMY_PRESENTATION;
+      ItemPresentation filePresent = ((PsiFileImpl)getElement()).getPresentation();
+      return filePresent != null ? filePresent : DUMMY_PRESENTATION;
     }
 
     if (getElement() instanceof NavigationItem) {
-      final ItemPresentation itemPresent = ((NavigationItem) getElement()).getPresentation();
+      final ItemPresentation itemPresent = ((NavigationItem)getElement()).getPresentation();
       if (itemPresent != null) {
         return itemPresent;
       }
@@ -113,17 +119,18 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
     return DUMMY_PRESENTATION;
   }
 
+
   @NotNull
   @Override
   public Collection<StructureViewTreeElement> getChildrenBase() {
-    final List<StructureViewTreeElement> childrenElements = new ArrayList<StructureViewTreeElement>();
+    final List<StructureViewTreeElement> childrenElements = new ArrayList<>();
 
     final PsiElement myElement = getElement();
-    if(myElement==null) return childrenElements;
+    if (myElement == null) return childrenElements;
 
     PsiElement nextSibling = myElement instanceof MarkdownFile ?
-            myElement.getFirstChild().getFirstChild() :
-            myElement.getNextSibling();
+                             myElement.getFirstChild().getFirstChild() :
+                             myElement.getNextSibling();
 
     PsiElement maxContentLevel = null;
 
@@ -148,7 +155,7 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
   }
 
 
-  private boolean isSameLevelOrHigher(@NotNull PsiElement psiA, @NotNull PsiElement psiB) {
+  private static boolean isSameLevelOrHigher(@NotNull PsiElement psiA, @NotNull PsiElement psiB) {
     IElementType typeA = psiA.getNode().getElementType();
     IElementType typeB = psiB.getNode().getElementType();
 
@@ -156,7 +163,7 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
   }
 
 
-  private int headerLevel(@NotNull IElementType curLevelType) {
+  private static int headerLevel(@NotNull IElementType curLevelType) {
     for (int i = 0; i < HEADER_ORDER.size(); i++) {
       if (HEADER_ORDER.get(i).contains(curLevelType)) {
         return i;
@@ -167,21 +174,13 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
     return Integer.MAX_VALUE;
   }
 
-
-  private static final List<TokenSet> HEADER_ORDER = Arrays.asList(
-          TokenSet.create(MarkdownElementTypes.MARKDOWN_FILE_ELEMENT_TYPE),
-          HEADER_LEVEL_1_SET,
-          HEADER_LEVEL_2_SET,
-          HEADER_LEVEL_3_SET,
-          HEADER_LEVEL_4_SET,
-          HEADER_LEVEL_5_SET,
-          HEADER_LEVEL_6_SET);
-
+  @NotNull
   @Override
   public String getLocationPrefix() {
     return " ";
   }
 
+  @NotNull
   @Override
   public String getLocationSuffix() {
     return "";
@@ -194,5 +193,4 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
       info.put("location", getLocationString());
     }
   }
-
 }

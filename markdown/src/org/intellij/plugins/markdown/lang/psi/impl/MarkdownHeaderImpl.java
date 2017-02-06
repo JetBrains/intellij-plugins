@@ -15,11 +15,13 @@ public class MarkdownHeaderImpl extends MarkdownCompositePsiElementBase {
     super(node);
   }
 
+  @NotNull
   @Override
   protected String getPresentableTagName() {
     return "h" + getHeaderNumber();
   }
 
+  @NotNull
   @Override
   public ItemPresentation getPresentation() {
     return new DelegatingItemPresentation(super.getPresentation()) {

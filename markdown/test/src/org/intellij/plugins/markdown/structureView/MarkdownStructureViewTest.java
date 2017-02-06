@@ -47,6 +47,10 @@ public class MarkdownStructureViewTest extends LightPlatformCodeInsightFixtureTe
     doTest();
   }
 
+  public void testHeadersUnderBlockquotesAndLists() {
+    doTest();
+  }
+
   public void testPuppetlabsCoreTypes() {
     doTest();
   }
