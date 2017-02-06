@@ -8,7 +8,7 @@ Paragraph
 
 ### Header 3
 
-* List Item 1
+* List <caret>Item 1
 * List Item 2
 
 #### Header 4

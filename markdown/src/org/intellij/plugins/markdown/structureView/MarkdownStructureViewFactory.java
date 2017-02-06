@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
-import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,13 +39,15 @@ public class MarkdownStructureViewFactory implements PsiStructureViewFactory {
     @Override
     protected Object findAcceptableElement(PsiElement element) {
       // walk up the psi-tree until we find an element from the structure view
-      while (element != null && !PRESENTABLE_TYPES.contains(element.getNode().getElementType())) {
-        IElementType elementType = element.getParent().getNode().getElementType();
+      while (element != null && !PRESENTABLE_TYPES.contains(PsiUtilCore.getElementType(element))) {
+        IElementType parentType = PsiUtilCore.getElementType(element.getParent());
 
-        if (elementType.equals(MarkdownElementTypes.MARKDOWN_FILE)) {
-          element = element.getPrevSibling();
-        } else {
+        final PsiElement previous = element.getPrevSibling();
+        if (previous == null || !MarkdownStructureElement.TRANSPARENT_CONTAINERS.contains(parentType)) {
           element = element.getParent();
+        }
+        else {
+          element = previous;
         }
       }
 

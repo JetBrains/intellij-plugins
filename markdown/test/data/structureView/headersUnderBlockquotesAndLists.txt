@@ -1,0 +1,11 @@
+-headersUnderBlockquotesAndLists.md
+ -h1 location=A list
+  -h2 location=Subsection
+   h3 location=Subsubsection
+   h4 location=H4 here
+  h2 location=And one more h2
+  -h1 location=Testing under blockquotes
+   h2 location=A quoted susbection
+  h1 location=One more h1
+  -[h2 location=Should this h2 be under previous section?]
+   h1 location=This h1

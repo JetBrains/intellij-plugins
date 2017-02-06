@@ -1,7 +1,7 @@
 -normalATXDocument.md
  -h1 location=Header 1
   -h2 location=Header 2
-   -h3 location=Header 3
+   -[h3 location=Header 3]
     -h4 location=Header 4
      -h5 location=Header 5
       h6 location=Header 6

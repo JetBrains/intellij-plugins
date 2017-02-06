@@ -113,7 +113,7 @@ If a service has a bad init script, you can work around it and manage almost any
 Hello World
 -----
 
-### [notify][]
+### <caret>[notify][]
 
 Logs an arbitrary message, at the `notice` log level. This appears in the POSIX syslog or Windows Event Log on the Puppet agent node and is also logged in reports.
 

@@ -1,5 +1,5 @@
 -puppetlabsCoreTypes.md
- -[h1 location=Core Types Cheat Sheet]
+ -h1 location=Core Types Cheat Sheet
   -h2 location=The Trifecta
    -h3 location=[file][]
     h4 location=Important Attributes
@@ -13,7 +13,7 @@
     h4 location=Important Attributes
     h4 location=Other Notable Attributes
   -h2 location=Hello World
-   -h3 location=[notify][]
+   -[h3 location=[notify][]]
     h4 location=Important Attributes
   -h2 location=Grab Bag
    -h3 location=[exec][]
