@@ -35,7 +35,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
 
   private static Pair<Editor, PsiFile> getEditorAndPsiFile(final AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
-    if (project == null) return Pair.create((Editor)null, null);
+    if (project == null) return Pair.create(null, null);
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
     return Pair.create(editor, psiFile);
@@ -69,8 +69,8 @@ public abstract class BaseDartGenerateAction extends AnAction {
     if (methodDeclarations == null) {
       return false;
     }
-    for (DartMethodDeclaration methodDecaration : methodDeclarations) {
-      if (methodName.equals(methodDecaration.getName())) {
+    for (DartMethodDeclaration methodDeclaration : methodDeclarations) {
+      if (methodName.equals(methodDeclaration.getName())) {
         return true;
       }
     }

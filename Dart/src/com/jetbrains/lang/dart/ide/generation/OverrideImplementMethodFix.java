@@ -20,9 +20,7 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
   @Override
   @NotNull
   protected String getNothingFoundMessage() {
-    return myImplementNotOverride
-           ? DartBundle.message("dart.fix.implement.none.found")
-           : DartBundle.message("dart.fix.override.none.found");
+    return DartBundle.message(myImplementNotOverride ? "dart.fix.implement.none.found" : "dart.fix.override.none.found");
   }
 
 
