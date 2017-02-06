@@ -135,10 +135,13 @@ public class DartRefactoringUtil {
     }
     if (expression.getTextRange().getEndOffset() != endOffset) {
       element2 = file.findElementAt(endOffset - 1);
-      if (isComma(element2)) {
+      if (element2 != null && isComma(element2)) {
         PsiElement prev = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(element2, true);
         if (prev instanceof DartExpressionList) {
           prev = prev.getLastChild();
+        }
+        else if (prev instanceof DartNamedArgument && prev == expression.getParent()) {
+          return new PsiElement[]{prev, element2};
         }
         if (prev == expression) {
           return new PsiElement[]{expression, element2};
@@ -154,11 +157,15 @@ public class DartRefactoringUtil {
     return new PsiElement[]{expression};
   }
 
-  public static boolean isRightParen(PsiElement element) {
+  public static boolean isRightBracket(@NotNull PsiElement element) {
+    return element.getNode().getElementType() == DartTokenTypes.RBRACKET;
+  }
+
+  public static boolean isRightParen(@NotNull PsiElement element) {
     return element.getNode().getElementType() == DartTokenTypes.RPAREN;
   }
 
-  public static boolean isComma(PsiElement element) {
+  public static boolean isComma(@NotNull PsiElement element) {
     return element.getNode().getElementType() == DartTokenTypes.COMMA;
   }
 }

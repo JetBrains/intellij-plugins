@@ -65,4 +65,16 @@ public class DartStatementMoverTest extends DartCodeMoverTest {
   public void testListExpr7() {
     doTest(); // Do nothing when no trailing comma
   }
+
+  public void testNamedParam1() {
+    doTest();
+  }
+
+  public void testNamedParam2() {
+    doTest();
+  }
+
+  public void testNamedParam3() {
+    doTest();
+  }
 }
