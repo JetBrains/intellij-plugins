@@ -49,7 +49,7 @@ public class AngularModulesProvider implements JSModuleConnectionProvider {
   @Override
   public List<Link> getDependencies(@NotNull PsiFile file) {
     final Project project = file.getProject();
-    if (!AngularIndexUtil.hasAngularJS(project) && !AngularIndexUtil.hasAngularJS2(project)) return null;
+    if (!AngularIndexUtil.hasAngularJS(project)) return null;
     if (!(file instanceof JSFile)) return null;
 
     final SmartPointerManager spm = SmartPointerManager.getInstance(project);
