@@ -8,10 +8,16 @@ import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static org.intellij.plugins.markdown.structureView.MarkdownStructureElement.PRESENTABLE_TYPES;
+
 public class MarkdownStructureViewFactory implements PsiStructureViewFactory {
+
+
   @Nullable
   @Override
   public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
@@ -29,19 +35,23 @@ public class MarkdownStructureViewFactory implements PsiStructureViewFactory {
       super(psiFile, editor, new MarkdownStructureElement(psiFile));
     }
 
+    @Nullable
     @Override
-    protected boolean isSuitable(PsiElement element) {
-      if (element == null) {
-        return false;
+    protected Object findAcceptableElement(PsiElement element) {
+      // walk up the psi-tree until we find an element from the structure view
+      while (element != null && !PRESENTABLE_TYPES.contains(PsiUtilCore.getElementType(element))) {
+        IElementType parentType = PsiUtilCore.getElementType(element.getParent());
+
+        final PsiElement previous = element.getPrevSibling();
+        if (previous == null || !MarkdownStructureElement.TRANSPARENT_CONTAINERS.contains(parentType)) {
+          element = element.getParent();
+        }
+        else {
+          element = previous;
+        }
       }
-      if (!MarkdownStructureElement.PRESENTABLE_TYPES.contains(element.getNode().getElementType())) {
-        return false;
-      }
-      final PsiElement parent = element.getParent();
-      if (MarkdownStructureElement.hasTrivialChild(parent)) {
-        return false;
-      }
-      return true;
+
+      return element;
     }
   }
 }

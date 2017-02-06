@@ -3,6 +3,7 @@ package org.intellij.plugins.markdown.lang.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.DelegatingItemPresentation;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
@@ -14,11 +15,13 @@ public class MarkdownHeaderImpl extends MarkdownCompositePsiElementBase {
     super(node);
   }
 
+  @NotNull
   @Override
   protected String getPresentableTagName() {
     return "h" + getHeaderNumber();
   }
 
+  @NotNull
   @Override
   public ItemPresentation getPresentation() {
     return new DelegatingItemPresentation(super.getPresentation()) {
@@ -32,7 +35,7 @@ public class MarkdownHeaderImpl extends MarkdownCompositePsiElementBase {
           return null;
         }
         else {
-          return contentHolder.getText();
+          return StringUtil.trim(contentHolder.getText());
         }
       }
     };
