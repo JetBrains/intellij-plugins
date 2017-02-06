@@ -66,7 +66,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String packageName() {
-    return "angular-cli";
+    return "@angular/cli";
   }
 
   @Override
