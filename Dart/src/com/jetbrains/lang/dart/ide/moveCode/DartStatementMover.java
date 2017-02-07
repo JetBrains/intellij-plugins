@@ -11,6 +11,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
@@ -21,14 +22,16 @@ import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.jetbrains.lang.dart.util.DartRefactoringUtil.isComma;
-import static com.jetbrains.lang.dart.util.DartRefactoringUtil.isRightParen;
+import static com.jetbrains.lang.dart.DartTokenTypes.*;
+import static com.jetbrains.lang.dart.util.DartRefactoringUtil.*;
 
 /**
  * Move executable statements within a method or function. Statements cannot be moved outside a component.
  * TODO: What about moving statements from a local function to the surrounding method?
  */
 public class DartStatementMover extends LineMover {
+  static final TokenSet NESTED_GUARDS = TokenSet.create(LIST_LITERAL_EXPRESSION, ARGUMENT_LIST, ARGUMENTS);
+
   private SmartPsiElementPointer statementToSurroundWithCodeBlock;
 
   @Override
@@ -78,10 +81,14 @@ public class DartStatementMover extends LineMover {
 
   private static LineRange expandLineRangeToCoverPsiElements(final LineRange range, Editor editor, final PsiFile file) {
     Pair<PsiElement, PsiElement> psiRange = getElementRange(editor, file, range);
-    if (psiRange == null) return null;
-    if (psiRange.getFirst() instanceof DartStatements || psiRange.getFirst() instanceof DartExpressionList) {
-      PsiElement first = psiRange.getFirst();
-      PsiElement last = psiRange.getSecond();
+    if (psiRange == null) {
+      return null;
+    }
+    if (psiRange.first instanceof DartStatements ||
+        psiRange.first instanceof DartExpressionList ||
+        psiRange.first instanceof DartArgumentList) {
+      PsiElement first = psiRange.first;
+      PsiElement last = psiRange.second;
       if (last != null) {
         PsiElement statement = first.getFirstChild();
         if (statement != null) {
@@ -89,9 +96,12 @@ public class DartStatementMover extends LineMover {
         }
       }
     }
-    if (psiRange.getSecond() instanceof DartStatements) {
-      PsiElement first = psiRange.getFirst();
-      PsiElement last = psiRange.getSecond();
+    else if (psiRange.first instanceof DartNamedArgument && psiRange.first.getParent() == psiRange.second) {
+      psiRange = Pair.create(psiRange.first, psiRange.first);
+    }
+    if (psiRange.second instanceof DartStatements) {
+      PsiElement first = psiRange.first;
+      PsiElement last = psiRange.second;
       if (PsiTreeUtil.isAncestor(last, first, false)) {
         PsiElement statement = last.getLastChild();
         if (statement != null) {
@@ -99,9 +109,9 @@ public class DartStatementMover extends LineMover {
         }
       }
     }
-    if (isComma(psiRange.getSecond())) {
-      PsiElement first = psiRange.getFirst();
-      PsiElement last = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(psiRange.getSecond(), true);
+    if (isComma(psiRange.second)) {
+      PsiElement first = psiRange.first;
+      PsiElement last = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(psiRange.second, true);
       if (PsiTreeUtil.isAncestor(last, first, false)) {
         PsiElement statement = last.getLastChild();
         if (statement != null) {
@@ -109,10 +119,12 @@ public class DartStatementMover extends LineMover {
         }
       }
     }
-    final PsiElement parent = PsiTreeUtil.findCommonParent(psiRange.getFirst(), psiRange.getSecond());
-    Pair<PsiElement, PsiElement> elementRange = getElementRange(parent, psiRange.getFirst(), psiRange.getSecond());
-    if (elementRange == null) return null;
-    int endOffset = elementRange.getSecond().getTextRange().getEndOffset();
+    final PsiElement parent = PsiTreeUtil.findCommonParent(psiRange.first, psiRange.second);
+    Pair<PsiElement, PsiElement> elementRange = getElementRange(parent, psiRange.first, psiRange.second);
+    if (elementRange == null) {
+      return null;
+    }
+    int endOffset = elementRange.second.getTextRange().getEndOffset();
     Document document = editor.getDocument();
     if (endOffset > document.getTextLength()) {
       return null;
@@ -125,7 +137,7 @@ public class DartStatementMover extends LineMover {
       endLine = editor.offsetToLogicalPosition(endOffset).line + 1;
       endLine = Math.min(endLine, document.getLineCount());
     }
-    int startLine = Math.min(range.startLine, editor.offsetToLogicalPosition(elementRange.getFirst().getTextOffset()).line);
+    int startLine = Math.min(range.startLine, editor.offsetToLogicalPosition(elementRange.first.getTextOffset()).line);
     endLine = Math.max(endLine, range.endLine);
     return new LineRange(startLine, endLine);
   }
@@ -138,8 +150,9 @@ public class DartStatementMover extends LineMover {
     PsiElement guard = elementAtOffset;
     boolean isExpr = isMovingExpr(info.toMove);
     if (isExpr) {
-      guard = PsiTreeUtil.getParentOfType(guard, DartMethodDeclaration.class, DartListLiteralExpression.class,
-                                          DartFunctionDeclarationWithBodyOrNative.class, DartClass.class, PsiComment.class);
+      guard = PsiTreeUtil
+        .getParentOfType(guard, DartMethodDeclaration.class, DartListLiteralExpression.class, DartArgumentList.class, DartArguments.class,
+                         DartFunctionDeclarationWithBodyOrNative.class, DartClass.class, PsiComment.class);
     }
     else {
       guard = PsiTreeUtil.getParentOfType(guard, DartMethodDeclaration.class,
@@ -162,9 +175,9 @@ public class DartStatementMover extends LineMover {
     PsiElement elementAtInsertOffset = file.getViewProvider().findElementAt(insertOffset, DartLanguage.INSTANCE);
     PsiElement newGuard;
     if (isExpr) {
-      newGuard =
-        PsiTreeUtil.getParentOfType(elementAtInsertOffset, DartMethodDeclaration.class, DartListLiteralExpression.class,
-                                    DartFunctionDeclarationWithBodyOrNative.class, DartClass.class, PsiComment.class);
+      newGuard = PsiTreeUtil.getParentOfType(
+        elementAtInsertOffset, DartMethodDeclaration.class, DartListLiteralExpression.class, DartArgumentList.class, DartArguments.class,
+        DartFunctionDeclarationWithBodyOrNative.class, DartClass.class, PsiComment.class);
     }
     else {
       newGuard = PsiTreeUtil.getParentOfType(elementAtInsertOffset, DartMethodDeclaration.class,
@@ -175,7 +188,18 @@ public class DartStatementMover extends LineMover {
                          PsiTreeUtil.getParentOfType(elementAtInsertOffset, IDartBlock.class, false)) {
       info.indentSource = true;
     }
-    if (newGuard == guard && isInside(insertOffset, newGuard) == isInside(offset, guard)) return true;
+    if (newGuard == guard && isInside(insertOffset, newGuard) == isInside(offset, guard)) {
+      return true;
+    }
+    if (newGuard == null || guard == null) {
+      return false;
+    }
+    if (NESTED_GUARDS.contains(newGuard.getNode().getElementType()) && NESTED_GUARDS.contains(guard.getNode().getElementType())) {
+      PsiElement parent = PsiTreeUtil.findCommonParent(guard, newGuard);
+      if (parent == guard || parent == newGuard) {
+        return isInside(insertOffset, newGuard) == isInside(offset, guard);
+      }
+    }
 
     return false;
   }
@@ -209,27 +233,50 @@ public class DartStatementMover extends LineMover {
     boolean firstTime = true;
     boolean isExpr = isMovingExpr(info.toMove);
     PsiElement elementStart = null;
-    if (isExpr /*&& down*/) {
+    if (isExpr) {
       int offset = editor.logicalPositionToOffset(new LogicalPosition(startLine, 0));
       elementStart = firstNonWhiteMovableElement(offset, file, true);
-      if (elementStart instanceof DartExpression) {
+      if (elementStart instanceof DartArgumentList) {
+        elementStart = elementStart.getFirstChild();
+      }
+      else if (isRightBracket(elementStart) && info.toMove.firstElement instanceof DartNamedArgument) {
+        elementStart = elementStart.getParent().getParent(); // Possibly a named arg with list value
+      }
+      if (elementStart instanceof DartExpression || elementStart instanceof DartNamedArgument) {
         TextRange elementTextRange = elementStart.getTextRange();
         LogicalPosition pos = editor.offsetToLogicalPosition(elementTextRange.getEndOffset());
         int endOffset = editor.logicalPositionToOffset(new LogicalPosition(pos.line + 1, 0));
         PsiElement elementEnd = firstNonWhiteMovableElement(endOffset, file, false);
-        PsiElement elementTail = elementEnd;
-        if (isComma(elementEnd)) {
-          elementTail = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(elementEnd, true);
+        if (elementEnd instanceof DartArgumentList && elementStart instanceof DartNamedArgument) {
+          elementEnd = elementEnd.getLastChild();
+          if (!isComma(elementEnd)) {
+            return false; // Require trailing comma
+          }
+          else {
+            info.toMove2 = new LineRange(startLine, pos.line + 1);
+            return true;
+          }
+        }
+        if (elementEnd != null && isComma(elementEnd)) {
+          PsiElement elementTail = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(elementEnd, true);
           if (elementTail instanceof DartExpressionList) {
             elementTail = elementTail.getLastChild();
-            if (elementStart == elementTail) {
+          }
+          if (elementStart == elementTail) {
+            if (down) {
               info.toMove2 = new LineRange(startLine, pos.line + 1);
-              return true;
             }
+            else {
+              destLine = pos.line;
+              elementTextRange = elementTail.getTextRange();
+              pos = editor.offsetToLogicalPosition(elementTextRange.getStartOffset());
+              info.toMove2 = new LineRange(pos.line, destLine + 1);
+            }
+            return true;
           }
         }
       }
-      else if (isRightParen(elementStart)) {
+      else if (elementStart != null && isRightParen(elementStart)) {
         PsiElement start = elementStart.getParent().getParent();
         TextRange elementTextRange = start.getTextRange();
         LogicalPosition pos = editor.offsetToLogicalPosition(elementTextRange.getStartOffset());
@@ -534,6 +581,6 @@ public class DartStatementMover extends LineMover {
   }
 
   private static boolean isMovingExpr(@NotNull LineRange range) {
-    return range.firstElement instanceof DartExpression && isComma(range.lastElement);
+    return isComma(range.lastElement) && (range.firstElement instanceof DartExpression || range.firstElement instanceof DartNamedArgument);
   }
 }
