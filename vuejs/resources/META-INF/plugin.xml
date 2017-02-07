@@ -20,6 +20,11 @@
     <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
     <!--<directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGeneraator"/>-->
     <!--<projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>-->
+
+
+    <localInspection language="Vue" groupName="Vue" displayName="Data Function" shortName="VueDataFunction"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="org.jetbrains.vuejs.inspections.DataFunctionInspection"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler"/>
