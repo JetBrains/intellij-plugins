@@ -25,7 +25,8 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   public static final TextAttributesKey STRING = createTextAttributesKey("POST_CSS_STRING", CssHighlighter.CSS_STRING);
   public static final TextAttributesKey IMPORTANT = createTextAttributesKey("POST_CSS_IMPORTANT", CssHighlighter.CSS_IMPORTANT);
   public static final TextAttributesKey PROPERTY_NAME = createTextAttributesKey("POST_CSS_PROPERTY_NAME", CssHighlighter.CSS_PROPERTY_NAME);
-  public static final TextAttributesKey PROPERTY_VALUE = createTextAttributesKey("POST_CSS_PROPERTY_VALUE", CssHighlighter.CSS_PROPERTY_VALUE);
+  public static final TextAttributesKey PROPERTY_VALUE =
+    createTextAttributesKey("POST_CSS_PROPERTY_VALUE", CssHighlighter.CSS_PROPERTY_VALUE);
   public static final TextAttributesKey FUNCTION = createTextAttributesKey("POST_CSS_FUNCTION", CssHighlighter.CSS_FUNCTION);
   public static final TextAttributesKey URL = createTextAttributesKey("POST_CSS_URL", CssHighlighter.CSS_URL);
   public static final TextAttributesKey NUMBER = createTextAttributesKey("POST_CSS_NUMBER", CssHighlighter.CSS_NUMBER);
@@ -82,9 +83,12 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     for (IElementType type : PostCssTokenTypes.IDENTIFIERS.getTypes()) {
       mapping.put(type, IDENTIFIER);
     }
-    for (IElementType type : PostCssTokenTypes.OPERATORS.getTypes()) {
+    for (IElementType type : CssElementTypes.OPERATORS.getTypes()) {
       mapping.put(type, OPERATORS);
     }
+    mapping.put(PostCssTokenTypes.LT, OPERATORS);
+    mapping.put(PostCssTokenTypes.LE, OPERATORS);
+    mapping.put(PostCssTokenTypes.GE, OPERATORS);
 
     HtmlFileHighlighter.registerEmbeddedTokenAttributes(mapping, null);
     XmlFileHighlighter.registerEmbeddedTokenAttributes(mapping, null);
