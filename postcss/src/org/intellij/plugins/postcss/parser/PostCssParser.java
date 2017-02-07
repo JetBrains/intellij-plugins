@@ -128,30 +128,32 @@ public class PostCssParser extends CssParser2 {
 
   private boolean parseMediaFeatureRange() {
     boolean startsWithValue = isNumberTermStart();
-    if (!startsWithValue && !(isIdent() && PostCssTokenTypes.OPERATORS.contains(lookAhead(1)))) return false;
+    if (!startsWithValue && !(isIdent() && PostCssTokenTypes.COMPARISON_OPERATORS.contains(lookAhead(1)))) {
+      return false;
+    }
     PsiBuilder.Marker mediaFeature = createCompositeElement();
     if (startsWithValue) {
       parseNumberTerm();
-      parseOperatorSign();
+      parseComparisonOperator();
       addIdentOrError();
       if (getTokenType() == CssElementTypes.CSS_RPAREN) {
         mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
         return true;
       }
-      parseOperatorSign();
+      parseComparisonOperator();
       parseNumberTerm();
     }
     else {
       addIdentOrError();
-      parseOperatorSign();
+      parseComparisonOperator();
       parseNumberTerm();
     }
     mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
     return true;
   }
 
-  private void parseOperatorSign() {
-    if (PostCssTokenTypes.OPERATORS.contains(getTokenType())) {
+  private void parseComparisonOperator() {
+    if (PostCssTokenTypes.COMPARISON_OPERATORS.contains(getTokenType())) {
       addSingleToken();
     }
     else {

@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SyntaxTraverser;
 import com.intellij.psi.css.CssAtRule;
+import com.intellij.psi.css.CssMediaFeature;
 import com.intellij.psi.css.CssRuleset;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
@@ -72,8 +73,8 @@ public class PostCssPsiUtil {
   }
 
   @NotNull
-  public static List<? extends PsiElement> findAllOperatorSigns(@Nullable final PsiElement element) {
-    return SyntaxTraverser.psiTraverser(element).filter(PostCssPsiUtil::isOperatorSign).toList();
+  public static List<? extends PsiElement> findAllComparisonOperators(@Nullable final CssMediaFeature mediaFeature) {
+    return SyntaxTraverser.psiTraverser(mediaFeature).filter(PostCssPsiUtil::isComparisonOperator).toList();
   }
 
   @Contract("null -> false")
@@ -87,7 +88,7 @@ public class PostCssPsiUtil {
   }
 
   @Contract("null -> false")
-  public static boolean isOperatorSign(@Nullable PsiElement element) {
-    return element != null && PostCssTokenTypes.OPERATORS.contains(element.getNode().getElementType());
+  public static boolean isComparisonOperator(@Nullable PsiElement element) {
+    return element != null && PostCssTokenTypes.COMPARISON_OPERATORS.contains(element.getNode().getElementType());
   }
 }

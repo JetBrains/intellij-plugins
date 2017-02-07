@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.inspections;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.CssElementVisitor;
@@ -16,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class PostCssMediaRangeInspection extends PostCssBaseInspection {
+  private static final Logger LOG = Logger.getInstance(PostCssMediaRangeInspection.class);
+
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
@@ -23,25 +26,32 @@ public class PostCssMediaRangeInspection extends PostCssBaseInspection {
       @Override
       public void visitMediaFeature(@NotNull CssMediaFeature mediaFeature) {
         if (!PostCssPsiUtil.isInsidePostCss(mediaFeature) || PsiTreeUtil.hasErrorElements(mediaFeature)) return;
-        List<? extends PsiElement> signs = PostCssPsiUtil.findAllOperatorSigns(mediaFeature);
-        if (signs.size() != 2) return;
+        List<? extends PsiElement> comparisonOperators = PostCssPsiUtil.findAllComparisonOperators(mediaFeature);
+        if (comparisonOperators.size() != 2) return;
         boolean hasEqualSign = false;
-        for (PsiElement sign : signs) {
-          if (getSignDirection(sign) == 0) {
-            holder.registerProblem(sign, PostCssBundle.message("annotator.equal.operator.is.not.allowed.in.this.context"));
+        for (PsiElement operator : comparisonOperators) {
+          if (getComparisonOperatorDirection(operator) == 0) {
+            holder.registerProblem(operator, PostCssBundle.message("annotator.equal.operator.is.not.allowed.in.this.context"));
             hasEqualSign = true;
           }
         }
         if (hasEqualSign) return;
-        if (getSignDirection(signs.get(0)) != getSignDirection(signs.get(1))) {
-          holder.registerProblem(signs.get(1), PostCssBundle.message("annotator.media.query.range.operators.should.have.equal.direction"));
+        if (getComparisonOperatorDirection(comparisonOperators.get(0)) != getComparisonOperatorDirection(comparisonOperators.get(1))) {
+          holder.registerProblem(comparisonOperators.get(1),
+                                 PostCssBundle.message("annotator.media.query.range.operators.should.have.equal.direction"));
         }
       }
     };
   }
 
-  private static int getSignDirection(PsiElement sign) {
-    IElementType type = sign.getNode().getElementType();
-    return type == CssElementTypes.CSS_EQ ? 0 : (type == CssElementTypes.CSS_GT || type == PostCssTokenTypes.GE) ? 1 : -1;
+  private static int getComparisonOperatorDirection(@NotNull final PsiElement comparisonOperator) {
+    final IElementType type = comparisonOperator.getNode().getElementType();
+
+    if (type == CssElementTypes.CSS_GT || type == PostCssTokenTypes.GE) return 1;
+    if (type == PostCssTokenTypes.LT || type == PostCssTokenTypes.LE) return -1;
+    if (type == CssElementTypes.CSS_EQ) return 0;
+
+    LOG.error("Expected comparison operator, got " + type);
+    return 0;
   }
 }

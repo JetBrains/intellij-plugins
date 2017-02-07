@@ -18,6 +18,7 @@ public interface PostCssTokenTypes {
 
   TokenSet KEYWORDS = TokenSet.create(POST_CSS_NEST_SYM, POST_CSS_CUSTOM_SELECTOR_SYM, POST_CSS_CUSTOM_MEDIA_SYM);
   TokenSet IDENTIFIERS = TokenSet.create(AMPERSAND, HASH_SIGN);
-  TokenSet OPERATORS = TokenSet.create(CssElementTypes.CSS_EQ, CssElementTypes.CSS_GT, LT, GE, LE);
+  // only comparison operators allowed in media feature range (see https://www.w3.org/TR/mediaqueries-4/#typedef-mf-range)
+  TokenSet COMPARISON_OPERATORS = TokenSet.create(CssElementTypes.CSS_EQ, CssElementTypes.CSS_GT, LT, GE, LE);
   TokenSet POST_CSS_COMMENTS = TokenSet.create(CssElementTypes.CSS_COMMENT, POST_CSS_COMMENT);
 }
