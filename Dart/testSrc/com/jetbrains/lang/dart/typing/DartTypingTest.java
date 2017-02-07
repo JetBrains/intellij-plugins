@@ -654,5 +654,8 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   public void testBracket() {
     doTypingTest('[', "var a = new RegExp(<caret>)", "var a = new RegExp([<caret>])");
     doTypingTest('[', "var a = new RegExp(r'<caret>)", "var a = new RegExp(r'[<caret>)");
+    doTypingTest('[', "var a = ", "var a = [<caret>]");
+    doTypingTest('\n', "var a = [<caret>]", "var a = [\n  <caret>\n]");
+    doTypingTest('\n', "g() {\n  var a = [<caret>]", "g() {\n  var a = [\n    <caret>\n  ]");
   }
 }
