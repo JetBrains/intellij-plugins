@@ -191,7 +191,7 @@ public class ConversionParams {
       Element flexBuildConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
       if (flexBuildConfigurationElement != null) {
         FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(flexBuildConfigurationElement, FlexBuildConfiguration.class);
-        if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
+        if (FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
           return Collections.singletonList(FlexModuleConverter.generateModuleBcName(moduleSettings));
         }
       }
@@ -213,7 +213,7 @@ public class ConversionParams {
       Element oldConfigurationElement = facet.getChild(JpsFacetSerializer.CONFIGURATION_TAG);
       if (oldConfigurationElement != null) {
         FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
-        if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
+        if (FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
           return FlexModuleConverter.generateFacetBcName(facets, facet);
         }
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,8 +80,7 @@ public class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtensi
 
     @Override
     protected JpsOsmorcModuleExtension loadExtension(@NotNull Element element, String name, JpsElement parent, JpsModule module) {
-      OsmorcModuleExtensionProperties properties = XmlSerializer.deserialize(element, OsmorcModuleExtensionProperties.class);
-      return new JpsOsmorcModuleExtensionImpl(properties != null ? properties : new OsmorcModuleExtensionProperties());
+      return new JpsOsmorcModuleExtensionImpl(XmlSerializer.deserialize(element, OsmorcModuleExtensionProperties.class));
     }
 
     @Override

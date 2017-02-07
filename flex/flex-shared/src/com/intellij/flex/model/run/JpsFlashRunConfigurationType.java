@@ -17,6 +17,7 @@ public class JpsFlashRunConfigurationType extends JpsElementTypeBase<JpsFlashRun
 
   public static JpsRunConfigurationPropertiesSerializer<JpsFlashRunnerParameters> createRunConfigurationSerializer() {
     return new JpsRunConfigurationPropertiesSerializer<JpsFlashRunnerParameters>(INSTANCE, ID) {
+      @Override
       public JpsFlashRunnerParameters loadProperties(@Nullable final Element runConfigurationTag) {
         final JpsFlashRunnerParameters properties = runConfigurationTag != null
                                                     ? XmlSerializer.deserialize(runConfigurationTag, JpsFlashRunnerParameters.class)
@@ -24,6 +25,7 @@ public class JpsFlashRunConfigurationType extends JpsElementTypeBase<JpsFlashRun
         return properties != null ? properties : new JpsFlashRunnerParameters();
       }
 
+      @Override
       public void saveProperties(final JpsFlashRunnerParameters properties, final Element runConfigurationTag) {
       }
     };

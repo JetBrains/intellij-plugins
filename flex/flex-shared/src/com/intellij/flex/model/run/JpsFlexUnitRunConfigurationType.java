@@ -17,6 +17,7 @@ public class JpsFlexUnitRunConfigurationType extends JpsElementTypeBase<JpsFlexU
 
   public static JpsRunConfigurationPropertiesSerializer<JpsFlexUnitRunnerParameters> createRunConfigurationSerializer() {
     return new JpsRunConfigurationPropertiesSerializer<JpsFlexUnitRunnerParameters>(INSTANCE, ID) {
+      @Override
       public JpsFlexUnitRunnerParameters loadProperties(@Nullable final Element runConfigurationTag) {
         final JpsFlexUnitRunnerParameters properties = runConfigurationTag != null
                                                        ? XmlSerializer.deserialize(runConfigurationTag, JpsFlexUnitRunnerParameters.class)
@@ -24,6 +25,7 @@ public class JpsFlexUnitRunConfigurationType extends JpsElementTypeBase<JpsFlexU
         return properties != null ? properties : new JpsFlexUnitRunnerParameters();
       }
 
+      @Override
       public void saveProperties(final JpsFlexUnitRunnerParameters properties, final Element runConfigurationTag) {
       }
     };

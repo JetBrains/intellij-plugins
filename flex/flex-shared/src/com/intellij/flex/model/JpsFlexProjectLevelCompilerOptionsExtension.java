@@ -26,6 +26,7 @@ public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeEle
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsFlexProjectLevelCompilerOptionsExtension createCopy() {
     return new JpsFlexProjectLevelCompilerOptionsExtension(this);
@@ -43,10 +44,12 @@ public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeEle
 
   static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
     return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexIdeProjectLevelCompilerOptionsHolder") {
+      @Override
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexProjectLevelCompilerOptionsExtension.loadExtension(project, componentTag);
       }
 
+      @Override
       public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexProjectLevelCompilerOptionsExtension.saveExtension(project, componentTag);
       }
@@ -58,10 +61,12 @@ public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeEle
    */
   static JpsProjectExtensionSerializer createProjectExtensionSerializerIws() {
     return new JpsProjectExtensionSerializer("workspace.xml", "FlexIdeProjectLevelCompilerOptionsHolder") {
+      @Override
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexProjectLevelCompilerOptionsExtension.loadExtension(project, componentTag);
       }
 
+      @Override
       public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexProjectLevelCompilerOptionsExtension.saveExtension(project, componentTag);
       }

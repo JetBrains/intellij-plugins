@@ -39,11 +39,13 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
     VM_OPTIONS = original.VM_OPTIONS;
   }
 
+  @Override
   @NotNull
   public JpsFlexCompilerProjectExtension createCopy() {
     return new JpsFlexCompilerProjectExtension(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsFlexCompilerProjectExtension modified) {
     GENERATE_FLEXMOJOS_CONFIGS = modified.GENERATE_FLEXMOJOS_CONFIGS;
 
@@ -64,10 +66,12 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
 
   static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
     return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexCompilerConfiguration") {
+      @Override
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexCompilerProjectExtension.loadExtension(project, componentTag);
       }
 
+      @Override
       public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexCompilerProjectExtension.saveExtension(project, componentTag);
       }
@@ -79,10 +83,12 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
    */
   static JpsProjectExtensionSerializer createProjectExtensionSerializerIws() {
     return new JpsProjectExtensionSerializer("workspace.xml", "FlexCompilerConfiguration") {
+      @Override
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexCompilerProjectExtension.loadExtension(project, componentTag);
       }
 
+      @Override
       public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexCompilerProjectExtension.saveExtension(project, componentTag);
       }
