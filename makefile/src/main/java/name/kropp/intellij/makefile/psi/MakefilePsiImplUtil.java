@@ -7,12 +7,17 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MakefilePsiImplUtil {
     private static final Pattern suffixRule = Pattern.compile("^\\.[a-zA-Z]+(\\.[a-zA-Z]+)$");
+
+    public static List<MakefileTarget> getTargets(MakefileRule element) {
+        return element.getTargetLine().getTargets().getTargetList();
+    }
 
     @Nullable
     public static String getTargetName(MakefileTargetLine element) {

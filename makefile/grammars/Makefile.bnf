@@ -42,7 +42,7 @@ private any ::= (rule|variable-assignment|directive|topconditional|comment)*
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
-rule ::= target_line recipe
+rule ::= target_line recipe {methods=[getTargets]}
 recipe ::= (conditional|command)*
 command ::= '\t'* line (split line)*
 
