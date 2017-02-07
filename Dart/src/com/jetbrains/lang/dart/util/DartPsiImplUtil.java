@@ -265,6 +265,11 @@ public class DartPsiImplUtil {
   }
 
   @Nullable
+  public static PsiElement getForBody(@NotNull DartForStatement forStatement) {
+    return forStatement.getLastChild();
+  }
+
+  @Nullable
   public static PsiElement getWhileBody(@NotNull DartWhileStatement whileStatement) {
     return getBranchAfter(getCondition(whileStatement));
   }

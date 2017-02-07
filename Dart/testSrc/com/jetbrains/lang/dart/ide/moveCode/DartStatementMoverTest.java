@@ -75,6 +75,13 @@ public class DartStatementMoverTest extends DartCodeMoverTest {
   }
 
   public void testNamedParam3() {
+  }
+
+  public void testIntoFor1() {
+    doTest();
+  }
+
+  public void testIntoFor2() {
     doTest();
   }
 }
