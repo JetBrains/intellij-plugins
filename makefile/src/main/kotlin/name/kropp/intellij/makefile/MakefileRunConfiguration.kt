@@ -13,6 +13,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.getOrCreate
 import org.jdom.Element
+import java.io.File
 
 class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : LocatableConfigurationBase(project, factory, name) {
   var filename: String = ""
@@ -47,7 +48,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
         }
         val cmd = GeneralCommandLine()
             .withExePath(makePath)
-            .withWorkDirectory(project.basePath)
+            .withWorkDirectory(File(filename).parent)
             .withParameters(args)
         val processHandler = ColoredProcessHandler(cmd)
         ProcessTerminatedListener.attach(processHandler)
