@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,32 +23,38 @@ import aQute.bnd.header.Attrs;
 import aQute.bnd.osgi.Constants;
 import aQute.bnd.properties.Document;
 import biz.aQute.resolve.ProjectResolver;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.osgi.bnd.BndFileType;
 import org.osgi.resource.Resource;
 import org.osgi.resource.Wire;
 import org.osgi.service.resolver.ResolutionException;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.intellij.openapi.command.WriteCommandAction.writeCommandAction;
 
 public class ResolveAction extends AnAction {
 
@@ -57,76 +63,85 @@ public class ResolveAction extends AnAction {
   @Override
   public void actionPerformed(AnActionEvent event) {
     VirtualFile virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE);
+    Project project = event.getProject();
+    if (virtualFile == null || project == null) return;
+    com.intellij.openapi.editor.Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    if (document == null) return;
 
-    if (virtualFile == null) {
-      // This should never happen as the action is only available in when the virtualFile name ends with ".bndrun"
-      return;
-    }
+    FileDocumentManager.getInstance().saveAllDocuments();
 
-    try {
-      File file = new File(virtualFile.getCanonicalPath());
-      Workspace workspace = Workspace.findWorkspace(file);
-      Run run = Run.createRun(workspace, file);
+    new Task.Backgroundable(project, "Resolving Requirements", true) {
+      private Map<Resource, List<Wire>> resolveResult;
+      private String updatedText;
 
-      try (ProjectResolver projectResolver = new ProjectResolver(run)) {
-        Map<Resource, List<Wire>> resolveResult = projectResolver.resolve();
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        indicator.setIndeterminate(true);
 
-        DialogBuilder dialogBuilder = new DialogBuilder();
+        File file = new File(virtualFile.getPath());
+        try (Workspace workspace = Workspace.findWorkspace(file);
+             Run run = Run.createRun(workspace, file);
+             ProjectResolver projectResolver = new ProjectResolver(run)) {
+          resolveResult = projectResolver.resolve();
+
+          List<VersionedClause> versionedClauses = projectResolver.getRunBundles().stream()
+            .map(c -> {
+              Attrs attrs = new Attrs();
+              attrs.put(Constants.VERSION_ATTRIBUTE, c.getVersion());
+              return new VersionedClause(c.getBundleSymbolicName(), attrs);
+            })
+            .sorted(Comparator.comparing(VersionedClause::getName))
+            .collect(Collectors.toList());
+
+          BndEditModel editModel = new BndEditModel();
+          Document bndDocument = new Document(document.getImmutableCharSequence().toString());
+          editModel.loadFrom(bndDocument);
+          editModel.setRunBundles(versionedClauses);
+          editModel.saveChangesTo(bndDocument);
+          updatedText = bndDocument.get();
+        }
+        catch (ProcessCanceledException e) { throw e; }
+        catch (Exception e) { throw new WrappingException(e); }
+
+        indicator.checkCanceled();
+      }
+
+      @Override
+      public void onSuccess() {
+        DialogBuilder dialogBuilder = new DialogBuilder(project);
         dialogBuilder.setTitle("Confirm resolution");
         dialogBuilder.setCenterPanel(new ResolveConfirm(resolveResult).contentPane);
-
-        dialogBuilder.setOkOperation(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-          try {
-            List<VersionedClause> versionedClauses = projectResolver.getRunBundles().stream()
-              .map(c -> {
-                Attrs attrs = new Attrs();
-                attrs.put(Constants.VERSION_ATTRIBUTE, c.getVersion());
-                return new VersionedClause(c.getBundleSymbolicName(), attrs);
-              })
-              .sorted(Comparator.comparing(VersionedClause::getName))
-              .collect(Collectors.toList());
-
-            BndEditModel editModel = new BndEditModel();
-            Document document = new Document(VfsUtilCore.loadText(virtualFile));
-            editModel.loadFrom(document);
-            editModel.setRunBundles(versionedClauses);
-            editModel.saveChangesTo(document);
-            VfsUtil.saveText(virtualFile, document.get());
-          }
-          catch (Exception e) {
-            Notifications.Bus.notify(new Notification("Osmorc",
-                                                      "Failed to save resolution results",
-                                                      e.getMessage(),
-                                                      NotificationType.ERROR));
-            LOG.warn("Failed to save resolution results", e);
-          }
-          finally {
-            dialogBuilder.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
-          }
-        }));
-        dialogBuilder.showModal(true);
+        if (dialogBuilder.showAndGet() &&
+            FileModificationService.getInstance().prepareVirtualFilesForWrite(project, Collections.singleton(virtualFile))) {
+          writeCommandAction(project)
+            .withName("Bndrun Resolve")
+            .run(() -> document.setText(updatedText));
+        }
       }
-    }
-    catch (ResolutionException resolutionException) {
-      DialogWrapper wrapper = new ResolutionFailedDialogWrapper(resolutionException);
-      wrapper.show();
-    }
-    catch (Exception e) {
-      Notifications.Bus.notify(new Notification("Osmorc",
-                                                "Resolution failed",
-                                                e.getMessage(),
-                                                NotificationType.ERROR));
-      LOG.warn("Resolution failed", e);
-    }
+
+      @Override
+      public void onThrowable(@NotNull Throwable t) {
+        Throwable cause = t instanceof WrappingException ? t.getCause() : t;
+        LOG.warn("Resolution failed", cause);
+        if (cause instanceof ResolutionException) {
+          new ResolutionFailedDialogWrapper(project, (ResolutionException)cause).show();
+        }
+        else {
+          Notifications.Bus.notify(new Notification("Osmorc", "Resolution failed", cause.getMessage(), NotificationType.ERROR));
+        }
+      }
+    }.queue();
   }
 
   @Override
-  public void update(AnActionEvent actionEvent) {
-    VirtualFile virtualFile = actionEvent.getData(CommonDataKeys.VIRTUAL_FILE);
-    if (virtualFile != null && "bndrun".equals(virtualFile.getExtension())) {
-      actionEvent.getPresentation().setVisible(true);
-    } else {
-      actionEvent.getPresentation().setVisible(false);
+  public void update(AnActionEvent event) {
+    VirtualFile virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE);
+    event.getPresentation().setEnabledAndVisible(virtualFile != null && BndFileType.BND_RUN_EXT.equals(virtualFile.getExtension()));
+  }
+
+  private static class WrappingException extends RuntimeException {
+    private WrappingException(Throwable cause) {
+      super(cause);
     }
   }
 
@@ -134,8 +149,8 @@ public class ResolveAction extends AnAction {
 
     private final ResolutionException myResolutionException;
 
-    public ResolutionFailedDialogWrapper(ResolutionException resolutionException) {
-      super((Project)null, false);
+    public ResolutionFailedDialogWrapper(Project project, ResolutionException resolutionException) {
+      super(project, false);
       myResolutionException = resolutionException;
       init();
       setTitle("Resolution Failed");

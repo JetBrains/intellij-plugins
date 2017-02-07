@@ -179,17 +179,17 @@
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
 
+    <action id="osgi.bnd.resolve.bndrun" icon="OsmorcIdeaIcons.Bnd" text="Resolve .bndrun"
+            description="Resolves requirements and updates '-runbundles' directive"
+            class="org.jetbrains.osgi.bnd.resolve.ResolveAction">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </action>
+
     <group id="osmorc.viewGeneratedManifests" text="View Generated Manifest" popup="true"
            description="View the manifest of a recently generated OSGi bundle"
            class="org.osmorc.make.ViewGeneratedManifestGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </group>
-
-    <group id="BndActions" text="Bnd" popup="true" icon="OsmorcIdeaIcons.Bnd">
-      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-      <action class="org.jetbrains.osgi.bnd.resolve.ResolveAction" id="org.jetbrains.osgi.bnd.resolve.ResolveAction"
-              text="Resolve" description="Resolve">
-      </action>
     </group>
   </actions>
 </idea-plugin>
