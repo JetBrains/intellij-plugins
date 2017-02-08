@@ -34,7 +34,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library name="OSGi namespaces">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/org.osgi.namespace.contract-1.0.0.jar!/" />
