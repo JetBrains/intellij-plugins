@@ -24,9 +24,7 @@
  */
 package org.osmorc.make;
 
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -60,16 +58,16 @@ public class ViewManifestAction extends AnAction implements DumbAware {
 
     VirtualFile jarFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(myJarFilePath);
     if (jarFile == null) {
-      String message = OsmorcBundle.message("view.manifest.no.jar");
-      Notifications.Bus.notify(new Notification("OSGi", OsmorcBundle.message("view.manifest.title"), message, NotificationType.WARNING), project);
+      String title = OsmorcBundle.message("view.manifest.title"), message = OsmorcBundle.message("view.manifest.no.jar");
+      OsmorcBundle.notification(title, message, NotificationType.WARNING).notify(project);
       return;
     }
 
     String manifestPath = jarFile.getPath() + JarFileSystem.JAR_SEPARATOR + JarFile.MANIFEST_NAME;
     VirtualFile manifestFile = JarFileSystem.getInstance().refreshAndFindFileByPath(manifestPath);
     if (manifestFile == null) {
-      String message = OsmorcBundle.message("view.manifest.missing");
-      Notifications.Bus.notify(new Notification("OSGi", OsmorcBundle.message("view.manifest.title"), message, NotificationType.WARNING), project);
+      String title = OsmorcBundle.message("view.manifest.title"), message = OsmorcBundle.message("view.manifest.missing");
+      OsmorcBundle.notification(title, message, NotificationType.WARNING).notify(project);
       return;
     }
 

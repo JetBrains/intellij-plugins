@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -64,8 +62,7 @@ public abstract class AbstractOsgiQuickFix implements LocalQuickFix {
       }
     }
 
-    String message = OsmorcBundle.message("inspection.fix.no.manifest");
-    Notifications.Bus.notify(new Notification("osmorc", getFamilyName(), message, NotificationType.WARNING));
+    OsmorcBundle.notification(getFamilyName(), OsmorcBundle.message("inspection.fix.no.manifest"), NotificationType.WARNING).notify(element.getProject());
     return null;
   }
 }

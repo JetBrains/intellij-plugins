@@ -25,6 +25,11 @@
 package org.osmorc.i18n;
 
 import com.intellij.AbstractBundle;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationType;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
@@ -35,13 +40,19 @@ import org.jetbrains.annotations.PropertyKey;
  */
 public class OsmorcBundle extends AbstractBundle {
   private static final String PATH_TO_BUNDLE = "messages.OsmorcBundle";
-  private static final AbstractBundle ourInstance = new OsmorcBundle();
+  private static final AbstractBundle INSTANCE = new OsmorcBundle();
 
   private OsmorcBundle() {
     super(PATH_TO_BUNDLE);
   }
 
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
-    return ourInstance.getMessage(key, params);
+    return INSTANCE.getMessage(key, params);
+  }
+
+  private static final NotificationGroup NOTIFICATIONS = new NotificationGroup(message("notification.group"), NotificationDisplayType.BALLOON, true);
+
+  public static Notification notification(@NotNull @Nls String title, @NotNull @Nls String message, @NotNull NotificationType type) {
+    return NOTIFICATIONS.createNotification(title, message, type, null);
   }
 }
