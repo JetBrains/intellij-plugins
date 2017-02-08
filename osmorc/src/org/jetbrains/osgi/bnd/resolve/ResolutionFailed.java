@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,19 @@ import org.osgi.service.resolver.ResolutionException;
 import javax.swing.*;
 
 public class ResolutionFailed {
-  private JPanel contentPane;
-
-  private JTextPane _exception;
-  private JBList<Requirement> _unresolved;
+  private JPanel myContentPane;
+  private JTextPane myException;
+  private JBList<Requirement> myUnresolved;
 
   public ResolutionFailed(ResolutionException resolutionException) {
-    _exception.setText(resolutionException.getMessage());
+    myException.setText(resolutionException.getMessage());
 
     DefaultListModel<Requirement> model = new DefaultListModel<>();
     resolutionException.getUnresolvedRequirements().forEach(model::addElement);
-    _unresolved.setModel(model);
+    myUnresolved.setModel(model);
   }
 
   public JPanel getContentPane() {
-    return contentPane;
+    return myContentPane;
   }
 }

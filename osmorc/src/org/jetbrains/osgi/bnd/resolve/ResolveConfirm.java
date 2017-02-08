@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ResolveConfirm {
-
-  private JBList<Resource> _requiredResources;
-  private Tree _reason;
-  JPanel contentPane;
+  private JPanel myContentPane;
+  private JBList<Resource> myRequiredResources;
+  private Tree myReason;
 
   private static final Icon OSGI_BUNDLE_ICON;
   static {
@@ -58,23 +57,22 @@ public class ResolveConfirm {
   }
 
   public ResolveConfirm(Map<Resource, List<Wire>> resolveResult) {
-    final DefaultListModel<Resource> requiredResourcesModel = new DefaultListModel<>();
+    DefaultListModel<Resource> requiredResourcesModel = new DefaultListModel<>();
     resolveResult.keySet().stream()
       .sorted()
       .forEach(requiredResourcesModel::addElement);
 
     DefaultTreeModel reasonModel = new DefaultTreeModel(new DefaultMutableTreeNode());
-    _reason.setModel(reasonModel);
+    myReason.setModel(reasonModel);
 
-    _requiredResources.setModel(requiredResourcesModel);
+    myRequiredResources.setModel(requiredResourcesModel);
 
-    _requiredResources.addListSelectionListener(event -> {
-      Resource selectedResource = _requiredResources.getSelectedValue();
-
+    myRequiredResources.addListSelectionListener(event -> {
+      Resource selectedResource = myRequiredResources.getSelectedValue();
       updateReasonModel(resolveResult, reasonModel, selectedResource);
     });
 
-    _requiredResources.setCellRenderer(new ColoredListCellRenderer<Resource>() {
+    myRequiredResources.setCellRenderer(new ColoredListCellRenderer<Resource>() {
       @Override
       protected void customizeCellRenderer(@NotNull JList list, Resource resource, int index, boolean selected, boolean hasFocus) {
         setIcon(OSGI_BUNDLE_ICON);
@@ -98,16 +96,9 @@ public class ResolveConfirm {
       }
     });
 
-    _reason.setCellRenderer(new ColoredTreeCellRenderer() {
+    myReason.setCellRenderer(new ColoredTreeCellRenderer() {
       @Override
-      public void customizeCellRenderer(@NotNull JTree tree,
-                                        Object value,
-                                        boolean selected,
-                                        boolean expanded,
-                                        boolean leaf,
-                                        int row,
-                                        boolean hasFocus) {
-
+      public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
         Object userObject = node.getUserObject();
@@ -184,9 +175,7 @@ public class ResolveConfirm {
 
   private static void addRequirer(DefaultMutableTreeNode root, Resource resource, Map<Resource, List<Wire>> resolve) {
     List<Wire> wires = resolve.get(resource);
-    if (wires == null) {
-      return;
-    }
+    if (wires == null) return;
 
     Map<Capability, DefaultMutableTreeNode> map = new HashMap<>();
 
@@ -198,5 +187,9 @@ public class ResolveConfirm {
       addRequirer(child, wire.getRequirer(), resolve);
     });
     map.values().forEach(root::add);
+  }
+
+  public JPanel getContentPane() {
+    return myContentPane;
   }
 }
