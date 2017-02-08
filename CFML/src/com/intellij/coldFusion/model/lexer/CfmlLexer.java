@@ -32,6 +32,7 @@ public class CfmlLexer extends MergingLexerAdapter {
   private Lexer myCfscriptLexer = null;
   private int myStartPosition = 0;
   private Project myProject;
+  private final _CfmlLexer.CfmlLexerConfiguration myConfiguration;
 
   private static final TokenSet TOKENS_TO_MERGE =
     TokenSet.create(CfmlTokenTypes.COMMENT,
@@ -41,6 +42,7 @@ public class CfmlLexer extends MergingLexerAdapter {
   public CfmlLexer(boolean highlightingMode, Project project) {
     super(new FlexAdapter(new _CfmlLexer(project)), TOKENS_TO_MERGE);
     myProject = project;
+    myConfiguration = ((_CfmlLexer)((FlexAdapter)getDelegate()).getFlex()).myCurrentConfiguration;
   }
 
   @Override
@@ -50,9 +52,13 @@ public class CfmlLexer extends MergingLexerAdapter {
       assert modifiedState != 0;
       return modifiedState;
     }
-    int state = super.getState();
+    int state = doGetState();
     assert state >= 0 && state < LEXER_STATE_LIMIT;
     return state;
+  }
+
+  private int doGetState() {
+    return super.getState() + myConfiguration.getExtraState();
   }
 
   @Override

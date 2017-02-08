@@ -12,7 +12,7 @@ import com.intellij.util.containers.Stack;
 %%
 
 %{
-  CfmlLexerConfiguration myCurrentConfiguration = new CfmlLexerConfiguration();
+  final CfmlLexerConfiguration myCurrentConfiguration = new CfmlLexerConfiguration();
   private Project myProject;
 
   public _CfmlLexer(Project project) {
@@ -21,15 +21,15 @@ import com.intellij.util.containers.Stack;
   }
 
   public class CfmlLexerConfiguration {
-      public int myArePoundsEvaluated = 0;
-      public int myCommentCounter = 0;
-      public int mySharpCounter = 0;
-      public boolean myIfReturnExpression = false;
-      public Stack<Integer> myReturnStack = new Stack<Integer>();
+      int myArePoundsEvaluated = 0;
+      int myCommentCounter = 0;
+      int mySharpCounter = 0;
+      boolean myIfReturnExpression = false;
+      Stack<Integer> myReturnStack = new Stack<Integer>();
       // to give to other lexer
-      public IElementType myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
-      public boolean myStartExpression = true;
-      public String myCurrentTag = "cfelse";
+      IElementType myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+      boolean myStartExpression = true;
+      String myCurrentTag = "cfelse";
 
       public CfmlLexerConfiguration() {}
 
@@ -41,6 +41,11 @@ import com.intellij.util.containers.Stack;
           myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
           myStartExpression = true;
           myCurrentTag = "cfelse";
+          myArePoundsEvaluated = 0;
+      }
+
+      public int getExtraState() {
+        return myArePoundsEvaluated != 0 ? FINAL_STATE : 0;
       }
   }
 
@@ -177,6 +182,7 @@ WHAT_EVER=[^]*
 %state X, Y
 %state TEXT
 %state EAT_TEST_AS_SCRIPT
+%state FINAL_STATE
 
 %ignorecase
 %char
