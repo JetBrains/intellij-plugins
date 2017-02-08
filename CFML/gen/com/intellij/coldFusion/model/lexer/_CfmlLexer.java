@@ -47,6 +47,7 @@ class _CfmlLexer implements FlexLexer {
   public static final int Y = 36;
   public static final int TEXT = 38;
   public static final int EAT_TEST_AS_SCRIPT = 40;
+  public static final int FINAL_STATE = 42;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -57,7 +58,7 @@ class _CfmlLexer implements FlexLexer {
   private static final int ZZ_LEXSTATE[] = { 
      0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  7,  7, 
      8,  8,  9,  9, 10, 10,  9,  9, 11, 11, 12, 12, 13, 13,  9,  9, 
-    14, 14,  9,  9,  9,  9, 15, 15, 16, 16
+    14, 14,  9,  9,  9,  9, 15, 15, 16, 16,  9, 9
   };
 
   /** 
@@ -1202,7 +1203,7 @@ class _CfmlLexer implements FlexLexer {
   private boolean zzEOFDone;
 
   /* user code: */
-  CfmlLexerConfiguration myCurrentConfiguration = new CfmlLexerConfiguration();
+  final CfmlLexerConfiguration myCurrentConfiguration = new CfmlLexerConfiguration();
   private Project myProject;
 
   public _CfmlLexer(Project project) {
@@ -1211,15 +1212,15 @@ class _CfmlLexer implements FlexLexer {
   }
 
   public class CfmlLexerConfiguration {
-      public int myArePoundsEvaluated = 0;
-      public int myCommentCounter = 0;
-      public int mySharpCounter = 0;
-      public boolean myIfReturnExpression = false;
-      public Stack<Integer> myReturnStack = new Stack<Integer>();
+      int myArePoundsEvaluated = 0;
+      int myCommentCounter = 0;
+      int mySharpCounter = 0;
+      boolean myIfReturnExpression = false;
+      Stack<Integer> myReturnStack = new Stack<Integer>();
       // to give to other lexer
-      public IElementType myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
-      public boolean myStartExpression = true;
-      public String myCurrentTag = "cfelse";
+      IElementType myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+      boolean myStartExpression = true;
+      String myCurrentTag = "cfelse";
 
       public CfmlLexerConfiguration() {}
 
@@ -1231,6 +1232,11 @@ class _CfmlLexer implements FlexLexer {
           myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
           myStartExpression = true;
           myCurrentTag = "cfelse";
+          myArePoundsEvaluated = 0;
+      }
+
+      public int getExtraState() {
+        return myArePoundsEvaluated != 0 ? FINAL_STATE : 0;
       }
   }
 
