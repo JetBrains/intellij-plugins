@@ -52,7 +52,9 @@ public class OsmorcBundle extends AbstractBundle {
 
   private static final NotificationGroup NOTIFICATIONS = new NotificationGroup(message("notification.group"), NotificationDisplayType.BALLOON, true);
 
-  public static Notification notification(@NotNull @Nls String title, @NotNull @Nls String message, @NotNull NotificationType type) {
+  public static Notification notification(@NotNull @Nls(capitalization = Nls.Capitalization.Title) String title,
+                                          @NotNull @Nls String message,
+                                          @NotNull NotificationType type) {
     return NOTIFICATIONS.createNotification(title, message, type, null);
   }
 }
