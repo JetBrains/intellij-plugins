@@ -103,7 +103,7 @@ public class CfmlLexerTest extends LexerTestCase {
   }
 
   private void doTest() throws IOException {
-    doFileTest(".test.cfml");
+    doFileTest("test.cfml");
   }
 }
 
