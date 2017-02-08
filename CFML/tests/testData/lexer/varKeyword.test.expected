@@ -1,20 +1,17 @@
 OPENER ('<')
 CF_TAG_NAME ('cfscript')
 R_ANGLEBRACKET ('>')
-WHITE_SPACE ('
-  ')
+WHITE_SPACE ('\n  ')
 VAR_KEYWORD ('var')
 WHITE_SPACE (' ')
 IDENTIFIER ('a')
 SEMICOLON (';')
-WHITE_SPACE ('
-  ')
+WHITE_SPACE ('\n  ')
 VAR_KEYWORD ('Var')
 WHITE_SPACE (' ')
 IDENTIFIER ('a')
 SEMICOLON (';')
-WHITE_SPACE ('
-')
+WHITE_SPACE ('\n')
 LSLASH_ANGLEBRACKET ('</')
 CF_TAG_NAME ('cfscript')
 CLOSER ('>')
