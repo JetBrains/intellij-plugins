@@ -27,13 +27,19 @@ public class DartSdkLibraryPresentationProvider extends LibraryPresentationProvi
 
   @Nullable
   public DummyLibraryProperties detect(@NotNull final List<VirtualFile> classesRoots) {
-    return classesRoots.size() == 1 && isDartSdkLibRoot(classesRoots.get(0)) ? DummyLibraryProperties.INSTANCE : null;
+    return findDartCoreRoot(classesRoots) == null ? null : DummyLibraryProperties.INSTANCE;
   }
 
-  public static boolean isDartSdkLibRoot(@NotNull final VirtualFile root) {
-    return root.isInLocalFileSystem() &&
-           root.isDirectory() &&
-           root.getName().equals("lib") &&
-           root.findFileByRelativePath("core/core.dart") != null;
+  @Nullable
+  public static VirtualFile findDartCoreRoot(@NotNull final List<VirtualFile> classesRoots) {
+    for (VirtualFile root : classesRoots) {
+      if (root.isInLocalFileSystem() &&
+          root.isDirectory() &&
+          root.getPath().endsWith("/lib/core") &&
+          root.findChild("core.dart") != null) {
+        return root;
+      }
+    }
+    return null;
   }
 }

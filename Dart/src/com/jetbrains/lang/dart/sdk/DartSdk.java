@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DartSdk {
@@ -85,8 +86,9 @@ public class DartSdk {
   @Nullable
   public static DartSdk getSdkByLibrary(@NotNull final Library library) {
     final VirtualFile[] roots = library.getFiles(OrderRootType.CLASSES);
-    if (roots.length == 1 && DartSdkLibraryPresentationProvider.isDartSdkLibRoot(roots[0])) {
-      final String homePath = roots[0].getParent().getPath();
+    final VirtualFile dartCoreRoot = DartSdkLibraryPresentationProvider.findDartCoreRoot(Arrays.asList(roots));
+    if (dartCoreRoot != null) {
+      final String homePath = dartCoreRoot.getParent().getParent().getPath();
       final String version = StringUtil.notNullize(DartSdkUtil.getSdkVersion(homePath), UNKNOWN_VERSION);
       return new DartSdk(homePath, version);
     }

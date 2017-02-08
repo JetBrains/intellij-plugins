@@ -15,6 +15,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.WebModuleBuilder;
 import com.intellij.openapi.module.WebModuleType;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -122,12 +123,13 @@ public class DartModuleBuilder extends ModuleBuilder {
                                          @NotNull final DartProjectWizardData wizardData) {
     // similar to DartConfigurable.apply()
     if (DartSdkUtil.isDartSdkHome(wizardData.dartSdkPath)) {
-      DartSdkUtil.updateKnownSdkPaths(modifiableRootModel.getProject(), wizardData.dartSdkPath);
+      final Project project = modifiableRootModel.getProject();
+      DartSdkUtil.updateKnownSdkPaths(project, wizardData.dartSdkPath);
 
       final LibraryTable.ModifiableModel libraryTableModifiableModel =
-        ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel(modifiableRootModel.getProject());
+        ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel(project);
 
-      DartSdkLibUtil.ensureDartSdkConfigured(libraryTableModifiableModel, wizardData.dartSdkPath);
+      DartSdkLibUtil.ensureDartSdkConfigured(project, libraryTableModifiableModel, wizardData.dartSdkPath);
 
       if (libraryTableModifiableModel.isChanged()) {
         libraryTableModifiableModel.commit();

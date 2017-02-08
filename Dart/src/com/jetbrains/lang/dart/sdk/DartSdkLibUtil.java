@@ -10,20 +10,31 @@ import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 public class DartSdkLibUtil {
   private static final Logger LOG = Logger.getInstance(DartSdkLibUtil.class.getName());
+
+  private static final String[] SDK_LIB_SUBFOLDERS_BLACKLIST = {
+    "analysis_server",
+    "analyzer",
+    "dev_compiler",
+    "front_end",
+    "internal",
+    "profiler",
+  };
 
   public static boolean isIdeWithMultipleModuleSupport() {
     return PlatformUtils.isIntelliJ();
@@ -34,74 +45,125 @@ public class DartSdkLibUtil {
     final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (library == null) {
       final LibraryTable.ModifiableModel model = libraryTable.getModifiableModel();
-      createDartSdkLib(model, sdkHomePath);
+      createDartSdkLib(project, model, sdkHomePath);
       model.commit();
     }
     else {
       final DartSdk sdk = DartSdk.getSdkByLibrary(library);
       if (sdk == null || !sdkHomePath.equals(sdk.getHomePath())) {
-        setupDartSdkRoots(library, sdkHomePath);
+        setupDartSdkRoots(project, library, sdkHomePath);
       }
     }
   }
 
-  public static void ensureDartSdkConfigured(@NotNull final LibraryTable.ModifiableModel libraryTableModel,
+  public static void ensureDartSdkConfigured(@NotNull final Project project,
+                                             @NotNull final LibraryTable.ModifiableModel libraryTableModel,
                                              @NotNull final String sdkHomePath) {
     final Library library = libraryTableModel.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (library == null) {
-      createDartSdkLib(libraryTableModel, sdkHomePath);
+      createDartSdkLib(project, libraryTableModel, sdkHomePath);
     }
     else {
       final DartSdk sdk = DartSdk.getSdkByLibrary(library);
       if (sdk == null || !sdkHomePath.equals(sdk.getHomePath())) {
-        setupDartSdkRoots(library, sdkHomePath);
+        setupDartSdkRoots(project, library, sdkHomePath);
       }
     }
   }
 
-  private static void createDartSdkLib(@NotNull final LibraryTable.ModifiableModel libraryTableModel,
+  private static void createDartSdkLib(@NotNull final Project project,
+                                       @NotNull final LibraryTable.ModifiableModel libraryTableModel,
                                        @NotNull final String sdkHomePath) {
     final Library existingLib = libraryTableModel.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (existingLib != null) {
-      setupDartSdkRoots(existingLib, sdkHomePath);
+      setupDartSdkRoots(project, existingLib, sdkHomePath);
     }
     else {
       final Library library = libraryTableModel.createLibrary(DartSdk.DART_SDK_LIB_NAME);
-      setupDartSdkRoots(library, sdkHomePath);
+      setupDartSdkRoots(project, library, sdkHomePath);
     }
   }
 
-  private static void setupDartSdkRoots(@NotNull final Library library, @NotNull final String sdkHomePath) {
-    final VirtualFile libRoot = LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkHomePath + "/lib");
-    if (libRoot != null && libRoot.isDirectory()) {
-      final LibraryEx.ModifiableModelEx libModifiableModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
-      try {
-        // remove old
-        for (String url : libModifiableModel.getUrls(OrderRootType.CLASSES)) {
-          libModifiableModel.removeRoot(url, OrderRootType.CLASSES);
-        }
-        for (String url : libModifiableModel.getExcludedRootUrls()) {
-          libModifiableModel.removeExcludedRoot(url);
-        }
+  private static void setupDartSdkRoots(@NotNull final Project project, @NotNull final Library library, @NotNull final String sdkHomePath) {
+    LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkHomePath + "/lib");
 
-        // add new
-        libModifiableModel.addRoot(libRoot, OrderRootType.CLASSES);
+    final SortedSet<String> roots = getRootUrls(project, sdkHomePath);
+    if (roots.isEmpty()) return; // corrupted SDK
 
-        libRoot.refresh(false, true);
-        for (final VirtualFile subFolder : libRoot.getChildren()) {
-          // dev_compiler folder contains Megabytes of JavaScript that is used by SDK tools but not needed for the IDE
-          if (subFolder.getName().startsWith("_") || subFolder.getName().equals("dev_compiler")) {
-            libModifiableModel.addExcludedRoot(subFolder.getUrl());
-          }
-        }
-
-        libModifiableModel.commit();
-      }
-      catch (Exception e) {
-        LOG.warn(e);
-        Disposer.dispose(libModifiableModel);
-      }
+    if (Comparing.haveEqualElements(ArrayUtil.toStringArray(roots), library.getRootProvider().getUrls(OrderRootType.CLASSES))) {
+      return; // already ok
     }
+
+    final LibraryEx.ModifiableModelEx libModifiableModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+    try {
+      // remove old
+      for (String url : libModifiableModel.getUrls(OrderRootType.CLASSES)) {
+        libModifiableModel.removeRoot(url, OrderRootType.CLASSES);
+      }
+      for (String url : libModifiableModel.getExcludedRootUrls()) {
+        libModifiableModel.removeExcludedRoot(url);
+      }
+
+      // add new
+      for (String root : roots) {
+        libModifiableModel.addRoot(root, OrderRootType.CLASSES);
+      }
+
+      libModifiableModel.commit();
+    }
+    catch (Exception e) {
+      LOG.warn(e);
+      Disposer.dispose(libModifiableModel);
+    }
+  }
+
+  @NotNull
+  private static SortedSet<String> getRootUrls(@NotNull final Project project, @NotNull final String sdkHomePath) {
+    final Map<String, String> map = DartLibraryIndex.getSdkLibUriToRelativePathMap(project, sdkHomePath);
+
+    if (map.isEmpty() || !map.containsKey("dart:core")) {
+      LOG.info("Failed to get useful info from " + sdkHomePath + "/lib/_internal/libraries.dart");
+      return getRootUrlsFailover(sdkHomePath);
+    }
+
+    final SortedSet<String> result = new TreeSet<>();
+
+    for (Map.Entry<String, String> entry : map.entrySet()) {
+      if (entry.getKey().startsWith("dart:_")) continue; // private libs
+
+      final String relPath = entry.getValue();
+      final int slashIndex = relPath.indexOf("/");
+      if (slashIndex <= 0) {
+        LOG.info("Skipping unexpected Dart library path: " + relPath);
+        continue;
+      }
+
+      result.add(VfsUtilCore.pathToUrl(sdkHomePath + "/lib/" + relPath.substring(0, slashIndex)));
+    }
+
+    return result;
+  }
+
+  @NotNull
+  private static SortedSet<String> getRootUrlsFailover(@NotNull final String sdkHomePath) {
+    final SortedSet<String> result = new TreeSet<>();
+
+    final File lib = new File(sdkHomePath + "/lib");
+    if (!lib.isDirectory()) return result;
+
+    final File[] children = lib.listFiles();
+    if (children == null) return result;
+
+    for (File subDir : children) {
+      final String subDirName = subDir.getName();
+      if (!subDir.isDirectory()) continue;
+      if (subDirName.startsWith("_")) continue;
+      if (ArrayUtil.contains(subDirName, SDK_LIB_SUBFOLDERS_BLACKLIST)) continue;
+
+      result.add(VfsUtilCore.pathToUrl(sdkHomePath + "/lib/" + subDirName));
+    }
+
+    return result;
   }
 
   public static boolean isDartSdkEnabled(@NotNull final Module module) {
