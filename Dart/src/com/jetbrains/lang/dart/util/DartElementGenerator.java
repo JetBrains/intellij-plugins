@@ -14,8 +14,6 @@ import com.jetbrains.lang.dart.psi.impl.DartExpressionCodeFragmentImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class DartElementGenerator {
   @Nullable
   public static DartReference createReferenceFromText(Project myProject, String text) {
@@ -55,13 +53,6 @@ public class DartElementGenerator {
   }
 
 
-  public static List<DartComponent> createFunctionsFromText(Project myProject, String text) {
-    final PsiFile dummyFile = createDummyFile(myProject, DartCodeGenerateUtil.wrapFunction(text).getFirst());
-    final DartClass dartClass = PsiTreeUtil.getChildOfType(dummyFile, DartClass.class);
-    assert dartClass != null;
-    return DartResolveUtil.findNamedSubComponents(false, dartClass);
-  }
-
   @Nullable
   public static DartId createIdentifierFromText(Project myProject, String name) {
     final PsiFile dummyFile = createDummyFile(myProject, name + "(){}");
@@ -77,23 +68,6 @@ public class DartElementGenerator {
     return libraryStatement == null ? null : libraryStatement.getLibraryNameElement();
   }
 
-  @Nullable
-  public static DartLibraryComponentReferenceExpression createLibraryComponentReference(Project myProject, String name) {
-    final PsiFile dummyFile = createDummyFile(myProject, "import 'dummy' show " + name + ";");
-    final DartImportStatement importStatement = PsiTreeUtil.getChildOfType(dummyFile, DartImportStatement.class);
-    final List<DartShowCombinator> combinators = importStatement != null ? importStatement.getShowCombinatorList() : null;
-    final DartLibraryReferenceList libraryReferences = combinators != null && !combinators.isEmpty() ?
-                                                       combinators.iterator().next().getLibraryReferenceList() : null;
-    final List<DartLibraryComponentReferenceExpression> references = libraryReferences != null ?
-                                                                     libraryReferences.getLibraryComponentReferenceExpressionList() : null;
-    return references == null ? null : references.iterator().next();
-  }
-
-  @Nullable
-  public static PsiElement createTopLevelStatementFromText(Project myProject, String text) {
-    final PsiFile file = createDummyFile(myProject, text);
-    return file.getFirstChild();
-  }
 
   public static PsiFile createDummyFile(Project myProject, String text) {
     final PsiFileFactory factory = PsiFileFactory.getInstance(myProject);
