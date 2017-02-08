@@ -15,17 +15,22 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
                           "slot", "ref").
                   plus(DEFAULT_BINDABLE.map { "v-bind:" + it }).
                   plus(DEFAULT_BINDABLE.map { ":" + it })
+
+    fun vueAttributeDescriptor(attributeName: String?): VueAttributeDescriptor? {
+      if (DEFAULT.contains(attributeName!!)) return VueAttributeDescriptor(attributeName)
+      if (attributeName.startsWith(":") || attributeName.startsWith("v-bind:")) return VueAttributeDescriptor(attributeName)
+      if (attributeName.startsWith("@") || attributeName.startsWith("v-on:")) return VueAttributeDescriptor(attributeName)
+      return null
+    }
   }
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     return DEFAULT.map(::VueAttributeDescriptor).toTypedArray()
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    if (DEFAULT.contains(attributeName!!)) return VueAttributeDescriptor(attributeName)
-    if (attributeName.startsWith(":") || attributeName.startsWith("v-bind:")) return VueAttributeDescriptor(attributeName)
-    if (attributeName.startsWith("@") || attributeName.startsWith("v-on:")) return VueAttributeDescriptor(attributeName)
-    return null
+    return vueAttributeDescriptor(attributeName)
   }
+
 }
 
 class VueAttributeDescriptor(private val name:String) : BasicXmlAttributeDescriptor() {
