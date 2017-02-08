@@ -118,6 +118,14 @@ module Teamcity
         tc_after_step(step)
       end
 
+      def before_test_step(step)
+        tc_before_step(step)
+      end
+
+      def after_test_step(step, result)
+        tc_after_step(step)
+      end
+
       # result of step invocation - calls v_exception, v_step_name
       def before_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background, file_colon_line = nil)
         tc_before_step_result(exception, keyword, multiline_arg, source_indent, status, step_match, background, file_colon_line)

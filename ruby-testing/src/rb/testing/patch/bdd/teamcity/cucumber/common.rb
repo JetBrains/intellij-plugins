@@ -277,7 +277,9 @@ module Teamcity
       def tc_before_step(step)
         register_tags_holder
         @handled_exception = nil
-        @current_step_start_time = get_current_time_in_ms
+        unless @current_step_start_time
+          @current_step_start_time = get_current_time_in_ms
+        end
       end
 
       def tc_after_step(step)
@@ -360,6 +362,7 @@ module Teamcity
       def tc_before_step_result(exception, keyword, multiline_arg, source_indent, status, step_match, background, file_colon_line)
         finished_at_ms = get_current_time_in_ms
         duration_ms = finished_at_ms - @current_step_start_time
+        @current_step_start_time = nil
         @handled_exception = exception
 
         # Actually cucumber standard formatters doesn't count BG steps in
