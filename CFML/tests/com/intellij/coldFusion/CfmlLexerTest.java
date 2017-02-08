@@ -78,11 +78,11 @@ public class CfmlLexerTest extends LexerTestCase {
     doTest();
   }
 
-  public void testSharpInAttrValue() throws Throwable {
+  public void testSharpInNestedCfOutput() throws Throwable {
     doTest();
   }
 
-  public void testSharpInNestedCfOutput() throws Throwable {
+  public void testSqlWithInclude() throws Throwable {
     doTest();
   }
 

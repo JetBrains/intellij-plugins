@@ -192,8 +192,11 @@ WHAT_EVER=[^]*
 <YYINITIAL> {SCRIPT_COMPONENT_DEF} {if (yychar == 0) { yybegin(EAT_TEST_AS_SCRIPT); return CfmlElementTypes.CF_SCRIPT; }
                                                                  else { return myCurrentConfiguration.myBlockType; }}
 <YYINITIAL> {VARIABLE_TYPE_DECL} { return CfmlTokenTypes.VAR_ANNOTATION; }
-<YYINITIAL> {TAG_START}/{CF_TAG_NAME}  {
-    myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+<YYINITIAL> {TAG_START} {CF_TAG_NAME}  {
+    String tagName = yytext().subSequence(1, yylength()).toString();
+    boolean startTemplateText =  !"include".equalsIgnoreCase(tagName);
+    if (startTemplateText) myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+    yypushback(yylength() - 1);
     return startTag();
 }
 <YYINITIAL> {TAG_END}/{CF_TAG_NAME}  { myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT; return startCloseTag(); }
