@@ -34,6 +34,7 @@ PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
+VARIABLE_USAGE="$("[^)]*")"
 CONDITION_CHARACTER=[^#\r\n]
 
 %state PREREQUISITES INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS
@@ -73,6 +74,7 @@ CONDITION_CHARACTER=[^#\r\n]
     {BACKSLASHCRLF}         { return SPLIT; }
     {PIPE}                  { return PIPE; }
     {SEMICOLON}             { yybegin(SOURCE); return SEMICOLON; }
+    {VARIABLE_USAGE}        { return IDENTIFIER; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
