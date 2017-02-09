@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssNamedElement;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.CssUtil;
+import com.intellij.psi.css.util.CssCompletionUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.ObjectUtils;
@@ -81,8 +82,8 @@ public class PostCssCompletionContributor extends CompletionContributor {
   @NotNull
   private static LookupElement createCustomElementLookup(@NotNull final CssNamedElement element,
                                                          @NotNull final Set<VirtualFile> importedFiles) {
-    //TODO replace with appropriate constant when PostCSS module will be part of API
-    int priority = 10 + (importedFiles.contains(element.getContainingFile().getVirtualFile()) ? 1 : 0);
+    int priority = CssCompletionUtil.CSS_PSEUDO_SELECTOR_PRIORITY +
+                   (importedFiles.contains(element.getContainingFile().getVirtualFile()) ? 1 : 0);
 
     ItemPresentation itemPresentation = ObjectUtils.notNull(element.getPresentation());
     return PrioritizedLookupElement.withPriority(
