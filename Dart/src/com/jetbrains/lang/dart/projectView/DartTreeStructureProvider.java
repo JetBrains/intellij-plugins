@@ -20,7 +20,6 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,6 +55,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
             }
           };
         }
+
         return node;
       });
     }
@@ -67,9 +67,10 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
       return ContainerUtil.map(children, node -> {
         final VirtualFile dir = node instanceof PsiDirectoryNode ? ((PsiDirectoryNode)node).getVirtualFile() : null;
-        if (dir != null && dir.isInLocalFileSystem() && dir.isDirectory() && "lib".equals(dir.getName())) {
-          return new DartSdkOrLibraryRootNode(node.getProject(), ((PsiDirectoryNode)node).getValue(), isSdkRoot, settings);
+        if (dir != null && dir.isInLocalFileSystem() && dir.isDirectory() && (isSdkRoot || "lib".equals(dir.getName()))) {
+          return new DartSdkOrLibraryRootNode(node.getProject(), ((PsiDirectoryNode)node).getValue(), settings);
         }
+
         return node;
       });
     }
@@ -156,11 +157,8 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
   }
 
   private static class DartSdkOrLibraryRootNode extends PsiDirectoryNode {
-    private boolean myIsSdkRoot;
-
-    public DartSdkOrLibraryRootNode(final Project project, final PsiDirectory value, boolean isSdkRoot, final ViewSettings settings) {
+    public DartSdkOrLibraryRootNode(final Project project, final PsiDirectory value, final ViewSettings settings) {
       super(project, value, settings);
-      myIsSdkRoot = isSdkRoot;
     }
 
     @Override
@@ -180,11 +178,10 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
       final VirtualFile dir = getVirtualFile();
       final VirtualFile parentDir = dir == null ? null : dir.getParent();
       if (parentDir != null && parentDir.isInLocalFileSystem() && dir.isDirectory() && "lib".equals(dir.getName())) {
-        final String text = myIsSdkRoot ? parentDir.getName() + File.separator + dir.getName() // e.g. "dart-sdk-1.12/lib" instead of "lib"
-                                        : parentDir.getName();                                 // e.g. "path-1.3.6"        instead of "lib"
-        data.setPresentableText(text);
-        data.setLocationString("");
+        data.setPresentableText(parentDir.getName()); // e.g. "path-1.3.6" instead of "lib"
       }
+
+      data.setLocationString(""); // we do not want 'library root' location string
     }
   }
 }
