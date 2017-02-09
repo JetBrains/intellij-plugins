@@ -41,6 +41,7 @@ import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Map;
 
@@ -101,7 +102,18 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
       final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
       toolWindow.getContentManager().addContent(content);
       ((ToolWindowEx)toolWindow).setTitleActions(new AnalysisServerStatusAction());
-      myPanel.setContent(content);
+
+      myPanel.setToolWindowUpdater(new ToolWindowUpdater() {
+        @Override
+        public void setIcon(@NotNull Icon icon) {
+          toolWindow.setIcon(icon);
+        }
+
+        @Override
+        public void setHeaderText(@NotNull String headerText) {
+          content.setDisplayName(headerText);
+        }
+      });
 
       if (PropertiesComponent.getInstance(project).getBoolean("dart.analysis.tool.window.force.activate", true)) {
         PropertiesComponent.getInstance(project).setValue("dart.analysis.tool.window.force.activate", false, true);
@@ -165,5 +177,11 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
 
     myPanel.clearAll();
+  }
+
+  interface ToolWindowUpdater {
+    void setIcon(@NotNull final Icon icon);
+
+    void setHeaderText(@NotNull final String headerText);
   }
 }

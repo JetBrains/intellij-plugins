@@ -35,12 +35,12 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TableSpeedSearch;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.content.Content;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +65,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   @NotNull private DartProblemsViewSettings mySettings;
   @NotNull private final DartProblemsFilter myFilter;
 
-  private Content myContent;
+  private DartProblemsView.ToolWindowUpdater myToolWindowUpdater;
 
   public DartProblemsViewPanel(@NotNull final Project project,
                                @NotNull final DartProblemsFilter filter,
@@ -162,8 +162,12 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   private void updateStatusDescription() {
-    if (myContent != null) {
-      myContent.setDisplayName(((DartProblemsTableModel)myTable.getModel()).getStatusText());
+    if (myToolWindowUpdater != null) {
+      final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
+      myToolWindowUpdater.setHeaderText(model.getStatusText());
+      myToolWindowUpdater.setIcon(model.hasErrors() ? DartIcons.Dart_13_with_error_mark
+                                                    : model.hasWarnings() ? DartIcons.Dart_13_with_warning_mark
+                                                                          : DartIcons.Dart_13);
     }
   }
 
@@ -325,8 +329,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     updateStatusDescription();
   }
 
-  void setContent(Content content) {
-    myContent = content;
+  void setToolWindowUpdater(@NotNull final DartProblemsView.ToolWindowUpdater toolWindowUpdater) {
+    myToolWindowUpdater = toolWindowUpdater;
   }
 
   void updateFromSettings(DartProblemsViewSettings settings) {

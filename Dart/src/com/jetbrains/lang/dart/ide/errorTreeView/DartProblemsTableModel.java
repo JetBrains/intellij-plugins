@@ -345,6 +345,14 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     }
   }
 
+  boolean hasErrors() {
+    return myErrorCount > 0;
+  }
+
+  boolean hasWarnings() {
+    return myWarningCount > 0;
+  }
+
   @NotNull
   public String getStatusText() {
     final StringBuilder b = new StringBuilder();
