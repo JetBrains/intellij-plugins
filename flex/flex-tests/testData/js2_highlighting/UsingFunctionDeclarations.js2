@@ -1,13 +1,13 @@
 var ff:Function = function result():Boolean { return false; };
 var bb:Boolean = ff();
-function foo(x:Function) {
+function <warning descr="Unused function foo">foo</warning>(x:Function) {
     var x2:String = x();
     if (false) x2, foo(x(new Main()));
 }
 
 class Main {
   public function Main() {
-    f3<error>("sdfsdf", "sdf")</error>;
+    f3<error descr="Invalid number of arguments, expected 0">("sdfsdf", "sdf")</error>;
   }
 
   private function f3():void {
