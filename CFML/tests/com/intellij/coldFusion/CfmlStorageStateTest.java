@@ -16,9 +16,10 @@
 package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
+import com.intellij.configurationStore.XmlSerializer;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.intellij.util.xmlb.XmlSerializer;
+import com.intellij.util.JdomKt;
 import org.jdom.Element;
 
 /**
@@ -97,13 +98,12 @@ public class CfmlStorageStateTest extends CodeInsightFixtureTestCase {
                     "    <mapping logical_path=\"/cal\" directory=\"C:\\ColdFusion9\\wwwroot\\Sandbox\\calendar\" />\n" +
                     "  </mapps>\n" +
                     "</State>";
-    CfmlProjectConfiguration.State configState =
-      XmlSerializer.deserialize(JDOMUtil.loadDocument(xml).getRootElement().getChild("component"), CfmlProjectConfiguration.State.class);
+    CfmlProjectConfiguration.State configState = XmlSerializer
+      .deserialize(JdomKt.loadElement(xml).getChild("component"), CfmlProjectConfiguration.State.class);
     try {
       def.loadState(configState);
       Element resSer = XmlSerializer.serialize(def.getState());
-      String resxml = JDOMUtil.writeElement(resSer, "\n");
-      assertEquals(result, resxml);
+      assertEquals(result, JDOMUtil.writeElement(resSer, "\n"));
     }
     finally {
       CfmlProjectConfiguration.getInstance(getProject()).loadState(defaultState);
