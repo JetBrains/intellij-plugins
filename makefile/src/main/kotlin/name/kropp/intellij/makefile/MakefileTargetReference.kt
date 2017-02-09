@@ -48,7 +48,7 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
   }.toTypedArray()
 
   override fun resolve(): PsiElement? {
-    val match = Regex("\\\$\\((.*)\\)").find(prerequisite.text)
+    val match = Regex("""\$\((.*)\)""").find(prerequisite.text)
     if (match != null) {
       val name = match.groups[1]!!.value
       return (prerequisite.containingFile as MakefileFile).variables

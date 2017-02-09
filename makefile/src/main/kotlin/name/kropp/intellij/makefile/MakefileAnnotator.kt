@@ -18,6 +18,10 @@ class MakefileAnnotator : Annotator {
     } else if (element is MakefilePrerequisite) {
       holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.PREREQUISITE
 
+      if (Regex("""\$\((.*)\)""").matches(element.text)) {
+        return
+      }
+
       val targets = (element.parent.parent.parent as MakefileTargetLine).targets
       if (targets.targetList.firstOrNull()?.isSpecialTarget == false) {
         val targetReferences = element.references.filter { it is MakefileTargetReference && it.resolve() != null }.any()
