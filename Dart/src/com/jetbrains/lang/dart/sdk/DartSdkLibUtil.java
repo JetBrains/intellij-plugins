@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.sdk;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -119,13 +120,20 @@ public class DartSdkLibUtil {
 
   @NotNull
   private static SortedSet<String> getRootUrls(@NotNull final Project project, @NotNull final String sdkHomePath) {
-    final Map<String, String> map = DartLibraryIndex.getSdkLibUriToRelativePathMap(project, sdkHomePath);
+    final SortedSet<String> result = getRootUrlsFromLibrariesFile(project, sdkHomePath);
 
-    if (map.isEmpty() || !map.containsKey("dart:core")) {
+    if (result.isEmpty() || !result.contains(VfsUtilCore.pathToUrl(sdkHomePath + "/lib/core"))) {
       LOG.info("Failed to get useful info from " + sdkHomePath + "/lib/_internal/libraries.dart");
       return getRootUrlsFailover(sdkHomePath);
     }
 
+    return result;
+  }
+
+  @NotNull
+  @VisibleForTesting
+  public static SortedSet<String> getRootUrlsFromLibrariesFile(@NotNull Project project, @NotNull String sdkHomePath) {
+    final Map<String, String> map = DartLibraryIndex.getSdkLibUriToRelativePathMap(project, sdkHomePath);
     final SortedSet<String> result = new TreeSet<>();
 
     for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -140,12 +148,12 @@ public class DartSdkLibUtil {
 
       result.add(VfsUtilCore.pathToUrl(sdkHomePath + "/lib/" + relPath.substring(0, slashIndex)));
     }
-
     return result;
   }
 
   @NotNull
-  private static SortedSet<String> getRootUrlsFailover(@NotNull final String sdkHomePath) {
+  @VisibleForTesting
+  public static SortedSet<String> getRootUrlsFailover(@NotNull final String sdkHomePath) {
     final SortedSet<String> result = new TreeSet<>();
 
     final File lib = new File(sdkHomePath + "/lib");
