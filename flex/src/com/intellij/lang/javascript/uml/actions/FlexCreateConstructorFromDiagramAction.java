@@ -10,8 +10,8 @@ import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
  * @author Konstantin Bulenkov
  * @author Kirill Safonov
  */
-public class JSCreateConstructorAction extends JSCreateMethodActionBase {
-  public JSCreateConstructorAction() {
+public class FlexCreateConstructorFromDiagramAction extends JSCreateMethodActionBase {
+  public FlexCreateConstructorFromDiagramAction() {
     super(JSBundle.message("new.constructor.action.text"), JSBundle.message("new.constructor.action.description"),
           JSFunctionImpl.CONSTRUCTOR_ICON);
   }

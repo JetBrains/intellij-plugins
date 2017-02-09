@@ -100,9 +100,9 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
   };
 
   public static final DiagramCreateNewNodeElementAction[] NODE_ACTIONS = {
-    new JSCreateFieldAction(),
-    new JSCreateMethodAction(),
-    new JSCreateConstructorAction()
+    new FlexCreateFieldFromDiagramAction(),
+    new FlexCreateMethodFromDiagramAction(),
+    new FlexCreateConstructorFromDiagramAction()
   };
 
   @Override

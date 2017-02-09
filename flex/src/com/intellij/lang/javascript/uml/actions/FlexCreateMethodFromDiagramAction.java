@@ -7,8 +7,8 @@ import com.intellij.util.PlatformIcons;
  * @author Konstantin Bulenkov
  * @author Kirill Safonov
  */
-public class JSCreateMethodAction extends JSCreateMethodActionBase {
-  public JSCreateMethodAction() {
+public class FlexCreateMethodFromDiagramAction extends JSCreateMethodActionBase {
+  public FlexCreateMethodFromDiagramAction() {
     super(JSBundle.message("new.method.action.text"), JSBundle.message("new.method.action.description"), PlatformIcons.METHOD_ICON);
   }
 

@@ -19,8 +19,8 @@ import com.intellij.util.PlatformIcons;
  * @author Konstantin Bulenkov
  * @author Kirill Safonov
  */
-public class JSCreateFieldAction extends NewJSMemberActionBase {
-  public JSCreateFieldAction() {
+public class FlexCreateFieldFromDiagramAction extends NewJSMemberActionBase {
+  public FlexCreateFieldFromDiagramAction() {
     super(JSBundle.message("new.field.action.text"), JSBundle.message("new.field.action.description"), PlatformIcons.FIELD_ICON);
   }
 
