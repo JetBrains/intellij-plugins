@@ -1,10 +1,6 @@
 package org.jetbrains.vuejs.codeInsight
 
-import com.intellij.lang.ecmascript6.psi.JSExportAssignment
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.vuejs.VueFileType
 
 fun fromAsset(text: String): String {
   val split = StringUtil.unquoteString(text).split("(?=[A-Z])".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
