@@ -26,4 +26,11 @@ class VueXmlExtension : HtmlXmlExtension() {
       .forEach { return SchemaPrefix(it, TextRange.create(offset, namespacePrefix.length), namespacePrefix.substring(offset)) }
     return null
   }
+
+  override fun isRequiredAttributeImplicitlyPresent(tag: XmlTag?, attrName: String?): Boolean {
+      tag?.attributes?.
+        filter { it.name == "v-bind:" + attrName || it.name == ":" + attrName }?.
+        forEach { return true }
+    return false
+  }
 }
