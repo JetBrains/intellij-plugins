@@ -50,6 +50,6 @@ class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(ps
     property.replace(newProperty)
   }
 
-  override fun getFamilyName() = "Vue"
+  override fun getFamilyName() = "Wrap object"
 
 }
