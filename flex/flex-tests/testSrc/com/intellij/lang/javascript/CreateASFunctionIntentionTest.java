@@ -113,10 +113,6 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
     Assert.assertEquals(ContainerUtil.getFirstItem(scopes), actualScope);
   }
 
-  protected VirtualFile configureByFiles(@Nullable final File rawProjectRoot, @NotNull final VirtualFile... vFiles) throws IOException {
-    return super.configureByFiles(null, vFiles);
-  }
-
   public void testCreateConstructor() throws Exception {
     doTestTwoFiles();
   }
