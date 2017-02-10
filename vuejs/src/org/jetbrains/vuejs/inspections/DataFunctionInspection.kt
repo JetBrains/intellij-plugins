@@ -5,13 +5,14 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.ecmascript6.psi.ES6FunctionProperty
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.jetbrains.vuejs.codeInsight.isComponent
+import org.jetbrains.vuejs.VueFileType
 
 class DataFunctionInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -30,6 +31,11 @@ class DataFunctionInspection : LocalInspectionTool() {
         return
       }
     }
+  }
+
+  fun isComponent(property: JSProperty): Boolean {
+    return property.parent is JSObjectLiteralExpression && property.parent.parent is JSExportAssignment &&
+           property.containingFile.fileType == VueFileType.INSTANCE
   }
 }
 

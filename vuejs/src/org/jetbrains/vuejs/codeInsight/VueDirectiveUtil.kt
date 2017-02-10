@@ -22,10 +22,3 @@ fun toAsset(name: String): String {
   return StringUtil.join(*words)
 }
 
-
-fun isComponent(property: JSProperty): Boolean {
-  return property.parent is JSObjectLiteralExpression && property.parent.parent is JSExportAssignment &&
-         property.containingFile.fileType == VueFileType.INSTANCE
-}
-
-
