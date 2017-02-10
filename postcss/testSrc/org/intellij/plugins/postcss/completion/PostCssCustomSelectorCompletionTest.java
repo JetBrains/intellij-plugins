@@ -79,7 +79,7 @@ public class PostCssCustomSelectorCompletionTest extends PostCssCompletionTest {
   }
 
   public void testTwoColons() {
-    assertFalse(myFixture.getCompletionVariants(getTestName(true) + ".pcss").contains("--test"));
+    doTest();
   }
 
   @NotNull

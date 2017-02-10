@@ -4,6 +4,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.*;
+import com.intellij.psi.css.descriptor.CssElementDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.psi.css.impl.util.CssUtil;
@@ -77,7 +78,11 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
         StubIndex.getInstance()
           .processElements(PostCssCustomSelectorIndex.KEY, name, context.getProject(), scope, PostCssCustomSelector.class,
                            selector -> {
-                             result.add(new PostCssCustomSelectorDescriptor(selector));
+                             for (CssElementDescriptor descriptor : selector.getDescriptors()) {
+                               if (descriptor instanceof CssPseudoSelectorDescriptor) {
+                                 result.add((CssPseudoSelectorDescriptor)descriptor);
+                               }
+                             }
                              return true;
                            });
       }

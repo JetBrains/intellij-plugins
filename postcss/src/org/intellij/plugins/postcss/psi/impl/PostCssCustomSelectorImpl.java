@@ -6,6 +6,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.css.descriptor.CssElementDescriptor;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssNamedItemPresentation;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStub;
@@ -13,12 +14,15 @@ import com.intellij.psi.css.impl.stubs.base.CssNamedStubElement;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import icons.PostcssIcons;
+import org.intellij.plugins.postcss.descriptors.PostCssCustomSelectorDescriptor;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collection;
+import java.util.Collections;
 
 public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<PostCssCustomSelector>> implements PostCssCustomSelector {
 
@@ -80,5 +84,17 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
     else {
       visitor.visitElement(this);
     }
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends CssElementDescriptor> getDescriptors() {
+    return Collections.singletonList(new PostCssCustomSelectorDescriptor(this));
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends CssElementDescriptor> getDescriptors(@NotNull PsiElement context) {
+    return getDescriptors();
   }
 }
