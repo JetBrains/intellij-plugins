@@ -1,16 +1,22 @@
 package org.intellij.plugins.postcss.descriptors;
 
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.*;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
+import com.intellij.psi.css.impl.util.CssUtil;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.StubIndex;
+import com.intellij.util.Processor;
 import org.intellij.plugins.postcss.psi.*;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -54,6 +60,33 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
   @Override
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
     return PostCssPsiUtil.isInsideRulesetWithNestedRulesets(context);
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends CssPseudoSelectorDescriptor> getAllPseudoSelectorDescriptors(@Nullable final PsiElement context) {
+    if (context == null || DumbService.getInstance(context.getProject()).isDumb()) {
+      return Collections.emptyList();
+    }
+
+    final Collection<CssPseudoSelectorDescriptor> result = new ArrayList<>();
+    final GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(context);
+
+    final Processor<String> processor = name -> {
+      if (!name.isEmpty()) {
+        StubIndex.getInstance()
+          .processElements(PostCssCustomSelectorIndex.KEY, name, context.getProject(), scope, PostCssCustomSelector.class,
+                           selector -> {
+                             result.add(new PostCssCustomSelectorDescriptor(selector));
+                             return true;
+                           });
+      }
+      return true;
+    };
+
+    StubIndex.getInstance().processAllKeys(PostCssCustomSelectorIndex.KEY, processor, scope, null);
+
+    return result;
   }
 
   @NotNull

@@ -51,12 +51,12 @@ public class PostCssCustomSelectorCompletionTest extends PostCssCompletionTest {
 
   public void testCustomSelectorPriorityWithImport() {
     myFixture.configureByFile("definition.pcss");
-    doTestPreferred(Pair.create("test", "definition.pcss:1"), Pair.create("z-in-file", "customSelectorPriorityWithImport.pcss:3"));
+    doTestPreferred(Pair.create("--test", "definition.pcss:1"), Pair.create("--z-in-file", "customSelectorPriorityWithImport.pcss:3"));
   }
 
   public void testCustomSelectorPriorityWithoutImport() {
     myFixture.configureByFile("definition.pcss");
-    doTestPreferred(Pair.create("z-in-file", "customSelectorPriorityWithoutImport.pcss:1"), Pair.create("test", "definition.pcss:1"));
+    doTestPreferred(Pair.create("--z-in-file", "customSelectorPriorityWithoutImport.pcss:1"), Pair.create("--test", "definition.pcss:1"));
   }
 
   public void testCustomSelectorWithImport() {
