@@ -1755,10 +1755,10 @@ class _CfmlLexer implements FlexLexer {
             }
           case 85: break;
           case 35: 
-            // lookahead expression with fixed base length
-            zzMarkedPos = Character.offsetByCodePoints
-                (zzBufferL/*, zzStartRead, zzEndRead - zzStartRead*/, zzStartRead, 1);
-            { myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+            { String tagName = yytext().subSequence(1, yylength()).toString();
+    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName);
+    if (startTemplateText) myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+    yypushback(yylength() - 1);
     return startTag();
             }
           case 86: break;

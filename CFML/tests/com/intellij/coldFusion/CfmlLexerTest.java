@@ -85,6 +85,10 @@ public class CfmlLexerTest extends UsefulTestCase {
     doTest();
   }
 
+  public void testSqlWithInclude() throws Throwable {
+    doTest();
+  }
+
   private static void doFileLexerTest(Lexer lexer, String testText, String expectedFilePath) {
     lexer.start(testText);
     String result = "";
