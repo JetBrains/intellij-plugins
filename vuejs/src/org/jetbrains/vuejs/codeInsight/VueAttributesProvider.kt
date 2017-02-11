@@ -1,6 +1,9 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
@@ -27,7 +30,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
     }
   }
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    return DEFAULT.map(::VueAttributeDescriptor).toTypedArray()
+    return DEFAULT.map{ VueAttributeDescriptor(it) }.toTypedArray()
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
@@ -35,11 +38,12 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
   }
 }
 
-class VueAttributeDescriptor(private val name:String) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
+class VueAttributeDescriptor(private val name:String,
+                             private val element:PsiNamedElement? = null) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
   override fun getName() = name
-  override fun getDeclaration() = null
+  override fun getDeclaration() = element
   override fun init(element: PsiElement?) {}
-  override fun isRequired() = false
+  override fun isRequired() = element is JSProperty && findProperty(element.objectLiteralExpressionInitializer, "required") != null
   override fun isFixed() = false
   override fun hasIdType() = false
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
@@ -50,3 +54,5 @@ class VueAttributeDescriptor(private val name:String) : BasicXmlAttributeDescrip
   override fun getTypeName() = null
   override fun getIcon(): Icon = VuejsIcons.Vue
 }
+
+fun findProperty(obj: JSObjectLiteralExpression?, name:String) = obj?.properties?.find { it.name == name }

@@ -2,6 +2,8 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
@@ -61,7 +63,17 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
     return descriptor?.getElementDescriptor(childTag!!)
   }
 
-  override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)!!
+  override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
+    var props:Collection<XmlAttributeDescriptor> = emptyList()
+    if (declaration.parent is JSProperty) {
+      val obj = declaration.parent.context as JSObjectLiteralExpression
+      val propsProperties = findProperty(obj, "props")?.objectLiteralExpressionInitializer
+      if (propsProperties != null) {
+        props = propsProperties.properties.map { VueAttributeDescriptor(it.name!!, it) }
+      }
+    }
+    return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)!!.plus(props)
+  }
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?) = getAttributesDescriptors(context).find { it.name == attributeName } ?:
                                                                                   VueAttributesProvider.vueAttributeDescriptor(attributeName)
   override fun getAttributeDescriptor(attribute: XmlAttribute?) = getAttributeDescriptor(attribute?.name, attribute?.parent)
