@@ -13,6 +13,7 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
   init {
     registerHandler(XmlTokenType.XML_NAME, VueLangAttributeHandler())
     registerHandler(XmlTokenType.XML_NAME, VueTemplateTagHandler())
+    registerHandler(XmlTokenType.XML_NAME, VueAttributesHandler())
     registerHandler(XmlTokenType.XML_TAG_END, VueTagClosedHandler())
     val scriptCleaner = VueTemplateCleaner()
     registerHandler(XmlTokenType.XML_END_TAG_START, scriptCleaner)
@@ -55,6 +56,10 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
 
   override fun setSeenTag(tag: Boolean) {
     seenTag = tag
+  }
+
+  override fun setSeenAttribute(attribute: Boolean) {
+    seenAttribute = attribute
   }
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {

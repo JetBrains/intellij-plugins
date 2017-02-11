@@ -1,15 +1,21 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.lang.javascript.JSSyntaxHighlighterFactory
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.mock.MockApplicationEx
 import com.intellij.mock.MockFileTypeManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPoint
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.extensions.KeyedFactoryEPBean
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.util.Getter
 import com.intellij.psi.codeStyle.*
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
+import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.vuejs.VueFileType
 
 class VueHighlightingLexerTest : VueLexerTest() {
@@ -22,6 +28,21 @@ class VueHighlightingLexerTest : VueLexerTest() {
     instance.registerService(CssElementDescriptorFactory2::class.java, CssElementDescriptorFactory2(null))
     instance.registerService(FileTypeManager::class.java, MockFileTypeManager(VueFileType.INSTANCE))
     registerCodeStyle(instance)
+    registerHighlighter()
+  }
+
+  private fun registerHighlighter() {
+    val area = Extensions.getRootArea()
+    val syntaxHighlighterEP = ExtensionPointName<KeyedFactoryEPBean>("com.intellij.syntaxHighlighter")
+    val extensionName = syntaxHighlighterEP.name
+    if (!area.hasExtensionPoint(extensionName)) {
+      area.registerExtensionPoint(extensionName, KeyedFactoryEPBean::class.java.name, ExtensionPoint.Kind.INTERFACE)
+    }
+    val bean = KeyedFactoryEPBean()
+    bean.key = "JavaScript"
+    bean.factoryClass = "com.intellij.lang.javascript.highlighting.JSSyntaxHighlighterProvider"
+    PlatformTestUtil.registerExtension(area, syntaxHighlighterEP, bean, testRootDisposable)
+    SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(JavascriptLanguage.INSTANCE, JSSyntaxHighlighterFactory())
   }
 
   private fun registerCodeStyle(instance: MockApplicationEx) {

@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lexer.HtmlHighlightingLexer
-import com.intellij.lexer.HtmlLexer
 import com.intellij.lexer._HtmlLexer
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
@@ -14,6 +13,7 @@ class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
   init {
     registerHandler(XmlTokenType.XML_NAME, VueLangAttributeHandler())
     registerHandler(XmlTokenType.XML_NAME, VueTemplateTagHandler())
+    registerHandler(XmlTokenType.XML_NAME, VueAttributesHandler())
     registerHandler(XmlTokenType.XML_TAG_END, VueTagClosedHandler())
     val scriptCleaner = VueTemplateCleaner()
     registerHandler(XmlTokenType.XML_END_TAG_START, scriptCleaner)
@@ -62,6 +62,10 @@ class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
 
   override fun setSeenTag(tag: Boolean) {
     seenTag = tag
+  }
+
+  override fun setSeenAttribute(attribute: Boolean) {
+    seenAttribute = attribute
   }
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {

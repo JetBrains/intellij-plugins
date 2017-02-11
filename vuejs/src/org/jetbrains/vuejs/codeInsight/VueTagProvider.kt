@@ -1,6 +1,5 @@
 package org.jetbrains.vuejs.codeInsight
 
-import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.vfs.VirtualFile
@@ -39,11 +38,10 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 
   private fun createVueLookup(file: VirtualFile) =
-    LookupElementBuilder.create(fromAsset(file.nameWithoutExtension)).
-      withInsertHandler(XmlTagInsertHandler.INSTANCE).
+    LookupElementBuilder.create(file, fromAsset(file.nameWithoutExtension)).
+      withInsertHandler(VueInsertHandler.INSTANCE).
       withIcon(VuejsIcons.Vue)
 }
-
 
 class VueElementDescriptor(val file: PsiFile) : XmlElementDescriptor {
   override fun getDeclaration() = file

@@ -1,10 +1,13 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider
+import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider
 import com.intellij.lang.LanguageHtmlScriptContentProvider
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
 import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.dialects.ECMA6SyntaxHighlighterFactory
 import com.intellij.lang.javascript.dialects.TypeScriptSyntaxHighlighterFactory
 import com.intellij.lang.typescript.TypeScriptContentProvider
@@ -50,6 +53,8 @@ open class VueLexerTest : LexerTestCase() {
       val extensionPoint = area.getExtensionPoint<EmbeddedTokenTypesProvider>(extensionName)
       extensionPoint.registerExtension(SassTokenTypesProvider())
       LanguageParserDefinitions.INSTANCE.addExplicitExtension(SASSLanguage.INSTANCE, SASSParserDefinition())
+
+      LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, HtmlInlineJSScriptTokenTypesProvider())
     }
 
     fun registerScriptTokens() {
@@ -74,6 +79,8 @@ open class VueLexerTest : LexerTestCase() {
   fun testTemplateInner() = doFileTest("vue")
   fun testTemplateInnerDouble() = doFileTest("vue")
   fun testTemplateJade() = doFileTest("vue")
+
+  fun testBindingAttribute() = doFileTest("vue")
 
   override fun createLexer(): Lexer = VueLexer()
   override fun getDirPath() = "/contrib/vuejs/testData/lexer"
