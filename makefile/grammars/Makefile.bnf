@@ -43,8 +43,9 @@ private any ::= (rule|variable-assignment|directive|topconditional|comment)*
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line recipe {methods=[getTargets]}
-recipe ::= (conditional|command)*
+recipe ::= (conditional|command|empty_command)*
 command ::= '\t'* line (split line)*
+empty_command ::= '\t'+
 
 target_line ::= targets ':' (exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL)) {pin=2 methods=[getTargetName]}
 targets ::= target+

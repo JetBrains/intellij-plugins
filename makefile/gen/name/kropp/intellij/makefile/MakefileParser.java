@@ -41,6 +41,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == DIRECTORY) {
       r = directory(b, 0);
     }
+    else if (t == EMPTY_COMMAND) {
+      r = empty_command(b, 0);
+    }
     else if (t == EXPORT) {
       r = export(b, 0);
     }
@@ -398,6 +401,24 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '\t'+
+  public static boolean empty_command(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "empty_command")) return false;
+    if (!nextTokenIs(b, TAB)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, TAB);
+    int c = current_position_(b);
+    while (r) {
+      if (!consumeToken(b, TAB)) break;
+      if (!empty_element_parsed_guard_(b, "empty_command", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, EMPTY_COMMAND, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // 'export' (variable-assignment|variable)? comment?
   public static boolean export(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export")) return false;
@@ -736,7 +757,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (conditional|command)*
+  // (conditional|command|empty_command)*
   public static boolean recipe(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recipe")) return false;
     Marker m = enter_section_(b, l, _NONE_, RECIPE, "<recipe>");
@@ -750,13 +771,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // conditional|command
+  // conditional|command|empty_command
   private static boolean recipe_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recipe_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = conditional(b, l + 1);
     if (!r) r = command(b, l + 1);
+    if (!r) r = empty_command(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
