@@ -1,11 +1,14 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
 import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlAttributeDescriptorsProvider
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
+import icons.VuejsIcons
+import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider{
   companion object {
@@ -30,10 +33,9 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     return vueAttributeDescriptor(attributeName)
   }
-
 }
 
-class VueAttributeDescriptor(private val name:String) : BasicXmlAttributeDescriptor() {
+class VueAttributeDescriptor(private val name:String) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
   override fun getName() = name
   override fun getDeclaration() = null
   override fun init(element: PsiElement?) {}
@@ -45,4 +47,6 @@ class VueAttributeDescriptor(private val name:String) : BasicXmlAttributeDescrip
   override fun getDefaultValue() = null
   override fun isEnumerated() = false
   override fun getEnumeratedValues(): Array<out String> = ArrayUtil.EMPTY_STRING_ARRAY
+  override fun getTypeName() = null
+  override fun getIcon(): Icon = VuejsIcons.Vue
 }
