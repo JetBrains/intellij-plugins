@@ -10,8 +10,8 @@ import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
@@ -40,7 +40,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     val newProperty = (JSChangeUtil.createExpressionWithContext("{ ${name.capitalize()} }", obj)!!.psi as JSObjectLiteralExpression).firstProperty
     components.addBefore(newProperty, components.firstProperty)
     val info = ES6ImportPsiUtil.ImportedElementCreateInfo(name.capitalize(), ES6ImportPsiUtil.ImportType.DEFAULT)
-    var relativePath = FileUtil.getRelativePath(file.virtualFile.parent.path, (item.`object` as VirtualFile).path,  '/')
+    var relativePath = FileUtil.getRelativePath(file.virtualFile.parent.path, (item.`object` as JSImplicitElement).containingFile.virtualFile.path,  '/')
     if (!relativePath!!.startsWith(".")) relativePath = "./" + relativePath
     val import = ES6ImportPsiUtil.createImport(defaultExport, info, ES6ImportPsiUtil.wrapWithQuotesFromSettings(relativePath, defaultExport))
     if (import != null) {
