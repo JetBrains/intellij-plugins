@@ -2,9 +2,12 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.javascript.psi.JSDefinitionExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
@@ -67,9 +70,18 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
     var props:Collection<XmlAttributeDescriptor> = emptyList()
     if (declaration.parent is JSProperty) {
       val obj = declaration.parent.context as JSObjectLiteralExpression
-      val propsProperties = findProperty(obj, "props")?.objectLiteralExpressionInitializer
-      if (propsProperties != null) {
-        props = propsProperties.properties.map { VueAttributeDescriptor(it.name!!, it) }
+      val propsProperty = findProperty(obj, "props")
+      var propsObject = propsProperty?.objectLiteralExpressionInitializer
+      if (propsObject == null) {
+        val initializerReference = propsProperty?.initializerReference
+        if (initializerReference != null) {
+          val local = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, propsProperty!!)
+          propsObject = ((local as? JSVariable)?.initializerOrStub ?:
+                         (local as? JSDefinitionExpression)?.initializerOrStub) as? JSObjectLiteralExpression
+        }
+      }
+      if (propsObject != null) {
+        props = propsObject.properties.map { VueAttributeDescriptor(it.name!!, it) }
       }
     }
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)!!.plus(props)
