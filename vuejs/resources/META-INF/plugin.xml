@@ -18,9 +18,10 @@
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension"/>
     <xml.tagNameProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
     <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
+
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex" />
     <!--<directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGeneraator"/>-->
     <!--<projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>-->
-
 
     <localInspection language="Vue" groupName="Vue" displayName="Data Function" shortName="VueDataFunction"
                      enabledByDefault="true" level="WARNING"

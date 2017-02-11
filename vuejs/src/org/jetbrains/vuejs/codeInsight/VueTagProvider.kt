@@ -2,14 +2,11 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
-import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -19,34 +16,36 @@ import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
 import icons.VuejsIcons
-import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.index.VueComponentsIndex
+import org.jetbrains.vuejs.index.getAllKeys
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag != null) {
-      val file = FilenameIndex.getFilesByName(tag.project, toAsset(tag.name) + ".vue", tag.resolveScope).firstOrNull() ?:
-                 FilenameIndex.getFilesByName(tag.project, toAsset(tag.name).capitalize() + ".vue", tag.resolveScope).firstOrNull()
-      if (file != null) {
-        return VueElementDescriptor(file)
+      val component = org.jetbrains.vuejs.index.resolve(tag.name, tag.resolveScope, VueComponentsIndex.KEY) ?:
+                      org.jetbrains.vuejs.index.resolve(toAsset(tag.name), tag.resolveScope, VueComponentsIndex.KEY) ?:
+                      org.jetbrains.vuejs.index.resolve(toAsset(tag.name).capitalize(), tag.resolveScope, VueComponentsIndex.KEY)
+      if (component != null) {
+        return VueElementDescriptor(component)
       }
     }
     return null
   }
 
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
-    elements?.addAll(FileTypeIndex.getFiles(VueFileType.INSTANCE, tag.resolveScope).map { createVueLookup(it) })
+    elements?.addAll(getAllKeys(tag.resolveScope, VueComponentsIndex.KEY).map { createVueLookup(it) })
   }
 
-  private fun createVueLookup(file: VirtualFile) =
-    LookupElementBuilder.create(file, fromAsset(file.nameWithoutExtension)).
+  private fun createVueLookup(element: JSImplicitElement) =
+    LookupElementBuilder.create(element, fromAsset(element.name)).
       withInsertHandler(VueInsertHandler.INSTANCE).
       withIcon(VuejsIcons.Vue)
 }
 
-class VueElementDescriptor(val file: PsiFile) : XmlElementDescriptor {
-  override fun getDeclaration() = file
+class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
+  override fun getDeclaration() = element
   override fun getName(context: PsiElement?):String = name
-  override fun getName() = fromAsset(file.virtualFile.nameWithoutExtension)
+  override fun getName() = fromAsset(element.name)
   override fun init(element: PsiElement?) {}
   override fun getQualifiedName() = name
   override fun getDefaultName() = name
