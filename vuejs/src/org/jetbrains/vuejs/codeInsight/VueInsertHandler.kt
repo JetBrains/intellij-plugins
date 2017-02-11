@@ -20,10 +20,12 @@ import com.intellij.xml.util.HtmlUtil
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
     val INSTANCE = VueInsertHandler()
+    val ENABLED = false
   }
 
   override fun handleInsert(context: InsertionContext?, item: LookupElement?) {
     super.handleInsert(context, item)
+    if (!ENABLED) return
     context!!.commitDocument()
     val file = context.file as? HtmlFileImpl ?: return
     val content = PsiTreeUtil.getChildrenOfType(file.document, XmlTag::class.java)?.
