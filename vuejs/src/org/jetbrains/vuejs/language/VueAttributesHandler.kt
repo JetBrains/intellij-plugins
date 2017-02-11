@@ -8,7 +8,7 @@ class VueAttributesHandler : BaseHtmlLexer.TokenHandler{
     val handled = lexer as VueHandledLexer
     if (!handled.inTagState()) {
       val text = lexer.tokenText
-      if (text.startsWith(":") || text.startsWith("v-bind:")) {
+      if (text.startsWith(":") || text.startsWith("@") || text.startsWith("v-")) {
         handled.setSeenScript()
         handled.setSeenAttribute(true)
       }

@@ -81,6 +81,7 @@ open class VueLexerTest : LexerTestCase() {
   fun testTemplateJade() = doFileTest("vue")
 
   fun testBindingAttribute() = doFileTest("vue")
+  fun testEventAttribute() = doFileTest("vue")
 
   override fun createLexer(): Lexer = VueLexer()
   override fun getDirPath() = "/contrib/vuejs/testData/lexer"
