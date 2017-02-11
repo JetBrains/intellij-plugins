@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.LanguageHtmlScriptContentProvider
 import com.intellij.lang.LanguageParserDefinitions
+import com.intellij.lang.MetaLanguage
 import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.dialects.ECMA6SyntaxHighlighterFactory
@@ -25,11 +26,20 @@ import org.jetbrains.plugins.sass.highlighting.SASSSyntaxHighlighterFactory
 open class VueLexerTest : LexerTestCase() {
   override fun setUp() {
     super.setUp()
+    registerMetaLanguage()
     registerEmbeddedTokens()
     registerScriptTokens()
   }
 
   companion object {
+    fun registerMetaLanguage() {
+      val extensionName = MetaLanguage.EP_NAME.name
+      val area = Extensions.getRootArea()
+      if (!area.hasExtensionPoint(extensionName)) {
+        area.registerExtensionPoint(extensionName, MetaLanguage::class.java.name, ExtensionPoint.Kind.INTERFACE)
+      }
+    }
+
     fun registerEmbeddedTokens() {
       SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(SASSLanguage.INSTANCE, SASSSyntaxHighlighterFactory())
       val extensionName = EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.name
