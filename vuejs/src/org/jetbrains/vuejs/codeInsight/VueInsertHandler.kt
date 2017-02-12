@@ -6,16 +6,12 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.impl.source.html.HtmlFileImpl
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.xml.XmlTag
-import com.intellij.xml.util.HtmlUtil
 
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
@@ -28,9 +24,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (!ENABLED) return
     context!!.commitDocument()
     val file = context.file as? HtmlFileImpl ?: return
-    val content = PsiTreeUtil.getChildrenOfType(file.document, XmlTag::class.java)?.
-      firstOrNull { HtmlUtil.isScriptTag(it) }?.children?.
-      firstOrNull { it is JSEmbeddedContent } as? JSEmbeddedContent ?: return
+    val content = findScriptContent(file) ?: return
 
     val defaultExport = ES6PsiUtil.findDefaultExport(content, mutableSetOf()) as? JSExportAssignment ?: return
     val obj = defaultExport.expression as? JSObjectLiteralExpression ?: return

@@ -2,13 +2,14 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.lang.javascript.psi.JSDefinitionExpression
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.JSVariable
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
@@ -20,6 +21,7 @@ import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import com.intellij.xml.XmlTagNameProvider
+import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getAllKeys
@@ -27,7 +29,16 @@ import org.jetbrains.vuejs.index.getAllKeys
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag != null) {
-      val component = org.jetbrains.vuejs.index.resolve(tag.name, tag.resolveScope, VueComponentsIndex.KEY) ?:
+      var localComponent:JSImplicitElement? = null
+      processLocalComponents(tag, { property, element ->
+        if (property.name == tag.name || property.name == toAsset(tag.name) || property.name == toAsset(tag.name).capitalize()) {
+          localComponent = element
+        }
+        return@processLocalComponents localComponent == null
+      })
+
+      val component = localComponent ?:
+                      org.jetbrains.vuejs.index.resolve(tag.name, tag.resolveScope, VueComponentsIndex.KEY) ?:
                       org.jetbrains.vuejs.index.resolve(toAsset(tag.name), tag.resolveScope, VueComponentsIndex.KEY) ?:
                       org.jetbrains.vuejs.index.resolve(toAsset(tag.name).capitalize(), tag.resolveScope, VueComponentsIndex.KEY)
       if (component != null) {
@@ -37,12 +48,34 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     return null
   }
 
-  override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
-    elements?.addAll(getAllKeys(tag.resolveScope, VueComponentsIndex.KEY).map { createVueLookup(it) })
+  private fun processLocalComponents(tag: XmlTag, processor: (JSProperty, JSImplicitElement) -> Boolean): Boolean {
+    val content = findScriptContent(tag.containingFile as HtmlFileImpl) ?: return true
+    val defaultExport = ES6PsiUtil.findDefaultExport(content, mutableSetOf()) as? JSExportAssignment ?: return true
+    val component = defaultExport.expression as? JSObjectLiteralExpression ?: return true
+    val components = component.findProperty("components")?.objectLiteralExpressionInitializer ?: return true
+    for (property in components.properties) {
+      val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property) as? JSObjectLiteralExpression ?: continue
+      val elements = findProperty(obj, "name")?.indexingData?.implicitElements ?: continue
+      elements.forEach {
+        if (it.userString == VueComponentsIndex.JS_KEY && !processor.invoke(property, it)) return false
+      }
+    }
+    return true
   }
 
-  private fun createVueLookup(element: JSImplicitElement) =
-    LookupElementBuilder.create(element, fromAsset(element.name)).
+  override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
+    val files:MutableList<PsiFile> = mutableListOf()
+    processLocalComponents(tag, { property, element ->
+      elements?.add(createVueLookup(element, property.name!!))
+      files.add(property.containingFile)
+      return@processLocalComponents true
+    })
+    elements?.addAll(getAllKeys(tag.resolveScope, VueComponentsIndex.KEY).filter { !files.contains(it.containingFile) }.
+      map { createVueLookup(it, it.name) })
+  }
+
+  private fun createVueLookup(element: JSImplicitElement, name: String) =
+    LookupElementBuilder.create(element, fromAsset(name)).
       withInsertHandler(VueInsertHandler.INSTANCE).
       withIcon(VuejsIcons.Vue)
 }
@@ -95,4 +128,10 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   override fun getContentType() = CONTENT_TYPE_ANY
   override fun getDefaultValue() = null
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
+}
+
+fun findScriptContent(file: HtmlFileImpl): JSEmbeddedContent? {
+  return PsiTreeUtil.getChildrenOfType(file.document, XmlTag::class.java)?.
+    firstOrNull { HtmlUtil.isScriptTag(it) }?.children?.
+    firstOrNull { it is JSEmbeddedContent } as? JSEmbeddedContent
 }
