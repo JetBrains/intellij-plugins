@@ -19,9 +19,22 @@ public class DartConsoleFolding extends ConsoleFolding {
 
   private static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
   private static final String TEST_RUNNER_MARKER = "pub.dart.snapshot run test:test -r json "; // see DartTestRunningState.startProcess()
+  private static final int MIN_FRAME_DISPLAY_COUNT = 8;
+
+  private int myFrameCount = 0;
 
   @Override
   public boolean shouldFoldLine(@NotNull final String line) {
+    // check for a stack trace
+    if (isFrameLine(line)) {
+      myFrameCount++;
+
+      // Show the first n frames and fold the rest.
+      return myFrameCount > MIN_FRAME_DISPLAY_COUNT;
+    }
+
+    myFrameCount = 0;
+
     // fold Dart VM command line created in DartCommandLineRunningState.createCommandLine() together with the following "Observatory listening on ..." message
     if (line.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) return true;
 
@@ -47,6 +60,11 @@ public class DartConsoleFolding extends ConsoleFolding {
 
     if (lines.size() == 1 && lines.get(0).contains(TEST_RUNNER_MARKER)) {
       return foldTestRunnerCommand(lines.get(0));
+    }
+
+    // exception folding
+    if (isFrameLine(lines.get(0))) {
+      return " [" + lines.size() + " more...]";
     }
 
     final String fullText = StringUtil.join(lines, "\n");
@@ -86,6 +104,28 @@ public class DartConsoleFolding extends ConsoleFolding {
     }
 
     return b.toString();
+  }
+
+  private static boolean isFrameLine(String line) {
+    // Handle the "..." ellipses in the middle of a stack overflow trace.
+    if (line.equals("...")) return true;
+
+    // Handle "<asynchronous suspension>".
+    if (line.startsWith("<async") && line.endsWith(">")) return true;
+
+    //  #1      main (file:///Users/foo/projects/bar/tool/generate.dart:30:3)
+    if (!line.startsWith("#") || !line.endsWith(")")) return false;
+    if (line.length() < "#1234567x (x)".length()) return false;
+    if (line.charAt(8) == ' ') return false;
+
+    try {
+      //noinspection ResultOfMethodCallIgnored
+      Integer.parseInt(line.substring(1, 8).trim());
+      return true;
+    }
+    catch (Throwable t) {
+      return false;
+    }
   }
 
   private static String foldTestRunnerCommand(@NotNull final String line) {
