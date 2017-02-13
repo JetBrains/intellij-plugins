@@ -14,23 +14,29 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 public class DartConsoleFolding extends ConsoleFolding {
 
   private static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
   private static final String TEST_RUNNER_MARKER = "pub.dart.snapshot run test:test -r json "; // see DartTestRunningState.startProcess()
+  private static final int MIN_FRAME_DISPLAY_COUNT = 8;
 
-  //  #1      main (file:///Users/foo/projects/bar/tool/generate.dart:30:3)
-  private static final Pattern EXCEPTION_PREFIX = Pattern.compile("#\\d+ +[^ ].*");
+  private int myFrameCount = 0;
 
   @Override
   public boolean shouldFoldLine(@NotNull final String line) {
+    // check for a stack trace
+    if (isFrameLine(line)) {
+      myFrameCount++;
+
+      // Show the first n frames and fold the rest.
+      return myFrameCount > MIN_FRAME_DISPLAY_COUNT;
+    }
+
+    myFrameCount = 0;
+
     // fold Dart VM command line created in DartCommandLineRunningState.createCommandLine() together with the following "Observatory listening on ..." message
     if (line.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) return true;
-
-    // check for a stack trace
-    if (EXCEPTION_PREFIX.matcher(line).matches()) return true;
 
     final int index = line.indexOf(DART_MARKER);
     if (index < 0) return false;
@@ -57,8 +63,8 @@ public class DartConsoleFolding extends ConsoleFolding {
     }
 
     // exception folding
-    if (EXCEPTION_PREFIX.matcher(lines.get(0)).matches()) {
-      return " [" + lines.size() + " " + StringUtil.pluralize("frame", lines.size()) + "]";
+    if (isFrameLine(lines.get(0))) {
+      return " [" + lines.size() + " more...]";
     }
 
     final String fullText = StringUtil.join(lines, "\n");
@@ -98,6 +104,28 @@ public class DartConsoleFolding extends ConsoleFolding {
     }
 
     return b.toString();
+  }
+
+  private static boolean isFrameLine(String line) {
+    // Handle the "..." ellipses in the middle of a stack overflow trace.
+    if (line.equals("...")) return true;
+
+    // Handle "<asynchronous suspension>".
+    if (line.startsWith("<async") && line.endsWith(">")) return true;
+
+    //  #1      main (file:///Users/foo/projects/bar/tool/generate.dart:30:3)
+    if (!line.startsWith("#") || !line.endsWith(")")) return false;
+    if (line.length() < "#1234567x (x)".length()) return false;
+    if (line.charAt(8) == ' ') return false;
+
+    try {
+      //noinspection ResultOfMethodCallIgnored
+      Integer.parseInt(line.substring(1, 8).trim());
+      return true;
+    }
+    catch (Throwable t) {
+      return false;
+    }
   }
 
   private static String foldTestRunnerCommand(@NotNull final String line) {
