@@ -93,7 +93,6 @@ public class CfmlStorageStateTest extends CodeInsightFixtureTestCase {
     final CfmlProjectConfiguration def = CfmlProjectConfiguration.getInstance(getProject());
     final CfmlProjectConfiguration.State defaultState = CfmlProjectConfiguration.getInstance(getProject()).getState();
     String result = "<State>\n" +
-                    "  <language_level>cf10_tags.xml</language_level>\n" +
                     "  <mapps>\n" +
                     "    <mapping logical_path=\"/cal\" directory=\"C:\\ColdFusion9\\wwwroot\\Sandbox\\calendar\" />\n" +
                     "  </mapps>\n" +
