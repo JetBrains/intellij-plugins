@@ -49,7 +49,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 
   private fun processLocalComponents(tag: XmlTag, processor: (JSProperty, JSImplicitElement) -> Boolean): Boolean {
-    val content = findScriptContent(tag.containingFile as HtmlFileImpl) ?: return true
+    val content = findScriptContent(tag.containingFile as? HtmlFileImpl) ?: return true
     val defaultExport = ES6PsiUtil.findDefaultExport(content, mutableSetOf()) as? JSExportAssignment ?: return true
     val component = defaultExport.expression as? JSObjectLiteralExpression ?: return true
     val components = component.findProperty("components")?.objectLiteralExpressionInitializer ?: return true
@@ -130,8 +130,8 @@ class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescripto
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
 }
 
-fun findScriptContent(file: HtmlFileImpl): JSEmbeddedContent? {
-  return PsiTreeUtil.getChildrenOfType(file.document, XmlTag::class.java)?.
+fun findScriptContent(file: HtmlFileImpl?): JSEmbeddedContent? {
+  return PsiTreeUtil.getChildrenOfType(file?.document, XmlTag::class.java)?.
     firstOrNull { HtmlUtil.isScriptTag(it) }?.children?.
     firstOrNull { it is JSEmbeddedContent } as? JSEmbeddedContent
 }
