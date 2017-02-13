@@ -107,11 +107,4 @@ public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescrip
     final ItemPresentation presentation = ObjectUtils.notNull(mySelector.getPresentation());
     return presentation.getIcon(false);
   }
-
-  @Nullable
-  @Override
-  public String getTypeTextForCompletion() {
-    final ItemPresentation presentation = ObjectUtils.notNull(mySelector.getPresentation());
-    return presentation.getLocationString();
-  }
 }
