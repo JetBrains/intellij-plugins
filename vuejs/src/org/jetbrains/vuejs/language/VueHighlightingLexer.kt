@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer._HtmlLexer
 import com.intellij.psi.tree.IElementType
@@ -23,6 +24,7 @@ class VueHighlightingLexer : HtmlHighlightingLexer(), VueHandledLexer {
   override fun getTokenType(): IElementType? {
     val type = super.getTokenType()
     if (type == XmlTokenType.TAG_WHITE_SPACE && baseState() == 0) return XmlTokenType.XML_REAL_WHITE_SPACE
+    if (seenAttribute && type == JSElementTypes.ES6_EMBEDDED_CONTENT) return VueElementTypes.EMBEDDED_JS
     return type
   }
 

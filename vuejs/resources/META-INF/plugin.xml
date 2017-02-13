@@ -20,6 +20,7 @@
     <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
 
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex" />
+    <stubElementTypeHolder class="org.jetbrains.vuejs.language.VueElementTypes" />
     <!--<directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGeneraator"/>-->
     <!--<projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>-->
 
@@ -32,6 +33,7 @@
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler"/>
+    <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueInspectionFilter"/>
   </extensions>
   <extensions defaultExtensionNs="com.jetbrains">
     <javaScriptDebugAware implementation="org.jetbrains.vuejs.run.VueDebugAware"/>

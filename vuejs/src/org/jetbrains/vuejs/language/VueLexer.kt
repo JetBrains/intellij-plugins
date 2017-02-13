@@ -2,9 +2,11 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.HtmlLexer
 import com.intellij.lexer._HtmlLexer
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
 class VueLexer : HtmlLexer(), VueHandledLexer {
@@ -75,5 +77,11 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
   override fun endOfTheEmbeddment(name:String?):Boolean {
     return super.endOfTheEmbeddment(name) ||
            seenTemplate && "template" == name
+  }
+
+  override fun getTokenType(): IElementType? {
+    val type = super.getTokenType()
+    if (seenAttribute && type == JSElementTypes.EMBEDDED_CONTENT) return VueElementTypes.EMBEDDED_JS
+    return type
   }
 }
