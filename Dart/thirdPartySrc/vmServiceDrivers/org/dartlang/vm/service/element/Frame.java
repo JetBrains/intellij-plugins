@@ -40,6 +40,8 @@ public class Frame extends Response {
    * Note: this is not yet part of the public API and should not be considered stable.
    */
   public FrameKind getKind() {
+    if (json.get("kind") == null) return null;
+
     String name = json.get("kind").getAsString();
     try {
       return FrameKind.valueOf(name);
