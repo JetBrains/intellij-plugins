@@ -51,7 +51,7 @@ public class ChoosePackageDialog extends DialogWrapper{
     final String packageName = getPackageName();
     for (final String s : StringUtil.split(packageName, ".")) {
       if (!namesValidator.isIdentifier(s, null)) {
-        setErrorText(JSBundle.message("invalid.package", packageName));
+        setErrorText(JSBundle.message("invalid.package", packageName), myPackageCombo);
         return;
       }
     }

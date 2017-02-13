@@ -131,13 +131,13 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
                              .validateNewStepDefinitionFileName(myModel.getDirectory(), fileName, myModel.getSelectedFileType());
 
     if (!fileNameIsOk) {
-      setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.incorrect.file.name"));
+      setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.incorrect.file.name"), myFileNameTextField);
     } else {
       PsiFile file = myModel.getDirectory().findFile(myModel.getFileNameWithExtension());
       VirtualFile vFile = file != null ? file.getVirtualFile() : null;
       if (vFile != null) {
         fileNameIsOk = false;
-        setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.file.exists", (myModel.getFileNameWithExtension())));
+        setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.file.exists", (myModel.getFileNameWithExtension())), myFileNameTextField);
       }
     }
     return fileNameIsOk;
@@ -147,7 +147,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(myDirectoryTextField.getText());
     final boolean directoryIsOk = vFile != null && vFile.exists();
     if (!directoryIsOk) {
-      setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.directory.doesnt.exist"));
+      setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.directory.doesnt.exist"), myDirectoryTextField);
     } else {
       setErrorText(null);
     }
