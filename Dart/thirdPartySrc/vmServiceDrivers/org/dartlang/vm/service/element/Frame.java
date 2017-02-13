@@ -36,11 +36,25 @@ public class Frame extends Response {
     return json.get("index") == null ? -1 : json.get("index").getAsInt();
   }
 
+  /**
+   * Note: this is not yet part of the public API and should not be considered stable.
+   */
+  public FrameKind getKind() {
+    String name = json.get("kind").getAsString();
+    try {
+      return FrameKind.valueOf(name);
+    } catch (IllegalArgumentException e) {
+      return FrameKind.Unknown;
+    }
+  }
+
   public SourceLocation getLocation() {
-    return new SourceLocation((JsonObject) json.get("location"));
+    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
   }
 
   public ElementList<BoundVariable> getVars() {
+    if (json.get("vars") == null) return null;
+    
     return new ElementList<BoundVariable>(json.get("vars").getAsJsonArray()) {
       @Override
       protected BoundVariable basicGet(JsonArray array, int index) {

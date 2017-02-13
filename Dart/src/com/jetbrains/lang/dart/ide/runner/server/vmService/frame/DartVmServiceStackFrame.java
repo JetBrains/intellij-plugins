@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
+import com.google.gson.JsonArray;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.LightVirtualFile;
@@ -33,7 +34,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
     myIsolateId = isolateId;
     myVmFrame = vmFrame;
     myException = exception;
-    mySourcePosition = debugProcess.getSourcePosition(isolateId, vmFrame.getLocation().getScript(), vmFrame.getLocation().getTokenPos());
+    if (vmFrame.getLocation() == null) {
+      mySourcePosition = null;
+    }
+    else {
+      mySourcePosition = debugProcess.getSourcePosition(isolateId, vmFrame.getLocation().getScript(), vmFrame.getLocation().getTokenPos());
+    }
   }
 
   @NotNull
@@ -50,7 +56,8 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Override
   public void customizePresentation(@NotNull final ColoredTextContainer component) {
     final String name = StringUtil.trimEnd(myVmFrame.getCode().getName(), "="); // trim setter postfix
-    component.append(name, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    final boolean causal = myVmFrame.getKind() == FrameKind.kAsyncCausal;
+    component.append(name, causal ? SimpleTextAttributes.REGULAR_ITALIC_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
     if (mySourcePosition != null) {
       final String text = " (" + mySourcePosition.getFile().getName() + ":" + (mySourcePosition.getLine() + 1) + ")";
@@ -73,15 +80,25 @@ public class DartVmServiceStackFrame extends XStackFrame {
       node.addChildren(XValueChildrenList.singleton(exception), false);
     }
 
-    final ElementList<BoundVariable> vars = myVmFrame.getVars();
+    ElementList<BoundVariable> vars = myVmFrame.getVars();
 
     BoundVariable thisVar = null;
-    for (BoundVariable var : vars) {
-      if ("this".equals(var.getName())) {
-        // in some cases "this" var is not the first one in the list, no idea why
-        thisVar = var;
-        break;
+    if (vars != null) {
+      for (BoundVariable var : vars) {
+        if ("this".equals(var.getName())) {
+          // in some cases "this" var is not the first one in the list, no idea why
+          thisVar = var;
+          break;
+        }
       }
+    }
+    else {
+      vars = new ElementList<BoundVariable>(new JsonArray()) {
+        @Override
+        protected BoundVariable basicGet(JsonArray array, int index) {
+          return null;
+        }
+      };
     }
 
     addStaticFieldsIfPresentAndThenAllVars(node, thisVar, vars);
