@@ -10,7 +10,6 @@ import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
-import com.intellij.util.Processor;
 import org.intellij.plugins.postcss.psi.*;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex;
@@ -73,23 +72,21 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
     final Collection<CssPseudoSelectorDescriptor> result = new ArrayList<>();
     final GlobalSearchScope scope = CssUtil.getCompletionAndResolvingScopeForElement(context);
 
-    final Processor<String> processor = name -> {
-      if (!name.isEmpty()) {
-        StubIndex.getInstance()
-          .processElements(PostCssCustomSelectorIndex.KEY, name, context.getProject(), scope, PostCssCustomSelector.class,
-                           selector -> {
-                             for (CssElementDescriptor descriptor : selector.getDescriptors()) {
-                               if (descriptor instanceof CssPseudoSelectorDescriptor) {
-                                 result.add((CssPseudoSelectorDescriptor)descriptor);
-                               }
-                             }
-                             return true;
-                           });
-      }
-      return true;
-    };
+    final Collection<String> selectorNames = StubIndex.getInstance().getAllKeys(PostCssCustomSelectorIndex.KEY, context.getProject());
+    for (String name : selectorNames) {
+      if (name.isEmpty()) continue;
 
-    StubIndex.getInstance().processAllKeys(PostCssCustomSelectorIndex.KEY, processor, scope, null);
+      StubIndex.getInstance()
+        .processElements(PostCssCustomSelectorIndex.KEY, name, context.getProject(), scope, PostCssCustomSelector.class,
+                         selector -> {
+                           for (CssElementDescriptor descriptor : selector.getDescriptors()) {
+                             if (descriptor instanceof CssPseudoSelectorDescriptor) {
+                               result.add((CssPseudoSelectorDescriptor)descriptor);
+                             }
+                           }
+                           return true;
+                         });
+    }
 
     return result;
   }
