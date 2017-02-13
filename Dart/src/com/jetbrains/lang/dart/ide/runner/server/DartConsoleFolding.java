@@ -106,12 +106,12 @@ public class DartConsoleFolding extends ConsoleFolding {
     return b.toString();
   }
 
-  private static boolean isFrameLine(String line) {
+  private boolean isFrameLine(@NotNull final String line) {
     // Handle the "..." ellipses in the middle of a stack overflow trace.
-    if (line.equals("...")) return true;
+    if (myFrameCount > 0 && line.equals("...")) return true;
 
     // Handle "<asynchronous suspension>".
-    if (line.startsWith("<async") && line.endsWith(">")) return true;
+    if (myFrameCount > 0 && line.startsWith("<async") && line.endsWith(">")) return true;
 
     //  #1      main (file:///Users/foo/projects/bar/tool/generate.dart:30:3)
     if (!line.startsWith("#") || !line.endsWith(")")) return false;
