@@ -83,7 +83,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
 class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
   override fun getDeclaration() = element
-  override fun getName(context: PsiElement?):String = name
+  override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
   override fun getName() = fromAsset(element.name)
   override fun init(element: PsiElement?) {}
   override fun getQualifiedName() = name
