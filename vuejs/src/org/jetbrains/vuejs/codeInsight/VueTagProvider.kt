@@ -68,7 +68,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val files:MutableList<PsiFile> = mutableListOf()
     processLocalComponents(tag, { property, element ->
       elements?.add(PrioritizedLookupElement.withPriority(createVueLookup(element, property.name!!).bold(), 100.0))
-      files.add(property.containingFile)
+      files.add(element.containingFile)
       return@processLocalComponents true
     })
     elements?.addAll(getAllKeys(tag.resolveScope, VueComponentsIndex.KEY).filter { !files.contains(it.containingFile) }.
