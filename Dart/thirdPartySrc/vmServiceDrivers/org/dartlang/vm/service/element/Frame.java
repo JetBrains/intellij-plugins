@@ -25,22 +25,35 @@ public class Frame extends Response {
   }
 
   public CodeRef getCode() {
-    return new CodeRef((JsonObject) json.get("code"));
+    return json.get("code") == null ? null : new CodeRef((JsonObject) json.get("code"));
   }
 
   public FuncRef getFunction() {
-    return new FuncRef((JsonObject) json.get("function"));
+    return json.get("function") == null ? null : new FuncRef((JsonObject) json.get("function"));
   }
 
   public int getIndex() {
     return json.get("index") == null ? -1 : json.get("index").getAsInt();
   }
 
+  public FrameKind getKind() {
+    if (json.get("kind") == null) return null;
+    
+    String name = json.get("kind").getAsString();
+    try {
+      return FrameKind.valueOf(name);
+    } catch (IllegalArgumentException e) {
+      return FrameKind.Unknown;
+    }
+  }
+
   public SourceLocation getLocation() {
-    return new SourceLocation((JsonObject) json.get("location"));
+    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
   }
 
   public ElementList<BoundVariable> getVars() {
+    if (json.get("vars") == null) return null;
+    
     return new ElementList<BoundVariable>(json.get("vars").getAsJsonArray()) {
       @Override
       protected BoundVariable basicGet(JsonArray array, int index) {
