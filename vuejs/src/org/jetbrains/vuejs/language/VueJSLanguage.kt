@@ -16,7 +16,7 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6) {
   }
 
   override fun createParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
-    return ES6Parser<ES6ExpressionParser<*>, ES6StatementParser<*>, ES6FunctionParser<*>, JSPsiTypeParser<*>>(builder)
+    return ES6Parser<ES6ExpressionParser<*>, ES6StatementParser<*>, ES6FunctionParser<*>, JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder)
   }
 
 
