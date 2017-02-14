@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.meta.PsiPresentableMetaData
+import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
 import com.intellij.xml.XmlAttributeDescriptor
@@ -47,6 +48,10 @@ class VueAttributeDescriptor(private val name:String,
   override fun isFixed() = false
   override fun hasIdType() = false
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
+  override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
+    return if ("v-else" == name) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
+  }
+
   override fun hasIdRefType() = false
   override fun getDefaultValue() = null
   override fun isEnumerated() = false
