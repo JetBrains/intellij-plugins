@@ -12,7 +12,6 @@ import com.intellij.util.PathUtilRt;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
@@ -436,9 +435,8 @@ public class FlexBuilderUtils {
   private static String fixInitialContent(final File descriptorFile, final String swfName) throws IOException, JDOMException {
     // hardcoded UTF-8 makes it work the same way as it worked in FlexCompilationUtils.fixInitialContent() for ages (UTF-8 is hardcoded in JDOMUtil)
     final String descriptorContent = FileUtil.loadFile(descriptorFile, "UTF-8");
-    final Document document = JDOMUtil.loadDocument(StringUtil.trimStart(descriptorContent, "\uFEFF"));
-    final Element rootElement = document.getRootElement();
-    if (rootElement == null || !"application".equals(rootElement.getName())) {
+    final Element rootElement = JDOMUtil.load(StringUtil.trimStart(descriptorContent, "\uFEFF"));
+    if (!"application".equals(rootElement.getName())) {
       throw new JDOMException("incorrect root tag");
     }
 
@@ -456,6 +454,6 @@ public class FlexBuilderUtils {
 
     contentElement.setText(swfName);
 
-    return JDOMUtil.writeDocument(document, SystemProperties.getLineSeparator());
+    return JDOMUtil.write(rootElement, SystemProperties.getLineSeparator());
   }
 }
