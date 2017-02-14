@@ -14,6 +14,8 @@ import org.jdom.JDOMException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
@@ -100,17 +102,17 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
       return false;
     }
 
-    File globalAfter = new File(path, "global_after");
+    Path globalAfter = Paths.get(path, "global_after");
     if (checkJdk()) {
       Element sdkState = ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).getState();
       ConversionHelper.collapsePaths(sdkState);
-      assertThat(sdkState).isEqualTo(new File(globalAfter, JDK_TABLE_XML));
+      assertThat(sdkState).isEqualTo(globalAfter.resolve(JDK_TABLE_XML));
     }
 
     {
       Element globalLibState = ApplicationLibraryTable.getApplicationTable().getState();
       ConversionHelper.collapsePaths(globalLibState);
-      assertThat(globalLibState).isEqualTo(new File(globalAfter, GLOBAL_LIBS_XML));
+      assertThat(globalLibState).isEqualTo(globalAfter.resolve(GLOBAL_LIBS_XML));
     }
     return true;
   }
