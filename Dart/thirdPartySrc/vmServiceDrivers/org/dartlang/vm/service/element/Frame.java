@@ -25,23 +25,20 @@ public class Frame extends Response {
   }
 
   public CodeRef getCode() {
-    return new CodeRef((JsonObject) json.get("code"));
+    return json.get("code") == null ? null : new CodeRef((JsonObject) json.get("code"));
   }
 
   public FuncRef getFunction() {
-    return new FuncRef((JsonObject) json.get("function"));
+    return json.get("function") == null ? null : new FuncRef((JsonObject) json.get("function"));
   }
 
   public int getIndex() {
     return json.get("index") == null ? -1 : json.get("index").getAsInt();
   }
 
-  /**
-   * Note: this is not yet part of the public API and should not be considered stable.
-   */
   public FrameKind getKind() {
     if (json.get("kind") == null) return null;
-
+    
     String name = json.get("kind").getAsString();
     try {
       return FrameKind.valueOf(name);

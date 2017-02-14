@@ -20,11 +20,11 @@ package org.dartlang.vm.service.element;
  */
 public enum FrameKind {
 
-  kAsyncCausal,
+  AsyncCausal,
 
-  kAsyncSuspensionMarker,
+  AsyncSuspensionMarker,
 
-  kRegular,
+  Regular,
 
   /**
    * Represents a value returned by the VM but unknown to this client

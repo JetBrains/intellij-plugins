@@ -356,7 +356,7 @@ public class VmServiceWrapper implements Disposable {
 
           final List<XStackFrame> result = new ArrayList<>(vmFrames.size());
           for (Frame vmFrame : vmFrames) {
-            if (vmFrame.getKind() == FrameKind.kAsyncSuspensionMarker) {
+            if (vmFrame.getKind() == FrameKind.AsyncSuspensionMarker) {
               // Render an asynchronous gap.
               final XStackFrame markerFrame = new DartAsyncMarkerFrame();
               result.add(markerFrame);

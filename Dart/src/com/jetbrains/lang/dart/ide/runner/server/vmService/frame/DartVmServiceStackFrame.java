@@ -56,7 +56,7 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Override
   public void customizePresentation(@NotNull final ColoredTextContainer component) {
     final String name = StringUtil.trimEnd(myVmFrame.getCode().getName(), "="); // trim setter postfix
-    final boolean causal = myVmFrame.getKind() == FrameKind.kAsyncCausal;
+    final boolean causal = myVmFrame.getKind() == FrameKind.AsyncCausal;
     component.append(name, causal ? SimpleTextAttributes.REGULAR_ITALIC_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
     if (mySourcePosition != null) {

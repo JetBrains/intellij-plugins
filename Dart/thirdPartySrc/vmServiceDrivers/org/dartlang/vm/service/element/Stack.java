@@ -24,9 +24,6 @@ public class Stack extends Response {
     super(json);
   }
 
-  /**
-   * Note: this is not yet part of the public API and should not be considered stable.
-   */
   public ElementList<Frame> getAsyncCausalFrames() {
     if (json.get("asyncCausalFrames") == null) return null;
     
