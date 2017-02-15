@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
@@ -66,8 +67,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
     val files:MutableList<PsiFile> = mutableListOf()
     processLocalComponents(tag, { property, element ->
-      elements?.add(createVueLookup(element, property.name!!))
-      files.add(property.containingFile)
+      elements?.add(PrioritizedLookupElement.withPriority(createVueLookup(element, property.name!!).bold(), 100.0))
+      files.add(element.containingFile)
       return@processLocalComponents true
     })
     elements?.addAll(getAllKeys(tag.resolveScope, VueComponentsIndex.KEY).filter { !files.contains(it.containingFile) }.
@@ -82,7 +83,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
 class VueElementDescriptor(val element: JSImplicitElement) : XmlElementDescriptor {
   override fun getDeclaration() = element
-  override fun getName(context: PsiElement?):String = name
+  override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
   override fun getName() = fromAsset(element.name)
   override fun init(element: PsiElement?) {}
   override fun getQualifiedName() = name

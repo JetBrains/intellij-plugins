@@ -33,7 +33,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
     myIsolateId = isolateId;
     myVmFrame = vmFrame;
     myException = exception;
-    mySourcePosition = debugProcess.getSourcePosition(isolateId, vmFrame.getLocation().getScript(), vmFrame.getLocation().getTokenPos());
+    if (vmFrame.getLocation() == null) {
+      mySourcePosition = null;
+    }
+    else {
+      mySourcePosition = debugProcess.getSourcePosition(isolateId, vmFrame.getLocation().getScript(), vmFrame.getLocation().getTokenPos());
+    }
   }
 
   @NotNull
@@ -50,7 +55,8 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Override
   public void customizePresentation(@NotNull final ColoredTextContainer component) {
     final String name = StringUtil.trimEnd(myVmFrame.getCode().getName(), "="); // trim setter postfix
-    component.append(name, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    final boolean causal = myVmFrame.getKind() == FrameKind.AsyncCausal;
+    component.append(name, causal ? SimpleTextAttributes.REGULAR_ITALIC_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
     if (mySourcePosition != null) {
       final String text = " (" + mySourcePosition.getFile().getName() + ":" + (mySourcePosition.getLine() + 1) + ")";
@@ -74,6 +80,11 @@ public class DartVmServiceStackFrame extends XStackFrame {
     }
 
     final ElementList<BoundVariable> vars = myVmFrame.getVars();
+
+    if (vars == null) {
+      node.addChildren(XValueChildrenList.EMPTY, true);
+      return;
+    }
 
     BoundVariable thisVar = null;
     for (BoundVariable var : vars) {

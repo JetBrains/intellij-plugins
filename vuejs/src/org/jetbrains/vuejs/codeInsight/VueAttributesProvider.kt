@@ -12,6 +12,7 @@ import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlAttributeDescriptorsProvider
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
+import org.jetbrains.vuejs.VueLanguage
 import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider{
@@ -31,10 +32,17 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider{
     }
   }
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    return DEFAULT.map{ VueAttributeDescriptor(it) }.toTypedArray()
+    val default = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
+    if ("style" == context?.name && context?.containingFile?.language == VueLanguage.INSTANCE) {
+      return default.plus(VueAttributeDescriptor("scoped"))
+    }
+    return default
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
+    if ("style" == context?.name && context?.containingFile?.language == VueLanguage.INSTANCE) {
+      return VueAttributeDescriptor("scoped")
+    }
     return vueAttributeDescriptor(attributeName)
   }
 }
@@ -49,7 +57,7 @@ class VueAttributeDescriptor(private val name:String,
   override fun hasIdType() = false
   override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
   override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
-    return if ("v-else" == name) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
+    return if ("v-else" == name || "scoped" == name) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
   }
 
   override fun hasIdRefType() = false

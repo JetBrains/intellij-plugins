@@ -18,13 +18,15 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashSet;
 import org.jdom.Attribute;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class FlashBuilderSdkFinder {
@@ -268,16 +270,16 @@ public class FlashBuilderSdkFinder {
   }
 
   private boolean initSdksConfiguredInWorkspace(final String fbWorkspacePath) {
-    final Document sdkInfoDocument = loadSdkInfoDocument(fbWorkspacePath);
+    final Element sdkInfoDocument = loadSdkInfoDocument(fbWorkspacePath);
     if (sdkInfoDocument == null) {
       return false;
     }
 
-    final Element sdksElement = sdkInfoDocument.getRootElement();
+    final Element sdksElement = sdkInfoDocument;
     if (!sdksElement.getName().equals(SDKS_ELEMENT)) return false;
 
     //noinspection unchecked
-    for (final Element sdkElement : ((Iterable<Element>)sdksElement.getChildren(SDK_ELEMENT))) {
+    for (final Element sdkElement : sdksElement.getChildren(SDK_ELEMENT)) {
       final Attribute defaultSdkAttr = sdkElement.getAttribute(DEFAULT_SDK_ATTR);
       final Attribute sdkNameAttr = sdkElement.getAttribute(SDK_NAME_ATTR);
       final Attribute sdkLocationAttr = sdkElement.getAttribute(SDK_LOCATION_ATTR);
@@ -297,7 +299,7 @@ public class FlashBuilderSdkFinder {
   }
 
   @Nullable
-  private static Document loadSdkInfoDocument(final String flashBuilderWorkspacePath) {
+  private static Element loadSdkInfoDocument(final String flashBuilderWorkspacePath) {
     try {
       final VirtualFile projectPrefsFile =
         LocalFileSystem.getInstance().findFileByPath(flashBuilderWorkspacePath + FlashBuilderProjectFinder.PROJECT_PREFS_RELATIVE_PATH);
@@ -308,7 +310,7 @@ public class FlashBuilderSdkFinder {
       final String xmlString = projectPrefsProperties.getProperty(FLEX_SDK_PROPERTY);
       if (xmlString == null) return null;
 
-      return JDOMUtil.loadDocument(xmlString);
+      return JDOMUtil.load(xmlString);
     }
     catch (IOException e) {/*ignore*/}
     catch (JDOMException e) {/*ignore*/}

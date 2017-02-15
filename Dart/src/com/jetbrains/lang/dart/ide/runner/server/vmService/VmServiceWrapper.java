@@ -13,6 +13,7 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartAsyncMarkerFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
@@ -33,6 +34,9 @@ public class VmServiceWrapper implements Disposable {
 
   public static final Logger LOG = Logger.getInstance(VmServiceWrapper.class.getName());
   private static final long RESPONSE_WAIT_TIMEOUT = 3000; // millis
+
+  // TODO: Remove this compile time flag once the VM implementation and wire protocol are final.
+  private static final boolean RENDER_CAUSAL_FRAMES = true;
 
   private final DartVmServiceDebugProcess myDebugProcess;
   private final VmService myVmService;
@@ -339,15 +343,34 @@ public class VmServiceWrapper implements Disposable {
       public void received(final Stack vmStack) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           InstanceRef exceptionToAddToFrame = exception;
-          final List<XStackFrame> result = new ArrayList<>(vmStack.getFrames().size());
-          for (Frame vmFrame : vmStack.getFrames()) {
-            final DartVmServiceStackFrame stackFrame =
-              new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, exceptionToAddToFrame);
-            result.add(stackFrame);
 
-            if (!stackFrame.isInDartSdkPatchFile()) {
-              // exception (if any) is added to the frame where debugger stops and to the upper frames
-              exceptionToAddToFrame = null;
+          ElementList<Frame> vmFrames;
+          if (RENDER_CAUSAL_FRAMES) {
+            vmFrames = vmStack.getAsyncCausalFrames();
+            if (vmFrames == null) {
+              vmFrames = vmStack.getFrames();
+            }
+          } else {
+            vmFrames = vmStack.getFrames();
+          }
+
+          final List<XStackFrame> result = new ArrayList<>(vmFrames.size());
+          for (Frame vmFrame : vmFrames) {
+            if (vmFrame.getKind() == FrameKind.AsyncSuspensionMarker) {
+              // Render an asynchronous gap.
+              final XStackFrame markerFrame = new DartAsyncMarkerFrame();
+              result.add(markerFrame);
+            }
+            else {
+              final DartVmServiceStackFrame stackFrame =
+                new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, exceptionToAddToFrame);
+
+              result.add(stackFrame);
+
+              if (!stackFrame.isInDartSdkPatchFile()) {
+                // The exception (if any) is added to the frame where debugger stops and to the upper frames.
+                exceptionToAddToFrame = null;
+              }
             }
           }
           container.addStackFrames(firstFrameIndex == 0 ? result : result.subList(firstFrameIndex, result.size()), true);

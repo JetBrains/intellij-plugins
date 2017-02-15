@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompil
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -22,7 +23,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Processor;
 import gnu.trove.THashMap;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
@@ -121,7 +121,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     if (configFile == null || configFile.isDirectory()) return Collections.emptyList();
 
     final FileDocumentManager documentManager = FileDocumentManager.getInstance();
-    final com.intellij.openapi.editor.Document cachedDocument = documentManager.getCachedDocument(configFile);
+    final Document cachedDocument = documentManager.getCachedDocument(configFile);
     final Long currentTimestamp = cachedDocument != null ? cachedDocument.getModificationStamp() : configFile.getModificationCount();
     final Long cachedTimestamp = configFileToTimestamp.get(configFile);
 
@@ -130,12 +130,11 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
       configFileToConditionalCompilerDefinitions.remove(configFile);
 
       try {
-        final Document document = cachedDocument == null
-                                  ? JDOMUtil.loadDocument(configFile.getInputStream())
-                                  : JDOMUtil.loadDocument(cachedDocument.getCharsSequence());
+        final Element rootElement = cachedDocument == null
+                                  ? JDOMUtil.load(configFile.getInputStream())
+                                  : JDOMUtil.load(cachedDocument.getCharsSequence());
         final Collection<Pair<String, String>> result = new ArrayList<>();
 
-        final Element rootElement = document.getRootElement();
         if (rootElement.getName().equals(FlexCompilerConfigFileUtilBase.FLEX_CONFIG)) {
           // noinspection unchecked
           for (Element compilerElement : rootElement.getChildren(FlexCompilerConfigFileUtilBase.COMPILER, rootElement.getNamespace())) {

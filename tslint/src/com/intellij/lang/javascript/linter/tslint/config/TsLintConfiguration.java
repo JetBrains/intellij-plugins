@@ -107,9 +107,18 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   }
 
   private void restoreLinterLocalPaths(TsLintState.Builder builder) {
-    myPackage.detect();
+    myPackage.readOrDetect();
     builder.setNodePath(myPackage.getInterpreter());
     builder.setPackagePath(StringUtil.notNullize(myPackage.getPackagePath()));
+  }
+
+  @Override
+  protected TsLintState initializePrivateSettings(ExtendedLinterState<TsLintState> state) {
+    myPackage.detect();
+    TsLintState.Builder builder = new TsLintState.Builder(state.getState());
+    builder.setNodePath(myPackage.getInterpreter());
+    builder.setPackagePath(myPackage.getPackagePath());
+    return builder.build();
   }
 
   private void storeLinterLocalPaths(TsLintState state) {

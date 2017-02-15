@@ -139,6 +139,8 @@ public class Event extends Response {
    *  - PauseBreakpoint
    */
   public ElementList<Breakpoint> getPauseBreakpoints() {
+    if (json.get("pauseBreakpoints") == null) return null;
+    
     return new ElementList<Breakpoint>(json.get("pauseBreakpoints").getAsJsonArray()) {
       @Override
       protected Breakpoint basicGet(JsonArray array, int index) {
@@ -162,6 +164,8 @@ public class Event extends Response {
    * This is provided for the TimelineEvents event.
    */
   public ElementList<TimelineEvent> getTimelineEvents() {
+    if (json.get("timelineEvents") == null) return null;
+    
     return new ElementList<TimelineEvent>(json.get("timelineEvents").getAsJsonArray()) {
       @Override
       protected TimelineEvent basicGet(JsonArray array, int index) {

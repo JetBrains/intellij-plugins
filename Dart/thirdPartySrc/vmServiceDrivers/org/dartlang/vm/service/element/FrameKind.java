@@ -15,18 +15,19 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-import com.google.gson.JsonObject;
+/**
+ * A {@link FrameKind} is used to distinguish different kinds of {@link Frame} objects.
+ */
+public enum FrameKind {
 
-public class ReloadReport extends Response {
+  AsyncCausal,
 
-  public ReloadReport(JsonObject json) {
-    super(json);
-  }
+  AsyncSuspensionMarker,
+
+  Regular,
 
   /**
-   * Did the reload succeed or fail?
+   * Represents a value returned by the VM but unknown to this client
    */
-  public boolean getSuccess() {
-    return json.get("success").getAsBoolean();
-  }
+  Unknown
 }

@@ -74,7 +74,7 @@ public class FlexCompilerConfigFileUtilBase {
     makeLibrariesMergedIntoCode(rootElement, makeExternalLibsMerged, makeIncludedLibsMerged);
 
     try {
-      final Element otherRootElement = JDOMUtil.loadDocument(generatedConfigText).getRootElement();
+      final Element otherRootElement = JDOMUtil.load(generatedConfigText);
       assert FLEX_CONFIG.equals(rootElement.getName()) : JDOMUtil.writeElement(rootElement, "\n");
 
       appendDocument(rootElement, otherRootElement);
@@ -125,14 +125,14 @@ public class FlexCompilerConfigFileUtilBase {
   private static Collection<String> removeLibs(final Element rootElement, final boolean removeExternal, final boolean removeIncluded) {
     final Namespace namespace = rootElement.getNamespace();
 
-    final Collection<String> result = new ArrayList<String>();
+    final Collection<String> result = new ArrayList<>();
 
     //noinspection unchecked
     for (Element compilerElement : rootElement.getChildren(COMPILER, namespace)) {
       if (removeExternal) {
         //noinspection unchecked
         for (Element externalLibraryPathElement : compilerElement.getChildren(EXTERNAL_LIBRARY_PATH, namespace)) {
-          final Collection<Element> pathElementsToRemove = new ArrayList<Element>();
+          final Collection<Element> pathElementsToRemove = new ArrayList<>();
           //noinspection unchecked
           for (Element pathElement : externalLibraryPathElement.getChildren(PATH_ELEMENT, namespace)) {
             final String path = pathElement.getText();
@@ -154,7 +154,7 @@ public class FlexCompilerConfigFileUtilBase {
       if (removeIncluded) {
         //noinspection unchecked
         for (Element includeLibrariesElement : compilerElement.getChildren(INCLUDE_LIBRARIES, namespace)) {
-          final Collection<Element> libraryElementsToRemove = new ArrayList<Element>();
+          final Collection<Element> libraryElementsToRemove = new ArrayList<>();
           //noinspection unchecked
           for (Element libraryElement : includeLibrariesElement.getChildren(LIBRARY, namespace)) {
             result.add(libraryElement.getText());
@@ -188,7 +188,7 @@ public class FlexCompilerConfigFileUtilBase {
 
   // required to avoid setting the same option values twice because it may lead to compilation failure (e.g. if the same locale is listed twice)
   private static Collection<Element> findDuplicateElementsRecursively(final Element existingElement, final Element otherElement) {
-    final Collection<Element> result = new THashSet<Element>();
+    final Collection<Element> result = new THashSet<>();
 
     //noinspection unchecked
     for (Element potentialChild : otherElement.getChildren()) {
