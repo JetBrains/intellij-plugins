@@ -2,11 +2,16 @@ package name.kropp.intellij.makefile
 
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.util.treeView.smartTree.TreeElement
+import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.NavigationItem
 import com.intellij.psi.PsiElement
+import name.kropp.intellij.makefile.psi.MakefileTarget
 
 class MakefileStructureViewElement(private val element: PsiElement) : StructureViewTreeElement {
-  override fun getPresentation() = (element as NavigationItem).presentation!!
+  override fun getPresentation(): ItemPresentation {
+    if (element is MakefileTarget) return MakefileTargetStructureViewPresentation(element)
+    return (element as NavigationItem).presentation!!
+  }
 
   override fun getChildren(): Array<out TreeElement> {
     if (element is MakefileFile) {
