@@ -51,7 +51,11 @@ public class PostCssCustomSelectorCompletionTest extends PostCssCompletionTest {
 
   public void testCustomSelectorPriorityWithImport() {
     myFixture.configureByFile("definition.pcss");
-    doTestPreferred(Pair.create("--test", "definition.pcss:1"), Pair.create("--z-in-file", "customSelectorPriorityWithImport.pcss:3"));
+    // order of completion items is different on different classpaths:
+    // in Webstorm "--test" is the first one (alpha-sort),
+    // in IntelliJ IDEA com.intellij.psi.util.proximity.ExplicitlyImportedWeigher bubbles "--z-in-file" up, because it is in the same file
+    doTestPreferredNotStrict(Pair.create("--test", "definition.pcss:1"),
+                             Pair.create("--z-in-file", "customSelectorPriorityWithImport.pcss:3"));
   }
 
   public void testCustomSelectorPriorityWithoutImport() {
