@@ -72,9 +72,14 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
     final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(dartClass.getProject())
       .search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), true);
 
-    // The first item is the Dart class the query was run on, so skip it
-    for (int i = 1; i < items.size(); i++) {
-      final DartClass superDartClass = DartHierarchyUtil.findDartClass(project, items.get(i));
+    for (int i = 0; i < items.size(); i++) {
+      // only consider superclasses
+      Integer superclassIndex = items.get(i).getSuperclass();
+      if (superclassIndex == null || superclassIndex < 0) {
+        break;
+      }
+      TypeHierarchyItem superclassItem = items.get(superclassIndex);
+      final DartClass superDartClass = DartHierarchyUtil.findDartClass(project, superclassItem);
       if (superDartClass != null && superDartClass.getName() != null && !superDartClass.getName().equals("Object")) {
         if (DartGenerateEqualsAndHashcodeAction.doesClassContainEqualsAndHashCode(superDartClass)) {
           return true;
