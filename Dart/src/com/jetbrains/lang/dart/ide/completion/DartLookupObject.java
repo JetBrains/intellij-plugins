@@ -19,12 +19,10 @@ import org.jetbrains.annotations.Nullable;
 public class DartLookupObject implements ResolveResult {
   @NotNull private final Project myProject;
   @Nullable private final Location myLocation;
-  private final int myRelevance;
 
-  public DartLookupObject(@NotNull final Project project, @Nullable Location location, final int relevance) {
+  public DartLookupObject(@NotNull final Project project, @Nullable Location location) {
     myProject = project;
     myLocation = location;
-    myRelevance = relevance;
   }
 
   @Nullable
@@ -44,9 +42,5 @@ public class DartLookupObject implements ResolveResult {
   @Override
   public boolean isValidResult() {
     return true;
-  }
-
-  public int getRelevance() {
-    return myRelevance;
   }
 }

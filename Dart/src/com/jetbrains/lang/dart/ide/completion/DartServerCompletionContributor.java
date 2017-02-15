@@ -182,7 +182,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
   private static LookupElement createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
-    final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
+    final DartLookupObject lookupObject = new DartLookupObject(project, location);
 
     final String lookupString = suggestion.getCompletion();
     LookupElementBuilder lookup = LookupElementBuilder.create(lookupObject, lookupString);
@@ -269,7 +269,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       });
     }
 
-    return lookup;
+    return PrioritizedLookupElement.withPriority(lookup, suggestion.getRelevance());
   }
 
   private static Icon getBaseImage(Element element) {
