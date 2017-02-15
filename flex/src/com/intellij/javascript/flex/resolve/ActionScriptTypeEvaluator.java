@@ -46,7 +46,10 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         resolveResult.processDeclarations((PsiScopeProcessor)myTypeProcessor, ResolveState.initial(), expression, expression);
       }
       else {
-        addType(((JSQualifiedNamedElement)resolveResult).getQualifiedName(), resolveResult);
+        String name = ((JSQualifiedNamedElement)resolveResult).getQualifiedName();
+        if (name != null) {
+          addType(name, resolveResult);
+        }
       }
       return true;
     }
