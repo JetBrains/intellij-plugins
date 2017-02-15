@@ -113,9 +113,9 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   }
 
   @Override
-  protected TsLintState initializePrivateSettings(ExtendedLinterState<TsLintState> state) {
+  protected TsLintState initializePrivateSettings(TsLintState state) {
     myPackage.detect();
-    TsLintState.Builder builder = new TsLintState.Builder(state.getState());
+    TsLintState.Builder builder = new TsLintState.Builder(state);
     builder.setNodePath(myPackage.getInterpreter());
     builder.setPackagePath(myPackage.getPackagePath());
     return builder.build();
