@@ -32,7 +32,7 @@ public class FlexResourceBuildTargetType extends ModuleBasedBuildTargetType<Flex
   @NotNull
   @Override
   public List<FlexResourceBuildTarget> computeAllTargets(@NotNull JpsModel model) {
-    final List<FlexResourceBuildTarget> targets = new ArrayList<FlexResourceBuildTarget>();
+    final List<FlexResourceBuildTarget> targets = new ArrayList<>();
     for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : model.getProject().getModules(JpsFlexModuleType.INSTANCE)) {
       targets.add(new FlexResourceBuildTarget(this, module));
     }
@@ -43,7 +43,7 @@ public class FlexResourceBuildTargetType extends ModuleBasedBuildTargetType<Flex
   @Override
   public BuildTargetLoader<FlexResourceBuildTarget> createLoader(@NotNull JpsModel model) {
     final Map<String, JpsTypedModule<JpsFlexBuildConfigurationManager>> modules =
-      new HashMap<String, JpsTypedModule<JpsFlexBuildConfigurationManager>>();
+      new HashMap<>();
     for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : model.getProject().getModules(JpsFlexModuleType.INSTANCE)) {
       modules.put(module.getName(), module);
     }

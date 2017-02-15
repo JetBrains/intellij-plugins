@@ -48,8 +48,8 @@ public class CompilerOptionInfo {
   private static final Logger LOG = Logger.getInstance(CompilerOptionInfo.class.getName());
 
   private static volatile CompilerOptionInfo[] ourRootInfos;
-  private static final Map<String, CompilerOptionInfo> ourIdToInfoMap = new THashMap<String, CompilerOptionInfo>(50);
-  private static final Collection<CompilerOptionInfo> ourOptionsWithSpecialValues = new LinkedList<CompilerOptionInfo>();
+  private static final Map<String, CompilerOptionInfo> ourIdToInfoMap = new THashMap<>(50);
+  private static final Collection<CompilerOptionInfo> ourOptionsWithSpecialValues = new LinkedList<>();
 
   public static final CompilerOptionInfo DEBUG_INFO =
     new CompilerOptionInfo("compiler.debug", "fake", OptionType.Boolean, null, null, false, null, true, true, true, true, "");
@@ -322,7 +322,7 @@ public class CompilerOptionInfo {
 
   private static void loadInfo() {
     try {
-      final List<CompilerOptionInfo> infos = new ArrayList<CompilerOptionInfo>(30);
+      final List<CompilerOptionInfo> infos = new ArrayList<>(30);
 
       final Element rootElement = JDOMUtil.load(CompilerOptionInfo.class.getResourceAsStream("flex-compiler-options.xml"));
       assert rootElement != null;
@@ -369,7 +369,7 @@ public class CompilerOptionInfo {
     final String okForSWCValue = groupElement.getAttributeValue("okForSWC");
     final boolean okForSWC = okForSWCValue == null || "false".equals(okForSWCValue);
 
-    final List<CompilerOptionInfo> infos = new ArrayList<CompilerOptionInfo>();
+    final List<CompilerOptionInfo> infos = new ArrayList<>();
 
     //noinspection unchecked
     for (final Element element : groupElement.getChildren()) {
@@ -434,7 +434,7 @@ public class CompilerOptionInfo {
   }
 
   private static ListElement[] readListElements(final Element element) {
-    final List<ListElement> result = new LinkedList<ListElement>();
+    final List<ListElement> result = new LinkedList<>();
 
     //noinspection unchecked
     for (final Element childElement : element.getChildren("listElement")) {

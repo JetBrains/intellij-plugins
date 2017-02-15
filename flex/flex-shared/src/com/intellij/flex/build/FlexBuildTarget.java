@@ -98,7 +98,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry, TargetOutputIndex outputIndex) {
-    final ArrayList<BuildTarget<?>> result = new ArrayList<BuildTarget<?>>();
+    final ArrayList<BuildTarget<?>> result = new ArrayList<>();
 
     final FlexResourceBuildTargetType type = FlexCommonUtils.isFlexUnitBC(myBC) ? FlexResourceBuildTargetType.TEST
                                                                                 : FlexResourceBuildTargetType.PRODUCTION;
@@ -121,9 +121,9 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
                                                           final ModuleExcludeIndex index,
                                                           final IgnoredFileIndex ignoredFileIndex,
                                                           final BuildDataPaths dataPaths) {
-    final List<BuildRootDescriptor> result = new ArrayList<BuildRootDescriptor>();
+    final List<BuildRootDescriptor> result = new ArrayList<>();
 
-    final Collection<File> srcRoots = new ArrayList<File>();
+    final Collection<File> srcRoots = new ArrayList<>();
 
     for (JpsModuleSourceRoot sourceRoot : myBC.getModule().getSourceRoots(JavaSourceRootType.SOURCE)) {
       final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());

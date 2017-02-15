@@ -21,7 +21,7 @@ public class InfoFromConfigFile {
 
   public static InfoFromConfigFile DEFAULT = new InfoFromConfigFile(null, null, null, null, null);
 
-  private static final Map<String, Pair<Long, InfoFromConfigFile>> ourCache = new THashMap<String, Pair<Long, InfoFromConfigFile>>();
+  private static final Map<String, Pair<Long, InfoFromConfigFile>> ourCache = new THashMap<>();
 
   private final @Nullable File myConfigFile;
   private final @Nullable String myMainClassPath;

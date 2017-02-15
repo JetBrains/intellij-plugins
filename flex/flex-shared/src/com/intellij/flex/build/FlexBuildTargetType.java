@@ -33,7 +33,7 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
 
   @NotNull
   public List<FlexBuildTarget> computeAllTargets(@NotNull final JpsModel model) {
-    final List<FlexBuildTarget> result = new ArrayList<FlexBuildTarget>();
+    final List<FlexBuildTarget> result = new ArrayList<>();
 
     final JpsProject project = model.getProject();
 

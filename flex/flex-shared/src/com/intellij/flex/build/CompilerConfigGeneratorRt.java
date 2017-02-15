@@ -284,7 +284,7 @@ public class CompilerConfigGeneratorRt {
       addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, mySdk.getHomePath() + "/frameworks/locale/{locale}");
     }
 
-    final Map<String, String> libNameToRslInfo = new THashMap<String, String>();
+    final Map<String, String> libNameToRslInfo = new THashMap<>();
 
     for (final String swcUrl : mySdk.getParent().getRootUrls(JpsOrderRootType.COMPILED)) {
       final String swcPath = JpsPathUtil.urlToPath(swcUrl);
@@ -477,8 +477,8 @@ public class CompilerConfigGeneratorRt {
     locales.addAll(FlexCommonUtils.getOptionValues(myModuleLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
     locales.addAll(FlexCommonUtils.getOptionValues(myBC.getCompilerOptions().getAdditionalOptions(), "locale", "compiler.locale"));
 
-    final Set<String> sourcePathsWithLocaleToken = new THashSet<String>(); // Set - to avoid duplication of paths like "locale/{locale}"
-    final List<String> sourcePathsWithoutLocaleToken = new LinkedList<String>();
+    final Set<String> sourcePathsWithLocaleToken = new THashSet<>(); // Set - to avoid duplication of paths like "locale/{locale}"
+    final List<String> sourcePathsWithoutLocaleToken = new LinkedList<>();
 
     for (JpsModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.SOURCE)) {
       final String srcRootPath = JpsPathUtil.urlToPath(srcRoot.getUrl());
@@ -546,7 +546,7 @@ public class CompilerConfigGeneratorRt {
   }
 
   private void addOtherOptions(final Element rootElement) {
-    final Map<String, String> options = new THashMap<String, String>(myProjectLevelCompilerOptions.getAllOptions());
+    final Map<String, String> options = new THashMap<>(myProjectLevelCompilerOptions.getAllOptions());
     options.putAll(myModuleLevelCompilerOptions.getAllOptions());
     options.putAll(myBC.getCompilerOptions().getAllOptions());
 
@@ -616,7 +616,7 @@ public class CompilerConfigGeneratorRt {
     final JpsCompilerExcludes excludes =
       JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(myModule.getProject()).getCompilerExcludes();
 
-    final Map<String, String> filePathToPathInSwc = new THashMap<String, String>();
+    final Map<String, String> filePathToPathInSwc = new THashMap<>();
 
     for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
       final File fileOrDir = new File(path);
@@ -776,7 +776,7 @@ public class CompilerConfigGeneratorRt {
   private void addLibClasses(final Element rootElement) throws IOException {
     final JpsCompilerExcludes excludes =
       JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(myModule.getProject()).getCompilerExcludes();
-    final Ref<Boolean> noClasses = new Ref<Boolean>(true);
+    final Ref<Boolean> noClasses = new Ref<>(true);
 
     for (JpsTypedModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.SOURCE)) {
       final File srcFolder = JpsPathUtil.urlToFile(srcRoot.getUrl());
@@ -832,7 +832,7 @@ public class CompilerConfigGeneratorRt {
    * The difference from FileUtil.processFilesRecursively() is that if processor returns false children processing is cancelled, but overall processing doesn't stop
    */
   private static boolean processFilesRecursively(@NotNull File root, @NotNull Processor<File> processor) {
-    final LinkedList<File> queue = new LinkedList<File>();
+    final LinkedList<File> queue = new LinkedList<>();
     queue.add(root);
     while (!queue.isEmpty()) {
       final File file = queue.removeFirst();

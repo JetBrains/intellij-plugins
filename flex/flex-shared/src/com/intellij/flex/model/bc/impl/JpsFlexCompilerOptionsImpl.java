@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOptionsImpl> implements JpsFlexCompilerOptions {
 
-  private @NotNull final Map<String, String> myOptions = new THashMap<String, String>();
+  private @NotNull final Map<String, String> myOptions = new THashMap<>();
   private @NotNull ResourceFilesMode myResourceFilesMode = ResourceFilesMode.All;
   private @NotNull String myFilesToIncludeInSWC = "";
   private @NotNull String myAdditionalConfigFilePath = "";
@@ -133,7 +133,7 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
   public static class State {
     @Property(surroundWithTag = false)
     @MapAnnotation(surroundKeyWithTag = false, surroundValueWithTag = false)
-    public Map<String, String> options = new THashMap<String, String>();
+    public Map<String, String> options = new THashMap<>();
     public ResourceFilesMode resourceFilesMode = ResourceFilesMode.All;
     public String filesToIncludeInSWC = "";
     public String additionalConfigFilePath = "";

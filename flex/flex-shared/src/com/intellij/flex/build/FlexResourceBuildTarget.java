@@ -57,7 +57,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
                                                           final ModuleExcludeIndex index,
                                                           final IgnoredFileIndex ignoredFileIndex,
                                                           final BuildDataPaths dataPaths) {
-    final List<BuildRootDescriptor> result = new ArrayList<BuildRootDescriptor>();
+    final List<BuildRootDescriptor> result = new ArrayList<>();
 
     final JavaSourceRootType rootType = getTargetType() == FlexResourceBuildTargetType.PRODUCTION ? JavaSourceRootType.SOURCE
                                                                                                   : JavaSourceRootType.TEST_SOURCE;
@@ -99,7 +99,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
       return outputDir == null ? Collections.<File>emptyList() : Collections.singletonList(outputDir);
     }
 
-    final Set<File> result = new THashSet<File>(FileUtil.FILE_HASHING_STRATEGY);
+    final Set<File> result = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
 
     for (JpsFlexBuildConfiguration bc : getModule().getProperties().getBuildConfigurations()) {
       if (FlexCommonUtils.canHaveResourceFiles(bc.getNature())) {

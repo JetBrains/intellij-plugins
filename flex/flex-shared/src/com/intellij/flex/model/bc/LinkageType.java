@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class LinkageType {
-  private static final Collection<LinkageType> all = new ArrayList<LinkageType>();
+  private static final Collection<LinkageType> all = new ArrayList<>();
 
   public static final LinkageType Default = new LinkageType("Default", "Default", "");
   public static final LinkageType Merged = new LinkageType("Merged", "Merged into code", "Merged");

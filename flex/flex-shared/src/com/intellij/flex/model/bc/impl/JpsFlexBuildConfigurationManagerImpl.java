@@ -143,7 +143,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
   public static class State {
     @Tag("configurations")
     @AbstractCollection(surroundWithTag = false, elementTag = "configuration")
-    public List<JpsFlexBCState> CONFIGURATIONS = new ArrayList<JpsFlexBCState>();
+    public List<JpsFlexBCState> CONFIGURATIONS = new ArrayList<>();
 
     @Property(surroundWithTag = false)
     public JpsFlexCompilerOptionsImpl.State MODULE_LEVEL_COMPILER_OPTIONS = new JpsFlexCompilerOptionsImpl.State();

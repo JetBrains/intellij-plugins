@@ -31,9 +31,9 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
 
   // todo  may be one untyped reference instead of 2 sdk references?
   private static final JpsSdkReferenceRole<JpsDummyElement> FLEX_SDK_REF_ROLE =
-    new JpsSdkReferenceRole<JpsDummyElement>(JpsFlexSdkType.INSTANCE);
+    new JpsSdkReferenceRole<>(JpsFlexSdkType.INSTANCE);
   private static final JpsSdkReferenceRole<JpsSimpleElement<JpsFlexmojosSdkProperties>> FLEXMOJOS_SDK_REF_ROLE =
-    new JpsSdkReferenceRole<JpsSimpleElement<JpsFlexmojosSdkProperties>>(JpsFlexmojosSdkType.INSTANCE);
+    new JpsSdkReferenceRole<>(JpsFlexmojosSdkType.INSTANCE);
 
   private static final JpsElementChildRoleBase<JpsFlexDependencyEntry> ENTRY_ROLE = JpsElementChildRoleBase.create("flex dependency entry");
   private static final JpsElementCollectionRole<JpsFlexDependencyEntry> ENTRIES_ROLE = JpsElementCollectionRole.create(ENTRY_ROLE);

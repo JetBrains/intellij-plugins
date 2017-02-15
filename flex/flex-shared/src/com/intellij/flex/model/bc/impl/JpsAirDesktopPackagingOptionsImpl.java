@@ -87,7 +87,7 @@ class JpsAirDesktopPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAi
     public String PACKAGE_FILE_NAME = "";
     @Tag("files-to-package")
     @AbstractCollection(surroundWithTag = false)
-    public List<JpsAirPackageEntryImpl.State> FILES_TO_PACKAGE = new ArrayList<JpsAirPackageEntryImpl.State>();
+    public List<JpsAirPackageEntryImpl.State> FILES_TO_PACKAGE = new ArrayList<>();
     @Property(surroundWithTag = false)
     public JpsAirSigningOptionsImpl.State SIGNING_OPTIONS = new JpsAirSigningOptionsImpl.State();
   }

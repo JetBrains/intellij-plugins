@@ -83,7 +83,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
                     @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexBuildTarget> holder,
                     @NotNull final BuildOutputConsumer outputConsumer,
                     @NotNull final CompileContext context) throws ProjectBuildException, IOException {
-    final Collection<String> dirtyFilePaths = new ArrayList<String>();
+    final Collection<String> dirtyFilePaths = new ArrayList<>();
 
     holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexBuildTarget>() {
       @Override
@@ -193,7 +193,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
   private static List<JpsFlexBuildConfiguration> getAllBCsToCompile(final JpsFlexBuildConfiguration bc) {
     final List<JpsFlexBuildConfiguration> result =
-      new ArrayList<JpsFlexBuildConfiguration>(1 + bc.getRLMs().size() + bc.getCssFilesToCompile().size());
+      new ArrayList<>(1 + bc.getRLMs().size() + bc.getCssFilesToCompile().size());
 
     result.add(bc);
 
@@ -329,7 +329,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
   private static List<File> createConfigFiles(final JpsFlexBuildConfiguration bc,
                                               final ProjectDescriptor projectDescriptor) throws IOException {
-    final ArrayList<File> configFiles = new ArrayList<File>(2);
+    final ArrayList<File> configFiles = new ArrayList<>(2);
     configFiles.add(CompilerConfigGeneratorRt.getOrCreateConfigFile(bc, projectDescriptor));
 
     final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
@@ -457,7 +457,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
   private static List<String> buildCommand(final List<String> compilerCommand,
                                            final List<File> configFiles,
                                            final JpsFlexBuildConfiguration bc) {
-    final List<String> command = new ArrayList<String>(compilerCommand);
+    final List<String> command = new ArrayList<>(compilerCommand);
     for (File configFile : configFiles) {
       command.add("-load-config=" + configFile.getPath());
     }

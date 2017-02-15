@@ -27,7 +27,7 @@ public class JpsFlexmojosSdkType extends JpsSdkType<JpsSimpleElement<JpsFlexmojo
     return new JpsSdkPropertiesSerializer<JpsSimpleElement<JpsFlexmojosSdkProperties>>(ID, INSTANCE) {
       @NotNull
       public JpsSimpleElement<JpsFlexmojosSdkProperties> loadProperties(@Nullable final Element propertiesElement) {
-        final Collection<String> flexCompilerClasspath = new ArrayList<String>();
+        final Collection<String> flexCompilerClasspath = new ArrayList<>();
         String adlPath = "";
         String airRuntimePath = "";
 

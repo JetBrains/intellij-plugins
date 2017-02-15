@@ -80,7 +80,7 @@ public class AirDescriptorOptions {
   }
 
   private String replaceMacros(final String descriptorText) {
-    final Map<String, String> replacementMap = new THashMap<String, String>();
+    final Map<String, String> replacementMap = new THashMap<>();
 
     replacementMap.put("${air_version}", AIR_VERSION);
     replacementMap.put("${app_id}", APP_ID);

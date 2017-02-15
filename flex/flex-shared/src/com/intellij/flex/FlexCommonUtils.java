@@ -98,7 +98,7 @@ public class FlexCommonUtils {
   public static final boolean KEEP_TEMP_FILES = Boolean.parseBoolean(System.getProperty("idea.keep.flex.temporary.files"));
   public static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[0-9]+\\.[0-9]+(\\.[0-9]+)*");
 
-  private static final Map<Pair<String, Long>, String> ourAdtJarPathAndTimestampToVersion = new THashMap<Pair<String, Long>, String>();
+  private static final Map<Pair<String, Long>, String> ourAdtJarPathAndTimestampToVersion = new THashMap<>();
 
   public static boolean isSourceFile(final String fileName) {
     final String ext = FileUtilRt.getExtension(fileName);
@@ -216,7 +216,7 @@ public class FlexCommonUtils {
       return Collections.emptyList();
     }
 
-    final List<String> result = new LinkedList<String>();
+    final List<String> result = new LinkedList<>();
 
     for (CommandLineTokenizer tokenizer = new CommandLineTokenizer(commandLine); tokenizer.hasMoreTokens(); ) {
       final String token = tokenizer.nextToken();
@@ -663,7 +663,7 @@ public class FlexCommonUtils {
     }
     catch (IOException ignore) {/*unlucky*/}
 
-    final Collection<String> result = new ArrayList<String>(2);
+    final Collection<String> result = new ArrayList<>(2);
 
     if (flexUnit4) {
       result.add("unittestingsupport_flexunit_4.swc");
@@ -824,7 +824,7 @@ public class FlexCommonUtils {
 
     final String d32 = getD32IfNeed(customJavaHomeSet, javaHome);
 
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
 
     result.add(javaExecutable);
     if (StringUtil.isNotEmpty(d32)) result.add(d32);

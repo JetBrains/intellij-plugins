@@ -72,7 +72,7 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
             }
           }
           else {
-            final Collection<String> targetPaths = new ArrayList<String>();
+            final Collection<String> targetPaths = new ArrayList<>();
 
             for (JpsFlexBuildConfiguration bc : target.getModule().getProperties().getBuildConfigurations()) {
               if (bc.isSkipCompile() || !FlexCommonUtils.canHaveResourceFiles(bc.getNature()) ||

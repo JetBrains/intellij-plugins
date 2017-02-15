@@ -20,7 +20,7 @@ public class RslUtil {
   private static final Logger LOG = Logger.getInstance(RslUtil.class.getName());
 
   private static final Map<String, Pair<Long, Map<String, List<String>>>> ourConfigFilePathToTimestampAndSwcPathToRslUrls =
-    new THashMap<String, Pair<Long, Map<String, List<String>>>>();
+    new THashMap<>();
 
   public static boolean canBeRsl(final String sdkHome, final String swcPath) {
     final List<String> rslUrls = getRslUrls(sdkHome, swcPath);
@@ -56,14 +56,14 @@ public class RslUtil {
     if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
       ourConfigFilePathToTimestampAndSwcPathToRslUrls.remove(configFilePath);
 
-      final Map<String, List<String>> swcPathToRslMap = new THashMap<String, List<String>>();
+      final Map<String, List<String>> swcPathToRslMap = new THashMap<>();
       try {
         final Element rootElement = JDOMUtil.load(configFile);
         for (Element rslElement : rootElement.getChildren("runtime-shared-library-path",
                                                           rootElement.getNamespace())) {
           final Element swcPathElement = rslElement.getChild("path-element", rslElement.getNamespace());
           if (swcPathElement != null) {
-            final List<String> rslUrls = new ArrayList<String>(2);
+            final List<String> rslUrls = new ArrayList<>(2);
             for (Element rslUrlElement : rslElement.getChildren("rsl-url", rootElement.getNamespace())) {
               final String rslUrl = rslUrlElement.getTextNormalize();
               rslUrls.add(rslUrl);

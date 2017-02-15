@@ -185,7 +185,7 @@ public class FlexBuilderUtils {
 
   private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer,
                                       final String mainClassPath) {
-    final Map<String, String> replacementMap = new THashMap<String, String>();
+    final Map<String, String> replacementMap = new THashMap<>();
 
     replacementMap.put(FlexCommonUtils.SWF_MACRO, outputFileName);
     replacementMap.put(FlexCommonUtils.TITLE_MACRO, outputFileName);
@@ -251,7 +251,7 @@ public class FlexBuilderUtils {
   private static Map<String, String> getAttributesMap(final String metadata) {
     if (metadata == null) return Collections.emptyMap();
 
-    final THashMap<String, String> result = new THashMap<String, String>();
+    final THashMap<String, String> result = new THashMap<>();
 
     final int beginIndex = metadata.indexOf('(');
     final int endIndex = metadata.lastIndexOf(')');
@@ -333,7 +333,7 @@ public class FlexBuilderUtils {
   }
 
   private static Collection<File> getANEFiles(final JpsFlexBuildConfiguration bc) {
-    final Collection<File> result = new ArrayList<File>();
+    final Collection<File> result = new ArrayList<>();
 
     for (JpsFlexDependencyEntry entry : bc.getDependencies().getEntries()) {
       if (entry instanceof JpsLibraryDependencyEntry) {
@@ -351,7 +351,7 @@ public class FlexBuilderUtils {
   }
 
   private static String[] getAirExtensionIDs(final JpsFlexBuildConfiguration bc) {
-    final Collection<String> result = new ArrayList<String>();
+    final Collection<String> result = new ArrayList<>();
 
     for (File aneFile : getANEFiles(bc)) {
       final String extensionId = getExtensionId(aneFile);
