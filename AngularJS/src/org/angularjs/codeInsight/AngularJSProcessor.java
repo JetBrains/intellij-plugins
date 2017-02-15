@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -153,6 +154,12 @@ public class AngularJSProcessor {
         public void visitJSDefinitionExpression(JSDefinitionExpression node) {
           myResult.add(node);
           super.visitJSDefinitionExpression(node);
+        }
+
+        @Override
+        public void visitJSVariable(JSVariable node) {
+          myResult.add(node);
+          super.visitJSVariable(node);
         }
 
         @Override

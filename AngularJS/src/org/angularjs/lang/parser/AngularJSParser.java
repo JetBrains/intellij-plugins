@@ -237,7 +237,9 @@ public class AngularJSParser
     public boolean parseInExpression() {
       final PsiBuilder.Marker expr = builder.mark();
       if (isIdentifierToken(builder.getTokenType())) {
-        parseExplicitIdentifier();
+        PsiBuilder.Marker statement = builder.mark();
+        buildTokenElement(JSStubElementTypes.VARIABLE);
+        statement.done(JSStubElementTypes.VAR_STATEMENT);
       } else {
         final PsiBuilder.Marker keyValue = builder.mark();
         parseKeyValue();
@@ -261,14 +263,22 @@ public class AngularJSParser
     private void parseKeyValue() {
       builder.advanceLexer();
       final PsiBuilder.Marker comma = builder.mark();
-      parseExplicitIdentifierWithError();
+      if (isIdentifierToken(builder.getTokenType())) {
+        buildTokenElement(JSStubElementTypes.VARIABLE);
+      } else {
+        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+      }
       if (builder.getTokenType() == JSTokenTypes.COMMA) {
         builder.advanceLexer();
       } else {
         builder.error(JSBundle.message("javascript.parser.message.expected.comma"));
       }
-      parseExplicitIdentifierWithError();
-      comma.done(JSElementTypes.COMMA_EXPRESSION);
+      if (isIdentifierToken(builder.getTokenType())) {
+        buildTokenElement(JSStubElementTypes.VARIABLE);
+      } else {
+        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+      }
+      comma.done(JSStubElementTypes.VAR_STATEMENT);
       if (builder.getTokenType() == JSTokenTypes.RPAR) {
         builder.advanceLexer();
       } else {

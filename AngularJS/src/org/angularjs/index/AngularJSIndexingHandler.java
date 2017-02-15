@@ -43,6 +43,7 @@ import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
+import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -561,7 +562,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                                           boolean hasSomeType) {
     if (!AngularIndexUtil.hasAngularJS(resolveResult.getProject())) return false;
 
-    if (resolveResult instanceof JSDefinitionExpression) {
+    if (resolveResult instanceof JSDefinitionExpression && resolveResult.getLanguage() instanceof AngularJSLanguage) {
       final PsiElement resolveParent = resolveResult.getParent();
       if (resolveParent instanceof AngularJSAsExpression) {
         final String name = resolveParent.getFirstChild().getText();
@@ -570,7 +571,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         evaluator.addType(type, resolveResult);
         return true;
       }
-      else if (resolveParent instanceof AngularJSRepeatExpression) {
+    }
+    if (resolveResult instanceof JSVariable && resolveResult.getLanguage() instanceof AngularJSLanguage) {
+      PsiElement resolveParent = resolveResult.getParent().getParent();
+      if (resolveParent instanceof AngularJSRepeatExpression) {
         if (calculateRepeatParameterType(evaluator, (AngularJSRepeatExpression)resolveParent)) {
           return true;
         }

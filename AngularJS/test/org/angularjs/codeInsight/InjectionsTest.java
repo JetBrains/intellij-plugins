@@ -75,7 +75,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgRepeatExplicitResolve() {
     myFixture.configureByFiles("ngRepeatExplicit.resolve.html", "angular.js");
-    checkVariableResolve("per<caret>son", "person", JSDefinitionExpression.class);
+    checkVariableResolve("per<caret>son", "person", JSVariable.class);
   }
 
   public void testInternalDefinitionResolve() {
@@ -85,12 +85,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgRepeatExplicitResolveInScript() {
     myFixture.configureByFiles("ngRepeatExplicitInScript.resolve.html", "angular.js");
-    checkVariableResolve("per<caret>son", "person", JSDefinitionExpression.class);
+    checkVariableResolve("per<caret>son", "person", JSVariable.class);
   }
 
   public void testNgRepeatExplicitResolveSameTag() {
     myFixture.configureByFiles("ngRepeatExplicitSameTag.resolve.html", "angular.js");
-    checkVariableResolve("per<caret>son", "person", JSDefinitionExpression.class);
+    checkVariableResolve("per<caret>son", "person", JSVariable.class);
   }
 
   public void testNgRepeatExplicitKeyCompletion() {
@@ -99,7 +99,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgRepeatExplicitKeyResolve() {
     myFixture.configureByFiles("ngRepeatExplicitHashKey.resolve.html", "angular.js");
-    checkVariableResolve("ke<caret>y", "key", JSDefinitionExpression.class);
+    checkVariableResolve("ke<caret>y", "key", JSVariable.class);
   }
 
   public void testNgRepeatExplicitValueCompletion() {
@@ -108,7 +108,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgRepeatExplicitValueResolve() {
     myFixture.configureByFiles("ngRepeatExplicitHashValue.resolve.html", "angular.js");
-    checkVariableResolve("val<caret>ue", "value", JSDefinitionExpression.class);
+    checkVariableResolve("val<caret>ue", "value", JSVariable.class);
   }
 
   public void testNgControllerAliasCompletion() {

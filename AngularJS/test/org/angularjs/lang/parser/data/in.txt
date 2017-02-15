@@ -1,8 +1,8 @@
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSDefinitionExpression
-        JSReferenceExpression
+      JSVarStatement
+        JSVariable
           PsiElement(JS:IDENTIFIER)('name')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
@@ -13,8 +13,8 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSDefinitionExpression
-        JSReferenceExpression
+      JSVarStatement
+        JSVariable
           PsiElement(JS:IDENTIFIER)('name')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
