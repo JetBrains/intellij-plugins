@@ -103,11 +103,7 @@ public class JpsBuiltInFlexCompilerHandler {
     processBuilder.redirectErrorStream(true);
     processBuilder.directory(new File(FlexCommonUtils.getFlexCompilerWorkDirPath(myProject)));
 
-    final String plainCommand = StringUtil.join(processBuilder.command(), new Function<String, String>() {
-      public String fun(final String s) {
-        return s.contains(" ") ? "\"" + s + "\"" : s;
-      }
-    }, " ");
+    final String plainCommand = StringUtil.join(processBuilder.command(), s -> s.contains(" ") ? "\"" + s + "\"" : s, " ");
     context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.INFO, "Starting Flex compiler:\n" + plainCommand));
 
     final Process process = processBuilder.start();
@@ -115,66 +111,62 @@ public class JpsBuiltInFlexCompilerHandler {
   }
 
   private void readInputStreamUntilConnected(final Process process, final CompileContext context, final String compilerName) {
-    SharedThreadPool.getInstance().executeOnPooledThread(new Runnable() {
-      public void run() {
-        final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(process.getInputStream());
+    SharedThreadPool.getInstance().executeOnPooledThread(() -> {
+      final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(process.getInputStream());
 
+      try {
+        char[] buf = new char[1024];
+        int read;
+        while ((read = reader.read(buf, 0, buf.length)) >= 0) {
+          final String output = new String(buf, 0, read);
+          if (output.startsWith(CONNECTION_SUCCESSFUL)) {
+            break;
+          }
+          else {
+            closeSocket();
+            context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, output));
+          }
+        }
+      }
+      catch (IOException e) {
+        closeSocket();
+        context.processMessage(
+          new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, "Failed to start Flex compiler: " + e.toString()));
+      }
+      finally {
         try {
-          char[] buf = new char[1024];
-          int read;
-          while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-            final String output = new String(buf, 0, read);
-            if (output.startsWith(CONNECTION_SUCCESSFUL)) {
-              break;
-            }
-            else {
-              closeSocket();
-              context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, output));
-            }
-          }
+          reader.close();
         }
-        catch (IOException e) {
-          closeSocket();
-          context.processMessage(
-            new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, "Failed to start Flex compiler: " + e.toString()));
-        }
-        finally {
-          try {
-            reader.close();
-          }
-          catch (IOException e) {/*ignore*/}
-        }
+        catch (IOException e) {/*ignore*/}
       }
     });
   }
 
   private void scheduleInputReading() {
-    SharedThreadPool.getInstance().executeOnPooledThread(new Runnable() {
-      public void run() {
-        final StringBuilder buffer = new StringBuilder();
-        while (true) {
-          final DataInputStream dataInputStream = myDataInputStream;
-          if (dataInputStream != null) {
-            try {
-              buffer.append(dataInputStream.readUTF());
+    SharedThreadPool.getInstance().executeOnPooledThread(() -> {
+      final StringBuilder buffer = new StringBuilder();
+      while (true) {
+        final DataInputStream dataInputStream = myDataInputStream;
+        if (dataInputStream != null) {
+          try {
+            buffer.append(dataInputStream.readUTF());
 
-              int index;
-              while ((index = buffer.indexOf("\n")) > -1) {
-                final String line = buffer.substring(0, index);
-                buffer.delete(0, index + 1);
-                handleInputLine(line);
-              }
-            }
-            catch (IOException e) {
-              if (dataInputStream == myDataInputStream) {
-                stopCompilerProcess();
-              }
-              break;
+            int index;
+            while ((index = buffer.indexOf("\n")) > -1) {
+              final String line = buffer.substring(0, index);
+              buffer.delete(0, index + 1);
+              handleInputLine(line);
             }
           }
-          else {
+          catch (IOException e) {
+            if (dataInputStream == myDataInputStream) {
+              stopCompilerProcess();
+            }
             break;
           }
+        }
+        else {
+          break;
         }
       }
     });

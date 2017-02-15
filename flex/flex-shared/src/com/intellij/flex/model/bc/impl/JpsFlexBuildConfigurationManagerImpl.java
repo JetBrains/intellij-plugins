@@ -95,12 +95,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
     }
     else {
       myActiveConfiguration =
-        activeBCName != null ? ContainerUtil.find(bcs, new Condition<JpsFlexBuildConfiguration>() {
-          @Override
-          public boolean value(JpsFlexBuildConfiguration bc) {
-            return bc.getName().equals(activeBCName);
-          }
-        }) : null;
+        activeBCName != null ? ContainerUtil.find(bcs, bc -> bc.getName().equals(activeBCName)) : null;
 
       if (myActiveConfiguration == null) {
         myActiveConfiguration = bcs.get(0);

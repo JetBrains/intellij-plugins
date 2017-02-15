@@ -194,15 +194,11 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
 
   public void setRLMs(@NotNull Collection<RLMInfo> rlms) {
     if (rlms.isEmpty()) myRLMs = "";
-    myRLMs = StringUtil.join(rlms, new Function<RLMInfo, String>() {
-      public String fun(final RLMInfo info) {
-        return info.MAIN_CLASS +
-               CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
-               info.OUTPUT_FILE +
-               CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
-               info.OPTIMIZE;
-      }
-    }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    myRLMs = StringUtil.join(rlms, info -> info.MAIN_CLASS +
+                                       CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+                                       info.OUTPUT_FILE +
+                                       CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+                                       info.OPTIMIZE, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @Override

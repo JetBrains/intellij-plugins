@@ -409,24 +409,15 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
     final List<String> mxmlcOrCompc = Collections.singletonList(bc.getOutputType() == OutputType.Library ? "compc" : "mxmlc");
     final List<String> command = buildCommand(mxmlcOrCompc, configFiles, bc);
-    final String plainCommand = StringUtil.join(command, new Function<String, String>() {
-      @Override
-      public String fun(final String s) {
-        return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
-      }
-    }, " ");
+    final String plainCommand = StringUtil.join(command,
+                                                s -> s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s, " ");
 
     final Semaphore semaphore = new Semaphore();
     semaphore.down();
 
     context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.INFO, plainCommand));
 
-    final BuiltInCompilerListener listener = new BuiltInCompilerListener(context, compilerName, new Runnable() {
-      @Override
-      public void run() {
-        semaphore.up();
-      }
-    });
+    final BuiltInCompilerListener listener = new BuiltInCompilerListener(context, compilerName, () -> semaphore.up());
 
     builtInCompilerHandler.sendCompilationCommand(plainCommand, listener);
 

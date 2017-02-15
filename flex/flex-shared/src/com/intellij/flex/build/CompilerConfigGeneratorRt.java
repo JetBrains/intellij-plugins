@@ -265,15 +265,12 @@ public class CompilerConfigGeneratorRt {
 
   private void addNamespaces(final Element rootElement) {
     final StringBuilder namespaceBuilder = new StringBuilder();
-    FlexCommonUtils.processStandardNamespaces(myBC, new PairConsumer<String, String>() {
-      @Override
-      public void consume(final String namespace, final String relativePath) {
-        if (namespaceBuilder.length() > 0) {
-          namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-        }
-        namespaceBuilder.append(namespace).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
-          .append(CompilerOptionInfo.FLEX_SDK_MACRO + "/").append(relativePath);
+    FlexCommonUtils.processStandardNamespaces(myBC, (namespace, relativePath) -> {
+      if (namespaceBuilder.length() > 0) {
+        namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
       }
+      namespaceBuilder.append(namespace).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
+        .append(CompilerOptionInfo.FLEX_SDK_MACRO + "/").append(relativePath);
     });
 
     if (namespaceBuilder.length() == 0) return;
@@ -630,21 +627,19 @@ public class CompilerConfigGeneratorRt {
         StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
 
       if (fileOrDir.isDirectory()) {
-        processFilesRecursively(fileOrDir, new Processor<File>() {
-          public boolean process(final File file) {
-            if (myProjectDescriptor.getIgnoredFileIndex().isIgnored(file.getName())) return false;
+        processFilesRecursively(fileOrDir, file -> {
+          if (myProjectDescriptor.getIgnoredFileIndex().isIgnored(file.getName())) return false;
 
-            if (!file.isDirectory() &&
-                !FlexCommonUtils.isSourceFile(file.getName()) &&
-                !excludes.isExcluded(file)) {
-              final String relativePath = FileUtil.getRelativePath(fileOrDir, file);
-              assert relativePath != null;
-              final String pathInSwc = baseRelativePath.isEmpty() ? relativePath
-                                                                  : baseRelativePath + "/" + relativePath;
-              filePathToPathInSwc.put(file.getPath(), pathInSwc);
-            }
-            return true;
+          if (!file.isDirectory() &&
+              !FlexCommonUtils.isSourceFile(file.getName()) &&
+              !excludes.isExcluded(file)) {
+            final String relativePath = FileUtil.getRelativePath(fileOrDir, file);
+            assert relativePath != null;
+            final String pathInSwc = baseRelativePath.isEmpty() ? relativePath
+                                                                : baseRelativePath + "/" + relativePath;
+            filePathToPathInSwc.put(file.getPath(), pathInSwc);
           }
+          return true;
         });
       }
       else if (fileOrDir.isFile()) {
@@ -786,27 +781,25 @@ public class CompilerConfigGeneratorRt {
     for (JpsTypedModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.SOURCE)) {
       final File srcFolder = JpsPathUtil.urlToFile(srcRoot.getUrl());
       if (srcFolder.isDirectory()) {
-        processFilesRecursively(srcFolder, new Processor<File>() {
-          public boolean process(final File file) {
-            if (myProjectDescriptor.getIgnoredFileIndex().isIgnored(file.getName())) return false;
-            if (file.isDirectory()) return true;
-            if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
-            if (excludes.isExcluded(file)) return true;
+        processFilesRecursively(srcFolder, file -> {
+          if (myProjectDescriptor.getIgnoredFileIndex().isIgnored(file.getName())) return false;
+          if (file.isDirectory()) return true;
+          if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
+          if (excludes.isExcluded(file)) return true;
 
-            String packageRelativePath = FileUtil.getRelativePath(srcFolder, file.getParentFile());
-            assert packageRelativePath != null : srcFolder.getPath() + ": " + file.getPath();
-            if (packageRelativePath.equals(".")) packageRelativePath = "";
+          String packageRelativePath = FileUtil.getRelativePath(srcFolder, file.getParentFile());
+          assert packageRelativePath != null : srcFolder.getPath() + ": " + file.getPath();
+          if (packageRelativePath.equals(".")) packageRelativePath = "";
 
-            final String packageName = packageRelativePath.replace(File.separatorChar, '.');
-            final String qName = StringUtil.getQualifiedName(packageName, FileUtil.getNameWithoutExtension(file));
+          final String packageName = packageRelativePath.replace(File.separatorChar, '.');
+          final String qName = StringUtil.getQualifiedName(packageName, FileUtil.getNameWithoutExtension(file));
 
-            if (isSourceFileWithPublicDeclaration(file)) {
-              addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
-              noClasses.set(false);
-            }
-
-            return true;
+          if (isSourceFileWithPublicDeclaration(file)) {
+            addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
+            noClasses.set(false);
           }
+
+          return true;
         });
       }
     }

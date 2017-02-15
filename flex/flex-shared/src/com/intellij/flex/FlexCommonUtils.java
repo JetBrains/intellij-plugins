@@ -362,11 +362,7 @@ public class FlexCommonUtils {
   public static String[] getTargetPlayers(final String sdkHome) {
     final File playerFolder = new File(sdkHome + "/frameworks/libs/player");
     if (playerFolder.isDirectory()) {
-      return playerFolder.list(new FilenameFilter() {
-        public boolean accept(final File dir, final String name) {
-          return new File(playerFolder, name + "/playerglobal.swc").isFile();
-        }
-      });
+      return playerFolder.list((dir, name) -> new File(playerFolder, name + "/playerglobal.swc").isFile());
     }
 
     return ArrayUtil.EMPTY_STRING_ARRAY;
@@ -1214,10 +1210,8 @@ public class FlexCommonUtils {
 
     if (!dir.isDirectory()) return;
 
-    final File[] filesToDelete = dir.listFiles(new FilenameFilter() {
-      public boolean accept(final File file, final String name) {
-        return name.startsWith("idea-" + hash1) && name.endsWith(".xml"); // PlatformUtils.getPlatformPrefix().toLowerCase()
-      }
+    final File[] filesToDelete = dir.listFiles((file, name) -> {
+      return name.startsWith("idea-" + hash1) && name.endsWith(".xml"); // PlatformUtils.getPlatformPrefix().toLowerCase()
     });
 
     if (filesToDelete != null) {
