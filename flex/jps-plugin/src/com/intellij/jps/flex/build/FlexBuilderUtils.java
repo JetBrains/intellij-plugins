@@ -218,8 +218,7 @@ public class FlexBuilderUtils {
           swfMetadata = getSwfMetadata(FileUtil.loadFile(mainClassFile));
         }
       }
-      catch (JDOMException ignore) {/*unlucky*/}
-      catch (IOException ignore) {/*unlucky*/}
+      catch (JDOMException | IOException ignore) {/*unlucky*/}
     }
 
     final Map<String, String> attributesMap = getAttributesMap(swfMetadata);

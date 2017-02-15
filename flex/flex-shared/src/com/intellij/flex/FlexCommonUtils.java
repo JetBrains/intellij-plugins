@@ -339,8 +339,7 @@ public class FlexCommonUtils {
 
       return element.getTextNormalize();
     }
-    catch (JDOMException ignore) {/**/}
-    catch (IOException ignore) {/**/}
+    catch (JDOMException | IOException ignore) {/**/}
     return null;
   }
 
@@ -1038,8 +1037,7 @@ public class FlexCommonUtils {
         return namespace.getURI().substring(AIR_NAMESPACE_BASE.length());
       }
     }
-    catch (JDOMException e) {/*unlucky*/}
-    catch (IOException e) {/*unlucky*/}
+    catch (JDOMException | IOException e) {/*unlucky*/}
 
     return null;
   }

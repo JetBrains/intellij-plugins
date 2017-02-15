@@ -144,8 +144,7 @@ public class InfoFromConfigFile {
 
         targetPlayer = rootElement.getChildTextNormalize("target-player", rootElement.getNamespace());
       }
-      catch (IOException ignore) {/*ignore*/ }
-      catch (JDOMException ignore) {/*ignore*/}
+      catch (IOException | JDOMException ignore) {/*ignore*/ }
 
       final String outputFileName = outputPath == null ? null : PathUtilRt.getFileName(outputPath);
       final String outputFolderPath = outputPath == null ? null : PathUtilRt.getParentPath(outputPath);

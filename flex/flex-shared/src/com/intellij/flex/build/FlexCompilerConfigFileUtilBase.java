@@ -59,10 +59,7 @@ public class FlexCompilerConfigFileUtilBase {
     try {
       rootElement = JDOMUtil.load(additionalConfigFile);
     }
-    catch (JDOMException e) {
-      return generatedConfigText;
-    }
-    catch (IOException e) {
+    catch (JDOMException | IOException e) {
       return generatedConfigText;
     }
 
@@ -79,10 +76,7 @@ public class FlexCompilerConfigFileUtilBase {
 
       appendDocument(rootElement, otherRootElement);
     }
-    catch (IOException e) {
-      assert false : e.getMessage() + "\n" + generatedConfigText;
-    }
-    catch (JDOMException e) {
+    catch (IOException | JDOMException e) {
       assert false : e.getMessage() + "\n" + generatedConfigText;
     }
 

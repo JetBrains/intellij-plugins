@@ -73,10 +73,7 @@ public class RslUtil {
           }
         }
       }
-      catch (IOException e) {
-        LOG.warn(configFilePath, e);
-      }
-      catch (JDOMException e) {
+      catch (IOException | JDOMException e) {
         LOG.warn(configFilePath, e);
       }
 
