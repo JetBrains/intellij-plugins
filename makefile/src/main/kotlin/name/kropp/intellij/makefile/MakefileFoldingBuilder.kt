@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.folding.FoldingBuilderEx
 import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -13,7 +14,7 @@ import name.kropp.intellij.makefile.psi.MakefileRule
 import name.kropp.intellij.makefile.psi.MakefileTypes
 import name.kropp.intellij.makefile.psi.MakefileVariableAssignment
 
-class MakefileFoldingBuilder : FoldingBuilderEx() {
+class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
   override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean) =
       PsiTreeUtil.findChildrenOfAnyType(root, MakefileRule::class.java, MakefileVariableAssignment::class.java, MakefileDefine::class.java)
       .mapNotNull {
