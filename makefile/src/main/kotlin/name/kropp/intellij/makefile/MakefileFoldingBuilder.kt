@@ -7,11 +7,9 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import name.kropp.intellij.makefile.psi.MakefileDefine
 import name.kropp.intellij.makefile.psi.MakefileRule
-import name.kropp.intellij.makefile.psi.MakefileTypes
 import name.kropp.intellij.makefile.psi.MakefileVariableAssignment
 
 class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
@@ -41,13 +39,7 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
       }?.trim() ?: ""
     }
 
-    fun PsiElement.trimmedTextRange(): TextRange {
-      var last = lastChild
-      while (last != null && (last is PsiWhiteSpace || last.node.elementType == MakefileTypes.EOL || last.textRange.isEmpty)) {
-        last = last.prevSibling
-      }
-      return TextRange.create(textRange.startOffset, last.textRange.endOffset )
-    }
+    fun PsiElement.trimmedTextRange() = TextRange.create(textRange.startOffset, textRange.startOffset + text.indexOfLast { !it.isWhitespace() } + 1)
   }
 
   class MakefileRuleFoldingDescriptor(private val rule: MakefileRule) : FoldingDescriptor(rule, rule.trimmedTextRange()) {
