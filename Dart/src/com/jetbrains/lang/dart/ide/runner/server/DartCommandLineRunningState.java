@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Consumer;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.coverage.DartCoverageProgramRunner;
@@ -34,16 +35,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class DartCommandLineRunningState extends CommandLineState {
 
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
   private int myObservatoryPort = -1;
-  private OpenDartObservatoryUrlAction myOpenObservatoryAction;
+  private Collection<Consumer<String>> myObservatoryUrlConsumers = new ArrayList<>();
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);
@@ -70,6 +68,10 @@ public class DartCommandLineRunningState extends CommandLineState {
     catch (RuntimeConfigurationError e) { /* can't happen because already checked */}
   }
 
+  public void addObservatoryUrlConsumer(@NotNull final Consumer<String> consumer) {
+    myObservatoryUrlConsumers.add(consumer);
+  }
+
   @NotNull
   @Override
   protected AnAction[] createActions(final ConsoleView console, final ProcessHandler processHandler, final Executor executor) {
@@ -81,8 +83,12 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   protected void addObservatoryActions(List<AnAction> actions, final ProcessHandler processHandler) {
     actions.add(new Separator());
-    myOpenObservatoryAction = new OpenDartObservatoryUrlAction(null, () -> !processHandler.isProcessTerminated());
-    actions.add(myOpenObservatoryAction);
+
+    final OpenDartObservatoryUrlAction openObservatoryAction =
+      new OpenDartObservatoryUrlAction(null, () -> !processHandler.isProcessTerminated());
+    addObservatoryUrlConsumer(url -> openObservatoryAction.setUrl(url));
+
+    actions.add(openObservatoryAction);
   }
 
   @NotNull
@@ -109,9 +115,13 @@ public class DartCommandLineRunningState extends CommandLineState {
       @Override
       public void onTextAvailable(final ProcessEvent event, final Key outputType) {
         final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
-        if (event.getText().startsWith(prefix)) {
+        final String text = event.getText().trim();
+        if (text.startsWith(prefix)) {
           processHandler.removeProcessListener(this);
-          myOpenObservatoryAction.setUrl("http://" + event.getText().substring(prefix.length()));
+          final String url = "http://" + text.substring(prefix.length());
+          for (Consumer<String> consumer : myObservatoryUrlConsumers) {
+            consumer.consume(url);
+          }
         }
       }
     });

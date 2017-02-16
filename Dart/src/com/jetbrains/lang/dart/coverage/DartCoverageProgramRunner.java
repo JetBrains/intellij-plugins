@@ -21,18 +21,17 @@ import com.intellij.coverage.CoverageRunnerData;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
+import com.intellij.execution.process.*;
 import com.intellij.execution.runners.DefaultProgramRunnerKt;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
@@ -66,9 +65,11 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
 
   @Nullable
   @Override
-  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
+  protected RunContentDescriptor doExecute(final @NotNull RunProfileState state,
+                                           final @NotNull ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)env.getRunProfile();
+
+    final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)env.getRunProfile();
 
     final DartSdk sdk = DartSdk.getDartSdk(runConfiguration.getProject());
     if (sdk == null) {
@@ -77,10 +78,7 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
 
     final String dartPubPath = DartSdkUtil.getPubPath(sdk);
 
-    DartCoverageEnabledConfiguration config = (DartCoverageEnabledConfiguration)CoverageEnabledConfiguration.getOrCreate(runConfiguration);
-    String coverageFilePath = config.getCoverageFilePath();
-
-    RunContentDescriptor result = DefaultProgramRunnerKt.executeState(state, env, this);
+    final RunContentDescriptor result = DefaultProgramRunnerKt.executeState(state, env, this);
     if (result == null) {
       return null;
     }
@@ -89,23 +87,61 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
       throw new ExecutionException("Cannot activate pub package 'coverage'.");
     }
 
-    GeneralCommandLine cmdline = new GeneralCommandLine().withExePath(dartPubPath)
-      .withParameters("global", "run", "coverage:collect_coverage", "-p",
-                      Integer.toString(((DartCommandLineRunningState)state).getObservatoryPort()), "-o", coverageFilePath, "-r", "-w");
-    ProcessHandler coverageProcess = new OSProcessHandler(cmdline);
-    coverageProcess.startNotify();
-    config.setCoverageProcess(coverageProcess);
+    final ProcessHandler dartAppProcessHandler = result.getProcessHandler();
 
-    ProcessHandler resultProcessHandler = result.getProcessHandler();
-    if (resultProcessHandler != null) {
-      CoverageHelper.attachToProcess(runConfiguration, resultProcessHandler, env.getRunnerSettings());
+    if (dartAppProcessHandler != null) {
+      ((DartCommandLineRunningState)state)
+        .addObservatoryUrlConsumer(observatoryUrl -> startCollectingCoverage(env, dartAppProcessHandler, observatoryUrl));
     }
 
     return result;
   }
 
+  private static void startCollectingCoverage(@NotNull final ExecutionEnvironment env,
+                                              @NotNull final ProcessHandler dartAppProcessHandler,
+                                              @NotNull final String observatoryUrl) {
+    final DartCommandLineRunConfiguration dartRC = (DartCommandLineRunConfiguration)env.getRunProfile();
+
+    final DartCoverageEnabledConfiguration coverageConfiguration =
+      (DartCoverageEnabledConfiguration)CoverageEnabledConfiguration.getOrCreate(dartRC);
+    final String coverageFilePath = coverageConfiguration.getCoverageFilePath();
+
+    final DartSdk sdk = DartSdk.getDartSdk(env.getProject());
+    LOG.assertTrue(sdk != null);
+
+    final GeneralCommandLine cmdline = new GeneralCommandLine().withExePath(DartSdkUtil.getPubPath(sdk))
+      .withParameters("global", "run", "coverage:collect_coverage",
+                      "--uri", observatoryUrl,
+                      "--out", coverageFilePath,
+                      "--resume-isolates",
+                      "--wait-paused");
+
+    try {
+      final ProcessHandler coverageProcess = new OSProcessHandler(cmdline);
+
+      coverageProcess.addProcessListener(new ProcessAdapter() {
+        @Override
+        public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+          LOG.debug(event.getText());
+        }
+      });
+
+      coverageProcess.startNotify();
+      coverageConfiguration.setCoverageProcess(coverageProcess);
+      CoverageHelper.attachToProcess(dartRC, dartAppProcessHandler, env.getRunnerSettings());
+    }
+    catch (ExecutionException e) {
+      LOG.error(e);
+    }
+  }
+
   private boolean activateCoverage(@NotNull final Project project, @NotNull final String dartPubPath) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+      if (indicator != null) {
+        indicator.setIndeterminate(true);
+      }
+
       try {
         // 'pub global list' is fast, let's run it first to find out if coverage package is already activated.
         // Following 'pub global activate' is long and may be cancelled by user
