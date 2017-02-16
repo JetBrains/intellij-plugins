@@ -51,7 +51,9 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
                                                      @Nullable VirtualFile config,
                                                      @Nullable String content) {
     JSLanguageServiceQueue process = getProcess();
-    if (process == null || virtualFile == null) {
+    if (process == null ||
+        virtualFile == null ||
+        !virtualFile.isInLocalFileSystem()) {
       return null;
     }
 
