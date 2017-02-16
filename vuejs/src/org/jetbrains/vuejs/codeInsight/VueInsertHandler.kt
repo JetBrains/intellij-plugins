@@ -26,7 +26,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     val file = context.file as? HtmlFileImpl ?: return
     val content = findScriptContent(file) ?: return
 
-    val defaultExport = ES6PsiUtil.findDefaultExport(content, mutableSetOf()) as? JSExportAssignment ?: return
+    val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment ?: return
     val obj = defaultExport.expression as? JSObjectLiteralExpression ?: return
     val name = toAsset(item!!.lookupString)
     val components = componentProperty(obj).value as? JSObjectLiteralExpression ?: return
