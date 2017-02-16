@@ -83,6 +83,10 @@ open class VueLexerTest : LexerTestCase() {
   fun testBindingAttribute() = doFileTest("vue")
   fun testEventAttribute() = doFileTest("vue")
 
+  fun testInterpolation() = doFileTest("vue")
+  fun testInterpolationInText() = doFileTest("vue")
+  fun testMultipleInterpolations() = doFileTest("vue")
+
   override fun createLexer(): Lexer = VueLexer()
   override fun getDirPath() = "/contrib/vuejs/testData/lexer"
 

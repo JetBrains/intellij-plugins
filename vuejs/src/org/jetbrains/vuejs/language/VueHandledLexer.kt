@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.language
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageHtmlScriptContentProvider
+import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
 
 interface VueHandledLexer {
@@ -45,5 +46,4 @@ interface VueHandledLexer {
     }
     return null
   }
-
 }
