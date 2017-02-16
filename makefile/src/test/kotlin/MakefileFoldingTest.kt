@@ -3,6 +3,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 class MakefileFoldingTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testRule() = doTest()
   fun testVariable() = doTest()
+  fun testDefine() = doTest()
 
 
   fun doTest() = myFixture.testFolding("$testDataPath/folding/${getTestName(true)}.mk")
