@@ -7,6 +7,7 @@ import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -55,11 +56,21 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val component = defaultExport.expression as? JSObjectLiteralExpression ?: return true
     val components = component.findProperty("components")?.objectLiteralExpressionInitializer ?: return true
     for (property in components.properties) {
-      val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property) as? JSObjectLiteralExpression ?: continue
-      val elements = findProperty(obj, "name")?.indexingData?.implicitElements ?: continue
-      elements.forEach {
-        if (it.userString == VueComponentsIndex.JS_KEY && !processor.invoke(property, it)) return false
+      val obj = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(property) as? JSObjectLiteralExpression
+      if (obj != null) {
+        val elements = findProperty(obj, "name")?.indexingData?.implicitElements
+        if (elements != null) {
+          elements.forEach {
+            if (it.userString == VueComponentsIndex.JS_KEY && !processor.invoke(property, it)) return false
+          }
+          continue
+        }
+        val first = obj.firstProperty
+        if (first != null) {
+          if (!processor.invoke(property, JSImplicitElementImpl(property.name!!, first))) return false
+        }
       }
+      if (!processor.invoke(property, JSImplicitElementImpl(property.name!!, property.nameIdentifier))) return false
     }
     return true
   }
