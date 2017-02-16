@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.ruby.motion.ui;
 
-import org.jetbrains.plugins.ruby.RubyProjectSettings;
+import org.jetbrains.plugins.ruby.wizard.RubyProjectSettings;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl;
 
 /**

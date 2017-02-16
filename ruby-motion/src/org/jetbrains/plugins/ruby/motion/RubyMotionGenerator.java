@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.RBundle;
-import org.jetbrains.plugins.ruby.RubyFrameworkProjectGenerator;
+import org.jetbrains.plugins.ruby.wizard.RubyFrameworkProjectGenerator;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionGeneratorTabBase;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionSettingsHolder;
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil;
