@@ -20,6 +20,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.completion.MethodInsertHandle
 import org.jetbrains.plugins.ruby.ruby.codeInsight.completion.RubyAbstractMethodInsertHandler;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.completion.RubyCompletionProvider;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.completion.RubyLookupElement;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RPsiElement;
@@ -41,7 +42,7 @@ public class RubyMotionCompletionProvider extends RubyCompletionProvider {
                                         @Nullable RType originalType,
                                         boolean isInsertHandlerCanBeApplied,
                                         @Nullable MethodInsertHandlerCreator insertHandler,
-                                        @Nullable String symbolFQN) {
+                                        @Nullable FQN symbolFQN) {
     if (symbol instanceof FunctionSymbol) {
       return createLookupItem((FunctionSymbol)symbol, bold, isInsertHandlerCanBeApplied);
     }

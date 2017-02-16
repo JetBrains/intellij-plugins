@@ -2,7 +2,6 @@ package org.jetbrains.plugins.ruby.motion.paramdefs;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.Consumer;
 import com.intellij.util.containers.hash.HashMap;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.BridgeSupportLoader;
@@ -17,6 +16,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.matcher.ParamDefExp
 import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.matcher.ParamDefHash;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.matcher.ParamDefLeaf;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.matcher.ParamDefSeq;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +49,7 @@ public class RubyMotionParamdefsProvider implements ParamDefProvider {
     for (Class clazz : framework.getClasses()) {
       for (Function function : clazz.getFunctions()) {
         if (!canHaveParamdef(function)) continue;
-        final String name = clazz.getName() + "::" + MotionSymbolUtil.getSelectorNames(function).get(0);
+        final String name = clazz.getName() + "." + MotionSymbolUtil.getSelectorNames(function).get(0);
         Map<String, Collection<Function>> allFunctions = mergedFunctions.get(name);
         if (allFunctions == null) {
           allFunctions = new HashMap<>();
@@ -73,8 +73,9 @@ public class RubyMotionParamdefsProvider implements ParamDefProvider {
   private static void registerParamDef(final ParamDefManager manager,
                                        final String name,
                                        final Map<String, Collection<Function>> functions) {
-    if (manager.getParamDefExpression(name) == null) {
-      manager.registerParamDefExpression(name, buildExpression(functions));
+    final FQN fqn = FQN.Builder.fromString(name);
+    if (manager.getParamDefExpression(fqn) == null) {
+      manager.registerParamDefExpression(fqn, buildExpression(functions));
     }
   }
 
