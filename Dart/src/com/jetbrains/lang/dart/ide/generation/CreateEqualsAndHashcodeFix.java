@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
+import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerTypeHierarchyTreeStructure;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
@@ -72,11 +72,9 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
     final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(dartClass.getProject())
       .search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), true);
 
-    // The first item is the Dart class the query was run on, so skip it
-    for (int i = 1; i < items.size(); i++) {
-      final DartClass superDartClass = DartHierarchyUtil.findDartClass(project, items.get(i));
-      if (superDartClass != null && superDartClass.getName() != null && !superDartClass.getName().equals("Object")) {
-        if (DartGenerateEqualsAndHashcodeAction.doesClassContainEqualsAndHashCode(superDartClass)) {
+    for (DartClass superClass : DartServerTypeHierarchyTreeStructure.filterSuperClasses(project, items)) {
+      if (superClass != null && superClass.getName() != null && !superClass.getName().equals("Object")) {
+        if (DartGenerateEqualsAndHashcodeAction.doesClassContainEqualsAndHashCode(superClass)) {
           return true;
         }
       }

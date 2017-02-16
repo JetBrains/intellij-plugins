@@ -63,7 +63,7 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
       superDescriptor.setCachedChildren(new HierarchyNodeDescriptor[]{baseDescriptor});
     }
     if (!items.isEmpty()) {
-      addSubClassHierarchy(Sets.<TypeHierarchyItem>newHashSet(), project, items, items.get(0), baseDescriptor);
+      addSubClassHierarchy(Sets.newHashSet(), project, items, items.get(0), baseDescriptor);
     }
 
     return baseDescriptor;
@@ -73,7 +73,7 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
   private static HierarchyNodeDescriptor buildSuperClassHierarchy(@NotNull final Project project,
                                                                   @NotNull final List<TypeHierarchyItem> items) {
     HierarchyNodeDescriptor descriptor = null;
-    final DartClass[] superClasses = createSuperClasses(project, items);
+    final DartClass[] superClasses = filterSuperClasses(project, items);
     for (int i = superClasses.length - 1; i >= 0; i--) {
       final DartClass superClass = superClasses[i];
       final HierarchyNodeDescriptor newDescriptor = new DartTypeHierarchyNodeDescriptor(project, descriptor, superClass, false);
@@ -86,7 +86,7 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
   }
 
   @NotNull
-  private static DartClass[] createSuperClasses(@NotNull final Project project, @NotNull final List<TypeHierarchyItem> items) {
+  public static DartClass[] filterSuperClasses(@NotNull final Project project, @NotNull final List<TypeHierarchyItem> items) {
     if (items.isEmpty()) return new DartClass[]{};
 
     final Set<TypeHierarchyItem> seenItems = Sets.newHashSet();
