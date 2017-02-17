@@ -5,10 +5,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.PsiReference
-import name.kropp.intellij.makefile.psi.MakefileElementFactory
-import name.kropp.intellij.makefile.psi.MakefilePrerequisite
-import name.kropp.intellij.makefile.psi.MakefileTarget
-import name.kropp.intellij.makefile.psi.MakefileVariable
+import name.kropp.intellij.makefile.psi.*
 
 class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiReference {
   override fun getElement() = prerequisite
@@ -42,8 +39,11 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
 
   override fun isSoft() = false
 
+  val rule: MakefileRule?
+    get() = prerequisite.parent.parent.parent.parent as? MakefileRule
+
   override fun getVariants()
-      = (prerequisite.containingFile as MakefileFile).targets.filterNot { it.isPatternTarget }.map {
+      = (prerequisite.containingFile as MakefileFile).targets.filterNot { it.isPatternTarget || rule?.targets?.any { t -> t.name == it.name } == true }.map {
     LookupElementBuilder.create(it).withIcon(MakefileTargetIcon)
   }.toTypedArray()
 
