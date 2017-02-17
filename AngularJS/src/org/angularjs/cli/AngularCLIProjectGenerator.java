@@ -16,6 +16,8 @@ import java.io.File;
  * @author Dennis.Ushakov
  */
 public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
+  public static final String PACKAGE_NAME = "@angular/cli";
+
   @Nls
   @NotNull
   @Override
@@ -66,7 +68,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String packageName() {
-    return "@angular/cli";
+    return PACKAGE_NAME;
   }
 
   @Override
