@@ -83,7 +83,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val scroll = ScrollPaneFactory.createScrollPane(list)
     scroll.border = IdeBorderFactory.createEmptyBorder()
-    val pane = ListWithFilter.wrap(list, scroll, StringUtil.createToStringFunction(Any::class.java))
+    val pane = ListWithFilter.wrap(list, scroll, StringUtil.createToStringFunction(Blueprint::class.java))
 
     val builder = JBPopupFactory.getInstance().createComponentPopupBuilder(pane, list).
         setMayBeParent(true).
