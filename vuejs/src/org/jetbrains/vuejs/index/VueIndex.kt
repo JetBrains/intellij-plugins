@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.index
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
@@ -17,6 +18,7 @@ fun getAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitEleme
 }
 
 fun resolve(name:String, scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): JSImplicitElement? {
+  if (DumbService.isDumb(scope.project!!)) return null
   var result:JSImplicitElement? = null
   StubIndex.getInstance().processElements(key, name, scope.project!!, scope, JSImplicitElementProvider::class.java, Processor {
     val element = (it.indexingData?.implicitElements ?: emptyList()).firstOrNull { it.userString == INDICES[key] }
