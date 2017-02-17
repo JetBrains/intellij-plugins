@@ -17,12 +17,14 @@ import org.jetbrains.annotations.NotNull;
  * @author Dennis.Ushakov
  */
 public class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
+  public static final String ANGULAR_CLI_JSON = ".angular-cli.json";
+
   @Override
   public void configureProject(Project project, @NotNull VirtualFile baseDir, Ref<Module> moduleRef) {
     final ModuleManager moduleManager = ModuleManager.getInstance(project);
     final Module[] modules = moduleManager.getModules();
     if (modules.length == 1) {
-      final VirtualFile cliJson = baseDir.findChild("angular-cli.json");
+      final VirtualFile cliJson = baseDir.findChild(ANGULAR_CLI_JSON);
       final ModifiableRootModel model = ModuleRootManager.getInstance(modules[0]).getModifiableModel();
       final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
       if (entry != null && cliJson != null) {

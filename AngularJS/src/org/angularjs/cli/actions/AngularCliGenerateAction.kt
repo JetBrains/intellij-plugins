@@ -27,10 +27,7 @@ import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import icons.JavaScriptLanguageIcons
-import org.angularjs.cli.AngularCLIFilter
-import org.angularjs.cli.AngularCLIProjectGenerator
-import org.angularjs.cli.Blueprint
-import org.angularjs.cli.BlueprintsLoader
+import org.angularjs.cli.*
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -199,6 +196,6 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
   override fun update(e: AnActionEvent?) {
     val project = e?.project
-    e?.presentation?.isEnabledAndVisible = project != null && project.baseDir?.findChild("angular-cli.json") != null
+    e?.presentation?.isEnabledAndVisible = project != null && project.baseDir?.findChild(AngularJSProjectConfigurator.ANGULAR_CLI_JSON) != null
   }
 }
