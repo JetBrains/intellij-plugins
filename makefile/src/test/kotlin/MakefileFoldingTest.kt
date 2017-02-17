@@ -6,7 +6,7 @@ class MakefileFoldingTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testDefine() = doTest()
 
 
-  fun doTest() = myFixture.testFolding("$testDataPath/folding/${getTestName(true)}.mk")
+  fun doTest() = myFixture.testFolding("$testDataPath/$basePath/${getTestName(true)}.mk")
 
   override fun getTestDataPath() = "testData"
   override fun getBasePath() = "folding"
