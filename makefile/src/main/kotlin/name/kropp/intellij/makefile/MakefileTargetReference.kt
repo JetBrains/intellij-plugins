@@ -43,7 +43,7 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
     get() = prerequisite.parent.parent.parent.parent as? MakefileRule
 
   override fun getVariants()
-      = (prerequisite.containingFile as MakefileFile).targets.filterNot { it.isPatternTarget || rule?.targets?.any { t -> t.name == it.name } == true }.map {
+      = (prerequisite.containingFile as MakefileFile).targets.filterNot { it.isPatternTarget || rule?.targets?.any { t -> t.name == it.name } == true }.distinctBy { it.name }.map {
     LookupElementBuilder.create(it).withIcon(MakefileTargetIcon)
   }.toTypedArray()
 
