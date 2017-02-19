@@ -34,6 +34,7 @@ import com.intellij.json.psi.JsonBooleanLiteral
 import com.intellij.json.psi.JsonNumberLiteral
 import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonProperty
+import com.intellij.json.psi.JsonReferenceExpression
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.json.psi.JsonValue
 import com.intellij.openapi.util.text.StringUtil
@@ -275,6 +276,10 @@ class JsonCloudFormationParser private constructor () {
       is JsonArray -> {
         val items = value.valueList.mapNotNull { expression(it, allowFunctions) }
         CfnArrayValueNode(items).registerNode(value)
+      }
+      is JsonReferenceExpression -> {
+        addProblem(value, "Expected an expression")
+        null
       }
       is JsonObject -> {
         if (allowFunctions == AllowFunctions.True &&

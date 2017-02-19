@@ -17,4 +17,10 @@
     <line>45</line>
     <description>Required resource properties are not set: AttributeDefinitions</description>
   </problem>
+
+  <problem>
+    <file>minecraft_server-29c3.template</file>
+    <line>282</line>
+    <description>Expected an expression</description>
+  </problem>
 </problems>
