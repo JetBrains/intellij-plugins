@@ -126,6 +126,6 @@ class CompletionTests : LightCodeInsightFixtureTestCase() {
   }
 
   override fun getTestDataPath(): String {
-    return TestUtil.getTestDataPath("completion")
+    return TestUtil.getTestDataPath("completion/json")
   }
 }
