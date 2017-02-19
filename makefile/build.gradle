@@ -42,4 +42,5 @@ sourceSets {
 
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile "org.hamcrest:hamcrest-all:1.3"
 }
