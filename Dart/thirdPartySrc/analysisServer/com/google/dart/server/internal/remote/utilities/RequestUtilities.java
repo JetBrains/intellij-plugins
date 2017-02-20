@@ -95,6 +95,9 @@ public class RequestUtilities {
   private static final String METHOD_EXECUTION_MAP_URI = "execution.mapUri";
   private static final String METHOD_EXECUTION_SET_SUBSCRIPTIONS = "execution.setSubscriptions";
 
+  // Diagnostic domain
+  private static final String METHOD_DIAGNOSTIC_GET_SERVER_PORT = "diagnostic.getServerPort";
+
   /**
    * Flag indicating whether requests should include the time at which the request is made.
    */
@@ -806,6 +809,10 @@ public class RequestUtilities {
    */
   public static JsonObject generateServerShutdown(String idValue) {
     return buildJsonObjectRequest(idValue, METHOD_SERVER_SHUTDOWN);
+  }
+
+  public static JsonObject generateDiagnosticGetServerPort(String idValue) {
+    return buildJsonObjectRequest(idValue, METHOD_DIAGNOSTIC_GET_SERVER_PORT);
   }
 
   /**
