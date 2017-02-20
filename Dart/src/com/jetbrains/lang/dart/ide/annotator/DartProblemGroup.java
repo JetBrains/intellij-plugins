@@ -110,8 +110,8 @@ public class DartProblemGroup implements SuppressableProblemGroup {
         document.getCharsSequence().subSequence(document.getLineStartOffset(line - 1), document.getLineEndOffset(line - 1));
 
       int index = -1;
-      while (prevLine.length() > 0 && index < prevLine.length()) {
-        char ch = prevLine.charAt(++index);
+      while (++index < prevLine.length()) {
+        char ch = prevLine.charAt(index);
         switch (ch) {
           case ' ':
             continue;
