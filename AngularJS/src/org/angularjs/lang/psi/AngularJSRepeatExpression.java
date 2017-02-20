@@ -39,8 +39,10 @@ public class AngularJSRepeatExpression extends JSExpressionImpl {
 
   public JSExpression getCollection() {
     final ASTNode myNode = getNode();
+    ASTNode type = myNode.findChildByType(JSTokenTypes.IN_KEYWORD);
+    type = type == null ? myNode.findChildByType(JSTokenTypes.OF_KEYWORD) : type;
     final ASTNode secondExpression = myNode.findChildByType(
-      JSElementTypes.EXPRESSIONS, myNode.findChildByType(JSTokenTypes.IN_KEYWORD)
+      JSElementTypes.EXPRESSIONS, type
     );
     return secondExpression != null ? (JSExpression)secondExpression.getPsi() : null;
   }
