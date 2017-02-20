@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.completion;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
@@ -9,8 +8,10 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.injected.editor.VirtualFileWindow;
+import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -18,8 +19,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.xml.XmlTokenType;
+import com.intellij.psi.PsiFile;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
@@ -79,78 +79,93 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
 
-               final String specialPrefix = getSpecialPrefix(parameters);
-               final CompletionResultSet resultSet = specialPrefix != null
-                                                     ? originalResultSet.withPrefixMatcher(specialPrefix)
+               final String uriPrefix = getPrefixIfCompletingUri(parameters);
+               final CompletionResultSet resultSet = uriPrefix != null
+                                                     ? originalResultSet.withPrefixMatcher(uriPrefix)
                                                      : originalResultSet;
 
-               das.addCompletions(completionId, suggestion -> {
+               das.addCompletions(file, completionId, (replacementOffset, suggestion) -> {
+                 final CompletionResultSet updatedResultSet;
+                 if (uriPrefix != null) {
+                   updatedResultSet = resultSet;
+                 }
+                 else {
+                   final String specialPrefix = getPrefixForSpecialCases(parameters, replacementOffset);
+                   if (specialPrefix != null && !specialPrefix.equals(resultSet.getPrefixMatcher().getPrefix())) {
+                     updatedResultSet = resultSet.withPrefixMatcher(specialPrefix);
+                   }
+                   else {
+                     updatedResultSet = resultSet;
+                   }
+                 }
+
                  final LookupElement lookupElement = createLookupElement(project, suggestion);
-                 resultSet.addElement(lookupElement);
+                 updatedResultSet.addElement(lookupElement);
                });
              }
            });
   }
 
   @Nullable
-  private static String getSpecialPrefix(@NotNull final CompletionParameters parameters) {
+  private static String getPrefixIfCompletingUri(@NotNull final CompletionParameters parameters) {
+    final PsiElement psiElement = parameters.getOriginalPosition();
+    final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
+    final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
+    if (parentParent instanceof DartUriElement) {
+      final int uriStringOffset = ((DartUriElement)parentParent).getUriStringAndItsRange().second.getStartOffset();
+      if (parameters.getOffset() >= parentParent.getTextRange().getStartOffset() + uriStringOffset) {
+        return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextRange().getStartOffset());
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Handles completion provided by angular_analyzer_plugin in HTML files and inside string literals;
+   * our PSI doesn't allow top calculate prefix in such cases
+   */
+  @Nullable
+  private static String getPrefixForSpecialCases(@NotNull final CompletionParameters parameters, final int replacementOffset) {
     final PsiElement psiElement = parameters.getOriginalPosition();
     if (psiElement == null) return null;
 
     final PsiElement parent = psiElement.getParent();
-    if (parent instanceof DartStringLiteralExpression) {
-      final PsiElement parentParent = parent.getParent();
-      if (parentParent instanceof DartUriElement) {
-        final int uriStringOffset = ((DartUriElement)parentParent).getUriStringAndItsRange().second.getStartOffset();
-        if (parameters.getOffset() >= parentParent.getTextRange().getStartOffset() + uriStringOffset) {
-          return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextRange().getStartOffset());
-        }
-      }
-      else {
-        return getIdentifierPrefix(parameters);
-      }
-    }
-
-    final IElementType elementType = psiElement.getNode().getElementType();
-    if (elementType == XmlTokenType.XML_DATA_CHARACTERS || elementType == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
-      return getIdentifierPrefix(parameters);
+    final Language language = psiElement.getContainingFile().getLanguage();
+    if (parent instanceof DartStringLiteralExpression || language.isKindOf(XMLLanguage.INSTANCE)) {
+      return getPrefixUsingServerData(parameters, replacementOffset);
     }
 
     return null;
   }
 
   @Nullable
-  private static String getIdentifierPrefix(@NotNull final CompletionParameters parameters) {
-    final PsiElement element = parameters.getOriginalPosition();
+  private static String getPrefixUsingServerData(@NotNull final CompletionParameters parameters, final int replacementOffset) {
+    PsiElement element = parameters.getOriginalPosition();
     if (element == null) return null;
 
-    final int offset = parameters.getOffset();
-    final TextRange range = element.getTextRange();
-    if (offset < range.getStartOffset() || offset > range.getEndOffset()) return null;
+    final InjectedLanguageManager manager = InjectedLanguageManager.getInstance(element.getProject());
+    final PsiFile injectedContext = parameters.getOriginalFile();
 
-    return getIdentifierInTheEndOfThisString(element.getText().substring(0, parameters.getOffset() - range.getStartOffset()));
-  }
+    final int completionOffset = manager.injectedToHost(injectedContext, parameters.getOffset());
+    final TextRange range = manager.injectedToHost(injectedContext, element.getTextRange());
 
-  /**
-   * If <code>text</code> ends with any valid identifier - this identifier is returned, otherwise empty string is returned.
-   * For example if text="foo.bar123" then "bar123" is returned; if text="foo." then empty string is returned.
-   */
-  @NotNull
-  @VisibleForTesting
-  public static String getIdentifierInTheEndOfThisString(@NotNull final String text) {
-    int prefixStartIndex = text.length();
-    for (int i = text.length() - 1; i >= 0; i--) {
-      char ch = text.charAt(i);
-      if (!Character.isJavaIdentifierPart(ch)) {
-        return text.substring(prefixStartIndex);
+    if (completionOffset < range.getStartOffset() || completionOffset > range.getEndOffset()) return null; // shouldn't happen
+    if (replacementOffset > completionOffset) return null; // shouldn't happen
+
+    while (element != null) {
+      final int elementStartOffset = manager.injectedToHost(injectedContext, element.getTextRange().getStartOffset());
+      if (elementStartOffset <= replacementOffset) {
+        break; // that's good, we can use this element to calculate prefix
       }
-
-      if (Character.isJavaIdentifierStart(ch)) {
-        prefixStartIndex = i;
-      }
+      element = element.getParent();
     }
 
-    return text.substring(prefixStartIndex);
+    if (element != null) {
+      final int startOffset = manager.injectedToHost(injectedContext, element.getTextRange().getStartOffset());
+      return element.getText().substring(replacementOffset - startOffset, completionOffset - startOffset);
+    }
+
+    return null;
   }
 
   @Override

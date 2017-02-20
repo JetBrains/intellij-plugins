@@ -45,10 +45,8 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.search.FilenameIndex;
-import com.intellij.util.Alarm;
+import com.intellij.util.*;
 import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
-import com.intellij.util.Processor;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -237,7 +235,7 @@ public class DartAnalysisServerService implements Disposable {
                                    @NotNull final List<CompletionSuggestion> completions,
                                    final boolean isLast) {
       synchronized (myCompletionInfos) {
-        myCompletionInfos.add(new CompletionInfo(completionId, completions, isLast));
+        myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, completions, isLast));
         myCompletionInfos.notifyAll();
       }
     }
@@ -371,7 +369,9 @@ public class DartAnalysisServerService implements Disposable {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
   }
 
-  public void addCompletions(@NotNull final String completionId, @NotNull final Consumer<CompletionSuggestion> consumer) {
+  public void addCompletions(@NotNull final VirtualFile file,
+                             @NotNull final String completionId,
+                             @NotNull final PairConsumer<Integer, CompletionSuggestion> consumer) {
     while (true) {
       ProgressManager.checkCanceled();
 
@@ -382,7 +382,8 @@ public class DartAnalysisServerService implements Disposable {
           if (!completionInfo.isLast) continue;
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
-            consumer.consume(completion);
+            final int convertedReplacementOffset = getConvertedOffset(file, completionInfo.myOriginalReplacementOffset);
+            consumer.consume(convertedReplacementOffset, completion);
           }
           return;
         }
@@ -1633,13 +1634,19 @@ public class DartAnalysisServerService implements Disposable {
   private static class CompletionInfo {
     @NotNull private final String myCompletionId;
     @NotNull private final List<CompletionSuggestion> myCompletions;
+    /**
+     * needs to be converted before any usage
+     */
+    private final int myOriginalReplacementOffset;
     private final boolean isLast;
 
     public CompletionInfo(@NotNull final String completionId,
+                          int replacementOffset,
                           @NotNull final List<CompletionSuggestion> completions,
                           boolean isLast) {
       this.myCompletionId = completionId;
       this.myCompletions = completions;
+      this.myOriginalReplacementOffset = replacementOffset;
       this.isLast = isLast;
     }
   }
