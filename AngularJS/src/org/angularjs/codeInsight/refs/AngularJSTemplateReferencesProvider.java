@@ -1,10 +1,13 @@
 package org.angularjs.codeInsight.refs;
 
+import com.intellij.javascript.JSFileReference;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileReferenceSet;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
@@ -46,6 +49,11 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       }
 
       return super.getDefaultContexts();
+    }
+
+    @Override
+    public FileReference createFileReference(TextRange range, int index, String text) {
+      return new JSFileReference(text, index, range, this, ArrayUtil.EMPTY_STRING_ARRAY);
     }
   }
 }
