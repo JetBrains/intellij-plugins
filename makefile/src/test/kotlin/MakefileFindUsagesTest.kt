@@ -13,7 +13,10 @@ class MakefileFindUsagesTest : LightPlatformCodeInsightFixtureTestCase() {
     assertThat(usages, hasSize(2))
   }
 
-  fun testPhony() {
+  fun testPhony() = notSearchableForUsages()
+  fun testForce() = notSearchableForUsages()
+
+  fun notSearchableForUsages() {
     myFixture.configureByFiles("$testDataPath/$basePath/${getTestName(true)}.mk")
     val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
     val handler = (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(targetElement!!, false)
