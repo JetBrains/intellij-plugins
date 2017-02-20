@@ -185,10 +185,10 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSDefinitionExpression
+      JSVarStatement
         PsiElement(JS:LET_KEYWORD)('let')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        JSVariable
           PsiElement(JS:IDENTIFIER)('todo')
       PsiWhiteSpace(' ')
       PsiElement(JS:OF_KEYWORD)('of')
@@ -228,7 +228,7 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSDefinitionExpression
+      JSVarStatement
         PsiElement(JS:LET_KEYWORD)('let')
         PsiErrorElement:identifier expected
           <empty list>
@@ -270,10 +270,10 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSDefinitionExpression
+      JSVarStatement
         PsiElement(JS:LET_KEYWORD)('let')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        JSVariable
           PsiElement(JS:IDENTIFIER)('todo')
       PsiErrorElement:'of' expected
         <empty list>
@@ -313,10 +313,10 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSDefinitionExpression
+      JSVarStatement
         PsiElement(JS:LET_KEYWORD)('let')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        JSVariable
           PsiElement(JS:IDENTIFIER)('todo')
       PsiWhiteSpace(' ')
       PsiElement(JS:OF_KEYWORD)('of')
@@ -332,10 +332,10 @@ ASTWrapperPsiElement(FILE)
     JSCommaExpression
       JSAssignmentExpression
         JSDefinitionExpression
-          JSDefinitionExpression
+          JSVarStatement
             PsiElement(JS:LET_KEYWORD)('let')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
+            JSVariable
               PsiElement(JS:IDENTIFIER)('index')
         PsiElement(JS:EQ)('=')
         JSReferenceExpression
@@ -344,10 +344,10 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       JSAssignmentExpression
         JSDefinitionExpression
-          JSDefinitionExpression
+          JSVarStatement
             PsiElement(JS:LET_KEYWORD)('let')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
+            JSVariable
               PsiElement(JS:IDENTIFIER)('last')
         PsiElement(JS:EQ)('=')
         JSReferenceExpression
@@ -356,10 +356,10 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSDefinitionExpression
+      JSVarStatement
         PsiElement(JS:LET_KEYWORD)('let')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
+        JSVariable
           PsiElement(JS:IDENTIFIER)('item')
       PsiWhiteSpace(' ')
       PsiElement(JS:OF_KEYWORD)('of')

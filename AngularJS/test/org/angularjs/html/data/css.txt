@@ -14,10 +14,10 @@ HtmlFile:css.html
           JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
             JSExpressionStatement
               AngularJSRepeatExpression
-                JSDefinitionExpression
+                JSVarStatement
                   PsiElement(JS:LET_KEYWORD)('let')
                   PsiWhiteSpace(' ')
-                  JSReferenceExpression
+                  JSVariable
                     PsiElement(JS:IDENTIFIER)('something')
                 PsiWhiteSpace(' ')
                 PsiElement(JS:OF_KEYWORD)('of')
