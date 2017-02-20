@@ -1,0 +1,2 @@
+test:
+<caret>.PHONY: test

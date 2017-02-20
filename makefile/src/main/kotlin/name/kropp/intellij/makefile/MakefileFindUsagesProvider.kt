@@ -8,12 +8,12 @@ import name.kropp.intellij.makefile.psi.MakefileTarget
 import name.kropp.intellij.makefile.psi.MakefileTypes
 
 class MakefileFindUsagesProvider : FindUsagesProvider {
-  override fun getWordsScanner() = DefaultWordsScanner(MakefileLexerAdapter(), TokenSet.create(MakefileTypes.IDENTIFIER ), TokenSet.create(MakefileTypes.COMMENT), TokenSet.EMPTY)
+  override fun getWordsScanner() = DefaultWordsScanner(MakefileLexerAdapter(), TokenSet.create(MakefileTypes.IDENTIFIER), TokenSet.create(MakefileTypes.COMMENT), TokenSet.EMPTY)
 
-  override fun canFindUsagesFor(element: PsiElement) = element is MakefileTarget
+  override fun canFindUsagesFor(element: PsiElement) = element is MakefileTarget && !element.isSpecialTarget
   override fun getType(element: PsiElement) = if (element is MakefileTarget) { "Makefile target" } else ""
   override fun getDescriptiveName(element: PsiElement) = if (element is MakefileTarget) { element.text } else ""
   override fun getNodeText(element: PsiElement, useFullName: Boolean) = if (element is MakefileTarget) { element.text } else ""
 
-  override fun getHelpId(p0: PsiElement) = null
+  override fun getHelpId(element: PsiElement) = null
 }
