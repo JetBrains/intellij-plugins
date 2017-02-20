@@ -34,6 +34,9 @@
   <extensions defaultExtensionNs="JavaScript">
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler"/>
     <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueInspectionFilter"/>
+    <inheritedLanguagesConfigurableProvider language="VueJS"
+                                            implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
+
   </extensions>
   <extensions defaultExtensionNs="com.jetbrains">
     <javaScriptDebugAware implementation="org.jetbrains.vuejs.run.VueDebugAware"/>
