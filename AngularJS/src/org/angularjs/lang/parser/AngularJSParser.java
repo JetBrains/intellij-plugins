@@ -229,9 +229,9 @@ public class AngularJSParser
       if (builder.getTokenType() != JSTokenTypes.IDENTIFIER) {
         builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
       } else {
-        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+        buildTokenElement(JSStubElementTypes.VARIABLE);
       }
-      def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
+      def.done(JSStubElementTypes.VAR_STATEMENT);
     }
 
     public boolean parseInExpression() {
