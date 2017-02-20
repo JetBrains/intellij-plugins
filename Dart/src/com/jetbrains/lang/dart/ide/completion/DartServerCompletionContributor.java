@@ -84,23 +84,28 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                                      ? originalResultSet.withPrefixMatcher(uriPrefix)
                                                      : originalResultSet;
 
-               das.addCompletions(file, completionId, (replacementOffset, suggestion) -> {
-                 final CompletionResultSet updatedResultSet;
-                 if (uriPrefix != null) {
-                   updatedResultSet = resultSet;
-                 }
-                 else {
-                   final String specialPrefix = getPrefixForSpecialCases(parameters, replacementOffset);
-                   if (specialPrefix != null && !specialPrefix.equals(resultSet.getPrefixMatcher().getPrefix())) {
-                     updatedResultSet = resultSet.withPrefixMatcher(specialPrefix);
-                   }
-                   else {
+               das.addCompletions(file, completionId, new DartAnalysisServerService.CompletionSuggectionConsumer() {
+                 @Override
+                 public void consumeCompletionSuggestion(int replacementOffset,
+                                                         int replacementLength,
+                                                         @NotNull CompletionSuggestion suggestion) {
+                   final CompletionResultSet updatedResultSet;
+                   if (uriPrefix != null) {
                      updatedResultSet = resultSet;
                    }
-                 }
+                   else {
+                     final String specialPrefix = getPrefixForSpecialCases(parameters, replacementOffset);
+                     if (specialPrefix != null) {
+                       updatedResultSet = resultSet.withPrefixMatcher(specialPrefix);
+                     }
+                     else {
+                       updatedResultSet = resultSet;
+                     }
+                   }
 
-                 final LookupElement lookupElement = createLookupElement(project, suggestion);
-                 updatedResultSet.addElement(lookupElement);
+                   final LookupElement lookupElement = createLookupElement(project, suggestion);
+                   updatedResultSet.addElement(lookupElement);
+                 }
                });
              }
            });
@@ -172,10 +177,20 @@ public class DartServerCompletionContributor extends CompletionContributor {
   public void beforeCompletion(@NotNull final CompletionInitializationContext context) {
     final PsiElement psiElement = context.getFile().findElementAt(context.getStartOffset());
     final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
-    final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
-    if (parentParent instanceof DartUriElement) {
-      final Pair<String, TextRange> uriAndRange = ((DartUriElement)parentParent).getUriStringAndItsRange();
-      context.setReplacementOffset(parentParent.getTextRange().getStartOffset() + uriAndRange.second.getEndOffset());
+    if (parent instanceof DartStringLiteralExpression) {
+      final PsiElement parentParent = parent.getParent();
+      if (parentParent instanceof DartUriElement) {
+        final Pair<String, TextRange> uriAndRange = ((DartUriElement)parentParent).getUriStringAndItsRange();
+        context.setReplacementOffset(parentParent.getTextRange().getStartOffset() + uriAndRange.second.getEndOffset());
+      }
+      else {
+        // If replacement context is not set explicitly then com.intellij.codeInsight.completion.CompletionProgressIndicator#duringCompletion
+        // implementation looks for the reference at caret and on Tab replaces the whole reference.
+        // angular_analyzer_plugin provides angular-specific completion inside Dart string literals. Without the following hack Tab replaces
+        // too much useful text. This hack is not ideal though as it may leave a piece of tail not replaced.
+        // TODO: use replacementLength received from the server
+        context.setReplacementOffset(context.getReplacementOffset());
+      }
     }
   }
 
