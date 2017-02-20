@@ -44,18 +44,20 @@ public class AngularJSParser
             return;
           }
         }
+        if (tryParseNgIfStatement()) {
+          return;
+        }
         super.doParseStatement(canHaveClasses);
       }
 
-      private boolean parseNgForStatement() {
+      private void parseNgForStatement() {
         PsiBuilder.Marker statement = builder.mark();
         if (!getExpressionParser().parseForExpression()) {
           statement.drop();
-          return false;
+          return;
         }
         checkForSemicolon();
         statement.done(JSElementTypes.EXPRESSION_STATEMENT);
-        return true;
       }
 
       private boolean parseInStatement() {
@@ -67,8 +69,39 @@ public class AngularJSParser
         statement.done(JSElementTypes.EXPRESSION_STATEMENT);
         return true;
       }
+
+      private boolean tryParseNgIfStatement() {
+        PsiBuilder.Marker ngIf = builder.mark();
+        getExpressionParser().parseExpression();
+        if (builder.getTokenType() != JSTokenTypes.SEMICOLON) {
+          ngIf.rollbackTo();
+          return false;
+        }
+        builder.advanceLexer();
+        if (builder.getTokenType() != AngularJSTokenTypes.THEN && builder.getTokenType() != JSTokenTypes.ELSE_KEYWORD) {
+          ngIf.rollbackTo();
+          return false;
+        }
+
+        parseBranch(AngularJSTokenTypes.THEN);
+        parseBranch(JSTokenTypes.ELSE_KEYWORD);
+        ngIf.done(JSElementTypes.IF_STATEMENT);
+        return true;
+      }
+
+      private void parseBranch(IElementType branchType) {
+        if (builder.getTokenType() == branchType) {
+          builder.advanceLexer();
+          if (builder.getTokenType() == JSTokenTypes.IDENTIFIER) {
+            buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+          } else {
+            builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+          }
+        }
+      }
     };
   }
+
 
   public void parseAngular(IElementType root) {
     final PsiBuilder.Marker rootMarker = builder.mark();
@@ -114,7 +147,7 @@ public class AngularJSParser
       if (firstToken == JSTokenTypes.STRING_LITERAL) {
         return parseStringLiteral(firstToken);
       }
-      if (firstToken == AngularJSTokenTypes.LET_KEYWORD) {
+      if (firstToken == JSTokenTypes.LET_KEYWORD) {
         parseHashDefinition();
         return true;
       }
