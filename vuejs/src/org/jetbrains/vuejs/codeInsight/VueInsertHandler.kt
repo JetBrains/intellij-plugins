@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ImportType
@@ -11,18 +12,21 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
     val INSTANCE = VueInsertHandler()
-    val ENABLED = false
   }
 
   override fun handleInsert(context: InsertionContext?, item: LookupElement?) {
     super.handleInsert(context, item)
-    if (!ENABLED) return
     if (context == null || item  == null) return
+    val importedFile = (item.`object` as JSImplicitElement).containingFile
+    val nodeModule = NodeModuleSearchUtil.findDependencyRoot((item.`object` as PsiElement).containingFile.virtualFile)
+    if (nodeModule != null && "vue" == nodeModule.name) return
+
     context.commitDocument()
     val file = context.file as? HtmlFileImpl ?: return
     val content = findScriptContent(file) ?: return
@@ -35,7 +39,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (components.findProperty(name) != null || components.findProperty(capitalizedName) != null) return
     val newProperty = (JSChangeUtil.createExpressionWithContext("{ $capitalizedName }", obj)!!.psi as JSObjectLiteralExpression).firstProperty
     components.addBefore(newProperty, components.firstProperty)
-    ES6ImportPsiUtil.insertImport(content, capitalizedName, ImportType.DEFAULT, (item.`object` as JSImplicitElement).containingFile, context.editor)
+    ES6ImportPsiUtil.insertImport(content, capitalizedName, ImportType.DEFAULT, importedFile, context.editor)
   }
 
   private fun componentProperty(obj: JSObjectLiteralExpression): JSProperty {
