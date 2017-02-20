@@ -45,6 +45,8 @@ public class MakefilePsiImplUtil {
 
     @Nullable
     public static PsiElement getNameIdentifier(MakefileTarget element) {
+        if (element.isSpecialTarget()) return null;
+
         ASTNode targetNode = element.getNode();
         return targetNode != null ? targetNode.getPsi() : null;
     }

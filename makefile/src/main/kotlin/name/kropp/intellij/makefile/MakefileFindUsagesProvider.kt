@@ -11,9 +11,9 @@ class MakefileFindUsagesProvider : FindUsagesProvider {
   override fun getWordsScanner() = DefaultWordsScanner(MakefileLexerAdapter(), TokenSet.create(MakefileTypes.IDENTIFIER), TokenSet.create(MakefileTypes.COMMENT), TokenSet.EMPTY)
 
   override fun canFindUsagesFor(element: PsiElement) = element is MakefileTarget && !element.isSpecialTarget
-  override fun getType(element: PsiElement) = if (element is MakefileTarget) { "Makefile target" } else ""
-  override fun getDescriptiveName(element: PsiElement) = if (element is MakefileTarget) { element.text } else ""
-  override fun getNodeText(element: PsiElement, useFullName: Boolean) = if (element is MakefileTarget) { element.text } else ""
+  override fun getType(element: PsiElement) = if (canFindUsagesFor(element)) { "Makefile target" } else ""
+  override fun getDescriptiveName(element: PsiElement) = if (canFindUsagesFor(element)) { element.text } else ""
+  override fun getNodeText(element: PsiElement, useFullName: Boolean) = if (canFindUsagesFor(element)) { element.text } else ""
 
   override fun getHelpId(element: PsiElement) = null
 }
