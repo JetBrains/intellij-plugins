@@ -18,11 +18,14 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.preview.PreviewPanelProvider;
+import com.intellij.openapi.preview.impl.PreviewManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +55,6 @@ import java.util.Map;
 )
 public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings> {
   public static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
-
-  private static final Logger LOG = Logger.getInstance(DartProblemsView.class.getName());
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 
@@ -101,7 +103,12 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
       final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
       toolWindow.getContentManager().addContent(content);
-      ((ToolWindowEx)toolWindow).setTitleActions(new AnalysisServerStatusAction());
+
+      ToolWindowEx toolWindowEx = (ToolWindowEx)toolWindow;
+      toolWindowEx.setTitleActions(new AnalysisServerStatusAction());
+      ArrayList<AnAction> gearActions = new ArrayList<>();
+      gearActions.add(new AnalysisServerDiagnosticsAction());
+      toolWindowEx.setAdditionalGearActions(new DefaultActionGroup(gearActions));
 
       myPanel.setToolWindowUpdater(new ToolWindowUpdater() {
         @Override
@@ -120,12 +127,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
         toolWindow.activate(null, false);
       }
 
-      Disposer.register(project, new Disposable() {
-        @Override
-        public void dispose() {
-          toolWindow.getContentManager().removeAllContents(true);
-        }
-      });
+      Disposer.register(project, () -> toolWindow.getContentManager().removeAllContents(true));
     });
   }
 

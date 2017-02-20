@@ -926,6 +926,17 @@ public class DartAnalysisServerService implements Disposable {
     return results;
   }
 
+  public void diagnostic_getServerPort(GetServerPortConsumer consumer) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      consumer.onError(new RequestError(ExtendedRequestErrorCode.INVALID_SERVER_RESPONSE,
+                                        "The analysis server is not running."));
+    }
+    else {
+      server.diagnostic_getServerPort(consumer);
+    }
+  }
+
   /**
    * If server responds in less than <code>GET_FIXES_TIMEOUT</code> then this method can be considered synchronous: when exiting this method
    * <code>consumer</code> is already notified. Otherwise this method is async.
