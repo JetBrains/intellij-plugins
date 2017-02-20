@@ -86,6 +86,10 @@ public class AngularJSParser
         parseBranch(AngularJSTokenTypes.THEN);
         parseBranch(JSTokenTypes.ELSE_KEYWORD);
         ngIf.done(JSElementTypes.IF_STATEMENT);
+        checkForSemicolon();
+        if (builder.getTokenType() == JSTokenTypes.LET_KEYWORD) {
+          getExpressionParser().parseHashDefinition();
+        }
         return true;
       }
 
