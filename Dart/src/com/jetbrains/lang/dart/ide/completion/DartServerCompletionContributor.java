@@ -84,7 +84,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                                      ? originalResultSet.withPrefixMatcher(uriPrefix)
                                                      : originalResultSet;
 
-               das.addCompletions(file, completionId, new DartAnalysisServerService.CompletionSuggectionConsumer() {
+               das.addCompletions(file, completionId, new DartAnalysisServerService.CompletionSuggestionConsumer() {
                  @Override
                  public void consumeCompletionSuggestion(int replacementOffset,
                                                          int replacementLength,

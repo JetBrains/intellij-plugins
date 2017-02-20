@@ -373,7 +373,7 @@ public class DartAnalysisServerService implements Disposable {
 
   public void addCompletions(@NotNull final VirtualFile file,
                              @NotNull final String completionId,
-                             @NotNull final CompletionSuggectionConsumer consumer) {
+                             @NotNull final CompletionSuggestionConsumer consumer) {
     while (true) {
       ProgressManager.checkCanceled();
 
@@ -1634,7 +1634,7 @@ public class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public interface CompletionSuggectionConsumer {
+  public interface CompletionSuggestionConsumer {
     void consumeCompletionSuggestion(final int replacementOffset,
                                      final int replacementLength,
                                      final @NotNull CompletionSuggestion completionSuggestion);
