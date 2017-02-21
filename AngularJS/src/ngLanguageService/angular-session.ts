@@ -56,6 +56,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
         beforeFirstMessage(): void {
+            super.beforeFirstMessage();
             if (skipAngular) {
                 return;
             }
