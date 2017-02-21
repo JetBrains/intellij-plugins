@@ -26,11 +26,11 @@ function createPluginClass(state) {
     var AngularLanguagePlugin = (function (_super) {
         __extends(AngularLanguagePlugin, _super);
         function AngularLanguagePlugin(state) {
-            _super.call(this, state);
+            return _super.call(this, state) || this;
         }
-        AngularLanguagePlugin.prototype.getSession = function (ts_impl, loggerImpl, commonDefaultOptions, pathProcessor, mainFile, projectEmittedWithAllFiles) {
+        AngularLanguagePlugin.prototype.getSession = function (ts_impl, loggerImpl, defaultOptionHolder, pathProcessor, mainFile, projectEmittedWithAllFiles) {
             var _this = this;
-            var sessionClass = createSessionClass(ts_impl, loggerImpl, commonDefaultOptions, pathProcessor, projectEmittedWithAllFiles, mainFile);
+            var sessionClass = createSessionClass(ts_impl, loggerImpl, defaultOptionHolder, pathProcessor, projectEmittedWithAllFiles, mainFile);
             if (ts_impl["ide_processed"]) {
                 var requiredObject = require(state.ngServicePath);
                 var ng_1 = requiredObject;
@@ -54,7 +54,7 @@ function createPluginClass(state) {
                 ts_impl["skipNg"] = true;
             }
             var angularSession = angular_session_1.createAngularSessionClass(ts_impl, sessionClass);
-            return getSession(ts_impl, loggerImpl, commonDefaultOptions, mainFile, projectEmittedWithAllFiles, angularSession);
+            return getSession(ts_impl, loggerImpl, defaultOptionHolder, mainFile, projectEmittedWithAllFiles, angularSession);
         };
         AngularLanguagePlugin.prototype.overrideSysDefaults = function (ts_impl, state, serverFile) {
             var path = require('path');

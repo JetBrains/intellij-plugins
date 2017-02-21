@@ -15,7 +15,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
-            _super.apply(this, arguments);
+            return _super.apply(this, arguments) || this;
         }
         AngularSession.prototype.executeCommand = function (request) {
             var command = request.command;
@@ -50,6 +50,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             return _super.prototype.executeCommand.call(this, request);
         };
         AngularSession.prototype.beforeFirstMessage = function () {
+            _super.prototype.beforeFirstMessage.call(this);
             if (skipAngular) {
                 return;
             }
@@ -158,7 +159,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
         };
         AngularSession.prototype.appendHtmlDiagnostics = function (project, fileNames, result) {
             var _this = this;
-            var _loop_1 = function(fileName) {
+            var _loop_1 = function (fileName) {
                 fileName = ts_impl.normalizePath(fileName);
                 project = project == null ? this_1.getForceProject(fileName) : project;
                 try {
@@ -272,7 +273,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             if (result == null) {
                 result = [];
             }
-            var _loop_2 = function(file) {
+            var _loop_2 = function (file) {
                 var fileName = file.fileName;
                 var ngDiagnostics = this_2.getNgDiagnostics(project, fileName, file);
                 if (!ngDiagnostics || ngDiagnostics.length == 0) {
