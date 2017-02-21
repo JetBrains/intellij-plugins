@@ -4,7 +4,7 @@ import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
@@ -16,10 +16,10 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.RBundle;
-import org.jetbrains.plugins.ruby.wizard.RubyFrameworkProjectGenerator;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionGeneratorTabBase;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionSettingsHolder;
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil;
+import org.jetbrains.plugins.ruby.wizard.RubyFrameworkProjectGenerator;
 
 import javax.swing.*;
 
@@ -52,17 +52,16 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
     final RubyMotionSettingsHolder settings,
     @NotNull final Module module)
   {
+    super.generateProject(project, baseDir, settings, module);
     final RubyMotionUtilImpl.ProjectType projectType = settings.getProjectType();
-    final Sdk sdk = settings.getSdk();
-    RModuleUtil.getInstance().changeModuleSdk(sdk, module);
 
     module.putUserData(RubyMotionUtilImpl.PROJECT_TYPE, projectType);
     RubyMotionFacetConfigurator.configure(baseDir, module);
     StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-      ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).generateApp(baseDir, module, sdk, projectType);
+      ((RubyMotionUtilImpl)RubyMotionUtil.getInstance())
+        .generateApp(baseDir, module, ModuleRootManager.getInstance(module).getSdk(), projectType);
       RModuleUtil.getInstance().refreshRubyModuleTypeContent(module);
     });
-    super.generateProject(project, baseDir, settings, module);
   }
 
   @NotNull
