@@ -61,6 +61,13 @@ public class RequestError {
   /**
    * Constructor for {@link RequestError}.
    */
+  public RequestError(String code, String message) {
+    this(code, message, null);
+  }
+
+  /**
+   * Constructor for {@link RequestError}.
+   */
   public RequestError(String code, String message, String stackTrace) {
     this.code = code;
     this.message = message;

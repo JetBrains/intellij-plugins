@@ -258,6 +258,11 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     // TODO(scheglov) implement
   }
 
+  public void diagnostic_getServerPort(GetServerPortConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateDiagnosticGetServerPort(id), consumer);
+  }
+
   @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
     String id = generateUniqueId();
@@ -535,8 +540,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       requestError = processErrorResponse(errorObject);
       listener.requestError(requestError);
     }
+
     // handle result
     JsonObject resultObject = (JsonObject)response.get("result");
+
     //
     // Analysis Domain
     //
@@ -546,7 +553,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     //
     // Completion Domain
     //
-    if (consumer instanceof GetSuggestionsConsumer) {
+    else if (consumer instanceof GetSuggestionsConsumer) {
       new CompletionIdProcessor((GetSuggestionsConsumer)consumer).process(resultObject, requestError);
     }
     //
@@ -614,6 +621,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       new MapUriProcessor((MapUriConsumer)consumer).process(resultObject, requestError);
     }
     //
+    // Diagnostic Domain
+    //
+    else if (consumer instanceof GetServerPortConsumer) {
+      new GetServerPortProcessor((GetServerPortConsumer)consumer).process(resultObject, requestError);
+    }
+    //
     // Server Domain
     //
     else if (consumer instanceof GetVersionConsumer) {
@@ -622,6 +635,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (consumer instanceof BasicConsumer) {
       ((BasicConsumer)consumer).received();
     }
+
     synchronized (consumerMapLock) {
       consumerMap.remove(idString);
     }
