@@ -32,6 +32,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -160,7 +161,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
               myBuilder.updateFromRoot();
               selectFileSet(fileSet);
             }
-            myTree.requestFocus();
+            IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+              IdeFocusManager.getGlobalInstance().requestFocus(myTree, true);
+            });
           }
         })
         .setRemoveAction(new AnActionButtonRunnable() {
@@ -169,7 +172,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
             remove();
             myModified = true;
             myBuilder.updateFromRoot();
-            myTree.requestFocus();
+            IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+              IdeFocusManager.getGlobalInstance().requestFocus(myTree, true);
+            });
           }
         })
         .setEditAction(new AnActionButtonRunnable() {
@@ -192,7 +197,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
                 myBuilder.updateFromRoot();
                 selectFileSet(edited);
               }
-              myTree.requestFocus();
+              IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+                IdeFocusManager.getGlobalInstance().requestFocus(myTree, true);
+              });
             }
           }
         })

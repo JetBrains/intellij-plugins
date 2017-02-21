@@ -20,6 +20,7 @@ import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.content.Content;
 import jetbrains.communicator.core.EventVisitor;
@@ -230,7 +231,9 @@ public class MessagesTab implements Disposable {
     @Override
     public void actionPerformed(ActionEvent e) {
       send();
-      myInput.requestFocus();
+      IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+        IdeFocusManager.getGlobalInstance().requestFocus(myInput, true);
+      });
     }
   }
   private class LfAction extends AbstractAction {

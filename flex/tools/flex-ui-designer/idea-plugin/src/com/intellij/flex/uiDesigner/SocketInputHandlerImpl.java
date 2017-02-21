@@ -25,6 +25,7 @@ import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiFile;
@@ -362,7 +363,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
     // IdeFocusManager is not working correctly. If we open 2 projects, select another project, select some component in ADL and navigate to project, first project frame must be focused
     projectFrame.toFront();
-    projectFrame.requestFocus();
+    IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+      IdeFocusManager.getGlobalInstance().requestFocus(projectFrame, true);
+    });
 
     if (activateApp) {
       AppIcon.getInstance().requestFocus((IdeFrame)WindowManager.getInstance().getFrame(p));

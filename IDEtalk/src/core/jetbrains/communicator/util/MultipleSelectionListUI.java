@@ -16,6 +16,8 @@
 
 package jetbrains.communicator.util;
 
+import com.intellij.openapi.wm.IdeFocusManager;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.basic.BasicListUI;
@@ -57,7 +59,9 @@ public class MultipleSelectionListUI extends BasicListUI {
          * synchronous (it is on Windows).  See bug 4122345
          */
         if (!list.hasFocus() && list.isRequestFocusEnabled()) {
-          list.requestFocus();
+          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+            IdeFocusManager.getGlobalInstance().requestFocus(list, true);
+          });
         }
 
         int row = locationToIndex(list, e.getPoint());

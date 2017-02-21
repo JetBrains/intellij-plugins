@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.refactoring.introduce;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.EditorComboBoxEditor;
 import com.intellij.ui.EditorComboBoxRenderer;
 import com.intellij.ui.StringComboboxEditor;
@@ -54,7 +55,9 @@ public class DartIntroduceDialog extends DialogWrapper {
 
     myContentPane.registerKeyboardAction(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        myNameComboBox.requestFocus();
+        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+          IdeFocusManager.getGlobalInstance().requestFocus(myNameComboBox, true);
+        });
       }
     }, KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 

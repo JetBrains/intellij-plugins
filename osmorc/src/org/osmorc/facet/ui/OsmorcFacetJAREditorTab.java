@@ -44,10 +44,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.ui.*;
+import com.intellij.ui.EditorTextField;
+import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.UserActivityListener;
+import com.intellij.ui.UserActivityWatcher;
 import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -151,7 +155,9 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
           String destinationName = preselectedPath != null ? determineMostLikelyLocationInJar(preselectedPath) : "";
           myAdditionalJARContentsTableModel.changeAdditionalJARConent(row, additionalJARContent.first, destinationName);
           myAdditionalJARContentsTable.editCellAt(row, 1);
-          myAdditionalJARContentsTable.getEditorComponent().requestFocus();
+          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+            IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true);
+          });
         }
       }
     });
@@ -211,7 +217,9 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         String destPath = determineMostLikelyLocationInJar(files[0]);
         myAdditionalJARContentsTableModel.changeAdditionalJARConent(row, sourcePath, destPath);
         myAdditionalJARContentsTable.editCellAt(row, 1);
-        myAdditionalJARContentsTable.getEditorComponent().requestFocus();
+        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+          IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true);
+        });
       }
     }
   }
@@ -243,7 +251,9 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
       String destFile = determineMostLikelyLocationInJar(file);
       int row = myAdditionalJARContentsTableModel.addAdditionalJARContent(file.getPath(), destFile);
       myAdditionalJARContentsTable.editCellAt(row, 1);
-      myAdditionalJARContentsTable.getEditorComponent().requestFocus();
+      IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+        IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true);
+      });
     }
   }
 
