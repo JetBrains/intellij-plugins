@@ -16,6 +16,7 @@
 package jetbrains.communicator.core.impl.users;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ConcurrencyUtil;
 import jetbrains.communicator.core.TestFactory;
 import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.users.User;
@@ -138,9 +139,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
     for (Thread thread : threads) {
       thread.start();
     }
-    for (Thread thread : threads) {
-      thread.join();
-    }
+    ConcurrencyUtil.joinAll(threads);
 
     System.out.println("myUserModel.getAllUsers().length = " + myUserModel.getAllUsers().length);
     System.out.println("myUserModel.getGroups().length = " + myUserModel.getGroups().length);
