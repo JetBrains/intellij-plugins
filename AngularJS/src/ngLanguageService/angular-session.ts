@@ -4,7 +4,7 @@ import LanguageServiceHost = ts.LanguageServiceHost;
 
 let path = require('path');
 
-export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new(state: TypeScriptPluginState): IDETypeScriptSession}) {
+export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { new(state: TypeScriptPluginState): IDETypeScriptSession }) {
 
     (ts_impl.server.CommandNames as any).IDEGetHtmlErrors = "IDEGetHtmlErrors";
     (ts_impl.server.CommandNames as any).IDENgCompletions = "IDENgCompletions";
@@ -12,11 +12,12 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
 
     let skipAngular = ts_impl["skipNg"];
+    let refreshErrorCount = 0;
     let globalError = skipAngular ? "Cannot start Angular Service with the bundled TypeScript. " +
         "Please specify 'typescript' node_modules package" : null;
     abstract class AngularSession extends sessionClass {
 
-        executeCommand(request: ts.server.protocol.Request): {response?: any; responseRequired?: boolean} {
+        executeCommand(request: ts.server.protocol.Request): { response?: any; responseRequired?: boolean } {
             let command = request.command;
             if (command == ts_impl.server.CommandNames.IDEGetHtmlErrors) {
                 let args = request.arguments;
@@ -56,21 +57,25 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
         beforeFirstMessage(): void {
-            super.beforeFirstMessage();
             if (skipAngular) {
+                super.beforeFirstMessage();
                 return;
             }
 
             let sessionThis: AngularSession = this;
             let version = this.tsVersion();
             if (version == "2.0.0") {
+                sessionThis.logMessage("Override updateFileMap (old)")
                 extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
                     oldFunc.apply(this, args);
                     try {
-                        if (this.filenameToSourceFile) {
-                            sessionThis.logMessage("Connect templates to project (old)")
-                            for (let fileName of sessionThis.getTemplatesRefs(this)) {
-                                this.filenameToSourceFile[fileName] = {fileName, text: ""}
+                        let projectPath = sessionThis.getProjectConfigPathEx(this);
+                        if (projectPath) {
+                            if (this.filenameToSourceFile) {
+                                sessionThis.logMessage("Connect templates to project (old)")
+                                for (let fileName of sessionThis.getTemplatesRefs(this)) {
+                                    this.filenameToSourceFile[fileName] = {fileName, text: ""}
+                                }
                             }
                         }
                     } catch (err) {
@@ -79,6 +84,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     }
                 });
             } else if (version == "2.0.5") {
+                sessionThis.logMessage("Override updateFileMap (new)")
                 extendEx((ts_impl.server as any).Project, "updateGraph", function (this: ts.server.Project, oldFunc, args) {
                     let result = oldFunc.apply(this, args);
                     try {
@@ -116,6 +122,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                     return oldFunc.apply(this, args);
                 });
             }
+            super.beforeFirstMessage();
+            sessionThis.logMessage("Complete before first message");
         }
 
         getTemplatesRefs(project: ts.server.Project): string[] {
@@ -141,18 +149,17 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
 
             try {
                 if (this.projectService) {
-                    for (let prj of this.projectService.inferredProjects) {
-                        this.updateNgProject(prj);
-                    }
-
                     for (let prj of this.projectService.configuredProjects) {
                         this.updateNgProject(prj);
                     }
                 }
             } catch (err) {
+                refreshErrorCount++;
                 this.logError(err, "refresh from angular");
-                skipAngular = true;
-                this.logMessage("ERROR angular integration will be disable", true);
+                if (refreshErrorCount > 1) {
+                    skipAngular = true;
+                    this.logMessage("ERROR angular integration will be disable", true);
+                }
             }
         }
 
@@ -165,7 +172,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
             return this.appendGlobalNgErrors(result);
         }
 
-        private appendHtmlDiagnostics(project: ts.server.Project | null, fileNames: string[], result: ts.server.protocol.DiagnosticEventBody[]) {
+        private appendHtmlDiagnostics(project: ts.server.Project
+                                          | null, fileNames: string[], result: ts.server.protocol.DiagnosticEventBody[]) {
             for (let fileName of fileNames) {
                 fileName = ts_impl.normalizePath(fileName);
                 project = project == null ? this.getForceProject(fileName) : project;
@@ -234,7 +242,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
         private getNgDiagnostics(project: ts.server.Project, normalizedFileName: string, sourceFile: ts.SourceFile): ts.Diagnostic[] {
-            let languageService = project != null ? this.getLanguageService(project, false) : null;
+
+            let languageService = project != null && this.getProjectConfigPathEx(project) ? this.getLanguageService(project, false) : null;
             if (!languageService || skipAngular) {
                 return [];
             }
@@ -279,7 +288,8 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
         }
 
 
-        appendPluginProjectDiagnostics(project: ts.server.Project, program: ts.Program, diags: ts.server.protocol.DiagnosticEventBody[]| null): ts.server.protocol.DiagnosticEventBody[]| null {
+        appendPluginProjectDiagnostics(project: ts.server.Project, program: ts.Program, diags: ts.server.protocol.DiagnosticEventBody[]
+                                           | null): ts.server.protocol.DiagnosticEventBody[] | null {
             let result = super.appendPluginProjectDiagnostics(project, program, diags);
 
             if (!project || !program || this.tsVersion() == "2.0.0") {
@@ -307,16 +317,18 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
                 });
             }
 
-            let templatesRefs = this.getTemplatesRefs(project);
+            if (this.getProjectConfigPathEx(project)) {
+                let templatesRefs = this.getTemplatesRefs(project);
 
-            if (templatesRefs && templatesRefs.length > 0) {
-                this.appendHtmlDiagnostics(project, templatesRefs, result)
+                if (templatesRefs && templatesRefs.length > 0) {
+                    this.appendHtmlDiagnostics(project, templatesRefs, result)
+                }
             }
 
             return result;
         }
 
-        appendGlobalErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: {[p: string]: ts.server.Project}, empty: boolean): ts.server.protocol.DiagnosticEventBody[] {
+        appendGlobalErrors(result: ts.server.protocol.DiagnosticEventBody[], processedProjects: { [p: string]: ts.server.Project }, empty: boolean): ts.server.protocol.DiagnosticEventBody[] {
             let appendProjectErrors = super.appendGlobalErrors(result, processedProjects, empty);
             appendProjectErrors = this.appendGlobalNgErrors(appendProjectErrors);
             return appendProjectErrors;
@@ -360,7 +372,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: {new
             let file = args.file;
             file = ts_impl.normalizePath(file);
             let project = this.getForceProject(file);
-            if (!project) {
+            if (!project || !this.getProjectConfigPathEx(project)) {
                 return {
                     response: [],
                     responseRequired: true
