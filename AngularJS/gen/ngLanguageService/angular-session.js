@@ -10,6 +10,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDENgCompletions = "IDENgCompletions";
     ts_impl.server.CommandNames.IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
     var skipAngular = ts_impl["skipNg"];
+    var refreshErrorCount = 0;
     var globalError = skipAngular ? "Cannot start Angular Service with the bundled TypeScript. " +
         "Please specify 'typescript' node_modules package" : null;
     var AngularSession = (function (_super) {
@@ -50,21 +51,25 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             return _super.prototype.executeCommand.call(this, request);
         };
         AngularSession.prototype.beforeFirstMessage = function () {
-            _super.prototype.beforeFirstMessage.call(this);
             if (skipAngular) {
+                _super.prototype.beforeFirstMessage.call(this);
                 return;
             }
             var sessionThis = this;
             var version = this.tsVersion();
             if (version == "2.0.0") {
+                sessionThis.logMessage("Override updateFileMap (old)");
                 extendEx(ts_impl.server.Project, "updateFileMap", function (oldFunc, args) {
                     oldFunc.apply(this, args);
                     try {
-                        if (this.filenameToSourceFile) {
-                            sessionThis.logMessage("Connect templates to project (old)");
-                            for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
-                                var fileName = _a[_i];
-                                this.filenameToSourceFile[fileName] = { fileName: fileName, text: "" };
+                        var projectPath = sessionThis.getProjectConfigPathEx(this);
+                        if (projectPath) {
+                            if (this.filenameToSourceFile) {
+                                sessionThis.logMessage("Connect templates to project (old)");
+                                for (var _i = 0, _a = sessionThis.getTemplatesRefs(this); _i < _a.length; _i++) {
+                                    var fileName = _a[_i];
+                                    this.filenameToSourceFile[fileName] = { fileName: fileName, text: "" };
+                                }
                             }
                         }
                     }
@@ -75,6 +80,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 });
             }
             else if (version == "2.0.5") {
+                sessionThis.logMessage("Override updateFileMap (new)");
                 extendEx(ts_impl.server.Project, "updateGraph", function (oldFunc, args) {
                     var result = oldFunc.apply(this, args);
                     try {
@@ -111,6 +117,8 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                     return oldFunc.apply(this, args);
                 });
             }
+            _super.prototype.beforeFirstMessage.call(this);
+            sessionThis.logMessage("Complete before first message");
         };
         AngularSession.prototype.getTemplatesRefs = function (project) {
             var result = [];
@@ -134,20 +142,19 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             }
             try {
                 if (this.projectService) {
-                    for (var _i = 0, _a = this.projectService.inferredProjects; _i < _a.length; _i++) {
+                    for (var _i = 0, _a = this.projectService.configuredProjects; _i < _a.length; _i++) {
                         var prj = _a[_i];
-                        this.updateNgProject(prj);
-                    }
-                    for (var _b = 0, _c = this.projectService.configuredProjects; _b < _c.length; _b++) {
-                        var prj = _c[_b];
                         this.updateNgProject(prj);
                     }
                 }
             }
             catch (err) {
+                refreshErrorCount++;
                 this.logError(err, "refresh from angular");
-                skipAngular = true;
-                this.logMessage("ERROR angular integration will be disable", true);
+                if (refreshErrorCount > 1) {
+                    skipAngular = true;
+                    this.logMessage("ERROR angular integration will be disable", true);
+                }
             }
         };
         AngularSession.prototype.getHtmlDiagnosticsEx = function (fileNames) {
@@ -224,7 +231,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             return diags.concat(result);
         };
         AngularSession.prototype.getNgDiagnostics = function (project, normalizedFileName, sourceFile) {
-            var languageService = project != null ? this.getLanguageService(project, false) : null;
+            var languageService = project != null && this.getProjectConfigPathEx(project) ? this.getLanguageService(project, false) : null;
             if (!languageService || skipAngular) {
                 return [];
             }
@@ -290,9 +297,11 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                 var file = _a[_i];
                 _loop_2(file);
             }
-            var templatesRefs = this.getTemplatesRefs(project);
-            if (templatesRefs && templatesRefs.length > 0) {
-                this.appendHtmlDiagnostics(project, templatesRefs, result);
+            if (this.getProjectConfigPathEx(project)) {
+                var templatesRefs = this.getTemplatesRefs(project);
+                if (templatesRefs && templatesRefs.length > 0) {
+                    this.appendHtmlDiagnostics(project, templatesRefs, result);
+                }
             }
             return result;
         };
@@ -339,7 +348,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
             var file = args.file;
             file = ts_impl.normalizePath(file);
             var project = this.getForceProject(file);
-            if (!project) {
+            if (!project || !this.getProjectConfigPathEx(project)) {
                 return {
                     response: [],
                     responseRequired: true
