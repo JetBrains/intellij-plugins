@@ -23,6 +23,6 @@ public class ModuleBuilder {
     public static void bind_with_configuration(ServiceBinder binder) {
         binder.bind(String.class).withId("id").eagerLoad().scope("scope");
 
-        binder.bind(Collection.class, ArrayList.class).withId("id").eagerLoad().scope("scope");;
+        binder.bind(Collection.class, ArrayList.class).withId("id").eagerLoad().scope("scope");
     }
 }
