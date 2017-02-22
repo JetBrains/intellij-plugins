@@ -45,7 +45,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return new String[]{"init", "--name=" + baseDir.getName()};
+    return new String[]{"new", baseDir.getName(), "--dir=."};
   }
 
   @NotNull
