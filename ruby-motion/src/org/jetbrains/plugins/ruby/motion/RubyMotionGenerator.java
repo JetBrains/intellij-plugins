@@ -46,13 +46,11 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
   }
 
   @Override
-  public void generateProject(
+  public void generateProjectInner(
     @NotNull final Project project,
     @NotNull final VirtualFile baseDir,
-    final RubyMotionSettingsHolder settings,
-    @NotNull final Module module)
-  {
-    super.generateProject(project, baseDir, settings, module);
+    @NotNull final RubyMotionSettingsHolder settings,
+    @NotNull final Module module) {
     final RubyMotionUtilImpl.ProjectType projectType = settings.getProjectType();
 
     module.putUserData(RubyMotionUtilImpl.PROJECT_TYPE, projectType);
