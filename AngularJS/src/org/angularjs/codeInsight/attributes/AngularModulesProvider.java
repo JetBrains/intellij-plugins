@@ -17,9 +17,7 @@ import icons.AngularJSIcons;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +36,6 @@ public class AngularModulesProvider implements JSModuleConnectionProvider {
   @Override
   public String getName() {
     return "AngularJS";
-  }
-
-  @Nullable
-  @Override
-  public Icon getIcon() {
-    return AngularJSIcons.AngularJS;
   }
 
   @Override
@@ -77,7 +69,8 @@ public class AngularModulesProvider implements JSModuleConnectionProvider {
                                             final JSImplicitElement resolve = AngularIndexUtil.resolve(project, AngularModuleIndex.KEY, dependency);
                                             if (resolve != null) {
                                               result.add(new Link(spm.createSmartPsiElementPointer(element.getNavigationElement()),
-                                                                  spm.createSmartPsiElementPointer(resolve.getNavigationElement()), key, resolve.getName()));
+                                                                  spm.createSmartPsiElementPointer(resolve.getNavigationElement()), key, resolve.getName(),
+                                                                  AngularJSIcons.AngularJS));
                                             }
                                           }
                                         }
