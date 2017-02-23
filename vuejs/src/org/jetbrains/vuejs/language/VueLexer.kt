@@ -130,7 +130,7 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
     super.advance()
     val originalType = super.getTokenType()
     if (originalType === XmlTokenType.XML_DATA_CHARACTERS || originalType === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
-      var type: IElementType = originalType!!
+      var type: IElementType? = originalType!!
       interpolationStart = super.getTokenStart()
       val text = StringBuilder()
       while (type === XmlTokenType.XML_DATA_CHARACTERS ||
@@ -141,7 +141,7 @@ class VueLexer : HtmlLexer(), VueHandledLexer {
              type === XmlTokenType.XML_ENTITY_REF_TOKEN) {
         text.append(super.getTokenText())
         super.advance()
-        type = tokenType!!
+        type = tokenType
       }
       val lexer = VueInterpolationLexer("{{", "}}", originalType)
       lexer.start(text)
