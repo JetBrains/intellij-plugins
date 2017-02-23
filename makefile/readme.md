@@ -19,4 +19,6 @@ Provides:
 
 Work in progress.
 
+<img src="https://victor.kropp.name/projects/makefile/makefile-example.png" width="600">
+
 [GNU head icon](https://www.gnu.org/graphics/heckert_gnu.html) licensed under CC-BY-SA 2.0
