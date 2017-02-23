@@ -25,6 +25,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     super.handleInsert(context, item)
     if (context == null || item  == null) return
     val importedFile = (item.`object` as JSImplicitElement).containingFile
+    if (importedFile == context.file) return
     val nodeModule = NodeModuleSearchUtil.findDependencyRoot((item.`object` as PsiElement).containingFile.virtualFile)
     if (isSkippedModule(nodeModule)) return
 
