@@ -5,10 +5,9 @@ import com.intellij.diagram.components.DiagramNodeContainer;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.icons.AllIcons;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.modules.diagramm.JSModulesDiagramUtils;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.GraphUtil;
 import com.intellij.openapi.graph.base.Edge;
@@ -21,17 +20,14 @@ import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
 import com.intellij.openapi.graph.settings.GraphSettings;
 import com.intellij.openapi.graph.settings.GraphSettingsProvider;
 import com.intellij.openapi.graph.view.*;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.ui.*;
-import com.intellij.ui.components.JBList;
 import com.intellij.uml.UmlGraphBuilder;
 import com.intellij.uml.core.renderers.DefaultUmlRenderer;
 import com.intellij.uml.presentation.DiagramPresentationModelImpl;
@@ -49,6 +45,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
@@ -59,7 +56,6 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
   public static final BasicStroke DOTTED_STROKE =
     new BasicStroke(0.7f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{2, 2}, 0.0f);
   public static final StrokeBorder WARNING_BORDER = new StrokeBorder(DOTTED_STROKE, JBColor.red);
-  private static final DataKey<DiagramBuilder> DIAGRAM_BUILDER = DataKey.create("Angular.JS.Diagram.Builder");
   public static final Border ERROR_BORDER = JBUI.Borders.customLine(JBColor.red);
   public static final Border NORMAL_BORDER = JBUI.Borders.customLine(Gray._190);
   private DiagramVfsResolver<DiagramObject> myResolver;
@@ -465,7 +461,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
           final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
-        } else if (DIAGRAM_BUILDER.is(dataId)) {
+        } else if (JSModulesDiagramUtils.DIAGRAM_BUILDER.is(dataId)) {
           return builder;
         }
         return null;
@@ -536,7 +532,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return null;
   }
 
-  private static class MyEditSourceAction extends DumbAwareAction {
+  private static class MyEditSourceAction extends AnAction {
     private final AnAction myAction;
 
     public MyEditSourceAction() {
@@ -551,7 +547,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         e.getPresentation().setEnabled(false);
         return;
       }
-      final List<DiagramNode> nodes = getSelectedNodes(e);
+      final List<DiagramNode> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
       e.getPresentation().setEnabled(nodes != null && nodes.size() == 1 && nodes.get(0) instanceof AngularUiRouterNode);
     }
 
@@ -559,7 +555,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     public void actionPerformed(AnActionEvent e) {
       final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
       if (project == null) return;
-      final List<DiagramNode> nodes = getSelectedNodes(e);
+      final List<DiagramNode> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
       if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode)) return;
 
       final AngularUiRouterNode node = (AngularUiRouterNode)nodes.get(0);
@@ -567,37 +563,12 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       final List<DiagramObject> childrenList = main.getChildrenList();
       if (childrenList.isEmpty()) myAction.actionPerformed(e);
       else {
-        final JBList list = new JBList();
-        final List<Object> data = new ArrayList<>();
-        data.add(main.getType().name() + ": " + main.getName());
-        for (DiagramObject object : childrenList) {
-          data.add(object.getType().name() + ": " + object.getName());
-        }
-        list.setListData(ArrayUtil.toObjectArray(data));
-        JBPopupFactory.getInstance().createListPopupBuilder(list)
-          .setTitle("Select Navigation Target")
-          .setItemChoosenCallback(() -> {
-            final int index = list.getSelectedIndex();
-            if (index >= 0) {
-              final SmartPsiElementPointer target = index == 0 ? main.getNavigationTarget() : childrenList.get(index - 1).getNavigationTarget();
-              if (target != null) {
-                final PsiElement element = target.getElement();
-                final int offset = element == null ? 0 :
-                                   (element instanceof JSImplicitElement ? element.getTextOffset() : element.getTextRange().getStartOffset());
-                new OpenFileDescriptor(project, target.getVirtualFile(), offset).navigate(true);
-              }
-            }
-          })
-          .createPopup().showInBestPositionFor(e.getDataContext());
+        final List<Trinity<String, SmartPsiElementPointer, Icon>> children = childrenList.stream()
+          .map(ch -> Trinity.create(ch.getType().name() + ": " + ch.getName(), ch.getNavigationTarget(), (Icon)null))
+          .collect(Collectors.toList());
+        JSModulesDiagramUtils
+          .showMembersSelectionPopup(main.getType().name() + ": " + main.getName(), main.getNavigationTarget(), null, children, e.getDataContext());
       }
-    }
-
-    @Nullable
-    private static List<DiagramNode> getSelectedNodes(AnActionEvent e) {
-      final DiagramBuilder builder = DIAGRAM_BUILDER.getData(e.getDataContext());
-      if (builder == null || builder.getGraph().isSelectionEmpty()) return null;
-      UmlGraphBuilder umlBuilder = (UmlGraphBuilder)builder.getGraph().getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
-      return new ArrayList<>(GraphUtil.getSelectedNodes(umlBuilder));
     }
   }
 }
