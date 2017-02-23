@@ -5,6 +5,7 @@ import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import name.kropp.intellij.makefile.psi.MakefileTarget
+import java.io.File
 
 class MakefileRunConfigurationProducer : RunConfigurationProducer<MakefileRunConfiguration>(MakefileRunConfigurationType()) {
   public override fun setupConfigurationFromContext(configuration : MakefileRunConfiguration, context: ConfigurationContext, sourceElement: Ref<PsiElement>?): Boolean {
@@ -13,7 +14,13 @@ class MakefileRunConfigurationProducer : RunConfigurationProducer<MakefileRunCon
     }
     configuration.filename = context.location?.virtualFile?.path ?: ""
     configuration.target = findTarget(context)?.name ?: ""
-    configuration.name = configuration.target
+
+    if (!configuration.target.isNullOrEmpty()) {
+      configuration.name = configuration.target
+    } else {
+      configuration.name = File(configuration.filename).name
+    }
+
     return true
   }
 
