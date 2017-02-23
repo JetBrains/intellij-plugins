@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 
@@ -25,7 +26,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (context == null || item  == null) return
     val importedFile = (item.`object` as JSImplicitElement).containingFile
     val nodeModule = NodeModuleSearchUtil.findDependencyRoot((item.`object` as PsiElement).containingFile.virtualFile)
-    if (nodeModule != null && "vue" == nodeModule.name) return
+    if (isSkippedModule(nodeModule)) return
 
     context.commitDocument()
     val file = context.file as? HtmlFileImpl ?: return
@@ -41,6 +42,8 @@ class VueInsertHandler : XmlTagInsertHandler() {
     components.addBefore(newProperty, components.firstProperty)
     ES6ImportPsiUtil.insertImport(content, capitalizedName, ImportType.DEFAULT, importedFile, context.editor)
   }
+
+  private fun isSkippedModule(nodeModule: VirtualFile?) = "vue" == nodeModule?.name || "vue-router" == nodeModule?.name
 
   private fun componentProperty(obj: JSObjectLiteralExpression): JSProperty {
     val property = obj.findProperty("components")
