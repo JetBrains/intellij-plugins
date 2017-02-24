@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PropertiesComponent;
@@ -35,6 +36,7 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerMessages;
 import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -63,6 +65,10 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
   private final Alarm myAlarm;
   private DartProblemsViewSettings mySettings = new DartProblemsViewSettings();
+
+  private ToolWindow myToolWindow;
+  private Icon myCurrentIcon;
+  private boolean myAnalysisIsBusy;
 
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
@@ -95,13 +101,14 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
       myPanel = new DartProblemsViewPanel(project, myFilter, mySettings);
 
-      final ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
-      toolWindow.setIcon(DartIcons.Dart_13);
+      myToolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+      myCurrentIcon = DartIcons.Dart_13;
+      updateIcon();
 
       final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
-      toolWindow.getContentManager().addContent(content);
+      myToolWindow.getContentManager().addContent(content);
 
-      ToolWindowEx toolWindowEx = (ToolWindowEx)toolWindow;
+      ToolWindowEx toolWindowEx = (ToolWindowEx)myToolWindow;
       toolWindowEx.setTitleActions(new AnalysisServerStatusAction());
       ArrayList<AnAction> gearActions = new ArrayList<>();
       gearActions.add(new AnalysisServerDiagnosticsAction());
@@ -110,7 +117,8 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
       myPanel.setToolWindowUpdater(new ToolWindowUpdater() {
         @Override
         public void setIcon(@NotNull Icon icon) {
-          toolWindow.setIcon(icon);
+          myCurrentIcon = icon;
+          updateIcon();
         }
 
         @Override
@@ -121,11 +129,36 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
       if (PropertiesComponent.getInstance(project).getBoolean("dart.analysis.tool.window.force.activate", true)) {
         PropertiesComponent.getInstance(project).setValue("dart.analysis.tool.window.force.activate", false, true);
-        toolWindow.activate(null, false);
+        myToolWindow.activate(null, false);
       }
 
-      Disposer.register(project, () -> toolWindow.getContentManager().removeAllContents(true));
+      Disposer.register(project, () -> myToolWindow.getContentManager().removeAllContents(true));
     });
+
+    project.getMessageBus().connect().subscribe(
+      DartAnalysisServerMessages.DART_ANALYSIS_TOPIC, new DartAnalysisServerMessages.DartAnalysisNotifier() {
+        @Override
+        public void analysisStarted() {
+          myAnalysisIsBusy = true;
+          UIUtil.invokeLaterIfNeeded(() -> updateIcon());
+        }
+
+        @Override
+        public void analysisFinished() {
+          myAnalysisIsBusy = false;
+          UIUtil.invokeLaterIfNeeded(() -> updateIcon());
+        }
+      }
+    );
+  }
+
+  void updateIcon() {
+    if (myAnalysisIsBusy) {
+      myToolWindow.setIcon(ExecutionUtil.getLiveIndicator(myCurrentIcon));
+    }
+    else {
+      myToolWindow.setIcon(myCurrentIcon);
+    }
   }
 
   public static DartProblemsView getInstance(@NotNull final Project project) {
