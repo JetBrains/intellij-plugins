@@ -23,11 +23,6 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "routing";
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return getTestName(true).contains("Completion");
-  }
-
   public void testPartialResolve() {
     myFixture.configureByFiles("custom.js", "angular.js", "index.html", "partials/phone-details.html", "partials/phone-list.html");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("phone-<caret>details", myFixture.getFile());

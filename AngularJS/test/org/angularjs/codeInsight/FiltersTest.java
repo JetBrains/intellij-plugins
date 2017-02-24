@@ -18,11 +18,6 @@ public class FiltersTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "filters";
   }
 
-  @Override
-  protected boolean isWriteActionRequired() {
-    return getTestName(true).contains("Completion");
-  }
-
   public void testFilterCompletion() {
     myFixture.configureByFiles("filter.html", "angular.js", "custom.js");
     final List<String> variants = myFixture.getCompletionVariants("filter.html");
