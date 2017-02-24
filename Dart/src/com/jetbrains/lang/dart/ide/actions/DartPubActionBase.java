@@ -44,6 +44,7 @@ import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.content.MessageView;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
@@ -59,10 +60,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 abstract public class DartPubActionBase extends AnAction implements DumbAware {
+  public static final String PUB_ENV_VAR_NAME = "PUB_ENVIRONMENT";
+
   private static final String GROUP_DISPLAY_ID = "Dart Pub Tool";
   private static final Key<PubToolWindowContentInfo> PUB_TOOL_WINDOW_CONTENT_INFO_KEY = Key.create("PUB_TOOL_WINDOW_CONTENT_INFO_KEY");
 
   private static final AtomicBoolean ourInProgress = new AtomicBoolean(false);
+
+  public static String getPubEnvValue() {
+    String existingVar = System.getenv(PUB_ENV_VAR_NAME);
+    if (existingVar == null) {
+      return DartAnalysisServerService.getClientId();
+    }
+    else {
+      return existingVar + ":" + DartAnalysisServerService.getClientId();
+    }
+  }
 
   public static boolean isInProgress() {
     return ourInProgress.get();
@@ -178,6 +191,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     try {
       if (ourInProgress.compareAndSet(false, true)) {
+        command.withEnvironment(PUB_ENV_VAR_NAME, getPubEnvValue());
+
         final OSProcessHandler processHandler = new OSProcessHandler(command);
 
         processHandler.addProcessListener(new ProcessAdapter() {
