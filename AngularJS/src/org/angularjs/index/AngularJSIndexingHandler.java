@@ -600,6 +600,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (last instanceof JSReferenceExpression) {
       PsiElement resolve = ((JSReferenceExpression)last).resolve();
       if (resolve != null) {
+        if (resolve instanceof JSTypeDeclarationOwner) {
+          JSType type = ((JSTypeDeclarationOwner)resolve).getType();
+          if (type != null) {
+            return evaluator.addComponentTypeFromProcessor((JSExpression)last, type) != null;
+          }
+        }
         resolve = JSPsiImplUtils.getAssignedExpression(resolve);
         if (resolve != null) {
           arrayExpression = (JSExpression)resolve;
