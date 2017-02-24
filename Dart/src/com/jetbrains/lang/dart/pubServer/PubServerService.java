@@ -27,6 +27,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.NetKt;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -86,7 +87,7 @@ final class PubServerService extends NetService {
     private final Channel channel;
     private final HttpHeaders extraHeaders;
 
-    private ClientInfo(@NotNull  Channel channel, @NotNull HttpHeaders extraHeaders) {
+    private ClientInfo(@NotNull Channel channel, @NotNull HttpHeaders extraHeaders) {
       this.channel = channel;
       this.extraHeaders = extraHeaders;
     }
@@ -186,6 +187,8 @@ final class PubServerService extends NetService {
     commandLine.addParameter("serve");
     commandLine.addParameter(firstServedDir.getName());
     commandLine.addParameter("--port=" + String.valueOf(port));
+    commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue());
+
     //commandLine.addParameter("--admin-port=" + String.valueOf(PubServerManager.findOneMoreAvailablePort(port))); // todo uncomment and use
 
     final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
