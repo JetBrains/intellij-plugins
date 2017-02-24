@@ -43,4 +43,8 @@ public class MakefileRecipeImpl extends ASTWrapperPsiElement implements Makefile
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileEmptyCommand.class);
   }
 
+  public boolean isEmpty() {
+    return MakefilePsiImplUtil.isEmpty(this);
+  }
+
 }

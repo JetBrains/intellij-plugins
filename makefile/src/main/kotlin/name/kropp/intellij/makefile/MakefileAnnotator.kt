@@ -1,5 +1,6 @@
 package name.kropp.intellij.makefile
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.util.TextRange
@@ -13,7 +14,9 @@ class MakefileAnnotator : Annotator {
   private val lineTokenSet = TokenSet.create(MakefileTypes.LINE)
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-    if (element is MakefileTarget) {
+    if (element is MakefileRule && element.isUnused()) {
+      holder.createInfoAnnotation(element, "Redundant rule").highlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+    } else if (element is MakefileTarget && !(element.parent.parent.parent as MakefileRule).isUnused()) {
       holder.createInfoAnnotation(element, null).textAttributes = if (element.isSpecialTarget) MakefileSyntaxHighlighter.SPECIAL_TARGET else MakefileSyntaxHighlighter.TARGET
     } else if (element is MakefilePrerequisite) {
       holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.PREREQUISITE
@@ -56,4 +59,6 @@ class MakefileAnnotator : Annotator {
       }
     }
   }
+
+  private fun MakefileRule.isUnused() = targetLine.prerequisites?.normalPrerequisites?.prerequisiteList?.any() == false && recipe.isEmpty
 }

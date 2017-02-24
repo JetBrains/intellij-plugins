@@ -118,4 +118,8 @@ public class MakefilePsiImplUtil {
         ASTNode[] nodes = element.getNode().getChildren(VARIABLE_VALUE_LINE);
         return Arrays.stream(nodes).map(ASTNode::getText).collect(Collectors.joining("\n"));
     }
+
+    public static boolean isEmpty(MakefileRecipe element) {
+        return element.getCommandList().isEmpty() && element.getConditionalList().isEmpty();
+    }
 }

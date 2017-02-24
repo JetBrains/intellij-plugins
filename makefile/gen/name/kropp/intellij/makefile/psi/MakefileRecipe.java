@@ -17,4 +17,6 @@ public interface MakefileRecipe extends PsiElement {
   @NotNull
   List<MakefileEmptyCommand> getEmptyCommandList();
 
+  boolean isEmpty();
+
 }
