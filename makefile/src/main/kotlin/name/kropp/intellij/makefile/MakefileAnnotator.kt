@@ -15,7 +15,10 @@ class MakefileAnnotator : Annotator {
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element is MakefileRule && element.isUnused()) {
-      holder.createInfoAnnotation(element, "Redundant rule").highlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+      holder.createInfoAnnotation(element, "Redundant rule").apply {
+        highlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+        registerFix(RemoveRuleFix(element))
+      }
     } else if (element is MakefileTarget && !(element.parent.parent.parent as MakefileRule).isUnused()) {
       holder.createInfoAnnotation(element, null).textAttributes = if (element.isSpecialTarget) MakefileSyntaxHighlighter.SPECIAL_TARGET else MakefileSyntaxHighlighter.TARGET
     } else if (element is MakefilePrerequisite) {
