@@ -25,6 +25,7 @@
       <li>Quick Documentation for resource types and properties</li>
       <li>Format file</li>
     </ul>
+    <p>Not everything works in YAML right now, it's work in progress.
   ]]></description>
 
   <!-- IDEA 2016.1 -->
