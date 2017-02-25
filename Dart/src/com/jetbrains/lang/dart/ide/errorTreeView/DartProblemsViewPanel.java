@@ -30,10 +30,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
-import com.intellij.ui.AutoScrollToSourceHandler;
-import com.intellij.ui.PopupHandler;
-import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.TableSpeedSearch;
+import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
@@ -58,6 +55,19 @@ import java.util.Map;
 public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
 
   private static final long DEFAULT_SERVER_WAIT_MILLIS = 5000L; // Switch to UNKNOWN after 5s with no response.
+
+  private static final LayeredIcon DART_ERRORS_ICON;
+  private static final LayeredIcon DART_WARNINGS_ICON;
+
+  static {
+    DART_ERRORS_ICON = new LayeredIcon(2);
+    DART_ERRORS_ICON.setIcon(DartIcons.Dart_13, 0);
+    DART_ERRORS_ICON.setIcon(AllIcons.Ide.ErrorPoint, 1, SwingConstants.SOUTH_WEST);
+
+    DART_WARNINGS_ICON = new LayeredIcon(2);
+    DART_WARNINGS_ICON.setIcon(DartIcons.Dart_13, 0);
+    DART_WARNINGS_ICON.setIcon(DartIcons.Warning_point, 1, SwingConstants.SOUTH_WEST);
+  }
 
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
@@ -165,9 +175,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     if (myToolWindowUpdater != null) {
       final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
       myToolWindowUpdater.setHeaderText(model.getStatusText());
-      myToolWindowUpdater.setIcon(model.hasErrors() ? DartIcons.Dart_13_with_error_mark
-                                                    : model.hasWarnings() ? DartIcons.Dart_13_with_warning_mark
-                                                                          : DartIcons.Dart_13);
+      myToolWindowUpdater.setIcon(model.hasErrors() ? DART_ERRORS_ICON : model.hasWarnings() ? DART_WARNINGS_ICON : DartIcons.Dart_13);
     }
   }
 
