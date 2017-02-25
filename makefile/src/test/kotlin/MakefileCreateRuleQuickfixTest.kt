@@ -1,7 +1,11 @@
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 
 class MakefileCreateRuleQuickfixTest : LightPlatformCodeInsightFixtureTestCase() {
-  fun testSimple() {
+  fun testSimple() = doTest()
+  fun testMiddle() = doTest()
+
+
+  fun doTest() {
     myFixture.configureByFile("$testDataPath/$basePath/${getTestName(true)}.mk")
     val intention = myFixture.findSingleIntention("Create Rule")
     myFixture.launchAction(intention)
