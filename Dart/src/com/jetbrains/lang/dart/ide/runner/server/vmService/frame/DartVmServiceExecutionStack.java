@@ -31,7 +31,7 @@ public class DartVmServiceExecutionStack extends XExecutionStack {
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
     myException = exception;
-    myTopFrame = topFrame == null ? null : new DartVmServiceStackFrame(debugProcess, isolateId, topFrame, exception);
+    myTopFrame = topFrame == null ? null : new DartVmServiceStackFrame(debugProcess, isolateId, topFrame, null, exception);
   }
 
   @Nullable
@@ -47,7 +47,7 @@ public class DartVmServiceExecutionStack extends XExecutionStack {
       myDebugProcess.getVmServiceWrapper().computeStackFrames(myIsolateId, firstFrameIndex, container, myException);
     }
     else {
-      container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+      container.addStackFrames(Collections.emptyList(), true);
     }
   }
 
