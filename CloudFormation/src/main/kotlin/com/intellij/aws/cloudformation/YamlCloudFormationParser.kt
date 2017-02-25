@@ -268,9 +268,9 @@ class YamlCloudFormationParser private constructor () {
 
   private fun resourceProperties(propertiesProperty: YAMLKeyValue): CfnResourcePropertiesNode {
     val nameNode = keyName(propertiesProperty)
-    val properties = propertiesProperty.value as YAMLMapping
+    val properties = propertiesProperty.value as? YAMLMapping
 
-    val propertyNodes = properties.keyValues.mapNotNull { property ->
+    val propertyNodes = (properties?.keyValues ?: emptyList()).mapNotNull { property ->
       val propertyName = property.name
       if (propertyName == CloudFormationConstants.CommentResourcePropertyName) {
         return@mapNotNull null
