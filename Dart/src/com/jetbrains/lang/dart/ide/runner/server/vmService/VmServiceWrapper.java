@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
+import com.google.common.collect.Lists;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -330,6 +332,29 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
+  /**
+   * Drop to the indicated frame.
+   * <p>
+   * frameIndex specifies the stack frame to rewind to. Stack frame 0 is the currently executing
+   * function, so frameIndex must be at least 1.
+   */
+  public void dropFrame(@NotNull final String isolateId, int frameIndex) {
+    addRequest(() -> {
+      myLatestStep = StepOption.Rewind;
+      myVmService.resume(isolateId, StepOption.Rewind, frameIndex, new SuccessConsumer() {
+        @Override
+        public void onError(RPCError error) {
+          myDebugProcess.getSession().getConsoleView()
+            .print("Error from drop frame: " + error.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+        }
+
+        @Override
+        public void received(Success response) {
+        }
+      });
+    });
+  }
+
   public void pauseIsolate(@NotNull final String isolateId) {
     addRequest(() -> myVmService.pause(isolateId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
   }
@@ -344,28 +369,31 @@ public class VmServiceWrapper implements Disposable {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           InstanceRef exceptionToAddToFrame = exception;
 
-          ElementList<Frame> vmFrames;
+          ElementList<Frame> elementList;
           if (RENDER_CAUSAL_FRAMES) {
-            vmFrames = vmStack.getAsyncCausalFrames();
-            if (vmFrames == null) {
-              vmFrames = vmStack.getFrames();
+            elementList = vmStack.getAsyncCausalFrames();
+            if (elementList == null) {
+              elementList = vmStack.getFrames();
             }
-          } else {
-            vmFrames = vmStack.getFrames();
+          }
+          else {
+            elementList = vmStack.getFrames();
           }
 
-          final List<XStackFrame> result = new ArrayList<>(vmFrames.size());
-          for (Frame vmFrame : vmFrames) {
+          final List<Frame> vmFrames = Lists.newArrayList(elementList);
+          final List<XStackFrame> xStackFrames = new ArrayList<>(vmFrames.size());
+
+          for (final Frame vmFrame : vmFrames) {
             if (vmFrame.getKind() == FrameKind.AsyncSuspensionMarker) {
               // Render an asynchronous gap.
               final XStackFrame markerFrame = new DartAsyncMarkerFrame();
-              result.add(markerFrame);
+              xStackFrames.add(markerFrame);
             }
             else {
               final DartVmServiceStackFrame stackFrame =
-                new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, exceptionToAddToFrame);
-
-              result.add(stackFrame);
+                new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, vmFrames, exceptionToAddToFrame);
+              stackFrame.setIsDroppableFrame(vmFrame.getKind() == FrameKind.Regular);
+              xStackFrames.add(stackFrame);
 
               if (!stackFrame.isInDartSdkPatchFile()) {
                 // The exception (if any) is added to the frame where debugger stops and to the upper frames.
@@ -373,7 +401,7 @@ public class VmServiceWrapper implements Disposable {
               }
             }
           }
-          container.addStackFrames(firstFrameIndex == 0 ? result : result.subList(firstFrameIndex, result.size()), true);
+          container.addStackFrames(firstFrameIndex == 0 ? xStackFrames : xStackFrames.subList(firstFrameIndex, xStackFrames.size()), true);
         });
       }
 
