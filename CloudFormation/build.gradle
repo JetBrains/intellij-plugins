@@ -68,6 +68,6 @@ task printVersion {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.4-rc-3'
+    gradleVersion = '3.4'
     distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
