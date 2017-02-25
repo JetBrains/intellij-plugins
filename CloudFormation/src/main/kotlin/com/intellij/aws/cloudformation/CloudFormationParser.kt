@@ -51,7 +51,7 @@ object CloudFormationParser {
       }
 
       if (obj is Collection<*>) {
-        obj.forEach { processInstance(it!!, parent) }
+        obj.forEach { it?.let { processInstance(it, parent) } }
         return
       }
 
