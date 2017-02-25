@@ -70,6 +70,7 @@ User Guide (API Version 2010-05-15)
                 + Prevent Updates to Stack Resources
                 + Continue Rolling Back an Update
           o Exporting Stack Output Values
+          o Listing Stacks That Import an Exported Output Value
           o Working with Windows Stacks
                 + Windows AMIs and Templates
                 + Bootstrapping Windows Stacks
@@ -168,6 +169,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::CloudFront::Distribution
                 + AWS::CloudTrail::Trail
                 + AWS::CloudWatch::Alarm
+                + AWS::CodeBuild::Project
                 + AWS::CodeCommit::Repository
                 + AWS::CodeDeploy::Application
                 + AWS::CodeDeploy::DeploymentConfig
@@ -202,11 +204,13 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::SecurityGroupIngress
                 + AWS::EC2::SpotFleet
                 + AWS::EC2::Subnet
+                + AWS::EC2::SubnetCidrBlock
                 + AWS::EC2::SubnetNetworkAclAssociation
                 + AWS::EC2::SubnetRouteTableAssociation
                 + AWS::EC2::Volume
                 + AWS::EC2::VolumeAttachment
                 + AWS::EC2::VPC
+                + AWS::EC2::VPCCidrBlock
                 + AWS::EC2::VPCDHCPOptionsAssociation
                 + AWS::EC2::VPCEndpoint
                 + AWS::EC2::VPCGatewayAttachment
@@ -277,6 +281,8 @@ User Guide (API Version 2010-05-15)
                 + AWS::OpsWorks::Instance
                 + AWS::OpsWorks::Layer
                 + AWS::OpsWorks::Stack
+                + AWS::OpsWorks::UserProfile
+                + AWS::OpsWorks::Volume
                 + AWS::RDS::DBCluster
                 + AWS::RDS::DBClusterParameterGroup
                 + AWS::RDS::DBInstance
@@ -303,7 +309,10 @@ User Guide (API Version 2010-05-15)
                 + AWS::SNS::TopicPolicy
                 + AWS::SQS::Queue
                 + AWS::SQS::QueuePolicy
+                + AWS::SSM::Association
                 + AWS::SSM::Document
+                + AWS::StepFunctions::Activity
+                + AWS::StepFunctions::StateMachine
                 + AWS::WAF::ByteMatchSet
                 + AWS::WAF::IPSet
                 + AWS::WAF::Rule
@@ -357,6 +366,10 @@ User Guide (API Version 2010-05-15)
                 + CloudWatch Events Rule Target
                 + CloudWatch Logs MetricFilter MetricTransformation
                   Property
+                + AWS CodeBuild Project Artifacts
+                + AWS CodeBuild Project Environment
+                + AWS CodeBuild Project Environment EnvironmentVariables
+                + AWS CodeBuild Project Source
                 + AWS CodeCommit Repository Trigger
                 + AWS CodeDeploy DeploymentConfig MinimumHealthyHosts
                 + AWS CodeDeploy DeploymentGroup Deployment
@@ -409,6 +422,7 @@ User Guide (API Version 2010-05-15)
                 + EC2 Network Interface
                 + EC2 NetworkAclEntry Icmp
                 + EC2 NetworkAclEntry PortRange
+                + EC2 NetworkInterface Ipv6Addresses
                 + EC2 Network Interface Private IP Specification
                 + EC2 Security Group Rule
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
@@ -529,16 +543,21 @@ User Guide (API Version 2010-05-15)
                 + AWS Lambda Function Code
                 + AWS Lambda Function VPCConfig
                 + Name Type
+                + DataSource
+                + AWS OpsWorks App Environment
                 + AWS OpsWorks AutoScalingThresholds Type
                 + AWS OpsWorks ChefConfiguration Type
                 + AWS OpsWorks Layer LifeCycleConfiguration
                 + AWS OpsWorks Layer LifeCycleConfiguration
                   ShutdownEventConfiguration
                 + AWS OpsWorks LoadBasedAutoScaling Type
+                + AWS OpsWorks Instance BlockDeviceMapping
+                + AWS OpsWorks Instance BlockDeviceMapping EbsBlockDevice
                 + AWS OpsWorks Recipes Type
                 + AWS OpsWorks Source Type
-                + AWS OpsWorks App Environment
                 + AWS OpsWorks SslConfiguration Type
+                + AWS OpsWorks Stack ElasticIp
+                + AWS OpsWorks Stack RdsDbInstance
                 + AWS OpsWorks StackConfigurationManager Type
                 + AWS OpsWorks TimeBasedAutoScaling Type
                 + AWS OpsWorks VolumeConfiguration Type
@@ -582,6 +601,7 @@ User Guide (API Version 2010-05-15)
                   Rule Property
                 + Amazon S3 Website Configuration Routing Rules Routing
                   Rule Condition Property
+                + SSM Association Targets
                 + Amazon SNS Subscription
                 + Amazon SQS RedrivePolicy
                 + AWS WAF ByteMatchSet ByteMatchTuples
@@ -597,6 +617,8 @@ User Guide (API Version 2010-05-15)
                 + AWS WAF XssMatchSet XssMatchTuple FieldToMatch
                 + AWS WAF WebACL Action
                 + AWS WAF WebACL Rules
+          o Resource Specification
+                + Specification Format
           o Resource Attributes
                 + CreationPolicy
                 + DeletionPolicy
@@ -613,6 +635,7 @@ User Guide (API Version 2010-05-15)
                 + Fn::ImportValue
                 + Fn::Join
                 + Fn::Select
+                + Fn::Split
                 + Fn::Sub
                 + Ref
           o Pseudo Parameters
@@ -642,8 +665,16 @@ User Guide (API Version 2010-05-15)
                 + Sample Solutions
                 + Application Frameworks
                 + Services
+          o Canada (Central) Region
+                + Sample Solutions
+                + Application Frameworks
+                + Services
           o China (Beijing) Region
           o EU (Frankfurt) Region
+                + Sample Solutions
+                + Application Frameworks
+                + Services
+          o EU (London) Region
                 + Sample Solutions
                 + Application Frameworks
                 + Services
@@ -687,6 +718,206 @@ The following table describes the important changes to the documentation
 since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+New resources 	February 10, 2017 	
+AWS::StepFunctions::Activity
+
+    Use the AWS::StepFunctions::Activity resource to create an AWS Step
+    Functions activity.
+
+AWS::StepFunctions::StateMachine
+
+    Use the AWS::StepFunctions::StateMachine resource to create a Step
+    Functions state machine.
+
+2010-05-15
+
+New intrinsic function
+
+January 17, 2017
+
+Use the Fn::Split function to split a string into a list of string values. 
+For more information, see Fn::Split.
+
+2010-05-15
+
+Console support for listing imports
+
+January 17, 2017
+
+Use the AWS CloudFormation console to see all of the stacks that are 
+importing an exported output value. For more information, see Listing 
+Stacks That Import an Exported Output Value.
+
+2010-05-15
+
+Updated resources
+
+January 17, 2017
+
+AWS::AutoScaling::AutoScalingGroup
+
+    The LoadBalancerNames property can be updated without replacing the
+    Auto Scaling group.
+
+AWS::ECS::TaskDefinition
+
+    Added the NetworkMode and MemoryReservation properties.
+
+AWS::RDS::DBCluster
+
+    AWS CloudFormation supports updates to the Tags property.
+
+AWS::RDS::DBInstance
+
+    Added the Timezone property.
+
+AWS IoT Firehose Action
+
+    Added the Separator property.
+
+AWS::OpsWorks::Instance
+
+    Added the PublicIp attribute for the Fn::GetAtt intrinsic function.
+
+2010-05-15
+
+New resources
+
+December 01, 2016
+
+AWS::CodeBuild::Project
+
+    Use the AWS::CodeBuild::Project resource to create an AWS CodeBuild
+    project that defines how AWS CodeBuild builds your source code.
+
+AWS::SSM::Association
+
+    Use the AWS::SSM::Association resource to associate an Amazon EC2
+    Systems Manager document with EC2 instances.
+
+AWS::EC2::SubnetCidrBlock
+
+    Use the AWS::EC2::SubnetCidrBlock resource to associate a single IPv6
+    CIDR block with an Amazon VPC subnet.
+
+AWS::EC2::VPCCidrBlock
+
+    Use the AWS::EC2::VPCCidrBlock resource to associate a single
+    Amazon-provided IPv6 CIDR block with an Amazon VPC VPC.
+
+2010-05-15
+
+Updated resources for IPv6 support
+
+December 01, 2016
+
+AWS::EC2::Instance
+
+    Added the Ipv6AddressCount and Ipv6Addresses properties.
+
+AWS::EC2::NetworkAclEntry
+
+    Added the Ipv6CidrBlock property.
+
+AWS::EC2::NetworkInterface
+
+    Added the Ipv6AddressCount and Ipv6Addresses properties.
+
+AWS::EC2::Route
+
+    Added the DestinationIpv6CidrBlock property.
+
+AWS::EC2::SecurityGroupEgress
+
+    Added the CidrIpv6 property.
+
+AWS::EC2::SecurityGroupIngress
+
+    Added the CidrIpv6 property.
+
+AWS::EC2::SpotFleet
+
+    Added the Ipv6AddressCount and Ipv6Addresses properties for the launch
+    specification network interfaces.
+
+AWS::EC2::Subnet
+
+    Added the Ipv6CidrBlocks attribute for the Fn::GetAtt function.
+
+AWS::EC2::VPC
+
+    Added the Ipv6CidrBlocks attribute for the Fn::GetAtt function.
+
+AWS::SSM::Document
+
+    Added the DocumentType property.
+
+2010-05-15
+
+Resource specification
+
+November 22, 2016
+
+Use the AWS CloudFormation resource specification to builds tools that help 
+you create AWS CloudFormation templates. The specification is a 
+machine-readable, JSON-formatted text file. For more information, see AWS 
+CloudFormation Resource Specification.
+
+2010-05-15
+
+New resources
+
+November 22, 2016
+
+AWS::OpsWorks::UserProfile
+
+    Use the AWS::OpsWorks::UserProfile resource to configure SSH access for
+    users who require access to instances in an AWS OpsWorks stack.
+
+AWS::OpsWorks::Volume
+
+    Use the AWS::OpsWorks::Volume resource to register an Amazon Elastic
+    Block Store volume with an AWS OpsWorks stack.
+
+2010-05-15
+
+Updated resources
+
+November 22, 2016
+
+AWS::OpsWorks::App
+
+    Added the DataSources property.
+
+AWS::OpsWorks::Instance
+
+    Added the BlockDeviceMappings, AgentVersion, ElasticIps, Hostname, 
+    Tenancy, and Volumes properties.
+
+AWS::OpsWorks::Layer
+
+    Added the CustomJson and VolumeConfigurations properties.
+
+AWS::OpsWorks::Stack
+
+    Added the ElasticIps, EcsClusterArn, RdsDbInstances, CloneAppIds, 
+    ClonePermissions, and SourceStackId properties.
+
+AWS::RDS::DBInstance
+
+    Added the CopyTagsToSnapshot property.
+
+2010-05-15
+
+List imports
+
+November 22, 2016
+
+List imports of an exported output value to track which AWS CloudFormation 
+stacks are importing the value. For more information, see Listing Stacks 
+That Import an Exported Output Value.
+
+2010-05-15
 
 Transforms
 
@@ -898,8 +1129,19 @@ YAML support
 
 September 19, 2016
 
-You can use the YAML format to author AWS CloudFormation templates. For 
-more information, see AWS CloudFormation Template Formats.
+You can use the YAML format to author AWS CloudFormation templates. YAML 
+also allows you to, for example, add comments to your templates or use the 
+short form for intrinsic functions. For more information, see AWS 
+CloudFormation Template Formats.
+
+2010-05-15
+
+New intrinsic function
+
+September 19, 2016
+
+Use the Fn::Sub function to substitute variables in an input string with 
+values that you specify. For more information, see Fn::Sub.
 
 2010-05-15
 
@@ -1461,8 +1703,8 @@ AWS::KMS::Key
 
 AWS::SSM::Document
 
-    Use the Amazon EC2 Simple Systems Manager to create a document that
-    specifies on-instance configurations.
+    Use the Amazon EC2 Systems Manager to create a document that specifies
+    on-instance configurations.
 
 2010-05-15
 
@@ -1501,8 +1743,8 @@ AWS::DynamoDB::Table
 
 AWS::EC2::Instance
 
-    Use the SsmAssociations property to associate an Amazon EC2 Simple
-    Systems Manager document with an instance.
+    Use the SsmAssociations property to associate an Amazon EC2 Systems
+    Manager document with an instance.
 
 AWS::EC2::SpotFleet
 
@@ -2889,9 +3131,9 @@ This is the initial public release of AWS CloudFormation.
 
 Document Conventions
 « Previous Next »
-© 2016, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+© 2017, Amazon Web Services, Inc. or its affiliates. All rights reserved.
 PDF | Kindle <http://www.amazon.com/dp/B007S28IUW>
-Terms of Use <http://aws.amazon.com/terms> | © 2016, Amazon Web Services, 
+Terms of Use <http://aws.amazon.com/terms> | © 2017, Amazon Web Services, 
 Inc. or its affiliates. All rights reserved.
 Have a question? Try the Forums.
 <http://forums.aws.amazon.com/forum.jspa?forumID=92>
