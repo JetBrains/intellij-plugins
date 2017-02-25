@@ -30,7 +30,7 @@
     </ul>
   ]]></description>
 
-  <!-- IDEA 2016.1 -->
+  <!-- IDEA 2017.1 -->
   <idea-version since-build="171.3566.24" until-build="171.*"/>
 
   <depends>com.intellij.modules.lang</depends>
