@@ -184,7 +184,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val modules:MutableList<CompletionModuleInfo> = mutableListOf()
     val baseDir = project.baseDir
-    NodeModuleSearchUtil.findModulesWithName(modules, "angular-cli", baseDir, NodeSettings.create(node), false)
+    NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, baseDir, NodeSettings.create(node), false)
 
     val module = modules.firstOrNull() ?: return
 
