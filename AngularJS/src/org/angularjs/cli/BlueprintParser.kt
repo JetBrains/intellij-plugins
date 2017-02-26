@@ -13,12 +13,13 @@ class BlueprintParser {
     var name:String? = null
     var description:String? = null
     var arguments:MutableList<String> = mutableListOf()
-    var seenCli = false
     for (line in converted.split('\n')) {
-      if (line.startsWith("    angular-cli:") && seenCli) return result
-      if (line.startsWith("    angular-cli:")) seenCli = true
-      if (line.startsWith("      ")) {
-        var text = line.substring(6)
+      if (line.startsWith("ng generate")) {
+        if (name != null) result.add(Blueprint(name, description, arguments))
+        break
+      }
+      if (line.startsWith("    ")) {
+        var text = line.substring(4)
         if (text.isBlank()) continue
 
         val nameCandidate = firstWord(text)
