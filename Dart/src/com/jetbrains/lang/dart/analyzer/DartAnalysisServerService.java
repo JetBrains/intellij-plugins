@@ -136,6 +136,9 @@ public class DartAnalysisServerService implements Disposable {
   @Nullable private ProgressIndicator myProgressIndicator;
   private final Object myProgressLock = new Object();
 
+  private boolean myHaveShownInitialProgress;
+  private boolean mySentAnalysisBusy;
+
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
   @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
@@ -301,32 +304,39 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   private void startShowingServerProgress() {
-    final Task.Backgroundable task = new Task.Backgroundable(myProject, DartBundle.message("dart.analysis.progress.title"), false) {
-      @Override
-      public void run(@NotNull final ProgressIndicator indicator) {
-        if (DartAnalysisServerService.this.myProject.isDisposed()) return;
-        if (!myAnalysisInProgress && !myPubListInProgress) return;
+    if (!myHaveShownInitialProgress) {
+      myHaveShownInitialProgress = true;
 
-        indicator.setText(DartBundle.message("dart.analysis.progress.title"));
+      final Task.Backgroundable task = new Task.Backgroundable(myProject, DartBundle.message("dart.analysis.progress.title"), false) {
+        @Override
+        public void run(@NotNull final ProgressIndicator indicator) {
+          if (DartAnalysisServerService.this.myProject.isDisposed()) return;
+          if (!myAnalysisInProgress && !myPubListInProgress) return;
 
-        if (ApplicationManager.getApplication().isDispatchThread()) {
-          if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            LOG.error("wait() in EDT");
+          indicator.setText(DartBundle.message("dart.analysis.progress.title"));
+
+          if (ApplicationManager.getApplication().isDispatchThread()) {
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+              LOG.error("wait() in EDT");
+            }
+          }
+          else {
+            try {
+              myProgressIndicator = indicator;
+              waitWhileServerBusy();
+            }
+            finally {
+              myProgressIndicator = null;
+            }
           }
         }
-        else {
-          try {
-            myProgressIndicator = indicator;
-            waitWhileServerBusy();
-          }
-          finally {
-            myProgressIndicator = null;
-          }
-        }
-      }
-    };
+      };
 
-    ProgressManager.getInstance().run(task);
+      ProgressManager.getInstance().run(task);
+    }
+
+    DartAnalysisServerMessages.sendAnalysisStarted(myProject, true);
+    mySentAnalysisBusy = true;
   }
 
   /**
@@ -1427,6 +1437,7 @@ public class DartAnalysisServerService implements Disposable {
 
         startedServer.addAnalysisServerListener(myAnalysisServerListener);
 
+        myHaveShownInitialProgress = false;
         startedServer.addStatusListener(new AnalysisServerStatusListener() {
           @Override
           public void isAliveServer(boolean isAlive) {
@@ -1579,6 +1590,11 @@ public class DartAnalysisServerService implements Disposable {
       myAnalysisInProgress = false;
       myPubListInProgress = false;
       myProgressLock.notifyAll();
+
+      if (mySentAnalysisBusy) {
+        mySentAnalysisBusy = false;
+        DartAnalysisServerMessages.sendAnalysisStarted(myProject, false);
+      }
     }
   }
 
