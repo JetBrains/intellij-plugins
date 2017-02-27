@@ -151,6 +151,14 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
+  public static String getClientId() {
+    return ApplicationNamesInfo.getInstance().getFullProductName().replaceAll(" ", "-");
+  }
+
+  private static String getClientVersion() {
+    return ApplicationInfo.getInstance().getApiVersion();
+  }
+
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
@@ -1414,8 +1422,8 @@ public class DartAnalysisServerService implements Disposable {
       myServerSocket =
         new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), analysisServerPath, StringUtil.split(serverArgsRaw, " "),
                               debugStream);
-      myServerSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
-      myServerSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
+      myServerSocket.setClientId(getClientId());
+      myServerSocket.setClientVersion(getClientVersion());
 
       final AnalysisServer startedServer = new RemoteAnalysisServerImpl(myServerSocket);
 
