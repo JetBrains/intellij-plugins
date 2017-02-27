@@ -1,5 +1,5 @@
 
-public interface <lineMarker descr="Has implementations"></lineMarker>IFoo
+public interface <lineMarker descr="Has implementations">IFoo</lineMarker>
 {
   native function abc():*;
 }
@@ -14,7 +14,7 @@ public class _5fbf1214009f16e9465fe2a742dcebb16563a1691d43c9dfb9c86d82676bc740_f
 }
 
 
-public interface <lineMarker descr="Has implementations"></lineMarker>IFooEx
+public interface <lineMarker descr="Has implementations">IFooEx</lineMarker>
   extends IFoo
 {
   native function zzz():*;
@@ -22,7 +22,7 @@ public interface <lineMarker descr="Has implementations"></lineMarker>IFooEx
 }
 
 
-public class <lineMarker descr="Has subclasses"></lineMarker>Foo extends Object
+public class <lineMarker descr="Has subclasses">Foo</lineMarker> extends Object
   implements IFooEx
 {
   native public function Foo():*;

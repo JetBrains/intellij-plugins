@@ -17,7 +17,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
@@ -89,10 +89,11 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithLineMarkers})
   public void testLineMarkersInSwf() throws Exception {
+    final String testName = getTestName(false);
     myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
-    configureByFiles((String)null);
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + getTestName(false) + ".swc");
+      () -> FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", testName + ".swc", null, null);
+    configureByFile("/" + testName + ".as"); // actual test data is in library.swf; this file is here just because we need any file
+    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + ".swc");
     vFile = JarFileSystem.getInstance().getJarRootForLocalFile(vFile).findChild("library.swf");
     myEditor = FileEditorManager.getInstance(myProject).openTextEditor(new OpenFileDescriptor(myProject, vFile, 0), false);
     PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
@@ -100,9 +101,9 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
     myFile = myPsiManager.findFile(vFile);
     ((EditorImpl)myEditor).setCaretActive();
 
-    vFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + getTestName(false) + ".as");
-    myFile = myPsiManager.findFile(vFile);
-    checkHighlighting(new ExpectedHighlightingData(new DocumentImpl(StreamUtil.convertSeparators(VfsUtil.loadText(vFile))), false, false, true, myFile));
+    vFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + ".as");
+    final String verificationText = StreamUtil.convertSeparators(VfsUtilCore.loadText(vFile));
+    checkHighlighting(new ExpectedHighlightingData(new DocumentImpl(verificationText), false, false, true, myFile));
   }
 
   public void testProtectSwf() throws Exception {
