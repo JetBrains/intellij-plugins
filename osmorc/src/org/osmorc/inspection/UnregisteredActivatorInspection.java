@@ -51,6 +51,7 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
   @NotNull
   @Override
   protected PsiElementVisitor buildVisitor(final OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
+    if (!(holder.getFile() instanceof PsiClassOwner)) return PsiElementVisitor.EMPTY_VISITOR;
     return new JavaElementVisitor() {
       @Override
       public void visitFile(PsiFile file) {

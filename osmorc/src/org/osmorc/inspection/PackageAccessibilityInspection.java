@@ -71,7 +71,7 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
   @Nullable
   @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
-    if (!checkTests && ProjectRootsUtil.isInTestSource(file)) {
+    if (!(file instanceof PsiClassOwner) || !checkTests && ProjectRootsUtil.isInTestSource(file)) {
       return null;
     }
 
