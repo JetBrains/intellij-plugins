@@ -34,6 +34,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
+import com.jetbrains.lang.dart.ide.runner.actions.DartPopFrameAction;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
@@ -343,6 +344,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
   }
 
+  public void dropFrame(DartVmServiceStackFrame frame) {
+    myVmServiceWrapper.dropFrame(frame.getIsolateId(), frame.getFrameIndex() + 1);
+  }
+
   @Override
   public void stop() {
     myVmConnected = false;
@@ -432,6 +437,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     // For Run tool window this action is added in DartCommandLineRunningState.createActions()
     topToolbar.addSeparator();
     topToolbar.addAction(myOpenObservatoryAction);
+    topToolbar.addAction(new DartPopFrameAction());
   }
 
   @NotNull

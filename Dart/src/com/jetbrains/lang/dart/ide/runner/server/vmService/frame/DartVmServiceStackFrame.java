@@ -17,6 +17,8 @@ import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class DartVmServiceStackFrame extends XStackFrame {
 
   @NotNull private final DartVmServiceDebugProcess myDebugProcess;
@@ -24,14 +26,18 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @NotNull private final Frame myVmFrame;
   @Nullable private final InstanceRef myException;
   @Nullable private final XSourcePosition mySourcePosition;
+  @Nullable private final List<Frame> myVmFrames;
+  private boolean myIsDroppableFrame;
 
   public DartVmServiceStackFrame(@NotNull final DartVmServiceDebugProcess debugProcess,
                                  @NotNull final String isolateId,
                                  @NotNull final Frame vmFrame,
+                                 @Nullable List<Frame> vmFrames,
                                  @Nullable final InstanceRef exception) {
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
     myVmFrame = vmFrame;
+    myVmFrames = vmFrames;
     myException = exception;
     if (vmFrame.getLocation() == null) {
       mySourcePosition = null;
@@ -50,6 +56,21 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Override
   public XSourcePosition getSourcePosition() {
     return mySourcePosition;
+  }
+
+  public int getFrameIndex() {
+    return myVmFrames == null ? 0 : myVmFrames.indexOf(myVmFrame);
+  }
+
+  public void setIsDroppableFrame(boolean value) {
+    myIsDroppableFrame = value;
+  }
+
+  private boolean isLastFrame() {
+    if (myVmFrames == null) {
+      return true;
+    }
+    return getFrameIndex() == (myVmFrames.size() - 1);
   }
 
   @Override
@@ -162,5 +183,13 @@ public class DartVmServiceStackFrame extends XStackFrame {
 
   public boolean isInDartSdkPatchFile() {
     return mySourcePosition != null && (mySourcePosition.getFile() instanceof LightVirtualFile);
+  }
+
+  public boolean canDrop() {
+    return myIsDroppableFrame && !isLastFrame();
+  }
+
+  public void dropFrame() {
+    myDebugProcess.dropFrame(this);
   }
 }
