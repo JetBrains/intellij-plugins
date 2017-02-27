@@ -15,19 +15,21 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
-
   @NotNull
   private final TsLintConfigFileSearcher myConfigFileSearcher;
+  private final JSLanguageServiceQueue.ServiceInfoReporter myReporter;
 
   @NotNull
   public static TsLintLanguageService getService(@NotNull Project project) {
@@ -38,6 +40,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   public TsLintLanguageService(@NotNull Project project) {
     super(project);
     myConfigFileSearcher = new TsLintConfigFileSearcher();
+    myReporter = new MyLinterLanguageServiceReporter();
   }
 
   @NotNull
@@ -54,18 +57,14 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     if (process == null ||
         virtualFile == null ||
         !virtualFile.isInLocalFileSystem()) {
-      return null;
+      return new FixedFuture<>(Collections.singletonList(new TsLinterError("Path not specified")));
     }
-
 
     String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
-    if (configPath == null) {
-      return null;
-    }
 
     String path = JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
     if (path == null) {
-      return null;
+      return new FixedFuture<>(Collections.singletonList(new TsLinterError("Can not work with the path: " + virtualFile.getPath())));
     }
 
 
@@ -84,9 +83,6 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
 
     String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
-    if (configPath == null) {
-      return null;
-    }
 
     String path = JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
     if (path == null) {
@@ -125,7 +121,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     TsLintLanguageServiceProtocol protocol = new TsLintLanguageServiceProtocol(myProject, (el) -> {
     });
 
-    return new JSLanguageServiceQueueImpl(myProject, protocol, myProcessConnector, myDefaultReporter,
+    return new JSLanguageServiceQueueImpl(myProject, protocol, myProcessConnector, myReporter,
                                           new JSLanguageServiceDefaultCacheData());
   }
 

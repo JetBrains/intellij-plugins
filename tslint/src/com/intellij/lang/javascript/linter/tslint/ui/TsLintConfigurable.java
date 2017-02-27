@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.linter.JSLinterBaseView;
 import com.intellij.lang.javascript.linter.JSLinterConfigurable;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
+import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
@@ -39,5 +40,12 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
   @Override
   public String getDisplayName() {
     return "TSLint";
+  }
+
+  @Override
+  public void apply() {
+    super.apply();
+    final TsLintLanguageService service = TsLintLanguageService.getService(myProject);
+    service.terminateStartedProcess(false);
   }
 }
