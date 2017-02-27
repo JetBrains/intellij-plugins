@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser;
@@ -29,7 +30,6 @@ import java.util.concurrent.Future;
 public final class TsLintLanguageService extends JSLanguageServiceBase {
   @NotNull
   private final TsLintConfigFileSearcher myConfigFileSearcher;
-  private final JSLanguageServiceQueue.ServiceInfoReporter myReporter;
 
   @NotNull
   public static TsLintLanguageService getService(@NotNull Project project) {
@@ -40,7 +40,6 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   public TsLintLanguageService(@NotNull Project project) {
     super(project);
     myConfigFileSearcher = new TsLintConfigFileSearcher();
-    myReporter = new MyLinterLanguageServiceReporter();
   }
 
   @NotNull
@@ -49,6 +48,11 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     return "TSLint";
   }
 
+  @NotNull
+  @Override
+  protected JSLanguageServiceQueue.ServiceInfoReporter createDefaultReporter() {
+    return new NotificationLanguageServiceReporter(JSLinterUtil.NOTIFICATION_GROUP, super.createDefaultReporter());
+  }
 
   public final Future<List<TsLinterError>> highlight(@Nullable VirtualFile virtualFile,
                                                      @Nullable VirtualFile config,
@@ -115,13 +119,12 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     return ContainerUtil.newArrayList(parser.getErrors());
   }
 
-  @Nullable
   @Override
   protected final JSLanguageServiceQueue createLanguageServiceQueue() {
     TsLintLanguageServiceProtocol protocol = new TsLintLanguageServiceProtocol(myProject, (el) -> {
     });
 
-    return new JSLanguageServiceQueueImpl(myProject, protocol, myProcessConnector, myReporter,
+    return new JSLanguageServiceQueueImpl(myProject, protocol, myProcessConnector, myDefaultReporter,
                                           new JSLanguageServiceDefaultCacheData());
   }
 
