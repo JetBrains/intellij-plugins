@@ -29,15 +29,9 @@ import com.intellij.aws.cloudformation.model.CfnResourcesNode
 import com.intellij.aws.cloudformation.model.CfnRootNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
-import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.TokenType
-import com.intellij.psi.impl.source.tree.CompositeElement
-import com.intellij.psi.impl.source.tree.TreeElement
-import org.jetbrains.yaml.YAMLElementTypes
-import org.jetbrains.yaml.YAMLTokenTypes
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.YAMLKeyValue
 import org.jetbrains.yaml.psi.YAMLMapping
@@ -45,7 +39,6 @@ import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequence
 import org.jetbrains.yaml.psi.YAMLValue
 import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
-import org.jetbrains.yaml.psi.impl.YAMLQuotedTextImpl
 import java.util.ArrayList
 
 class YamlCloudFormationParser private constructor () {
@@ -289,32 +282,6 @@ class YamlCloudFormationParser private constructor () {
     return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty)
   }
 
-  private fun YAMLScalar.cfnPatchedTextValue(): String {
-    if (this is YAMLQuotedTextImpl) {
-      if (node.firstChildNode == null) {
-        return ""
-      }
-
-      val clone = node.clone() as ASTNode
-
-      val startNode = if (clone.firstChildNode.elementType == YAMLTokenTypes.TAG) {
-        var current: ASTNode? = clone.firstChildNode
-        while (current != null && (current.elementType == YAMLTokenTypes.TAG || current.elementType == TokenType.WHITE_SPACE)) {
-          current = current.treeNext
-        }
-        current
-      } else {
-        clone.firstChildNode
-      } ?: return ""
-
-      val composite = CompositeElement(YAMLElementTypes.SCALAR_QUOTED_STRING)
-      composite.rawAddChildrenWithoutNotifications(startNode as TreeElement)
-      return YAMLQuotedTextImpl(composite).textValue
-    } else {
-      return textValue
-    }
-  }
-
   enum class AllowFunctions {
     True,
     False
@@ -336,7 +303,7 @@ class YamlCloudFormationParser private constructor () {
 
       return when {
         value is YAMLScalar -> {
-          val parameterNode = CfnScalarValueNode(value.cfnPatchedTextValue()).registerNode(value)
+          val parameterNode = CfnScalarValueNode(value.textValue).registerNode(value)
           CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value)
         }
 
@@ -366,7 +333,7 @@ class YamlCloudFormationParser private constructor () {
     }
 
     return when {
-      value is YAMLScalar -> CfnScalarValueNode(value.cfnPatchedTextValue()).registerNode(value)
+      value is YAMLScalar -> CfnScalarValueNode(value.textValue).registerNode(value)
       value.javaClass == YAMLCompoundValueImpl::class.java -> {
         addProblem(value, "Too many values")
         null
@@ -473,12 +440,12 @@ class YamlCloudFormationParser private constructor () {
 
   private fun checkAndGetStringElement(expression: YAMLValue?): CfnScalarValueNode? {
     val scalar = checkAndGetScalarNode(expression) ?: return null
-    return CfnScalarValueNode(scalar.cfnPatchedTextValue()).registerNode(scalar)
+    return CfnScalarValueNode(scalar.textValue).registerNode(scalar)
   }
 
   private fun checkAndGetStringValue(expression: YAMLValue?): String? {
     val scalar = checkAndGetScalarNode(expression) ?: return null
-    return scalar.cfnPatchedTextValue()
+    return scalar.textValue
   }
 
   fun file(psiFile: PsiFile): CfnRootNode {
