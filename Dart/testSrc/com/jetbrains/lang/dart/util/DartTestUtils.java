@@ -24,10 +24,10 @@ import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -67,6 +67,7 @@ public class DartTestUtils {
     return "";
   }
 
+  @TestOnly
   public static void configureDartSdk(@NotNull final Module module, @NotNull final Disposable disposable, final boolean realSdk) {
     final String sdkHome;
     if (realSdk) {
@@ -92,37 +93,34 @@ public class DartTestUtils {
     });
   }
 
-  public static List<CaretPositionInfo> extractPositionMarkers(final @NotNull Project project, final @NotNull Document document) {
+  public static List<CaretPositionInfo> extractPositionMarkers(@NotNull final Project project, @NotNull final Document document) {
     final Pattern caretPattern = Pattern.compile(
       "<caret(?: expected=\'([^\']*)\')?(?: completionEquals=\'([^\']*)\')?(?: completionIncludes=\'([^\']*)\')?(?: completionExcludes=\'([^\']*)\')?>");
     final List<CaretPositionInfo> result = new ArrayList<>();
 
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        while (true) {
-          Matcher m = caretPattern.matcher(document.getImmutableCharSequence());
-          if (m.find()) {
-            document.deleteString(m.start(), m.end());
+    WriteCommandAction.runWriteCommandAction(null, (Runnable)() -> {
+      while (true) {
+        Matcher m = caretPattern.matcher(document.getImmutableCharSequence());
+        if (m.find()) {
+          document.deleteString(m.start(), m.end());
 
-            final int caretOffset = m.start();
+          final int caretOffset = m.start();
 
-            final String expected = m.group(1);
+          final String expected = m.group(1);
 
-            final String completionEqualsRaw = m.group(2);
-            final List<String> completionEqualsList = completionEqualsRaw == null ? null : StringUtil.split(completionEqualsRaw, ",");
+          final String completionEqualsRaw = m.group(2);
+          final List<String> completionEqualsList = completionEqualsRaw == null ? null : StringUtil.split(completionEqualsRaw, ",");
 
-            final String completionIncludesRaw = m.group(3);
-            final List<String> completionIncludesList = completionIncludesRaw == null ? null : StringUtil.split(completionIncludesRaw, ",");
+          final String completionIncludesRaw = m.group(3);
+          final List<String> completionIncludesList = completionIncludesRaw == null ? null : StringUtil.split(completionIncludesRaw, ",");
 
-            final String completionExcludesRaw = m.group(4);
-            final List<String> completionExcludesList = completionExcludesRaw == null ? null : StringUtil.split(completionExcludesRaw, ",");
+          final String completionExcludesRaw = m.group(4);
+          final List<String> completionExcludesList = completionExcludesRaw == null ? null : StringUtil.split(completionExcludesRaw, ",");
 
-            result.add(new CaretPositionInfo(caretOffset, expected, completionEqualsList, completionIncludesList, completionExcludesList));
-          }
-          else {
-            break;
-          }
+          result.add(new CaretPositionInfo(caretOffset, expected, completionEqualsList, completionIncludesList, completionExcludesList));
+        }
+        else {
+          break;
         }
       }
     });
@@ -154,7 +152,7 @@ public class DartTestUtils {
         }
 
         final ContentEntry[] contentEntries = modifiableModel.getContentEntries();
-        TestCase.assertTrue("Expected one content root, got: " + contentEntries.length, contentEntries.length == 1);
+        TestCase.assertEquals("Expected one content root, got: " + contentEntries.length, 1, contentEntries.length);
 
         final ContentEntry oldContentEntry = contentEntries[0];
         if (oldContentEntry.getSourceFolders().length != 1 || oldContentEntry.getExcludeFolderUrls().size() > 0) {
@@ -177,7 +175,7 @@ public class DartTestUtils {
 
   public static VirtualFile configureNavigation(@NotNull PsiTestCase test,
                                                 @NotNull VirtualFile testRoot,
-                                                @NotNull final VirtualFile... vFiles) throws IOException {
+                                                @NotNull final VirtualFile... vFiles) {
     DartAnalysisServerService.getInstance(test.getProject()).serverReadyForRequest(test.getProject());
     // Trigger navigation requests for each file that needs to have navigation data during resolution.
     for (VirtualFile vFile : vFiles) {

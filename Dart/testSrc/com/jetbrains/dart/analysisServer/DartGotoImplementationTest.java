@@ -34,7 +34,7 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     doTestInner(expectedLength);
   }
 
-  protected void doTestInner(int expectedLength) {
+  private void doTestInner(int expectedLength) {
     final GotoTargetHandler.GotoData data = CodeInsightTestUtil.gotoImplementation(myFixture.getEditor(), myFixture.getFile());
     assertNotNull(myFixture.getFile().toString(), data);
     assertEquals(expectedLength, data.targets.length);
