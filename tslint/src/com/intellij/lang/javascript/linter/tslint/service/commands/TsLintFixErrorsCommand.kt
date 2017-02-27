@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 
 
-class TsLintFixErrorsCommand(val fileName: String, val configPath: String) : JSLanguageServiceCommand, JSLanguageServiceSimpleCommand, JSLanguageServiceObject {
+class TsLintFixErrorsCommand(val fileName: String, val configPath: String?) : JSLanguageServiceCommand, JSLanguageServiceSimpleCommand, JSLanguageServiceObject {
 
   override fun toSerializableObject(): JSLanguageServiceObject {
     return this

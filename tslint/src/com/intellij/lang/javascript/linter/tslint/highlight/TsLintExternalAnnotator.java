@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -110,6 +111,11 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
     List<TsLinterError> annotationErrors = JSLanguageServiceUtil.awaitFuture(highlight);
     if (annotationErrors == null) {
+      if (!service.isServiceCreated() || service.getServiceCreationError() != null) {
+        String error = service.getServiceCreationError();
+        error = error == null ? JSLanguageServiceQueueImpl.CANNOT_START_LANGUAGE_SERVICE_PROCESS : error;
+        return JSLinterAnnotationResult.create(collectedInfo, new JSLinterFileLevelAnnotation(error), config);
+      }
       return null;
     }
 

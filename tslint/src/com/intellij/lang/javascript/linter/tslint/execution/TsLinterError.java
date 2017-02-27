@@ -34,6 +34,14 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
     myFixInfo = fixInfo;
   }
 
+  public TsLinterError(final @NotNull String description) {
+    super(1, 1, description, null);
+    myPath = null;
+    myEndLine = 1;
+    myEndColumn = 1;
+    myFixInfo = null;
+  }
+
   @Override
   public int getEndLine() {
     return myEndLine;
@@ -57,5 +65,17 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
   @Nullable
   public TsLintFixInfo getFixInfo() {
     return myFixInfo;
+  }
+
+  @Override
+  public String toString() {
+    return "TsLinterError{" +
+           "myDescription='" + myDescription + '\'' +
+           ", myCode='" + myCode + '\'' +
+           ", myPath='" + myPath + '\'' +
+           ", myEndLine=" + myEndLine +
+           ", myEndColumn=" + myEndColumn +
+           ", myFixInfo=" + myFixInfo +
+           '}';
   }
 }
