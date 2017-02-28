@@ -106,7 +106,10 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     myToolbarWrapper.refresh();
     myComponent.repaint();
 
-    IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent, true);
+    final JComponent focusComponent = getPreferredFocusedComponent();
+    if (focusComponent != null) {
+      IdeFocusManager.findInstanceByComponent(focusComponent).requestFocus(focusComponent, true);
+    }
   }
 
   private void adjustEditorsVisibility() {
@@ -171,8 +174,8 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   @Override
   public void selectNotify() {
-    myMainEditor.selectNotify();
     mySecondEditor.selectNotify();
+    myMainEditor.selectNotify();
   }
 
   @Override
