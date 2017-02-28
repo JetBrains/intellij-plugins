@@ -1,9 +1,13 @@
 package com.intellij.tapestry.tests;
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfoFilter;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.codeInspection.unused.UnusedPropertyInspection;
 import com.intellij.codeInspection.xml.DeprecatedClassUsageInspection;
+import com.intellij.openapi.editor.XmlHighlighterColors;
+import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
@@ -11,17 +15,34 @@ import com.intellij.util.containers.ContainerUtil;
 
 import java.util.Set;
 
+import static com.intellij.codeInsight.daemon.impl.HighlightInfoFilter.EXTENSION_POINT_NAME;
+
 /**
  * @author Alexey Chmutov
  *         Date: Jul 16, 2009
  *         Time: 6:11:55 PM
  */
 public class TapestryHighlightingTest extends TapestryBaseTestCase {
+  private static final Set<String> ourTestsWithExtraLibraryComponents = ContainerUtil.newHashSet("ComponentFromJar", "LibraryMapping");
+
   @Override
   protected String getBasePath() {
     return "highlighting/";
   }
-  private static final Set<String> ourTestsWithExtraLibraryComponents = ContainerUtil.newHashSet("ComponentFromJar", "LibraryMapping");
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    suppressXmlNSAnnotator();
+  }
+
+  private void suppressXmlNSAnnotator() {
+    HighlightInfoFilter filter = (info, file) -> info.forcedTextAttributesKey != XmlHighlighterColors.XML_NS_PREFIX;
+    Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).registerExtension(filter);
+    Disposer.register(getTestRootDisposable(),
+                      () -> Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).unregisterExtension(filter));
+  }
+
 
   public void testTmlTagNameUsingSubpackage() throws Throwable {
     addComponentToProject("other.Count");
