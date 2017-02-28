@@ -3,6 +3,7 @@ package com.intellij.lang.javascript;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInsight.daemon.impl.HighlightInfoFilter;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnusedNamespaceInspection;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -53,6 +54,8 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.XmlHighlighterColors;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -117,6 +120,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static com.intellij.codeInsight.daemon.impl.HighlightInfoFilter.EXTENSION_POINT_NAME;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
@@ -156,7 +160,16 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     super.setUp();
     myAfterCommitRunnable = null;
     enableInspectionTool(new XmlPathReferenceInspection());
+    suppressXmlNSAnnotator();
   }
+
+  private void suppressXmlNSAnnotator() {
+    HighlightInfoFilter filter = (info, file) -> info.forcedTextAttributesKey != XmlHighlighterColors.XML_NS_PREFIX;
+    Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).registerExtension(filter);
+    Disposer.register(getTestRootDisposable(),
+                      () -> Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).unregisterExtension(filter));
+  }
+
 
   protected ModuleType getModuleType() {
     return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();

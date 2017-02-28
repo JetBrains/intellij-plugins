@@ -15,7 +15,6 @@ import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.uml.FlashUmlDataModel;
 import com.intellij.lang.javascript.uml.FlashUmlDependenciesSettingsOption;
@@ -40,7 +39,10 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.SkipInHeadlessEnvironment;
 import com.intellij.uml.UmlGraphBuilderFactory;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.JDOMCompare;
+import com.intellij.util.JdomKt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jdom.transform.JDOMResult;
 import org.jetbrains.annotations.Nullable;
@@ -134,10 +136,10 @@ public class FlashUmlTest extends CodeInsightTestCase {
 
       final DataContext dataContext = DataManager.getInstance().getDataContext();
       final DiagramProvider[] providers = DiagramProvider.findProviders(dataContext, "unknown");
-      assertEquals("Should be single provider", 1, providers.length);
 
+      final FlashUmlProvider provider = ContainerUtil.findInstance(providers, FlashUmlProvider.class);
+      assertNotNull("Flash UML provider not found", provider);
 
-      final DiagramProvider<Object> provider = providers[0];
       final String actualOriginFqn =
         provider.getVfsResolver().getQualifiedName(provider.getElementManager().findInDataContext(dataContext));
 
