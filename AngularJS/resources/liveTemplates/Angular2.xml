@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templateSet group="Angular2">
-  <template name="ng2-bootstrap" value="import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';&#10;&#10;import { $APP$Module } from './$NAME$.module';&#10;&#10;platformBrowserDynamic().bootstrapModule($APP$Module)&#10;    .then(success =&gt; console.log(`Bootstrap success`))&#10;    .catch(error =&gt; console.log(error));&#10;$END" description="Angular2 bootstrap" toReformat="false" toShortenFQNames="true">
+  <template name="ng2-bootstrap" value="import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';&#10;&#10;import { $APP$Module } from './$NAME$.module';&#10;&#10;platformBrowserDynamic().bootstrapModule($APP$Module)&#10;    .then(success =&gt; console.log(`Bootstrap success`))&#10;    .catch(error =&gt; console.log(error));&#10;$END$" description="Angular2 bootstrap" toReformat="false" toShortenFQNames="true">
     <variable name="APP" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="NAME" expression="lowercaseAndDash(APP)" defaultValue="" alwaysStopAt="true" />
     <context>
