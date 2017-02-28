@@ -11,16 +11,61 @@
     "space-option": {"type": "string", "enum": ["space", "nospace"]},
     "ruledefinitions": {
       "properties": {
+        "adjacent-overload-signatures": {
+          "description": "Enforces function overloads to be consecutive",
+          "$ref": "#/definitions/switchable"
+        },
         "align": {
           "description": "Enforces vertical alignment",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
+              "uniqueItems": true,
               "items": {
                 "type": ["boolean", "string"],
                 "enum": [true, "parameters", "arguments", "statements"]
               }}
           ]
+        },
+        "array-type":{
+          "description": "Requires using either ‘T[]’ or ‘Array' for arrays",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "array", "generic", "array-simple"]
+              }}
+          ]
+        },
+        "arrow-parens":{
+          "description": "Requires parentheses around the parameters of arrow function definitions",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "ban-single-arg-parens"]
+              }}
+          ]
+        },
+        "arrow-return-shorthand":{
+          "description": "Suggests to convert () => { return x; } to () => x",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "multiline"]
+              }}
+          ]
+        },
+        "await-promise":{
+          "description": "Warns for an awaited value that is not a Promise",
+          "$ref": "#/definitions/switchable"
         },
         "ban": {
           "description": "Bans the use of specific functions",
@@ -31,13 +76,35 @@
               "items": {
                 "oneOf": [
                   {"type": "boolean", "enum": [true]},
-                  {"type": "array", "items": {
+                  {"type": "array",
+                    "items": {
                     "type": "string",
-                    "minItems": 2, "maxItems": 2
+                    "minItems": 1, "maxItems": 3
                   }}
                 ]
               }
             }]},
+        "ban-types": {
+          "description": "Bans specific types from being used. Does not ban the corresponding runtime objects from being used",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {"type": "array",
+                    "items": {
+                    "type": "string",
+                    "minItems": 1, "maxItems": 2
+                  }}
+                ]
+              }
+            }]},
+        "callable-types":{
+          "description": "An interface or literal type with just a call signature can be written as a function type",
+          "$ref": "#/definitions/switchable"
+        },
         "class-name": {
           "description": "Enforces PascalCased class and interface names",
           "type": "boolean"
@@ -48,18 +115,57 @@
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
               "items": {
-                "type": ["boolean", "string"],
-                "enum": [true, "check-space", "check-lowercase", "check-uppercase"]
-              }}
+                "oneOf": [
+                  {"type": "boolean", "enum": [true]},
+                  {"type": "string", "enum": ["check-space", "check-lowercase", "check-uppercase"]},
+                  {"type": "object",
+                    "properties": {
+                      "ignore-words": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "ignore-pattern": {
+                        "type": "string"
+                      }
+                    },
+                    "minProperties": 1,
+                    "maxProperties": 1
+                  }
+                ]
+              },
+              "minLength": 1,
+              "maxLength": 4
+            }
           ]
+        },
+        "completed-docs": {
+          "description": "Enforces documentation for important items be filled out",
+          "type": "boolean"
         },
         "curly": {
           "description": "Enforces braces for if/for/do/while statements",
           "type": "boolean"
         },
+        "cyclomatic-complexity": {
+          "description": "Enforces a threshold of cyclomatic complexity",
+          "type": ["boolean", "integer"]
+        },
         "eofline": {
           "description": "Enforces the file to end with a newline",
           "type": "boolean"
+        },
+        "file-header": {
+          "description": "Enforces a certain header comment for all files, matched by a regular expression",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "items": {
+                "type": ["boolean", "string"],
+                "maxItems": 2
+              }}
+          ]
         },
         "forin": {
           "description": "Enforces a for...in  statement to be filtered with an if statement",
