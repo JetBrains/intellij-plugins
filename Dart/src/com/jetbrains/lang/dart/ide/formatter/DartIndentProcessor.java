@@ -126,6 +126,9 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
     if (parentType == ARGUMENTS) {
+      if (COMMENTS.contains(elementType)) {
+        return Indent.getNormalIndent();
+      }
       if (mode == FormattingMode.ADJUST_INDENT_ON_ENTER) {
         ASTNode last = node.getLastChildNode();
         if (last == null) return Indent.getNoneIndent();

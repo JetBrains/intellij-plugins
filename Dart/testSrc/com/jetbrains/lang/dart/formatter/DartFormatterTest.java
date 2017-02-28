@@ -245,4 +245,8 @@ public class DartFormatterTest extends FormatterTestCase {
   public void testArguments() throws Exception {
     doTest();
   }
+
+  public void testArgumentComment() throws Exception {
+    doTest();
+  }
 }
