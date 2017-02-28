@@ -163,6 +163,7 @@
             {"type": "array",
               "items": {
                 "type": ["boolean", "string"],
+                "minItems": 1,
                 "maxItems": 2
               }}
           ]
@@ -171,8 +172,24 @@
           "description": "Enforces a for...in  statement to be filtered with an if statement",
           "type": "boolean"
         },
+        "import-blacklist": {
+          "description": "Disallows importing the specified modules directly via import and require. Instead only sub modules may be imported from that module",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "items": {
+                "type": ["boolean", "string"],
+                "minItems": 1,
+                "maxItems": 2
+              }}
+          ]
+        },
+        "import-spacing": {
+          "description": "Ensures proper spacing between import statement keywords",
+          "type": "boolean"
+        },
         "indent": {
-          "description": "enforces indentation with tabs or spaces",
+          "description": "Enforces indentation with tabs or spaces",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
@@ -183,20 +200,39 @@
           ]
         },
         "interface-name": {
-          "description": "Enforces the rule that interface names must begin with a capital 'I'",
+          "description": "Requires interface names to begin with a capital ‘I’",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "always-prefix", "never-prefix"]
+              }}
+          ]
+        },
+        "interface-over-type-literal": {
+          "description": "Prefer an interface declaration over a type literal (type T = { ... })",
           "type": "boolean"
         },
         "jsdoc-format": {
-          "description": "Enforces basic format rules for jsdoc comments",
+          "description": "Enforces basic format rules for JSDoc comments",
           "type": "boolean"
         },
         "label-position": {
-          "description": "Enforces labels only on sensible statements",
+          "description": "Only allows labels in sensible locations",
           "type": "boolean"
         },
-        "label-undefined": {
-          "description": "Checks that labels are defined before usage",
-          "type": "boolean"
+        "linebreak-style": {
+          "description": "Enforces a consistent linebreak style",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "LF", "CRLF"]
+              }, "maxItems": 2
+            }
+          ]
         },
         "max-line-length": {
           "description": "Sets the maximum length of a line",
