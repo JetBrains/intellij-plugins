@@ -282,8 +282,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   }
 
   private class MyListenersMultimap {
-    private final Map<PropertyChangeListener, Pair<Integer, DoublingEventListenerDelegate>> myMap =
-      new HashMap<PropertyChangeListener, Pair<Integer, DoublingEventListenerDelegate>>();
+    private final Map<PropertyChangeListener, Pair<Integer, DoublingEventListenerDelegate>> myMap = new HashMap<>();
 
     @NotNull
     public DoublingEventListenerDelegate addListenerAndGetDelegate(@NotNull PropertyChangeListener listener) {
