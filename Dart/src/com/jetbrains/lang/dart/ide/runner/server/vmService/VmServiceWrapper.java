@@ -458,8 +458,7 @@ public class VmServiceWrapper implements Disposable {
   public void evaluateInFrame(@NotNull final String isolateId,
                               @NotNull final Frame vmFrame,
                               @NotNull final String expression,
-                              @NotNull final XDebuggerEvaluator.XEvaluationCallback callback,
-                              final boolean reportIfError) {
+                              @NotNull final XDebuggerEvaluator.XEvaluationCallback callback) {
     addRequest(() -> myVmService.evaluateInFrame(isolateId, vmFrame.getIndex(), expression, new EvaluateInFrameConsumer() {
       @Override
       public void received(InstanceRef instanceRef) {
@@ -468,16 +467,12 @@ public class VmServiceWrapper implements Disposable {
 
       @Override
       public void received(ErrorRef errorRef) {
-        if (reportIfError) {
-          callback.errorOccurred(DartVmServiceEvaluator.getPresentableError(errorRef.getMessage()));
-        }
+        callback.errorOccurred(DartVmServiceEvaluator.getPresentableError(errorRef.getMessage()));
       }
 
       @Override
       public void onError(RPCError error) {
-        if (reportIfError) {
-          callback.errorOccurred(error.getMessage());
-        }
+        callback.errorOccurred(error.getMessage());
       }
     }));
   }

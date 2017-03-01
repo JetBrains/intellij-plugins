@@ -208,7 +208,7 @@ public class DartVmServiceListener implements VmServiceListener {
         evalResult.set("Failed to evaluate log expression [" + evalText + "]: " + errorMessage);
         semaphore.up();
       }
-    }, true);
+    });
 
     semaphore.waitFor(1000);
     return evalResult.get();
