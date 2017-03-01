@@ -174,8 +174,8 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   @Override
   public void selectNotify() {
-    mySecondEditor.selectNotify();
     myMainEditor.selectNotify();
+    mySecondEditor.selectNotify();
   }
 
   @Override
