@@ -44,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyAdapter;
@@ -131,6 +132,9 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     table.setShowHorizontalLines(false);
     table.setStriped(true);
     table.setRowHeight(table.getRowHeight() + JBUI.scale(4));
+
+    JTableHeader tableHeader = table.getTableHeader();
+    tableHeader.setPreferredSize(new Dimension(0, table.getRowHeight()));
 
     return table;
   }
