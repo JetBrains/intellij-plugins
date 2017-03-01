@@ -169,11 +169,6 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   }
 
   @Override
-  public boolean isExported() {
-    return false;
-  }
-
-  @Override
   public boolean isDeprecated() {
     return false;
   }
