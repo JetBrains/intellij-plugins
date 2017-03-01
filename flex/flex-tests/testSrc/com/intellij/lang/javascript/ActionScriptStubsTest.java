@@ -32,6 +32,8 @@ import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
+  protected List<PsiFile> myPsiFiles = new ArrayList<>();
+
   @Override
   protected void setUp() throws Exception {
     VfsRootAccess.allowRootAccess(getTestRootDisposable(),
@@ -39,7 +41,11 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     super.setUp();
   }
 
-  protected List<PsiFile> myPsiFiles = new ArrayList<>();
+  @Override
+  protected void tearDown() throws Exception {
+    myPsiFiles.clear();
+    super.tearDown();
+  }
 
   @Override
   protected String getBasePath() {

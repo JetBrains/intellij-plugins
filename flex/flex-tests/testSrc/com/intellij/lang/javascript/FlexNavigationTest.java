@@ -55,6 +55,12 @@ public class FlexNavigationTest extends CodeInsightTestCase {
   }
 
   @Override
+  protected void tearDown() throws Exception {
+    myAfterCommitRunnable = null;
+    super.tearDown();
+  }
+
+  @Override
   protected void setUpJdk() {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }

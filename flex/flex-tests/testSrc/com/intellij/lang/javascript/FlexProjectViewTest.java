@@ -26,6 +26,12 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
   }
 
   @Override
+  protected void tearDown() throws Exception {
+    myPane = null;
+    super.tearDown();
+  }
+
+  @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
   }

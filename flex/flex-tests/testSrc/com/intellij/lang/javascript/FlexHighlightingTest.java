@@ -171,6 +171,12 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
 
+  @Override
+  protected void tearDown() throws Exception {
+    myAfterCommitRunnable = null;
+    super.tearDown();
+  }
+
   protected ModuleType getModuleType() {
     return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
   }

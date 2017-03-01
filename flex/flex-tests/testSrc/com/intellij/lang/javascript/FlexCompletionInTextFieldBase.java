@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.EditorInfo;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
@@ -77,6 +76,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionTest
       for (Editor editor : myEditorsToRelease) {
         EditorFactory.getInstance().releaseEditor(editor);
       }
+      myEditorsToRelease = null;
     }
     finally {
       super.tearDown();

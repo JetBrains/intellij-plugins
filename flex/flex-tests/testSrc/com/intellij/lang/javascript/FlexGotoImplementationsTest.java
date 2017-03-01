@@ -58,6 +58,12 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
   }
 
   @Override
+  protected void tearDown() throws Exception {
+    myAfterCommitRunnable = null;
+    super.tearDown();
+  }
+
+  @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
   }

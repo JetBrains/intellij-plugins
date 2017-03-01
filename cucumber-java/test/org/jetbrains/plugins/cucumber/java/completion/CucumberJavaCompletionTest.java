@@ -16,6 +16,12 @@ import java.io.File;
 public class CucumberJavaCompletionTest extends CucumberJavaCodeInsightTestCase {
   private CompletionTester myCompletionTester;
 
+  @Override
+  protected void tearDown() throws Exception {
+    myCompletionTester = null;
+    super.tearDown();
+  }
+
   public void testStepWithRegExGroups() throws Throwable {
     doTestVariants();
   }

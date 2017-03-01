@@ -51,6 +51,12 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   @Override
+  protected void tearDown() throws Exception {
+    myAfterCommitRunnable = null;
+    super.tearDown();
+  }
+
+  @Override
   protected String getBasePath() {
     return "";
   }

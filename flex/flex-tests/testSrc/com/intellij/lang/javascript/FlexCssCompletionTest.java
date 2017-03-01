@@ -41,6 +41,12 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
+  protected void tearDown() throws Exception {
+    myAfterCommitRunnable = null;
+    super.tearDown();
+  }
+
+  @Override
   protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
     if (myAfterCommitRunnable != null) {
