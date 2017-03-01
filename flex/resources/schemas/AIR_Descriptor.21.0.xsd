@@ -282,6 +282,9 @@
               <!-- default is false -->
               <xs:element name="containsVideo" type="xs:boolean" minOccurs="0"/>
 
+              <!-- default is false -->
+              <xs:element name="webContentsDebuggingEnabled" type="xs:boolean" minOccurs="0"/>
+
             </xs:all>
           </xs:complexType>
         </xs:element>

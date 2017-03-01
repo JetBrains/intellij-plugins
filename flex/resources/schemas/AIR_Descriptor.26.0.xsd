@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <xs:schema
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://ns.adobe.com/air/application/24.0"
-    xmlns="http://ns.adobe.com/air/application/24.0"
+    targetNamespace="http://ns.adobe.com/air/application/26.0"
+    xmlns="http://ns.adobe.com/air/application/26.0"
     elementFormDefault="qualified"
 >
   <xs:element name="application">
@@ -285,6 +285,9 @@
               <!-- default is false -->
               <xs:element name="webContentsDebuggingEnabled" type="xs:boolean" minOccurs="0"/>
 
+               <!-- default is false -->
+              <xs:element name="disableMediaCodec" type="xs:boolean" minOccurs="0"/>
+
             </xs:all>
           </xs:complexType>
         </xs:element>
@@ -316,13 +319,16 @@
   <xs:simpleType name="languageNameType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="en"/>
+      <xs:enumeration value="da" />
       <xs:enumeration value="de"/>
       <xs:enumeration value="cs"/>
       <xs:enumeration value="es"/>
       <xs:enumeration value="fr"/>
       <xs:enumeration value="it"/>
+      <xs:enumeration value="iw" />
       <xs:enumeration value="ja"/>
       <xs:enumeration value="ko"/>
+      <xs:enumeration value="nb" />
       <xs:enumeration value="nl"/>
       <xs:enumeration value="pl"/>
       <xs:enumeration value="pt"/>
