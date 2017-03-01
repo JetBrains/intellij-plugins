@@ -219,9 +219,7 @@ public class AnalysisError {
     if (correction != null) {
       jsonObject.addProperty("correction", correction);
     }
-    if (code != null) {
-      jsonObject.addProperty("code", code);
-    }
+    jsonObject.addProperty("code", code);
     if (hasFix != null) {
       jsonObject.addProperty("hasFix", hasFix);
     }

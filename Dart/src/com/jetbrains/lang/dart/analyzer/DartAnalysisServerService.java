@@ -952,7 +952,7 @@ public class DartAnalysisServerService implements Disposable {
     final AnalysisServer server = myServer;
     if (server == null) {
       consumer.onError(new RequestError(ExtendedRequestErrorCode.INVALID_SERVER_RESPONSE,
-                                        "The analysis server is not running."));
+                                        "The analysis server is not running.", null));
     }
     else {
       server.diagnostic_getServerPort(consumer);
