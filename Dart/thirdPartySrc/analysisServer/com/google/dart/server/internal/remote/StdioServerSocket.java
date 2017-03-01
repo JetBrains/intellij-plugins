@@ -83,14 +83,7 @@ public class StdioServerSocket implements AnalysisServerSocket {
 
   @Override
   public boolean isOpen() {
-    try {
-      if (process != null) {
-        process.exitValue();
-      }
-      return false;
-    } catch (IllegalThreadStateException ex) {
-      return true;
-    }
+    return process != null ? process.isAlive() : false;
   }
 
   /**
