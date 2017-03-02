@@ -104,7 +104,7 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
             context.getEditor().getCaretModel().moveCaretRelatively("Customized insertion".length(), 0, true, false, true);
           }));
         }
-      }, getTestRootDisposable());
+      }, myFixture.getTestRootDisposable());
 
       LanguageGuesser.INSTANCE.resetCodeFenceLanguageProviders();
       configure();

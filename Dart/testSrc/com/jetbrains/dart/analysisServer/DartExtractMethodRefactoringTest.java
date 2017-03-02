@@ -36,7 +36,7 @@ public class DartExtractMethodRefactoringTest extends CodeInsightFixtureTestCase
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    DartTestUtils.configureDartSdk(myModule, myFixture.getTestRootDisposable(), true);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 

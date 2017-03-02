@@ -12,7 +12,7 @@ public class DartSdkConfigurationTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    DartTestUtils.configureDartSdk(myModule, myFixture.getTestRootDisposable(), true);
   }
 
   private static void checkSdkRoots(String sdkHomePath, String[] actualRoots) {

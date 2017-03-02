@@ -23,7 +23,7 @@ public class DependencyInjectionTest extends LightPlatformCodeInsightFixtureTest
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    JSTestUtils.forbidStubAstSwitch(myFixture::getFile, getProject(), this);
+    JSTestUtils.forbidStubAstSwitch(myFixture::getFile, getProject(), this, myFixture.getTestRootDisposable());
   }
 
   public void testInjectedServiceCompletion() {

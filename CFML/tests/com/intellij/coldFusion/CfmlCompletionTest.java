@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 /**
  * Created by Lera Nikolaenko
@@ -47,7 +46,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
+    CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
   }
 
   static void addJavaClassToSubPackage(JavaCodeInsightTestFixture fixture) throws IOException {

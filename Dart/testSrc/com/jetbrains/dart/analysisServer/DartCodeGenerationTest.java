@@ -11,7 +11,7 @@ public class DartCodeGenerationTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    DartTestUtils.configureDartSdk(myModule, myFixture.getTestRootDisposable(), true);
     DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest(getProject());
   }
 

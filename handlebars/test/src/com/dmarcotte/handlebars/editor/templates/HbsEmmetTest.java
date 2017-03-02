@@ -20,7 +20,7 @@ public class HbsEmmetTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testSimpleTagsWithHtmlSubstitutor() {
-    HbTestUtils.setOpenHtmlAsHandlebars(true, getProject(), getTestRootDisposable());
+    HbTestUtils.setOpenHtmlAsHandlebars(true, getProject(), myFixture.getTestRootDisposable());
     final PsiFile file = myFixture.configureByText("test.html", "div>span<caret>");
     assertInstanceOf(file, HbPsiFile.class);
     WriteCommandAction.runWriteCommandAction(getProject(), () -> {

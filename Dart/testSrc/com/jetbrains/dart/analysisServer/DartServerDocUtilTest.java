@@ -27,7 +27,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    DartTestUtils.configureDartSdk(myModule, myFixture.getTestRootDisposable(), true);
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 

@@ -21,7 +21,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    DartTestUtils.configureDartSdk(myModule, myFixture.getTestRootDisposable(), true);
     DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest(getProject());
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }

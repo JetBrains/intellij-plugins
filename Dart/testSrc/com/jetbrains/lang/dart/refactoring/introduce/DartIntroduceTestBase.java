@@ -70,7 +70,7 @@ public abstract class DartIntroduceTestBase extends LightPlatformCodeInsightFixt
     myFixture.configureByFile(name + getFileExtension());
     final boolean enabled = myFixture.getEditor().getSettings().isVariableInplaceRenameEnabled();
     try {
-      TemplateManagerImpl.setTemplateTesting(getProject(), getTestRootDisposable());
+      TemplateManagerImpl.setTemplateTesting(getProject(), myFixture.getTestRootDisposable());
       myFixture.getEditor().getSettings().setVariableInplaceRenameEnabled(true);
 
       DartIntroduceHandler handler = createHandler();

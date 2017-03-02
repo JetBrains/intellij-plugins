@@ -34,7 +34,7 @@ public class Angular2ServiceTest extends CodeInsightFixtureTestCase {
       return;
     }
 
-    enableService(myFixture.getProject(), getTestRootDisposable());
+    enableService(myFixture.getProject(), myFixture.getTestRootDisposable());
 
 
     myFixture.copyDirectoryToProject("/defaultData", "");

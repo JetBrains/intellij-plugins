@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HbMoverTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testMoveHtmlTextWhenOpenHtmlAsHandlebars() {
-    HbTestUtils.setOpenHtmlAsHandlebars(true, getProject(), getTestRootDisposable());
+    HbTestUtils.setOpenHtmlAsHandlebars(true, getProject(), myFixture.getTestRootDisposable());
     doTest("hbs");
   }
 
