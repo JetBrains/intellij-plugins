@@ -103,9 +103,10 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     if (selector == null) return;
     final String[] names = selector.split("\\s*,\\s*");
     for (String selectorName : names) {
-      final int not = selectorName.indexOf(":");
+      final int not = selectorName.indexOf(':');
       if (not >= 0) {
-        selectorName = selectorName.substring(0, not);
+        int brace = selectorName.indexOf(')', not);
+        selectorName = brace >= 0 ? selectorName.substring(brace + 1) : "";
       }
       if (!StringUtil.isEmpty(selectorName)) {
         consumer.consume(selectorName);
