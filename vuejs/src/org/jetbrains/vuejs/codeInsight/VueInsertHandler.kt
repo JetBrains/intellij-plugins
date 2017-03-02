@@ -12,9 +12,12 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlTag
 
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
@@ -22,7 +25,9 @@ class VueInsertHandler : XmlTagInsertHandler() {
   }
 
   override fun handleInsert(context: InsertionContext?, item: LookupElement?) {
-    super.handleInsert(context, item)
+    if (context == null || shouldHandleXmlInsert(context)) {
+      super.handleInsert(context, item)
+    }
     if (context == null || item  == null) return
     val importedFile = (item.`object` as JSImplicitElement).containingFile
     if (importedFile == context.file) return
@@ -42,6 +47,15 @@ class VueInsertHandler : XmlTagInsertHandler() {
     val newProperty = (JSChangeUtil.createExpressionWithContext("{ $capitalizedName }", obj)!!.psi as JSObjectLiteralExpression).firstProperty
     addProperty(newProperty, components)
     ES6ImportPsiUtil.insertImport(content, capitalizedName, ImportType.DEFAULT, importedFile, context.editor)
+  }
+
+  private fun shouldHandleXmlInsert(context: InsertionContext): Boolean {
+    val file = context.file
+    if (!file.language.isKindOf(XMLLanguage.INSTANCE)) {
+      return false
+    }
+    val element = PsiTreeUtil.findElementOfClassAtOffset(file, context.startOffset, XmlTag::class.java, false)
+    return element == null || element.language.isKindOf(XMLLanguage.INSTANCE)
   }
 
   private fun isSkippedModule(nodeModule: VirtualFile?) = "vue" == nodeModule?.name || "vue-router" == nodeModule?.name
