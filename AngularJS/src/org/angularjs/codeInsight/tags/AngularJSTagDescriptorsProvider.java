@@ -3,8 +3,10 @@ package org.angularjs.codeInsight.tags;
 import com.intellij.codeInsight.completion.XmlTagInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
@@ -32,19 +34,23 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return;
 
     final Project project = xmlTag.getProject();
+    Language language = xmlTag.getContainingFile().getLanguage();
     DirectiveUtil.processTagDirectives(project, directive -> {
-      addLookupItem(elements, directive);
+      addLookupItem(language, elements, directive);
       return true;
     });
     if (AngularIndexUtil.hasAngularJS2(project)) {
-      addLookupItem(elements, createContainerDirective(xmlTag));
+      addLookupItem(language, elements, createContainerDirective(xmlTag));
     }
   }
 
-  private static void addLookupItem(List<LookupElement> elements, JSImplicitElement directive) {
-    elements.add(LookupElementBuilder.create(directive).
-      withInsertHandler(XmlTagInsertHandler.INSTANCE).
-      withIcon(AngularJSIcons.Angular2));
+  private static void addLookupItem(Language language, List<LookupElement> elements, JSImplicitElement directive) {
+    LookupElementBuilder element = LookupElementBuilder.create(directive).
+      withIcon(AngularJSIcons.Angular2);
+    if (language.isKindOf(XMLLanguage.INSTANCE)) {
+      element = element.withInsertHandler(XmlTagInsertHandler.INSTANCE);
+    }
+    elements.add(element);
   }
 
   @Nullable
