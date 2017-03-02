@@ -29,7 +29,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testTagNameInTmlParent() throws Throwable {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
+    CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
@@ -39,7 +39,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testAttrNameInHtmlParent() throws Throwable {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
+    CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
@@ -56,7 +56,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testAttrNameInHtmlParent1() throws Throwable {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
+    CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "translate", "type", "typeof");
   }
@@ -79,7 +79,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testAttrNameInTmlParent1() throws Throwable {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
+    CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     addComponentToProject("Count");
     doTestBasicCompletionVariants("class", "content", "contenteditable", "contextmenu");
@@ -206,7 +206,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testTelPropertyByGetter() throws Throwable {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
+    CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     initByComponent();
     myFixture.complete(CompletionType.BASIC);
     checkResultByFile();
