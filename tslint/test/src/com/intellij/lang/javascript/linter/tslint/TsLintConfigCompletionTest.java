@@ -17,7 +17,8 @@ public class TsLintConfigCompletionTest extends LightPlatformCodeInsightFixtureT
 
   public void testTopLevelRules() throws Exception {
     List<String> result = myFixture.getCompletionVariants("/topLevelRules/tslint.json");
-    final String[] variants = {"\"label-position\"", "\"label-undefined\""};
+    final String[] variants = {"\"max-classes-per-file\"", "\"max-file-line-count\"",
+      "\"max-line-length\""};
     assertContainsOrdered(result, variants);
   }
 
