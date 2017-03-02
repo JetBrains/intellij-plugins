@@ -39,7 +39,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
   private void suppressXmlNSAnnotator() {
     HighlightInfoFilter filter = (info, file) -> info.forcedTextAttributesKey != XmlHighlighterColors.XML_NS_PREFIX;
     Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).registerExtension(filter);
-    Disposer.register(getTestRootDisposable(),
+    Disposer.register(myFixture.getTestRootDisposable(),
                       () -> Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).unregisterExtension(filter));
   }
 
