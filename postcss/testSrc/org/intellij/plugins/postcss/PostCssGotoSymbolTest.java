@@ -51,7 +51,7 @@ public class PostCssGotoSymbolTest extends PostCssFixtureTestCase {
 
   public void doTest(@NotNull String name, @NotNull String... expectedNames) {
     myFixture.copyDirectoryToProject(getTestName(true), ".");
-    ((PsiManagerEx)myFixture.getPsiManager()).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, getTestRootDisposable());
+    ((PsiManagerEx)myFixture.getPsiManager()).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, myFixture.getTestRootDisposable());
     GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject());
     model.getNames(false);
     final ArrayList<String> actual = ContainerUtil.newArrayList();
