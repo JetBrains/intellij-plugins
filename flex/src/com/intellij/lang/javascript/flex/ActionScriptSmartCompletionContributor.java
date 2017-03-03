@@ -452,9 +452,15 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
   private static void processStaticsOf(JSClass parameterClass, ResolveProcessor processor, @Nullable JSClass contextClass) {
     processor.configureClassScope(contextClass);
-
-    processor.setProcessStatics(true);
-    processor.setTypeName(parameterClass.getQualifiedName());
-    parameterClass.processDeclarations(processor, ResolveState.initial(), parameterClass, parameterClass);
+    
+    boolean savedProcessStatics = processor.getAccessibilityProcessingHandler().isProcessStatics();
+    try {
+      processor.getAccessibilityProcessingHandler().setProcessStatics(true);
+      processor.setTypeName(parameterClass.getQualifiedName());
+      parameterClass.processDeclarations(processor, ResolveState.initial(), parameterClass, parameterClass);
+    }
+    finally {
+      processor.getAccessibilityProcessingHandler().setProcessStatics(savedProcessStatics);
+    }
   }
 }
