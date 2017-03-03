@@ -1,3 +1,3 @@
 main() {
-  print(<caret>)
+  print(object)
 }

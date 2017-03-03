@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.LayeredIcon;
@@ -258,6 +259,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
                 final Document document = editor.getDocument();
                 int offset = context.getSelectionEndOffset() - 1;
                 document.insertString(offset, argumentListString);
+
+                PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
 
                 final TemplateBuilderImpl
                   builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
