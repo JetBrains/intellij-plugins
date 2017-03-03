@@ -84,7 +84,7 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
     }
     else {
       for (final Module module : scope.getAffectedModules()) {
-        if (ModuleType.get(module) != FlexModuleType.getInstance()) continue;
+        if (module.isDisposed() || ModuleType.get(module) != FlexModuleType.getInstance()) continue;
         for (final FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
           if (!bc.isSkipCompile()) {
             result.add(Pair.create(module, bc));
