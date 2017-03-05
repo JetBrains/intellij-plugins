@@ -14,7 +14,7 @@ object MakefileElementFactory {
       createFile(project, "$target:\n").firstChild as MakefileRule
 
   fun createTarget(project: Project, name: String) =
-      createRule(project, name).firstChild.firstChild as MakefileTarget
+      createRule(project, name).firstChild.firstChild.firstChild as MakefileTarget
 
   fun createWhiteSpace(project: Project, whitespace: String) =
       createFile(project, whitespace).firstChild as PsiWhiteSpace
