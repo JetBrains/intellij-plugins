@@ -69,7 +69,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
         !JSCommonTypeNames.VOID_TYPE_NAME.equals(annotationAndExprType.second)) {
       JSFunction method = (JSFunction)p.getParent().getParent();
       JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
-      annotationAndExprType.first.registerFix(new ChangeSignatureFix(topMethod, ((JSArgumentList)expr.getParent()).getArguments()));
+      annotationAndExprType.first.registerFix(new ChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
     }
 
     PsiElement _fun;
