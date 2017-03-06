@@ -156,8 +156,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @NotNull
   private String prepareHtml(@NotNull String html) {
     return ImageRefreshFix.setStamps(html
-      .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris))
-      .replace("</body>", getScriptingLines() + "</body>"));
+      .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris) + "\n" + getScriptingLines()));
   }
 
   @Override
@@ -213,6 +212,8 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @SuppressWarnings("unused")
   public static class JavaPanelBridge {
+    static final JavaPanelBridge INSTANCE = new JavaPanelBridge();
+
     public void openInExternalBrowser(@NotNull String link) {
       if (!BrowserUtil.isAbsoluteURL(link)) {
         try {
@@ -235,7 +236,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
         JSObject win
           = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
-        win.setMember("JavaPanelBridge", new JavaPanelBridge());
+        win.setMember("JavaPanelBridge", JavaPanelBridge.INSTANCE);
     }
   }
 
