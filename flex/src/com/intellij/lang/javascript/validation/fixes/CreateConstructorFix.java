@@ -136,7 +136,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
       JSFunction fakeFunction = (JSFunction)JSChangeUtil.createStatementFromText(project, text, JavaScriptSupportLoader.ECMA_SCRIPT_L4)
         .getPsi();
 
-      new ChangeSignatureFix(fakeFunction, myNode.getArguments()) {
+      new ChangeSignatureFix(fakeFunction, myNode.getArgumentList()) {
         @Override
         protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, JSExpression[] arguments, boolean dummy) {
           List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dummy).second;
@@ -145,7 +145,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
 
         @Override
         protected JSChangeSignatureDialog createDialog(PsiElement context, final List<JSParameterInfo> paramInfos) {
-          JSMethodDescriptor descriptor = new JSMethodDescriptor(myFunction, true) {
+          JSMethodDescriptor descriptor = new JSMethodDescriptor(myFunction.getElement(), true) {
             @Override
             public List<JSParameterInfo> getParameters() {
               return paramInfos;
@@ -155,8 +155,10 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
         }
 
         @Override
-        protected JSChangeSignatureProcessor createProcessor(List<JSParameterInfo> paramInfos, JSAttributeList attributeList) {
-          return new MyProcessor(myFunction,
+        protected JSChangeSignatureProcessor createProcessor(List<JSParameterInfo> paramInfos,
+                                                             JSAttributeList attributeList,
+                                                             @NotNull JSFunction function) {
+          return new MyProcessor(function,
                                  attributeList != null ? attributeList.getAccessType() : JSAttributeList.AccessType.PACKAGE_LOCAL,
                                  myClass.getName(),
                                  "",
