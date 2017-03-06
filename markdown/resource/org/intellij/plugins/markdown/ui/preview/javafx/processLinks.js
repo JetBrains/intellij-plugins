@@ -4,39 +4,46 @@ if (window.__IntelliJTools === undefined) {
 
 (function() {
   var openInExternalBrowser = function(href) {
-    window.JavaPanelBridge.openInExternalBrowser(href);
+    try {
+      window.JavaPanelBridge.openInExternalBrowser(href);
+    }
+    finally {}
   }
 
-  window.__IntelliJTools.processClick = function() {
-    if (!this.href) {
+  window.__IntelliJTools.processClick = function(link) {
+    if (!link.hasAttribute('href')) {
       return false;
     }
 
-    if (this.href[0] == '#') {
-      var elementId = this.href.substring(1)
-      var elementById = document.getElementById(elementId);
+    var href = link.getAttribute('href')
+    if (href[0] === '#') {
+      var elementId = href.substring(1)
+      var elementById = window.document.getElementById(elementId);
       if (elementById) {
-        elementById.scrollIntoView();
+        elementById.scrollIntoViewIfNeeded();
       }
     }
     else {
-      openInExternalBrowser(this.href);
+      openInExternalBrowser(link.href);
     }
 
     return false;
   }
 
-  window.onload = function() {
-    setTimeout(function () {
-      var links = document.getElementsByTagName("a");
-      //window.JavaPanelBridge.log(links.length)
-      for (var i = 0; i < links.length; ++i) {
-        var link = links[i];
+  window.document.onclick = function(e) {
+    var target = e.target;
+    while (target && target.tagName !== 'A') {
+      target = target.parentNode
+    }
 
-        link.onclick = __IntelliJTools.processClick
-        //window.JavaPanelBridge.log(link + ' ' + link.onclick)
-      }
-    }, 100)
+    if (!target) {
+      return true;
+    }
+
+    if (target.tagName === 'A' && target.hasAttribute('href')) {
+      e.stopPropagation()
+      return window.__IntelliJTools.processClick(target)
+    }
   }
 
 })()
