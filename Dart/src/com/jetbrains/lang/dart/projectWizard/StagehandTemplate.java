@@ -50,6 +50,11 @@ class StagehandTemplate extends DartProjectTemplate {
                                  ? null
                                  : LocalFileSystem.getInstance()
                                    .refreshAndFindFileByPath(baseDir.getPath() + "/" + myTemplate.myEntrypoint);
+
+    if (mainFile != null && mainFile.getName().equals("index.html")) {
+      ContainerUtil.addIfNotNull(files, mainFile.getParent().findChild("main.dart"));
+    }
+
     ContainerUtil.addIfNotNull(files, mainFile);
 
     if (!myTemplate.myEntrypoint.isEmpty() && mainFile != null) {
