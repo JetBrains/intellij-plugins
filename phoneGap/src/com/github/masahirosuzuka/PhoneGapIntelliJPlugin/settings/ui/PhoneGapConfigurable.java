@@ -46,11 +46,11 @@ public class PhoneGapConfigurable implements Configurable {
     private List<String> myRepoList;
 
     public RepositoryStore() {
-      setReposInner(ContainerUtil.<String>newArrayList());
+      setReposInner(ContainerUtil.newArrayList());
     }
 
     private void setReposInner(List<String> repos) {
-      myRepoList = repos == null ? ContainerUtil.<String>newArrayList() : ContainerUtil.newArrayList(repos);
+      myRepoList = repos == null ? ContainerUtil.newArrayList() : ContainerUtil.newArrayList(repos);
     }
 
     public List<String> getRepositories() {
@@ -187,10 +187,6 @@ public class PhoneGapConfigurable implements Configurable {
   @Override
   public void reset() {
     myUIController.reset(mySettings.getState());
-  }
-
-  @Override
-  public void disposeUIResources() {
   }
 
   private PhoneGapPluginsView.VersionCallback getVersionCallback() {

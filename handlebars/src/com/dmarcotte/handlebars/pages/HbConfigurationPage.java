@@ -120,8 +120,4 @@ public class HbConfigurationPage implements SearchableConfigurable {
     });
     myCommenterLanguage.setSelectedItem(commentLanguage);
   }
-
-  @Override
-  public void disposeUIResources() {
-  }
 }
