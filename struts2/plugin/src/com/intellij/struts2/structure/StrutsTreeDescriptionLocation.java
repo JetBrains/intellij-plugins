@@ -17,6 +17,7 @@ package com.intellij.struts2.structure;
 
 import com.intellij.psi.ElementDescriptionLocation;
 import com.intellij.psi.ElementDescriptionProvider;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Element description for structure tree.
@@ -29,6 +30,7 @@ public class StrutsTreeDescriptionLocation extends ElementDescriptionLocation {
 
   private static final ElementDescriptionProvider PROVIDER = new StrutsTreeDescriptionProvider();
 
+  @NotNull
   @Override
   public ElementDescriptionProvider getDefaultProvider() {
     return PROVIDER;
