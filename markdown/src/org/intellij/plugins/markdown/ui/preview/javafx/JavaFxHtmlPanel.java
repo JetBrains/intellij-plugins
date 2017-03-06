@@ -45,7 +45,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
         .toString();
     }
   };
-  
+
   @NotNull
   private final JPanel myPanelWrapper;
   @NotNull
@@ -106,7 +106,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private static void runFX(@NotNull Runnable r) {
     IdeEventQueue.unsafeNonblockingExecute(r);
   }
-  
+
   private void runInPlatformWhenAvailable(@NotNull Runnable runnable) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     if (myPanel == null) {
@@ -161,8 +161,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @NotNull
   private String prepareHtml(@NotNull String html) {
     return ImageRefreshFix.setStamps(html
-      .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris))
-      .replace("</body>", getScriptingLines() + "</body>"));
+      .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris) + "\n" + getScriptingLines()));
   }
 
   @Override
@@ -218,6 +217,8 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @SuppressWarnings("unused")
   public static class JavaPanelBridge {
+    static final JavaPanelBridge INSTANCE = new JavaPanelBridge();
+
     public void openInExternalBrowser(@NotNull String link) {
       if (!BrowserUtil.isAbsoluteURL(link)) {
         try {
@@ -234,16 +235,16 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       Logger.getInstance(JavaPanelBridge.class).warn(text);
     }
   }
-  
+
   private class BridgeSettingListener implements ChangeListener<State> {
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
         JSObject win
           = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
-        win.setMember("JavaPanelBridge", new JavaPanelBridge());
+        win.setMember("JavaPanelBridge", JavaPanelBridge.INSTANCE);
     }
   }
-  
+
   private class ScrollPreservingListener implements ChangeListener<State> {
     volatile int myScrollY = 0;
 
@@ -261,5 +262,5 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
           .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
       }
     }
-  } 
+  }
 }
