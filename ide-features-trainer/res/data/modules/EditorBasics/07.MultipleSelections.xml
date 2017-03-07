@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Multiple Selections" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="HTML">
+<xml type="Scenario" name="Multiple Selections"  version="0.1" subtype="aimless" projectTree="hide" lang="HTML">
     <MouseBlock><CopyText>&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot;&gt;
     &lt;head&gt;

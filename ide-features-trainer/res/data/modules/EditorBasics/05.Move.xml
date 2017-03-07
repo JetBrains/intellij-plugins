@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Move" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Move"  version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
     <MouseBlock>
         <CopyText>class MoveDemo extends Thread {
 
