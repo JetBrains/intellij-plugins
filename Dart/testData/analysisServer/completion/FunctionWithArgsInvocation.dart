@@ -1,3 +1,3 @@
 main() {
-  prin<caret>
+  ical<caret>
 }

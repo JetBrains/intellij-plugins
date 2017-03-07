@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.ide.completion;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
-import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
@@ -279,30 +278,38 @@ public class DartServerCompletionContributor extends CompletionContributor {
               final String argumentListString = suggestion.getDefaultArgumentListString();
               if (argumentListString != null) {
                 final Document document = editor.getDocument();
-                int offset = context.getSelectionEndOffset() - 1;
-                document.insertString(offset, argumentListString);
+                int offset = editor.getCaretModel().getOffset();
 
-                PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+                // At this point caret is expected to be right after the opening paren.
+                // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
+                // if so, skip inserting argumentListString
 
-                final TemplateBuilderImpl
-                  builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
+                final CharSequence text = document.getCharsSequence();
+                if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
+                  document.insertString(offset, argumentListString);
 
-                final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
-                // Only proceed if ranges are provided and well-formed.
-                if (ranges != null && (ranges.length & 1) == 0) {
-                  int index = 0;
-                  while (index < ranges.length) {
-                    final int start = ranges[index];
-                    final int length = ranges[index + 1];
-                    final String arg = argumentListString.substring(start, start + length);
-                    final TextExpression expression = new TextExpression(arg);
-                    final TextRange range = new TextRange(offset + start, offset + start + length);
+                  PsiDocumentManager.getInstance(project).commitDocument(document);
 
-                    index += 2;
-                    builder.replaceRange(range, "group_" + (index - 1), expression, true);
+                  final TemplateBuilderImpl
+                    builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
+
+                  final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
+                  // Only proceed if ranges are provided and well-formed.
+                  if (ranges != null && (ranges.length & 1) == 0) {
+                    int index = 0;
+                    while (index < ranges.length) {
+                      final int start = ranges[index];
+                      final int length = ranges[index + 1];
+                      final String arg = argumentListString.substring(start, start + length);
+                      final TextExpression expression = new TextExpression(arg);
+                      final TextRange range = new TextRange(offset + start, offset + start + length);
+
+                      index += 2;
+                      builder.replaceRange(range, "group_" + (index - 1), expression, true);
+                    }
+
+                    builder.run(editor, true);
                   }
-
-                  builder.run(editor, true);
                 }
               }
 
