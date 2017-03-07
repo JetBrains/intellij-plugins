@@ -12,7 +12,7 @@ buildscript {
 
 
 plugins {
-    id "org.jetbrains.intellij" version "0.1.9"
+    id "org.jetbrains.intellij" version "0.2.5"
 }
 
 repositories {
@@ -35,8 +35,8 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.8
 
 intellij {
-    type 'IC'
-//    plugins 'Pythonid:2017.1.171.6'
+    type 'IU'
+    plugins = ['Pythonid:2017.1.171.3691.19']
     updateSinceUntilBuild = false
 //    publish {
 //        username repoUser
