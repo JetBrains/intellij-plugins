@@ -69,13 +69,12 @@ class OpenLessonAction : AnAction() {
             val learnProject = CourseManager.getInstance().learnProject
             if (lesson.module!!.moduleType == Module.ModuleType.SCRATCH) {
                 CourseManager.getInstance().checkEnvironment(project)
-                vf = getScratchFile(myProject!!, lesson, scratchFileName)
+                vf = getScratchFile(myProject, lesson, scratchFileName)
             } else {
                 //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
                 if (learnProject == null && getCurrentProject()!!.name == LEARN_PROJECT_NAME) {
-                    CourseManager.getInstance().setLearnProject(getCurrentProject())
+                    CourseManager.getInstance().learnProject = getCurrentProject()
                     vf = getFileInLearnProject(lesson)
-
                     //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
                 } else if (learnProject == null && getCurrentProject()!!.name != LEARN_PROJECT_NAME) {
                     val myLearnProject = initLearnProject(myProject) ?: return
@@ -149,7 +148,7 @@ class OpenLessonAction : AnAction() {
                 }
             }
             if (textEditor == null) {
-                val editors = FileEditorManager.getInstance(project).openEditor(OpenFileDescriptor(project, vf), true)
+                val editors = FileEditorManager.getInstance(project).openFile(vf, true, true)
                 for (fileEditor in editors) {
                     if (fileEditor is TextEditor) {
                         textEditor = fileEditor
@@ -282,7 +281,7 @@ class OpenLessonAction : AnAction() {
 
                 var fileName = "Test." + extensionFile
                 if (lesson.module != null) {
-                    fileName = lesson.module!!.nameWithoutWhitespaces + extensionFile
+                    fileName = lesson.module!!.nameWithoutWhitespaces + "." + extensionFile
                 }
 
                 var lessonVirtualFile = sourceRootFile.findChild(fileName)

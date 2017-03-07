@@ -75,15 +75,4 @@ public class Scenario {
         return root;
     }
 
-    public String getTarget() {
-        return root.getAttribute("target").getValue();
-    }
-
-    public String getSubtype() {
-        if (root.getAttribute("subtype") != null) {
-            return root.getAttribute("subtype").getValue();
-        } else {
-            return "targeted";
-        }
-    }
 }

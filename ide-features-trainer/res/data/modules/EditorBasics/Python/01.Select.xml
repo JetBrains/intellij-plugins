@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Selection" passed="false" version="0.1" subtype="aimless" projectTree="hide" lang="Python">
+<xml type="Scenario" name="Selection"  version="0.1" subtype="aimless" projectTree="hide" lang="Python">
     <MouseBlock>
         <CopyText>def fib(n):
     a = 1
