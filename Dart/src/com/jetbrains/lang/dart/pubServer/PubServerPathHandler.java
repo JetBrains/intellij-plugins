@@ -44,7 +44,7 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
         NettyKt.isRegularBrowser(request) &&
         NettyKt.getOrigin(request) == null &&
         NettyKt.getReferrer(request) == null &&
-        request.uri().endsWith(".map")) {
+        (request.uri().endsWith(".map") || request.uri().endsWith(".dart"))) {
       Matcher matcher = DefaultWebServerPathHandlerKt.getChromeVersionFromUserAgent().matcher(userAgent);
       if (matcher.find() && StringUtil.compareVersionNumbers(matcher.group(1), "51") >= 0) {
         validateResult = EmptyHttpHeaders.INSTANCE;
