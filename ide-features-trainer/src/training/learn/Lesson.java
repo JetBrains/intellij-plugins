@@ -93,11 +93,6 @@ public class Lesson {
         name = scn.getName();
 
         this.passed = passed;
-        if (!scn.getSubtype().equals("aimless")) {
-            targetPath = scn.getTarget();
-        } else {
-            targetPath = null;
-        }
         lessonListeners = new ArrayList<>();
         parentModule = module;
 
