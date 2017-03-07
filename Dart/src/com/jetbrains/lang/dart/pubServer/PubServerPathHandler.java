@@ -8,18 +8,19 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.io.NettyKt;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.EmptyHttpHeaders;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.builtInWebServer.BuiltInWebServerKt;
-import org.jetbrains.builtInWebServer.PathInfo;
-import org.jetbrains.builtInWebServer.WebServerPathHandlerAdapter;
-import org.jetbrains.builtInWebServer.WebServerPathToFileManager;
+import org.jetbrains.builtInWebServer.*;
+
+import java.util.regex.Matcher;
 
 public class PubServerPathHandler extends WebServerPathHandlerAdapter {
   private static final Logger LOG = Logger.getInstance(PubServerPathHandler.class.getName());
@@ -35,7 +36,25 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     final Pair<VirtualFile, String> servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path);
     if (servedDirAndPathForPubServer == null) return false;
 
-    HttpHeaders validateResult = BuiltInWebServerKt.validateToken(request, context.channel());
+    boolean isSignedRequest = BuiltInWebServerKt.isSignedRequest(request);
+    HttpHeaders validateResult = null;
+    String userAgent = NettyKt.getUserAgent(request);
+    if (!isSignedRequest &&
+        userAgent != null &&
+        NettyKt.isRegularBrowser(request) &&
+        NettyKt.getOrigin(request) == null &&
+        NettyKt.getReferrer(request) == null &&
+        request.uri().endsWith(".map")) {
+      Matcher matcher = DefaultWebServerPathHandlerKt.getChromeVersionFromUserAgent().matcher(userAgent);
+      if (matcher.find() && StringUtil.compareVersionNumbers(matcher.group(1), "51") >= 0) {
+        validateResult = EmptyHttpHeaders.INSTANCE;
+      }
+    }
+
+    if (validateResult == null) {
+      validateResult = BuiltInWebServerKt.validateToken(request, context.channel(), isSignedRequest);
+    }
+
     if (validateResult != null) {
       PubServerManager.getInstance(project).send(context.channel(), request, validateResult, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
     }
