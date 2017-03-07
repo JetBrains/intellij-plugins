@@ -31,15 +31,19 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   }
 
   private void doTest() {
-    doTest(null);
+    doTest(null, Lookup.NORMAL_SELECT_CHAR);
   }
 
   private void doTest(@Nullable final String lookupToSelect) {
+    doTest(lookupToSelect, Lookup.NORMAL_SELECT_CHAR);
+  }
+
+  private void doTest(@Nullable final String lookupToSelect, final char complationChar) {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.complete(CompletionType.BASIC);
 
     if (lookupToSelect != null) {
-      selectLookup(lookupToSelect, Lookup.NORMAL_SELECT_CHAR);
+      selectLookup(lookupToSelect, complationChar);
     }
 
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
@@ -58,7 +62,15 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFunctionWithArgsInvocation() throws Throwable {
-    doTest();
+    doTest("identical");
+  }
+
+  public void testKeepOldArgsOnTab() throws Throwable {
+    doTest("identical", Lookup.REPLACE_SELECT_CHAR);
+  }
+
+  public void testArgsPlaceholderOnTab() throws Throwable {
+    doTest("identical", Lookup.REPLACE_SELECT_CHAR);
   }
 
   public void testFunctionNoArgsInvocation() throws Throwable {

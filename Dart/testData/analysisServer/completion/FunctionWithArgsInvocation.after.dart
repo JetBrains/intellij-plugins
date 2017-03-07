@@ -1,3 +1,3 @@
 main() {
-  print(object)
+  identical(a<caret>, b)
 }
