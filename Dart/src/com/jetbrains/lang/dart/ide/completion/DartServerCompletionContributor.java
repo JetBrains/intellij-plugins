@@ -5,6 +5,9 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.codeInsight.template.TemplateBuilderImpl;
+import com.intellij.codeInsight.template.impl.TextExpression;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.injected.editor.VirtualFileWindow;
@@ -12,12 +15,14 @@ import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.xml.XMLLanguage;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.LayeredIcon;
@@ -84,28 +89,23 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                                      ? originalResultSet.withPrefixMatcher(uriPrefix)
                                                      : originalResultSet;
 
-               das.addCompletions(file, completionId, new DartAnalysisServerService.CompletionSuggestionConsumer() {
-                 @Override
-                 public void consumeCompletionSuggestion(int replacementOffset,
-                                                         int replacementLength,
-                                                         @NotNull CompletionSuggestion suggestion) {
-                   final CompletionResultSet updatedResultSet;
-                   if (uriPrefix != null) {
-                     updatedResultSet = resultSet;
+               das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
+                 final CompletionResultSet updatedResultSet;
+                 if (uriPrefix != null) {
+                   updatedResultSet = resultSet;
+                 }
+                 else {
+                   final String specialPrefix = getPrefixForSpecialCases(parameters, replacementOffset);
+                   if (specialPrefix != null) {
+                     updatedResultSet = resultSet.withPrefixMatcher(specialPrefix);
                    }
                    else {
-                     final String specialPrefix = getPrefixForSpecialCases(parameters, replacementOffset);
-                     if (specialPrefix != null) {
-                       updatedResultSet = resultSet.withPrefixMatcher(specialPrefix);
-                     }
-                     else {
-                       updatedResultSet = resultSet;
-                     }
+                     updatedResultSet = resultSet;
                    }
-
-                   final LookupElement lookupElement = createLookupElement(project, suggestion);
-                   updatedResultSet.addElement(lookupElement);
                  }
+
+                 final LookupElement lookupElement = createLookupElement(project, suggestion);
+                 updatedResultSet.addElement(lookupElement);
                });
              }
            });
@@ -171,27 +171,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
 
     return null;
-  }
-
-  @Override
-  public void beforeCompletion(@NotNull final CompletionInitializationContext context) {
-    final PsiElement psiElement = context.getFile().findElementAt(context.getStartOffset());
-    final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
-    if (parent instanceof DartStringLiteralExpression) {
-      final PsiElement parentParent = parent.getParent();
-      if (parentParent instanceof DartUriElement) {
-        final Pair<String, TextRange> uriAndRange = ((DartUriElement)parentParent).getUriStringAndItsRange();
-        context.setReplacementOffset(parentParent.getTextRange().getStartOffset() + uriAndRange.second.getEndOffset());
-      }
-      else {
-        // If replacement context is not set explicitly then com.intellij.codeInsight.completion.CompletionProgressIndicator#duringCompletion
-        // implementation looks for the reference at caret and on Tab replaces the whole reference.
-        // angular_analyzer_plugin provides angular-specific completion inside Dart string literals. Without the following hack Tab replaces
-        // too much useful text. This hack is not ideal though as it may leave a piece of tail not replaced.
-        // TODO: use replacementLength received from the server
-        context.setReplacementOffset(context.getReplacementOffset());
-      }
-    }
   }
 
   private static Icon applyOverlay(Icon base, boolean condition, Icon overlay) {
@@ -264,19 +243,48 @@ public class DartServerCompletionContributor extends CompletionContributor {
         shouldSetSelection = false;
         final List<String> parameterNames = suggestion.getParameterNames();
         if (parameterNames != null) {
-          lookup = lookup.withInsertHandler(new InsertHandler<LookupElement>() {
-            @Override
-            public void handleInsert(InsertionContext context, LookupElement item) {
-              if (parameterNames.isEmpty()) {
-                ParenthesesInsertHandler.NO_PARAMETERS.handleInsert(context, item);
+          lookup = lookup.withInsertHandler((context, item) -> {
+            if (parameterNames.isEmpty()) {
+              ParenthesesInsertHandler.NO_PARAMETERS.handleInsert(context, item);
+            }
+            else {
+              ParenthesesInsertHandler.WITH_PARAMETERS.handleInsert(context, item);
+              // Show parameters popup.
+              final Editor editor = context.getEditor();
+              final PsiElement psiElement = lookupObject.getElement();
+
+              // Insert argument defaults if provided.
+              final String argumentListString = suggestion.getDefaultArgumentListString();
+              if (argumentListString != null) {
+                final Document document = editor.getDocument();
+                int offset = context.getSelectionEndOffset() - 1;
+                document.insertString(offset, argumentListString);
+
+                PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+
+                final TemplateBuilderImpl
+                  builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
+
+                final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
+                // Only proceed if ranges are provided and well-formed.
+                if (ranges != null && (ranges.length & 1) == 0) {
+                  int index = 0;
+                  while (index < ranges.length) {
+                    final int start = ranges[index];
+                    final int length = ranges[index + 1];
+                    final String arg = argumentListString.substring(start, start + length);
+                    final TextExpression expression = new TextExpression(arg);
+                    final TextRange range = new TextRange(offset + start, offset + start + length);
+
+                    index += 2;
+                    builder.replaceRange(range, "group_" + (index - 1), expression, true);
+                  }
+
+                  builder.run(editor, true);
+                }
               }
-              else {
-                ParenthesesInsertHandler.WITH_PARAMETERS.handleInsert(context, item);
-                // Show parameters popup.
-                final Editor editor = context.getEditor();
-                final PsiElement psiElement = lookupObject.getElement();
-                AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, psiElement);
-              }
+
+              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, psiElement);
             }
           });
         }
@@ -285,16 +293,13 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
     // Use selection offset / length.
     if (shouldSetSelection) {
-      lookup = lookup.withInsertHandler(new InsertHandler<LookupElement>() {
-        @Override
-        public void handleInsert(InsertionContext context, LookupElement item) {
-          final Editor editor = context.getEditor();
-          final int startOffset = context.getStartOffset() + suggestion.getSelectionOffset();
-          final int endOffset = startOffset + suggestion.getSelectionLength();
-          editor.getCaretModel().moveToOffset(startOffset);
-          if (endOffset > startOffset) {
-            editor.getSelectionModel().setSelection(startOffset, endOffset);
-          }
+      lookup = lookup.withInsertHandler((context, item) -> {
+        final Editor editor = context.getEditor();
+        final int startOffset = context.getStartOffset() + suggestion.getSelectionOffset();
+        final int endOffset = startOffset + suggestion.getSelectionLength();
+        editor.getCaretModel().moveToOffset(startOffset);
+        if (endOffset > startOffset) {
+          editor.getSelectionModel().setSelection(startOffset, endOffset);
         }
       });
     }
@@ -345,6 +350,27 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
     else {
       return null;
+    }
+  }
+
+  @Override
+  public void beforeCompletion(@NotNull final CompletionInitializationContext context) {
+    final PsiElement psiElement = context.getFile().findElementAt(context.getStartOffset());
+    final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
+    if (parent instanceof DartStringLiteralExpression) {
+      final PsiElement parentParent = parent.getParent();
+      if (parentParent instanceof DartUriElement) {
+        final Pair<String, TextRange> uriAndRange = ((DartUriElement)parentParent).getUriStringAndItsRange();
+        context.setReplacementOffset(parentParent.getTextRange().getStartOffset() + uriAndRange.second.getEndOffset());
+      }
+      else {
+        // If replacement context is not set explicitly then com.intellij.codeInsight.completion.CompletionProgressIndicator#duringCompletion
+        // implementation looks for the reference at caret and on Tab replaces the whole reference.
+        // angular_analyzer_plugin provides angular-specific completion inside Dart string literals. Without the following hack Tab replaces
+        // too much useful text. This hack is not ideal though as it may leave a piece of tail not replaced.
+        // TODO: use replacementLength received from the server
+        context.setReplacementOffset(context.getReplacementOffset());
+      }
     }
   }
 }
