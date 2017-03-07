@@ -35,8 +35,8 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.8
 
 intellij {
-    type 'IU'
-    plugins 'Pythonid:2017.1.171.6'
+    type 'IC'
+//    plugins 'Pythonid:2017.1.171.6'
     updateSinceUntilBuild = false
 //    publish {
 //        username repoUser
