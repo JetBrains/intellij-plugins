@@ -23,8 +23,8 @@ public class DartVmServiceExecutionStack extends XExecutionStack {
                                      @Nullable final Frame topFrame,
                                      @Nullable final InstanceRef exception) {
     // topFrame is not null for (and only for) the active execution stack
-    super(debugProcess.isIsolateSuspended(isolateId) ? isolateName
-                                                     : isolateName + " (running)",
+    super(debugProcess.isIsolateSuspended(isolateId) ? beautify(isolateName)
+                                                     : beautify(isolateName) + " (running)",
           topFrame != null ? AllIcons.Debugger.ThreadCurrent
                            : debugProcess.isIsolateSuspended(isolateId) ? AllIcons.Debugger.ThreadAtBreakpoint
                                                                         : AllIcons.Debugger.ThreadRunning);
@@ -32,6 +32,13 @@ public class DartVmServiceExecutionStack extends XExecutionStack {
     myIsolateId = isolateId;
     myException = exception;
     myTopFrame = topFrame == null ? null : new DartVmServiceStackFrame(debugProcess, isolateId, topFrame, null, exception);
+  }
+
+  @NotNull
+  private static String beautify(@NotNull final String isolateName) {
+    // in tests it is "foo_test.dart%22%20as%20test;%0A%0A%20%20%20%20%20%20%20%20void%20main(_,%20SendPort%20message)..."
+    final int index = isolateName.indexOf(".dart%22%20as%20test;");
+    return index > 0 ? isolateName.substring(0, index + ".dart".length()) : isolateName;
   }
 
   @Nullable
