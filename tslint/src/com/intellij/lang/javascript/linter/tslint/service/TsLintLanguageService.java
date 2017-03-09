@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
+import com.intellij.util.text.SemVerMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -113,7 +114,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     }
 
     String version = element.get("version").getAsString();
-    SemVer tsLintVersion = SemVer.parseFromText(version);
+    SemVer tsLintVersion = SemVerMatcher.parseFromText(version);
     boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
     TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased);
     return ContainerUtil.newArrayList(parser.getErrors());
