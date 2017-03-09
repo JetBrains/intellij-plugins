@@ -4,6 +4,7 @@ import com.google.common.net.UrlEscapers;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -66,6 +67,35 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     // File with requested path may not exist, pub server will generate and serve it.
     // Here we find deepest (if nested) Dart project (aka Dart package) folder and its existing subfolder that can be served by pub server.
 
+    // There may be 2 content roots with web/foo.html and web/bar.html files in them correspondingly. We need to catch the correct 'web' folder.
+    // First see if full path can be resolved to a file
+    final PathInfo fullPathInfo = WebServerPathToFileManager.getInstance(project).getPathInfo(path);
+    final VirtualFile file = fullPathInfo == null
+                             ? null
+                             : LocalFileSystem.getInstance().findFileByPath(FileUtilRt.toSystemIndependentName(fullPathInfo.getFilePath()));
+    if (file != null) {
+      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, file);
+      if (pubspec == null) return null;
+
+      final VirtualFile dartRoot = pubspec.getParent();
+      final String relativePath = FileUtil.getRelativePath(dartRoot.getPath(), file.getPath(), '/');
+      // we only handle files 2 levels deeper than the Dart project root
+      final int slashIndex = relativePath == null ? -1 : relativePath.indexOf('/');
+      final String folderName = slashIndex == -1 ? null : relativePath.substring(0, slashIndex);
+
+      if (folderName == null ||
+          "build".equals(folderName) ||
+          "lib".equals(folderName) ||
+          DartUrlResolver.PACKAGES_FOLDER_NAME.equals(folderName)) {
+        return null;
+      }
+
+      final VirtualFile servedDir = dartRoot.findChild(folderName);
+      final String pubServePath = relativePath.substring(slashIndex);
+      return Pair.create(servedDir, escapeUrl(pubServePath));
+    }
+
+    // If above failed then take the longest path part that corresponds to an existing folder
     VirtualFile servedDir = null;
     String pubServePath = null;
 
