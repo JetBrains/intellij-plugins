@@ -28,8 +28,8 @@ class MakefileAnnotator : Annotator {
         return
       }
 
-      val targets = (element.parent.parent.parent as MakefileTargetLine).targets
-      if (targets.targetList.firstOrNull()?.isSpecialTarget == false) {
+      val targetLine = element.parent.parent.parent as MakefileTargetLine
+      if (targetLine.targets.targetList.firstOrNull()?.isSpecialTarget == false && targetLine.targetPattern == null) {
         val targetReferences = element.references.filter { it is MakefileTargetReference && it.resolve() != null }.any()
 
         var fileReferenceResolved = false

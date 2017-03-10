@@ -16,6 +16,9 @@ public interface MakefileTargetLine extends PsiElement {
   @Nullable
   MakefilePrivatevar getPrivatevar();
 
+  @Nullable
+  MakefileTargetPattern getTargetPattern();
+
   @NotNull
   MakefileTargets getTargets();
 

@@ -86,6 +86,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == TARGET_LINE) {
       r = target_line(b, 0);
     }
+    else if (t == TARGET_PATTERN) {
+      r = target_pattern(b, 0);
+    }
     else if (t == TARGETS) {
       r = targets(b, 0);
     }
@@ -809,7 +812,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // targets (':'|'::') (exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL))
+  // targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL))
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
@@ -818,7 +821,8 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = targets(b, l + 1);
     r = r && target_line_1(b, l + 1);
     p = r; // pin = 2
-    r = r && target_line_2(b, l + 1);
+    r = r && report_error_(b, target_line_2(b, l + 1));
+    r = p && target_line_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -834,83 +838,113 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL)
+  // (target_pattern ':')?
   private static boolean target_line_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line_2")) return false;
+    target_line_2_0(b, l + 1);
+    return true;
+  }
+
+  // target_pattern ':'
+  private static boolean target_line_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = target_pattern(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL)
+  private static boolean target_line_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = exportvar(b, l + 1);
     if (!r) r = override(b, l + 1);
     if (!r) r = privatevar(b, l + 1);
-    if (!r) r = target_line_2_3(b, l + 1);
+    if (!r) r = target_line_3_3(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // prerequisites (';' comment? EOL? | comment? EOL)
-  private static boolean target_line_2_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_2_3")) return false;
+  private static boolean target_line_3_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_3")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = prerequisites(b, l + 1);
-    r = r && target_line_2_3_1(b, l + 1);
+    r = r && target_line_3_3_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ';' comment? EOL? | comment? EOL
-  private static boolean target_line_2_3_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_2_3_1")) return false;
+  private static boolean target_line_3_3_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_3_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = target_line_2_3_1_0(b, l + 1);
-    if (!r) r = target_line_2_3_1_1(b, l + 1);
+    r = target_line_3_3_1_0(b, l + 1);
+    if (!r) r = target_line_3_3_1_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ';' comment? EOL?
-  private static boolean target_line_2_3_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_2_3_1_0")) return false;
+  private static boolean target_line_3_3_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_3_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, SEMICOLON);
-    r = r && target_line_2_3_1_0_1(b, l + 1);
-    r = r && target_line_2_3_1_0_2(b, l + 1);
+    r = r && target_line_3_3_1_0_1(b, l + 1);
+    r = r && target_line_3_3_1_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // comment?
-  private static boolean target_line_2_3_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_2_3_1_0_1")) return false;
+  private static boolean target_line_3_3_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_3_1_0_1")) return false;
     consumeToken(b, COMMENT);
     return true;
   }
 
   // EOL?
-  private static boolean target_line_2_3_1_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_2_3_1_0_2")) return false;
+  private static boolean target_line_3_3_1_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_3_1_0_2")) return false;
     consumeToken(b, EOL);
     return true;
   }
 
   // comment? EOL
-  private static boolean target_line_2_3_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_2_3_1_1")) return false;
+  private static boolean target_line_3_3_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_3_1_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = target_line_2_3_1_1_0(b, l + 1);
+    r = target_line_3_3_1_1_0(b, l + 1);
     r = r && consumeToken(b, EOL);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // comment?
-  private static boolean target_line_2_3_1_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_2_3_1_1_0")) return false;
+  private static boolean target_line_3_3_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_3_1_1_0")) return false;
     consumeToken(b, COMMENT);
     return true;
+  }
+
+  /* ********************************************************** */
+  // identifier
+  public static boolean target_pattern(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_pattern")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, TARGET_PATTERN, r);
+    return r;
   }
 
   /* ********************************************************** */

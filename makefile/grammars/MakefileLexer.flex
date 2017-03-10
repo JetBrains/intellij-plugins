@@ -75,6 +75,8 @@ CONDITION_CHARACTER=[^#\r\n]
     "private"               { yybegin(YYINITIAL); return KEYWORD_PRIVATE; }
     {BACKSLASHCRLF}         { return SPLIT; }
     {PIPE}                  { return PIPE; }
+    {DOUBLECOLON}           { return DOUBLECOLON; }
+    {COLON}                 { return COLON; }
     {SEMICOLON}             { yybegin(SOURCE); return SEMICOLON; }
     {VARIABLE_USAGE}        { return IDENTIFIER; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }

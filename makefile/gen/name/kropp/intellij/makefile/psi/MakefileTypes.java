@@ -30,6 +30,7 @@ public interface MakefileTypes {
   IElementType TARGET = new MakefileElementType("TARGET");
   IElementType TARGETS = new MakefileElementType("TARGETS");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
+  IElementType TARGET_PATTERN = new MakefileElementType("TARGET_PATTERN");
   IElementType TOPCONDITIONAL = new MakefileElementType("TOPCONDITIONAL");
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
@@ -133,6 +134,9 @@ public interface MakefileTypes {
       }
       else if (type == TARGET_LINE) {
         return new MakefileTargetLineImpl(node);
+      }
+      else if (type == TARGET_PATTERN) {
+        return new MakefileTargetPatternImpl(node);
       }
       else if (type == TOPCONDITIONAL) {
         return new MakefileTopconditionalImpl(node);
