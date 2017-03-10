@@ -76,12 +76,12 @@ public class _MakefileLexer implements FlexLexer {
     "\1\7\10\1\1\10\1\1\1\6\1\11\1\12\1\2"+
     "\4\1\1\13\1\14\1\2\1\6\1\2\1\15\1\6"+
     "\1\16\1\6\1\1\1\17\1\6\1\17\1\20\1\2"+
-    "\1\0\13\1\2\21\4\1\3\0\1\17\14\1\1\0"+
-    "\3\1\1\17\4\1\1\22\3\1\1\23\10\1\1\17"+
-    "\2\1\1\24\1\25\2\1\1\26\1\1\1\27\5\1"+
-    "\1\30\1\1\1\31\1\1\1\32\1\33\2\1\1\34"+
-    "\2\1\1\35\1\1\1\36\1\1\1\37\1\1\1\40"+
-    "\1\41\1\42";
+    "\1\21\13\1\2\22\4\1\3\0\1\17\14\1\1\0"+
+    "\3\1\1\17\4\1\1\23\3\1\1\24\10\1\1\17"+
+    "\2\1\1\25\1\26\2\1\1\27\1\1\1\30\5\1"+
+    "\1\31\1\1\1\32\1\1\1\33\1\34\2\1\1\35"+
+    "\2\1\1\36\1\1\1\37\1\1\1\40\1\1\1\41"+
+    "\1\42\1\43";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[140];
@@ -321,9 +321,8 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\7\0\5\1\1\11\15\1\1\11\16\1\1\11\7\1"+
-    "\1\0\13\1\1\11\5\1\3\0\15\1\1\0\21\1"+
-    "\1\11\46\1";
+    "\7\0\5\1\1\11\15\1\1\11\16\1\1\11\23\1"+
+    "\1\11\5\1\3\0\15\1\1\0\21\1\1\11\46\1";
 
   private static int [] zzUnpackAttribute() {
     int [] result = new int[140];
@@ -645,139 +644,143 @@ public class _MakefileLexer implements FlexLexer {
           case 1: 
             { return IDENTIFIER;
             }
-          case 35: break;
+          case 36: break;
           case 2: 
             { return WHITE_SPACE;
             }
-          case 36: break;
+          case 37: break;
           case 3: 
             { return COMMENT;
             }
-          case 37: break;
+          case 38: break;
           case 4: 
             { yybegin(PREREQUISITES); return COLON;
             }
-          case 38: break;
+          case 39: break;
           case 5: 
             { yybegin(SOURCE); return ASSIGN;
             }
-          case 39: break;
+          case 40: break;
           case 6: 
             { return BAD_CHARACTER;
             }
-          case 40: break;
+          case 41: break;
           case 7: 
             { yybegin(SOURCE); return TAB;
             }
-          case 41: break;
+          case 42: break;
           case 8: 
             { yybegin(YYINITIAL); return EOL;
             }
-          case 42: break;
+          case 43: break;
           case 9: 
             { yybegin(SOURCE); return SEMICOLON;
             }
-          case 43: break;
+          case 44: break;
           case 10: 
             { return PIPE;
             }
-          case 44: break;
+          case 45: break;
           case 11: 
             { return LINE;
             }
-          case 45: break;
+          case 46: break;
           case 12: 
             { yybegin(YYINITIAL); return WHITE_SPACE;
             }
-          case 46: break;
+          case 47: break;
           case 13: 
             { yybegin(DEFINEBODY); return WHITE_SPACE;
             }
-          case 47: break;
+          case 48: break;
           case 14: 
             { return ASSIGN;
             }
-          case 48: break;
+          case 49: break;
           case 15: 
             { return VARIABLE_VALUE_LINE;
             }
-          case 49: break;
+          case 50: break;
           case 16: 
             { yybegin(YYINITIAL); return CONDITION;
             }
-          case 50: break;
-          case 17: 
-            { return SPLIT;
-            }
           case 51: break;
-          case 18: 
-            { yybegin(CONDITIONALS); return KEYWORD_IFEQ;
+          case 17: 
+            { yybegin(PREREQUISITES); return DOUBLECOLON;
             }
           case 52: break;
-          case 19: 
-            { return KEYWORD_ELSE;
+          case 18: 
+            { return SPLIT;
             }
           case 53: break;
-          case 20: 
-            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ;
+          case 19: 
+            { yybegin(CONDITIONALS); return KEYWORD_IFEQ;
             }
           case 54: break;
-          case 21: 
-            { yybegin(CONDITIONALS); return KEYWORD_IFDEF;
+          case 20: 
+            { return KEYWORD_ELSE;
             }
           case 55: break;
-          case 22: 
-            { return KEYWORD_ENDIF;
+          case 21: 
+            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ;
             }
           case 56: break;
-          case 23: 
-            { yybegin(INCLUDES); return KEYWORD_VPATH;
+          case 22: 
+            { yybegin(CONDITIONALS); return KEYWORD_IFDEF;
             }
           case 57: break;
-          case 24: 
-            { yybegin(YYINITIAL); return KEYWORD_ENDEF;
+          case 23: 
+            { return KEYWORD_ENDIF;
             }
           case 58: break;
-          case 25: 
-            { yybegin(CONDITIONALS); return KEYWORD_IFNDEF;
+          case 24: 
+            { yybegin(INCLUDES); return KEYWORD_VPATH;
             }
           case 59: break;
-          case 26: 
-            { yybegin(DEFINE); return KEYWORD_DEFINE;
+          case 25: 
+            { yybegin(YYINITIAL); return KEYWORD_ENDEF;
             }
           case 60: break;
-          case 27: 
-            { return KEYWORD_EXPORT;
+          case 26: 
+            { yybegin(CONDITIONALS); return KEYWORD_IFNDEF;
             }
           case 61: break;
-          case 28: 
-            { yybegin(YYINITIAL); return KEYWORD_EXPORT;
+          case 27: 
+            { yybegin(DEFINE); return KEYWORD_DEFINE;
             }
           case 62: break;
-          case 29: 
-            { yybegin(INCLUDES); return KEYWORD_INCLUDE;
+          case 28: 
+            { return KEYWORD_EXPORT;
             }
           case 63: break;
-          case 30: 
-            { return KEYWORD_PRIVATE;
+          case 29: 
+            { yybegin(YYINITIAL); return KEYWORD_EXPORT;
             }
           case 64: break;
-          case 31: 
-            { yybegin(YYINITIAL); return KEYWORD_PRIVATE;
+          case 30: 
+            { yybegin(INCLUDES); return KEYWORD_INCLUDE;
             }
           case 65: break;
-          case 32: 
-            { yybegin(INCLUDES); return KEYWORD_UNDEFINE;
+          case 31: 
+            { return KEYWORD_PRIVATE;
             }
           case 66: break;
-          case 33: 
-            { return KEYWORD_OVERRIDE;
+          case 32: 
+            { yybegin(YYINITIAL); return KEYWORD_PRIVATE;
             }
           case 67: break;
-          case 34: 
-            { yybegin(YYINITIAL); return KEYWORD_OVERRIDE;
+          case 33: 
+            { yybegin(INCLUDES); return KEYWORD_UNDEFINE;
             }
           case 68: break;
+          case 34: 
+            { return KEYWORD_OVERRIDE;
+            }
+          case 69: break;
+          case 35: 
+            { yybegin(YYINITIAL); return KEYWORD_OVERRIDE;
+            }
+          case 70: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

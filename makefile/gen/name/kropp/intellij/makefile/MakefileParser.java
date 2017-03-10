@@ -809,18 +809,29 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // targets ':' (exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL))
+  // targets (':'|'::') (exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL))
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, TARGET_LINE, null);
     r = targets(b, l + 1);
-    r = r && consumeToken(b, COLON);
+    r = r && target_line_1(b, l + 1);
     p = r; // pin = 2
     r = r && target_line_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // ':'|'::'
+  private static boolean target_line_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COLON);
+    if (!r) r = consumeToken(b, DOUBLECOLON);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL)

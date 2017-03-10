@@ -41,6 +41,7 @@ public interface MakefileTypes {
   IElementType COLON = new MakefileTokenType(":");
   IElementType COMMENT = new MakefileTokenType("comment");
   IElementType CONDITION = new MakefileTokenType("condition");
+  IElementType DOUBLECOLON = new MakefileTokenType("::");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType IDENTIFIER = new MakefileTokenType("identifier");
   IElementType KEYWORD_DEFINE = new MakefileTokenType("define");

@@ -29,6 +29,7 @@ BACKSLASHCRLF="\\"(\r|\n|\r\n)
 COMMENT="#"[^\r\n]*
 VARIABLE_VALUE=[^\r\n]*[^\\\r\n]
 COLON=":"
+DOUBLECOLON="::"
 SEMICOLON=";"
 PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
@@ -47,6 +48,7 @@ CONDITION_CHARACTER=[^#\r\n]
     \t+                { yybegin(SOURCE); return TAB; }
     {EOL}              { return WHITE_SPACE; }
     {SPACES}           { return WHITE_SPACE; }
+    {DOUBLECOLON}      { yybegin(PREREQUISITES); return DOUBLECOLON; }
     {COLON}            { yybegin(PREREQUISITES); return COLON; }
     {ASSIGN}           { yybegin(SOURCE); return ASSIGN; }
     "include"          { yybegin(INCLUDES); return KEYWORD_INCLUDE; }
