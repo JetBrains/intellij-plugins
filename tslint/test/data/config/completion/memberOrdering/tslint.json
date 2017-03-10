@@ -1,5 +1,5 @@
 {
   "rules": {
-    "member-ordering": [<caret>]
+    "member-ordering": [true, {"order": <caret>}]
   }
 }
