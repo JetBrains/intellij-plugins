@@ -32,6 +32,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
     testSuite.addTestSuite(ActionScriptHighlightingInTextFieldTest.class);
     testSuite.addTestSuite(SwfHighlightingTest.class);
+    testSuite.addTestSuite(ActionScriptFormatterTest.class);
 
     testSuite.addTestSuite(FlexCssCompletionTest.class);
     testSuite.addTestSuite(FlexCssNavigationTest.class);
