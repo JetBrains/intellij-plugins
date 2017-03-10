@@ -970,10 +970,10 @@
                   "enum": true
                 },
                 {
-                  "$ref": "#/definitions/space-option"
+                  "$ref": "#/definitions/space-object"
                 },
                 {
-                  "$ref": "#/definitions/space-option"
+                  "$ref": "#/definitions/space-object"
                 }
               ]
             }

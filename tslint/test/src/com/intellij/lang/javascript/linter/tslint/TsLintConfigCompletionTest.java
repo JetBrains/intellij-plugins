@@ -24,7 +24,7 @@ public class TsLintConfigCompletionTest extends LightPlatformCodeInsightFixtureT
 
   public void testMemberOrdering() throws Exception {
     List<String> result = myFixture.getCompletionVariants("/memberOrdering/tslint.json");
-    final String[] variants = {"\"public-before-private\"", "\"static-before-instance\"", "\"variables-before-functions\"", "true"};
+    final String[] variants = {"\"public-before-private\"", "\"static-before-instance\"", "\"variables-before-functions\""};
     assertContainsOrdered(result, variants);
   }
 
