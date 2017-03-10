@@ -17,6 +17,30 @@
       ],
       "additionalItems": false
     },
+    "alwaysNever": {
+      "type": "string",
+      "enum": ["always", "never"]
+    },
+    "space-object": {
+      "type": "object",
+      "properties": {
+        "call-signature": {
+          "$ref": "#/definitions/space-option"
+        },
+        "index-signature": {
+          "$ref": "#/definitions/space-option"
+        },
+        "parameter": {
+          "$ref": "#/definitions/space-option"
+        },
+        "property-declaration": {
+          "$ref": "#/definitions/space-option"
+        },
+        "variable-declaration": {
+          "$ref": "#/definitions/space-option"
+        }
+      }, "additionalProperties": false
+    },
     "ruledefinitions": {
       "properties": {
         "adjacent-overload-signatures": {
@@ -668,10 +692,40 @@
           "type": "boolean"
         },
         "no-var-requires": {
-          "description": "Disallows the use of require statements except in import statements, banning the use of forms such as var module = require(\"module\")",
+          "description": "Disallows the use of require statements except in import statements",
           "type": "boolean"
         },
+        "no-void-expression": {
+          "description": "Requires expressions of type void to appear in statement position",
+          "type": "boolean"
+        },
+        "object-literal-key-quotes": {
+          "description": "Enforces consistent object literal property quote style",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "string",
+                    "enum": ["always",
+                      "as-needed",
+                      "consistent",
+                      "consistent-as-needed"]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "object-literal-shorthand": {
+          "type": "boolean",
+          "description": "Enforces use of ES6 object literal shorthand when possible"
+        },
         "object-literal-sort-keys": {
+          "type": "boolean",
           "description": "Requires keys in object literals to be sorted alphabetically"
         },
         "one-line": {
@@ -681,9 +735,100 @@
             {"type": "array",
               "items": {
                 "type": ["boolean", "string"],
-                "enum": [true, "check-open-brace", "check-catch", "check-else", "check-whitespace"]
+                "enum": [true, "check-catch",
+                  "check-finally",
+                  "check-else",
+                  "check-open-brace",
+                  "check-whitespace"]
               }}
           ]
+        },
+        "one-variable-per-declaration": {
+          "description": "Disallows multiple variable definitions in the same declaration statement",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "ignore-for-loop"]
+              }}
+          ]
+        },
+        "only-arrow-functions": {
+          "description": "Disallows traditional (non-arrow) function expressions",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "allow-declarations", "allow-named-functions"]
+              }}
+          ]
+        },
+        "ordered-imports": {
+          "description": "Requires that import statements be alphabetized",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "object",
+                    "properties": {
+                      "import-sources-order": {
+                        "type": "string",
+                        "enum": [
+                          "case-insensitive",
+                          "lowercase-first",
+                          "lowercase-last",
+                          "any"
+                        ]
+                      },
+                      "named-imports-order": {
+                        "type": "string",
+                        "enum": [
+                          "case-insensitive",
+                          "lowercase-first",
+                          "lowercase-last",
+                          "any"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "prefer-const": {
+          "description": "Requires that variable declarations use const instead of let if possible",
+          "type": "boolean"
+        },
+        "prefer-for-of": {
+          "description": "Recommends a ‘for-of’ loop over a standard ‘for’ loop if the index is only used to access the array being iterated",
+          "type": "boolean"
+        },
+        "prefer-function-over-method": {
+          "description": "Warns for class methods that do not use ‘this’",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "allow-public", "allow-protected"]
+              }}
+          ]
+        },
+        "prefer-method-signature": {
+          "description": "Prefer foo(): void over foo: () => void in interfaces and types",
+          "type": "boolean"
+        },
+        "promise-function-async": {
+          "description": "Requires any function or method that returns a promise to be marked async",
+          "type": "boolean"
         },
         "quotemark": {
           "description": "Enforces consistent single or double quoted string literals",
@@ -697,15 +842,73 @@
           ]
         },
         "radix": {
-          "description": "Enforces the radix parameter of parseInt",
+          "description": "Requires the radix parameter to be specified when calling parseInt",
+          "type": "boolean"
+        },
+        "restrict-plus-operands": {
+          "description": "When adding two variables, operands must both be of type number or of type string",
           "type": "boolean"
         },
         "semicolon": {
           "description": "Enforces semicolons at the end of every statement",
-          "type": "boolean"
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {
+              "type": "array",
+              "items": [
+                {"type": "boolean"},
+                {"type": "string", "enum": ["always", "never"]},
+                {"type": "string", "enum": ["ignore-interfaces"]}
+              ], "additionalItems": false
+            }
+          ]
+        },
+        "space-before-function-paren": {
+          "description": "Require or disallow a space before function parenthesis",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {
+              "type": "array",
+              "items": [
+                {"type": "boolean"},
+                {"$ref": "#/definitions/alwaysNever"}
+              ], "additionalItems": false
+            },
+            {
+              "type": "array",
+              "items": [
+                {"type": "boolean"},
+                {"type": "object", "properties": {
+                  "anonymous": {"$ref": "#/definitions/alwaysNever"},
+                  "asyncArrow": {"$ref": "#/definitions/alwaysNever"},
+                  "constructor": {"$ref": "#/definitions/alwaysNever"},
+                  "method": {"$ref": "#/definitions/alwaysNever"},
+                  "named": {"$ref": "#/definitions/alwaysNever"}
+                }}
+              ], "additionalItems": false
+            }
+          ]
+        },
+        "strict-boolean-expressions": {
+          "description": "Restricts the types allowed in boolean expressions. By default only booleans are allowed",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {"type": "array",
+              "items": {
+                "type": ["boolean", "string"],
+                "enum": [true, "allow-null-union",
+                  "allow-undefined-union",
+                  "allow-string",
+                  "allow-number"]
+              }}
+          ]
+        },
+        "strict-type-predicates": {
+          "description": "Warns for type predicates that are always true or always false",
+          "boolean": "true"
         },
         "switch-default": {
-          "description": "Enforces a default case in switch statements",
+          "description": "Require a default case in all switch statements",
           "type": "boolean"
         },
         "trailing-comma": {
@@ -717,20 +920,8 @@
                 {"type": "boolean"},
                 {"type": "object",
                   "properties": {
-                    "multiline": {
-                      "type": "string",
-                      "enum": [
-                        "always",
-                        "never"
-                      ]
-                    },
-                    "singleline": {
-                      "type": "string",
-                      "enum": [
-                        "always",
-                        "never"
-                      ]
-                    }
+                    "multiline": {"$ref": "#/definitions/alwaysNever"},
+                    "singleline": {"$ref": "#/definitions/alwaysNever"}
                   }
                 }
               ]
@@ -738,13 +929,13 @@
           ]
         },
         "triple-equals": {
-          "description": "Enforces === and !== in favor of == and !=",
+          "description": "Requires === and !== in place of == and !=",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
               "items": {
                 "type": ["boolean", "string"],
-                "enum": [true, "allow-null-check"]
+                "enum": [true, "allow-null-check", "allow-undefined-check"]
               }}
           ]
         },
@@ -755,12 +946,20 @@
             {"type": "array",
               "items": {
                 "type": ["boolean", "string"],
-                "enum": [true, "call-signature", "parameter", "property-declaration", "variable-declaration", "member-variable-declaration"]
+                "enum": [true, "call-signature",
+                  "arrow-call-signature",
+                  "parameter",
+                  "arrow-parameter",
+                  "property-declaration",
+                  "variable-declaration",
+                  "member-variable-declaration",
+                  "object-destructuring",
+                  "array-destructuring"]
               }}
           ]
         },
         "typedef-whitespace": {
-          "description": "Enforces spacing whitespace for type definitions",
+          "description": "Requires or disallows whitespace for type definitions",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {
@@ -771,59 +970,57 @@
                   "enum": true
                 },
                 {
-                  "type": "object",
-                  "properties": {
-                    "call-signature": {
-                      "$ref": "#/definitions/space-option"
-                    },
-                    "index-signature": {
-                      "$ref": "#/definitions/space-option"
-                    },
-                    "parameter": {
-                      "$ref": "#/definitions/space-option"
-                    },
-                    "property-declaration": {
-                      "$ref": "#/definitions/space-option"
-                    },
-                    "variable-declaration": {
-                      "$ref": "#/definitions/space-option"
-                    }
-                  }
+                  "$ref": "#/definitions/space-option"
+                },
+                {
+                  "$ref": "#/definitions/space-option"
                 }
               ]
             }
           ]
         },
-        "use-strict": {
-          "description": "Enforces ECMAScript 5's strict mode",
-          "oneOf": [
-            {"$ref": "#/definitions/switchedOff"},
-            {"type": "array",
-              "items": {
-                "type": ["boolean", "string"],
-                "enum": [true, "check-module", "check-function"]
-              }}
-          ]
+        "typeof-compare": {
+          "description": "Makes sure result of typeof is compared to correct string values",
+          "type": "boolean"
+        },
+        "unified-signatures": {
+          "description": "Warns for any two overloads that could be unified into one by using a union or an optional/rest parameter",
+          "type": "boolean"
+        },
+        "use-isnan": {
+          "description": "Enforces use of the isNaN() function to check for NaN references instead of a comparison to the NaN constant",
+          "type": "boolean"
         },
         "variable-name": {
-          "description": "Allows only camelCased or UPPER_CASED variable names",
+          "description": "Checks variable names for various errors",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
               "items": {
                 "type": ["boolean", "string"],
-                "enum": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-trailing-underscore"]
+                "enum": [true, "check-format",
+                  "allow-leading-underscore",
+                  "allow-trailing-underscore",
+                  "allow-pascal-case",
+                  "ban-keywords"]
               }}
           ]
         },
         "whitespace": {
-          "description": "Enforces spacing whitespace",
+          "description": "Enforces whitespace style conventions",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
               "items": {
                 "type": ["boolean", "string"],
-                "enum": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-separator", "check-type", "check-typecast"]
+                "enum": [true, "check-branch",
+                  "check-decl",
+                  "check-operator",
+                  "check-module",
+                  "check-separator",
+                  "check-type",
+                  "check-typecast",
+                  "check-preblock"]
               }}
           ]
         }
