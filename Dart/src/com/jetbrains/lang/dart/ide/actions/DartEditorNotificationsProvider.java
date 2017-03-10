@@ -1,6 +1,10 @@
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -17,19 +21,18 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
-import com.jetbrains.lang.dart.sdk.DartConfigurable;
-import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
-import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
+import com.jetbrains.lang.dart.sdk.*;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 
 public class DartEditorNotificationsProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
   private static final Key<EditorNotificationPanel> KEY = Key.create("DartEditorNotificationsProvider");
+  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Dart Support");
 
   @NotNull private final Project myProject;
 
@@ -66,8 +69,19 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     if (PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(vFile.getName()) || vFile.getFileType() == DartFileType.INSTANCE) {
       final DartSdk sdk = DartSdk.getDartSdk(myProject);
 
+      final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(vFile);
+      if (psiFile == null) return null;
+
+      final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
+      if (module == null) return null;
+
       // no SDK
       if (sdk == null) {
+        final String sdkPath = DartSdkUtil.getFirstKnownDartSdkPath();
+        if (DartSdkUtil.isDartSdkHome(sdkPath)) {
+          return createNotificationToEnableDartSupport(module);
+        }
+
         final String message = DartBundle.message("dart.sdk.is.not.configured");
         final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
 
@@ -77,21 +91,9 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
         return panel;
       }
 
-      final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(vFile);
-      if (psiFile == null) return null;
-
-      final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
-      if (module == null) return null;
-
       // SDK not enabled for this module
       if (!DartSdkLibUtil.isDartSdkEnabled(module)) {
-        final String message = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
-                               ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
-                               : DartBundle.message("dart.support.is.not.enabled.for.project");
-        final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
-        panel.createActionLabel(DartBundle.message("enable.dart.support"), new EnableDartSupportForModule(module));
-        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(myProject));
-        return panel;
+        return createNotificationToEnableDartSupport(module);
       }
 
       if (!DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
@@ -106,6 +108,17 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     }
 
     return null;
+  }
+
+  @NotNull
+  private EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull final Module module) {
+    final String message = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
+                           ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
+                           : DartBundle.message("dart.support.is.not.enabled.for.project");
+    final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
+    panel.createActionLabel(DartBundle.message("enable.dart.support"), new EnableDartSupportForModule(module));
+    panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(myProject));
+    return panel;
   }
 
   private static class PubActionsPanel extends EditorNotificationPanel {
@@ -129,7 +142,39 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
     @Override
     public void run() {
-      ApplicationManager.getApplication().runWriteAction(() -> DartSdkLibUtil.enableDartSdk(myModule));
+      final Project project = myModule.getProject();
+
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        if (DartSdk.getDartSdk(project) == null) {
+          final String sdkPath = DartSdkUtil.getFirstKnownDartSdkPath();
+          if (DartSdkUtil.isDartSdkHome(sdkPath)) {
+            DartSdkLibUtil.ensureDartSdkConfigured(project, sdkPath);
+          }
+          else {
+            return; // shouldn't happen, sdk path is already checked
+          }
+        }
+
+        DartSdkLibUtil.enableDartSdk(myModule);
+      });
+
+      final DartSdk sdk = DartSdk.getDartSdk(project);
+      if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(myModule)) {
+        final String title = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
+                             ? DartBundle.message("dart.support.enabled.for.module.0", myModule.getName())
+                             : DartBundle.message("dart.support.enabled");
+        final String message = DartBundle.message("dart.sdk.0.open.dart.settings", sdk.getVersion());
+
+        final NotificationListener listener = new NotificationListener.Adapter() {
+          @Override
+          protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+            DartConfigurable.openDartSettings(project);
+          }
+        };
+
+        NOTIFICATION_GROUP.createNotification(title, message, NotificationType.INFORMATION, listener)
+          .notify(project);
+      }
     }
   }
 
