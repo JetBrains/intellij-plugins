@@ -9,6 +9,14 @@
     "switchedOff": {"type": "boolean"},
     "switchable": {"type": "boolean"},
     "space-option": {"type": "string", "enum": ["space", "nospace"]},
+    "booleanWithInteger": {
+      "type": "array",
+      "items": [
+        {"type": "boolean"},
+        {"type": "number"}
+      ],
+      "additionalItems": false
+    },
     "ruledefinitions": {
       "properties": {
         "adjacent-overload-signatures": {
@@ -234,20 +242,24 @@
             }
           ]
         },
+        "match-default-export-name": {
+          "description": "Requires that a default import have the same name as the declaration it imports. Does nothing for anonymous default exports.",
+          "type": "boolean"
+        },
+        "max-classes-per-file": {
+          "description": "A file may not contain more than the specified number of classes",
+          "$ref": "#/definitions/booleanWithInteger"
+        },
+        "max-file-line-count": {
+          "description": "Requires files to remain under a certain number of lines",
+          "$ref": "#/definitions/booleanWithInteger"
+        },
         "max-line-length": {
-          "description": "Sets the maximum length of a line",
-          "oneOf": [
-            {"$ref": "#/definitions/switchedOff"},
-            {"type": "array",
-              "items": [
-                {"type": "boolean", "enum": [true]},
-                {"type": "integer"}
-              ]
-            }
-          ]
+          "description": "Requires lines to be under a certain max length",
+          "$ref": "#/definitions/booleanWithInteger"
         },
         "member-access": {
-          "description": "Enforces using explicit visibility on class members",
+          "description": "Requires explicit visibility declarations for class members",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
@@ -261,31 +273,99 @@
           "description": "Enforces member ordering",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
-            {"type": "array",
-              "items": {
-                "type": ["boolean", "string"],
-                "enum": [true, "public-before-private", "static-before-instance", "variables-before-functions"]
-              }}
+            {
+              "type": "array",
+              "items": [
+                {
+                  "type": "boolean",
+                  "enum": "true"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "order": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "public-before-private",
+                            "static-before-instance",
+                            "variables-before-functions"
+                          ]
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "public-static-field",
+                              "public-static-method",
+                              "protected-static-field",
+                              "protected-static-method",
+                              "private-static-field",
+                              "private-static-method",
+                              "public-instance-field",
+                              "protected-instance-field",
+                              "private-instance-field",
+                              "public-constructor",
+                              "protected-constructor",
+                              "private-constructor",
+                              "public-instance-method",
+                              "protected-instance-method",
+                              "private-instance-method"
+                            ]
+                          },
+                          "uniqueItems": true
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
           ]
         },
+        "new-parens": {
+          "description": "Requires parentheses when invoking a constructor via the new keyword",
+          "type": "boolean"
+        },
+        "newline-before-return": {
+          "description": "Enforces blank line before return when not the only line in the block",
+          "type": "boolean"
+        },
+        "no-angle-bracket-type-assertion": {
+          "description": "Requires the use of as Type for type assertions instead of <Type>",
+          "type": "boolean"
+        },
         "no-any": {
-          "description": "disallows usages of any as a type decoration",
+          "description": "Disallows usages of any as a type declaration",
           "type": "boolean"
         },
         "no-arg": {
-          "description": "Disallows access to arguments.callee",
+          "description": "Disallows use of arguments.callee",
           "type": "boolean"
         },
         "no-bitwise": {
           "description": "Disallows bitwise operators",
           "type": "boolean"
         },
+        "no-boolean-literal-compare": {
+          "description": "Warns on comparison to a boolean literal, as in x === true",
+          "type": "boolean"
+        },
         "no-conditional-assignment": {
           "description": "Disallows any type of assignment in any conditionals. This applies to do-while, for, if, and while statements.",
           "type": "boolean"
         },
+        "no-consecutive-blank-lines": {
+          "description": "Disallows one or more blank lines in a row",
+          "oneOf": [
+            {"type": "boolean"},
+            {"$ref": "#/definitions/booleanWithInteger"}
+          ]
+        },
         "no-console": {
-          "description": "Disallows access to the specified functions on console",
+          "description": "Bans the use of specified console methods",
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
@@ -295,24 +375,20 @@
               }, "additionalItems": true}
           ]
         },
-        "no-consecutive-blank-lines": {
-          "description": "Disallows having more than one blank line in a row in a file",
-          "type": "boolean"
-        },
         "no-construct": {
           "description": "Disallows access to the constructors of String, Number and Boolean",
-          "type": "boolean"
-        },
-        "no-constructor-vars": {
-          "description": "Disallows the `public` and `private` modifiers for constructor parameters",
           "type": "boolean"
         },
         "no-debugger": {
           "description": "Disallows debugger statements",
           "type": "boolean"
         },
-        "no-duplicate-key": {
-          "description": "Disallows duplicate keys in object literals",
+        "no-default-export": {
+          "description": "Disallows default exports in ES6-style modules",
+          "type": "boolean"
+        },
+        "no-duplicate-super": {
+          "description": "Warns if ‘super()’ appears twice in a constructor",
           "type": "boolean"
         },
         "no-duplicate-variable": {
@@ -327,9 +403,57 @@
           "description": "Disallows empty blocks",
           "type": "boolean"
         },
+        "no-empty-interface": {
+          "description": "Forbids empty interfaces",
+          "type": "boolean"
+        },
         "no-eval": {
           "description": "Disallows eval function invocations",
           "type": "boolean"
+        },
+        "no-floating-promises": {
+          "description": "Promises returned by functions must be handled appropriately",
+          "oneOf": [
+            {"type": "boolean"},
+            {"type": "array",
+             "items": {
+               "oneOf": [
+                 {
+                   "type": "boolean",
+                   "enum": [true]
+                 },
+                 {
+                   "type": "string"
+                 }
+               ]
+             }}
+          ]
+        },
+        "no-for-in-array": {
+          "description": "Disallows iterating over an array with a for-in loop",
+          "type": "boolean"
+        },
+        "no-import-side-effect": {
+          "description": "Avoid import statements with side-effect",
+          "oneOf": [
+            {"$ref": "#/definitions/switchedOff"},
+            {
+              "type": "array",
+              "items": [
+                {
+                  "type": "boolean",
+                  "enum": "true"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "ignore-module": {"type": "string"}
+                  }
+                }
+              ],
+              "additionalItems": false
+            }
+          ]
         },
         "no-inferrable-types": {
           "description": "Disallows explicit type declarations for variables or parameters initialized to a number, string, or boolean",
