@@ -395,10 +395,6 @@
           "description": "Disallows duplicate variable declarations in the same block scope",
           "type": "boolean"
         },
-        "no-shadowed-variable": {
-          "description": "Disallows shadowed variable declarations",
-          "type": "boolean"
-        },
         "no-empty": {
           "description": "Disallows empty blocks",
           "type": "boolean"
@@ -551,12 +547,28 @@
           "description": "Disallows use of the null keyword literal",
           "type": "boolean"
         },
+        "no-parameter-properties": {
+          "description": "Disallows parameter properties in class constructors",
+          "type": "boolean"
+        },
+        "no-reference": {
+          "description": "Disallows /// <reference path=> imports (use ES6-style imports instead)",
+          "type": "boolean"
+        },
         "no-require-imports": {
-          "description": "Disallows require() style imports",
+          "description": "Disallows invocation of require()",
+          "type": "boolean"
+        },
+        "no-shadowed-variable": {
+          "description": "Disallows shadowing variable declarations",
           "type": "boolean"
         },
         "no-string-literal": {
           "description": "Disallows object access via string literals",
+          "type": "boolean"
+        },
+        "no-string-throw": {
+          "description": "Flags throwing plain strings or concatenations of strings because only Errors produce proper stack traces",
           "type": "boolean"
         },
         "no-switch-case-fall-through": {
@@ -565,25 +577,86 @@
         },
         "no-trailing-whitespace": {
           "description": "Disallows trailing whitespace at the end of a line",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "string",
+                    "enum": ["ignore-comments", "ignore-jsdoc"]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "no-unbound-method": {
+          "description": "Warns when a method is used as outside of a method call",
           "type": "boolean"
         },
-        "no-unreachable": {
-          "description": "Disallows unreachable code after break, catch, throw and return statements",
+        "no-unnecessary-initializer": {
+          "description": "Forbids a ‘var’/’let’ statement or destructuring initializer to be initialized to ‘undefined’",
+          "type": "boolean"
+        },
+        "no-unnecessary-qualifier": {
+          "description": "Warns when a namespace qualifier (A.x) is unnecessary",
+          "type": "boolean"
+        },
+        "no-unsafe-any": {
+          "description": "Warns when using an expression of type ‘any’ in an unsafe way",
+          "type": "boolean"
+        },
+        "no-unsafe-finally": {
+          "description": "Disallows control flow statements, such as return, continue, break and throws in finally blocks",
           "type": "boolean"
         },
         "no-unused-expression": {
-          "description": "Disallows unused expression statements, that is, expression statements that are not assignments or function invocations (and thus no-ops)",
+          "description": "Disallows unused expression statements",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "string",
+                    "enum": ["allow-fast-null-checks"]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "no-unused-new": {
+          "description": "Disallows unused ‘new’ expression statements",
           "type": "boolean"
         },
         "no-unused-variable": {
           "description": "Disallows unused imports, variables, functions and private class members",
           "oneOf": [
-            {"$ref": "#/definitions/switchedOff"},
-            {"type": "array",
+            {"type": "boolean"},
+            {
+              "type": "array",
               "items": {
-                "type": ["boolean", "string"],
-                "enum": [true, "check-parameters", "react"]
-              }}
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "string",
+                    "enum": ["check-parameters", "react"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "ignore-pattern": {"type": "string"}
+                    }, "additionalProperties": false
+                  }
+                ]
+              }
+            }
           ]
         },
         "no-use-before-declare": {
