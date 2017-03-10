@@ -457,10 +457,94 @@
         },
         "no-inferrable-types": {
           "description": "Disallows explicit type declarations for variables or parameters initialized to a number, string, or boolean",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "string",
+                    "enum": ["ignore-params", "ignore-properties"]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "no-inferred-empty-object-type": {
+          "description": "Disallow type inference of {} (empty object type) at function and constructor call sites",
           "type": "boolean"
         },
         "no-internal-module": {
           "description": "Disallows internal module, use namespace instead",
+          "type": "boolean"
+        },
+        "no-invalid-this": {
+          "description": "Disallows using the this keyword outside of classes",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "string",
+                    "enum": ["check-function-in-method"]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "no-magic-numbers": {
+          "description": "Disallows the use constant number values outside of variable assignments",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "minItems": 2
+            }
+          ]
+        },
+        "no-mergeable-namespace": {
+          "description": "Disallows mergeable namespaces in the same file",
+          "type": "boolean"
+        },
+        "no-misused-new": {
+          "description": "Warns on apparent attempts to define constructors for interfaces or new for classes",
+          "type": "boolean"
+        },
+        "no-namespace": {
+          "description": "Disallows use of internal module S and namespace S",
+          "oneOf": [
+            {"type": "boolean"},
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {"type": "boolean", "enum": ["true"]},
+                  {
+                    "type": "string",
+                    "enum": ["allow-declarations"]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "no-non-null-assertion": {
+          "description": "Disallows non-null assertions",
           "type": "boolean"
         },
         "no-null-keyword": {
