@@ -1,5 +1,6 @@
 package name.kropp.intellij.makefile
 
+import com.intellij.execution.configuration.EnvironmentVariablesComponent
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -16,6 +17,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   private val filenameField = TextFieldWithBrowseButton()
   private val targetCompletionProvider = TextFieldWithAutoCompletion.StringsCompletionProvider(emptyList(), MakefileTargetIcon)
   private val targetField = TextFieldWithAutoCompletion<String>(project, targetCompletionProvider, true, "")
+  private val environmentVarsComponent = EnvironmentVariablesComponent()
 
   private val panel: JPanel by lazy {
     FormBuilder.createFormBuilder()
@@ -24,6 +26,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
         .setVerticalGap(UIUtil.DEFAULT_VGAP)
         .addLabeledComponent("&Makefile", filenameField)
         .addLabeledComponent("&Target", targetField)
+        .addComponent(environmentVarsComponent)
         .panel
   }
 
@@ -53,11 +56,13 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   override fun applyEditorTo(configuration: MakefileRunConfiguration) {
     configuration.filename = filenameField.text
     configuration.target = targetField.text
+    configuration.environmentVariables = environmentVarsComponent.envData
   }
 
   override fun resetEditorFrom(configuration: MakefileRunConfiguration) {
     filenameField.text = configuration.filename
     targetField.text = configuration.target
+    environmentVarsComponent.envData = configuration.environmentVariables
 
     updateTargetCompletion(configuration.filename)
   }
