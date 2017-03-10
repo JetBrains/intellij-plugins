@@ -69,7 +69,7 @@ public class DartSdkUtil {
   }
 
   @Contract("null->false")
-  public static boolean isDartSdkHome(final String path) {
+  public static boolean isDartSdkHome(@Nullable final String path) {
     return path != null && !path.isEmpty() && new File(path + "/lib/core/core.dart").isFile();
   }
 
