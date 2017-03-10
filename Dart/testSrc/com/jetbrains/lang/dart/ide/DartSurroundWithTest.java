@@ -4,6 +4,7 @@ import com.intellij.codeInsight.generation.surroundWith.SurroundWithHandler;
 import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
+import com.jetbrains.lang.dart.ide.surroundWith.expression.DartWithBracketsExpressionSurrounder;
 import com.jetbrains.lang.dart.ide.surroundWith.expression.DartWithNotParenthesisExpressionSurrounder;
 import com.jetbrains.lang.dart.ide.surroundWith.expression.DartWithParenthesisExpressionSurrounder;
 import com.jetbrains.lang.dart.ide.surroundWith.statement.*;
@@ -90,5 +91,13 @@ public class DartSurroundWithTest extends LightPlatformCodeInsightTestCase {
 
   public void testWhile2() throws Throwable {
     doTest(new DartWithWhileSurrounder());
+  }
+
+  public void testBrackets1() throws Throwable {
+    doTest(new DartWithBracketsExpressionSurrounder());
+  }
+
+  public void testBrackets2() throws Throwable {
+    doTest(new DartWithBracketsExpressionSurrounder());
   }
 }
