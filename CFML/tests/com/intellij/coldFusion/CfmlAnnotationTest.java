@@ -15,9 +15,6 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection;
-
 /**
  * User: Nadya.Zabrodina
  */
@@ -27,18 +24,12 @@ public class CfmlAnnotationTest extends CfmlCodeInsightFixtureTestCase {
     return "/annotation";
   }
 
-  private void doAnnotationTest(boolean infos, Class<? extends LocalInspectionTool>... inspectionClasses) throws Exception {
+  private void doAnnotationTest() {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     myFixture.configureByFiles(inputDataFileName);
-    myFixture.testHighlighting(false, infos, false);
+    myFixture.testHighlighting(false, true, false);
   }
 
-
-  public void testActionNameAnnotation() throws Throwable {
-    doAnnotationTest(true, CfmlReferenceInspection.class);
-  }
-
-  public void testTodoAnnotation() throws Throwable {
-    doAnnotationTest(true);
-  }
+  public void testActionNameAnnotation() { doAnnotationTest(); }
+  public void testTodoAnnotation()       { doAnnotationTest(); }
 }
