@@ -73,6 +73,7 @@ CONDITION_CHARACTER=[^#\r\n]
     "override"              { yybegin(YYINITIAL); return KEYWORD_OVERRIDE; }
     "export"                { yybegin(YYINITIAL); return KEYWORD_EXPORT; }
     "private"               { yybegin(YYINITIAL); return KEYWORD_PRIVATE; }
+    {ASSIGN}                { yybegin(SOURCE); return ASSIGN; }
     {BACKSLASHCRLF}         { return SPLIT; }
     {PIPE}                  { return PIPE; }
     {DOUBLECOLON}           { return DOUBLECOLON; }

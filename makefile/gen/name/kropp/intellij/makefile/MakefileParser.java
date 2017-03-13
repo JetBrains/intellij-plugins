@@ -812,7 +812,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL))
+  // targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' comment? EOL? | comment? EOL))
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
@@ -856,7 +856,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL)
+  // exportvar|override|privatevar|variable-assignment|prerequisites (';' comment? EOL? | comment? EOL)
   private static boolean target_line_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line_3")) return false;
     boolean r;
@@ -864,73 +864,74 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = exportvar(b, l + 1);
     if (!r) r = override(b, l + 1);
     if (!r) r = privatevar(b, l + 1);
-    if (!r) r = target_line_3_3(b, l + 1);
+    if (!r) r = variable_assignment(b, l + 1);
+    if (!r) r = target_line_3_4(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // prerequisites (';' comment? EOL? | comment? EOL)
-  private static boolean target_line_3_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_3")) return false;
+  private static boolean target_line_3_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = prerequisites(b, l + 1);
-    r = r && target_line_3_3_1(b, l + 1);
+    r = r && target_line_3_4_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ';' comment? EOL? | comment? EOL
-  private static boolean target_line_3_3_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_3_1")) return false;
+  private static boolean target_line_3_4_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = target_line_3_3_1_0(b, l + 1);
-    if (!r) r = target_line_3_3_1_1(b, l + 1);
+    r = target_line_3_4_1_0(b, l + 1);
+    if (!r) r = target_line_3_4_1_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ';' comment? EOL?
-  private static boolean target_line_3_3_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_3_1_0")) return false;
+  private static boolean target_line_3_4_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, SEMICOLON);
-    r = r && target_line_3_3_1_0_1(b, l + 1);
-    r = r && target_line_3_3_1_0_2(b, l + 1);
+    r = r && target_line_3_4_1_0_1(b, l + 1);
+    r = r && target_line_3_4_1_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // comment?
-  private static boolean target_line_3_3_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_3_1_0_1")) return false;
+  private static boolean target_line_3_4_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4_1_0_1")) return false;
     consumeToken(b, COMMENT);
     return true;
   }
 
   // EOL?
-  private static boolean target_line_3_3_1_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_3_1_0_2")) return false;
+  private static boolean target_line_3_4_1_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4_1_0_2")) return false;
     consumeToken(b, EOL);
     return true;
   }
 
   // comment? EOL
-  private static boolean target_line_3_3_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_3_1_1")) return false;
+  private static boolean target_line_3_4_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4_1_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = target_line_3_3_1_1_0(b, l + 1);
+    r = target_line_3_4_1_1_0(b, l + 1);
     r = r && consumeToken(b, EOL);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // comment?
-  private static boolean target_line_3_3_1_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_3_1_1_0")) return false;
+  private static boolean target_line_3_4_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4_1_1_0")) return false;
     consumeToken(b, COMMENT);
     return true;
   }

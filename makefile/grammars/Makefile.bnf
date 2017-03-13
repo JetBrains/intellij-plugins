@@ -48,7 +48,7 @@ recipe ::= (command|conditional|empty_command)* {methods=[isEmpty]}
 command ::= '\t'* line (split line)*
 empty_command ::= '\t'+
 
-target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|prerequisites (';' comment? EOL? | comment? EOL)) {pin=2 methods=[getTargetName]}
+target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' comment? EOL? | comment? EOL)) {pin=2 methods=[getTargetName]}
 targets ::= target+
 target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement,com.intellij.navigation.NavigationItem" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches]}
 
