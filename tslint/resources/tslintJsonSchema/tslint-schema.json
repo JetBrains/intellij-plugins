@@ -393,10 +393,10 @@
           "oneOf": [
             {"$ref": "#/definitions/switchedOff"},
             {"type": "array",
-              "items": {
-                "type": ["boolean", "string"],
-                "enum": [true, "debug", "info", "time", "timeEnd", "trace", "log", "error"]
-              }, "additionalItems": true}
+              "items":
+              {
+                "type": ["boolean", "string"]
+              }}
           ]
         },
         "no-construct": {
