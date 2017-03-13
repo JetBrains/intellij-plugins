@@ -17,6 +17,12 @@
       ],
       "additionalItems": false
     },
+    "withOptionalIntegerParam": {
+      "oneOf": [
+        {"type": "boolean"},
+        {"$ref": "#/definitions/booleanWithInteger"}
+      ]
+    },
     "alwaysNever": {
       "type": "string",
       "enum": ["always", "never"]
@@ -182,7 +188,7 @@
         },
         "cyclomatic-complexity": {
           "description": "Enforces a threshold of cyclomatic complexity",
-          "type": ["boolean", "integer"]
+          "$ref": "#/definitions/withOptionalIntegerParam"
         },
         "eofline": {
           "description": "Enforces the file to end with a newline",
@@ -385,7 +391,7 @@
           "description": "Disallows one or more blank lines in a row",
           "oneOf": [
             {"type": "boolean"},
-            {"$ref": "#/definitions/booleanWithInteger"}
+            {"$ref": "#/definitions/withOptionalIntegerParam"}
           ]
         },
         "no-console": {
