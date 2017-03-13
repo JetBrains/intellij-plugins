@@ -42,6 +42,8 @@
     <quoteHandler fileType="Markdown" className="org.intellij.plugins.markdown.braces.MarkdownQuoteHandler"/>
     <typedHandler implementation="org.intellij.plugins.markdown.editor.MarkdownTypedHandler"/>
 
+    <bidiRegionsSeparator language="Markdown" implementationClass="org.intellij.plugins.markdown.editor.MarkdownBidiRegionsSeparator"/>
+
     <annotator language="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownHighlightingAnnotator"/>
 
     <multiHostInjector implementation="org.intellij.plugins.markdown.injection.CodeFenceInjector"/>
