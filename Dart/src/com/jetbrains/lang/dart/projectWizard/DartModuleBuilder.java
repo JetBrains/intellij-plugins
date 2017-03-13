@@ -161,6 +161,13 @@ public class DartModuleBuilder extends ModuleBuilder {
   }
 
   static void runWhenNonModalIfModuleNotDisposed(@NotNull final Runnable runnable, @NotNull final Module module) {
+    // runnable must not be executed immediately because the new project model might be not yet committed, so Dart SDK won't be found
+
+    if (module.getProject().isInitialized()) {
+      ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, module.getDisposed());
+      return;
+    }
+
     StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(() -> {
       if (ApplicationManager.getApplication().getCurrentModalityState() == ModalityState.NON_MODAL) {
         runnable.run();
