@@ -8,7 +8,7 @@
   "definitions": {
     "switchedOff": {"type": "boolean"},
     "switchable": {"type": "boolean"},
-    "space-option": {"type": "string", "enum": ["space", "nospace"]},
+    "space-option": {"type": "string", "enum": ["space", "nospace", "onespace"]},
     "booleanWithInteger": {
       "type": "array",
       "items": [
