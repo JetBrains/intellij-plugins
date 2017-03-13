@@ -906,7 +906,7 @@
         },
         "strict-type-predicates": {
           "description": "Warns for type predicates that are always true or always false",
-          "boolean": true
+          "type": "boolean"
         },
         "switch-default": {
           "description": "Require a default case in all switch statements",
