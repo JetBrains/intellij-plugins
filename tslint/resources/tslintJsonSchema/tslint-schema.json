@@ -302,7 +302,7 @@
               "items": [
                 {
                   "type": "boolean",
-                  "enum": "true"
+                  "enum": true
                 },
                 {
                   "type": "object",
@@ -462,7 +462,7 @@
               "items": [
                 {
                   "type": "boolean",
-                  "enum": "true"
+                  "enum": true
                 },
                 {
                   "type": "object",
@@ -483,7 +483,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "string",
                     "enum": ["ignore-params", "ignore-properties"]
@@ -509,7 +509,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "string",
                     "enum": ["check-function-in-method"]
@@ -527,7 +527,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "integer"
                   }
@@ -553,7 +553,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "string",
                     "enum": ["allow-declarations"]
@@ -607,7 +607,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "string",
                     "enum": ["ignore-comments", "ignore-jsdoc"]
@@ -645,7 +645,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "string",
                     "enum": ["allow-fast-null-checks"]
@@ -667,7 +667,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "string",
                     "enum": ["check-parameters", "react"]
@@ -707,7 +707,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "string",
                     "enum": ["always",
@@ -773,7 +773,7 @@
               "type": "array",
               "items": {
                 "oneOf": [
-                  {"type": "boolean", "enum": ["true"]},
+                  {"type": "boolean", "enum": [true]},
                   {
                     "type": "object",
                     "properties": {
@@ -905,7 +905,7 @@
         },
         "strict-type-predicates": {
           "description": "Warns for type predicates that are always true or always false",
-          "boolean": "true"
+          "boolean": true
         },
         "switch-default": {
           "description": "Require a default case in all switch statements",
