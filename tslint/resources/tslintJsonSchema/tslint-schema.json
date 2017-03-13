@@ -899,7 +899,8 @@
                 "enum": [true, "allow-null-union",
                   "allow-undefined-union",
                   "allow-string",
-                  "allow-number"]
+                  "allow-number",
+                  "allow-mix"]
               }}
           ]
         },
