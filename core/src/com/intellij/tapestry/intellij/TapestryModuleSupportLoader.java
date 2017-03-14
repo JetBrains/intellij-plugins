@@ -4,7 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlElement;
@@ -38,7 +38,7 @@ public class TapestryModuleSupportLoader
   public static TapestryModuleSupportLoader getInstance(@NotNull PsiElement element) {
     final PsiFile file = element.getContainingFile();
     if (file == null || !(file.getFileType() instanceof TmlFileType)) return null;
-    Module module = ModuleUtil.findModuleForPsiElement(element);
+    Module module = ModuleUtilCore.findModuleForPsiElement(element);
     return module != null ? getInstance(module) : null;
   }
 
@@ -50,7 +50,7 @@ public class TapestryModuleSupportLoader
    */
   @Nullable
   public static TapestryProject getTapestryProject(@Nullable Module module) {
-    return module == null ? null : getInstance(module).getTapestryProject();
+    return module == null || module.isDisposed() ? null : getInstance(module).getTapestryProject();
   }
 
   @Nullable
