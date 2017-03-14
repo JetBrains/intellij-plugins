@@ -35,10 +35,6 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
     return FlexBundle.message("flash.module.type.description");
   }
 
-  public Icon getBigIcon() {
-    return FlexIcons.Flex.Flash_module_24;
-  }
-
   public Icon getNodeIcon(final boolean isOpened) {
     return FlexIcons.Flex.Flash_module_closed;
   }

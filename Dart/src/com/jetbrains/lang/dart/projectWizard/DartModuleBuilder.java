@@ -60,11 +60,6 @@ public class DartModuleBuilder extends ModuleBuilder {
   }
 
   @Override
-  public Icon getBigIcon() {
-    return DartIcons.Dart_16;
-  }
-
-  @Override
   public Icon getNodeIcon() {
     return DartIcons.Dart_16;
   }
