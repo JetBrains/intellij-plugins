@@ -247,18 +247,17 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // conditional-keyword condition comment? branch ('else' comment? branch)* 'endif' comment?
   public static boolean conditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional")) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, CONDITIONAL, "<conditional>");
     r = conditional_keyword(b, l + 1);
-    p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, CONDITION));
-    r = p && report_error_(b, conditional_2(b, l + 1)) && r;
-    r = p && report_error_(b, branch(b, l + 1)) && r;
-    r = p && report_error_(b, conditional_4(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, KEYWORD_ENDIF)) && r;
-    r = p && conditional_6(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    r = r && consumeToken(b, CONDITION);
+    r = r && conditional_2(b, l + 1);
+    r = r && branch(b, l + 1);
+    r = r && conditional_4(b, l + 1);
+    r = r && consumeToken(b, KEYWORD_ENDIF);
+    r = r && conditional_6(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   // comment?

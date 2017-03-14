@@ -59,7 +59,7 @@ normal_prerequisites ::= prerequisite* (split prerequisite*)*
 order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin"}
 
-conditional ::= conditional-keyword condition comment? branch ('else' comment? branch)* 'endif' comment? {pin=1}
+conditional ::= conditional-keyword condition comment? branch ('else' comment? branch)* 'endif' comment?
 
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 
