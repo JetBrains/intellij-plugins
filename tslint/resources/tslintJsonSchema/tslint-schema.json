@@ -1038,18 +1038,22 @@
 
   "properties": {
     "rules": {
+      "description": "Rules for .ts and .tsx files",
       "$ref": "#/definitions/ruledefinitions"
     },
     "jsRules": {
+      "description": "Rules for .js and .jsx files",
       "$ref": "#/definitions/ruledefinitions"
     },
     "extends": {
+      "description": "A path(s) to another configuration file which to extend",
       "oneOf": [
         {"type": "string"},
         {"type": "array", "items": "string"}
       ]
     },
     "rulesDirectory": {
+      "description": "A path(s) to a directory of custom rules",
       "oneOf": [
         {"type": "string"},
         {"type": "array", "items": "string"}
