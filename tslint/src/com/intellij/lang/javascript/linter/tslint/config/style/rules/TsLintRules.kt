@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint.config.style.rules
 
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 
 val TslintRulesSet = setOf(ImportDestructuringSpacingRule(),
@@ -28,6 +29,7 @@ val TslintRulesSet = setOf(ImportDestructuringSpacingRule(),
                            WhitespaceShiftOperatorRule(),
                            WhitespaceCommaRule(),
                            MaxLineLengthRule(),
+                           ImportBlacklistRule(),
                            IndentRule()
 )
 
@@ -94,7 +96,7 @@ class ForceQuotemarkRule : TsLintSimpleRule<Boolean>("quotemark") {
   }
 }
 
-class SemicolonRule() : TsLintSimpleRule<Boolean>("semicolon") {
+class SemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
   override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
     val option = config.getOption(optionId) ?: return null
 
@@ -115,7 +117,7 @@ class SemicolonRule() : TsLintSimpleRule<Boolean>("semicolon") {
 
 }
 
-open class ForceSemicolonRule() : TsLintSimpleRule<Boolean>("semicolon") {
+open class ForceSemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
   override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
     val option = config.getOption(optionId) ?: return null
 
@@ -151,7 +153,7 @@ abstract class MergedArrayRule(id: String) : TsLintSimpleRule<Boolean>(id) {
   abstract fun defaultValue(): Boolean
 }
 
-class OneLineCatchRule() : MergedArrayRule("one-line") {
+class OneLineCatchRule : MergedArrayRule("one-line") {
   override fun defaultValue(): Boolean = false
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings
@@ -164,7 +166,7 @@ class OneLineCatchRule() : MergedArrayRule("one-line") {
   override fun getCode(): String = "check-catch"
 }
 
-class OneLineFinallyRule() : MergedArrayRule("one-line") {
+class OneLineFinallyRule : MergedArrayRule("one-line") {
   override fun defaultValue(): Boolean = false
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings
@@ -177,7 +179,7 @@ class OneLineFinallyRule() : MergedArrayRule("one-line") {
   override fun getCode(): String = "check-finally"
 }
 
-class OneLineElseRule() : MergedArrayRule("one-line") {
+class OneLineElseRule : MergedArrayRule("one-line") {
   override fun defaultValue(): Boolean = false
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings
@@ -190,7 +192,7 @@ class OneLineElseRule() : MergedArrayRule("one-line") {
   override fun getCode(): String = "check-else"
 }
 
-abstract class FunctionSpacesRule() : TsLintSimpleRule<Boolean>("space-before-function-paren") {
+abstract class FunctionSpacesRule : TsLintSimpleRule<Boolean>("space-before-function-paren") {
   val ALWAYS = "always"
   val NEVER = "never"
 
@@ -219,7 +221,7 @@ abstract class FunctionSpacesRule() : TsLintSimpleRule<Boolean>("space-before-fu
   abstract fun getCode(): String
 }
 
-class NamedFunctionSpacesRule() : FunctionSpacesRule() {
+class NamedFunctionSpacesRule : FunctionSpacesRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return languageSettings.SPACE_BEFORE_METHOD_PARENTHESES
   }
@@ -231,7 +233,7 @@ class NamedFunctionSpacesRule() : FunctionSpacesRule() {
   override fun getCode(): String = "named"
 }
 
-class AnonymousFunctionSpacesRule() : FunctionSpacesRule() {
+class AnonymousFunctionSpacesRule : FunctionSpacesRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return codeStyleSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH
   }
@@ -243,7 +245,7 @@ class AnonymousFunctionSpacesRule() : FunctionSpacesRule() {
   override fun getCode(): String = "anonymous"
 }
 
-class WhitespaceTypeRule() : MergedArrayRule("whitespace") {
+class WhitespaceTypeRule : MergedArrayRule("whitespace") {
   override fun defaultValue(): Boolean = true
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
@@ -257,7 +259,7 @@ class WhitespaceTypeRule() : MergedArrayRule("whitespace") {
   override fun getCode(): String = "check-type"
 }
 
-class WhitespaceIfRule() : MergedArrayRule("whitespace") {
+class WhitespaceIfRule : MergedArrayRule("whitespace") {
   override fun defaultValue(): Boolean = true
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
@@ -271,7 +273,7 @@ class WhitespaceIfRule() : MergedArrayRule("whitespace") {
   override fun getCode(): String = "check-branch"
 }
 
-class WhitespaceForRule() : MergedArrayRule("whitespace") {
+class WhitespaceForRule : MergedArrayRule("whitespace") {
   override fun defaultValue(): Boolean = true
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
@@ -285,7 +287,7 @@ class WhitespaceForRule() : MergedArrayRule("whitespace") {
   override fun getCode(): String = "check-branch"
 }
 
-class WhitespaceWhileRule() : MergedArrayRule("whitespace") {
+class WhitespaceWhileRule : MergedArrayRule("whitespace") {
   override fun defaultValue(): Boolean = true
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
@@ -299,7 +301,7 @@ class WhitespaceWhileRule() : MergedArrayRule("whitespace") {
   override fun getCode(): String = "check-branch"
 }
 
-class WhitespaceAssignmentRule() : MergedArrayRule("whitespace") {
+class WhitespaceAssignmentRule : MergedArrayRule("whitespace") {
   override fun defaultValue(): Boolean = true
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
@@ -313,12 +315,12 @@ class WhitespaceAssignmentRule() : MergedArrayRule("whitespace") {
   override fun getCode(): String = "check-decl"
 }
 
-abstract class WhitespaceOperatorRule() : MergedArrayRule("whitespace") {
+abstract class WhitespaceOperatorRule : MergedArrayRule("whitespace") {
   final override fun getCode(): String = "check-operator"
   final override fun defaultValue(): Boolean = true
 }
 
-class WhitespaceArrowOperatorRule() : WhitespaceOperatorRule() {
+class WhitespaceArrowOperatorRule : WhitespaceOperatorRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return codeStyleSettings.SPACE_AROUND_ARROW_FUNCTION_OPERATOR
   }
@@ -328,7 +330,7 @@ class WhitespaceArrowOperatorRule() : WhitespaceOperatorRule() {
   }
 }
 
-class WhitespaceLogicalOperatorRule() : WhitespaceOperatorRule() {
+class WhitespaceLogicalOperatorRule : WhitespaceOperatorRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return languageSettings.SPACE_AROUND_LOGICAL_OPERATORS
   }
@@ -338,7 +340,7 @@ class WhitespaceLogicalOperatorRule() : WhitespaceOperatorRule() {
   }
 }
 
-class WhitespaceEqOperatorRule() : WhitespaceOperatorRule() {
+class WhitespaceEqOperatorRule : WhitespaceOperatorRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return languageSettings.SPACE_AROUND_EQUALITY_OPERATORS
   }
@@ -348,7 +350,7 @@ class WhitespaceEqOperatorRule() : WhitespaceOperatorRule() {
   }
 }
 
-class WhitespaceBitwiseOperatorRule() : WhitespaceOperatorRule() {
+class WhitespaceBitwiseOperatorRule : WhitespaceOperatorRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return languageSettings.SPACE_AROUND_BITWISE_OPERATORS
   }
@@ -358,7 +360,7 @@ class WhitespaceBitwiseOperatorRule() : WhitespaceOperatorRule() {
   }
 }
 
-class WhitespaceRelationOperatorRule() : WhitespaceOperatorRule() {
+class WhitespaceRelationOperatorRule : WhitespaceOperatorRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return languageSettings.SPACE_AROUND_RELATIONAL_OPERATORS
   }
@@ -368,7 +370,7 @@ class WhitespaceRelationOperatorRule() : WhitespaceOperatorRule() {
   }
 }
 
-class WhitespaceAdditiveOperatorRule() : WhitespaceOperatorRule() {
+class WhitespaceAdditiveOperatorRule : WhitespaceOperatorRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return languageSettings.SPACE_AROUND_ADDITIVE_OPERATORS
   }
@@ -378,7 +380,7 @@ class WhitespaceAdditiveOperatorRule() : WhitespaceOperatorRule() {
   }
 }
 
-class WhitespaceMultplyOperatorRule() : WhitespaceOperatorRule() {
+class WhitespaceMultplyOperatorRule : WhitespaceOperatorRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return languageSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS
   }
@@ -388,7 +390,7 @@ class WhitespaceMultplyOperatorRule() : WhitespaceOperatorRule() {
   }
 }
 
-class WhitespaceShiftOperatorRule() : WhitespaceOperatorRule() {
+class WhitespaceShiftOperatorRule : WhitespaceOperatorRule() {
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return languageSettings.SPACE_AROUND_SHIFT_OPERATORS
   }
@@ -398,7 +400,7 @@ class WhitespaceShiftOperatorRule() : WhitespaceOperatorRule() {
   }
 }
 
-class WhitespaceCommaRule() : MergedArrayRule("whitespace") {
+class WhitespaceCommaRule : MergedArrayRule("whitespace") {
   override fun defaultValue(): Boolean = true
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
@@ -412,7 +414,7 @@ class WhitespaceCommaRule() : MergedArrayRule("whitespace") {
   override fun getCode(): String = "check-separator"
 }
 
-class IndentRule() : TsLintSimpleRule<String>("indent") {
+class IndentRule : TsLintSimpleRule<String>("indent") {
   override fun getConfigValue(config: TsLintConfigWrapper): String? {
     val option = config.getOption(optionId) ?: return null
     val stringValues = option.getStringValues()
@@ -456,6 +458,28 @@ class MaxLineLengthRule : TsLintSimpleRule<Int>("max-line-length") {
 
   override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Int) {
     languageSettings.RIGHT_MARGIN = value
+  }
+
+}
+
+class ImportBlacklistRule : TsLintSimpleRule<Collection<String>>("import-blacklist") {
+  override fun getConfigValue(config: TsLintConfigWrapper): Collection<String>? {
+    val option = config.getOption(optionId) ?: return null
+    if (!option.isTrue()) return null
+
+    val stringValues = option.getStringValues()
+    if (stringValues.isNotEmpty()) {
+      return stringValues.toHashSet()
+    }
+    return null
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Collection<String> {
+    return codeStyleSettings.blacklistImports.toHashSet()
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Collection<String>) {
+    codeStyleSettings.BLACKLIST_IMPORTS = StringUtil.join(value, ",")
   }
 
 }
