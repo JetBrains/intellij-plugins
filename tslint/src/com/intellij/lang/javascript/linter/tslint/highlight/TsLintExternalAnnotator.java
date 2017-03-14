@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -79,6 +80,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   @Override
   protected boolean acceptPsiFile(@NotNull PsiFile file) {
     if (!(file instanceof JSFile)) return false;
+    if (TsLintConfiguration.getInstance(file.getProject()).getExtendedState().getState().isAllowJs() && JSUtils.isJavaScriptFile(file)) return true;
     final DialectOptionHolder holder = DialectDetector.dialectOfFile(file);
     return holder != null && holder.isTypeScript;
   }
