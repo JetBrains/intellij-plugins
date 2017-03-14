@@ -33,7 +33,6 @@
                      implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection"
                      unfair="true"/>
 
-    <externalAnnotator language="TypeScript" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
     <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
   </extensions>
