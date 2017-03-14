@@ -192,7 +192,7 @@ public class OsmorcProjectComponent implements ProjectComponent {
     }
   }
 
-  private class MyVfsListener extends BulkFileListener.Adapter {
+  private class MyVfsListener implements BulkFileListener {
     @Override
     public void after(@NotNull List<? extends VFileEvent> events) {
       for (VFileEvent event : events) {
