@@ -1039,6 +1039,21 @@
   "properties": {
     "rules": {
       "$ref": "#/definitions/ruledefinitions"
+    },
+    "jsRules": {
+      "$ref": "#/definitions/ruledefinitions"
+    },
+    "extends": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "array", "items": "string"}
+      ]
+    },
+    "rulesDirectory": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "array", "items": "string"}
+      ]
     }
   }
 }

@@ -21,17 +21,19 @@ public class TsLintState implements JSLinterState {
   private final boolean myCustomConfigFileUsed;
   @Nullable
   private final String myRulesDirectory;
+  private final boolean myAllowJs;
 
   public TsLintState(@NotNull NodeJsInterpreterRef nodePath,
                      @Nullable String packagePath,
                      boolean customConfigFileUsed,
                      @Nullable String customConfigFilePath,
-                     @Nullable String rulesDirectory) {
+                     @Nullable String rulesDirectory, boolean allowJs) {
     myCustomConfigFileUsed = customConfigFileUsed;
     myCustomConfigFilePath = customConfigFilePath;
     myInterpreterRef = nodePath;
     myPackagePath = packagePath;
     myRulesDirectory = rulesDirectory;
+    myAllowJs = allowJs;
   }
 
   public boolean isCustomConfigFileUsed() {
@@ -61,11 +63,16 @@ public class TsLintState implements JSLinterState {
     return myRulesDirectory;
   }
 
+  public boolean isAllowJs() {
+    return myAllowJs;
+  }
+
   public static class Builder {
     private boolean myCustomConfigFileUsed = false;
     private String myCustomConfigFilePath = "";
     private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
     private String myPackagePath = "";
+    private boolean myAllowJs;
 
     @Nullable
     private String myRulesDirectory;
@@ -79,6 +86,7 @@ public class TsLintState implements JSLinterState {
       myInterpreterRef = state.getInterpreterRef();
       myPackagePath = state.getPackagePath();
       myRulesDirectory = state.getRulesDirectory();
+      myAllowJs = state.isAllowJs();
     }
 
     public Builder setCustomConfigFileUsed(boolean customConfigFileUsed) {
@@ -106,8 +114,13 @@ public class TsLintState implements JSLinterState {
       return this;
     }
 
+    public Builder setAllowJs(boolean allowJs) {
+      myAllowJs = allowJs;
+      return this;
+    }
+
     public TsLintState build() {
-      return new TsLintState(myInterpreterRef, myPackagePath, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory);
+      return new TsLintState(myInterpreterRef, myPackagePath, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory, myAllowJs);
     }
   }
 
@@ -119,13 +132,14 @@ public class TsLintState implements JSLinterState {
     TsLintState state = (TsLintState)o;
 
     if (myCustomConfigFileUsed != state.myCustomConfigFileUsed) return false;
+    if (myAllowJs != state.myAllowJs) return false;
+    if (!myInterpreterRef.equals(state.myInterpreterRef)) return false;
+    if (myPackagePath != null ? !myPackagePath.equals(state.myPackagePath) : state.myPackagePath != null) return false;
     if (myCustomConfigFilePath != null
         ? !myCustomConfigFilePath.equals(state.myCustomConfigFilePath)
         : state.myCustomConfigFilePath != null) {
       return false;
     }
-    if (!myInterpreterRef.equals(state.myInterpreterRef)) return false;
-    if (myPackagePath != null ? !myPackagePath.equals(state.myPackagePath) : state.myPackagePath != null) return false;
     if (myRulesDirectory != null ? !myRulesDirectory.equals(state.myRulesDirectory) : state.myRulesDirectory != null) return false;
 
     return true;
@@ -133,22 +147,24 @@ public class TsLintState implements JSLinterState {
 
   @Override
   public int hashCode() {
-    int result = (myCustomConfigFileUsed ? 1 : 0);
-    result = 31 * result + (myCustomConfigFilePath != null ? myCustomConfigFilePath.hashCode() : 0);
-    result = 31 * result + myInterpreterRef.hashCode();
+    int result = myInterpreterRef.hashCode();
     result = 31 * result + (myPackagePath != null ? myPackagePath.hashCode() : 0);
+    result = 31 * result + (myCustomConfigFilePath != null ? myCustomConfigFilePath.hashCode() : 0);
+    result = 31 * result + (myCustomConfigFileUsed ? 1 : 0);
     result = 31 * result + (myRulesDirectory != null ? myRulesDirectory.hashCode() : 0);
+    result = 31 * result + (myAllowJs ? 1 : 0);
     return result;
   }
 
   @Override
   public String toString() {
     return "TsLintState{" +
-           "myCustomConfigFileUsed=" + myCustomConfigFileUsed +
-           ", myCustomConfigFilePath='" + myCustomConfigFilePath + '\'' +
-           ", myNodePath='" + myInterpreterRef.getReferenceName() + '\'' +
+           "myInterpreterRef=" + myInterpreterRef +
            ", myPackagePath='" + myPackagePath + '\'' +
+           ", myCustomConfigFilePath='" + myCustomConfigFilePath + '\'' +
+           ", myCustomConfigFileUsed=" + myCustomConfigFileUsed +
            ", myRulesDirectory='" + myRulesDirectory + '\'' +
+           ", myAllowJs=" + myAllowJs +
            '}';
   }
 }

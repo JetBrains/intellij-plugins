@@ -58,11 +58,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
                                                      @Nullable VirtualFile config,
                                                      @Nullable String content) {
     JSLanguageServiceQueue process = getProcess();
-    if (process == null ||
-        virtualFile == null ||
-        !virtualFile.isInLocalFileSystem()) {
-      return new FixedFuture<>(Collections.singletonList(new TsLinterError("Path not specified")));
-    }
+    if (checkParameters(virtualFile, process)) return new FixedFuture<>(Collections.singletonList(new TsLinterError("Path not specified")));
 
     String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
 
@@ -71,7 +67,6 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       return new FixedFuture<>(Collections.singletonList(new TsLinterError("Can not work with the path: " + virtualFile.getPath())));
     }
 
-
     TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(path, configPath, StringUtil.notNullize(content));
     return process.execute(command, createHighlightProcessor(path));
   }
@@ -79,12 +74,9 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   public final Future<List<TsLinterError>> highlightAndFix(@Nullable VirtualFile virtualFile, @NotNull TsLintState state) {
 
     JSLanguageServiceQueue process = getProcess();
-    if (process == null || virtualFile == null) {
-      return null;
-    }
+    if (checkParameters(virtualFile, process)) return new FixedFuture<>(Collections.singletonList(new TsLinterError("Path not specified")));
 
     VirtualFile config = myConfigFileSearcher.getConfig(state, virtualFile);
-
 
     String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
 
@@ -96,6 +88,13 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     //doesn't pass content (file should be saved before)
     TsLintFixErrorsCommand command = new TsLintFixErrorsCommand(path, configPath);
     return process.execute(command, createHighlightProcessor(path));
+  }
+
+  private static boolean checkParameters(@Nullable VirtualFile virtualFile, JSLanguageServiceQueue process) {
+    if (process == null || virtualFile == null || !virtualFile.isInLocalFileSystem()) {
+      return true;
+    }
+    return false;
   }
 
   @NotNull

@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
@@ -36,6 +37,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   private final NodeModuleConfigurationView myNodeModuleConfigurationView;
   private final JSLinterConfigFileView myConfigFileView;
   private TextFieldWithBrowseButton myRules;
+  private JBCheckBox myAllowJs;
 
   public TsLintView(@NotNull Project project, boolean fullModeDialog) {
     super(fullModeDialog);
@@ -71,6 +73,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   @Override
   protected Component createCenterComponent() {
     myRules = new TextFieldWithBrowseButton();
+    myAllowJs = new JBCheckBox();
     SwingHelper.installFileCompletionAndBrowseDialog(myProject, myRules, "Select additional rules directory",
                                                      FileChooserDescriptorFactory.createSingleFolderDescriptor());
     final FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder()
@@ -91,6 +94,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
       .addSeparator(4)
       .addVerticalGap(4)
       .addLabeledComponent("Additional rules directory:", myRules)
+      .addLabeledComponent("Lint JavaScript files:", myAllowJs)
       .getPanel();
     final JPanel centerPanel = SwingHelper.wrapWithHorizontalStretch(panel);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
@@ -109,7 +113,8 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
       .setNodePath(myNodeModuleConfigurationView.getNodeInterpreterField().getInterpreterRef())
       .setPackagePath(myNodeModuleConfigurationView.getPackageField().getSelected().getSystemDependentPath())
       .setCustomConfigFileUsed(myConfigFileView.isCustomConfigFileUsed())
-      .setCustomConfigFilePath(myConfigFileView.getCustomConfigFilePath());
+      .setCustomConfigFilePath(myConfigFileView.getCustomConfigFilePath())
+      .setAllowJs(myAllowJs.isSelected());
     if (!StringUtil.isEmptyOrSpaces(myRules.getText())) {
       builder.setRulesDirectory(myRules.getText().trim());
     }
@@ -126,6 +131,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
     if (! StringUtil.isEmptyOrSpaces(state.getRulesDirectory())) {
       myRules.setText(state.getRulesDirectory());
     }
+    myAllowJs.setSelected(state.isAllowJs());
 
     resizeOnSeparateDialog();
   }
