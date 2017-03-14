@@ -1,0 +1,18 @@
+OgnlFile:AfterVarFollowedBySelection.ognl
+  PsiElement(%{)('%{')
+  INDEXED_EXPRESSION
+    VARIABLE_EXPRESSION
+      PsiElement(#)('#')
+      PsiElement(IDENTIFIER)('var')
+    PsiElement([)('[')
+    LITERAL_EXPRESSION
+      PsiElement(INTEGER_LITERAL)('5')
+    PsiElement(])(']')
+    PsiElement(.)('.')
+    SELECTION_EXPRESSION
+      PsiElement({)('{')
+      PsiElement(?)('?')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('selection')
+      PsiElement(})('}')
+  PsiElement(EXPRESSION_END)('}')

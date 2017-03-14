@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -320,9 +320,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "fqnTypeExpression_1_0")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, DOT);
+    r = consumeTokens(b, 1, DOT, IDENTIFIER);
     p = r; // pin = 1
-    r = r && consumeToken(b, IDENTIFIER);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -693,10 +692,9 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIsSmart(b, COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, LAMBDA_EXPRESSION, null);
-    r = consumeTokenSmart(b, COLON);
+    r = consumeTokensSmart(b, 1, COLON, LBRACKET);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, LBRACKET));
-    r = p && report_error_(b, expression(b, l + 1, -1)) && r;
+    r = r && report_error_(b, expression(b, l + 1, -1));
     r = p && consumeToken(b, RBRACKET) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -760,9 +758,7 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIsSmart(b, HASH)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, VARIABLE_ASSIGNMENT_EXPRESSION, null);
-    r = consumeTokenSmart(b, HASH);
-    r = r && consumeToken(b, IDENTIFIER);
-    r = r && consumeToken(b, EQ);
+    r = consumeTokensSmart(b, 3, HASH, IDENTIFIER, EQ);
     p = r; // pin = 3
     r = r && expression(b, l + 1, -1);
     exit_section_(b, l, m, r, p, null);
@@ -810,6 +806,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   }
 
   // (referenceExpression | variableExpression) '[' expression ']'
+  //                       ('.' IDENTIFIER)*
+  //                       ('.'  selectionExpression | projectionExpression)?
   public static boolean indexedExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "indexedExpression")) return false;
     boolean r, p;
@@ -818,7 +816,9 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, LBRACKET);
     p = r; // pin = 2
     r = r && report_error_(b, expression(b, l + 1, -1));
-    r = p && consumeToken(b, RBRACKET) && r;
+    r = p && report_error_(b, consumeToken(b, RBRACKET)) && r;
+    r = p && report_error_(b, indexedExpression_4(b, l + 1)) && r;
+    r = p && indexedExpression_5(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -830,6 +830,57 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = referenceExpression(b, l + 1);
     if (!r) r = variableExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('.' IDENTIFIER)*
+  private static boolean indexedExpression_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "indexedExpression_4")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!indexedExpression_4_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "indexedExpression_4", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // '.' IDENTIFIER
+  private static boolean indexedExpression_4_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "indexedExpression_4_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokensSmart(b, 0, DOT, IDENTIFIER);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('.'  selectionExpression | projectionExpression)?
+  private static boolean indexedExpression_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "indexedExpression_5")) return false;
+    indexedExpression_5_0(b, l + 1);
+    return true;
+  }
+
+  // '.'  selectionExpression | projectionExpression
+  private static boolean indexedExpression_5_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "indexedExpression_5_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = indexedExpression_5_0_0(b, l + 1);
+    if (!r) r = projectionExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '.'  selectionExpression
+  private static boolean indexedExpression_5_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "indexedExpression_5_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokenSmart(b, DOT);
+    r = r && selectionExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -876,18 +927,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   // ('@')?
   private static boolean referenceExpression_0_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "referenceExpression_0_1_0")) return false;
-    referenceExpression_0_1_0_0(b, l + 1);
+    consumeTokenSmart(b, AT);
     return true;
-  }
-
-  // ('@')
-  private static boolean referenceExpression_0_1_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "referenceExpression_0_1_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokenSmart(b, AT);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   // ('.' IDENTIFIER)*
@@ -907,8 +948,7 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "referenceExpression_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokenSmart(b, DOT);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = consumeTokensSmart(b, 0, DOT, IDENTIFIER);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -925,8 +965,7 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "referenceExpression_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokenSmart(b, AT);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = consumeTokensSmart(b, 0, AT, IDENTIFIER);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -973,8 +1012,7 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIsSmart(b, HASH)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokenSmart(b, HASH);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = consumeTokensSmart(b, 0, HASH, IDENTIFIER);
     exit_section_(b, m, VARIABLE_EXPRESSION, r);
     return r;
   }

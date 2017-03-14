@@ -1,0 +1,13 @@
+OgnlFile:AfterVarFollowedByProperty.ognl
+  PsiElement(%{)('%{')
+  INDEXED_EXPRESSION
+    VARIABLE_EXPRESSION
+      PsiElement(#)('#')
+      PsiElement(IDENTIFIER)('var')
+    PsiElement([)('[')
+    LITERAL_EXPRESSION
+      PsiElement(INTEGER_LITERAL)('5')
+    PsiElement(])(']')
+    PsiElement(.)('.')
+    PsiElement(IDENTIFIER)('bar')
+  PsiElement(EXPRESSION_END)('}')
