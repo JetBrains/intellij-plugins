@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.AutoPopupController;
+import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -265,11 +266,19 @@ public class DartServerCompletionContributor extends CompletionContributor {
         final List<String> parameterNames = suggestion.getParameterNames();
         if (parameterNames != null) {
           lookup = lookup.withInsertHandler((context, item) -> {
+            // like in JavaCompletionUtil.insertParentheses()
+            final boolean needRightParenth = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET ||
+                                             parameterNames.isEmpty() && context.getCompletionChar() != '(';
+
             if (parameterNames.isEmpty()) {
-              ParenthesesInsertHandler.NO_PARAMETERS.handleInsert(context, item);
+              final ParenthesesInsertHandler<LookupElement> handler =
+                ParenthesesInsertHandler.getInstance(false, false, false, needRightParenth, false);
+              handler.handleInsert(context, item);
             }
             else {
-              ParenthesesInsertHandler.WITH_PARAMETERS.handleInsert(context, item);
+              final ParenthesesInsertHandler<LookupElement> handler =
+                ParenthesesInsertHandler.getInstance(true, false, false, needRightParenth, false);
+              handler.handleInsert(context, item);
               // Show parameters popup.
               final Editor editor = context.getEditor();
               final PsiElement psiElement = lookupObject.getElement();
