@@ -67,10 +67,10 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         }
         val first = obj.firstProperty
         if (first != null) {
-          if (!processor.invoke(property, JSImplicitElementImpl(property.name!!, first))) return false
+          if (property.name != null && !processor.invoke(property, JSImplicitElementImpl(property.name!!, first))) return false
         }
       }
-      if (!processor.invoke(property, JSImplicitElementImpl(property.name!!, property.nameIdentifier))) return false
+      if (property.name != null && !processor.invoke(property, JSImplicitElementImpl(property.name!!, property.nameIdentifier))) return false
     }
     return true
   }
