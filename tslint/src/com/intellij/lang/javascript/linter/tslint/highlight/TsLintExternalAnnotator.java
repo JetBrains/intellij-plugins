@@ -80,7 +80,8 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   @Override
   protected boolean acceptPsiFile(@NotNull PsiFile file) {
     if (!(file instanceof JSFile)) return false;
-    if (TsLintConfiguration.getInstance(file.getProject()).getExtendedState().getState().isAllowJs() && JSUtils.isJavaScriptFile(file)) return true;
+    final TsLintConfiguration configuration = TsLintConfiguration.getInstance(file.getProject());
+    if (configuration.isAllowJs() && JSUtils.isJavaScriptFile(file)) return true;
     final DialectOptionHolder holder = DialectDetector.dialectOfFile(file);
     return holder != null && holder.isTypeScript;
   }

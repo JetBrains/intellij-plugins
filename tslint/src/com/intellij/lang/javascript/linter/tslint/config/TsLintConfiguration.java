@@ -67,6 +67,10 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     return builder.build();
   }
 
+  public boolean isAllowJs() {
+    return getMyStateWithoutPrivateSettings().isAllowJs();
+  }
+
   @NotNull
   @Override
   protected Class<? extends JSLinterInspection> getInspectionClass() {
