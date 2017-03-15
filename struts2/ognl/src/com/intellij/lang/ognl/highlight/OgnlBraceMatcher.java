@@ -36,6 +36,7 @@ public class OgnlBraceMatcher implements PairedBraceMatcher {
     new BracePair(OgnlTypes.LPARENTH, OgnlTypes.RPARENTH, false),
   };
 
+  @NotNull
   @Override
   public BracePair[] getPairs() {
     return pairs;

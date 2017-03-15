@@ -36,6 +36,7 @@ public class CfmlPairedBraceMatcher implements PairedBraceMatcher {
     new BracePair(CfscriptTokenTypes.OPENSHARP, CfscriptTokenTypes.CLOSESHARP, true)
   };
 
+  @NotNull
   public BracePair[] getPairs() {
     return PAIRS;
   }

@@ -80,6 +80,7 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     return null;
   }
 
+  @NotNull
   @Override
   protected ResolveResult[] resolveInner() {
     PsiElement nextSibling = getNextSibling();

@@ -171,6 +171,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     //return super.isReferenceTo(element);    //To change body of overridden methods use File | Settings | File Templates.
   }
 
+  @NotNull
   protected ResolveResult[] resolveInner() {
     final String referenceName = getReferenceName();
     if (referenceName == null) {

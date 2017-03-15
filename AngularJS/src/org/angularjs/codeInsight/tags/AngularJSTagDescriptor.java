@@ -20,6 +20,7 @@ import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -136,6 +137,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   public void init(PsiElement element) {
   }
 
+  @NotNull
   @Override
   public Object[] getDependences() {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;

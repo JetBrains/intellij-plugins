@@ -115,6 +115,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   @Override
   public void init(PsiElement element) {}
 
+  @NotNull
   @Override
   public Object[] getDependences() {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;

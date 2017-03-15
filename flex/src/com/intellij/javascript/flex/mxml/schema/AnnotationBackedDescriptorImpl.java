@@ -682,6 +682,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return getName();
   }
 
+  @NotNull
   @Override
   public Object[] getDependences() {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;

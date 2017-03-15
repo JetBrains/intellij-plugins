@@ -162,6 +162,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     CodeContextHolder.getInstance(module.getProject()).clearCodeContext(namespace, module);
   }
 
+  @NotNull
   public Object[] getDependences() {
     return CodeContext.getContext(namespace, module).getDependencies();
   }
