@@ -132,6 +132,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   public void init(PsiElement element) {
   }
 
+  @NotNull
   public Object[] getDependences() {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }

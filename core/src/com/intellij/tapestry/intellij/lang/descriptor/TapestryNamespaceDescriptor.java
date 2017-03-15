@@ -59,6 +59,7 @@ public class TapestryNamespaceDescriptor extends SchemaNSDescriptor {
     }
   }
 
+  @NotNull
   public Object[] getDependences() {
     return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;
   }

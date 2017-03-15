@@ -80,6 +80,7 @@ public class PsiClassMock implements PsiClass {
         return null;
     }
 
+    @NotNull
     @Override
     public PsiClass[] getInterfaces() {
         return PsiClass.EMPTY_ARRAY;
