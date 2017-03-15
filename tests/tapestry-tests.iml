@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="tapestry-core" />
     <orderEntry type="library" name="Velocity" level="project" />
