@@ -4,8 +4,8 @@ import com.google.common.net.UrlEscapers
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.isRegularBrowser
 import com.intellij.util.io.origin
@@ -57,17 +57,19 @@ class PubServerPathHandler : WebServerPathHandlerAdapter() {
   }
 }
 
+private val pathQuery = PathQuery(searchInLibs = false, searchInArtifacts = false, useHtaccess = false, useVfs = true)
+
 private fun getServedDirAndPathForPubServer(project: Project, path: String): Pair<VirtualFile, String>? {
   // File with requested path may not exist, pub server will generate and serve it.
   // Here we find deepest (if nested) Dart project (aka Dart package) folder and its existing subfolder that can be served by pub server.
 
   // There may be 2 content roots with web/foo.html and web/bar.html files in them correspondingly. We need to catch the correct 'web' folder.
   // First see if full path can be resolved to a file
-  val file = WebServerPathToFileManager.getInstance(project).findVirtualFile(path)
+  val pathToFileManager = WebServerPathToFileManager.getInstance(project)
+  val file = pathToFileManager.findVirtualFile(path, pathQuery = pathQuery)
   if (file != null) {
-    val pubspec = PubspecYamlUtil.findPubspecYamlFile(project, file) ?: return null
-    val dartRoot = pubspec.parent
-    val relativePath = FileUtil.getRelativePath(dartRoot.path, file.path, '/')
+    val dartRoot = PubspecYamlUtil.findPubspecYamlFile(project, file)?.parent ?: return null
+    val relativePath = VfsUtilCore.getRelativePath(file, dartRoot)
     // we only handle files 2 levels deeper than the Dart project root
     val slashIndex = relativePath?.indexOf('/') ?: -1
     val folderName = if (slashIndex == -1) null else relativePath!!.substring(0, slashIndex)
@@ -75,9 +77,8 @@ private fun getServedDirAndPathForPubServer(project: Project, path: String): Pai
       return null
     }
 
-    val servedDir = dartRoot.findChild(folderName)
     val pubServePath = relativePath!!.substring(slashIndex)
-    return Pair.create(servedDir, escapeUrl(pubServePath))
+    return Pair.create(dartRoot.findChild(folderName), escapeUrl(pubServePath))
   }
 
   // If above failed then take the longest path part that corresponds to an existing folder
@@ -92,18 +93,17 @@ private fun getServedDirAndPathForPubServer(project: Project, path: String): Pai
     }
     
     val pathPart = path.substring(0, slashIndex)
-    val dirInfo = WebServerPathToFileManager.getInstance(project).getPathInfo(pathPart)
-    if (dirInfo == null || !dirInfo.isDirectory()) {
+    val dir = pathToFileManager.findVirtualFile(pathPart, pathQuery = pathQuery)
+    if (dir == null || !dir.isDirectory) {
       continue
     }
 
-    val dir = dirInfo.getOrResolveVirtualFile()
-    val parentDir = dir?.parent
+    val parentDir = dir.parent
     if (parentDir != null && parentDir.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) {
-      if ("build" == dirInfo.name ||
-          "lib" == dirInfo.name ||
-          DartUrlResolver.PACKAGES_FOLDER_NAME == dir!!.name) {
-        return null // contents of "build" folder should be served by the IDE internal web server directly, i.e. without pub serve
+      val name = dir.nameSequence
+      if (StringUtil.equals(name, "build") || StringUtil.equals(name, "lib") || StringUtil.equals(name, DartUrlResolver.PACKAGES_FOLDER_NAME)) {
+        // contents of "build" folder should be served by the IDE internal web server directly, i.e. without pub serve
+        return null
       }
 
       servedDir = dir
@@ -112,7 +112,7 @@ private fun getServedDirAndPathForPubServer(project: Project, path: String): Pai
     }
   }
 
-  return if (servedDir != null) Pair.create<VirtualFile, String>(servedDir, escapeUrl(pubServePath!!)) else null
+  return servedDir?.let { Pair.create(it, escapeUrl(pubServePath!!)) }
 }
 
 private fun escapeUrl(path: String): String {
@@ -124,5 +124,4 @@ private fun escapeUrl(path: String): String {
     LOG.warn(path, e)
     return path
   }
-
 }
