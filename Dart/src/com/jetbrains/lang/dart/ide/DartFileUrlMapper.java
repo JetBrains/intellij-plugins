@@ -1,10 +1,10 @@
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -16,6 +16,7 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 final class DartFileUrlMapper extends FileUrlMapper {
@@ -33,15 +34,11 @@ final class DartFileUrlMapper extends FileUrlMapper {
     }
 
     if (DartUrlResolver.PACKAGE_SCHEME.equals(scheme)) {
-      final String packageUri = DartUrlResolver.PACKAGE_PREFIX + path;
+      final String packageUri = PACKAGE_PREFIX + path;
       final VirtualFile contextFile = findContextFile(project, requestor);
 
       if (contextFile != null) {
-        return ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
-          public VirtualFile compute() {
-            return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUri);
-          }
-        });
+        ReadAction.compute(() -> DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUri));
       }
       else {
         if (ApplicationManager.getApplication().isDispatchThread()) {
@@ -66,12 +63,8 @@ final class DartFileUrlMapper extends FileUrlMapper {
         // First make sure that this URL relates to Dart. 'packageUrlMarkerIndex >= 0' condition is not strict enough to guarantee that this is a Dart project
         final VirtualFile contextFile = findContextFile(project, requestor);
         if (contextFile != null) {
-          final String packageUri = DartUrlResolver.PACKAGE_PREFIX + path.substring(packageUrlMarkerIndex + PACKAGE_URL_MARKER.length());
-          return ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
-            public VirtualFile compute() {
-              return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUri);
-            }
-          });
+          final String packageUri = PACKAGE_PREFIX + path.substring(packageUrlMarkerIndex + PACKAGE_URL_MARKER.length());
+          return ReadAction.compute(() -> DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUri));
         }
       }
     }
