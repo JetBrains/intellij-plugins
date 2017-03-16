@@ -33,6 +33,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -283,41 +284,44 @@ public class DartServerCompletionContributor extends CompletionContributor {
               final Editor editor = context.getEditor();
               final PsiElement psiElement = lookupObject.getElement();
 
-              // Insert argument defaults if provided.
-              final String argumentListString = suggestion.getDefaultArgumentListString();
-              if (argumentListString != null) {
-                final Document document = editor.getDocument();
-                int offset = editor.getCaretModel().getOffset();
 
-                // At this point caret is expected to be right after the opening paren.
-                // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
-                // if so, skip inserting argumentListString
+              if (DartCodeInsightSettings.getInstance().INSERT_DEFAULT_ARG_VALUES) {
+                // Insert argument defaults if provided.
+                final String argumentListString = suggestion.getDefaultArgumentListString();
+                if (argumentListString != null) {
+                  final Document document = editor.getDocument();
+                  int offset = editor.getCaretModel().getOffset();
 
-                final CharSequence text = document.getCharsSequence();
-                if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
-                  document.insertString(offset, argumentListString);
+                  // At this point caret is expected to be right after the opening paren.
+                  // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
+                  // if so, skip inserting argumentListString
 
-                  PsiDocumentManager.getInstance(project).commitDocument(document);
+                  final CharSequence text = document.getCharsSequence();
+                  if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
+                    document.insertString(offset, argumentListString);
 
-                  final TemplateBuilderImpl
-                    builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
+                    PsiDocumentManager.getInstance(project).commitDocument(document);
 
-                  final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
-                  // Only proceed if ranges are provided and well-formed.
-                  if (ranges != null && (ranges.length & 1) == 0) {
-                    int index = 0;
-                    while (index < ranges.length) {
-                      final int start = ranges[index];
-                      final int length = ranges[index + 1];
-                      final String arg = argumentListString.substring(start, start + length);
-                      final TextExpression expression = new TextExpression(arg);
-                      final TextRange range = new TextRange(offset + start, offset + start + length);
+                    final TemplateBuilderImpl
+                      builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
 
-                      index += 2;
-                      builder.replaceRange(range, "group_" + (index - 1), expression, true);
+                    final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
+                    // Only proceed if ranges are provided and well-formed.
+                    if (ranges != null && (ranges.length & 1) == 0) {
+                      int index = 0;
+                      while (index < ranges.length) {
+                        final int start = ranges[index];
+                        final int length = ranges[index + 1];
+                        final String arg = argumentListString.substring(start, start + length);
+                        final TextExpression expression = new TextExpression(arg);
+                        final TextRange range = new TextRange(offset + start, offset + start + length);
+
+                        index += 2;
+                        builder.replaceRange(range, "group_" + (index - 1), expression, true);
+                      }
+
+                      builder.run(editor, true);
                     }
-
-                    builder.run(editor, true);
                   }
                 }
               }
