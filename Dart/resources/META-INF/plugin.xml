@@ -211,6 +211,11 @@
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
     <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>
     <testSourcesFilter implementation="com.jetbrains.lang.dart.test.DartTestSourcesFilter"/>
+
+    <applicationService serviceInterface="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"
+                        serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
+    <editorSmartKeysConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysOptions"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
