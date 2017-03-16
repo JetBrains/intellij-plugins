@@ -121,7 +121,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
       JSType detectedTypeFromUsage = TypeFromUsageDetector.detectTypeFromUsage(parent, containingFile);
 
       if (detectedTypeFromUsage != null) {
-        BaseCreateFix.addTypeVar(t, "a", anchor, detectedTypeFromUsage.getTypeText(JSType.TypeTextFormat.CODE));
+        BaseCreateFix.addTypeVariable(t, "a", anchor, detectedTypeFromUsage.getTypeText(JSType.TypeTextFormat.CODE));
       }
       else {
         String defaultValue = "uint";
