@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ArrayUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
@@ -107,6 +108,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
       @Override
       public void buildUI(@NotNull SettingsStep settingsStep) {
         super.buildUI(settingsStep);
+        ng4.setBorder(IdeBorderFactory.createEmptyBorder(0, -2, 0, 0));
         settingsStep.addSettingsComponent(ng4);
       }
 
