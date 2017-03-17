@@ -38,7 +38,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
       final VirtualFile contextFile = findContextFile(project, requestor);
 
       if (contextFile != null) {
-        ReadAction.compute(() -> DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUri));
+        return ReadAction.compute(() -> DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUri));
       }
       else {
         if (ApplicationManager.getApplication().isDispatchThread()) {
