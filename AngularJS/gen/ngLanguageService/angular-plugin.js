@@ -41,7 +41,7 @@ function createPluginClass(state) {
                     ng_1 = requiredObject(obj);
                 }
                 if (!isVersionCompatible(ng_1, util, ts_impl)) {
-                    ts_impl["ngInitErrorIncompatible"] = "This version of Angular language service requires TypeScript 2.1 or higher.";
+                    ts_impl["ngIncompatible"] = true;
                 }
                 extendEx(ts_impl, "createLanguageService", function (oldFunction, args) {
                     var languageService = oldFunction.apply(_this, args);
