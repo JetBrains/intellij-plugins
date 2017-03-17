@@ -37,6 +37,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerMessages;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -70,12 +71,18 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private Icon myCurrentIcon;
   private boolean myAnalysisIsBusy;
 
+  private int myFilesWithErrorsHash;
+
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
     public void run() {
       if (ProjectViewPane.ID.equals(ProjectView.getInstance(myProject).getCurrentViewId())) {
-        // refresh red squiggles managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
-        ProjectView.getInstance(myProject).refresh();
+        final int hash = DartAnalysisServerService.getInstance(myProject).getFilePathsWithErrorsHash();
+        if (myFilesWithErrorsHash != hash) {
+          // refresh red squiggles managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
+          myFilesWithErrorsHash = hash;
+          ProjectView.getInstance(myProject).refresh();
+        }
       }
 
       final Map<String, List<AnalysisError>> filePathToErrors;

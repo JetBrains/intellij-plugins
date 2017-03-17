@@ -1612,6 +1612,12 @@ public class DartAnalysisServerService implements Disposable {
     }
   }
 
+  public int getFilePathsWithErrorsHash() {
+    synchronized (myFilePathsWithErrors) {
+      return myFilePathsWithErrors.hashCode();
+    }
+  }
+
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
     final String trace = error.getStackTrace();
     final String partialTrace = trace == null || trace.isEmpty() ? "" : trace.substring(0, Math.min(trace.length(), 1000));
