@@ -98,6 +98,10 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                         }
 
                     } catch (err) {
+                        if (ts_impl["ngIncompatible"] && !ts_impl["ngInitErrorIncompatible"]) {
+                            ts_impl["ngInitErrorIncompatible"] = "This version of Angular language service requires TypeScript 2.1 or higher.";
+                        }
+
                         //something wrong
                         sessionThis.logError(err, "update graph ng service");
                     }
