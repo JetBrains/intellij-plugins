@@ -122,4 +122,9 @@ public class MakefilePsiImplUtil {
     public static boolean isEmpty(MakefileRecipe element) {
         return element.getCommandList().isEmpty() && element.getConditionalList().isEmpty();
     }
+
+    public static MakefilePrerequisite updateText(MakefilePrerequisite prerequisite, String newText) {
+        MakefilePrerequisite replacement = MakefileElementFactory.INSTANCE.createPrerequisite(prerequisite.getProject(), newText);
+        return (MakefilePrerequisite) prerequisite.replace(replacement);
+    }
 }

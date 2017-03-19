@@ -16,6 +16,9 @@ object MakefileElementFactory {
   fun createTarget(project: Project, name: String) =
       createRule(project, name).firstChild.firstChild.firstChild as MakefileTarget
 
+  fun createPrerequisite(project: Project, name: String) =
+      (createFile(project, "a: $name").firstChild as MakefileRule).targetLine.prerequisites!!.normalPrerequisites.firstChild as MakefilePrerequisite
+
   fun createWhiteSpace(project: Project, whitespace: String) =
       createFile(project, whitespace).firstChild as PsiWhiteSpace
 }
