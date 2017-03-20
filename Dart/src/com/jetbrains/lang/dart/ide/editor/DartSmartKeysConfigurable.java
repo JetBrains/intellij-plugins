@@ -24,8 +24,8 @@ import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 
 import javax.swing.*;
 
-public class DartSmartKeysOptions extends BeanConfigurable<DartCodeInsightSettings> implements UnnamedConfigurable {
-  public DartSmartKeysOptions() {
+public class DartSmartKeysConfigurable extends BeanConfigurable<DartCodeInsightSettings> implements UnnamedConfigurable {
+  public DartSmartKeysConfigurable() {
     super(DartCodeInsightSettings.getInstance());
     DartCodeInsightSettings settings = getInstance();
 

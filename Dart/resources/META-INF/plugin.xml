@@ -214,7 +214,7 @@
 
     <applicationService serviceInterface="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"
                         serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
-    <editorSmartKeysConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysOptions"/>
+    <editorSmartKeysConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
 
   </extensions>
 
