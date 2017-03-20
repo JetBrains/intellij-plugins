@@ -56,6 +56,7 @@ class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiEle
 
       final Set<XmlFile> files = new LinkedHashSet<>(set.getFiles().size());
       for (final VirtualFilePointer filePointer : set.getFiles()) {
+        if (!filePointer.isValid()) continue;
         final VirtualFile file = filePointer.getFile();
         if (file == null) {
           continue;
