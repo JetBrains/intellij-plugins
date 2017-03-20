@@ -46,14 +46,10 @@ public class PubspecYamlUtil {
 
     while (parent != null && (LIB_DIR_NAME.equals(current.getName()) || fileIndex.isInContent(parent))) {
       current = parent;
-
-      // the following cycle is 10 times faster than parent.findChild(PUBSPEC_YAML) because it doesn't use toCanonicalFile() behind the hood
-      for (VirtualFile child : parent.getChildren()) {
-        if (!child.isDirectory() && child.getNameSequence().equals(PUBSPEC_YAML)) {
-          return child;
-        }
+      final VirtualFile file = parent.findChild(PUBSPEC_YAML);
+      if (file != null && !file.isDirectory()) {
+        return file;
       }
-
       parent = current.getParent();
     }
 
