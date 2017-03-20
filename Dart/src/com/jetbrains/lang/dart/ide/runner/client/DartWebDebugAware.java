@@ -11,10 +11,9 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 
 final class DartWebDebugAware extends JavaScriptDebugAware {
-  @Nullable
   @Override
   protected LanguageFileType getFileType() {
     return DartFileType.INSTANCE;
@@ -26,16 +25,12 @@ final class DartWebDebugAware extends JavaScriptDebugAware {
   }
 
   @Override
-  @Nullable
   public Class<? extends XLineBreakpointType<?>> getBreakpointTypeClass() {
     return DartLineBreakpointType.class;
   }
 
-  @Nullable
   @Override
-  public ExpressionInfo getEvaluationInfo(@NotNull PsiElement elementAtOffset,
-                                          @NotNull Document document,
-                                          @NotNull ExpressionInfoFactory expressionInfoFactory) {
-    return DartVmServiceEvaluator.getExpressionInfo(elementAtOffset);
+  public Promise<ExpressionInfo> getEvaluationInfo(@NotNull PsiElement element, @NotNull Document document, @NotNull ExpressionInfoFactory expressionInfoFactory) {
+    return Promise.resolve(DartVmServiceEvaluator.getExpressionInfo(element));
   }
 }

@@ -110,6 +110,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     return parent instanceof DartId ? new ExpressionInfo(parent.getTextRange()) : null;
   }
 
+  @Override
   public boolean isCodeFragmentEvaluationSupported() {
     return false;
   }
