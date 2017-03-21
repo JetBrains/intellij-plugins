@@ -8,7 +8,6 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -17,6 +16,7 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
+  @Override
   protected String getBasePath() {
     return "/analysisServer/intentions";
   }

@@ -33,6 +33,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
+  @Override
   protected String getBasePath() {
     return "/analysisServer/highlighting";
   }

@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -22,6 +21,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
+  @Override
   protected String getBasePath() {
     return "/analysisServer/quickfix";
   }

@@ -20,6 +20,7 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
+  @Override
   protected String getBasePath() {
     return "/paramInfo";
   }

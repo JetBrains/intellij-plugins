@@ -28,6 +28,7 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
     return "analysisServer/typeHierarchy/" + getTestName(false);
   }
 
+  @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;
   }
