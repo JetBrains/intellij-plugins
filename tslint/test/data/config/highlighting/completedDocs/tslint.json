@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "completed-docs": [true, {
+      "functions": {
+        "visibilities": ["exported"]
+      },
+      "methods": {
+        "locations": ["instance"],
+        "privacies": ["public", "protected"]
+      }
+    }]
+  }
+}

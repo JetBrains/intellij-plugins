@@ -47,4 +47,8 @@ public class TsLintConfigHighlightingTest extends LightPlatformCodeInsightFixtur
   public void testAlignWrongParameters() throws Exception {
     doTest();
   }
+
+  public void testCompletedDocs() throws Exception {
+    doTest();
+  }
 }
