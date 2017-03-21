@@ -498,7 +498,7 @@ public class DartServerData {
     private int myConvertedOffset = -1;
 
     private DartNavigationTarget(@NotNull final NavigationTarget target) {
-      myFile = FileUtil.toSystemIndependentName(target.getFile()).intern();
+      myFile = FileUtil.toSystemIndependentName(target.getFile().trim()).intern();
       myOriginalOffset = target.getOffset();
       myKind = target.getKind().intern();
     }
