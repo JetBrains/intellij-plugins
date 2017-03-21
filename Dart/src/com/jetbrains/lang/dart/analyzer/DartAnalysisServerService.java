@@ -98,6 +98,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long EXECUTION_CREATE_CONTEXT_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EXECUTION_MAP_URI_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long ANALYSIS_IN_TESTS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+  private static final long TESTS_TIMEOUT_COEFF = 10;
 
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
   private static final String STACK_TRACE_MARKER = "#0";
@@ -1576,7 +1577,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, ANALYSIS_IN_TESTS_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, ANALYSIS_IN_TESTS_TIMEOUT / TESTS_TIMEOUT_COEFF);
     assert latch.getCount() == 0 : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
   }
 
@@ -1641,11 +1642,15 @@ public class DartAnalysisServerService implements Disposable {
 
   private static boolean awaitForLatchCheckingCanceled(@NotNull final AnalysisServer server,
                                                        @NotNull final CountDownLatch latch,
-                                                       final long timeoutInMillis,
+                                                       long timeoutInMillis,
                                                        final boolean checkWriteLock) {
     if (checkWriteLock) {
       // waiting under write action blocks server notifications handling that require read action
       LOG.assertTrue(!ApplicationManager.getApplication().isWriteAccessAllowed());
+    }
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      timeoutInMillis *= TESTS_TIMEOUT_COEFF;
     }
 
     long startTime = System.currentTimeMillis();
