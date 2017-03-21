@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.notification.*;
 import com.intellij.notification.impl.NotificationsManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageDialogBuilder;
@@ -117,7 +118,8 @@ public abstract class DartFeedbackBuilder {
     notification.notify(project);
 
     // this shows red balloon line in case of an IDE fatal error
-    ApplicationManager.getApplication().invokeLater(() -> showErrorNotification(notification, project));
+    ApplicationManager.getApplication()
+      .invokeLater(() -> showErrorNotification(notification, project), ModalityState.NON_MODAL, project.getDisposed());
   }
 
   private static void showErrorNotification(@NotNull Notification notification, @NotNull Project project) {
