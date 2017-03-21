@@ -48,7 +48,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
         return ContainerUtil.skipNulls(Arrays.asList(file.getContainingDirectory(), directory));
       }
 
-      return super.getDefaultContexts();
+      return super.computeDefaultContexts();
     }
 
     @Override
