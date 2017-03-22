@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.*;
+import com.intellij.lexer.Lexer;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.*;
@@ -219,9 +221,29 @@ public interface DartTokenTypesSets {
     }
   }
 
-  class DartLazyParseableBlockElementType extends ILazyParseableElementType {
+  class DartLazyParseableBlockElementType extends IReparseableElementType {
     public DartLazyParseableBlockElementType() {
       super("LAZY_PARSEABLE_BLOCK", DartLanguage.INSTANCE);
+    }
+
+    @Override
+    public boolean isParsable(@NotNull final CharSequence buffer, @NotNull final Language fileLanguage, @NotNull final Project project) {
+      final Lexer lexer = new DartLexer();
+      lexer.start(buffer);
+      if (lexer.getTokenType() != LBRACE) return false;
+      int balance = 1;
+      lexer.advance();
+
+      while (true) {
+        final IElementType type = lexer.getTokenType();
+        if (type == null) break;
+        if (balance == 0) return false;
+        if (type == LBRACE) balance++;
+        if (type == RBRACE) balance--;
+        lexer.advance();
+      }
+
+      return balance == 0;
     }
 
     @Override
