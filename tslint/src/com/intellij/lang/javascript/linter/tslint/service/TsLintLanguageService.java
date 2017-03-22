@@ -105,16 +105,20 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
   @Nullable
   private static List<TsLinterError> parseResults(@NotNull JSLanguageServiceAnswer answer, @NotNull String path) {
-    JsonObject element = answer.getElement();
-    JsonElement body = element.get("body");
+    final JsonObject element = answer.getElement();
+    final JsonElement error = element.get("error");
+    if (error != null) {
+      return Collections.singletonList(new TsLinterError(error.getAsString()));
+    }
+    final JsonElement body = element.get("body");
     if (body == null) {
       return null;
     }
 
-    String version = element.get("version").getAsString();
-    SemVer tsLintVersion = SemVer.parseFromText(version);
-    boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
-    TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased);
+    final String version = element.get("version").getAsString();
+    final SemVer tsLintVersion = SemVer.parseFromText(version);
+    final boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
+    final TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased);
     return ContainerUtil.newArrayList(parser.getErrors());
   }
 

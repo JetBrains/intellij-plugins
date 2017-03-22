@@ -40,24 +40,41 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testOne() throws Exception {
-    doTest("one", "one/one.ts");
+    doTest("one", "one/one.ts", true, true);
   }
 
-  private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest) throws IOException {
+  public void testNoAdditionalDirectory() throws Exception {
+    doTest("noAdditionalDirectory", "noAdditionalDirectory/data.ts", true, true);
+    checkGlobalAnnotation("Could not find custom rule directory:", false, true, TsLintInspection.class);
+  }
+
+  public void testNoConfig() throws Exception {
+    doTest("noConfig", "noConfig/data.ts", false, true);
+    checkGlobalAnnotation("TSLint: FatalError: Failed to load", false, true, TsLintInspection.class);
+  }
+
+  public void testBadConfig() throws Exception {
+    doTest("badConfig", "badConfig/data.ts", false, true);
+    checkGlobalAnnotation("TSLint: FatalError: Failed to load", false, true, TsLintInspection.class);
+  }
+
+  private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest, boolean copyConfig,
+                      @SuppressWarnings("SameParameterValue") boolean useConfig) throws IOException {
     if (!myNodeLinterPackagePaths.checkPaths()) return;
 
     final TsLintState.Builder builder = new TsLintState.Builder()
       .setNodePath(NodeJsInterpreterRef.create(myNodeLinterPackagePaths.getNodePath().getAbsolutePath()))
       .setPackagePath(myNodeLinterPackagePaths.getPackagePath().getPath());
 
-    runTest(builder, true, filePathToTest, directoryToCopy + "/tslint.json");
+    runTest(builder, copyConfig, useConfig, filePathToTest, directoryToCopy + "/tslint.json");
   }
 
-  private void runTest(TsLintState.Builder builder, boolean withConfig, String... filePathToTest) {
-    final PsiFile[] files = myFixture.configureByFiles(filePathToTest);
-    if (withConfig) {
-      builder.setCustomConfigFileUsed(true)
-        .setCustomConfigFilePath(FileUtil.toSystemDependentName(files[files.length - 1].getVirtualFile().getPath()));
+  private void runTest(TsLintState.Builder builder, boolean copyConfig, boolean useConfig, String... filePathToTest) {
+    final String[] paths = copyConfig ? filePathToTest : new String[]{filePathToTest[0]};
+    final PsiFile[] files = myFixture.configureByFiles(paths);
+    if (useConfig) {
+      final String configPath = copyConfig ? FileUtil.toSystemDependentName(files[files.length - 1].getVirtualFile().getPath()) : "aaa";
+      builder.setCustomConfigFileUsed(true).setCustomConfigFilePath(configPath);
     }
     final TsLintConfiguration configuration = TsLintConfiguration.getInstance(getProject());
     configuration.setExtendedState(true, builder.build());

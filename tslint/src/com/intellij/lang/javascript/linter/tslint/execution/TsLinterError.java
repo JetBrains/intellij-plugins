@@ -18,6 +18,7 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
 
   @Nullable
   private final TsLintFixInfo myFixInfo;
+  private final boolean myIsGlobal;
 
   public TsLinterError(@Nullable String path,
                        int line,
@@ -32,6 +33,7 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
     myEndLine = endLine;
     myEndColumn = endColumn;
     myFixInfo = fixInfo;
+    myIsGlobal = false;
   }
 
   public TsLinterError(final @NotNull String description) {
@@ -40,6 +42,7 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
     myEndLine = 1;
     myEndColumn = 1;
     myFixInfo = null;
+    myIsGlobal = true;
   }
 
   @Override
@@ -67,6 +70,10 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
     return myFixInfo;
   }
 
+  public boolean isGlobal() {
+    return myIsGlobal;
+  }
+
   @Override
   public String toString() {
     return "TsLinterError{" +
@@ -76,6 +83,7 @@ public final class TsLinterError extends JSLinterError implements JSAnnotationRa
            ", myEndLine=" + myEndLine +
            ", myEndColumn=" + myEndColumn +
            ", myFixInfo=" + myFixInfo +
+           ", myIsGlobal=" + myIsGlobal +
            '}';
   }
 }
