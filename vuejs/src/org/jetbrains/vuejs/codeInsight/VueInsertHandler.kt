@@ -44,7 +44,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     val components = componentProperty(obj).value as? JSObjectLiteralExpression ?: return
     val capitalizedName = name.capitalize()
     if (components.findProperty(name) != null || components.findProperty(capitalizedName) != null) return
-    val newProperty = (JSChangeUtil.createExpressionWithContext("{ $capitalizedName }", obj)!!.psi as JSObjectLiteralExpression).firstProperty
+    val newProperty = (JSChangeUtil.createExpressionWithContext("{ $capitalizedName }", obj)!!.psi as JSObjectLiteralExpression).firstProperty!!
     addProperty(newProperty, components)
     ES6ImportPsiUtil.insertImport(content, capitalizedName, ImportType.DEFAULT, importedFile, context.editor)
   }
@@ -63,7 +63,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
   private fun componentProperty(obj: JSObjectLiteralExpression): JSProperty {
     val property = obj.findProperty("components")
     if (property != null) return property
-    val newProperty = (JSChangeUtil.createExpressionWithContext("{ components: {} }", obj)!!.psi as JSObjectLiteralExpression).firstProperty
+    val newProperty = (JSChangeUtil.createExpressionWithContext("{ components: {} }", obj)!!.psi as JSObjectLiteralExpression).firstProperty!!
     val addedProperty: PsiElement = addProperty(newProperty, obj)
     return addedProperty as JSProperty
   }
