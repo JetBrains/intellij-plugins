@@ -7,19 +7,22 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author Irina.Chernushina on 6/4/2015.
  */
 public class TsLintHighlightingTest extends LinterHighlightingTest {
-
   @Override
   protected String getBasePath() {
     final String homePath = isCommunity() ? PlatformTestUtil.getCommunityPath() : PathManager.getHomePath();
@@ -40,38 +43,47 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testOne() throws Exception {
-    doTest("one", "one/one.ts", true, true);
+    doTest("one", "one/one.ts", true, true, null);
   }
 
   public void testNoAdditionalDirectory() throws Exception {
-    doTest("noAdditionalDirectory", "noAdditionalDirectory/data.ts", true, true);
+    doTest("noAdditionalDirectory", "noAdditionalDirectory/data.ts", true, true, null);
     checkGlobalAnnotation("Could not find custom rule directory:", false, true, TsLintInspection.class);
   }
 
   public void testNoConfig() throws Exception {
-    doTest("noConfig", "noConfig/data.ts", false, true);
+    doTest("noConfig", "noConfig/data.ts", false, true, null);
     checkGlobalAnnotation("TSLint: FatalError: Failed to load", false, true, TsLintInspection.class);
   }
 
   public void testBadConfig() throws Exception {
-    doTest("badConfig", "badConfig/data.ts", false, true);
+    doTest("badConfig", "badConfig/data.ts", false, true, null);
     checkGlobalAnnotation("TSLint: FatalError: Failed to load", false, true, TsLintInspection.class);
   }
 
+  public void testLineSeparatorsWin() throws Exception {
+    if (!SystemInfo.isWindows) return;
+    doTest("lineSeparators", "lineSeparators/data.ts", true, true, LineSeparator.CRLF);
+  }
+
   private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest, boolean copyConfig,
-                      @SuppressWarnings("SameParameterValue") boolean useConfig) throws IOException {
+                      @SuppressWarnings("SameParameterValue") boolean useConfig, LineSeparator lineSeparator) throws IOException {
     if (!myNodeLinterPackagePaths.checkPaths()) return;
 
     final TsLintState.Builder builder = new TsLintState.Builder()
       .setNodePath(NodeJsInterpreterRef.create(myNodeLinterPackagePaths.getNodePath().getAbsolutePath()))
       .setPackagePath(myNodeLinterPackagePaths.getPackagePath().getPath());
 
-    runTest(builder, copyConfig, useConfig, filePathToTest, directoryToCopy + "/tslint.json");
+    runTest(builder, copyConfig, useConfig, lineSeparator, filePathToTest, directoryToCopy + "/tslint.json");
   }
 
-  private void runTest(TsLintState.Builder builder, boolean copyConfig, boolean useConfig, String... filePathToTest) {
+  private void runTest(TsLintState.Builder builder, boolean copyConfig, boolean useConfig, @Nullable LineSeparator lineSeparator,
+                       String... filePathToTest) {
     final String[] paths = copyConfig ? filePathToTest : new String[]{filePathToTest[0]};
     final PsiFile[] files = myFixture.configureByFiles(paths);
+    if (lineSeparator != null) {
+      Arrays.stream(files).forEach(file -> ensureLineSeparators(file.getVirtualFile(), lineSeparator.getSeparatorString()));
+    }
     if (useConfig) {
       final String configPath = copyConfig ? FileUtil.toSystemDependentName(files[files.length - 1].getVirtualFile().getPath()) : "aaa";
       builder.setCustomConfigFileUsed(true).setCustomConfigFilePath(configPath);
