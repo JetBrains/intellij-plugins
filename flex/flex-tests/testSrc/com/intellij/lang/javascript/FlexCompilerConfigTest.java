@@ -23,7 +23,6 @@ import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.roots.impl.RootProviderBaseImpl;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -211,36 +210,29 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
                       final CompilerOptions moduleLevelOptions, final CompilerOptions projectLevelOptions,
                       final String suffix,
                       @Nullable Map<String, String> additionalMacros) throws Exception {
-    final Sdk testSdk = WriteCommandAction.runWriteCommandAction(null, (Computable<Sdk>)() -> {
-      final Sdk testSdk1 = createTestSdk(sdkVersion);
-      ProjectJdkTable.getInstance().addJdk(testSdk1);
-      return testSdk1;
+    WriteCommandAction.runWriteCommandAction(null, () -> {
+      ProjectJdkTable.getInstance().addJdk(createTestSdk(sdkVersion), getTestRootDisposable());
     });
 
-    try {
-      final Constructor<CompilerConfigGenerator> constructor =
-        CompilerConfigGenerator.class.getDeclaredConstructor(Module.class, FlexBuildConfiguration.class,
-                                                             CompilerOptions.class, CompilerOptions.class);
-      constructor.setAccessible(true);
+    final Constructor<CompilerConfigGenerator> constructor =
+      CompilerConfigGenerator.class.getDeclaredConstructor(Module.class, FlexBuildConfiguration.class,
+                                                           CompilerOptions.class, CompilerOptions.class);
+    constructor.setAccessible(true);
 
-      final CompilerConfigGenerator configGenerator = constructor.newInstance(getModule(), bc, moduleLevelOptions, projectLevelOptions);
+    final CompilerConfigGenerator configGenerator = constructor.newInstance(getModule(), bc, moduleLevelOptions, projectLevelOptions);
 
-      final Method method = CompilerConfigGenerator.class.getDeclaredMethod("generateConfigFileText");
-      method.setAccessible(true);
-      String text = (String)method.invoke(configGenerator);
+    final Method method = CompilerConfigGenerator.class.getDeclaredMethod("generateConfigFileText");
+    method.setAccessible(true);
+    String text = (String)method.invoke(configGenerator);
 
-      if (bc.isTempBCForCompilation()) {
-        text = FlexCompilerConfigFileUtilBase
-          .mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(), true, false);
-      }
-
-      VirtualFile expectedFile = getVirtualFile(getTestName(false) + suffix + ".xml");
-      String expectedText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(expectedFile));
-      assertEquals(expectedFile.getName(), replaceMacros(expectedText, bc.getSdk(), additionalMacros), text);
+    if (bc.isTempBCForCompilation()) {
+      text = FlexCompilerConfigFileUtilBase
+        .mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(), true, false);
     }
-    finally {
-      ApplicationManager.getApplication().runWriteAction(() -> ProjectJdkTable.getInstance().removeJdk(testSdk));
-    }
+
+    VirtualFile expectedFile = getVirtualFile(getTestName(false) + suffix + ".xml");
+    String expectedText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(expectedFile));
+    assertEquals(expectedFile.getName(), replaceMacros(expectedText, bc.getSdk(), additionalMacros), text);
   }
 
   private Sdk createTestSdk(final String sdkVersion) {
