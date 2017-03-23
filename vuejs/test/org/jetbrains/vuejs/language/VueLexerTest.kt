@@ -84,6 +84,7 @@ open class VueLexerTest : LexerTestCase() {
   fun testEventAttribute() = doFileTest("vue")
 
   fun testInterpolation() = doFileTest("vue")
+  fun testInterpolationNewLine() = doFileTest("vue")
   fun testInterpolationInText() = doFileTest("vue")
   fun testMultipleInterpolations() = doFileTest("vue")
 
