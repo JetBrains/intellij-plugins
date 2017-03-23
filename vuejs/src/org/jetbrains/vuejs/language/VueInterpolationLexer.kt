@@ -1,7 +1,6 @@
 package org.jetbrains.vuejs.language
 
 import com.intellij.lexer.LexerBase
-import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
