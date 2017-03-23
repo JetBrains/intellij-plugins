@@ -1,4 +1,4 @@
-package com.intellij.flex.flexunit;
+package com.intellij.flex.flexunit.execution;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.execution.Executor;
@@ -20,6 +20,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.flexunit.FlexUnitLibs;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -31,8 +32,6 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flexunit.FlexUnitLibs;
-import com.intellij.lang.javascript.flexunit.FlexUnitTestRunner;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModuleType;
@@ -65,8 +64,8 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
     public FlexUnitExecutionWebTest() {
       super(TargetPlatform.Web);
     }
-
   }
+
   public static class FlexUnitExecutionDesktopTest extends FlexUnitExecutionTest {
     public FlexUnitExecutionDesktopTest() {
       super(TargetPlatform.Desktop);
@@ -89,7 +88,8 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
         put(FlexUnitRunnerParameters.OutputLogLevel.Warn, "Warning_message");
         put(FlexUnitRunnerParameters.OutputLogLevel.Info, "Info_message");
         put(FlexUnitRunnerParameters.OutputLogLevel.Debug, "Debug_message");
-      }};
+      }
+    };
 
   private static final String BASE_PATH = "/execute/";
 
@@ -707,5 +707,4 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   public void testUnicodeBreaks() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, getTestName(false), null, null, BASE_PATH + getTestName(false) + ".as");
   }
-
 }

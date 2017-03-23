@@ -10,6 +10,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.flexunit.FlexUnitLibs;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -31,7 +32,6 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompil
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
-import com.intellij.lang.javascript.flexunit.FlexUnitLibs;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
@@ -207,7 +207,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     assertNotNull(element);
     assertEquals(element.getContainingFile().getName(), testName + ".css");
   }
-  
+
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexSpecificFunctionsInCss() throws Exception {
     enableInspectionTool(new CssInvalidElementInspection());
@@ -245,7 +245,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testFlexWithCss4() throws Exception {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
+      () -> FlexTestUtils
+        .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
     doTestFor(true, getTestName(false) + ".css");
   }
 
@@ -260,7 +261,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testFlexWithCss6() throws Exception {
     registerCommonCssInspections();
     myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
+      () -> FlexTestUtils
+        .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
     defaultTest();
   }
 
@@ -270,7 +272,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
     doTestFor(true, getTestName(false) + ".css");
   }
-  
+
   public void testFlexCssShouldNotComplainAboutUnitlessLength() throws Exception {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     doTestFor(true, getTestName(false) + ".css");
@@ -343,7 +345,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testSwitchToClassicCssQuickFix2() throws Exception {
     enableInspectionTool(new CssUnknownPropertyInspection());
     doHighlightingWithInvokeFixAndCheckResult(
-      CssBundle.message("switch.to.css.dialect.quickfix.name",  CssDialect.CLASSIC.getDisplayName()), "css");
+      CssBundle.message("switch.to.css.dialect.quickfix.name", CssDialect.CLASSIC.getDisplayName()), "css");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
@@ -1459,7 +1461,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final VirtualFile srcFile = JarFileSystem.getInstance().getJarRootForLocalFile(srcZipFile).findChild(testName + "_sdk_src.as");
 
     myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", testName + ".zip", null);
+      () -> FlexTestUtils
+        .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", testName + ".zip", null);
     configureByFile(getBasePath() + "/" + testName + ".as"); // file not used; we need just to have content root configured
 
     setActiveEditor(createEditor(srcFile));
@@ -1561,7 +1564,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     final File toDirIO = createTempDirectory();
     final VirtualFile toDir = getVirtualFile(toDirIO);
     VirtualFile copyRef =
-    copy(file, toDir, file.getName());
+      copy(file, toDir, file.getName());
 
     setActiveEditor(createEditor(copyRef));
     doDoTest(true, false, true);
@@ -1605,7 +1608,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testFxPrivate() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
 
-    final JSClassResolver resolver = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
+    final JSClassResolver resolver =
+      JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
     final JSClass jsClass =
       (JSClass)resolver.findClassByQName("mx.controls.CheckBox", GlobalSearchScope.moduleWithLibrariesScope(myModule));
     final Collection<PsiReference> usages = ReferencesSearch.search(jsClass, GlobalSearchScope.moduleScope(myModule)).findAll();

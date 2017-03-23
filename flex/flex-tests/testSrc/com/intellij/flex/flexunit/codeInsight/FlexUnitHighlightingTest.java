@@ -1,10 +1,10 @@
-package com.intellij.lang.javascript.flexunit;
+package com.intellij.flex.flexunit.codeInsight;
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.flexunit.FlexUnitLibs;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.ActionScriptDaemonAnalyzerTestCase;
@@ -29,7 +29,8 @@ import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase implements FlexUnitLibs {
 
-  private static final Collection<String> CHECK_TEST_IN_PRODUCT_SOURCES_FOR = Arrays.asList("ClassInProductSource1", "ClassInProductSource2");
+  private static final Collection<String> CHECK_TEST_IN_PRODUCT_SOURCES_FOR =
+    Arrays.asList("ClassInProductSource1", "ClassInProductSource2");
 
   @Override
   protected void setUp() throws Exception {

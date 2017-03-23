@@ -1,6 +1,7 @@
-package com.intellij.lang.javascript.flexunit;
+package com.intellij.flex.flexunit.codeInsight;
 
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.flexunit.FlexUnitLibs;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;
@@ -107,9 +108,8 @@ public class FlexUnitCompletionTest extends BaseJSCompletionTestCase implements 
 
   @JSTestOptions({WithFlexSdk})
   public void testCustomRunner() throws Exception {
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".as"), getVirtualFile(getBasePath() + "mypackage/FooRunner.as")};
+    VirtualFile[] files = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".as"),
+      getVirtualFile(getBasePath() + "mypackage/FooRunner.as")};
     doTestForFiles(files, "", "as", new File(getTestDataPath() + getBasePath()));
   }
-
-
 }

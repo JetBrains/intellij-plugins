@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.flexunit;
+package com.intellij.flex.flexunit.execution;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FlexUnitTestRunner extends FlexRunner {
+class FlexUnitTestRunner extends FlexRunner {
   @Override
   public void execute(@NotNull final ExecutionEnvironment env, @Nullable final Callback callback) throws ExecutionException {
     final Project project = env.getProject();

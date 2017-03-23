@@ -1,9 +1,9 @@
 package com.intellij.flex;
 
+import com.intellij.flex.flexunit.codeInsight.FlexUnitCompletionTest;
+import com.intellij.flex.flexunit.codeInsight.FlexUnitConfigurationTest;
+import com.intellij.flex.flexunit.codeInsight.FlexUnitHighlightingTest;
 import com.intellij.lang.javascript.*;
-import com.intellij.lang.javascript.flexunit.FlexUnitCompletionTest;
-import com.intellij.lang.javascript.flexunit.FlexUnitConfigurationTest;
-import com.intellij.lang.javascript.flexunit.FlexUnitHighlightingTest;
 import com.intellij.lang.javascript.generate.ActionScriptGenerateTest;
 import com.intellij.lang.javascript.imports.FlexAutoImportsTest;
 import com.intellij.lang.javascript.imports.FlexOptimizeImportsTest;
