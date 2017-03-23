@@ -9,7 +9,9 @@ import com.intellij.psi.tree.*;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 import com.jetbrains.lang.dart.lexer.DartDocLexer;
 import com.jetbrains.lang.dart.lexer.DartLexer;
+import com.jetbrains.lang.dart.psi.impl.DartLazyParseableBlockImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
@@ -244,6 +246,12 @@ public interface DartTokenTypesSets {
       }
 
       return balance == 0;
+    }
+
+    @Nullable
+    @Override
+    public ASTNode createNode(@NotNull final CharSequence text) {
+      return new DartLazyParseableBlockImpl(this, text);
     }
 
     @Override
