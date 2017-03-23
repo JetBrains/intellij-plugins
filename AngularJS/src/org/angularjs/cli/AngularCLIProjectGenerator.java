@@ -5,8 +5,10 @@ import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.platform.GeneratorPeer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ArrayUtil;
 import icons.AngularJSIcons;
@@ -93,7 +95,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
 
   @NotNull
   @Override
-  public GeneratorPeer<Settings> createPeer() {
+  public GeneratorPeer<Settings> createPeer(Computable<ProjectSettingsStepBase> computable) {
     return new NpmPackageGeneratorPeer() {
       private JCheckBox ng4;
 

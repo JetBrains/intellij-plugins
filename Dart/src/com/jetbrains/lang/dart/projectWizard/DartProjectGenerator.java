@@ -6,7 +6,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.platform.GeneratorPeer;
 import com.jetbrains.lang.dart.DartBundle;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +32,7 @@ public class DartProjectGenerator extends WebProjectTemplate<DartProjectWizardDa
   }
 
   @NotNull
-  public GeneratorPeer<DartProjectWizardData> createPeer() {
+  public GeneratorPeer<DartProjectWizardData> createPeer(Computable<ProjectSettingsStepBase> computable) {
     return new DartGeneratorPeer();
   }
 

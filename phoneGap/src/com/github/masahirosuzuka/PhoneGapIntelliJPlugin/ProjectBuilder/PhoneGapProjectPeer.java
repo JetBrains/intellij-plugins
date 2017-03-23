@@ -6,6 +6,7 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapComm
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.platform.GeneratorPeer;
 import com.intellij.platform.WebProjectGenerator;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.containers.ContainerUtil;
@@ -18,7 +19,7 @@ import javax.swing.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
-public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings> {
+public class PhoneGapProjectPeer implements GeneratorPeer<PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings> {
 
   private final List<WebProjectGenerator.SettingsStateListener> myStateListeners = ContainerUtil.createLockFreeCopyOnWriteList();
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
