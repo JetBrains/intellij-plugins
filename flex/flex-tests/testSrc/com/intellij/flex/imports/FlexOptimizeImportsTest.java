@@ -1,7 +1,8 @@
-package com.intellij.lang.javascript.imports;
+package com.intellij.flex.imports;
 
 import com.intellij.codeInsight.actions.OptimizeImportsAction;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
@@ -10,6 +11,7 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
+import com.intellij.flex.util.FlexModuleFixtureBuilder;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.codeStyle.CodeStyleSettings;

@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.refactoring.introduceConstant;
+package com.intellij.flex.refactoring.introduceConstant;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
@@ -12,6 +12,9 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.refactoring.introduceConstant.IntroduceConstantInfoProvider;
+import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantHandler;
+import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantSettings;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;

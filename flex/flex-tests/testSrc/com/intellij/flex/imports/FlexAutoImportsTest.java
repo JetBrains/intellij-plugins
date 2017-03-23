@@ -1,27 +1,26 @@
-package com.intellij.lang.javascript.imports;
+package com.intellij.flex.imports;
 
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
-import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.flex.util.FlexModuleFixtureBuilder;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 
 import java.util.List;

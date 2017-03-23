@@ -4,7 +4,7 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.FlexTestUtils;
-import com.intellij.flex.flexunit.FlexUnitLibs;
+import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.ActionScriptDaemonAnalyzerTestCase;

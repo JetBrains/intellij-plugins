@@ -5,8 +5,8 @@ import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
-import com.intellij.lang.javascript.imports.FlexModuleFixtureBuilder;
-import com.intellij.lang.javascript.imports.FlexModuleFixtureBuilderImpl;
+import com.intellij.flex.util.FlexModuleFixtureBuilder;
+import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
@@ -17,9 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModuleFixtureBuilder> {
   @Override
   protected Class<FlexModuleFixtureBuilder> getModuleBuilderClass() {

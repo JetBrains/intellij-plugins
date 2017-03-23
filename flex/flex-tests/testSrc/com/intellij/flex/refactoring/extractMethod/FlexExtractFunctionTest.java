@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.refactoring.extractMethod;
+package com.intellij.flex.refactoring.extractMethod;
 
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
@@ -8,11 +8,13 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionBaseTest;
+import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionHandler;
+import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionSettings;
+import com.intellij.lang.javascript.refactoring.extractMethod.MockJSExtractFunctionHandler;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -138,7 +140,7 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
     ecmaL4Test();
   }
 
-   public void testBadSelectionJS2() throws Exception {
+  public void testBadSelectionJS2() throws Exception {
     failedEcmaTest();
   }
 

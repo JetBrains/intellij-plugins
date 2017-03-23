@@ -1,10 +1,12 @@
-package com.intellij.lang.javascript.refactoring.introduceField;
+package com.intellij.flex.refactoring.introduceField;
 
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldSettings;
+import com.intellij.lang.javascript.refactoring.introduceField.MockJSIntroduceFieldHandler;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;

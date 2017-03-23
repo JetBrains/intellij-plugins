@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.generate;
+package com.intellij.flex.generate;
 
 
 import com.intellij.flex.FlexTestUtils;

@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.refactoring.inlineFunction;
+package com.intellij.flex.refactoring.inlineFunction;
 
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
@@ -6,15 +6,13 @@ import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.refactoring.inlineFunction.JSInlineFunctionTestBase;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-/**
- * @author Konstantin.Ulitin
- */
 public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
 
   @Override

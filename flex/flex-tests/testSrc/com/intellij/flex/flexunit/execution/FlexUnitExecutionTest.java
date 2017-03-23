@@ -20,7 +20,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.FlexTestUtils;
-import com.intellij.flex.flexunit.FlexUnitLibs;
+import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;

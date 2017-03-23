@@ -1,4 +1,4 @@
-package com.intellij.flex.flexunit;
+package com.intellij.flex.util;
 
 public interface FlexUnitLibs {
 

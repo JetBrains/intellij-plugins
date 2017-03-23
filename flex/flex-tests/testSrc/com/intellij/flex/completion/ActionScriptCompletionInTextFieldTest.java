@@ -1,15 +1,16 @@
-package com.intellij.lang.javascript;
+package com.intellij.flex.completion;
 
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.JSTestOption;
+import com.intellij.lang.javascript.JSTestOptions;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinDialog;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -21,7 +22,6 @@ import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceCon
 import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersDialog;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -31,7 +31,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
 
 public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
 

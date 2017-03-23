@@ -1,10 +1,13 @@
-package com.intellij.lang.javascript;
+package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.EditorInfo;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
+import com.intellij.lang.javascript.BaseJSCompletionTestCase;
+import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.completion.JSKeywordsCompletionProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
@@ -32,9 +35,6 @@ import java.util.HashSet;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-/**
- * User: ksafonov
- */
 public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionTestCase {
 
   protected static final String BASE_PATH = "/js2_completion/";

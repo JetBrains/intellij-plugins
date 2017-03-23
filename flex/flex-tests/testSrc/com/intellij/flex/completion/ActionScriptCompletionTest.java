@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript;
+package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
@@ -8,6 +8,10 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javaee.ExternalResourceManagerExImpl;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.lang.javascript.BaseJSCompletionTestCase;
+import com.intellij.lang.javascript.JSTestOption;
+import com.intellij.lang.javascript.JSTestOptions;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -32,9 +36,6 @@ import java.util.Arrays;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-/**
- * @by Maxim.Mossienko
- */
 @SuppressWarnings({"ALL"})
 public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
