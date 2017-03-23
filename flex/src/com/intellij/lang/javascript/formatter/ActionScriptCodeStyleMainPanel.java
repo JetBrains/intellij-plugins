@@ -20,7 +20,7 @@ public class ActionScriptCodeStyleMainPanel extends TabbedLanguageCodeStylePanel
   @Override
   protected void initTabs(CodeStyleSettings settings) {
     super.initTabs(settings);
-    addTab(new JSCodeStylePunctuationPanel(JavaScriptSupportLoader.ECMA_SCRIPT_L4, settings) {
+    addTab(new JSCodeStylePunctuationPanel(JavaScriptSupportLoader.ECMA_SCRIPT_L4, settings, false) {
       @NotNull
       @Override
       protected FileType getFileType() {
