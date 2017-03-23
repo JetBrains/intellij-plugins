@@ -35,6 +35,8 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   public static final TextAttributesKey COMMENT = createTextAttributesKey("POST_CSS_COMMENT", CssHighlighter.CSS_COMMENT);
   public static final TextAttributesKey TAG_NAME = createTextAttributesKey("POST_CSS_TAG_NAME", CssHighlighter.CSS_TAG_NAME);
   public static final TextAttributesKey ID_SELECTOR = createTextAttributesKey("POST_CSS_ID_SELECTOR", CssHighlighter.CSS_ID_SELECTOR);
+  public static final TextAttributesKey CLASS_NAME = createTextAttributesKey("POST_CSS_CLASS_NAME", CssHighlighter.CSS_CLASS_NAME);
+  public static final TextAttributesKey ATTRIBUTE_NAME = createTextAttributesKey("POST_CSS_ATTRIBUTE_NAME", CssHighlighter.CSS_ATTRIBUTE_NAME);
   public static final TextAttributesKey UNICODE_RANGE = createTextAttributesKey("POST_CSS_UNICODE_RANGE", CssHighlighter.CSS_UNICODE_RANGE);
   public static final TextAttributesKey PARENTHESES = createTextAttributesKey("POST_CSS_PARENTHESES", CssHighlighter.CSS_PARENTHESES);
   public static final TextAttributesKey BRACKETS = createTextAttributesKey("POST_CSS_BRACKETS", CssHighlighter.CSS_BRACKETS);
@@ -49,6 +51,8 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
   static {
     mapping = new HashMap<>();
     mapping.put(CssElementTypes.CSS_HASH, ID_SELECTOR);
+    mapping.put(CssElementTypes.CSS_ATTRIBUTE_NAME, ATTRIBUTE_NAME);
+    mapping.put(CssElementTypes.CSS_CLASS_NAME, CLASS_NAME);
     mapping.put(CssElementTypes.CSS_IDENT, IDENTIFIER);
     mapping.put(CssElementTypes.CSS_STRING_TOKEN, STRING);
     mapping.put(CssElementTypes.CSS_NUMBER, NUMBER);

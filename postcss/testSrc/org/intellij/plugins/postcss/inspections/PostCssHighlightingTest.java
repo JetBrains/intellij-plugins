@@ -12,6 +12,14 @@ public class PostCssHighlightingTest extends PostCssQuickFixTest {
     doTest();
   }
 
+  public void testAttributeName() {
+    doTest();
+  }
+
+  public void testClassName() {
+    doTest();
+  }
+
   private void doTest() {
     myFixture.testHighlighting(true, true, true, getTestName(true) + ".pcss");
   }

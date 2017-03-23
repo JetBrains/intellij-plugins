@@ -7,6 +7,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.css.CssBundle;
+import com.intellij.psi.css.impl.util.CssHighlighter;
 import com.intellij.util.containers.ContainerUtil;
 import icons.PostcssIcons;
 import org.intellij.plugins.postcss.PostCssBundle;
@@ -18,7 +19,10 @@ import java.util.Map;
 
 public class PostCssColorsPage implements ColorSettingsPage {
   private static final Map<String, TextAttributesKey> ADDITIONAL_ATTRIBUTES_KEY_MAP = ContainerUtil.newHashMap(
-    Pair.create("tag", PostCssSyntaxHighlighter.TAG_NAME));
+    Pair.create("tag", PostCssSyntaxHighlighter.TAG_NAME),
+    Pair.create("id", CssHighlighter.CSS_ID_SELECTOR),
+    Pair.create("class", CssHighlighter.CSS_CLASS_NAME),
+    Pair.create("attr", CssHighlighter.CSS_ATTRIBUTE_NAME));
   private static final String DEMO_TEXT = "@import \"manual.css\";\n\n" +
                                           "@font-face {\n" +
                                           "  font-family: DroidSans;\n" +
@@ -28,7 +32,7 @@ public class PostCssColorsPage implements ColorSettingsPage {
                                           "@media (500px < width <= 1200px) and (height >= 400px){\n" +
                                           "  color: red;\n" +
                                           "}\n\n" +
-                                          "<tag>h1</tag>.mystyle:lang(en) {\n" +
+                                          "<tag>h1</tag>.<class>mystyle</class>:lang(en) {\n" +
                                           "  color:blue; /* TODO: change THIS to yellow for next version! */\n" +
                                           "  border:rgb(255,0,0);\n" +
                                           "  background-color: #FAFAFA;\n" +
@@ -37,10 +41,10 @@ public class PostCssColorsPage implements ColorSettingsPage {
                                           "    color: yellow;\n" +
                                           "  }\n" +
                                           "}\n\n" +
-                                          "<tag>div</tag> > <tag>p</tag>, <tag>p</tag> ~ <tag>ul</tag>, <tag>input</tag> [type=\"radio\"] {\n" +
+                                          "<tag>div</tag> > <tag>p</tag>, <tag>p</tag> ~ <tag>ul</tag>, <tag>input</tag> [<attr>type</attr>=\"radio\"] {\n" +
                                           "  width: 80%;\n" +
                                           "}\n\n" +
-                                          "#header:after {\n" +
+                                          "<id>#header</id>:after {\n" +
                                           "  color: red;\n" +
                                           "}\n\n" +
                                           "!";
@@ -57,6 +61,8 @@ public class PostCssColorsPage implements ColorSettingsPage {
     new AttributesDescriptor(CssBundle.message("css.function"), PostCssSyntaxHighlighter.FUNCTION),
     new AttributesDescriptor(CssBundle.message("css.identifier"), PostCssSyntaxHighlighter.IDENTIFIER),
     new AttributesDescriptor(CssBundle.message("css.id.selector"), PostCssSyntaxHighlighter.ID_SELECTOR),
+    new AttributesDescriptor(CssBundle.message("css.class.name"), PostCssSyntaxHighlighter.CLASS_NAME),
+    new AttributesDescriptor(CssBundle.message("css.attribute.name"), PostCssSyntaxHighlighter.ATTRIBUTE_NAME),
     new AttributesDescriptor(CssBundle.message("css.important"), PostCssSyntaxHighlighter.IMPORTANT),
     new AttributesDescriptor(CssBundle.message("css.keyword"), PostCssSyntaxHighlighter.KEYWORD),
     new AttributesDescriptor(CssBundle.message("css.number"), PostCssSyntaxHighlighter.NUMBER),
