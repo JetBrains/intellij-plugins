@@ -74,6 +74,11 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON",
                           JSBundle.message("space.after.type.colon"),
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
+      
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class,
+                                "SPACES_WITHIN_OBJECT_LITERAL_BRACES",
+                                JSBundle.message("spaces.within.object.literal.braces"),
+                                CodeStyleSettingsCustomizable.SPACES_WITHIN);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
       List<String> blankLinesOptions = new ArrayList<>();
