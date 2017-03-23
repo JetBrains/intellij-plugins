@@ -44,7 +44,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
     if (!(element instanceof XmlAttribute) || !JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
       return;
     }
-    if (LineMarkerSettings.getSettings().isEnabled(new ColorLineMarkerProvider())) {
+    if (!LineMarkerSettings.getSettings().isEnabled(new ColorLineMarkerProvider())) {
       return;
     }
     XmlAttribute attribute = (XmlAttribute)element;
