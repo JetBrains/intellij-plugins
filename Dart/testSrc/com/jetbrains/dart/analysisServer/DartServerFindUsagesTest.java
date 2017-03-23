@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();

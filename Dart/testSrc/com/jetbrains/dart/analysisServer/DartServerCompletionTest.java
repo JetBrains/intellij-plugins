@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -26,6 +25,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
+  @Override
   protected String getBasePath() {
     return "/analysisServer/completion";
   }
