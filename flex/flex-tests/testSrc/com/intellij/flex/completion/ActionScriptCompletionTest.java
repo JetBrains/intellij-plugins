@@ -5,7 +5,7 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javaee.ExternalResourceManagerExImpl;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;

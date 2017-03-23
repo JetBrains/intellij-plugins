@@ -1,6 +1,6 @@
 package com.intellij.flex.resolver;
 
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSResolveTestCase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;

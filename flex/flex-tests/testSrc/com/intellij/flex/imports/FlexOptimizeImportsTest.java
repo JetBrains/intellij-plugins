@@ -1,9 +1,9 @@
 package com.intellij.flex.imports;
 
 import com.intellij.codeInsight.actions.OptimizeImportsAction;
-import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.util.FlexModuleFixtureBuilder;
 import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;

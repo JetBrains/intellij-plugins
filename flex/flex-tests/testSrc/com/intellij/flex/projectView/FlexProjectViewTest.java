@@ -1,6 +1,6 @@
 package com.intellij.flex.projectView;
 
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane;
 import com.intellij.ide.projectView.impl.ProjectViewImpl;

@@ -1,9 +1,9 @@
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.GutterMark;
-import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.util.FlexModuleFixtureBuilder;
 import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;

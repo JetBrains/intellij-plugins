@@ -1,6 +1,6 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.refactoring.introduceVariable.JSInplaceIntroduceVariableTestCase;

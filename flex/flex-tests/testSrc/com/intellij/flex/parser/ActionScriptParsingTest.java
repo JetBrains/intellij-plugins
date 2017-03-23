@@ -1,6 +1,6 @@
 package com.intellij.flex.parser;
 
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.javascript.JavascriptASTFactory;
 import com.intellij.lang.javascript.JavascriptLanguage;

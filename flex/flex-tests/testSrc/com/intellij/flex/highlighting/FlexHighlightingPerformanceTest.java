@@ -1,7 +1,7 @@
 package com.intellij.flex.highlighting;
 
-import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;

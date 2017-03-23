@@ -1,7 +1,7 @@
 package com.intellij.flex.maven;
 
-import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;

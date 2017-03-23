@@ -1,7 +1,7 @@
 package com.intellij.flex.refactoring;
 
 import com.intellij.codeInsight.EditorInfo;
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler;

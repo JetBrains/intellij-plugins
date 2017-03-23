@@ -1,12 +1,12 @@
 package com.intellij.flex.bc;
 
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
 import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;

@@ -1,6 +1,6 @@
 package com.intellij.flex.parser;
 
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.flex.importer.FlexImporter;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;

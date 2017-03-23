@@ -1,11 +1,11 @@
 package com.intellij.flex.highlighting;
 
-import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.codeInsight.FlexNavigationTest;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;

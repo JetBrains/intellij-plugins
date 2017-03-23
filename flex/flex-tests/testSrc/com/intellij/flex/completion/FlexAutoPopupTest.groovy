@@ -3,7 +3,7 @@ package com.intellij.flex.completion
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.completion.CompletionAutoPopupTestCase
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
-import com.intellij.flex.FlexTestUtils
+import com.intellij.flex.util.FlexTestUtils
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler
 import com.intellij.lang.javascript.JSTestOption

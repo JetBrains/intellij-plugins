@@ -4,7 +4,7 @@ import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;

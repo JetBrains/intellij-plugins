@@ -1,7 +1,7 @@
 package com.intellij.flex.editor;
 
 
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.JSBaseEditorTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;

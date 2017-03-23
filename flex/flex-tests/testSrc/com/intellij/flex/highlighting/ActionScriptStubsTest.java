@@ -2,8 +2,8 @@ package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;

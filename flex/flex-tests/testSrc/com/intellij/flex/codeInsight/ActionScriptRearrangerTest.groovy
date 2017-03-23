@@ -1,6 +1,6 @@
 package com.intellij.flex.codeInsight
 
-import com.intellij.flex.FlexTestUtils
+import com.intellij.flex.util.FlexTestUtils
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor
 import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.arrangement.ActionScriptRearranger

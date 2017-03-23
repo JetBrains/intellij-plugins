@@ -9,11 +9,11 @@ import com.intellij.codeInsight.daemon.impl.analysis.XmlUnusedNamespaceInspectio
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;

@@ -9,7 +9,7 @@ import com.intellij.diagram.DiagramProvider;
 import com.intellij.diagram.settings.DiagramConfiguration;
 import com.intellij.diagram.util.DiagramUtils;
 import com.intellij.diagram.util.UmlDataModelDumper;
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
