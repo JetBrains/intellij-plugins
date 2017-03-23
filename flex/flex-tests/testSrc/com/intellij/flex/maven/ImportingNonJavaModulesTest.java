@@ -1,11 +1,10 @@
-package com.intellij.lang.javascript.maven;
+package com.intellij.flex.maven;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.vfs.VirtualFile;
-import junit.framework.Assert;
 import org.jetbrains.idea.maven.MavenImportingTestCase;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,13 +21,13 @@ public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
     AtomicInteger counter = configConfirmationForYesAnswer();
     importProject(file);
 
-    Assert.assertEquals(1, counter.get());
-    Assert.assertTrue(m.isDisposed());
+    assertEquals(1, counter.get());
+    assertTrue(m.isDisposed());
 
     assertModules("flex-project");
-    Assert.assertEquals(StdModuleTypes.JAVA, ModuleType.get(getModule("flex-project")));
+    assertEquals(StdModuleTypes.JAVA, ModuleType.get(getModule("flex-project")));
   }
-  
+
   public void testChangeJavaModuleToFlexModule() throws Exception {
     Module m = createModule("flex-module", StdModuleTypes.JAVA);
 
@@ -52,11 +51,11 @@ public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
     AtomicInteger counter = configConfirmationForYesAnswer();
     importProject(file);
 
-    Assert.assertEquals(1, counter.get());
-    Assert.assertTrue(m.isDisposed());
+    assertEquals(1, counter.get());
+    assertTrue(m.isDisposed());
 
     assertModules("flex-project");
-    Assert.assertEquals(FlexModuleType.getInstance(), ModuleType.get(getModule("flex-project")));
+    assertEquals(FlexModuleType.getInstance(), ModuleType.get(getModule("flex-project")));
   }
 
   public void testDoNotRecreateNonJavaModulesIfUserDoNotWantTo() throws Exception {
@@ -70,11 +69,11 @@ public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
     configConfirmationForNoAnswer();
     importProject(file);
 
-    Assert.assertFalse(m.isDisposed());
+    assertFalse(m.isDisposed());
     assertModules("flex-module");
-    Assert.assertSame(m, getModule("flex-module"));
+    assertSame(m, getModule("flex-module"));
 
-    Assert.assertTrue(myProjectsManager.isIgnored(myProjectsManager.findProject(m)));
+    assertTrue(myProjectsManager.isIgnored(myProjectsManager.findProject(m)));
   }
 
   public void testDoNotAskToRecreateNonJavaModulesTwice() throws Exception {
@@ -89,6 +88,6 @@ public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
     importProject(file);
     importProject(file);
 
-    Assert.assertEquals(1, counter.get());
+    assertEquals(1, counter.get());
   }
 }

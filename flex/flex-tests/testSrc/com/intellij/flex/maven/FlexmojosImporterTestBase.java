@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.maven;
+package com.intellij.flex.maven;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -42,14 +42,14 @@ public abstract class FlexmojosImporterTestBase extends MavenImportingTestCase {
   }
 
   protected FlexBuildConfiguration checkBC(final String moduleName,
-                                              final String bcName,
-                                              final BuildConfigurationNature nature,
-                                              final String mainClass,
-                                              final String outputFileName,
-                                              final String outputFolderRelPath,
-                                              final String sdkVersion,
-                                              final String locales,
-                                              final String configFileRelPath) {
+                                           final String bcName,
+                                           final BuildConfigurationNature nature,
+                                           final String mainClass,
+                                           final String outputFileName,
+                                           final String outputFolderRelPath,
+                                           final String sdkVersion,
+                                           final String locales,
+                                           final String configFileRelPath) {
     final Module module = ModuleManager.getInstance(myProject).findModuleByName(moduleName);
     assertNotNull("Module '" + moduleName + "' not found", module);
     final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(bcName);
@@ -77,9 +77,9 @@ public abstract class FlexmojosImporterTestBase extends MavenImportingTestCase {
 
   private static void checkLibrariesOfFlexType(final Module module, final FlexBuildConfiguration bc) {
     final List<LibraryOrderEntry> moduleLibEntries = ContainerUtil.filter(ModuleRootManager.getInstance(module).getOrderEntries(),
-                                                                       new FilteringIterator.InstanceOf(LibraryOrderEntry.class));
+                                                                          new FilteringIterator.InstanceOf(LibraryOrderEntry.class));
     final List<SharedLibraryEntry> bcLibEntries = ContainerUtil.filter(bc.getDependencies().getEntries(),
-                                                                    new FilteringIterator.InstanceOf(SharedLibraryEntry.class));
+                                                                       new FilteringIterator.InstanceOf(SharedLibraryEntry.class));
     assertTrue(bcLibEntries.size() > 0);
     assertEquals(moduleLibEntries.size(), bcLibEntries.size());
     for (SharedLibraryEntry entry : bcLibEntries) {

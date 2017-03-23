@@ -1,10 +1,9 @@
-package com.intellij.lang.javascript.maven;
+package com.intellij.flex.maven;
 
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.Result;
@@ -19,7 +18,6 @@ import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.*;
@@ -771,7 +769,8 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
         }
 
         embedder.customizeForStrictResolve(workspaceMap, NULL_MAVEN_CONSOLE, EMPTY_MAVEN_PROCESS);
-        MavenServerExecutionResult result = embedder.execute(app, Collections.<String>emptyList(), Collections.<String>emptyList(), Collections.singletonList("compile"));
+        MavenServerExecutionResult result =
+          embedder.execute(app, Collections.emptyList(), Collections.emptyList(), Collections.singletonList("compile"));
         assertEmpty(result.problems);
         assertNotNull(result);
         // test find all transitive deps (MavenWorkspaceMap filler is responsible for)

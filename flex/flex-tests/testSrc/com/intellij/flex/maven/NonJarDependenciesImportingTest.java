@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.maven;
+package com.intellij.flex.maven;
 
 import org.jetbrains.idea.maven.MavenImportingTestCase;
 
@@ -89,7 +89,7 @@ public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
 
     setRepositoryPath(new File(myDir, "__repo").getPath());
     myProjectsManager.getEmbeddersManager().reset();
-    
+
     scheduleResolveAll();
     resolveDependenciesAndImport();
 

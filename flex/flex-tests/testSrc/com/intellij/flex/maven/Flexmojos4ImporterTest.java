@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.maven;
+package com.intellij.flex.maven;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.javascript.flex.maven.Flexmojos4Configurator;
@@ -141,14 +141,14 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
                                                    "  <packaging>swf</packaging>\n" +
                                                    "\n" + dependencies("libA"));
     createProjectSubFile("app/src/Main.as", "package {\n" +
-                                        "import flash.display.Sprite;\n" +
-                                        "\n" +
-                                        "public class Main extends Sprite {\n" +
-                                        "  public function Main() {\n" +
-                                        "    new B();\n" +
-                                        "  }\n" +
-                                        "}\n" +
-                                        "}");
+                                            "import flash.display.Sprite;\n" +
+                                            "\n" +
+                                            "public class Main extends Sprite {\n" +
+                                            "  public function Main() {\n" +
+                                            "    new B();\n" +
+                                            "  }\n" +
+                                            "}\n" +
+                                            "}");
 
     createModulePom("libA", parent() +
                             "  <artifactId>libA</artifactId>\n" +
@@ -174,8 +174,12 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
     assertNotNull(p);
     String s = loadContent(p, "app-com.intellij.flex.maven.test.xml");
     int index = assertContains(s, "\t\t<library-path>\n" +
-                                  "\t\t\t<path-element>" + FileUtil.toSystemDependentName(rootDir + "/libA/target/libA-1.0.swc") + "</path-element>\n" +
-                                  "\t\t\t<path-element>" + FileUtil.toSystemDependentName(rootDir + "/libB/target/libB-1.0.swc") + "</path-element>\n" +
+                                  "\t\t\t<path-element>" +
+                                  FileUtil.toSystemDependentName(rootDir + "/libA/target/libA-1.0.swc") +
+                                  "</path-element>\n" +
+                                  "\t\t\t<path-element>" +
+                                  FileUtil.toSystemDependentName(rootDir + "/libB/target/libB-1.0.swc") +
+                                  "</path-element>\n" +
                                   "\t\t</library-path>", 0);
     assertContains(s, "\t<file-specs>\n" +
                       "\t\t<path-element>" + FileUtil.toSystemDependentName(rootDir + "/app/src/Main.as") + "</path-element>\n" +
@@ -183,7 +187,9 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
 
     s = loadContent(p, "libA-com.intellij.flex.maven.test.xml");
     final String playerGlobalPathElement =
-      "\t\t\t<path-element>" + FileUtil.toSystemDependentName(localRepoDir + "/com/adobe/flex/framework/playerglobal/4.5.1.21328/10.2/playerglobal.swc") + "</path-element>\n";
+      "\t\t\t<path-element>" +
+      FileUtil.toSystemDependentName(localRepoDir + "/com/adobe/flex/framework/playerglobal/4.5.1.21328/10.2/playerglobal.swc") +
+      "</path-element>\n";
     assertContains(s, "\t\t<external-library-path>\n" +
                       "\t\t\t<path-element>" + FileUtil.toSystemDependentName(rootDir + "/libB/target/libB-1.0.swc") + "</path-element>\n" +
                       playerGlobalPathElement +
