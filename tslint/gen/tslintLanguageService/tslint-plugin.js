@@ -29,6 +29,8 @@ var TSLintPlugin = (function () {
     };
     TSLintPlugin.prototype.onMessage = function (p, writer) {
         var request = JSON.parse(p);
+        // here we use object -> JSON.stringify, because we need to escape possible error's text symbols
+        // and we do not want to duplicate this code
         var response = new Response();
         response.version = this.linterOptions.version;
         response.command = request.command;
@@ -43,7 +45,7 @@ var TSLintPlugin = (function () {
             return;
         }
         if (result) {
-            response.body = JSON.parse(result.output);
+            response.body = result.output;
         }
         writer.write(JSON.stringify(response));
     };

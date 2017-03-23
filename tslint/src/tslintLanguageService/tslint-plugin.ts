@@ -48,6 +48,8 @@ export class TSLintPlugin implements LanguagePlugin {
 
     onMessage(p: string, writer: MessageWriter): void {
         const request: TsLintRequest = JSON.parse(p);
+        // here we use object -> JSON.stringify, because we need to escape possible error's text symbols
+        // and we do not want to duplicate this code
         let response: Response = new Response();
         response.version = this.linterOptions.version;
         response.command = request.command;
@@ -62,7 +64,7 @@ export class TSLintPlugin implements LanguagePlugin {
             return;
         }
         if (result) {
-            response.body = JSON.parse((<any>result).output);
+            response.body = (<any>result).output;
         }
         writer.write(JSON.stringify(response));
     }
