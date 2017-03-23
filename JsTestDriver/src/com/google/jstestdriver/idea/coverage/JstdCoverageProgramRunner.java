@@ -12,7 +12,6 @@ import com.intellij.coverage.CoverageHelper;
 import com.intellij.coverage.CoverageRunnerData;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.RunProfileStarter;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
@@ -20,7 +19,7 @@ import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.runners.AsyncGenericProgramRunner;
+import com.intellij.execution.runners.AsyncProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
@@ -29,9 +28,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
 
-public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
-
+public class JstdCoverageProgramRunner extends AsyncProgramRunner {
   private static final String COVERAGE_RUNNER_ID = JstdCoverageProgramRunner.class.getSimpleName();
 
   @NotNull
@@ -52,56 +51,54 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected Promise<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
-    JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
-    if (jstdState.getRunSettings().isExternalServerType()) {
-      return Promise.resolve(new MyStarter(null));
+  protected Promise<RunContentDescriptor> execute(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
+    if (JstdRunProfileState.cast(state).getRunSettings().isExternalServerType()) {
+      return Promise.resolve(null);
     }
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
-      return Promise.resolve(new MyStarter(server));
+      return Promise.resolve(start(server, environment));
     }
     return jstdToolWindowManager.restartServer()
-      .then(server1 -> server1 != null ? new MyStarter(server1) : null);
+      .thenAsync(it -> {
+        try {
+          return it == null ? null : Promises.resolvedPromise(start(it, environment));
+        }
+        catch (ExecutionException e) {
+          return Promises.rejectedPromise(e);
+        }
+      });
   }
 
-  public static class MyStarter extends RunProfileStarter {
-    private final JstdServer myServer;
 
-    public MyStarter(@Nullable JstdServer server) {
-      myServer = server;
-    }
+  @Nullable
+  private static RunContentDescriptor start(@Nullable JstdServer server, @NotNull ExecutionEnvironment environment) throws ExecutionException {
+    FileDocumentManager.getInstance().saveAllDocuments();
+    JstdRunConfiguration runConfiguration = (JstdRunConfiguration)environment.getRunProfile();
+    CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
+    String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
+    JstdRunProfileState jstdState = new JstdRunProfileState(environment, runConfiguration.getRunSettings(), coverageFilePath);
+    ExecutionResult executionResult = jstdState.executeWithServer(server);
 
-    @Nullable
-    @Override
-    public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
-      FileDocumentManager.getInstance().saveAllDocuments();
-      JstdRunConfiguration runConfiguration = (JstdRunConfiguration) environment.getRunProfile();
-      CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
-      String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
-      JstdRunProfileState jstdState = new JstdRunProfileState(environment, runConfiguration.getRunSettings(), coverageFilePath);
-      ExecutionResult executionResult = jstdState.executeWithServer(myServer);
-
-      RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
-      final RunContentDescriptor descriptor = contentBuilder.showRunContent(environment.getContentToReuse());
-      ProcessHandler processHandler = executionResult.getProcessHandler();
-      if (processHandler instanceof NopProcessHandler) {
-        if (myServer != null) {
-          myServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
-            @Override
-            public void onBrowserCaptured(@NotNull JstdBrowserInfo info) {
-              ExecutionUtil.restartIfActive(descriptor);
-              myServer.removeLifeCycleListener(this);
-            }
-          }, contentBuilder);
-        }
+    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
+    final RunContentDescriptor descriptor = contentBuilder.showRunContent(environment.getContentToReuse());
+    ProcessHandler processHandler = executionResult.getProcessHandler();
+    if (processHandler instanceof NopProcessHandler) {
+      if (server != null) {
+        server.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
+          @Override
+          public void onBrowserCaptured(@NotNull JstdBrowserInfo info) {
+            ExecutionUtil.restartIfActive(descriptor);
+            server.removeLifeCycleListener(this);
+          }
+        }, contentBuilder);
       }
-      else {
-        CoverageHelper.attachToProcess(runConfiguration, processHandler, environment.getRunnerSettings());
-      }
-      return descriptor;
     }
+    else {
+      CoverageHelper.attachToProcess(runConfiguration, processHandler, environment.getRunnerSettings());
+    }
+    return descriptor;
   }
 }
