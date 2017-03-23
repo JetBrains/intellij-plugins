@@ -225,7 +225,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         }
       });
 
-    debugSession.addSessionListener(new XDebugSessionAdapter() {
+    debugSession.addSessionListener(new XDebugSessionListener() {
       @Override
       public void sessionStopped() {
         iosStopForwardTcpPortIfNeeded(bc, params);
@@ -392,15 +392,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Nullable
   public static String getApplicationId(final String airDescriptorPath) {
-    final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
-      @Override
-      public VirtualFile compute() {
-        final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
-        if (file != null) {
-          file.refresh(false, false);
-        }
-        return file;
+    final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>)() -> {
+      final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
+      if (file != null) {
+        file.refresh(false, false);
       }
+      return file;
     });
 
     if (descriptorFile != null) {
@@ -414,15 +411,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Nullable
   public static String getApplicationName(final String airDescriptorPath) {
-    final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
-      @Override
-      public VirtualFile compute() {
-        final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
-        if (file != null) {
-          file.refresh(false, false);
-        }
-        return file;
+    final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>)() -> {
+      final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
+      if (file != null) {
+        file.refresh(false, false);
       }
+      return file;
     });
 
     if (descriptorFile != null) {
