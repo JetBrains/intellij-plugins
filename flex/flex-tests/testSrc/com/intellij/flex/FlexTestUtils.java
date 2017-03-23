@@ -258,22 +258,22 @@ public class FlexTestUtils {
   }
 
   public static FlexProjectConfigurationEditor createConfigEditor(final Module... modules) {
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    final Map<Module, ModifiableRootModel> models = new FactoryMap<Module, ModifiableRootModel>() {
-      @Override
-      protected ModifiableRootModel create(final Module module) {
-        final ModifiableRootModel result = ModuleRootManager.getInstance(module).getModifiableModel();
-        Disposer.register(module, new Disposable() {
-          @Override
-          public void dispose() {
-            if (!result.isDisposed()) {
-              result.dispose();
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, ModifiableRootModel> models =
+      new FactoryMap<Module, ModifiableRootModel>() {
+        @Override
+        protected ModifiableRootModel create(final Module module) {
+          final ModifiableRootModel result = ModuleRootManager.getInstance(module).getModifiableModel();
+          Disposer.register(module, new Disposable() {
+            @Override
+            public void dispose() {
+              if (!result.isDisposed()) {
+                result.dispose();
+              }
             }
-          }
-        });
-        return result;
-      }
-    };
+          });
+          return result;
+        }
+      };
 
     return new FlexProjectConfigurationEditor(modules[0].getProject(), new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
       @Override
@@ -401,7 +401,8 @@ public class FlexTestUtils {
         else {
           final OrderEntry
             entry = ContainerUtil.find(ModuleRootManager.getInstance(module).getOrderEntries(),
-                                       orderEntry -> orderEntry instanceof LibraryOrderEntry && ((LibraryOrderEntry)orderEntry).getLibraryName().equals(libraryName));
+                                       orderEntry -> orderEntry instanceof LibraryOrderEntry &&
+                                                     ((LibraryOrderEntry)orderEntry).getLibraryName().equals(libraryName));
           committedLibraryId = FlexProjectRootsUtil.getLibraryId(((LibraryOrderEntry)entry).getLibrary());
         }
 

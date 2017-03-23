@@ -22,7 +22,7 @@ import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceCon
 import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersDialog;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -48,7 +48,8 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
     JSFunction function = createFakeFunction();
     JSExpressionCodeFragment fragment =
-      JSChangeSignatureDialog.createReturnTypeCodeFragment(new JSMethodDescriptor(function, false).getReturnType(), function, JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+      JSChangeSignatureDialog.createReturnTypeCodeFragment(new JSMethodDescriptor(function, false).getReturnType(), function,
+                                                           JavaScriptSupportLoader.ECMA_SCRIPT_L4);
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
     checkTextFieldCompletion(fragment, included, excluded, "Z111", BASE_PATH + getTestName(false) + ".txt");
@@ -120,7 +121,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   public void testIntroduceConstantTargetClass() throws Exception {
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
     // scope calculated same way as in constructor of JSIntroduceConstantDialog
-    Module module = ModuleUtil.findModuleForPsiElement(myFile);
+    Module module = ModuleUtilCore.findModuleForPsiElement(myFile);
     GlobalSearchScope targetClassScope =
       module != null ? GlobalSearchScope.moduleWithDependenciesScope(module) : GlobalSearchScope.projectScope(myProject);
     PsiFile fragment =

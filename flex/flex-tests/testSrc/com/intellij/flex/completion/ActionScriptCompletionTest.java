@@ -748,7 +748,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public void testClassHierarchyMembersOrder2() throws Exception {
     final LookupElement[] lookupElements = doTest("");
-    assertStartsWith(lookupElements, "e", "param", "Extended", "a", "Base", "zbb", "zzz", "Object",  "zaa", "constructor");
+    assertStartsWith(lookupElements, "e", "param", "Extended", "a", "Base", "zbb", "zzz", "Object", "zaa", "constructor");
   }
 
   public void testUseKeyword() throws Exception {
@@ -1123,19 +1123,19 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testNoJs() throws Exception {
     String testName = getTestName(false);
-    final VirtualFile[] vFiles= new VirtualFile[]{
+    final VirtualFile[] vFiles = new VirtualFile[]{
       getVirtualFile(getBasePath() + testName + ".js2"), getVirtualFile(getBasePath() + testName + ".js")
     };
-    doTestForFiles(vFiles, "","js2");
+    doTestForFiles(vFiles, "", "js2");
   }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testCompleteInRHSOfAsBinOp() throws Exception {
     String testName = getTestName(false);
-    final VirtualFile[] vFiles= new VirtualFile[]{
+    final VirtualFile[] vFiles = new VirtualFile[]{
       getVirtualFile(getBasePath() + testName + ".js2"), getVirtualFile(getBasePath() + testName + "_2.js2")
     };
-    doTestForFiles(vFiles, "","js2");
+    doTestForFiles(vFiles, "", "js2");
   }
 
   public final void testCompleteStaticConst() throws Exception {
@@ -1154,10 +1154,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testNoInaccessibleCompletion() throws Exception {
     String testName = getTestName(false);
-    final VirtualFile[] vFiles= new VirtualFile[]{
+    final VirtualFile[] vFiles = new VirtualFile[]{
       getVirtualFile(getBasePath() + testName + ".js2"), getVirtualFile(getBasePath() + testName + "_2.js2")
     };
-    doTestForFiles(vFiles, "","js2");
+    doTestForFiles(vFiles, "", "js2");
   }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
@@ -1166,7 +1166,9 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testNoKeywordsInLiteral() throws Exception { defaultTest(); }
+
   public final void testNoKeywordsInLiteral_2() throws Exception { defaultTest(); }
+
   public final void testNoKeywordsInComments() throws Exception { defaultTest(); }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
@@ -1267,7 +1269,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public void testSameParameterName2() throws Exception {
     String testName = getTestName(false);
-    final VirtualFile[] vFiles= new VirtualFile[]{
+    final VirtualFile[] vFiles = new VirtualFile[]{
       getVirtualFile(getBasePath() + testName + ".js2"), getVirtualFile(getBasePath() + testName + "_2.js2")
     };
     final LookupElement[] lookupElements = doTestForFiles(vFiles, "", "js2");

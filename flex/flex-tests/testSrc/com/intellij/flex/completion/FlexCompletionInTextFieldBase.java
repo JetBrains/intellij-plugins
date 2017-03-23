@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.ArrayUtil;
@@ -115,7 +115,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionTest
       Document document = PsiDocumentManager.getInstance(myProject).getDocument(fragment);
       editorTextField = new JSEditorTextField(myProject, document);
 
-      final String text = StringUtil.convertLineSeparators(VfsUtil.loadText(getVirtualFile(file)));
+      final String text = StringUtil.convertLineSeparators(VfsUtilCore.loadText(getVirtualFile(file)));
       EditorInfo editorInfo = new EditorInfo(text);
       editorTextField.addNotify(); // initialize editor
       myEditor = editorTextField.getEditor();
@@ -149,6 +149,4 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionTest
       .createJSTreeFromText(myProject, "package {class Foo { function a() {}} }", JavaScriptSupportLoader.ECMA_SCRIPT_L4)
       .getPsi().getContainingFile());
   }
-
-
 }

@@ -20,8 +20,8 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.FlexTestUtils;
-import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -426,7 +426,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
     final StringBuilder stdout = new StringBuilder();
     final StringBuilder stderr = new StringBuilder();
     final StringBuilder system = new StringBuilder();
-    ((Printable)testProxy).printOn(new Printer() {
+    testProxy.printOn(new Printer() {
       @Override
       public void print(String text, ConsoleViewContentType contentType) {
         if (contentType == ConsoleViewContentType.NORMAL_OUTPUT) {

@@ -35,5 +35,4 @@ public class FlexCompletionInUmlTextFieldsTest extends FlexCompletionInTextField
     String[] excluded = new String[]{"public", "function", "while"};
     checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", BASE_PATH + getTestName(false) + ".txt");
   }
-
 }

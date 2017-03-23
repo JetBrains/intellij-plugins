@@ -96,5 +96,4 @@ public class ActionScriptGenerateTest extends JSDaemonAnalyzerTestCase {
   private void doGenerateTest(@NonNls final String actionId) throws Exception {
     doGenerateTest(actionId, "js2");
   }
-
 }
