@@ -17,7 +17,7 @@ package jetbrains.communicator.idea.monitor;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponentAdapter;
+import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerAdapter;
@@ -39,7 +39,7 @@ import java.awt.event.AWTEventListener;
  *
  * @see Transport#setOwnPresence(UserPresence)
  */
-public class UserActivityMonitor implements ApplicationComponentAdapter, Disposable, Runnable {
+public class UserActivityMonitor implements Disposable, Runnable, ApplicationComponent {
   private static final Logger LOG = Logger.getLogger(UserActivityMonitor.class);
 
   private static final int REFRESH_INTERVAL = 60 * 1000;
