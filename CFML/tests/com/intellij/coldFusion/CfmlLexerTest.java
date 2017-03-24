@@ -89,6 +89,17 @@ public class CfmlLexerTest extends UsefulTestCase {
     doTest();
   }
 
+  public void testLexerState() {
+    String charSequence = "component name=\"Foo\" {}";
+    CfmlLexer lexer = new CfmlLexer(true, null);
+    lexer.start(charSequence);
+
+    IElementType tokenType = lexer.getTokenType();
+    lexer.advance();
+    lexer.start(charSequence);
+    assertEquals(tokenType, lexer.getTokenType());
+  }
+
   private static void doFileLexerTest(Lexer lexer, String testText, String expectedFilePath) {
     lexer.start(testText);
     String result = "";
