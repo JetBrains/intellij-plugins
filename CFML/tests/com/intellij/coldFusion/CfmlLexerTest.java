@@ -17,6 +17,7 @@ package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.model.lexer.CfmlLexer;
 import com.intellij.lexer.Lexer;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.LexerTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,6 +85,17 @@ public class CfmlLexerTest extends LexerTestCase {
 
   public void testSqlWithInclude() throws Throwable {
     doTest();
+  }
+
+  public void testLexerState() {
+    String charSequence = "component name=\"Foo\" {}";
+    CfmlLexer lexer = new CfmlLexer(true, null);
+    lexer.start(charSequence);
+    
+    IElementType tokenType = lexer.getTokenType();
+    lexer.advance();
+    lexer.start(charSequence);
+    assertEquals(tokenType, lexer.getTokenType());
   }
 
   @Override

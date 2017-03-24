@@ -22,6 +22,7 @@ import com.intellij.lexer.MergingLexerAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
@@ -43,6 +44,12 @@ public class CfmlLexer extends MergingLexerAdapter {
     super(new FlexAdapter(new _CfmlLexer(project)), TOKENS_TO_MERGE);
     myProject = project;
     myConfiguration = ((_CfmlLexer)((FlexAdapter)getDelegate()).getFlex()).myCurrentConfiguration;
+  }
+
+  @Override
+  public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
+    myCfscriptLexer = null;
+    super.start(buffer, startOffset, endOffset, initialState);
   }
 
   @Override
