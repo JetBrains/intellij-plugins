@@ -31,7 +31,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.*;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
@@ -65,7 +65,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsmorcProjectComponent implements ProjectComponent {
+public class OsmorcProjectComponent implements BaseComponent {
   public static final NotificationGroup IMPORTANT_NOTIFICATIONS =
     new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
 
@@ -88,12 +88,6 @@ public class OsmorcProjectComponent implements ProjectComponent {
     myQueue = new MergingUpdateQueue(getComponentName(), 500, true, MergingUpdateQueue.ANY_COMPONENT, myProject);
   }
 
-  @NotNull
-  @Override
-  public String getComponentName() {
-    return "OsmorcProjectComponent";
-  }
-
   @Override
   public void initComponent() {
     MessageBusConnection appBus = myApplication.getMessageBus().connect(myProject);
@@ -107,16 +101,7 @@ public class OsmorcProjectComponent implements ProjectComponent {
       appBus.subscribe(VirtualFileManager.VFS_CHANGES, new MyVfsListener());
     }
   }
-
-  @Override
-  public void disposeComponent() { }
-
-  @Override
-  public void projectOpened() { }
-
-  @Override
-  public void projectClosed() { }
-
+  
   private void scheduleImportNotification() {
     myQueue.queue(new Update("reimport") {
       @Override

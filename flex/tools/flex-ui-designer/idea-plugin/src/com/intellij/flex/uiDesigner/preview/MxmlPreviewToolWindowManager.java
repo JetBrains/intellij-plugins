@@ -120,14 +120,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     return "MxmlPreviewToolWindowManager";
   }
 
-  @Override
-  public void initComponent() {
-  }
-
-  @Override
-  public void disposeComponent() {
-  }
-
   private void initToolWindow() {
     toolWindowForm = new MxmlPreviewToolWindowForm();
     String toolWindowId = FlashUIDesignerBundle.message("mxml.preview.tool.window.title");
