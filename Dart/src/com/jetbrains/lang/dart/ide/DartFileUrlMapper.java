@@ -41,7 +41,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
 
     if (BuiltInServerManagerImpl.isOnBuiltInWebServerByAuthority(currentAuthority)) {
       // for built-in server:
-      // package:PackageName/subdir/foo.dart -> http://localhost:63342/PackageName/MayBeModuleName/MayBeRelPathToDartProject/packages/PackageName/subdir/foo.dart
+      // package:PackageName/subdir/foo.dart -> http://localhost:63342/ProjectName/MayBeRelPathToDartProject/web/packages/PackageName/subdir/foo.dart
       final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, file);
       if (pubspec == null) return Collections.emptyList();
 
