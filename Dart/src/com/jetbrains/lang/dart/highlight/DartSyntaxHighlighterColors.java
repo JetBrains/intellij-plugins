@@ -91,9 +91,9 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey ERROR =
     createTextAttributesKey(DART_ERROR, CodeInsightColors.ERRORS_ATTRIBUTES);
   public static final TextAttributesKey WARNING =
-    createTextAttributesKey(DART_WARNING, CodeInsightColors.WEAK_WARNING_ATTRIBUTES);
+    createTextAttributesKey(DART_WARNING, CodeInsightColors.WARNINGS_ATTRIBUTES);
   public static final TextAttributesKey HINT =
-    createTextAttributesKey(DART_HINT, CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES);
+    createTextAttributesKey(DART_HINT, CodeInsightColors.WEAK_WARNING_ATTRIBUTES);
 
   public static final TextAttributesKey BLOCK_COMMENT =
     createTextAttributesKey(DART_BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCK_COMMENT);
