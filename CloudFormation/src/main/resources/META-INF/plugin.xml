@@ -76,7 +76,8 @@
 
     <internalFileTemplate name="AWS CloudFormation Template" />
 
-    <liveTemplateContext implementation="com.intellij.aws.cloudformation.CloudFormationCodeContextType"/>
+    <liveTemplateContext implementation="com.intellij.aws.cloudformation.JsonCloudFormationCodeContextType"/>
+    <liveTemplateContext implementation="com.intellij.aws.cloudformation.YamlCloudFormationCodeContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
 
     <errorHandler implementation="com.intellij.aws.cloudformation.CloudFormationReportSubmitter"/>

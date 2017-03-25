@@ -4,9 +4,9 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.json.liveTemplates.JsonContextType
 import com.intellij.psi.PsiFile
 
-class CloudFormationCodeContextType : TemplateContextType(
-    "AWS_CLOUD_FORMATION",
-    CloudFormationBundle.getString("aws.cloudformation.template.context.type"),
+class JsonCloudFormationCodeContextType : TemplateContextType(
+    "AWS_CLOUD_FORMATION_JSON",
+    CloudFormationBundle.getString("aws.cloudformation.template.context.type.json"),
     JsonContextType::class.java) {
 
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
