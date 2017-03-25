@@ -118,7 +118,8 @@ object ResourceTypesSaver {
 
     val doc = getDocumentFromUrl(docLocation)
 
-    val descriptionElement = doc.select(".section").first()
+    val descriptionElement = doc.select("div").filter { it.attr("id") == "main-col-body" }.single()
+    descriptionElement.getElementsByAttributeValueMatching("id", "language-filter").forEach { it.remove() }
     val description = cleanupHtml(descriptionElement.toString())
 
     val vlists = doc.select("div.variablelist")
