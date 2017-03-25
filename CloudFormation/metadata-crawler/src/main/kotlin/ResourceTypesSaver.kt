@@ -127,12 +127,18 @@ object ResourceTypesSaver {
 
     if (!vlists.isEmpty()) {
       for (vlist in vlists) {
-        val titleElements = vlist.parent().select("h2.title")
-        if (titleElements.isEmpty()) {
-          continue
+        var cur = vlist
+        while (cur != null) {
+          if (cur.tagName() == "h2") {
+            break
+          }
+          cur = cur.previousElementSibling()
         }
 
-        val sectionTitle = titleElements.first().text()
+        if (cur == null) continue
+        assert(cur.tagName() == "h2")
+
+        val sectionTitle = cur.text()
         if ("Properties" != sectionTitle && "Members" != sectionTitle) {
           continue
         }
