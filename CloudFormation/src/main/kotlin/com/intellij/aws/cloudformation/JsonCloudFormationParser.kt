@@ -230,13 +230,19 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun resourceDependsOn(property: JsonProperty): CfnResourceDependsOnNode {
+    val expectedMessage = "Expected a string or an array of strings"
+
     val value = property.value
     val valuesNodes = when(value) {
       null -> emptyList()
       is JsonArray -> value.valueList.mapNotNull { checkAndGetStringElement(it) }
       is JsonStringLiteral -> listOf(CfnScalarValueNode(value.value).registerNode(value))
+      is JsonReferenceExpression -> {
+        addProblemOnNameElement(property, expectedMessage)
+        listOf(CfnScalarValueNode(value.text).registerNode(value))
+      }
       else -> {
-        addProblemOnNameElement(property, "Expected a string or an array of strings")
+        addProblemOnNameElement(property, expectedMessage)
         emptyList()
       }
     }
@@ -279,7 +285,7 @@ class JsonCloudFormationParser private constructor () {
       }
       is JsonReferenceExpression -> {
         addProblem(value, "Expected an expression")
-        null
+        CfnScalarValueNode(value.identifier.text).registerNode(value)
       }
       is JsonObject -> {
         if (allowFunctions == AllowFunctions.True &&
@@ -352,29 +358,34 @@ class JsonCloudFormationParser private constructor () {
     }
   }
 
-  private fun checkAndGetScalarNode(expression: JsonValue?): JsonStringLiteral? {
-    if (expression == null) {
-      // Do not threat value absence as error
-      return null
-    }
-
-    val literal = expression as? JsonStringLiteral
-    if (literal == null) {
-      addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
-      return null
-    }
-
-    return literal
-  }
-
   private fun checkAndGetStringElement(expression: JsonValue?): CfnScalarValueNode? {
-    val scalar = checkAndGetScalarNode(expression) ?: return null
-    return CfnScalarValueNode(scalar.value).registerNode(scalar)
+    return when(expression) {
+      null -> null
+      is JsonStringLiteral -> CfnScalarValueNode(expression.value).registerNode(expression)
+      is JsonReferenceExpression -> {
+        addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
+        CfnScalarValueNode(expression.identifier.text).registerNode(expression)
+      }
+      else -> {
+        addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
+        null
+      }
+    }
   }
 
   private fun checkAndGetUnquotedStringText(expression: JsonValue?): String? {
-    val literal = checkAndGetScalarNode(expression)
-    return literal?.value
+    return when(expression) {
+      null -> null
+      is JsonStringLiteral -> expression.value
+      is JsonReferenceExpression -> {
+        addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
+        expression.identifier.text
+      }
+      else -> {
+        addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
+        null
+      }
+    }
   }
 
   fun file(psiFile: PsiFile): CfnRootNode {

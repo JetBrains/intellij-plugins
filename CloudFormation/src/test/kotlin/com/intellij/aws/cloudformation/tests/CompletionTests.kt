@@ -38,6 +38,10 @@ class CompletionTests : LightCodeInsightFixtureTestCase() {
     checkBasicCompletion("DependsOn1.template", "WebServerUser1")
   }
 
+  fun testDependsOn1Bare() {
+    checkBasicCompletion("DependsOn1_bare.template", "\"WebServerUser1\"")
+  }
+
   fun testDependsOn2() {
     checkBasicCompletion("DependsOn2.template", "WebServerUser1", "WebServerUser2")
   }

@@ -13,10 +13,12 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.json.JsonLanguage
+import com.intellij.json.psi.JsonReferenceExpression
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.util.ProcessingContext
 import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.psi.YAMLScalar
@@ -35,9 +37,9 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
             rs.stopHere()
 
             val parsed = CloudFormationParser.parse(position.containingFile)
-            val parent = if (position.parent is JsonStringLiteral || position.parent is YAMLScalar) position.parent else position
+            val parent = if (position.parent is JsonStringLiteral || position.parent is YAMLScalar || position.parent is JsonReferenceExpression) position.parent else position
 
-            val quoteResult = false // parent instanceof JSReferenceExpression;
+            val quoteResult = parent is JsonReferenceExpression
 
             val resourceTypeValuePositionMatch = ResourceTypeValueMatch.match(parent, parsed)
             if (resourceTypeValuePositionMatch != null) {
@@ -70,7 +72,7 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
             }
 
             @Suppress("LoopToCallChain")
-            for (reference in parent.references) {
+            for (reference in ReferenceProvidersRegistry.getReferencesFromProviders(parent)) {
               val cfnReference = reference as? CloudFormationReferenceBase
               if (cfnReference != null) {
                 for (v in cfnReference.getCompletionVariants()) {
