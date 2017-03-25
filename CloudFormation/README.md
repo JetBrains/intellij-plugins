@@ -14,7 +14,7 @@ https://plugins.jetbrains.com/plugin/7371
 Old Versions
 ------------
 
-"master" branch is compatible with IntelliJ-based IDEs 2016.1+
+"master" branch is compatible with IntelliJ-based IDEs 2017.1+
 Plugin sources for older IDE versions are in other branches.
 
 See versions history at https://plugins.jetbrains.com/plugin/7371
@@ -22,7 +22,9 @@ See versions history at https://plugins.jetbrains.com/plugin/7371
 Quick Start
 -----------
 
-* Open any *.template or *.json file with CloudFormation JSON inside
+Note: YAML support is in beta stage, not all features are supported
+
+* Open any *.template, *.json, *.yaml file with CloudFormation JSON/YAML inside
 * There should be number of features available:
   * Template validation
     * Overall file structure
