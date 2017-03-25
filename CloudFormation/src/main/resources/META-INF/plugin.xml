@@ -1,6 +1,6 @@
 <idea-plugin version="2" url="https://github.com/shalupov/idea-cloudformation">
   <id>AWSCloudFormation</id>
-  <name>AWS CloudFormation support</name>
+  <name>AWS CloudFormation</name>
   <version>SNAPSHOT</version>
 
   <vendor url="https://github.com/shalupov" email="leonid@shalupov.com">Leonid Shalupov</vendor>
