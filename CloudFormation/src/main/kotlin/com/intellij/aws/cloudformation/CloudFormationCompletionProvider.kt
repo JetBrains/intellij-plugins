@@ -4,7 +4,6 @@ import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
-import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
@@ -18,10 +17,10 @@ import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.util.ProcessingContext
 import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.psi.YAMLScalar
+import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
 
 class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters>() {
           public override fun addCompletions(parameters: CompletionParameters,
@@ -37,14 +36,23 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
             rs.stopHere()
 
             val parsed = CloudFormationParser.parse(position.containingFile)
-            val parent = if (position.parent is JsonStringLiteral || position.parent is YAMLScalar || position.parent is JsonReferenceExpression) position.parent else position
+            val inspected = CloudFormationInspections.inspectFile(parsed)
 
-            val quoteResult = parent is JsonReferenceExpression
+            val parentSub = if (position.parent is JsonStringLiteral || position.parent is YAMLScalar || position.parent is JsonReferenceExpression) position.parent else position
+            val parent = if (parentSub.parent != null && parentSub.parent.javaClass == YAMLCompoundValueImpl::class.java) {
+              parentSub.parent
+            } else parentSub
+
+            val prefixFirstChar = rs.prefixMatcher.prefix.firstOrNull()
+            val quote = when (parent) {
+              is JsonReferenceExpression -> "\""
+              else -> if (prefixFirstChar == '"' || prefixFirstChar == '\'') "$prefixFirstChar" else ""
+            }
 
             val resourceTypeValuePositionMatch = ResourceTypeValueMatch.match(parent, parsed)
             if (resourceTypeValuePositionMatch != null) {
               CloudFormationMetadataProvider.METADATA.resourceTypes.values.forEach { resourceType ->
-                rs.addElement(createLookupElement(resourceType.name, quoteResult))
+                rs.addElement(createLookupElement(resourceType.name, quote))
               }
 
               return
@@ -60,29 +68,27 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
                   continue
                 }
 
-                rs.addElement(createLookupElement(propertyName, quoteResult))
+                rs.addElement(createLookupElement(propertyName, quote))
               }
             }
 
-            completeResourceTopLevelProperty(rs, parent, quoteResult, parsed)
+            completeResourceTopLevelProperty(rs, parent, quote, parsed)
 
             val attResourceName = getResourceNameFromGetAttAttributePosition(parent, parsed)
             if (attResourceName != null) {
-              completeAttribute(parent.containingFile, rs, quoteResult, attResourceName)
+              completeAttribute(parent.containingFile, rs, quote, attResourceName)
             }
 
+            val references = inspected.references[parent]
             @Suppress("LoopToCallChain")
-            for (reference in ReferenceProvidersRegistry.getReferencesFromProviders(parent)) {
-              val cfnReference = reference as? CloudFormationReferenceBase
-              if (cfnReference != null) {
-                for (v in cfnReference.getCompletionVariants()) {
-                  rs.addElement(createLookupElement(v, quoteResult))
-                }
+            for (reference in references) {
+              for (v in reference.getCompletionVariants()) {
+                rs.addElement(createLookupElement(v, quote))
               }
             }
           }
 
-  private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quoteResult: Boolean, parsed: CloudFormationParsedFile) {
+  private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quote: String, parsed: CloudFormationParsedFile) {
     val nodes = parsed.getCfnNodes(element)
     val nameNode = nodes.ofType<CfnScalarValueNode>().singleOrNull() ?: return
     val namedNode = nameNode.parent(parsed) as? CfnNamedNode ?: return
@@ -92,7 +98,7 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
 
     CloudFormationConstants.AllTopLevelResourceProperties
         .filter { !resourceNode.allTopLevelProperties.containsKey(it) }
-        .forEach { rs.addElement(createLookupElement(it, quoteResult)) }
+        .forEach { rs.addElement(createLookupElement(it, quote)) }
   }
 
   private fun getResourceNameFromGetAttAttributePosition(element: PsiElement, parsed: CloudFormationParsedFile): String? {
@@ -108,7 +114,7 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
     return (functionNode.args[0] as? CfnScalarValueNode)?.value
   }
 
-  private fun completeAttribute(file: PsiFile, rs: CompletionResultSet, quoteResult: Boolean, resourceName: String) {
+  private fun completeAttribute(file: PsiFile, rs: CompletionResultSet, quote: String, resourceName: String) {
     val parsed = CloudFormationParser.parse(file)
     val resource = CloudFormationResolve.resolveResource(parsed, resourceName) ?: return
 
@@ -116,12 +122,12 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
     val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName) ?: return
 
     resourceType.attributes.values.forEach {
-      rs.addElement(createLookupElement(it.name, quoteResult))
+      rs.addElement(createLookupElement(it.name, quote))
     }
   }
 
-  private fun createLookupElement(value: String, quote: Boolean): LookupElement {
-    val id = if (quote) "\"$value\"" else value
+  private fun createLookupElement(value: String, quote: String): LookupElement {
+    val id = "$quote$value$quote"
     return LookupElementBuilder.create(id)
   }
 }

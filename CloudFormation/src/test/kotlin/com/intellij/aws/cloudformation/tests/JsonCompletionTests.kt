@@ -7,7 +7,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import java.util.Arrays
 
-class CompletionTests : LightCodeInsightFixtureTestCase() {
+class JsonCompletionTests : LightCodeInsightFixtureTestCase() {
   fun testResourceType1() {
     myFixture.configureByFiles("ResourceType1.template")
     myFixture.complete(CompletionType.BASIC, 1)

@@ -76,7 +76,16 @@ to a line feed, or 	 	non-content
         value=CfnObjectValueNode{
           properties=[
             CfnNameValueNode{
-              value=<null>
+              value=CfnFunctionNode{
+                name=CfnScalarValueNode{
+                  value=Sub
+                }
+                args=[
+                  CfnScalarValueNode{
+                    value=aaa
+                  }
+                ]
+              }
               name=CfnScalarValueNode{
                 value=Value
               }

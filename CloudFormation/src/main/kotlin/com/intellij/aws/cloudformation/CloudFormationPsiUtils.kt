@@ -9,6 +9,9 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
+import org.jetbrains.yaml.psi.YAMLPsiElement
+import org.jetbrains.yaml.psi.YAMLValue
+import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
 
 fun CfnNode.parent(parser: CloudFormationParsedFile): CfnNode? {
   val baseElement = parser.getPsiElement(this)
@@ -35,6 +38,25 @@ fun CfnNode.parent(parser: CloudFormationParsedFile): CfnNode? {
   }
 
   return null
+}
+
+inline fun <reified T> CfnNode.parentOfType(parser: CloudFormationParsedFile): T? {
+  var current: CfnNode? = this
+  while (current != null) {
+    if (current is T) {
+      return current
+    }
+
+    current = current.parent(parser)
+  }
+
+  return null
+}
+
+fun YAMLPsiElement.isYAMLCompoundValueImpl(): Boolean = this.javaClass == YAMLCompoundValueImpl::class.java
+fun YAMLValue.getFirstTag() = when {
+  this.isYAMLCompoundValueImpl() -> this.children.map { it as? YAMLValue }.firstOrNull()?.tag
+  else -> this.tag
 }
 
 object CloudFormationPsiUtils {

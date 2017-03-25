@@ -288,7 +288,7 @@ class YamlCloudFormationParser private constructor () {
   }
 
   private fun expression(value: YAMLValue, allowFunctions: AllowFunctions): CfnExpressionNode? {
-    val tag = value.tag
+    val tag = value.getFirstTag()
 
     if (tag != null && allowFunctions == AllowFunctions.True) {
       val functionName = tag.text.trimStart('!')
@@ -309,7 +309,9 @@ class YamlCloudFormationParser private constructor () {
 
         value.javaClass == YAMLCompoundValueImpl::class.java -> {
           addProblem(value, "Too many values")
-          null
+
+          val parameterNode = CfnScalarValueNode((value as YAMLCompoundValueImpl).textValue).registerNode(value)
+          CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value)
         }
 
         value is YAMLSequence -> {
@@ -336,7 +338,7 @@ class YamlCloudFormationParser private constructor () {
       value is YAMLScalar -> CfnScalarValueNode(value.textValue).registerNode(value)
       value.javaClass == YAMLCompoundValueImpl::class.java -> {
         addProblem(value, "Too many values")
-        null
+        CfnScalarValueNode((value as YAMLCompoundValueImpl).textValue).registerNode(value)
       }
       value is YAMLSequence -> {
         val items = value.items.mapNotNull {

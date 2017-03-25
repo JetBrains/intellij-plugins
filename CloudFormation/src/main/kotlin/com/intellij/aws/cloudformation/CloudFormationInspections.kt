@@ -28,7 +28,6 @@ import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.yaml.psi.impl.YAMLQuotedTextImpl
 import org.jetbrains.yaml.psi.impl.YAMLScalarImpl
 
 class CloudFormationInspections private constructor(val parsed: CloudFormationParsedFile): CfnVisitor() {
@@ -91,7 +90,9 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           addProblem(function, "Reference expects one string argument")
         } else {
           if (!CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(arg0.value)) {
-            addEntityReference(arg0, CloudFormationSection.ParametersAndResources)
+            val resourceNodeParent = function.parentOfType<CfnResourceNode>(parsed)
+            val excluded = resourceNodeParent?.let { it.name?.value }?.let { listOf(it) } ?: emptyList()
+            addEntityReference(arg0, CloudFormationSection.ParametersAndResources, excludeFromCompletion = excluded)
           }
         }
 
@@ -159,7 +160,9 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
         if (resourceName != null) {
           // TODO calculate exact text range and add it to ReferencesTest
-          addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList, referenceValue = resourceName)
+          val resourceNodeParent = function.parentOfType<CfnResourceNode>(parsed)
+          val excluded = resourceNodeParent?.let { it.name?.value }?.let { listOf(it) } ?: emptyList()
+          addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion = excluded, referenceValue = resourceName)
 
           if (attributeName != null) {
             val resource = CloudFormationResolve.resolveResource(parsed, resourceName)

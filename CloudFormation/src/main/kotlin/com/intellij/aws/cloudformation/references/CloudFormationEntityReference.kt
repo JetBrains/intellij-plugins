@@ -16,8 +16,14 @@ class CloudFormationEntityReference(element: PsiElement,
   }
 
   override fun resolve(): PsiElement? {
+    val value = referenceValue ?: scalarNode.value
+
+    if (myExcludeFromVariants != null && myExcludeFromVariants.contains(value)) {
+      return null
+    }
+
     val parsed = CloudFormationParser.parse(element.containingFile)
-    val node = CloudFormationResolve.resolveEntity(parsed, referenceValue ?: scalarNode.value, myPossibleSections) ?: return null
+    val node = CloudFormationResolve.resolveEntity(parsed, value, myPossibleSections) ?: return null
     return parsed.getPsiElement(node)
   }
 
