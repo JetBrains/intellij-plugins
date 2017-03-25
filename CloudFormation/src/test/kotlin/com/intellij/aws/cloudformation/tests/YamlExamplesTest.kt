@@ -2,6 +2,7 @@ package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationInspections
 import com.intellij.aws.cloudformation.CloudFormationParser
+import com.intellij.aws.cloudformation.CloudFormationProblem
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import java.io.File
 
@@ -18,6 +19,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun test10() = runTest("stemflow-apigateway.yml")
   fun test11() = runTest("stemflow-vpc.yml")
   fun test12() = runTest("WordPress_Single_Instance.yaml")
+  fun test13() = runTest("getatt-nested-stack.yaml")
 
   fun runTest(fileName: String) {
     println("Working on $fileName")
@@ -25,11 +27,16 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
     configureByFile(fileName)
 
     val parsed = CloudFormationParser.parse(myFile)
-    val inspectedProblems = CloudFormationInspections.inspectFile(parsed)
+    val inspected = CloudFormationInspections.inspectFile(parsed)
+
+    val referencesList = inspected.references.values().sortedBy { it.element.textOffset }
+    val unresolvedReferenceProblems = referencesList
+        .filter { it.resolve() == null }
+        .map { CloudFormationProblem(it.element, "Unresolved reference") }
 
     TestUtil.checkContent(
         File(testDataPath, "$fileName.expected"),
-        TestUtil.renderProblems(myFile, parsed.problems + inspectedProblems.problems)
+        TestUtil.renderProblems(myFile, parsed.problems + inspected.problems + unresolvedReferenceProblems)
     )
   }
 

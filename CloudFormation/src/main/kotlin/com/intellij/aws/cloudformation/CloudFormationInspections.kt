@@ -39,25 +39,14 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     references.put(reference.element, reference)
   }
 
-  private fun addEntityReference(element: CfnScalarValueNode, sections: Collection<CloudFormationSection>, excludeFromCompletion: Collection<String>? = null) {
+  private fun addEntityReference(element: CfnScalarValueNode, sections: Collection<CloudFormationSection>, excludeFromCompletion: Collection<String>? = null, referenceValue: String? = null) {
     val psiElement = parsed.getPsiElement(element)
-    val entityReference = CloudFormationEntityReference(psiElement, sections, excludeFromCompletion)
+    val entityReference = CloudFormationEntityReference(psiElement, sections, excludeFromCompletion, referenceValue = referenceValue)
 
-    // TODO check other cases at http://stackoverflow.com/a/21699210
     val scalarImpl = psiElement as? YAMLScalarImpl
     if (scalarImpl != null && scalarImpl.contentRanges.isNotEmpty()) {
-      val tag = scalarImpl.tag
-
-      val startOffset: Int
-      val endOffset: Int
-      if (scalarImpl is YAMLQuotedTextImpl && tag != null) {
-        // Fix up for https://youtrack.jetbrains.com/issue/RUBY-19104
-        startOffset = tag.textLength + 1
-        endOffset = scalarImpl.textLength
-      } else {
-        startOffset = scalarImpl.contentRanges.first().startOffset
-        endOffset = scalarImpl.contentRanges.last().endOffset
-      }
+      val startOffset: Int = scalarImpl.contentRanges.first().startOffset
+      val endOffset: Int = scalarImpl.contentRanges.last().endOffset
 
       entityReference.rangeInElement = TextRange(startOffset, endOffset)
     }
@@ -150,7 +139,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         val attributeName: String?
 
         if (function.args.size == 1 && arg0 is CfnScalarValueNode && function.name.value == CloudFormationIntrinsicFunction.FnGetAtt.shortForm) {
-          val dotIndex = arg0.value.lastIndexOf('.')
+          val dotIndex = arg0.value.indexOf('.')
           if (dotIndex < 0) {
             addProblem(function, "GetAttr in short form requires argument in the format logicalNameOfResource.attributeName")
             resourceName = null
@@ -170,7 +159,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
         if (resourceName != null) {
           // TODO calculate exact text range and add it to ReferencesTest
-          addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList)
+          addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList, referenceValue = resourceName)
 
           if (attributeName != null) {
             val resource = CloudFormationResolve.resolveResource(parsed, resourceName)

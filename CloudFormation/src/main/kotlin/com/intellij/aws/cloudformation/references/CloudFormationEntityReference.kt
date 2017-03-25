@@ -8,14 +8,16 @@ import com.intellij.psi.PsiElement
 
 class CloudFormationEntityReference(element: PsiElement,
                                     private val myPossibleSections: Collection<CloudFormationSection>,
-                                    private val myExcludeFromVariants: Collection<String>?) : CloudFormationReferenceBase(element) {
+                                    private val myExcludeFromVariants: Collection<String>?,
+                                    private val referenceValue: String? = null) : CloudFormationReferenceBase(element) {
+
   init {
     assert(myPossibleSections.isNotEmpty())
   }
 
   override fun resolve(): PsiElement? {
     val parsed = CloudFormationParser.parse(element.containingFile)
-    val node = CloudFormationResolve.resolveEntity(parsed, scalarNode.value, myPossibleSections) ?: return null
+    val node = CloudFormationResolve.resolveEntity(parsed, referenceValue ?: scalarNode.value, myPossibleSections) ?: return null
     return parsed.getPsiElement(node)
   }
 
