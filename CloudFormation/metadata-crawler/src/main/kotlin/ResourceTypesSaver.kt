@@ -383,12 +383,12 @@ object ResourceTypesSaver {
 
     val table = parseTable(tableElement)
 
-    val limits = table.map { it[0] to it[2] }.toMap()
+    val limits = table.filter { it.size == 4 }.map { it[0] to it[2] }.toMap()
 
     return CloudFormationLimits(
-        maxMappings = Integer.parseInt(limits["Mappings"]?.replace(" mappings", "")),
-        maxParameters = Integer.parseInt(limits["Parameters"]?.replace(" parameters", "")),
-        maxOutputs = Integer.parseInt(limits["Outputs"]?.replace(" outputs", ""))
+        maxMappings = Integer.parseInt(limits["Mappings"]!!.replace(" mappings", "")),
+        maxParameters = Integer.parseInt(limits["Parameters"]!!.replace(" parameters", "")),
+        maxOutputs = Integer.parseInt(limits["Outputs"]!!.replace(" outputs", ""))
     )
   }
 }
