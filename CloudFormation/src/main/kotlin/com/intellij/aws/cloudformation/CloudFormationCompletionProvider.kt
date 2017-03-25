@@ -25,7 +25,7 @@ import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
 class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters>() {
           public override fun addCompletions(parameters: CompletionParameters,
                                              context: ProcessingContext,
-                                             rs: CompletionResultSet) {
+                                             rsParent: CompletionResultSet) {
             val position = parameters.position
 
             if (!CloudFormationPsiUtils.isCloudFormationFile(position)) {
@@ -33,7 +33,9 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
             }
 
             // Disable all other items from JavaScript
-            rs.stopHere()
+            rsParent.stopHere()
+
+            val rs = rsParent.caseInsensitive()
 
             val parsed = CloudFormationParser.parse(position.containingFile)
             val inspected = CloudFormationInspections.inspectFile(parsed)

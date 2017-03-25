@@ -6,7 +6,7 @@
 
   "Resources": {
     "WebServerUser": {
-      "Type": "AWS::EC2::Instanc<caret>"
+      "Type": "AWS::EC2::instanc<caret>"
     }
   }
 }
