@@ -8,8 +8,7 @@
   <description><![CDATA[
     <p>Amazon AWS CloudFormation language support
     <p>
-    <p>YAML note: not everything works in YAML right now, it's work in progress. Also you need latest IDEA EAP to try it out
-       (check you've installed 0.5.x plugin version).
+    <p>YAML note: not everything works in YAML right now, it's work in progress. Also you need IDEA 2017.1 or later to try it out (check you've installed 0.5.x plugin version).
     <p>
     <p>Open any *.template, *.json or *.yaml file with CloudFormation language inside. There should be number of features available:
     <ul>
