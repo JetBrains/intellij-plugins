@@ -119,7 +119,7 @@ User Guide (API Version 2010-05-15)
                 + AWS OpsWorks
                 + Amazon Redshift
                 + Amazon RDS
-                + Amazon Route 53
+                + Amazon Route 53
                 + Amazon S3
                 + Amazon SNS
                 + Amazon SQS
@@ -568,12 +568,12 @@ User Guide (API Version 2010-05-15)
                   OptionSettings
                 + RDS Security Group Rule
                 + Route 53 AliasTarget Property
-                + Amazon Route 53 Record Set GeoLocation Property
-                + Amazon Route 53 HealthCheckConfig
-                + Amazon Route 53 HealthCheckTags
-                + Amazon Route 53 HostedZoneConfig Property
-                + Amazon Route 53 HostedZoneTags
-                + Amazon Route 53 HostedZoneVPCs
+                + Amazon Route 53 Record Set GeoLocation Property
+                + Amazon Route 53 HealthCheckConfig
+                + Amazon Route 53 HealthCheckTags
+                + Amazon Route 53 HostedZoneConfig Property
+                + Amazon Route 53 HostedZoneTags
+                + Amazon Route 53 HostedZoneVPCs
                 + Amazon S3 Cors Configuration
                 + Amazon S3 Cors Configuration Rule
                 + Amazon S3 Lifecycle Configuration
@@ -706,10 +706,9 @@ User Guide (API Version 2010-05-15)
     * Release History
           o Supported AWS Services
     * AWS Glossary
-AWS Documentation <http://aws.amazon.com/documentation/> » AWS 
-CloudFormation <http://aws.amazon.com/documentation/cloudformation/> » 
-User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
-» Release History
+AWS Documentation <http://aws.amazon.com/documentation> » AWS 
+CloudFormation <http://aws.amazon.com/documentation/cloudformation> » User 
+Guide » Release History
 
 
 Release History
@@ -1153,8 +1152,6 @@ AWS::KMS::Alias
 
     Use the AWS::KMS::Alias resource to create an alias for an AWS Key
     Management Service customer master key.
-
- 
 
 Updated resources
 
@@ -2187,11 +2184,11 @@ AWS::ElasticLoadBalancing::LoadBalancer.
 
 2010-05-15
 
-Amazon Route 53 update
+Amazon Route 53 update
 
 November 6, 2014
 
-You can now provision and manage Amazon Route 53 hosted zones, health 
+You can now provision and manage Amazon Route 53 hosted zones, health 
 checks, failover record sets, and geolocation record sets.
 
 2010-05-15
@@ -2326,7 +2323,7 @@ properties:
     * For cache behaviors, you can specify allowed HTTP methods and
       indicate whether to forward cookies.
 
-For more information, see AWS::CloudFront::Distribution.
+For more information, see AWS::CloudFront::Distribution. 	
 
 2010-05-15
 
@@ -2392,7 +2389,7 @@ AWS CloudFormation supports additional features for updating stacks:
     * You can add or remove Amazon SNS notification topics for an AWS
       CloudFormation stack.
 
-For more information, see AWS CloudFormation Stacks Updates.
+For more information, see AWS CloudFormation Stacks Updates. 	
 
 2010-05-15
 
@@ -2625,7 +2622,7 @@ You can assign names (physical IDs) to the following resources:
 
     * RDS DB instances
 
-For more information, see Name Type.
+For more information, see Name Type. 	
 
 2010-05-15
 
@@ -2684,7 +2681,7 @@ support naming:
 
     * Amazon SQS queues
 
-For more information, see Name Type.
+For more information, see Name Type. 	
 
 2010-05-15
 
@@ -2954,35 +2951,9 @@ tables, and so forth) using a single AWS CloudFormation template.
 
 Templates that demonstrate new VPC features can be downloaded:
 
-Single instance in a single subnet
-<https://s3.amazonaws.com/cloudformation-templates-us-east-1/vpc_single_instance_in_subnet.template>
-Multiple subnets with Elastic Load Balancing (ELB) and an Auto Scaling 
-group
-<https://s3.amazonaws.com/cloudformation-templates-us-east-1/vpc_multiple_subnets.template>
-
 Documentation for the following resource types has been updated:
 
-AWS::EC2::SecurityGroup
-AWS::EC2::SecurityGroupIngress
-AWS::EC2::SecurityGroupEgress
-AWS::EC2::Instance
-AWS::AutoScaling::AutoScalingGroup
-AWS::EC2::EIP
-AWS::EC2::EIPAssociation
-AWS::ElasticLoadBalancing::LoadBalancer
-
 New resource types have been added to the documentation:
-
-AWS::EC2::VPC
-AWS::EC2::InternetGateway
-AWS::EC2::DHCPOptions
-AWS::EC2::DHCPOptions
-AWS::EC2::RouteTable
-AWS::EC2::NetworkAcl
-AWS::EC2::NetworkAclEntry
-AWS::EC2::Subnet
-AWS::EC2::VPNGateway
-AWS::EC2::CustomerGateway
 
 2010-05-15
 
