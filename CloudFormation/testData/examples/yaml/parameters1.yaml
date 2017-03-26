@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  MyNestedStack:
+    A: B
+Resources:
+  RootBucket:
+    Type: AWS::S3::Bucket

@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  MyNestedStack:
+    Type: Number
+    0@<MaxLength:> 100
+    1@<MinLength:> 1
+Resources:
+  RootBucket:
+    Type: AWS::S3::Bucket
+
+0: MaxLength property is valid for String type only
+1: MinLength property is valid for String type only

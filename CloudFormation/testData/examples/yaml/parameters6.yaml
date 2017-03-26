@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  MyNestedStack:
+    Type: String
+    MinValue: 100a
+    MaxValue: 1
+Resources:
+  RootBucket:
+    Type: AWS::S3::Bucket

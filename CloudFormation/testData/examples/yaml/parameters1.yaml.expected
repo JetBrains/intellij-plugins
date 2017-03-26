@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  0@<1@<MyNestedStack:>>
+    A: B
+Resources:
+  RootBucket:
+    Type: AWS::S3::Bucket
+
+0: Unknown parameter property: A
+1: Required property Type is missing or empty

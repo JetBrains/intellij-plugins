@@ -422,7 +422,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
           val scalar = property.value as? CfnScalarValueNode
           if (scalar != null && scalar.value.length > CloudFormationConstants.ParameterDescriptionLimit) {
-            addProblem(property, "${CloudFormationParameterProperty.Description.id} is too long, maximum allowed length is ${CloudFormationConstants.ParameterDescriptionLimit}")
+            addProblem(property, "${CloudFormationParameterProperty.Description.id} is too long (${scalar.value.length} chars), maximum allowed length is ${CloudFormationConstants.ParameterDescriptionLimit}")
           }
 
           Unit

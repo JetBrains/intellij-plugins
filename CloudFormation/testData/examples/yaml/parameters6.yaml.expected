@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  MyNestedStack:
+    Type: String
+    0@<1@<MinValue:>> 100a
+    2@<MaxValue:> 1
+Resources:
+  RootBucket:
+    Type: AWS::S3::Bucket
+
+0: Expected an integer or float
+1: MinValue property is valid for Number type only
+2: MaxValue property is valid for Number type only
