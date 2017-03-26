@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templateSet group="AWS CloudFormation">
+<templateSet group="AWS CloudFormation (JSON)">
 
   <template name="ref" value='{ "Ref": "$VAL$" }'
             resource-bundle="com.intellij.aws.cloudformation.CloudFormationBundle" key="livetemplate.description.ref">
@@ -9,11 +9,12 @@
     </context>
   </template>
 
-  <template name="ref" value='!Ref $VAL$'
-            resource-bundle="com.intellij.aws.cloudformation.CloudFormationBundle" key="livetemplate.description.ref">
-    <variable name="VAL" expression="complete()" defaultValue="" alwaysStopAt="true" />
+  <template name="param" value='"$NAME$": {&#10;  "Type": "$TYPE$"&#10;}$END$'
+            description="Inserts a parameter" toReformat="true" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="TYPE" expression="complete()" defaultValue="" alwaysStopAt="true" />
     <context>
-      <option name="AWS_CLOUD_FORMATION_YAML" value="true" />
+      <option name="AWS_CLOUD_FORMATION_JSON" value="true" />
     </context>
   </template>
 

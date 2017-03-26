@@ -10,6 +10,7 @@ class JsonCloudFormationCodeContextType : TemplateContextType(
     JsonContextType::class.java) {
 
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
-    return CloudFormationPsiUtils.isCloudFormationFile(file)
+    val fileType = file.viewProvider.fileType
+    return fileType === JsonCloudFormationFileType.INSTANCE
   }
 }
