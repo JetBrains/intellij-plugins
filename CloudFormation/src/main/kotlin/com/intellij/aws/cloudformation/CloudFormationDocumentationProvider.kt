@@ -2,7 +2,9 @@ package com.intellij.aws.cloudformation
 
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.documentation.AbstractDocumentationProvider
+import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import org.jetbrains.yaml.psi.YAMLScalar
 
 class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
@@ -26,6 +28,10 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     return null
+  }
+
+  override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?): PsiElement? {
+    return if (contextElement != null && CloudFormationPsiUtils.isCloudFormationFile(contextElement)) contextElement else null
   }
 
   private fun createResourceDescription(match: ResourceTypeValueMatch): String? {
