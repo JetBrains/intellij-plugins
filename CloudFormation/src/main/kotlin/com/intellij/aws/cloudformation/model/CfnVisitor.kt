@@ -12,7 +12,10 @@ abstract class CfnVisitor {
   }
 
   open fun parameters(parameters: CfnParametersNode) {
+    parameters.parameters.forEach { parameter(it) }
   }
+
+  open fun parameter(parameter: CfnParameterNode) {}
 
   open fun resources(resources: CfnResourcesNode) {
     resources.resources.forEach { resource(it) }

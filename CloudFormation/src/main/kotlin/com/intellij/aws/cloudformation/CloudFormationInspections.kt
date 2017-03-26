@@ -2,16 +2,19 @@ package com.intellij.aws.cloudformation
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
+import com.google.common.primitives.Floats
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnMappingsNode
 import com.intellij.aws.cloudformation.model.CfnMetadataNode
+import com.intellij.aws.cloudformation.model.CfnNameValueNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnObjectValueNode
 import com.intellij.aws.cloudformation.model.CfnOutputsNode
+import com.intellij.aws.cloudformation.model.CfnParameterNode
 import com.intellij.aws.cloudformation.model.CfnParametersNode
 import com.intellij.aws.cloudformation.model.CfnResourceConditionNode
 import com.intellij.aws.cloudformation.model.CfnResourceDependsOnNode
@@ -29,10 +32,13 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.yaml.psi.impl.YAMLScalarImpl
+import java.util.regex.Pattern
 
 class CloudFormationInspections private constructor(val parsed: CloudFormationParsedFile): CfnVisitor() {
   val problems: MutableList<CloudFormationProblem> = mutableListOf()
   val references: Multimap<PsiElement, CloudFormationReferenceBase> = ArrayListMultimap.create()
+
+  val numbersPattern = Pattern.compile("^[0-9]+$")!!
 
   private fun addReference(reference: CloudFormationReferenceBase) {
     references.put(reference.element, reference)
@@ -84,8 +90,9 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     val arg1 = function.args.getOrNull(1)
 
     // TODO make it sealed when some time in the future
-    when (function.functionId) {
-      CloudFormationIntrinsicFunction.Ref ->
+    @Suppress("UNUSED_VARIABLE")
+    val _used_to_enforce_exhaustive_check: Unit = when (function.functionId) {
+      CloudFormationIntrinsicFunction.Ref -> {
         if (function.args.size != 1 || arg0 !is CfnScalarValueNode) {
           addProblem(function, "Reference expects one string argument")
         } else {
@@ -96,6 +103,9 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           }
         }
 
+        Unit
+      }
+
       CloudFormationIntrinsicFunction.Condition ->
         if (function.args.size != 1 || arg0 !is CfnScalarValueNode) {
           addProblem(function, "Condition reference expects one string argument")
@@ -103,10 +113,13 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           addEntityReference(arg0, CloudFormationSection.ConditionsSingletonList)
         }
 
-      CloudFormationIntrinsicFunction.FnBase64 ->
+      CloudFormationIntrinsicFunction.FnBase64 -> {
         if (function.args.size != 1) {
           addProblem(function, "Base64 reference expects 1 argument")
         }
+
+        Unit
+      }
 
       CloudFormationIntrinsicFunction.FnFindInMap -> {
         if (function.args.size != 3) {
@@ -133,6 +146,8 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
             }
           }
         }
+
+        Unit
       }
 
       CloudFormationIntrinsicFunction.FnGetAtt -> {
@@ -180,35 +195,49 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
             }
           }
         }
+
+        Unit
       }
 
-      CloudFormationIntrinsicFunction.FnGetAZs ->
+      CloudFormationIntrinsicFunction.FnGetAZs -> {
         // TODO verify string against known regions
         // TODO possibility for dataflow checks
         if (function.args.size != 1) {
           addProblem(function, "GetAZs expects one argument")
         }
 
-      CloudFormationIntrinsicFunction.FnImportValue ->
+        Unit
+      }
+
+      CloudFormationIntrinsicFunction.FnImportValue -> {
         if (function.args.size != 1) {
           addProblem(function, "ImportValue expects one argument")
         }
 
-      CloudFormationIntrinsicFunction.FnJoin ->
+        Unit
+      }
+
+      CloudFormationIntrinsicFunction.FnJoin -> {
         if (function.args.size != 2 || arg0 !is CfnScalarValueNode || arg1 !is CfnArrayValueNode) {
           addProblem(function, "Join expects a string argument and an array argument")
         }
 
-      CloudFormationIntrinsicFunction.FnSelect ->
+        Unit
+      }
+
+      CloudFormationIntrinsicFunction.FnSelect -> {
         if (function.args.size != 2) {
           addProblem(function, "Select expects an index argument and an array argument")
         } else if (arg0 is CfnScalarValueNode) {
           try {
             Integer.parseUnsignedInt(arg0.value)
-          } catch (t : NumberFormatException) {
+          } catch (t: NumberFormatException) {
             addProblem(function, "Select index should be a valid non-negative number")
           }
         }
+
+        Unit
+      }
 
       CloudFormationIntrinsicFunction.FnSub -> {
         // TODO Add references to substituted values in a string
@@ -216,18 +245,26 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         if (function.args.size != 1 && !(function.args.size == 2 && arg1 is CfnObjectValueNode)) {
           addProblem(function, "Sub expects one argument plus an optional value map")
         }
+
+        Unit
       }
 
       // TODO Check context, valid only in boolean context
-      CloudFormationIntrinsicFunction.FnAnd, CloudFormationIntrinsicFunction.FnOr ->
+      CloudFormationIntrinsicFunction.FnAnd, CloudFormationIntrinsicFunction.FnOr -> {
         if (function.args.size < 2) {
           addProblem(function, function.functionId.shortForm + " expects at least 2 arguments")
         }
 
-      CloudFormationIntrinsicFunction.FnEquals ->
+        Unit
+      }
+
+      CloudFormationIntrinsicFunction.FnEquals -> {
         if (function.args.size != 2) {
           addProblem(function, "Equals expects exactly 2 arguments")
         }
+
+        Unit
+      }
 
       CloudFormationIntrinsicFunction.FnIf ->
         if (function.args.size == 3) {
@@ -240,10 +277,13 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           addProblem(function, "If expects exactly 3 arguments")
         }
 
-      CloudFormationIntrinsicFunction.FnNot ->
+      CloudFormationIntrinsicFunction.FnNot -> {
         if (function.args.size != 1) {
           addProblem(function, "Not expects exactly 1 argument")
         }
+
+        Unit
+      }
     }
 
     super.function(function)
@@ -311,6 +351,132 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     }
 
     super.parameters(parameters)
+  }
+
+  private fun checkValueIsScalar(nameValue: CfnNameValueNode) {
+    if (nameValue.value !is CfnScalarValueNode) {
+      addProblem(nameValue, "Expected a string")
+    }
+  }
+
+  override fun parameter(parameter: CfnParameterNode) {
+    // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
+
+    parameter.properties.forEach {
+      val name = it.name?.value?.trim() ?: return@forEach
+
+      if (!CloudFormationParameterProperty.allIds.contains(name)) {
+        addProblem(parameter, "Unknown parameter property: " + name)
+      }
+    }
+
+    val type = parameter.properties.firstOrNull { it.name?.value == CloudFormationParameterProperty.Type.id }
+    if (type != null) checkValueIsScalar(type)
+
+    val typeName = (type?.value as? CfnScalarValueNode)?.value?.trim()
+    if (type == null || typeName == null) {
+      addProblem(parameter, "Required property Type is missing or empty")
+      return
+    }
+
+    if (!CloudFormationParameterType.allIds.contains(typeName) &&
+        !CloudFormationConstants.AwsSpecificParameterTypes.contains(typeName)) {
+        addProblem(type, "Unknown parameter type: " + typeName)
+      return
+    }
+
+    parameter.properties.forEach { property ->
+      val propertyName = property.name?.value?.trim() ?: return@forEach
+      val typedPropertyName = CloudFormationParameterProperty.values().singleOrNull { it.id == propertyName }!!
+
+      @Suppress("UNUSED_VARIABLE")
+      val _used_to_enforce_exhaustive_check: Unit = when (typedPropertyName) {
+        CloudFormationParameterProperty.AllowedPattern -> {
+          checkValueIsScalar(property)
+        }
+
+        CloudFormationParameterProperty.AllowedValues -> {
+          if (property.value is CfnArrayValueNode) {
+            property.value.items.forEach {
+              if (it !is CfnScalarValueNode) {
+                addProblem(it, "Expected a string")
+              }
+            }
+          } else {
+            addProblem(property, "Expected an array")
+          }
+
+          Unit
+        }
+
+        CloudFormationParameterProperty.ConstraintDescription -> {
+          checkValueIsScalar(property)
+        }
+
+        CloudFormationParameterProperty.Default -> {
+          checkValueIsScalar(property)
+        }
+
+        CloudFormationParameterProperty.Description -> {
+          checkValueIsScalar(property)
+
+          val scalar = property.value as? CfnScalarValueNode
+          if (scalar != null && scalar.value.length > CloudFormationConstants.ParameterDescriptionLimit) {
+            addProblem(property, "${CloudFormationParameterProperty.Description.id} is too long, maximum allowed length is ${CloudFormationConstants.ParameterDescriptionLimit}")
+          }
+
+          Unit
+        }
+
+        CloudFormationParameterProperty.MaxLength, CloudFormationParameterProperty.MinLength -> {
+          checkValueIsScalar(property)
+
+          val scalar = property.value as? CfnScalarValueNode
+          if (scalar != null) {
+            if (!numbersPattern.matcher(scalar.value).matches()) {
+              addProblem(property, "Expected a number")
+            }
+
+            if (typeName != CloudFormationParameterType.String.id &&
+                !CloudFormationConstants.AwsSpecificParameterTypes.contains(typeName)) {
+              addProblem(property, "$propertyName property is valid for ${CloudFormationParameterType.String.id} type only")
+            }
+          }
+
+          Unit
+        }
+
+        CloudFormationParameterProperty.MinValue, CloudFormationParameterProperty.MaxValue -> {
+          checkValueIsScalar(property)
+
+          val scalar = property.value as? CfnScalarValueNode
+          if (scalar != null) {
+            if (Floats.tryParse(scalar.value) == null) {
+              addProblem(property, "Expected an integer or float")
+            }
+
+            if (typeName != CloudFormationParameterType.Number.id) {
+              addProblem(property, "$propertyName property is valid for ${CloudFormationParameterType.Number.id} type only")
+            }
+          }
+
+          Unit
+        }
+
+        CloudFormationParameterProperty.NoEcho -> {
+          checkValueIsScalar(property)
+
+          val scalar = property.value as? CfnScalarValueNode
+          if (scalar != null && !scalar.value.equals("True", ignoreCase = true)) {
+            addProblem(property, "Only 'True' value is allowed")
+          }
+
+          Unit
+        }
+
+        CloudFormationParameterProperty.Type -> Unit
+      }
+    }
   }
 
   override fun mappings(mappings: CfnMappingsNode) {
