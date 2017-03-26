@@ -70,8 +70,10 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
   private fun addProperty(newProperty: JSProperty, obj: JSObjectLiteralExpression): PsiElement {
     val addedProperty: PsiElement
-    if (obj.firstProperty != null) {
-      addedProperty = obj.addBefore(newProperty, obj.firstProperty)
+    val first = obj.firstProperty
+    if (first != null) {
+      addedProperty = obj.addBefore(newProperty, first)
+      JSChangeUtil.addWs(obj.node, first.node, "\n")
     } else {
       addedProperty = obj.addAfter(newProperty, obj.firstChild)
     }
