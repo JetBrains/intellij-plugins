@@ -1,6 +1,7 @@
 package com.intellij.aws.cloudformation
 
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
+import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.json.psi.JsonObject
@@ -17,11 +18,16 @@ fun CfnNode.parent(parser: CloudFormationParsedFile): CfnNode? {
   val baseElement = parser.getPsiElement(this)
 
   // handle corner case with !Ref "xxxx" or !Sub "yyy"
+  // Second case:
+  // Properties:
+  //   Ty <-- here, it'll be both CfnResourcePropertyNode and CfnScalarValueNode
+  //   A: B
+
   if (this is CfnScalarValueNode) {
     val baseNodes = parser.getCfnNodes(baseElement).filter { it !== this }
     if (baseNodes.isNotEmpty()) {
       val otherNode = baseNodes.single()
-      assert(otherNode is CfnFunctionNode)
+      assert(otherNode is CfnFunctionNode || otherNode is CfnNamedNode)
       return otherNode
     }
   }
