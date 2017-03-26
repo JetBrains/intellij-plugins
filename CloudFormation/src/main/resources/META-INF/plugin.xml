@@ -29,6 +29,14 @@
     </ul>
   ]]></description>
 
+  <change-notes><![CDATA[
+    <h4>0.5.19</h4>
+    <p>YAML: 'param' and 'ref' live templates</p>
+    <p>QuickDoc: Fix external links, fix quickdoc on resource types</p>
+    <p>YAML: better completion</p>
+    <p>Parameters section: 'param' live template, verify Parameters section, provide completion on parameter properties and type</p>
+  ]]></change-notes>
+
   <!-- IDEA 2017.1 -->
   <idea-version since-build="171.3566.24" until-build="171.*"/>
 
