@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.linter.tslint.config;
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -22,7 +21,6 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   public static final String TSLINT_JSON = "tslint.json";
 
   public static final String LOG_CATEGORY = "#com.intellij.lang.javascript.linter.tslint.TsLint";
-  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("TSLint Messages");
   private static final String TSLINT_ELEMENT_NAME = "tslint";
   private static final String IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME = "use-custom-config-file";
   private static final String CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME = "custom-config-file-path";
@@ -54,7 +52,7 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
 
   @Override
   protected void savePrivateSettings(@NotNull TsLintState state) {
-    myPathHolder.setPath(state.getCustomConfigFilePath());
+    myPathHolder.setPath(StringUtil.notNullize(state.getCustomConfigFilePath()));
     storeLinterLocalPaths(state);
   }
 
@@ -119,15 +117,6 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     myPackage.readOrDetect();
     builder.setNodePath(myPackage.getInterpreter());
     builder.setPackagePath(StringUtil.notNullize(myPackage.getPackagePath()));
-  }
-
-  @Override
-  protected TsLintState initializePrivateSettings(TsLintState state) {
-    myPackage.detect();
-    TsLintState.Builder builder = new TsLintState.Builder(state);
-    builder.setNodePath(myPackage.getInterpreter());
-    builder.setPackagePath(myPackage.getPackagePath());
-    return builder.build();
   }
 
   private void storeLinterLocalPaths(TsLintState state) {

@@ -1,14 +1,14 @@
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
-import com.intellij.lang.javascript.linter.JSLinterState;
+import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
  */
-public class TsLintState implements JSLinterState {
+public class TsLintState implements JSNpmLinterState<TsLintState> {
 
   @NotNull
   private final NodeJsInterpreterRef myInterpreterRef;
@@ -67,6 +67,17 @@ public class TsLintState implements JSLinterState {
     return myAllowJs;
   }
 
+  @Nullable
+  @Override
+  public String getLinterPackagePath() {
+    return myPackagePath;
+  }
+
+  @Override
+  public TsLintState withLinterPackagePath(@NotNull String path) {
+    return new TsLintState(myInterpreterRef, path, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory, myAllowJs);
+  }
+
   public static class Builder {
     private boolean myCustomConfigFileUsed = false;
     private String myCustomConfigFilePath = "";
@@ -109,6 +120,7 @@ public class TsLintState implements JSLinterState {
       return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Builder setRulesDirectory(@Nullable String rulesDirectory) {
       myRulesDirectory = rulesDirectory;
       return this;
