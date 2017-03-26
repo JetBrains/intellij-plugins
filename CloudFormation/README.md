@@ -22,7 +22,7 @@ See versions history at https://plugins.jetbrains.com/plugin/7371
 Quick Start
 -----------
 
-Note: YAML support is in beta stage, not all features are supported
+Note: you need IDEA 2017.1 or later for YAML support
 
 * Open any *.template, *.json, *.yaml file with CloudFormation JSON/YAML inside
 * There should be number of features available:
