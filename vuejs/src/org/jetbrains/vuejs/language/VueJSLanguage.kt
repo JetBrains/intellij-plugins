@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 
-class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6) {
+class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.OTHER) {
   override fun getFileExtension(): String {
     return "js"
   }
