@@ -168,6 +168,15 @@ object ResourceTypesSaver {
 
           val name = term.text()
 
+          val href = term.previousElementSibling()
+          assert(href.tagName() == "a")
+          assert(href.hasAttr("id"))
+          val propertyId = href.attr("id")
+          assert(propertyId.contains(name, ignoreCase = true)) {
+            "Property anchor id ($propertyId) should have a propery name ($name) as substring in $docLocation"
+          }
+          val docUrl = doc.baseUri() + "#" + propertyId
+
           var requiredValue: String? = null
           var typeValue: String? = null
           var descriptionValue: String = ""
@@ -250,11 +259,11 @@ object ResourceTypesSaver {
           }
 
           if (resourceTypeName == "AWS::AutoScaling::AutoScalingGroup" && name == "NotificationConfigurations") {
-            val additionalProperty = CloudFormationResourceProperty("NotificationConfiguration", type, required, updateValue)
+            val additionalProperty = CloudFormationResourceProperty("NotificationConfiguration", type, required, docUrl, updateValue)
             properties[additionalProperty.name] = Pair(additionalProperty, descriptionValue)
           }
 
-          properties[name] = Pair(CloudFormationResourceProperty(name, type, required, updateValue), descriptionValue)
+          properties[name] = Pair(CloudFormationResourceProperty(name, type, required, docUrl, updateValue), descriptionValue)
         }
       }
     } else {
@@ -282,7 +291,7 @@ object ResourceTypesSaver {
             throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredString")
           }
 
-          properties[name] = Pair(CloudFormationResourceProperty(name, type, required, ""), "")
+          properties[name] = Pair(CloudFormationResourceProperty(name, type, required, "", ""), "")
         }
       } else {
         if (resourceTypeName != "AWS::CloudFormation::WaitConditionHandle" &&
@@ -303,8 +312,8 @@ object ResourceTypesSaver {
 
     if (resourceTypeName == "AWS::ElasticBeanstalk::Application") {
       // Not in official documentation yet, found in examples
-      properties["ConfigurationTemplates"] = Pair(CloudFormationResourceProperty("ConfigurationTemplates", "Unknown", false, ""), "")
-      properties["ApplicationVersions"] = Pair(CloudFormationResourceProperty("ApplicationVersions", "Unknown", false, ""), "")
+      properties["ConfigurationTemplates"] = Pair(CloudFormationResourceProperty("ConfigurationTemplates", "Unknown", false, "", ""), "")
+      properties["ApplicationVersions"] = Pair(CloudFormationResourceProperty("ApplicationVersions", "Unknown", false, "", ""), "")
     }
 
     if (resourceTypeName == "AWS::IAM::AccessKey") {
@@ -324,6 +333,7 @@ object ResourceTypesSaver {
     return Pair(
         CloudFormationResourceType(
             resourceTypeName,
+            doc.baseUri(),
             properties.mapValues { it.value.first },
             resourceAttributes.mapValues { it.value.first }
         ),
