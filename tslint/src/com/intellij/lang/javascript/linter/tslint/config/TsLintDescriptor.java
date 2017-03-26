@@ -6,14 +6,12 @@ import com.intellij.lang.javascript.linter.JSLinterDescriptor;
 import com.intellij.lang.javascript.linter.tslint.ide.TsLintConfigFileType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Irina.Chernushina on 11/24/2016.
  */
 public final class TsLintDescriptor extends JSLinterDescriptor {
 
-  @Nullable
   @Override
   public String packageName() {
     return "tslint";
@@ -26,7 +24,7 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
 
   @NotNull
   @Override
-  protected Class<? extends JSLinterConfiguration> getConfigurationClass() {
+  public Class<? extends JSLinterConfiguration> getConfigurationClass() {
     return TsLintConfiguration.class;
   }
 }
