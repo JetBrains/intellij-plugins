@@ -365,15 +365,16 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     val type = parameter.properties.firstOrNull { it.name?.value == CloudFormationParameterProperty.Type.id }
     if (type != null) checkValueIsScalar(type)
 
-    val typeName = (type?.value as? CfnScalarValueNode)?.value?.trim()
-    if (type == null || typeName == null) {
+    val typeValue = type?.value
+    val typeName = (typeValue as? CfnScalarValueNode)?.value?.trim()
+    if (type == null || typeName == null || typeValue == null) {
       addProblem(parameter, "Required property Type is missing or empty")
       return
     }
 
     if (!CloudFormationParameterType.allIds.contains(typeName) &&
         !CloudFormationConstants.AwsSpecificParameterTypes.contains(typeName)) {
-        addProblem(type, "Unknown parameter type: " + typeName)
+        addProblem(type.value, "Unknown parameter type: " + typeName)
       return
     }
 
