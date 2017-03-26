@@ -1,4 +1,4 @@
-<idea-plugin version="2" url="https://github.com/shalupov/idea-cloudformation">
+<idea-plugin url="https://github.com/shalupov/idea-cloudformation">
   <id>AWSCloudFormation</id>
   <name>AWS CloudFormation</name>
   <version>SNAPSHOT</version>
@@ -36,6 +36,9 @@
   <depends>org.jetbrains.plugins.yaml</depends>
 
   <application-components>
+    <component>
+      <implementation-class>com.intellij.aws.cloudformation.CloudFormationUpdateComponent</implementation-class>
+    </component>
   </application-components>
 
   <project-components>
