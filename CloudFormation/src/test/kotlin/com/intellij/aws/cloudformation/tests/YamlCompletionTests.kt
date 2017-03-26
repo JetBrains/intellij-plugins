@@ -18,6 +18,15 @@ class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
   fun testRefDoubleQuotes2() = checkBasicCompletion("ref_double_quotes_2.yaml", *predefinedAndECSCluster)
   fun testRefDoubleQuotes3() = checkBasicCompletion("ref_double_quotes_3.yaml", *predefinedAndECSCluster.withQuotes("\""))
 
+  fun testResourceProperty1() = checkBasicCompletion("resource_property_1.yaml",
+      "ApplicationName", "ApplicationVersions", "ConfigurationTemplates", "Description")
+  fun testResourceProperty2() = checkBasicCompletion("resource_property_2.yaml",
+      "ApplicationName", "ApplicationVersions", "ConfigurationTemplates", "Description")
+
+  fun testProperty1() = checkBasicCompletion("resource_1.yaml",
+      "Condition", "CreationPolicy", "DeletionPolicy", "DependsOn",
+      "Metadata", "Properties", "UpdatePolicy", "Version")
+
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
     myFixture.configureByFiles(fileName)
     myFixture.complete(CompletionType.BASIC, 1)

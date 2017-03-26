@@ -38,6 +38,7 @@ import org.jetbrains.yaml.psi.YAMLMapping
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequence
 import org.jetbrains.yaml.psi.YAMLValue
+import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
 import java.util.ArrayList
 
@@ -49,7 +50,11 @@ class YamlCloudFormationParser private constructor () {
   private fun <T : CfnNode> T.registerNode(psiElement: PsiElement): T {
     if (psi2node.containsKey(psiElement)) {
       if (psi2node.get(psiElement).singleOrNull() is CfnScalarValueNode && this is CfnFunctionNode) {
-        // only known exception: !Ref "xxx" or !Sub "xxx"
+        // known exception: !Ref "xxx" or !Sub "xxx"
+      } else if (psi2node.get(psiElement).singleOrNull() is CfnScalarValueNode && this is CfnNamedNode) {
+        // Properties:
+        //   Ty <-- here, it'll be both CfnResourcePropertyNode and CfnScalarValueNode
+        //   A: B
       } else {
         error("Psi Elements map already has $psiElement")
       }
@@ -67,12 +72,13 @@ class YamlCloudFormationParser private constructor () {
     myProblems.add(CloudFormationProblem(element, description))
   }
 
-  private fun addProblemOnNameElement(property: YAMLKeyValue, description: String) =
-    addProblem(property.key ?: property, description)
-
+  private fun addProblemOnNameElement(element: PsiElement, description: String) {
+    val keyValue = element as? YAMLKeyValue
+    addProblem(keyValue?.key ?: element, description)
+  }
 
   private fun root(root: YAMLMapping): CfnRootNode {
-    val sections = root.keyValues.mapNotNull { property ->
+    val sections = root.cfnKeyValues().mapNotNull { property ->
       val name = property.keyText
       val value = property.value
 
@@ -94,7 +100,7 @@ class YamlCloudFormationParser private constructor () {
         CloudFormationSection.Mappings -> mappings(property)
         else -> {
           addProblemOnNameElement(
-              property,
+              property.owner,
               CloudFormationBundle.getString("format.unknown.section", name))
           null
         }
@@ -113,108 +119,108 @@ class YamlCloudFormationParser private constructor () {
     ).registerNode(root)
   }
 
-  private fun metadata(metadata: YAMLKeyValue): CfnMetadataNode {
+  private fun metadata(metadata: CfnKeyValue): CfnMetadataNode {
     val mapping = checkAndGetMapping(metadata.value!!)
-    return CfnMetadataNode(keyName(metadata), mapping?.let { expression(it, AllowFunctions.False) } as? CfnObjectValueNode).registerNode(metadata)
+    return CfnMetadataNode(keyName(metadata), mapping?.let { expression(it, AllowFunctions.False) } as? CfnObjectValueNode).registerNode(metadata.owner)
   }
 
-  private fun conditions(conditions: YAMLKeyValue): CfnConditionsNode = parseNameValues(
+  private fun conditions(conditions: CfnKeyValue): CfnConditionsNode = parseNameValues(
       conditions,
-      { node -> CfnConditionNode(keyName(node), expression(node.value!!, AllowFunctions.True)).registerNode(node) },
+      { node -> CfnConditionNode(keyName(node), expression(node.value!!, AllowFunctions.True)).registerNode(node.owner) },
       { nameNode, list -> CfnConditionsNode(nameNode, list) }
   )
 
-  private fun outputs(outputs: YAMLKeyValue): CfnOutputsNode = parseNameValues(
+  private fun outputs(outputs: CfnKeyValue): CfnOutputsNode = parseNameValues(
       outputs,
-      { output -> CfnOutputNode(keyName(output), expression(output.value!!, AllowFunctions.True)).registerNode(output) },
+      { output -> CfnOutputNode(keyName(output), expression(output.value!!, AllowFunctions.True)).registerNode(output.owner) },
       { nameNode, list -> CfnOutputsNode(nameNode, list) }
   )
 
-  private fun parameters(parameters: YAMLKeyValue): CfnParametersNode = parseNameValues(
+  private fun parameters(parameters: CfnKeyValue): CfnParametersNode = parseNameValues(
       parameters,
       { parameter -> parameter(parameter) },
       { nameNode, list -> CfnParametersNode(nameNode, list) }
   )
 
-  private fun parameter(parameter: YAMLKeyValue): CfnParameterNode = parseNameValues(
+  private fun parameter(parameter: CfnKeyValue): CfnParameterNode = parseNameValues(
       parameter,
-      { node -> CfnNameValueNode(keyName(node), node.value?.let { expression(it, AllowFunctions.False) }).registerNode(node) },
+      { node -> CfnNameValueNode(keyName(node), node.value?.let { expression(it, AllowFunctions.False) }).registerNode(node.owner) },
       { nameNode, list -> CfnParameterNode(nameNode, list) }
   )
 
   private fun <ResultNodeType : CfnNode, ValueNodeType: CfnNode> parseNameValues(
-      keyValueElement: YAMLKeyValue,
-      valueFactory: (YAMLKeyValue) -> ValueNodeType,
+      keyValueElement: CfnKeyValue,
+      valueFactory: (CfnKeyValue) -> ValueNodeType,
       resultFactory: (CfnScalarValueNode?, List<ValueNodeType>) -> ResultNodeType): ResultNodeType
   {
     val keyElement = keyValueElement.key
     val nameNode = if (keyElement == null) null else CfnScalarValueNode(keyValueElement.keyText).registerNode(keyElement)
 
-    val obj = checkAndGetMapping(keyValueElement.value!!) ?: return resultFactory(nameNode, emptyList()).registerNode(keyValueElement)
+    val obj = checkAndGetMapping(keyValueElement.value!!) ?: return resultFactory(nameNode, emptyList()).registerNode(keyValueElement.owner)
 
-    val list = obj.keyValues.mapNotNull { value ->
+    val list = obj.cfnKeyValues().mapNotNull { value ->
       if (value.keyText.isEmpty()) {
-        addProblemOnNameElement(value, "A non-empty key is expected")
+        addProblemOnNameElement(value.owner, "A non-empty key is expected")
         return@mapNotNull null
       }
 
       if (value.value == null) {
-        addProblemOnNameElement(value, "A value is expected")
+        addProblemOnNameElement(value.owner, "A value is expected")
         return@mapNotNull null
       }
 
       return@mapNotNull valueFactory(value)
     }
 
-    return resultFactory(nameNode, list).registerNode(keyValueElement)
+    return resultFactory(nameNode, list).registerNode(keyValueElement.owner)
   }
 
-  private fun mappings(mappings: YAMLKeyValue): CfnMappingsNode = parseNameValues(
+  private fun mappings(mappings: CfnKeyValue): CfnMappingsNode = parseNameValues(
       mappings,
       { mapping -> firstLevelMapping(mapping) },
       { nameNode, list -> CfnMappingsNode(nameNode, list) }
   )
 
-  private fun firstLevelMapping(mapping: YAMLKeyValue): CfnFirstLevelMappingNode = parseNameValues(
+  private fun firstLevelMapping(mapping: CfnKeyValue): CfnFirstLevelMappingNode = parseNameValues(
       mapping,
       { mapping -> secondLevelMapping(mapping) },
       { nameNode, list -> CfnFirstLevelMappingNode(nameNode, list) }
   )
 
-  private fun secondLevelMapping(mapping: YAMLKeyValue): CfnSecondLevelMappingNode = parseNameValues(
+  private fun secondLevelMapping(mapping: CfnKeyValue): CfnSecondLevelMappingNode = parseNameValues(
       mapping,
-      { node -> CfnMappingValue(keyName(node), checkAndGetStringElement(node.value)).registerNode(node) },
+      { node -> CfnMappingValue(keyName(node), checkAndGetStringElement(node.value)).registerNode(node.owner) },
       { nameNode, list -> CfnSecondLevelMappingNode(nameNode, list) }
   )
 
-  private fun keyName(property: YAMLKeyValue): CfnScalarValueNode? {
+  private fun keyName(property: CfnKeyValue): CfnScalarValueNode? {
     if (property.key != null) {
-      return CfnScalarValueNode(property.keyText).registerNode(property.key!!)
+      return CfnScalarValueNode(property.keyText).registerNode(property.key)
     } else {
-      addProblem(property, "Expected a name")
-      return CfnScalarValueNode("").registerNode(property)
+      addProblem(property.owner, "Expected a name")
+      return CfnScalarValueNode("").registerNode(property.owner)
     }
   }
 
-  private fun resources(resources: YAMLKeyValue): CfnResourcesNode = parseNameValues(
+  private fun resources(resources: CfnKeyValue): CfnResourcesNode = parseNameValues(
       resources,
       { resource -> resource(resource) },
       { nameNode, list -> CfnResourcesNode(nameNode, list) }
   )
 
-  private fun resource(resourceProperty: YAMLKeyValue): CfnResourceNode {
+  private fun resource(resourceProperty: CfnKeyValue): CfnResourceNode {
     val key = keyName(resourceProperty)
 
     val mapping = checkAndGetMapping(resourceProperty.value) ?:
-        return CfnResourceNode(key, null, null, null, null, emptyMap()).registerNode(resourceProperty)
+        return CfnResourceNode(key, null, null, null, null, emptyMap()).registerNode(resourceProperty.owner)
 
     val topLevelProperties: MutableMap<String, CfnNamedNode> = hashMapOf()
 
-    for (property in mapping.keyValues) {
+    for (property in mapping.cfnKeyValues()) {
       val propertyKey = property.keyText.trim()
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyKey)) {
-        addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyKey))
+        addProblemOnNameElement(property.owner, CloudFormationBundle.getString("format.unknown.resource.property", propertyKey))
       }
 
       val node = when (propertyKey) {
@@ -223,7 +229,7 @@ class YamlCloudFormationParser private constructor () {
         CloudFormationConstants.ConditionPropertyName -> resourceCondition(property)
         CloudFormationConstants.PropertiesPropertyName -> resourceProperties(property)
         else -> {
-          CfnNameValueNode(keyName(property), property.value?.let { expression(it, AllowFunctions.True) }).registerNode(property)
+          CfnNameValueNode(keyName(property), property.value?.let { expression(it, AllowFunctions.True) }).registerNode(property.owner)
         }
       }
 
@@ -238,48 +244,68 @@ class YamlCloudFormationParser private constructor () {
         lookupSection<CfnResourceConditionNode>(properties),
         lookupSection<CfnResourceDependsOnNode>(properties),
         topLevelProperties
-    ).registerNode(resourceProperty)
+    ).registerNode(resourceProperty.owner)
   }
 
-  private fun resourceDependsOn(property: YAMLKeyValue): CfnResourceDependsOnNode {
+  private fun resourceDependsOn(property: CfnKeyValue): CfnResourceDependsOnNode {
     val value = property.value
     val valuesNodes = when(value) {
       null -> emptyList()
       is YAMLSequence -> value.items.mapNotNull { checkAndGetStringElement(it.value) }
       is YAMLScalar -> checkAndGetStringElement(value)?.let { listOf(it) } ?: emptyList()
       else -> {
-        addProblemOnNameElement(property, "Expected a string or an array of strings")
+        addProblemOnNameElement(property.owner, "Expected a string or an array of strings")
         emptyList()
       }
     }
 
-    return CfnResourceDependsOnNode(keyName(property), valuesNodes).registerNode(property)
+    return CfnResourceDependsOnNode(keyName(property), valuesNodes).registerNode(property.owner)
   }
 
-  private fun resourceCondition(property: YAMLKeyValue): CfnResourceConditionNode =
-      CfnResourceConditionNode(keyName(property), checkAndGetStringElement(property.value)).registerNode(property)
+  private class CfnKeyValue(
+      val owner: PsiElement,
+      val key: PsiElement?,
+      val keyText: String,
+      val value: YAMLValue?
+  )
 
-  private fun resourceProperties(propertiesProperty: YAMLKeyValue): CfnResourcePropertiesNode {
+  private fun YAMLMapping.cfnKeyValues(): List<CfnKeyValue> {
+    val fromKeyValues = keyValues.filterNotNull().map { CfnKeyValue(it, it.key, it.keyText, it.value) }
+
+    // Handle special case when value is absent, this helps code completion
+    // Example:
+    // Properties:
+    //   Ty<caret>
+    //   A: B
+    // Here "Ty" won't be a part of keyValues so we add it manually
+    val fromStandaloneValues = if (this is YAMLBlockMappingImpl) {
+      children.mapNotNull { it as? YAMLScalar }.map { CfnKeyValue(it, it, it.textValue, null) }
+    } else {
+      emptyList()
+    }
+
+    return fromKeyValues + fromStandaloneValues
+  }
+
+  private fun resourceCondition(property: CfnKeyValue): CfnResourceConditionNode =
+      CfnResourceConditionNode(
+          keyName(property),
+          checkAndGetStringElement(property.value)).registerNode(property.owner)
+
+  private fun resourceProperties(propertiesProperty: CfnKeyValue): CfnResourcePropertiesNode {
     val nameNode = keyName(propertiesProperty)
     val properties = propertiesProperty.value as? YAMLMapping
 
-    val propertyNodes = (properties?.keyValues ?: emptyList()).mapNotNull { property ->
-      val propertyName = property.name
-      if (propertyName == CloudFormationConstants.CommentResourcePropertyName) {
-        return@mapNotNull null
-      }
-
-      val propertyNameNode = keyName(property)
-
+    val propertyNodes = (properties?.cfnKeyValues() ?: emptyList()).mapNotNull { property ->
       val yamlValueNode = property.value
       val valueNode = if (yamlValueNode == null) null else {
         expression(yamlValueNode, AllowFunctions.True)
       }
 
-      return@mapNotNull CfnResourcePropertyNode(propertyNameNode, valueNode).registerNode(property)
+      return@mapNotNull CfnResourcePropertyNode(keyName(property), valueNode).registerNode(property.owner)
     }
 
-    return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty)
+    return CfnResourcePropertiesNode(nameNode, propertyNodes).registerNode(propertiesProperty.owner)
   }
 
   enum class AllowFunctions {
@@ -348,10 +374,12 @@ class YamlCloudFormationParser private constructor () {
         CfnArrayValueNode(items).registerNode(value)
       }
       value is YAMLMapping -> {
-        if (value.keyValues.size == 1 &&
+        val cfnKeyValue = value.cfnKeyValues()
+
+        if (cfnKeyValue.size == 1 &&
             allowFunctions == AllowFunctions.True &&
-            CloudFormationIntrinsicFunction.fullNames.containsKey(value.keyValues.single().keyText)) {
-          val single = value.keyValues.single()
+            CloudFormationIntrinsicFunction.fullNames.containsKey(cfnKeyValue.single().keyText)) {
+          val single = cfnKeyValue.single()
           val nameNode = keyName(single)!!
           val functionId = CloudFormationIntrinsicFunction.fullNames[single.keyText]!!
 
@@ -368,7 +396,7 @@ class YamlCloudFormationParser private constructor () {
             CfnFunctionNode(nameNode, functionId, listOf(expression(yamlValueNode, allowFunctions))).registerNode(value)
           }
         } else {
-          val properties = value.keyValues.map {
+          val properties = cfnKeyValue.map {
             val nameNode = keyName(it)
 
             val yamlValueNode = it.value
@@ -376,7 +404,7 @@ class YamlCloudFormationParser private constructor () {
               expression(yamlValueNode, allowFunctions)
             }
 
-            CfnNameValueNode(nameNode, valueNode).registerNode(it)
+            CfnNameValueNode(nameNode, valueNode).registerNode(it.owner)
           }
 
           CfnObjectValueNode(properties).registerNode(value)
@@ -389,13 +417,13 @@ class YamlCloudFormationParser private constructor () {
     }
   }
 
-  private fun resourceType(typeProperty: YAMLKeyValue): CfnResourceTypeNode {
+  private fun resourceType(typeProperty: CfnKeyValue): CfnResourceTypeNode {
     val nameNode = keyName(typeProperty)
     val value = checkAndGetStringValue(typeProperty.value) ?:
-        return CfnResourceTypeNode(nameNode, null).registerNode(typeProperty)
+        return CfnResourceTypeNode(nameNode, null).registerNode(typeProperty.owner)
 
     val valueNode = CfnScalarValueNode(value).registerNode(typeProperty.value!!)
-    return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty)
+    return CfnResourceTypeNode(nameNode, valueNode).registerNode(typeProperty.owner)
   }
 
   private fun checkAndGetMapping(expression: YAMLValue?): YAMLMapping? {
