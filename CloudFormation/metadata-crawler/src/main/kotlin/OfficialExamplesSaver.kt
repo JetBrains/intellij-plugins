@@ -7,7 +7,7 @@ import java.net.URL
 
 object OfficialExamplesSaver {
   fun save() {
-    val url = URL("http://s3.amazonaws.com/cloudformation-templates-us-east-1/")
+    val url = URL("https://s3.amazonaws.com/cloudformation-templates-us-east-1/")
 
     val doc = Jsoup.parse(url, 2000)
     for (key in doc.getElementsByTag("Key")) {

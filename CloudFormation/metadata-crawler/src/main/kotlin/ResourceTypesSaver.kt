@@ -51,7 +51,7 @@ object ResourceTypesSaver {
   }
 
   private fun fetchResourceAttributes(): Map<String, Map<String, Pair<CloudFormationResourceAttribute, String>>> {
-    val fnGetAttrDocUrl = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html")
+    val fnGetAttrDocUrl = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html")
     val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
     val tableElement = doc.select("div.informaltable").first()!!
@@ -99,7 +99,7 @@ object ResourceTypesSaver {
     return result
   }
 
-  private fun getDocumentFromUrl(url: URL): Document {
+  private fun downloadDocument(url: URL): Document {
     println("Downloading " + url)
     for (retry in 1..4) {
       try {
@@ -111,6 +111,19 @@ object ResourceTypesSaver {
     }
 
     throw RuntimeException("Could not download from " + url)
+  }
+
+  private fun getDocumentFromUrl(url: URL): Document {
+    val doc = downloadDocument(url)
+
+    // Fix all links to be absolute URLs, this helps IDEA to navigate to them (opening external browser)
+    val select = doc.select("a")
+    for (e in select) {
+      val absUrl = e.absUrl("href")
+      e.attr("href", absUrl)
+    }
+
+    return doc
   }
 
   private fun fetchResourceType(resourceTypeName: String, docLocation: URL, resourceAttributes: Map<String, Pair<CloudFormationResourceAttribute, String>>): Pair<CloudFormationResourceType, CloudFormationResourceTypeDescription> {
@@ -199,13 +212,13 @@ object ResourceTypesSaver {
             }
           }
 
-          // TODO Handle "Required if NetBiosNameServers is specified; optional otherwise" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html
-          // TODO Handle "Yes, for VPC security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-          // TODO Handle "Can be used instead of GroupId for EC2 security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
-          // TODO Handle "Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
-          // TODO Handle "Yes, for ICMP and any protocol that uses ports" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
-          // TODO http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster isn't in a VPC, you must specify this property
-          // TODO http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster is in a VPC, you must specify this property
+          // TODO Handle "Required if NetBiosNameServers is specified; optional otherwise" in https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html
+          // TODO Handle "Yes, for VPC security groups" in https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+          // TODO Handle "Can be used instead of GroupId for EC2 security groups" in https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
+          // TODO Handle "Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups" in https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
+          // TODO Handle "Yes, for ICMP and any protocol that uses ports" in https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
+          // TODO https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster isn't in a VPC, you must specify this property
+          // TODO https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster is in a VPC, you must specify this property
 
           var required = false
 
@@ -357,7 +370,7 @@ object ResourceTypesSaver {
   private data class ResourceTypeLocation(val name: String, val location: URL)
 
   private fun fetchResourceTypeLocations(): List<ResourceTypeLocation> {
-    val url = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html")
+    val url = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html")
     val content = IOUtils.toString(url)
 
     val result: MutableList<ResourceTypeLocation> = ArrayList()
@@ -377,13 +390,13 @@ object ResourceTypesSaver {
   }
 
   private fun fetchPredefinedParameters(): List<String> {
-    val url = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html")
+    val url = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html")
     val doc = getDocumentFromUrl(url)
     return doc.select("h2").filter { it.attr("id").startsWith("cfn-pseudo-param") }.map { it.text() }.sorted().toList()
   }
 
   private fun fetchLimits(): CloudFormationLimits {
-    val fnGetAttrDocUrl = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html")
+    val fnGetAttrDocUrl = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html")
     val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
     val tableElement = doc.select("div.table-contents").first()!!

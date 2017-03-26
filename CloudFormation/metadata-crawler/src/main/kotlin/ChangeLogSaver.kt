@@ -4,7 +4,7 @@ import java.net.URL
 
 object ChangeLogSaver {
   fun saveChangeLog() {
-    val url = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/DocumentHistory.html")
+    val url = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/DocumentHistory.html")
 
     val source = Source(url)
     val renderedText = source.renderer.toString()
