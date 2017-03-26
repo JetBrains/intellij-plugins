@@ -74,6 +74,27 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
               }
             }
 
+            val parameterPropertyNameMatch = ParameterPropertyNameMatch.match(parent, parsed)
+            if (parameterPropertyNameMatch != null) {
+              @Suppress("LoopToCallChain")
+              for (propertyName in CloudFormationParameterProperty.allIds.sorted()) {
+                if (parameterPropertyNameMatch.parameter.properties.any { it.name?.value == propertyName }) {
+                  continue
+                }
+
+                rs.addElement(createLookupElement(propertyName, quote))
+              }
+
+              return
+            }
+
+            val parameterTypeMatch = ParameterTypeValueMatch.match(parent, parsed)
+            if (parameterTypeMatch != null) {
+              val allTypes = CloudFormationParameterType.allIds + CloudFormationConstants.AwsSpecificParameterTypes.sorted()
+              allTypes.forEach { rs.addElement(createLookupElement(it, quote)) }
+              return
+            }
+
             completeResourceTopLevelProperty(rs, parent, quote, parsed)
 
             val attResourceName = getResourceNameFromGetAttAttributePosition(parent, parsed)

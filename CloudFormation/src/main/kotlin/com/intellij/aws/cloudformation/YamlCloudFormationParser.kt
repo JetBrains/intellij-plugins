@@ -132,7 +132,7 @@ class YamlCloudFormationParser private constructor () {
 
   private fun outputs(outputs: CfnKeyValue): CfnOutputsNode = parseNameValues(
       outputs,
-      { output -> CfnOutputNode(keyName(output), expression(output.value!!, AllowFunctions.True)).registerNode(output.owner) },
+      { output -> CfnOutputNode(keyName(output), output.value?.let { expression(it, AllowFunctions.True) }).registerNode(output.owner) },
       { nameNode, list -> CfnOutputsNode(nameNode, list) }
   )
 
@@ -156,21 +156,16 @@ class YamlCloudFormationParser private constructor () {
     val keyElement = keyValueElement.key
     val nameNode = if (keyElement == null) null else CfnScalarValueNode(keyValueElement.keyText).registerNode(keyElement)
 
-    val obj = checkAndGetMapping(keyValueElement.value!!) ?: return resultFactory(nameNode, emptyList()).registerNode(keyValueElement.owner)
+    val obj = checkAndGetMapping(keyValueElement.value)
 
-    val list = obj.cfnKeyValues().mapNotNull { value ->
-      if (value.keyText.isEmpty()) {
-        addProblemOnNameElement(value.owner, "A non-empty key is expected")
+    val list = obj?.cfnKeyValues()?.mapNotNull { keyValue ->
+      if (keyValue.keyText.isEmpty()) {
+        addProblemOnNameElement(keyValue.owner, "A non-empty key is expected")
         return@mapNotNull null
       }
 
-      if (value.value == null) {
-        addProblemOnNameElement(value.owner, "A value is expected")
-        return@mapNotNull null
-      }
-
-      return@mapNotNull valueFactory(value)
-    }
+      return@mapNotNull valueFactory(keyValue)
+    } ?: emptyList()
 
     return resultFactory(nameNode, list).registerNode(keyValueElement.owner)
   }
@@ -390,7 +385,7 @@ class YamlCloudFormationParser private constructor () {
               if (itemValue != null) expression(itemValue, allowFunctions) else null
             }
             CfnFunctionNode(nameNode, functionId, items).registerNode(value)
-          } else if (yamlValueNode == null){
+          } else if (yamlValueNode == null) {
             CfnFunctionNode(nameNode, functionId, listOf()).registerNode(value)
           } else {
             CfnFunctionNode(nameNode, functionId, listOf(expression(yamlValueNode, allowFunctions))).registerNode(value)

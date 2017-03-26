@@ -1,6 +1,8 @@
 package com.intellij.aws.cloudformation.tests
 
+import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
+import com.intellij.aws.cloudformation.CloudFormationParameterType
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
@@ -26,6 +28,14 @@ class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
   fun testProperty1() = checkBasicCompletion("resource_1.yaml",
       "Condition", "CreationPolicy", "DeletionPolicy", "DependsOn",
       "Metadata", "Properties", "UpdatePolicy", "Version")
+
+  fun testParameterProperty() = checkBasicCompletion("parameter_property.yaml",
+      "AllowedPattern", "AllowedValues", "ConstraintDescription",
+      "Default", "MaxLength", "MaxValue", "MinLength", "MinValue", "NoEcho")
+  fun testParameterType() = checkBasicCompletion("parameter_type.yaml", "String", "List<String>")
+  fun testParameterType2() = checkBasicCompletion("parameter_type_2.yaml",
+      *(CloudFormationParameterType.allIds +
+          CloudFormationConstants.AwsSpecificParameterTypes.sorted()).toTypedArray())
 
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
     myFixture.configureByFiles(fileName)

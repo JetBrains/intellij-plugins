@@ -362,14 +362,6 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
   override fun parameter(parameter: CfnParameterNode) {
     // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
 
-    parameter.properties.forEach {
-      val name = it.name?.value?.trim() ?: return@forEach
-
-      if (!CloudFormationParameterProperty.allIds.contains(name)) {
-        addProblem(parameter, "Unknown parameter property: " + name)
-      }
-    }
-
     val type = parameter.properties.firstOrNull { it.name?.value == CloudFormationParameterProperty.Type.id }
     if (type != null) checkValueIsScalar(type)
 
@@ -387,10 +379,14 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
     parameter.properties.forEach { property ->
       val propertyName = property.name?.value?.trim() ?: return@forEach
-      val typedPropertyName = CloudFormationParameterProperty.values().singleOrNull { it.id == propertyName }!!
+      val typedPropertyName = CloudFormationParameterProperty.values().singleOrNull { it.id == propertyName }
 
       @Suppress("UNUSED_VARIABLE")
       val _used_to_enforce_exhaustive_check: Unit = when (typedPropertyName) {
+        null -> {
+          addProblem(parameter, "Unknown parameter property: " + propertyName)
+        }
+
         CloudFormationParameterProperty.AllowedPattern -> {
           checkValueIsScalar(property)
         }
