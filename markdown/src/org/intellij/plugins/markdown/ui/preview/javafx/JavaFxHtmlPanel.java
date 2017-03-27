@@ -1,6 +1,5 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -220,15 +218,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     static final JavaPanelBridge INSTANCE = new JavaPanelBridge();
 
     public void openInExternalBrowser(@NotNull String link) {
-      if (!BrowserUtil.isAbsoluteURL(link)) {
-        try {
-          link = new URI("http", link, null).toURL().toString();
-        }
-        catch (Exception ignore) {
-        }
-      }
-
-      BrowserUtil.browse(link);
+      SafeOpener.openLink(link);
     }
 
     public void log(@Nullable String text) {
