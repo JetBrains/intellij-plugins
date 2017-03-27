@@ -15,10 +15,27 @@ Provides:
  * find usages and Go To Symbol navigation for targets
  * prerequisites resolution
  * rules, variables and conditionals folding
- * quick fix to create new rule from unresolved prerequisite
-
-Work in progress.
+ * quick fixes to create new rule from unresolved prerequisite and remove empty rule
 
 <img src="https://victor.kropp.name/projects/makefile/makefile-example.png" width="600">
+
+### Development
+
+The plugin is built using Gradle and uses [gradle-intellij-plugin](https://github.com/JetBrains/gradle-intellij-plugin)
+to integrate with IntelliJ Platform.
+ 
+To build a plugin run
+
+```
+$ ./gradlew buildPlugin
+```
+
+Plugin zip file will be created in `build/distributions`
+
+To test plugin in IDE run `./gradlew runIdea`
+ 
+### Contribution
+
+Plugin is written in [Kotlin](http://kotlinlang.org/).
 
 [GNU head icon](https://www.gnu.org/graphics/heckert_gnu.html) licensed under CC-BY-SA 2.0
