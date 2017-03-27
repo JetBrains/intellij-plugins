@@ -16,6 +16,7 @@ import com.intellij.flex.generate.ActionScriptGenerateTest;
 import com.intellij.flex.highlighting.*;
 import com.intellij.flex.imports.FlexAutoImportsTest;
 import com.intellij.flex.imports.FlexOptimizeImportsTest;
+import com.intellij.flex.intentions.ActionScriptIntentionActionTest;
 import com.intellij.flex.intentions.CreateASFunctionIntentionTest;
 import com.intellij.flex.intentions.CreateASVariableIntentionTest;
 import com.intellij.flex.intentions.FlexConvertToLocalTest;
@@ -36,75 +37,105 @@ public class FlexTestSuite extends TestCase {
 
   public static Test suite() {
     final TestSuite testSuite = new TestSuite(FlexTestSuite.class.getSimpleName());
-    testSuite.addTestSuite(ActionScriptParsingTest.class);
 
-    testSuite.addTestSuite(ActionScriptCompletionTest.class);
-    testSuite.addTestSuite(ActionScriptHighlightingTest.class);
-    testSuite.addTestSuite(ActionScriptResolveTest.class);
-    testSuite.addTestSuite(FlexHighlightingTest.class);
-    testSuite.addTestSuite(FlexCompletionTest.class);
-    testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
-    testSuite.addTestSuite(ActionScriptHighlightingInTextFieldTest.class);
-    testSuite.addTestSuite(SwfHighlightingTest.class);
-    testSuite.addTestSuite(ActionScriptFormatterTest.class);
-
-    testSuite.addTestSuite(FlexCssCompletionTest.class);
-    testSuite.addTestSuite(FlexCssNavigationTest.class);
-
-    testSuite.addTestSuite(FlexImporterTest.class);
-    testSuite.addTestSuite(FlexProjectConfigTest.class);
-    testSuite.addTestSuite(FlexScopeTest.class);
+    // com.intellij.flex.bc.*
+    testSuite.addTestSuite(FlexCompilerConfigTest.class);
     testSuite.addTestSuite(FlexConversionTest.class);
+    testSuite.addTestSuite(FlexProjectConfigTest.class);
 
-    testSuite.addTestSuite(FlexHighlightingPerformanceTest.class);
-    testSuite.addTestSuite(FlexAutoImportsTest.class);
-    testSuite.addTestSuite(FlexOptimizeImportsTest.class);
+    // com.intellij.flex.codeInsight.*
+    testSuite.addTestSuite(ActionScriptRearrangerTest.class);
+    testSuite.addTestSuite(ActionScriptStatementMoverTest.class);
+    testSuite.addTestSuite(FlexDocumentationTest.class);
+    testSuite.addTestSuite(FlexFindUsagesTest.class);
+    testSuite.addTestSuite(FlexGotoImplementationsTest.class);
+    testSuite.addTestSuite(FlexHierarchyTest.class);
+    testSuite.addTestSuite(FlexNavigationTest.class);
+    testSuite.addTestSuite(FlexStructureViewTest.class);
 
+    // com.intellij.flex.completion.*
+    testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
+    testSuite.addTestSuite(ActionScriptCompletionTest.class);
+    testSuite.addTestSuite(FlexAutoPopupTest.class);
+    testSuite.addTestSuite(FlexCompletionInUmlTextFieldsTest.class);
+    testSuite.addTestSuite(FlexCompletionTest.class);
+    testSuite.addTestSuite(FlexCssCompletionTest.class);
+
+    //com.intellij.flex.editor.*
+    testSuite.addTestSuite(FlexEditorTest.class);
+    testSuite.addTestSuite(FlexExtendSelectionTest.class);
+    testSuite.addTestSuite(FlexLiveTemplatesTest.class);
+
+    //com.intellij.flex.flashBuilder.*
+    testSuite.addTestSuite(FlashBuilderImportTest.class);
+
+    //com.intellij.flex.flexunit.*
     testSuite.addTestSuite(FlexUnitConfigurationTest.class);
     testSuite.addTestSuite(FlexUnitHighlightingTest.class);
     testSuite.addTestSuite(FlexUnitCompletionTest.class);
 
-    testSuite.addTestSuite(GlobalFlexHighlightingTest.class);
+    //com.intellij.flex.generate.*
+    testSuite.addTestSuite(ActionScriptGenerateTest.class);
+
+    //com.intellij.flex.highlighting.*
+    testSuite.addTestSuite(ActionScriptHighlightingInTextFieldTest.class);
+    testSuite.addTestSuite(ActionScriptHighlightingTest.class);
+    testSuite.addTestSuite(ActionScriptRegExpHighlightingTest.class);
+    testSuite.addTestSuite(ActionScriptStubsTest.class);
     testSuite.addTestSuite(FlexColorAnnotatorTest.class);
+    testSuite.addTestSuite(FlexHighlightingPerformanceTest.class);
+    testSuite.addTestSuite(FlexHighlightingTest.class);
+    testSuite.addTestSuite(FlexScopeTest.class);
+    testSuite.addTestSuite(GlobalFlexHighlightingTest.class);
+    testSuite.addTestSuite(SwfHighlightingTest.class);
+
+    //com.intellij.flex.imports.*
+    testSuite.addTestSuite(FlexAutoImportsTest.class);
+    testSuite.addTestSuite(FlexOptimizeImportsTest.class);
+
+    //com.intellij.flex.intentions.*
+    testSuite.addTestSuite(ActionScriptIntentionActionTest.class);
+    testSuite.addTestSuite(CreateASFunctionIntentionTest.class);
+    testSuite.addTestSuite(CreateASVariableIntentionTest.class);
+    testSuite.addTestSuite(FlexConvertToLocalTest.class);
+
+    //com.intellij.flex.maven.*
+    //testSuite.addTestSuite(Flexmojos3ImporterTest.class);
+    //testSuite.addTestSuite(Flexmojos4ImporterTest.class);
+    //testSuite.addTestSuite(ImportingNonJavaModulesTest.class);
+    //testSuite.addTestSuite(NonJarDependenciesImportingTest.class);
+
+    //com.intellij.flex.parser.*
+    testSuite.addTestSuite(ActionScriptParsingTest.class);
+    testSuite.addTestSuite(FlexImporterTest.class);
+
+    //com.intellij.flex.projectView.*
     testSuite.addTestSuite(FlexProjectViewTest.class);
-    testSuite.addTestSuite(FlexCompilerConfigTest.class);
 
-    testSuite.addTestSuite(ActionScriptRearrangerTest.class);
-    testSuite.addTestSuite(FlashBuilderImportTest.class);
-    testSuite.addTestSuite(FlexStructureViewTest.class);
-    testSuite.addTestSuite(FlexDocumentationTest.class);
-    testSuite.addTestSuite(FlexLiveTemplatesTest.class);
-    testSuite.addTestSuite(FlexFindUsagesTest.class);
+    //com.intellij.flex.refactoring.*
+    testSuite.addTestSuite(ActionScriptInPlaceIntroduceVariableTest.class);
     testSuite.addTestSuite(FlexChangeSignatureTest.class);
-
+    testSuite.addTestSuite(FlexExtractFunctionTest.class);
+    testSuite.addTestSuite(FlexExtractSuperTest.class);
+    testSuite.addTestSuite(FlexInlineFunctionTest.class);
+    testSuite.addTestSuite(FlexInlineVariableTest.class);
     testSuite.addTestSuite(FlexIntroduceConstantTest.class);
     testSuite.addTestSuite(FlexIntroduceFieldTest.class);
     testSuite.addTestSuite(FlexMoveInnerClassTest.class);
     testSuite.addTestSuite(FlexMoveMembersTest.class);
+    testSuite.addTestSuite(FlexMoveTest.class);
     testSuite.addTestSuite(FlexPullUpTest.class);
     testSuite.addTestSuite(FlexPushDownTest.class);
-    testSuite.addTestSuite(FlexExtractSuperTest.class);
-    testSuite.addTestSuite(FlexHierarchyTest.class);
-    testSuite.addTestSuite(CreateASFunctionIntentionTest.class);
-    testSuite.addTestSuite(CreateASVariableIntentionTest.class);
-    testSuite.addTestSuite(FlexExtractFunctionTest.class);
-    testSuite.addTestSuite(FlexEditorTest.class);
-    testSuite.addTestSuite(FlexExtendSelectionTest.class);
     testSuite.addTestSuite(FlexRenameTest.class);
-    testSuite.addTestSuite(FlexNavigationTest.class);
-    testSuite.addTestSuite(FlexMoveTest.class);
-    testSuite.addTestSuite(FlexConvertToLocalTest.class);
-    testSuite.addTestSuite(FlexGotoImplementationsTest.class);
-    testSuite.addTestSuite(FlexAutoPopupTest.class);
-    testSuite.addTestSuite(FlexInlineFunctionTest.class);
-    testSuite.addTestSuite(FlexInlineVariableTest.class);
-    testSuite.addTestSuite(ActionScriptStubsTest.class);
-    testSuite.addTestSuite(ActionScriptGenerateTest.class);
-    testSuite.addTestSuite(FlashUmlTest.class);
-    testSuite.addTestSuite(FlexCompletionInUmlTextFieldsTest.class);
-    testSuite.addTestSuite(ActionScriptInPlaceIntroduceVariableTest.class);
-    testSuite.addTestSuite(ActionScriptStatementMoverTest.class);
 
+    //com.intellij.flex.resolver.*
+    testSuite.addTestSuite(ActionScriptResolveTest.class);
+    testSuite.addTestSuite(FlexCssNavigationTest.class);
+
+    //com.intellij.flex.uml.*
+    testSuite.addTestSuite(FlashUmlTest.class);
+
+    testSuite.addTestSuite(ActionScriptFormatterTest.class);
     return testSuite;
   }
 }
