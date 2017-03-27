@@ -1,6 +1,7 @@
 package org.jetbrains.vuejs.language
 
 import com.intellij.lexer.LexerBase
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
@@ -33,7 +34,7 @@ class VueInterpolationLexer(val prefix:String, val suffix:String, val type:IElem
       0 -> {
         if (buffer!![start] == '\n') {
           element = XmlTokenType.XML_REAL_WHITE_SPACE
-          while(end < buffer!!.length && (buffer!![end] == '\n' || buffer!![end] == ' ' || buffer!![end] == '\t')) end++
+          while(end < buffer!!.length && StringUtil.isWhiteSpace(buffer!![end])) end++
           return
         }
         val lineEnd = buffer!!.indexOf('\n', end)
