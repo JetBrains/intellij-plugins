@@ -17,6 +17,9 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 
 public class TsLintErrorFixAction extends BaseIntentionAction implements HighPriorityAction {
 
@@ -64,9 +67,12 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     WriteCommandAction.runWriteCommandAction(project, getText(), null, () -> {
       Document document = editor.getDocument();
       TsLintFixInfo.TsLintFixReplacements[] replacements = info.innerReplacements;
+
       if (replacements == null || replacements.length == 0) {
         return;
       }
+      Arrays.sort(replacements, Comparator.comparingInt(el -> -el.innerStart));
+
       for (TsLintFixInfo.TsLintFixReplacements replacement : replacements) {
         int offset = replacement.innerStart;
         if (offset > document.getTextLength()) {
