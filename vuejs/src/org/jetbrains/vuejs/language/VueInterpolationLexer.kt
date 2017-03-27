@@ -33,7 +33,7 @@ class VueInterpolationLexer(val prefix:String, val suffix:String, val type:IElem
       0 -> {
         if (buffer!![start] == '\n') {
           element = XmlTokenType.XML_REAL_WHITE_SPACE
-          end++
+          while(end < buffer!!.length && (buffer!![end] == '\n' || buffer!![end] == ' ' || buffer!![end] == '\t')) end++
           return
         }
         val lineEnd = buffer!!.indexOf('\n', end)
