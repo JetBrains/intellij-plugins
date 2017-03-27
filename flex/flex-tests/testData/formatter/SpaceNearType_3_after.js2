@@ -1,0 +1,10 @@
+package {
+public class SpaceNearType_3 {
+    var a: String;
+    var a2: String;
+    var a3: String;
+
+    function foo(p: Number): String {
+    }
+}
+}

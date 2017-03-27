@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<mx:Application
+        xmlns:mx="http://www.adobe.com/2006/mxml"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <mx:Script>
+        import com.adobe.viewsource.ViewSource;
+
+        function foo() {
+            var x:ViewSource;
+        }
+    </mx:Script>
+</mx:Application>

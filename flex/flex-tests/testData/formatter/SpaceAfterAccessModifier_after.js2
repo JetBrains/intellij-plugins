@@ -1,0 +1,21 @@
+package {
+public class SpaceAfterAccessModifier {
+
+    public function ttt() {
+
+    }
+
+
+    private var p;
+
+
+    protected static var p2;
+
+
+    internal static const p3 = 0;
+
+
+    internal static function fffff() {
+    }
+}
+}

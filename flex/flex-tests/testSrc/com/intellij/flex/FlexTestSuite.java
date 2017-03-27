@@ -27,7 +27,7 @@ import com.intellij.flex.refactoring.*;
 import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
 import com.intellij.flex.uml.FlashUmlTest;
-import com.intellij.lang.javascript.ActionScriptFormatterTest;
+import com.intellij.flex.formatter.ActionScriptFormatterTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

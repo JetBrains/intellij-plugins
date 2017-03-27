@@ -1,0 +1,6 @@
+class Foo {
+    function foo(a:int, b:String,
+                 c:Boolean,
+                 d:String) {
+    }
+}

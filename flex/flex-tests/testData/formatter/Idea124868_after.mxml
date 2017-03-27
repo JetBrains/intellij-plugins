@@ -1,0 +1,7 @@
+<s:Application xmlns:s="library://ns.adobe.com/flex/spark" xmlns:fx="http://ns.adobe.com/mxml/2009">
+    <fx:Script><![CDATA[
+        // @formatter:off
+        var    a;
+        // @formatter:on
+        ]]></fx:Script>
+</s:Application>

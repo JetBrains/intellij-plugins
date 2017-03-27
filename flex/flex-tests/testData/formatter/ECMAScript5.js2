@@ -1,0 +1,11 @@
+package {
+public class A {
+    public     function foo() {
+    }
+
+    public      var tt;
+        {
+          var x;
+        }
+}
+}

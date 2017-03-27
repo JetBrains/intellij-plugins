@@ -1,0 +1,11 @@
+public class Test {
+    private var foo;
+    public function func1() {
+    }
+    private var bar;
+    /**
+     *
+     */
+    public function func2() {
+    }
+}
