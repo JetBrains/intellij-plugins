@@ -220,15 +220,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     static final JavaPanelBridge INSTANCE = new JavaPanelBridge();
 
     public void openInExternalBrowser(@NotNull String link) {
-      if (!BrowserUtil.isAbsoluteURL(link)) {
-        try {
-          link = new URI("http", link, null).toURL().toString();
-        }
-        catch (Exception ignore) {
-        }
-      }
-
-      BrowserUtil.browse(link);
+      SafeOpener.openLink(link);
     }
 
     public void log(@Nullable String text) {
