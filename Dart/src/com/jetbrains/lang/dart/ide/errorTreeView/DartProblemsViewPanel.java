@@ -125,7 +125,11 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     });
 
     new TableSpeedSearch(table, object -> object instanceof DartProblem
-                                          ? ((DartProblem)object).getErrorMessage() + " " + ((DartProblem)object).getPresentableLocation()
+                                          ? ((DartProblem)object).getErrorMessage() +
+                                            " " +
+                                            ((DartProblem)object).getCorrectionMessage() +
+                                            " " +
+                                            ((DartProblem)object).getPresentableLocation()
                                           : "");
 
     table.setShowVerticalLines(false);
@@ -279,6 +283,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity() +
                                                                  ": " +
                                                                  problem.getErrorMessage() +
+                                                                 " " +
+                                                                 problem.getCorrectionMessage() +
                                                                  " (" +
                                                                  problem.getPresentableLocation() +
                                                                  ")", "\n");

@@ -42,6 +42,18 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     }
   };
 
+  private static final TableCellRenderer CORRECTION_RENDERER = new DefaultTableCellRenderer() {
+    @Override
+    public JLabel getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      // Do not emphasize focused cell, drawing the whole row as selected is enough
+      final JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+
+      setText(((DartProblem)value).getCorrectionMessage());
+
+      return label;
+    }
+  };
+
   private static final TableCellRenderer LOCATION_RENDERER = new DefaultTableCellRenderer() {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -69,13 +81,14 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private int myHintCountAfterFilter = 0;
 
   private final Comparator<DartProblem> myDescriptionComparator = new DartProblemsComparator(DartProblemsComparator.MESSAGE_COLUMN_ID);
+  private final Comparator<DartProblem> myCorrectionComparator = new DartProblemsComparator(DartProblemsComparator.CORRECTION_COLUMN_ID);
   private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
 
   public DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
     myProject = project;
     myFilter = filter;
     myItems = new ArrayList<>();
-    setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
+    setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createCorrectionColumn(), createLocationColumn()});
     setItems(myItems);
     setSortable(true);
   }
@@ -93,6 +106,29 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       @Override
       public TableCellRenderer getRenderer(@NotNull final DartProblem problem) {
         return MESSAGE_RENDERER;
+      }
+
+      @NotNull
+      @Override
+      public DartProblem valueOf(@NotNull final DartProblem problem) {
+        return problem;
+      }
+    };
+  }
+
+  @NotNull
+  private ColumnInfo<DartProblem, DartProblem> createCorrectionColumn() {
+    return new ColumnInfo<DartProblem, DartProblem>("Correction") {
+      @Nullable
+      @Override
+      public Comparator<DartProblem> getComparator() {
+        return myCorrectionComparator;
+      }
+
+      @Nullable
+      @Override
+      public TableCellRenderer getRenderer(@NotNull final DartProblem problem) {
+        return CORRECTION_RENDERER;
       }
 
       @NotNull
@@ -298,6 +334,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private static boolean lookSimilar(@NotNull final DartProblem problem1, @NotNull final DartProblem problem2) {
     return problem1.getSeverity().equals(problem2.getSeverity()) &&
            problem1.getErrorMessage().equals(problem2.getErrorMessage()) &&
+           problem1.getCorrectionMessage().equals(problem2.getCorrectionMessage()) &&
            problem1.getSystemIndependentPath().equals(problem2.getSystemIndependentPath());
   }
 
@@ -422,7 +459,8 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
   private class DartProblemsComparator implements Comparator<DartProblem> {
     private static final int MESSAGE_COLUMN_ID = 0;
-    private static final int LOCATION_COLUMN_ID = 1;
+    private static final int CORRECTION_COLUMN_ID = 1;
+    private static final int LOCATION_COLUMN_ID = 2;
 
     private final int myColumn;
 
@@ -443,6 +481,10 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
       if (myColumn == MESSAGE_COLUMN_ID) {
         return StringUtil.compare(problem1.getErrorMessage(), problem2.getErrorMessage(), false);
+      }
+
+      if (myColumn == CORRECTION_COLUMN_ID) {
+        return StringUtil.compare(problem1.getCorrectionMessage(), problem2.getCorrectionMessage(), false);
       }
 
       if (myColumn == LOCATION_COLUMN_ID) {
