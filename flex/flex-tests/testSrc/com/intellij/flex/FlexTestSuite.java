@@ -12,6 +12,7 @@ import com.intellij.flex.flashBuilder.FlashBuilderImportTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitCompletionTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitConfigurationTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitHighlightingTest;
+import com.intellij.flex.formatter.ActionScriptFormatterTest;
 import com.intellij.flex.generate.ActionScriptGenerateTest;
 import com.intellij.flex.highlighting.*;
 import com.intellij.flex.imports.FlexAutoImportsTest;
@@ -27,7 +28,6 @@ import com.intellij.flex.refactoring.*;
 import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
 import com.intellij.flex.uml.FlashUmlTest;
-import com.intellij.flex.formatter.ActionScriptFormatterTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -73,6 +73,9 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexUnitConfigurationTest.class);
     testSuite.addTestSuite(FlexUnitHighlightingTest.class);
     testSuite.addTestSuite(FlexUnitCompletionTest.class);
+
+    //com.intellij.flex.formatter.*
+    testSuite.addTestSuite(ActionScriptFormatterTest.class);
 
     //com.intellij.flex.generate.*
     testSuite.addTestSuite(ActionScriptGenerateTest.class);
@@ -135,7 +138,6 @@ public class FlexTestSuite extends TestCase {
     //com.intellij.flex.uml.*
     testSuite.addTestSuite(FlashUmlTest.class);
 
-    testSuite.addTestSuite(ActionScriptFormatterTest.class);
     return testSuite;
   }
 }

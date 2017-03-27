@@ -1,11 +1,11 @@
 package com.intellij.flex.formatter;
 
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -15,6 +15,11 @@ import com.intellij.psi.formatter.xml.XmlCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
+  @NotNull
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
 
   private static CommonCodeStyleSettings getCommonJSSettings() {
     return CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
@@ -474,10 +479,5 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
 
   public void testImportStatement2() throws Exception {
     doTestFromFile("js2");
-  }
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + "/contrib/flex/flex-tests/testData";
   }
 }
