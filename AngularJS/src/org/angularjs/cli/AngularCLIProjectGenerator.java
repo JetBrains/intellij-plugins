@@ -1,13 +1,10 @@
 package org.angularjs.cli;
 
 import com.intellij.execution.filters.Filter;
-import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ArrayUtil;
 import icons.AngularJSIcons;
 import org.jetbrains.annotations.Nls;
@@ -21,7 +18,6 @@ import java.io.File;
  */
 public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   public static final String PACKAGE_NAME = "@angular/cli";
-  private static final Key<Boolean> NG4 = Key.create("angular.cli.ng4");
 
   @Nls
   @NotNull
@@ -56,9 +52,6 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Settings settings) {
-    if (settings.getUserData(NG4) == Boolean.TRUE) {
-      return new String[]{"new", baseDir.getName(), "--dir=.", "--ng4"};
-    }
     return new String[]{"new", baseDir.getName(), "--dir=."};
   }
 
@@ -89,36 +82,5 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   protected String presentablePackageName() {
     return "Angular &CLI:";
-  }
-
-  @NotNull
-  @Override
-  public GeneratorPeer<Settings> createPeer() {
-    return new NpmPackageGeneratorPeer() {
-      private JCheckBox ng4;
-
-      @Override
-      protected JPanel createPanel() {
-        JPanel panel = super.createPanel();
-        ng4 = new JCheckBox("Create Angular 4 project");
-        panel.add(ng4);
-        return panel;
-      }
-
-      @Override
-      public void buildUI(@NotNull SettingsStep settingsStep) {
-        super.buildUI(settingsStep);
-        ng4.setBorder(IdeBorderFactory.createEmptyBorder(0, -2, 0, 0));
-        settingsStep.addSettingsComponent(ng4);
-      }
-
-      @NotNull
-      @Override
-      public Settings getSettings() {
-        Settings settings = super.getSettings();
-        settings.putUserData(NG4, ng4.isSelected());
-        return settings;
-      }
-    };
   }
 }
