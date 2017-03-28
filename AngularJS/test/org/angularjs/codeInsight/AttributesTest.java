@@ -555,7 +555,28 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "*ngIf");
+      assertDoesntContain(myFixture.getLookupElementStrings(), "ngIf");
     });
+  }
+
+  public void testIfCompletion4JavascriptUmd() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("if4.html", "angular4_compiled.umd.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
+      myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "*ngIf");
+      assertDoesntContain(myFixture.getLookupElementStrings(), "ngIf");
+    });
+  }
+
+  public void testIfCompletion4JavascriptEs6InEs5() throws Exception {
+    myFixture.configureByFiles("if4.html", "angular4_compiled.es6.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "*ngIf");
+    assertDoesntContain(myFixture.getLookupElementStrings(), "ngIf");
   }
 
   public void testForTemplateCompletion2Javascript() throws Exception {
