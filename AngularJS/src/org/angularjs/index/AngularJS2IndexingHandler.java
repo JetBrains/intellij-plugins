@@ -3,6 +3,7 @@ package org.angularjs.index;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
@@ -187,9 +188,11 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     final PsiElement parent = decorator.getParent();
     if (parent instanceof JSArrayLiteralExpression) {
       final JSCallExpression metadata = PsiTreeUtil.getNextSiblingOfType(decorator, JSCallExpression.class);
-      return metadata != null && metadata.getText().contains(TEMPLATE_REF);
+      return hasTemplateRef(metadata);
     }
     if (parent instanceof JSObjectLiteralExpression) {
+      JSQualifiedName namespace = getCompiledDecoratorNamespace(parent);
+      if (namespace == null) return false;
       final JSBlockStatement block = PsiTreeUtil.getParentOfType(parent, JSBlockStatement.class);
       final JSFile file = block == null ? PsiTreeUtil.getParentOfType(parent, JSFile.class) : null;
       final JSSourceElement[] statements = block != null ? block.getStatements() :
@@ -200,14 +203,25 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
           final JSExpression expression = ((JSExpressionStatement)statement).getExpression();
           if (expression instanceof JSAssignmentExpression) {
             final JSDefinitionExpression def = ((JSAssignmentExpression)expression).getDefinitionExpression();
-            if (def != null && "ctorParameters".equals(def.getName())) {
-              return expression.getText().contains(TEMPLATE_REF);
+            if (def != null && "ctorParameters".equals(def.getName()) && namespace.equals(def.getJSNamespace().getQualifiedName())) {
+              return hasTemplateRef(expression) ||
+                     PsiTreeUtil.hasErrorElements(expression) && !DialectDetector.isES6(expression) && hasTemplateRef(PsiTreeUtil.getNextSiblingOfType(statement, JSExpressionStatement.class));
             }
           }
         }
       }
     }
     return false;
+  }
+
+  private static boolean hasTemplateRef(@Nullable PsiElement expression) {
+    return expression != null && expression.getText().contains(TEMPLATE_REF);
+  }
+
+  private static JSQualifiedName getCompiledDecoratorNamespace(PsiElement parent) {
+    JSAssignmentExpression assignment = PsiTreeUtil.getParentOfType(parent, JSAssignmentExpression.class, true, JSFunction.class, JSFile.class);
+    JSDefinitionExpression definition = assignment != null ? assignment.getDefinitionExpression() : null;
+    return definition != null ? definition.getJSNamespace().getQualifiedName() : null;
   }
 
   @Nullable
