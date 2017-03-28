@@ -31,6 +31,8 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       final DartProblem problem = (DartProblem)value;
       setText(problem.getErrorMessage());
 
+      setToolTipText(generateToolTipText(problem.getErrorMessage(), problem.getCorrectionMessage()));
+
       final String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
               ? AllIcons.General.Error
@@ -41,6 +43,13 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       return label;
     }
   };
+
+  @NotNull
+  private static String generateToolTipText(@Nullable final String message, @Nullable final String correction) {
+    String messageSanitized = StringUtil.notNullize(message).replaceAll("\\\\n", "\n");
+    String correctionSanitized = StringUtil.notNullize(correction).replaceAll("\\\\n", "\n");
+    return correctionSanitized.isEmpty() ? messageSanitized : messageSanitized + "\n\n" + correctionSanitized;
+  }
 
   private static final TableCellRenderer LOCATION_RENDERER = new DefaultTableCellRenderer() {
     @Override
