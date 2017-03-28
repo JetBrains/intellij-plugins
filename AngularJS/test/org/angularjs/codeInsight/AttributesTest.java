@@ -548,6 +548,16 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testIfCompletion4Javascript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("if4.html", "angular4_compiled.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
+      myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "*ngIf");
+    });
+  }
+
   public void testForTemplateCompletion2Javascript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("for2Template.html", "angular2_compiled.js");

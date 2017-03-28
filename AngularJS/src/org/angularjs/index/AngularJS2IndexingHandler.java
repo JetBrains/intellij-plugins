@@ -191,8 +191,11 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     }
     if (parent instanceof JSObjectLiteralExpression) {
       final JSBlockStatement block = PsiTreeUtil.getParentOfType(parent, JSBlockStatement.class);
-      final JSStatement[] statements = block != null ? block.getStatements() : JSStatement.EMPTY;
-      for (JSStatement statement : statements) {
+      final JSFile file = block == null ? PsiTreeUtil.getParentOfType(parent, JSFile.class) : null;
+      final JSSourceElement[] statements = block != null ? block.getStatements() :
+                                           file != null ? file.getStatements() :
+                                           JSStatement.EMPTY;
+      for (JSSourceElement statement : statements) {
         if (statement instanceof JSExpressionStatement) {
           final JSExpression expression = ((JSExpressionStatement)statement).getExpression();
           if (expression instanceof JSAssignmentExpression) {
