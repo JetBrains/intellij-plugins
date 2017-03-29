@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.ruby.motion.symbols;
 
 import com.intellij.openapi.module.Module;
-import com.jetbrains.cidr.CocoaDocumentationManager;
+import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Function;
@@ -47,11 +47,11 @@ public class FunctionSymbol extends RTypedSyntheticSymbol implements MotionSymbo
   }
 
   @Override
-  public CocoaDocumentationManager.DocTokenType getInfoType() {
+  public CocoaDocumentationManagerImpl.DocTokenType getInfoType() {
     return getParentSymbol() != null ?
-             myFunction.isClassMethod() ? CocoaDocumentationManager.DocTokenType.CLASS_METHOD :
-                                          CocoaDocumentationManager.DocTokenType.INSTANCE_METHOD :
-           CocoaDocumentationManager.DocTokenType.FUNCTION;
+           myFunction.isClassMethod() ? CocoaDocumentationManagerImpl.DocTokenType.CLASS_METHOD :
+           CocoaDocumentationManagerImpl.DocTokenType.INSTANCE_METHOD :
+           CocoaDocumentationManagerImpl.DocTokenType.FUNCTION;
   }
 
   @Override

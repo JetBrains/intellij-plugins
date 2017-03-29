@@ -2,7 +2,7 @@ package org.jetbrains.plugins.ruby.motion.symbols;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.cidr.CocoaDocumentationManager;
+import com.jetbrains.cidr.CocoaDocumentationManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Struct;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
@@ -46,8 +46,8 @@ public class StructSymbol extends SymbolImpl implements MotionSymbol {
   }
 
   @Override
-  public CocoaDocumentationManager.DocTokenType getInfoType() {
-    return CocoaDocumentationManager.DocTokenType.TYPEDEF;
+  public CocoaDocumentationManagerImpl.DocTokenType getInfoType() {
+    return CocoaDocumentationManagerImpl.DocTokenType.TYPEDEF;
   }
 
   @Override
