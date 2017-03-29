@@ -2,6 +2,8 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFieldImpl;
@@ -66,6 +68,14 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(resolve);
       assertEquals("template.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, TypeScriptFieldImpl.class);
+    });
+  }
+
+  public void testNonInlineTemplateUsage2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class, JSUnusedGlobalSymbolsInspection.class);
+      myFixture.configureByFiles("template.usage.ts", "template.usage.html", "angular2.js");
+      myFixture.checkHighlighting();
     });
   }
 
