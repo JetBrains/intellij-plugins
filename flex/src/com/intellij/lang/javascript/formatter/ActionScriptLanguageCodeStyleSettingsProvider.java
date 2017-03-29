@@ -101,6 +101,13 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
       consumer.showStandardOptions(ArrayUtil.toStringArray(wrappingOptions));
       consumer.renameStandardOption("ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.after.left.bracket"));
       consumer.renameStandardOption("ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.before.right.bracket"));
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "FUNCTION_EXPRESSION_BRACE_STYLE",
+                                JSBundle.message("js.function.expression.brace.style"),
+                                CodeStyleSettingsCustomizable.WRAPPING_BRACES,
+                                CodeStyleSettingsCustomizable.OptionAnchor.AFTER,
+                                "METHOD_BRACE_STYLE",
+                                CodeStyleSettingsCustomizable.BRACE_PLACEMENT_OPTIONS,
+                                CodeStyleSettingsCustomizable.BRACE_PLACEMENT_VALUES);
     }
     else if (settingsType == SettingsType.LANGUAGE_SPECIFIC) {
       consumer.showStandardOptions("LINE_COMMENT_AT_FIRST_COLUMN");
