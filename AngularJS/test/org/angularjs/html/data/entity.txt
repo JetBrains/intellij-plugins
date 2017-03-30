@@ -8,7 +8,7 @@ HtmlFile:entity.html
       XmlToken:XML_TAG_END('>')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('{{')
-      JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+      JSEmbeddedContent:ANG_EMBEDDED_CONTENT
         JSExpressionStatement
           JSConditionalExpression
             JSReferenceExpression
