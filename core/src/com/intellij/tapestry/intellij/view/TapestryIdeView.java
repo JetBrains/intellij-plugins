@@ -8,7 +8,6 @@ import com.intellij.openapi.roots.ModuleFileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
@@ -18,22 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TapestryIdeView implements IdeView {
-
     private final TapestryProjectViewPane _viewPane;
 
     protected TapestryIdeView(TapestryProjectViewPane viewPane) {
         _viewPane = viewPane;
     }
 
-    public void selectElement(PsiElement element) {
-    }
-
+    @Override
     @NotNull
     public PsiDirectory[] getDirectories() {
         final List<PsiDirectory> directories = new ArrayList<>();
         final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance((Module) _viewPane.getData(DataKeys.MODULE.getName())).getFileIndex();
         moduleFileIndex.iterateContent(
                 new ContentIterator() {
+                    @Override
                     public boolean processFile(VirtualFile virtualfile) {
                         if (virtualfile.isDirectory() && moduleFileIndex.isInSourceContent(virtualfile)) {
                             directories.add(PsiManager.getInstance(_viewPane.getProject()).findDirectory(virtualfile));
@@ -45,6 +42,7 @@ public class TapestryIdeView implements IdeView {
         return directories.toArray(PsiDirectory.EMPTY_ARRAY);
     }
 
+    @Override
     @Nullable
     public PsiDirectory getOrChooseDirectory() {
         Object element = _viewPane.getSelectedDescriptor().getElement();
