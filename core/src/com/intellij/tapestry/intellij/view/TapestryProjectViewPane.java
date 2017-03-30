@@ -394,10 +394,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       public String toString() {
         return getTitle() + " " + super.toString();
       }
-
-      public DefaultMutableTreeNode getSelectedNode() {
-        return TapestryProjectViewPane.this.getSelectedNode();
-      }
     };
 
     setTreeBuilder(new TapestryViewTreeBuilder(myTree, myProject));
