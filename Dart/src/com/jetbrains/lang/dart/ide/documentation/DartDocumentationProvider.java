@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class DartDocumentationProvider implements DocumentationProvider {
-  private static final String BASE_DART_DOC_URL = "http://api.dartlang.org/docs/releases/latest/";
+  private static final String BASE_DART_DOC_URL = "https://api.dartlang.org/stable/";
 
   @Override
   public String generateDoc(@NotNull final PsiElement element, @Nullable final PsiElement originalElement) {
@@ -131,7 +131,6 @@ public class DartDocumentationProvider implements DocumentationProvider {
     // property:  http://api.dartlang.org/docs/releases/latest/dart_core/Object.html#id_hashCode
     // function:  http://api.dartlang.org/docs/releases/latest/dart_math.html#id_cos
 
-
     final StringBuilder resultUrl = new StringBuilder(BASE_DART_DOC_URL).append(libRelatedUrlPart);
 
     final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class, true);
@@ -139,14 +138,14 @@ public class DartDocumentationProvider implements DocumentationProvider {
 
     if (dartClass != null) {
       // method
-      resultUrl.append('/').append(dartClass.getName()).append(".html#id_").append(componentName);
+      resultUrl.append('/').append(dartClass.getName()).append("-class.html#id_").append(componentName);
       if (namedComponent instanceof DartSetterDeclaration) {
         resultUrl.append('=');
       }
     }
     else if (componentType == DartComponentType.CLASS) {
       // class
-      resultUrl.append('/').append(componentName).append(".html");
+      resultUrl.append('/').append(componentName).append("-class.html");
     }
     else {
       // function
@@ -162,13 +161,9 @@ public class DartDocumentationProvider implements DocumentationProvider {
       final DartUrlResolver urlResolver = DartUrlResolver.getInstance(element.getProject(), libFile);
 
       final String dartUrl = urlResolver.getDartUrlForFile(libFile);
-      // "dart:html" -> "dart_html"
+      // "dart:html" -> "dart-html"
       if (dartUrl.startsWith(DartUrlResolver.DART_PREFIX)) {
-        return "dart_" + dartUrl.substring(DartUrlResolver.DART_PREFIX.length());
-      }
-      // "package:unittest" -> "unittest"
-      if (dartUrl.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
-        return dartUrl.substring(DartUrlResolver.PACKAGE_PREFIX.length());
+        return "dart-" + dartUrl.substring(DartUrlResolver.DART_PREFIX.length());
       }
     }
 
