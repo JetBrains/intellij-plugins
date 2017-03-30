@@ -26,6 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
@@ -34,6 +35,7 @@ import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
+import com.jetbrains.lang.dart.psi.DartNewExpression;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -192,6 +194,14 @@ public class DartServerCompletionContributor extends CompletionContributor {
         // too much useful text. This hack is not ideal though as it may leave a piece of tail not replaced.
         // TODO: use replacementLength received from the server
         context.setReplacementOffset(context.getReplacementOffset());
+      }
+    }
+    else {
+      final PsiReference reference = context.getFile().findReferenceAt(context.getStartOffset());
+      if (reference instanceof DartNewExpression) {
+        // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
+        // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.
+        context.setReplacementOffset(context.getStartOffset());
       }
     }
   }
