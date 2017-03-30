@@ -7,6 +7,7 @@ import com.intellij.lang.ecmascript6.parsing.ES6Parser
 import com.intellij.lang.ecmascript6.parsing.ES6StatementParser
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSLanguageDialect
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 
@@ -23,7 +24,11 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.OTHER) {
     init {
       myStatementParser = object: ES6StatementParser<VueJSParser>(this) {
         override fun parseSourceElement() {
-          parseExpressionStatement()
+          if (builder.tokenType === JSTokenTypes.LBRACE) {
+            parseExpressionStatement()
+            return
+          }
+          super.parseSourceElement()
         }
       }
     }
