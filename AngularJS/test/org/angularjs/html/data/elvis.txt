@@ -12,7 +12,7 @@ HtmlFile:elvis.html
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
           XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{{')
-          JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+          JSEmbeddedContent:ANG_EMBEDDED_CONTENT
             JSExpressionStatement
               JSReferenceExpression
                 JSReferenceExpression

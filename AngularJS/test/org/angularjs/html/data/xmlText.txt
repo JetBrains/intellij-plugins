@@ -10,7 +10,7 @@ HtmlFile:xmlText.html
         XmlToken:XML_DATA_CHARACTERS('my')
         PsiWhiteSpace(' ')
         XmlToken:XML_DATA_CHARACTERS('{{')
-      JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+      JSEmbeddedContent:ANG_EMBEDDED_CONTENT
         JSExpressionStatement
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('interpolated')
@@ -29,7 +29,7 @@ HtmlFile:xmlText.html
       XmlToken:XML_TAG_END('>')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('my{{')
-      JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+      JSEmbeddedContent:ANG_EMBEDDED_CONTENT
         JSExpressionStatement
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('interpolated')
@@ -46,13 +46,13 @@ HtmlFile:xmlText.html
       XmlToken:XML_TAG_END('>')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('my{{')
-      JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+      JSEmbeddedContent:ANG_EMBEDDED_CONTENT
         JSExpressionStatement
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('double')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('}}{{')
-      JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+      JSEmbeddedContent:ANG_EMBEDDED_CONTENT
         JSExpressionStatement
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('interpolated')
@@ -69,13 +69,13 @@ HtmlFile:xmlText.html
       XmlToken:XML_TAG_END('>')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('my{{')
-      JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+      JSEmbeddedContent:ANG_EMBEDDED_CONTENT
         JSExpressionStatement
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('double')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('}}double{{')
-      JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+      JSEmbeddedContent:ANG_EMBEDDED_CONTENT
         JSExpressionStatement
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('interpolated')

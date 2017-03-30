@@ -6,6 +6,7 @@ import org.angularjs.codeInsight.*;
 import org.angularjs.codeInsight.messageFormat.AngularMessageFormatAnnotatorTest;
 import org.angularjs.editor.AngularTypedHandlerTest;
 import org.angularjs.findUsages.FindUsagesTest;
+import org.angularjs.html.Angular2HTMLParserTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
 import org.angularjs.inspections.EmptyEventHandlerInspectionTest;
 import org.angularjs.lang.lexer.AngularJSLexerTest;
@@ -18,6 +19,7 @@ public class AngularJSTestSuite {
 
     testSuite.addTestSuite(AngularJSLexerTest.class);
     //testSuite.addTestSuite(AngularJSParserTest.class); seems it can't handle @Test annotation
+    testSuite.addTestSuite(Angular2HTMLParserTest.class);
     testSuite.addTestSuite(AttributesTest.class);
     testSuite.addTestSuite(DependencyInjectionTest.class);
     testSuite.addTestSuite(DocumentationTest.class);

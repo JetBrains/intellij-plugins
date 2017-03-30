@@ -12,7 +12,7 @@ HtmlFile:web20713.html
         XmlToken:XML_DATA_CHARACTERS('Updated:')
         PsiWhiteSpace(' ')
         XmlToken:XML_DATA_CHARACTERS('{{')
-      JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+      JSEmbeddedContent:ANG_EMBEDDED_CONTENT
         JSExpressionStatement
           JSBinaryExpression
             JSParenthesizedExpression
