@@ -944,6 +944,29 @@ public class DartAnalysisServerService implements Disposable {
     return results;
   }
 
+  public SourceChange edit_getStatementCompletion(@NotNull final VirtualFile file, final int _offset) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
+    SourceChange[] results = new SourceChange[1];
+    final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
+    server.edit_getStatementCompletion(filePath, offset, new GetStatementCompletionConsumer() {
+      @Override
+      public void computedSourceChange(SourceChange sourceChange) {
+        results[0] = sourceChange;
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_ASSISTS_TIMEOUT, false);
+    return results[0];
+  }
+
   public void diagnostic_getServerPort(GetServerPortConsumer consumer) {
     final AnalysisServer server = myServer;
     if (server == null) {
