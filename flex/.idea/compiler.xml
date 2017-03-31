@@ -2,11 +2,11 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <excludeFromCompile>
-      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/ImportingNonJavaModulesTest.java" />
-      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/FlexmojosImporterTestBase.java" />
-      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/NonJarDependenciesImportingTest.java" />
-      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/Flexmojos4ImporterTest.java" />
-      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/Flexmojos3ImporterTest.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/flex/maven/ImportingNonJavaModulesTest.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/flex/maven/FlexmojosImporterTestBase.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/flex/maven/NonJarDependenciesImportingTest.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/flex/maven/Flexmojos4ImporterTest.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/flex/maven/Flexmojos3ImporterTest.java" />
     </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|gif|png|jpeg|jpg|xml|dtd|tld|xsd|ft|html|template)" />
@@ -21,11 +21,6 @@
       <entry name="!*.iml" />
       <entry name="!*.gant" />
     </wildcardResourcePatterns>
-    <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
-      </profile>
-    </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:unchecked" />
