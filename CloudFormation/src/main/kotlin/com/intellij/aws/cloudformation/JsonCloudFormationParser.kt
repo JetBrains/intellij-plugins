@@ -391,7 +391,8 @@ class JsonCloudFormationParser private constructor () {
   fun file(psiFile: PsiFile): CfnRootNode {
     assert(CloudFormationPsiUtils.isCloudFormationFile(psiFile)) { psiFile.name + " is not a cfn file" }
 
-    val root = CloudFormationPsiUtils.getRootExpression(psiFile) ?: error("Could not get root expression")
+    val root = CloudFormationPsiUtils.getRootExpression(psiFile)
+        ?: return CfnRootNode(null, null, null, null, null, null).registerNode(psiFile)
     return root(root)
   }
 
