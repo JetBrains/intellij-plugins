@@ -20,6 +20,8 @@ package org.dartlang.vm.service.element;
  */
 public enum FrameKind {
 
+  AsyncActivation,
+
   AsyncCausal,
 
   AsyncSuspensionMarker,

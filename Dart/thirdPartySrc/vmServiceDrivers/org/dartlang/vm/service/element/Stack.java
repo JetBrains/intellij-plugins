@@ -35,6 +35,17 @@ public class Stack extends Response {
     };
   }
 
+  public ElementList<Frame> getAwaiterFrames() {
+    if (json.get("awaiterFrames") == null) return null;
+
+    return new ElementList<Frame>(json.get("awaiterFrames").getAsJsonArray()) {
+      @Override
+      protected Frame basicGet(JsonArray array, int index) {
+        return new Frame(array.get(index).getAsJsonObject());
+      }
+    };
+  }
+
   public ElementList<Frame> getFrames() {
     return new ElementList<Frame>(json.get("frames").getAsJsonArray()) {
       @Override

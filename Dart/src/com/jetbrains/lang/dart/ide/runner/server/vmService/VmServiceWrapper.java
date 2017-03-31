@@ -37,9 +37,6 @@ public class VmServiceWrapper implements Disposable {
   public static final Logger LOG = Logger.getInstance(VmServiceWrapper.class.getName());
   private static final long RESPONSE_WAIT_TIMEOUT = 3000; // millis
 
-  // TODO: Remove this compile time flag once the VM implementation and wire protocol are final.
-  private static final boolean RENDER_CAUSAL_FRAMES = true;
-
   private final DartVmServiceDebugProcess myDebugProcess;
   private final VmService myVmService;
   private final DartVmServiceListener myVmServiceListener;
@@ -369,15 +366,12 @@ public class VmServiceWrapper implements Disposable {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           InstanceRef exceptionToAddToFrame = exception;
 
-          ElementList<Frame> elementList;
-          if (RENDER_CAUSAL_FRAMES) {
+          ElementList<Frame> elementList = vmStack.getAwaiterFrames();
+          if (elementList == null) {
             elementList = vmStack.getAsyncCausalFrames();
             if (elementList == null) {
               elementList = vmStack.getFrames();
             }
-          }
-          else {
-            elementList = vmStack.getFrames();
           }
 
           final List<Frame> vmFrames = Lists.newArrayList(elementList);
