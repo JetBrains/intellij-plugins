@@ -8,6 +8,7 @@ enum class CloudFormationIntrinsicFunction(val id: String) {
   FnImportValue("Fn::ImportValue"),
   FnJoin("Fn::Join"),
   FnSelect("Fn::Select"),
+  FnSplit("Fn::Split"),
   FnSub("Fn::Sub"),
   Ref("Ref"),
 

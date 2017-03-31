@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  SubnetPublicSharedB:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      AvailabilityZone: !Select [0, !Split ["," , !ImportValue BiPublicSubnetIDs ]]
+      CidrBlock: A
+      MapPublicIpOnLaunch: true
+      VpcId: B

@@ -225,6 +225,14 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         Unit
       }
 
+      CloudFormationIntrinsicFunction.FnSplit -> {
+        if (function.args.size != 2) {
+          addProblem(function, "Split expects two string arguments")
+        }
+
+        Unit
+      }
+
       CloudFormationIntrinsicFunction.FnSelect -> {
         if (function.args.size != 2) {
           addProblem(function, "Select expects an index argument and an array argument")
