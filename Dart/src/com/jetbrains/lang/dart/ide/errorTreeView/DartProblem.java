@@ -44,6 +44,11 @@ public class DartProblem {
     return StringUtil.notNullize(myAnalysisError.getCorrection());
   }
 
+  @NotNull
+  public String getCode() {
+    return StringUtil.notNullize(myAnalysisError.getCode());
+  }
+
   public String getSeverity() {
     return myAnalysisError.getSeverity();
   }

@@ -276,11 +276,11 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   @Override
   public void performCopy(@NotNull DataContext dataContext) {
     final List<DartProblem> selectedObjects = myTable.getSelectedObjects();
-    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity() +
+    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity().toLowerCase() +
                                                                  ": " +
                                                                  problem.getErrorMessage() +
                                                                  " (" +
-                                                                 problem.getPresentableLocation() +
+                                                                 problem.getCode() + " at " + problem.getPresentableLocation() +
                                                                  ")", "\n");
 
     if (!s.isEmpty()) {
