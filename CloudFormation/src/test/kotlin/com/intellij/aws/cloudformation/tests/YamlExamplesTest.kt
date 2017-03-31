@@ -29,6 +29,8 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun testParameters6() = runTest("parameters6.yaml")
   fun testParameters7() = runTest("parameters7.yaml")
 
+  fun testFindInMapBroken() = runTest("findinmap_broken.yaml")
+
   fun runTest(fileName: String) {
     println("Working on $fileName")
 

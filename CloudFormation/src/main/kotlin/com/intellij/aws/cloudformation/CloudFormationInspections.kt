@@ -124,25 +124,25 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       CloudFormationIntrinsicFunction.FnFindInMap -> {
         if (function.args.size != 3) {
           addProblem(function, "FindInMap requires 3 arguments")
-        }
+        } else {
+          val mappingName = function.args[0]
+          val firstLevelKey = function.args[1]
+          val secondLevelKey = function.args[2]
 
-        val mappingName = function.args[0]
-        val firstLevelKey = function.args[1]
-        val secondLevelKey = function.args[2]
+          if (mappingName is CfnScalarValueNode) {
+            addEntityReference(mappingName, CloudFormationSection.MappingsSingletonList)
 
-        if (mappingName is CfnScalarValueNode) {
-          addEntityReference(mappingName, CloudFormationSection.MappingsSingletonList)
+            val mapping = CloudFormationResolve.resolveMapping(parsed, mappingName.value)
+            if (mapping != null && firstLevelKey is CfnScalarValueNode) {
+              val firstLevelKeyPsiElement = parsed.getPsiElement(firstLevelKey)
+              addReference(CloudFormationMappingFirstLevelKeyReference(firstLevelKeyPsiElement, mappingName.value))
 
-          val mapping = CloudFormationResolve.resolveMapping(parsed, mappingName.value)
-          if (mapping != null && firstLevelKey is CfnScalarValueNode) {
-            val firstLevelKeyPsiElement = parsed.getPsiElement(firstLevelKey)
-            addReference(CloudFormationMappingFirstLevelKeyReference(firstLevelKeyPsiElement, mappingName.value))
+              // TODO resolve possible values if first level key is an expression
 
-            // TODO resolve possible values if first level key is an expression
-
-            if (secondLevelKey is CfnScalarValueNode) {
-              val secondLevelKeyPsiElement = parsed.getPsiElement(secondLevelKey)
-              addReference(CloudFormationMappingSecondLevelKeyReference(secondLevelKeyPsiElement, mappingName.value, firstLevelKey.value))
+              if (secondLevelKey is CfnScalarValueNode) {
+                val secondLevelKeyPsiElement = parsed.getPsiElement(secondLevelKey)
+                addReference(CloudFormationMappingSecondLevelKeyReference(secondLevelKeyPsiElement, mappingName.value, firstLevelKey.value))
+              }
             }
           }
         }
