@@ -102,10 +102,6 @@ public class AnyApplication implements ConfigurationType {
       };
     }
 
-    @Override
-    public void checkConfiguration() throws RuntimeConfigurationException {
-    }
-
     @NotNull
     @Override
     public Module[] getModules() {
