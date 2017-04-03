@@ -48,17 +48,17 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testNoAdditionalDirectory() throws Exception {
     doTest("noAdditionalDirectory", "noAdditionalDirectory/data.ts", true, true, null);
-    checkGlobalAnnotation("Could not find custom rule directory:", false, true, TsLintInspection.class);
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("Could not find custom rule directory:", false, true);
   }
 
   public void testNoConfig() throws Exception {
     doTest("noConfig", "noConfig/data.ts", false, true, null);
-    checkGlobalAnnotation("TSLint: FatalError: Failed to load", false, true, TsLintInspection.class);
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: FatalError: Failed to load", false, true);
   }
 
   public void testBadConfig() throws Exception {
     doTest("badConfig", "badConfig/data.ts", false, true, null);
-    checkGlobalAnnotation("TSLint: FatalError: Failed to load", false, true, TsLintInspection.class);
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: FatalError: Failed to load", false, true);
   }
 
   public void testLineSeparatorsWin() throws Exception {
