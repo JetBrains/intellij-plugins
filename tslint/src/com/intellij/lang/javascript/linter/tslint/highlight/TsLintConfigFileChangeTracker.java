@@ -29,7 +29,7 @@ public final class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTra
   protected boolean isAnalyzerRestartNeeded(@NotNull Project project, @NotNull VirtualFile changedFile) {
     final TsLintConfiguration configuration = TsLintConfiguration.getInstance(project);
     final TsLintState state = configuration.getExtendedState().getState();
-    if (state.isCustomConfigFileUsed()) {
+    if (state.isCustomConfigFileUsed() && state.getCustomConfigFilePath() != null) {
       final VirtualFile configVirtualFile = JSLinterConfigFileUtil.findLocalFileByPath(state.getCustomConfigFilePath());
       return changedFile.equals(configVirtualFile);
     }
