@@ -69,7 +69,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     }
     WriteCommandAction.runWriteCommandAction(project, getText(), null, () -> {
       Document document = editor.getDocument();
-      String separator = FileDocumentManager.getInstance().getLineSeparator(file.getVirtualFile(), project);
+      String separator = FileDocumentManager.getInstance().getLineSeparator(file.getViewProvider().getVirtualFile(), project);
 
       TsLintFixInfo.TsLintFixReplacements[] replacements = info.innerReplacements;
 
@@ -90,7 +90,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
                                    @NotNull String separator,
                                    @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements) {
     if ("\n".equals(separator)) {
-      if (!applyFor(document, replacements,
+      if (!applyFor(document.getTextLength(), replacements,
                     (replacement) -> document
                       .replaceString(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil
                         .notNullize(replacement.innerText)))) {
@@ -99,7 +99,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     }
     else {
       StringBuilder newContent = new StringBuilder(StringUtilRt.convertLineSeparators(document.getText(), separator));
-      if (!applyFor(document, replacements,
+      if (!applyFor(newContent.length(), replacements,
                     (replacement) -> newContent
                       .replace(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil.notNullize(
                         replacement.innerText)))) {
@@ -110,12 +110,11 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     return true;
   }
 
-  public boolean applyFor(@NotNull Document document,
+  public boolean applyFor(int documentLength,
                           @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements,
                           @NotNull Consumer<TsLintFixInfo.TsLintFixReplacements> apply) {
     for (TsLintFixInfo.TsLintFixReplacements replacement : replacements) {
       int offset = replacement.innerStart;
-      int documentLength = document.getTextLength();
       if (offset > documentLength || (offset + replacement.innerLength) > documentLength) {
         //incorrect value
         return false;
