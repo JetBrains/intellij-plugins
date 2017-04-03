@@ -108,6 +108,17 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                 "METHOD_BRACE_STYLE",
                                 CodeStyleSettingsCustomizable.BRACE_PLACEMENT_OPTIONS,
                                 CodeStyleSettingsCustomizable.BRACE_PLACEMENT_VALUES);
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class,
+                                "OBJECT_LITERAL_WRAP",
+                                "Object literals",
+                                null,
+                                CodeStyleSettingsCustomizable.WRAP_OPTIONS,
+                                CodeStyleSettingsCustomizable.WRAP_VALUES);
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "ALIGN_OBJECT_PROPERTIES",
+                                JSBundle.message("js.code.style.align.object.properties"),
+                                JSBundle.message("js.code.style.object.literals"),
+                                JSLanguageCodeStyleSettingsProvider.ALIGN_OBJECT_PROPERTIES_OPTIONS,
+                                JSLanguageCodeStyleSettingsProvider.ALIGN_OBJECT_PROPERTIES_VALUES);
     }
     else if (settingsType == SettingsType.LANGUAGE_SPECIFIC) {
       consumer.showStandardOptions("LINE_COMMENT_AT_FIRST_COLUMN");
