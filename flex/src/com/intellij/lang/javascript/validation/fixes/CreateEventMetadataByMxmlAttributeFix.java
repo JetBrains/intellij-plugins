@@ -10,9 +10,9 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlElementFactory;
@@ -75,8 +75,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
 
     final int offset;
     if (addingToMxml) {
-      final XmlTag metadataTag = createOrGetMetadataTag((XmlFile)type);
-      PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
+      XmlTag metadataTag = WriteAction.compute(() -> createOrGetMetadataTag((XmlFile)type));
       offset = metadataTag.getValue().getTextRange().getStartOffset();
     }
     else {
