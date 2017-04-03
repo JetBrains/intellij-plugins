@@ -17,7 +17,11 @@ public abstract class MakefilePrerequisiteMixin extends ASTWrapperPsiElement imp
     @NotNull
     @Override
     public PsiReference[] getReferences() {
+        MakefileTargetReference targetReference = new MakefileTargetReference(this);
+        if (isPhonyTarget()) {
+            return new PsiReference[] { targetReference };
+        }
         PsiReference[] references = new FileReferenceSet(this).getAllReferences();
-        return ArrayUtil.prepend(new MakefileTargetReference(this), references, PsiReference.ARRAY_FACTORY);
+        return ArrayUtil.prepend(targetReference, references, PsiReference.ARRAY_FACTORY);
     }
 }

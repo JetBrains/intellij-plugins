@@ -7,4 +7,6 @@ public interface MakefilePrerequisite extends PsiElement {
 
   MakefilePrerequisite updateText(String newText);
 
+  boolean isPhonyTarget();
+
 }

@@ -19,10 +19,13 @@ class MakefileFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, M
       get() = PsiTreeUtil.findChildrenOfType(this, MakefileTarget::class.java)
 
   val targets: Collection<MakefileTarget>
-      get() = PsiTreeUtil.findChildrenOfType(this, MakefileTarget::class.java).filter { !it.isSpecialTarget }
+      get() = allTargets.filter { !it.isSpecialTarget }
 
   val specialTargets: Collection<MakefileTarget>
-      get() = PsiTreeUtil.findChildrenOfType(this, MakefileTarget::class.java).filter { it.isSpecialTarget }
+      get() = allTargets.filter { it.isSpecialTarget }
+
+  val phonyRules: Collection<MakefileRule>
+    get() = rules.filter { it.targets.size == 1 && it.targets.single().name == ".PHONY" }
 
   val variables: Collection<MakefileVariable>
     get() = PsiTreeUtil.findChildrenOfType(this, MakefileVariable::class.java)

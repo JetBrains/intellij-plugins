@@ -3,11 +3,14 @@ package name.kropp.intellij.makefile.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.TokenSet;
+import name.kropp.intellij.makefile.MakefileFile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -126,5 +129,25 @@ public class MakefilePsiImplUtil {
     public static MakefilePrerequisite updateText(MakefilePrerequisite prerequisite, String newText) {
         MakefilePrerequisite replacement = MakefileElementFactory.INSTANCE.createPrerequisite(prerequisite.getProject(), newText);
         return (MakefilePrerequisite) prerequisite.replace(replacement);
+    }
+
+    public static boolean isPhonyTarget(MakefilePrerequisite prerequisite) {
+        final PsiFile file = prerequisite.getContainingFile();
+        if (file instanceof MakefileFile) {
+            final MakefileFile makefile = (MakefileFile) file;
+            for (MakefileRule rule : makefile.getPhonyRules()) {
+                MakefilePrerequisites prerequisites = rule.getTargetLine().getPrerequisites();
+                if (prerequisites != null) {
+                    MakefileNormalPrerequisites normalPrerequisites = prerequisites.getNormalPrerequisites();
+                    for (MakefilePrerequisite goal : normalPrerequisites.getPrerequisiteList()) {
+                        if (Objects.equals(goal.getText(), prerequisite.getText())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+        }
+        return false;
     }
 }

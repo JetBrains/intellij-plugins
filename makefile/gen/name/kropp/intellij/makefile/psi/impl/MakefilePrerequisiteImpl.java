@@ -27,4 +27,8 @@ public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implemen
     return MakefilePsiImplUtil.updateText(this, newText);
   }
 
+  public boolean isPhonyTarget() {
+    return MakefilePsiImplUtil.isPhonyTarget(this);
+  }
+
 }
