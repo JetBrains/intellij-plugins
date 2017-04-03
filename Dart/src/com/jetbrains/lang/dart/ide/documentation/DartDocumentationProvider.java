@@ -1,22 +1,18 @@
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.lang.documentation.DocumentationProvider;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartId;
-import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.dartlang.analysis.server.protocol.HoverInformation;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,14 +78,11 @@ public class DartDocumentationProvider implements DocumentationProvider {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
       return null;
     }
-    final DartComponent namedComponent = (DartComponent)(element instanceof DartComponent ? element : element.getParent());
-    final String componentName = namedComponent.getName();
-    if (componentName == null || !namedComponent.isPublic()) {
-      return null;
-    }
 
-    final String libRelatedUrlPart = getLibRelatedUrlPart(element);
-    final String docUrl = libRelatedUrlPart == null ? null : constructDocUrl(namedComponent, componentName, libRelatedUrlPart);
+    final DartComponent component = (DartComponent)(element instanceof DartComponent ? element : element.getParent());
+    if (!component.isPublic()) return null;
+
+    final String docUrl = constructDocUrl(component);
     return docUrl == null ? null : Collections.singletonList(docUrl);
   }
 
@@ -124,35 +117,49 @@ public class DartDocumentationProvider implements DocumentationProvider {
     return hoverList.get(0);
   }
 
-  @Nls
-  private static String constructDocUrl(DartComponent namedComponent, String componentName, @NotNull String libRelatedUrlPart) {
-    // class:     http://api.dartlang.org/docs/releases/latest/dart_core/Object.html
-    // method:    http://api.dartlang.org/docs/releases/latest/dart_core/Object.html#id_toString
-    // property:  http://api.dartlang.org/docs/releases/latest/dart_core/Object.html#id_hashCode
-    // function:  http://api.dartlang.org/docs/releases/latest/dart_math.html#id_cos
+  @Nullable
+  private static String constructDocUrl(@NotNull final DartComponent component) {
+    // class:       https://api.dartlang.org/stable/dart-web_audio/AnalyserNode-class.html
+    // constructor: https://api.dartlang.org/stable/dart-core/DateTime/DateTime.fromMicrosecondsSinceEpoch.html
+    //              https://api.dartlang.org/stable/dart-core/List/List.html
+    // method:      https://api.dartlang.org/stable/dart-core/Object/toString.html
+    // property:    https://api.dartlang.org/stable/dart-core/List/length.html
+    // function:    https://api.dartlang.org/stable/dart-math/cos.html
 
-    final StringBuilder resultUrl = new StringBuilder(BASE_DART_DOC_URL).append(libRelatedUrlPart);
+    final String libRelatedUrlPart = getLibRelatedUrlPart(component);
+    final String name = component.getName();
+    if (libRelatedUrlPart == null || name == null) return null;
 
-    final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class, true);
-    final DartComponentType componentType = DartComponentType.typeOf(namedComponent);
+    final String baseUrl = BASE_DART_DOC_URL + libRelatedUrlPart + "/";
+
+    if (component instanceof DartClass) {
+      return baseUrl + name + "-class.html";
+    }
+
+    final DartClass dartClass = PsiTreeUtil.getParentOfType(component, DartClass.class, true);
+
+    if (component instanceof DartNamedConstructorDeclaration) {
+      assert dartClass != null;
+      return baseUrl + dartClass.getName() + "/" +
+             StringUtil.join(((DartNamedConstructorDeclaration)component).getComponentNameList(), cName -> cName.getName(), ".") +
+             ".html";
+    }
+
+    if (component instanceof DartFactoryConstructorDeclaration) {
+      assert dartClass != null;
+      return baseUrl + dartClass.getName() + "/" +
+             StringUtil.join(((DartFactoryConstructorDeclaration)component).getComponentNameList(), cName -> cName.getName(), ".") +
+             ".html";
+    }
 
     if (dartClass != null) {
-      // method
-      resultUrl.append('/').append(dartClass.getName()).append("-class.html#id_").append(componentName);
-      if (namedComponent instanceof DartSetterDeclaration) {
-        resultUrl.append('=');
-      }
-    }
-    else if (componentType == DartComponentType.CLASS) {
-      // class
-      resultUrl.append('/').append(componentName).append("-class.html");
+      // method, property
+      return baseUrl + dartClass.getName() + "/" + name + ".html";
     }
     else {
-      // function
-      resultUrl.append(".html#id_").append(componentName);
+      // library-level function
+      return baseUrl + name + ".html";
     }
-
-    return resultUrl.toString();
   }
 
   @Nullable

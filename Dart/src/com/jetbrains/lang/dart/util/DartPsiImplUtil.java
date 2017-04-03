@@ -147,7 +147,8 @@ public class DartPsiImplUtil {
   @Nullable
   public static DartComponentName getComponentName(@NotNull DartFactoryConstructorDeclaration element) {
     final List<DartComponentName> list = element.getComponentNameList();
-    return list.size() == 2 ? list.get(1) : null; // todo somehow remove this bogus code, it is here just to mimic old behavior
+    // todo somehow remove this bogus code, it is here just to mimic old behavior
+    return list.size() == 2 ? list.get(1) : list.size() == 1 ? list.get(0) : null;
   }
 
   @Nullable
