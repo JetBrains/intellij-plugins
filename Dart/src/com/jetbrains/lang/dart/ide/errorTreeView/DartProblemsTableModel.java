@@ -368,14 +368,15 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     final List<String> summary = new ArrayList<>();
 
     if (myFilter.isShowErrors() && myErrorCountAfterFilter > 0) {
-      summary.add(myErrorCountAfterFilter > 1 ? myErrorCountAfterFilter + " errors" : "1 error");
+      summary.add(myErrorCountAfterFilter + " " + StringUtil.pluralize("error", myErrorCountAfterFilter));
     }
     if (myFilter.isShowWarnings() && myWarningCountAfterFilter > 0) {
-      summary.add(myWarningCountAfterFilter > 1 ? myWarningCountAfterFilter + " warnings" : "1 warning");
+      summary.add(myWarningCountAfterFilter + " " + StringUtil.pluralize("warning", myWarningCountAfterFilter));
     }
     if (myFilter.isShowHints() && myHintCountAfterFilter > 0) {
-      summary.add(myHintCountAfterFilter > 1 ? myHintCountAfterFilter + " hints" : "1 hint");
+      summary.add(myHintCountAfterFilter + " " + StringUtil.pluralize("hint", myHintCountAfterFilter));
     }
+
 
     if (summary.isEmpty()) {
       if (myFilter.areFiltersApplied()) {
