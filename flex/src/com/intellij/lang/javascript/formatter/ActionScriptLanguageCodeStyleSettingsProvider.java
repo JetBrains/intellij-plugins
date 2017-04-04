@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.IndentOptionsEditor;
-import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -27,7 +26,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
 
   @Override
   public IndentOptionsEditor getIndentOptionsEditor() {
-    return new SmartIndentOptionsEditor();
+    return new ActionScriptIndentOptionsEditor();
   }
 
   @Override

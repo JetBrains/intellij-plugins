@@ -18,10 +18,7 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
 
   public ActionScriptCodeStylePanel(final CodeStyleSettings settings) {
     super(JavaScriptSupportLoader.ECMA_SCRIPT_L4, settings);
-    myNamingConventionsPane.setVisible(true);
-    myIndentPackageChildren.setVisible(true);
   }
-
 
   @NotNull
   @Override
@@ -37,10 +34,9 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
 
   @Override
   protected String getPreviewText() {
-    final JSCodeStyleSettings jsCodeStyleSettings = getCustomJSSettings(getSettings());
     @NonNls String baseName = "field";
-    @NonNls String propertyName = (myPropertyPrefixTextField != null ? myPropertyPrefixTextField.getText() : jsCodeStyleSettings.PROPERTY_PREFIX) + baseName;
-    @NonNls String varName = (myFieldPrefixTextField != null ? myFieldPrefixTextField.getText() : jsCodeStyleSettings.FIELD_PREFIX) + baseName;
+    @NonNls String propertyName = baseName;
+    @NonNls String varName =  baseName;
 
     return "/*\n" +
            "    Multiline\n" +
