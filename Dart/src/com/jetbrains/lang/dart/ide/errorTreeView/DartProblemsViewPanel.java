@@ -51,6 +51,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
@@ -276,11 +277,11 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   @Override
   public void performCopy(@NotNull DataContext dataContext) {
     final List<DartProblem> selectedObjects = myTable.getSelectedObjects();
-    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity() +
+    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity().toLowerCase(Locale.US) +
                                                                  ": " +
                                                                  problem.getErrorMessage() +
                                                                  " (" +
-                                                                 problem.getPresentableLocation() +
+                                                                 problem.getCode() + " at " + problem.getPresentableLocation() +
                                                                  ")", "\n");
 
     if (!s.isEmpty()) {
