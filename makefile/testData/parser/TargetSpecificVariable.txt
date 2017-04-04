@@ -1,5 +1,5 @@
 Makefile
-  PsiComment(comment)('# This set VARIABLE to "foo" for the duration of handling test-bar')
+  PsiComment(COMMENT)('# This set VARIABLE to "foo" for the duration of handling test-bar')
   PsiWhiteSpace('\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
@@ -17,9 +17,9 @@ Makefile
         MakefileVariableValueImpl(VARIABLE_VALUE)
           PsiElement(line)('foo')
     PsiWhiteSpace('\n')
-    PsiComment(comment)('# The above target are not actually a executable target. Without the next line you would get.')
+    PsiComment(COMMENT)('# The above target are not actually a executable target. Without the next line you would get.')
     PsiWhiteSpace('\n')
-    PsiComment(comment)('# make: *** No rule to make target 'test-foo', needed by 'all'.  Stop.')
+    PsiComment(COMMENT)('# make: *** No rule to make target 'test-foo', needed by 'all'.  Stop.')
     PsiWhiteSpace('\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>
@@ -38,7 +38,7 @@ Makefile
         PsiElement(\t)('\t')
         PsiElement(line)('@echo "$$VARIABLE"')
   PsiWhiteSpace('\n\n')
-  PsiComment(comment)('# This set VARIABLE to "bar" for the duration of handling test-bar')
+  PsiComment(COMMENT)('# This set VARIABLE to "bar" for the duration of handling test-bar')
   PsiWhiteSpace('\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)

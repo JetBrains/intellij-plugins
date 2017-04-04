@@ -11,6 +11,7 @@ public interface MakefileTypes {
   IElementType BLOCK = new MakefileElementType("BLOCK");
   IElementType BRANCH = new MakefileElementType("BRANCH");
   IElementType COMMAND = new MakefileElementType("COMMAND");
+  IElementType COMMENT = new MakefileElementType("COMMENT");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType DIRECTORY = new MakefileElementType("DIRECTORY");
@@ -40,7 +41,6 @@ public interface MakefileTypes {
 
   IElementType ASSIGN = new MakefileTokenType("=");
   IElementType COLON = new MakefileTokenType(":");
-  IElementType COMMENT = new MakefileTokenType("comment");
   IElementType CONDITION = new MakefileTokenType("condition");
   IElementType DOUBLECOLON = new MakefileTokenType("::");
   IElementType EOL = new MakefileTokenType("EOL");
@@ -77,6 +77,9 @@ public interface MakefileTypes {
       }
       else if (type == COMMAND) {
         return new MakefileCommandImpl(node);
+      }
+      else if (type == COMMENT) {
+        return new MakefileCommentImpl(node);
       }
       else if (type == CONDITIONAL) {
         return new MakefileConditionalImpl(node);

@@ -39,7 +39,7 @@
 
 makefile ::= any
 
-private any ::= (topconditional|rule|variable-assignment|directive|comment)*
+private any ::= (topconditional|rule|variable-assignment|directive)*
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
@@ -48,7 +48,7 @@ recipe ::= (command|conditional|empty_command)* {methods=[isEmpty]}
 command ::= '\t'* line (split line)*
 empty_command ::= '\t'+
 
-target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' comment? EOL? | comment? EOL)) {pin=2 methods=[getTargetName]}
+target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites ';'? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
 target ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements="name.kropp.intellij.makefile.psi.MakefileNamedElement,com.intellij.navigation.NavigationItem" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches]}
 
@@ -59,7 +59,7 @@ normal_prerequisites ::= prerequisite* (split prerequisite*)*
 order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
 
-conditional ::= conditional-keyword condition comment? branch ('else' comment? branch)* 'endif' comment?
+conditional ::= conditional-keyword condition branch ('else' branch)* 'endif'
 
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 
@@ -70,18 +70,20 @@ private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
 meta variable-value ::= line? (split line)*
 define ::= 'define' variable assignment? (variable-value-line split?)* 'endef' {pin=1 methods=[getAssignment getValue]}
-undefine ::= 'undefine' variable comment? EOL {pin=1}
-override ::= 'override' variable-assignment comment? {pin=1}
-export ::= 'export' (variable-assignment|variable)? comment? {pin=1}
-private exportvar ::= 'export' variable-assignment comment? {pin=1}
-privatevar ::= 'private' variable-assignment comment? {pin=1}
+undefine ::= 'undefine' variable EOL {pin=1}
+override ::= 'override' variable-assignment {pin=1}
+export ::= 'export' (variable-assignment|variable)? {pin=1}
+private exportvar ::= 'export' variable-assignment {pin=1}
+privatevar ::= 'private' variable-assignment {pin=1}
 
 include ::= ('include'|'-include'|'sinclude') filename+ EOL {pin=1}
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-vpath ::= 'vpath' (pattern directory*)? comment? EOL {pin=1}
+vpath ::= 'vpath' (pattern directory*)? EOL {pin=1}
 pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-topconditional ::= conditional-keyword condition comment? block ('else' comment? block)* 'endif' comment? {pin=1}
+topconditional ::= conditional-keyword condition block ('else' block)* 'endif' {pin=1}
 block ::= any
+
+comment ::=

@@ -14,7 +14,7 @@ Makefile
     MakefileRecipeImpl(RECIPE)
       MakefileEmptyCommandImpl(EMPTY_COMMAND)
         PsiElement(\t)('\t')
-  PsiComment(comment)('#comment')
+  PsiComment(COMMENT)('#comment')
   PsiWhiteSpace('\n\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)

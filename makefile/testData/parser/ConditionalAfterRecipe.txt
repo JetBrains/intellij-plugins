@@ -9,7 +9,7 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
       PsiElement(EOL)('\n')
-    PsiComment(comment)('#\t@echo install')
+    PsiComment(COMMENT)('#\t@echo install')
     PsiWhiteSpace('\n\n')
     MakefileRecipeImpl(RECIPE)
       <empty list>

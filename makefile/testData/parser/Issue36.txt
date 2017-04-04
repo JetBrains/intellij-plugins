@@ -1,5 +1,5 @@
 Makefile
-  PsiComment(comment)('# ↓ occurred')
+  PsiComment(COMMENT)('# ↓ occurred')
   PsiWhiteSpace('\n')
   MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
     MakefileVariableImpl(VARIABLE)
