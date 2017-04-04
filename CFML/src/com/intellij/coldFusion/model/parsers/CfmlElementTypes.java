@@ -35,7 +35,7 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
   // IElementType SOME = new CfmlElementType("SOME");
   IElementType CF_SCRIPT = new CfmlElementType("CF_SCRIPT");
 
-  IElementType TEMPLATE_TEXT = new CfmlElementType("CFML_TEMPLATE_TEXT");
+  IElementType TEMPLATE_TEXT = new CfmlLeafElementType("CFML_TEMPLATE_TEXT");
 
   IElementType OUTER_ELEMENT_TYPE = new CfmlElementType("CFML_FRAGMENT");
 

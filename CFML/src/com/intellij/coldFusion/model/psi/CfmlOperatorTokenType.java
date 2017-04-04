@@ -17,6 +17,7 @@ package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,8 +28,7 @@ public class CfmlOperatorTokenType extends IElementType {
 
   private CfmlExpressionTypeCalculator myTypeCalculator;
 
-  public CfmlOperatorTokenType(@org.jetbrains.annotations.NotNull String debugName,
-                               CfmlExpressionTypeCalculator typeCalculator) {
+  public CfmlOperatorTokenType(@NotNull String debugName, CfmlExpressionTypeCalculator typeCalculator) {
     super(debugName, CfmlLanguage.INSTANCE);
     myTypeCalculator = typeCalculator;
   }
