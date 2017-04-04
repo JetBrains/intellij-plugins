@@ -114,10 +114,23 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                 CodeStyleSettingsCustomizable.WRAP_OPTIONS,
                                 CodeStyleSettingsCustomizable.WRAP_VALUES);
       consumer.showCustomOption(ECMA4CodeStyleSettings.class, "ALIGN_OBJECT_PROPERTIES",
-                                JSBundle.message("js.code.style.align.object.properties"),
-                                JSBundle.message("js.code.style.object.literals"),
+                                JSBundle.message("js.code.style.align.caption"),
+                                JSBundle.message("js.code.style.object.literals.category.name"),
                                 JSLanguageCodeStyleSettingsProvider.ALIGN_OBJECT_PROPERTIES_OPTIONS,
                                 JSLanguageCodeStyleSettingsProvider.ALIGN_OBJECT_PROPERTIES_VALUES);
+
+      //var statements
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class,
+                                "VAR_DECLARATION_WRAP",
+                                JSBundle.message("js.wrap.settings.var.group.name"),
+                                null,
+                                CodeStyleSettingsCustomizable.WRAP_OPTIONS,
+                                CodeStyleSettingsCustomizable.WRAP_VALUES);
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "ALIGN_VAR_STATEMENTS",
+                                JSBundle.message("js.code.style.align.caption"),
+                                JSBundle.message("js.wrap.settings.var.group.name"),
+                                JSLanguageCodeStyleSettingsProvider.ALIGN_VAR_STATEMENT_OPTIONS,
+                                JSLanguageCodeStyleSettingsProvider.ALIGN_VAR_STATEMENT_VALUES);
     }
     else if (settingsType == SettingsType.LANGUAGE_SPECIFIC) {
       consumer.showStandardOptions("LINE_COMMENT_AT_FIRST_COLUMN");
