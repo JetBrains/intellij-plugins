@@ -107,6 +107,12 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                 "METHOD_BRACE_STYLE",
                                 CodeStyleSettingsCustomizable.BRACE_PLACEMENT_OPTIONS,
                                 CodeStyleSettingsCustomizable.BRACE_PLACEMENT_VALUES);
+
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "REFORMAT_C_STYLE_COMMENTS",
+                                JSBundle.message("js.format.cstyle.comments"),
+                                CodeStyleSettingsCustomizable.WRAPPING_COMMENTS);
+      
+      //object literals
       consumer.showCustomOption(ECMA4CodeStyleSettings.class,
                                 "OBJECT_LITERAL_WRAP",
                                 "Object literals",
@@ -135,6 +141,27 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     else if (settingsType == SettingsType.LANGUAGE_SPECIFIC) {
       consumer.showStandardOptions("LINE_COMMENT_AT_FIRST_COLUMN");
     }
+  }
+  protected String getPreviewText() {
+    return "/*\n" +
+           " Multiline\n" +
+           " C-style\n" +
+           " Comment\n" +
+           " */\n" +
+           "var myLink = {\n" +
+           "      img: \"btn.gif\",\n" +
+           "      text: \"Button\",\n" +
+           "      width: 128\n" +
+           "    },\n" +
+           "    local = true,\n" +
+           "    initial = -1;\n" +
+           "var cssClasses = [\"bold\", \"red\",]\n" +
+           "var selector = \"#id\";\n" +
+           "\n" +
+           "var color = \"red\";\n" +
+           "var offset = 10;\n" +
+           "\n" +
+           "varName = val;";
   }
 
   @Override
@@ -228,6 +255,21 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     "function fThree(strA, strB, strC, strD, strE) {\n" +
     "return strA + strB + strC + strD + strE;\n" +
     "}\n" +
+    "/*\n" +
+    " Multiline\n" +
+    "   C-style\n" +
+    "     Comment\n" +
+    " */\n" +
+    "function fFour() {\n" +
+    "    var myLinkText = \"Button\",\n" +
+    "            local = true,\n" +
+    "            initial = -1;\n" +
+    "    var cssClasses = [\"bold\", \"red\",]\n" +
+    "    var selector = \"#id\";\n" +
+    "\n" +
+    "    var color = \"red\";\n" +
+    "    var offset = 10;\n" +
+    "    }" +
     "}";
 
   public final static String BLANK_LINE_CODE_SAMPLE =
