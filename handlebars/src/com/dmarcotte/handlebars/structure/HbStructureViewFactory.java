@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public class HbStructureViewFactory implements PsiStructureViewFactory {
   @Nullable
   @Override
-  public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
+  public StructureViewBuilder getStructureViewBuilder(@NotNull final PsiFile psiFile) {
     return new TemplateLanguageStructureViewBuilder(psiFile) {
       @Override
       protected StructureViewComposite.StructureViewDescriptor createMainView(FileEditor fileEditor, PsiFile mainFile) {

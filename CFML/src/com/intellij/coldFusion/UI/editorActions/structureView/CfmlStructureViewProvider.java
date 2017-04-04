@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CfmlStructureViewProvider implements PsiStructureViewFactory {
   @Override
-  public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
+  public StructureViewBuilder getStructureViewBuilder(@NotNull final PsiFile psiFile) {
     return new TemplateLanguageStructureViewBuilder(psiFile) {
       @Override
       protected StructureViewComposite.StructureViewDescriptor createMainView(final FileEditor fileEditor, final PsiFile mainFile) {
