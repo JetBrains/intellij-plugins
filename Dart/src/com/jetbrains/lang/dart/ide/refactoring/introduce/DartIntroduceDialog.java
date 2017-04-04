@@ -13,14 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-/**
- * User: Fedor.Korotkov
- */
 public class DartIntroduceDialog extends DialogWrapper {
   private JPanel myContentPane;
   private JLabel myNameLabel;
@@ -53,13 +48,9 @@ public class DartIntroduceDialog extends DialogWrapper {
     myNameComboBox.setEditable(true);
     myNameComboBox.setMaximumRowCount(8);
 
-    myContentPane.registerKeyboardAction(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-          IdeFocusManager.getGlobalInstance().requestFocus(myNameComboBox, true);
-        });
-      }
-    }, KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+    myContentPane.registerKeyboardAction(e -> IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
+      IdeFocusManager.getGlobalInstance().requestFocus(myNameComboBox, true);
+    }), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     for (String possibleName : possibleNames) {
       myNameComboBox.addItem(possibleName);
