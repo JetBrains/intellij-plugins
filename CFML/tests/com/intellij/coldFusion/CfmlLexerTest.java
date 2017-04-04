@@ -55,6 +55,10 @@ public class CfmlLexerTest extends LexerTestCase {
     doTest(testText2, loadTestDataFile("2.test.expected"), lexer);
   }
 
+  public void testSqlInjection() throws Throwable {
+    doTest();
+  }
+
   public void testSharpedAttributeValue() throws Throwable {
     doTest();
   }

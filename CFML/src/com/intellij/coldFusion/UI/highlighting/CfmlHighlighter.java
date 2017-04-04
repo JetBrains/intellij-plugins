@@ -35,7 +35,6 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.sql.SqlFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,8 +52,6 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
     super(new CfmlFileHighlighter(project), colors);
     registerLayer(CfmlElementTypes.TEMPLATE_TEXT, new LayerDescriptor(
       SyntaxHighlighterFactory.getSyntaxHighlighter(StdFileTypes.HTML, project, virtualFile), ""));
-    registerLayer(CfmlElementTypes.SQL,
-                  new LayerDescriptor(SyntaxHighlighterFactory.getSyntaxHighlighter(SqlFileType.INSTANCE, project, virtualFile), ""));
   }
 
   static class CfmlFileHighlighter extends SyntaxHighlighterBase {
@@ -141,7 +138,7 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
       // for script language
       fillMap(keys2, CfscriptTokenTypes.OPERATIONS, CFML_OPERATOR);
       fillMap(keys2, CfscriptTokenTypes.BRACKETS, CFML_BRACKETS);
-      // fillMap(keys2, CfscriptTokenTypes.STRING_ELEMENTS, CFML_STRING);
+       //fillMap(keys2, CfscriptTokenTypes.STRING_ELEMENTS, CFML_STRING);
       fillMap(keys2, CfscriptTokenTypes.WORD_OPERATIONS, CFML_KEYWORD);
       fillMap(keys2, CfscriptTokenTypes.KEYWORDS, CFML_KEYWORD);
       keys2.put(CfscriptTokenTypes.INTEGER, CFML_NUMBER);

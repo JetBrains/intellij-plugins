@@ -19,7 +19,9 @@
   <depends>com.intellij.modules.java</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.database</depends>
+  <depends optional="true" config-file="intellilang-cfml-support.xml">org.intellij.intelliLang</depends>
   <extensions defaultExtensionNs="com.intellij">
+    <patterns.patternClass className="com.intellij.coldFusion.patterns.CfmlPatterns" alias="cfml"/>
     <psi.referenceContributor language="CFML"
                               implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
     <programRunner implementation="com.intellij.coldFusion.UI.runner.CfmlRunner"/>

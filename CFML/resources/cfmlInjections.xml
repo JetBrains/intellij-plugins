@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="LanguageInjectionConfiguration">
+  <injection language="SQL" injector-id="cfml">
+    <display-name>&lt;&lt;&lt; SQL</display-name>
+    <place><![CDATA[sqlCapture()]]></place>
+  </injection>
+</component>
