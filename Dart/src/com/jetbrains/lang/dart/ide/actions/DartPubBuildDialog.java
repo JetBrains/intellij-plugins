@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class DartPubBuildDialog extends DialogWrapper {
@@ -49,19 +48,13 @@ public class DartPubBuildDialog extends DialogWrapper {
 
     setTitle(DartBundle.message("dart.pub.build.title"));
 
-    ActionListener listener = new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        updateControls();
-      }
-    };
+    ActionListener listener = e -> updateControls();
     myReleaseRadioButton.addActionListener(listener);
     myDebugRadioButton.addActionListener(listener);
     myOtherRadioButton.addActionListener(listener);
-    myOtherRadioButton.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        if (myOtherRadioButton.isSelected()) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myOtherModeTextField, true);
-        }
+    myOtherRadioButton.addActionListener(e -> {
+      if (myOtherRadioButton.isSelected()) {
+        IdeFocusManager.getInstance(myProject).requestFocus(myOtherModeTextField, true);
       }
     });
 

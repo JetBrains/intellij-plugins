@@ -110,15 +110,12 @@ public class DartResolveUtil {
       return true;
     }
     final BooleanValueHolder result = new BooleanValueHolder(false);
-    processSuperClasses(new PsiElementProcessor<DartClass>() {
-      @Override
-      public boolean execute(@NotNull DartClass dartClass) {
-        if (dartClass == baseClass) {
-          result.setValue(true);
-          return false;
-        }
-        return true;
+    processSuperClasses(dartClass -> {
+      if (dartClass == baseClass) {
+        result.setValue(true);
+        return false;
       }
+      return true;
     }, aClass);
     return result.getValue();
   }
@@ -462,12 +459,9 @@ public class DartResolveUtil {
   @NotNull
   public static <T> List<T> findSubComponents(final Function<DartClass, List<T>> fun, @NotNull DartClass... rootDartClasses) {
     final List<T> unfilteredResult = new ArrayList<>();
-    processSuperClasses(new PsiElementProcessor<DartClass>() {
-      @Override
-      public boolean execute(@NotNull DartClass dartClass) {
-        unfilteredResult.addAll(fun.fun(dartClass));
-        return true;
-      }
+    processSuperClasses(dartClass -> {
+      unfilteredResult.addAll(fun.fun(dartClass));
+      return true;
     }, rootDartClasses);
     return unfilteredResult;
   }
@@ -500,18 +494,12 @@ public class DartResolveUtil {
   public static void collectSupers(@NotNull final List<DartClass> superClasses,
                                    @NotNull final List<DartClass> superInterfaces,
                                    @Nullable DartClass rootDartClass) {
-    processSupers(new PsiElementProcessor<DartClass>() {
-      @Override
-      public boolean execute(@NotNull DartClass dartClass) {
-        superClasses.add(dartClass);
-        return true;
-      }
-    }, new PsiElementProcessor<DartClass>() {
-      @Override
-      public boolean execute(@NotNull DartClass dartClass) {
-        superInterfaces.add(dartClass);
-        return true;
-      }
+    processSupers(dartClass -> {
+      superClasses.add(dartClass);
+      return true;
+    }, dartClass -> {
+      superInterfaces.add(dartClass);
+      return true;
     }, rootDartClass);
   }
 

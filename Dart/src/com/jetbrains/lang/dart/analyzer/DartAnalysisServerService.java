@@ -747,12 +747,7 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     if (!filesToUpdate.isEmpty()) {
-      server.analysis_updateContent(filesToUpdate, new UpdateContentConsumer() {
-        @Override
-        public void onResponse() {
-          myServerData.onFilesContentUpdated();
-        }
-      });
+      server.analysis_updateContent(filesToUpdate, () -> myServerData.onFilesContentUpdated());
     }
   }
 
@@ -1392,13 +1387,10 @@ public class DartAnalysisServerService implements Disposable {
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
 
-      final DebugPrintStream debugStream = new DebugPrintStream() {
-        @Override
-        public void println(String str) {
-          str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
-          synchronized (myDebugLog) {
-            myDebugLog.add(str);
-          }
+      final DebugPrintStream debugStream = str -> {
+        str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
+        synchronized (myDebugLog) {
+          myDebugLog.add(str);
         }
       };
 
@@ -1447,14 +1439,11 @@ public class DartAnalysisServerService implements Disposable {
         startedServer.addAnalysisServerListener(myAnalysisServerListener);
 
         myHaveShownInitialProgress = false;
-        startedServer.addStatusListener(new AnalysisServerStatusListener() {
-          @Override
-          public void isAliveServer(boolean isAlive) {
-            if (!isAlive) {
-              synchronized (myLock) {
-                if (startedServer == myServer) {
-                  stopServer();
-                }
+        startedServer.addStatusListener(isAlive -> {
+          if (!isAlive) {
+            synchronized (myLock) {
+              if (startedServer == myServer) {
+                stopServer();
               }
             }
           }

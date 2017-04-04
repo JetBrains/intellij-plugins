@@ -123,21 +123,18 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   @Nullable
   @Override
   public DartMethodDeclaration findOperator(final String operator, @Nullable final DartClass rightDartClass) {
-    return ContainerUtil.find(getOperators(), new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement element) {
-        if (element instanceof DartMethodDeclaration) {
-          final DartMethodDeclaration method = (DartMethodDeclaration)element;
-          if (method.isOperator() && operator.equals(method.getName())) {
-            if (rightDartClass == null) {
-              return true;
-            }
-            final DartFormalParameterList formalParameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
-            return DartResolveUtil.checkParametersType(formalParameterList, rightDartClass);
+    return ContainerUtil.find(getOperators(), (Condition<PsiElement>)element -> {
+      if (element instanceof DartMethodDeclaration) {
+        final DartMethodDeclaration method = (DartMethodDeclaration)element;
+        if (method.isOperator() && operator.equals(method.getName())) {
+          if (rightDartClass == null) {
+            return true;
           }
+          final DartFormalParameterList formalParameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
+          return DartResolveUtil.checkParametersType(formalParameterList, rightDartClass);
         }
-        return false;
       }
+      return false;
     });
   }
 

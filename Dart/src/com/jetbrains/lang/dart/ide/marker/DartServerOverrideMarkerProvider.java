@@ -42,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
@@ -128,19 +127,16 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
                                            : DartBundle.message("overrides.method.in", name, superClass.getName());
                                   }
                                   return DartBundle.message("implements.method.in", name, superClass.getName());
-                                }, new GutterIconNavigationHandler<PsiElement>() {
-      @Override
-      public void navigate(MouseEvent e, PsiElement elt) {
-        List<DartComponent> superComponents = Lists.newArrayList();
-        if (superclassComponent != null) {
-          superComponents.add(superclassComponent);
-        }
-        superComponents.addAll(interfaceComponents);
-        PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(superComponents),
-                                            DaemonBundle.message("navigation.title.super.method", name),
-                                            DaemonBundle.message("navigation.findUsages.title.super.method", name),
-                                            new DefaultPsiElementCellRenderer());
+                                }, (GutterIconNavigationHandler<PsiElement>)(e, elt) -> {
+      List<DartComponent> superComponents = Lists.newArrayList();
+      if (superclassComponent != null) {
+        superComponents.add(superclassComponent);
       }
+      superComponents.addAll(interfaceComponents);
+      PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(superComponents),
+                                          DaemonBundle.message("navigation.title.super.method", name),
+                                          DaemonBundle.message("navigation.findUsages.title.super.method", name),
+                                          new DefaultPsiElementCellRenderer());
     }, GutterIconRenderer.Alignment.LEFT);
   }
 }

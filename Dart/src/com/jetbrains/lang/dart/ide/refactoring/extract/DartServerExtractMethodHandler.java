@@ -37,8 +37,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class DartServerExtractMethodHandler implements RefactoringActionHandler {
   @Override
@@ -102,12 +100,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     if (myRefactoring.getOccurrences() != 1) {
       myAllCheckBox.setSelected(true);
       myAllCheckBox.setText("Extract all " + myRefactoring.getOccurrences() + " occurrences");
-      myAllCheckBox.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          myRefactoring.setExtractAll(myAllCheckBox.isSelected());
-        }
-      });
+      myAllCheckBox.addActionListener(e -> myRefactoring.setExtractAll(myAllCheckBox.isSelected()));
     }
     else {
       myAllCheckBox.setEnabled(false);
@@ -115,12 +108,9 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
 
     if (myRefactoring.canExtractGetter()) {
       myGetterCheckBox.setSelected(true);
-      myGetterCheckBox.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          myRefactoring.setCreateGetter(myGetterCheckBox.isSelected());
-          mySignatureLabel.setText(myRefactoring.getSignature());
-        }
+      myGetterCheckBox.addActionListener(e -> {
+        myRefactoring.setCreateGetter(myGetterCheckBox.isSelected());
+        mySignatureLabel.setText(myRefactoring.getSignature());
       });
     }
     else {

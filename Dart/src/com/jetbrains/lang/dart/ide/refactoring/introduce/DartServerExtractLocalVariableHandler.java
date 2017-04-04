@@ -239,12 +239,9 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog {
 
     final String name = StringUtil.notNullize(ArrayUtil.getFirstElement(names), "name");
     myRefactoring.setName(name);
-    myVariableNameField.addDataChangedListener(new NameSuggestionsField.DataChanged() {
-      @Override
-      public void dataChanged() {
-        final String name = myVariableNameField.getEnteredName();
-        myRefactoring.setName(name);
-      }
+    myVariableNameField.addDataChangedListener(() -> {
+      final String name1 = myVariableNameField.getEnteredName();
+      myRefactoring.setName(name1);
     });
   }
 
