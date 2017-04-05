@@ -3,6 +3,8 @@ package com.intellij.aws.cloudformation.tests
 import com.intellij.aws.cloudformation.CloudFormationInspections
 import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.CloudFormationProblem
+import com.intellij.aws.cloudformation.inspections.YamlUnresolvedReferencesInspection
+import com.intellij.codeInspection.InspectionManager
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import java.io.File
 
@@ -32,6 +34,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun testFindInMapBroken() = runTest("findinmap_broken.yaml")
   fun testFnSplit() = runTest("fn-split.yaml")
   fun testFnJoinCommaDelimitedList() = runTest("fn-join-commadelimitedlist.yaml")
+  fun testRefSingleQuotes() = runTest("ref_single_quotes.yaml")
 
   fun runTest(fileName: String) {
     println("Working on $fileName")
@@ -41,10 +44,10 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
     val parsed = CloudFormationParser.parse(myFile)
     val inspected = CloudFormationInspections.inspectFile(parsed)
 
-    val referencesList = inspected.references.values().sortedBy { it.element.textOffset }
-    val unresolvedReferenceProblems = referencesList
-        .filter { it.resolve() == null }
-        .map { CloudFormationProblem(it.element, "Unresolved reference") }
+    val unresolvedReferenceProblems = YamlUnresolvedReferencesInspection()
+        .checkFile(myFile, InspectionManager.getInstance(myFile.project), true)!!
+        .sortedBy { it.psiElement.textOffset }
+        .map { CloudFormationProblem(it.psiElement, it.descriptionTemplate) }
 
     TestUtil.checkContent(
         File(testDataPath, "$fileName.expected"),

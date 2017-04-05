@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ECSCluster:
+    Type: String
+    Description: Name of an existing ECS Cluster.
+Resources:
+  service:
+    Type: AWS::ECS::Service
+    1@<Properties:>
+      Cluster: 0@<!Ref '
+      DesiredCount: '1'>
+      TaskDefinition: AA
+
+0: Too many values
+1: Required resource properties are not set: DesiredCount

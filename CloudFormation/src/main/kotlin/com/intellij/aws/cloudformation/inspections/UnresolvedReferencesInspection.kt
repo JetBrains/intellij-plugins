@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder.unresolvedReferenceMessage
 import com.intellij.psi.PsiFile
+import org.jetbrains.yaml.psi.YAMLCompoundValue
 
 abstract class UnresolvedReferencesInspection : LocalInspectionTool() {
   override fun runForWholeFile(): Boolean = true
@@ -25,6 +26,12 @@ abstract class UnresolvedReferencesInspection : LocalInspectionTool() {
 
       val element = reference.resolve()
       if (element != null) return@mapNotNull null
+
+      if (reference.element is YAMLCompoundValue) {
+        // Do not handle special cases like double string literals
+        // IDEA fails to create reference here with Cannot find manipulator for YAML compound value in YAML compound value:null class class com.intellij.aws.cloudformation.references.CloudFormationEntityReference
+        return@mapNotNull null
+      }
 
       return@mapNotNull manager.createProblemDescriptor(reference.element, reference.rangeInElement,
           unresolvedReferenceMessage(reference), ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, isOnTheFly)
