@@ -18,12 +18,11 @@ public final class TsLinterInput extends JSLinterInput<TsLintState> {
 
   public TsLinterInput(@NotNull Project project,
                        @NotNull PsiFile psiFile,
-                       @NotNull Document document,
                        @NotNull String fileContent,
                        @NotNull TsLintState state,
                        @Nullable EditorColorsScheme colorsScheme,
                        @Nullable VirtualFile config) {
-    super(project, psiFile, document, fileContent, state, colorsScheme);
+    super(project, psiFile, fileContent, state, colorsScheme);
     myConfig = config;
   }
 
