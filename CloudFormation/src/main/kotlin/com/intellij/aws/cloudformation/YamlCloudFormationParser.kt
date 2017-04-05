@@ -126,7 +126,7 @@ class YamlCloudFormationParser private constructor () {
 
   private fun conditions(conditions: CfnKeyValue): CfnConditionsNode = parseNameValues(
       conditions,
-      { node -> CfnConditionNode(keyName(node), expression(node.value!!, AllowFunctions.True)).registerNode(node.owner) },
+      { node -> CfnConditionNode(keyName(node), node.value?.let { expression(it, AllowFunctions.True) }).registerNode(node.owner) },
       { nameNode, list -> CfnConditionsNode(nameNode, list) }
   )
 
