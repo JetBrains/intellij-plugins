@@ -56,4 +56,9 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
     return MakefilePsiImplUtil.matches(this, prerequisite);
   }
 
+  @Nullable
+  public String getDocComment() {
+    return MakefilePsiImplUtil.getDocComment(this);
+  }
+
 }

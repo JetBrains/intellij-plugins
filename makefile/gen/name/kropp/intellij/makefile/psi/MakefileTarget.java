@@ -24,4 +24,7 @@ public interface MakefileTarget extends MakefileNamedElement, NavigationItem {
 
   boolean matches(String prerequisite);
 
+  @Nullable
+  String getDocComment();
+
 }

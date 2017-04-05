@@ -2,13 +2,16 @@ package name.kropp.intellij.makefile.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import name.kropp.intellij.makefile.MakefileFile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -52,6 +55,22 @@ public class MakefilePsiImplUtil {
 
         ASTNode targetNode = element.getNode();
         return targetNode != null ? targetNode.getPsi() : null;
+    }
+
+    @Nullable
+    public static String getDocComment(MakefileTarget element) {
+        if (element.isSpecialTarget()) return null;
+
+        final MakefileTargetLine targetLine = (MakefileTargetLine) element.getParent().getParent();
+
+        Collection<PsiComment> comments = PsiTreeUtil.findChildrenOfType(targetLine, PsiComment.class);
+        for (PsiComment comment : comments) {
+            if (comment.getTokenType() == MakefileTypes.DOC_COMMENT) {
+                return comment.getText().substring(2);
+            }
+        }
+
+        return null;
     }
 
     public static ItemPresentation getPresentation(MakefileTarget element) {
