@@ -103,7 +103,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       return null;
     }
 
-    return new TsLinterInput(project, psiFile, document, fileContent, state, colorsScheme, config);
+    return new TsLinterInput(project, psiFile, fileContent, state, colorsScheme, config);
   }
 
 
