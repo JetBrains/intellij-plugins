@@ -13,7 +13,7 @@ import name.kropp.intellij.makefile.psi.MakefileTypes
 class MakefileParserDefinition : ParserDefinition {
   companion object {
     val WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE)
-    val COMMENTS = TokenSet.create(MakefileTypes.COMMENT)
+    val COMMENTS = TokenSet.create(MakefileTypes.COMMENT, MakefileTypes.DOC_COMMENT)
 
     val FILE = IFileElementType(Language.findInstance(MakefileLanguage::class.java))
   }

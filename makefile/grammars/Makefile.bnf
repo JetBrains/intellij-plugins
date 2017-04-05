@@ -87,3 +87,4 @@ topconditional ::= conditional-keyword condition block ('else' block)* 'endif' {
 block ::= any
 
 comment ::=
+doc_comment ::=

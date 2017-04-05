@@ -15,6 +15,7 @@ public interface MakefileTypes {
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType DIRECTORY = new MakefileElementType("DIRECTORY");
+  IElementType DOC_COMMENT = new MakefileElementType("DOC_COMMENT");
   IElementType EMPTY_COMMAND = new MakefileElementType("EMPTY_COMMAND");
   IElementType EXPORT = new MakefileElementType("EXPORT");
   IElementType FILENAME = new MakefileElementType("FILENAME");
@@ -89,6 +90,9 @@ public interface MakefileTypes {
       }
       else if (type == DIRECTORY) {
         return new MakefileDirectoryImpl(node);
+      }
+      else if (type == DOC_COMMENT) {
+        return new MakefileDocCommentImpl(node);
       }
       else if (type == EMPTY_COMMAND) {
         return new MakefileEmptyCommandImpl(node);

@@ -24,6 +24,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testWildcard() = doTest(true)
   fun testDoubleColonRule() = doTest(true)
   fun testStaticPatternRules() = doTest(true)
+  fun testDoccomments() = doTest(true)
 
   fun testIssue7() = doTest(true)
   fun testIssue9() = doTest(true)

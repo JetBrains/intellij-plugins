@@ -35,6 +35,10 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDocComment(@NotNull MakefileDocComment o) {
+    visitPsiElement(o);
+  }
+
   public void visitEmptyCommand(@NotNull MakefileEmptyCommand o) {
     visitPsiElement(o);
   }

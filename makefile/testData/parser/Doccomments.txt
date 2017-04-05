@@ -1,0 +1,18 @@
+Makefile
+  PsiComment(COMMENT)('# Self-Document Makefile')
+  PsiWhiteSpace('\n\n')
+  MakefileRuleImpl(RULE)
+    MakefileTargetLineImpl(TARGET_LINE)
+      MakefileTargetsImpl(TARGETS)
+        MakefileTargetImpl(TARGET)
+          PsiElement(identifier)('some')
+      PsiElement(:)(':')
+      PsiWhiteSpace(' ')
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          MakefilePrerequisiteImpl(PREREQUISITE)
+            PsiElement(identifier)('hello')
+      PsiWhiteSpace(' ')
+      PsiComment(DOC_COMMENT)('## doc comment')
+    MakefileRecipeImpl(RECIPE)
+      <empty list>

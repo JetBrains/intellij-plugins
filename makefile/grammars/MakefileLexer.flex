@@ -26,6 +26,7 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 EOL=[\r\n]+
 SPACES=" "+
 BACKSLASHCRLF="\\"(\r|\n|\r\n)
+DOCCOMMENT="##"[^\r\n]*
 COMMENT="#"[^\r\n]*
 VARIABLE_VALUE=[^\r\n]*[^\\\r\n]
 COLON=":"
@@ -42,6 +43,7 @@ CONDITION_CHARACTER=[^#\r\n]
 
 %%
 
+{DOCCOMMENT}           { return DOC_COMMENT; }
 {COMMENT}              { return COMMENT; }
 
 <YYINITIAL> {

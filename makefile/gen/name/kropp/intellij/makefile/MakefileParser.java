@@ -44,6 +44,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     else if (t == DIRECTORY) {
       r = directory(b, 0);
     }
+    else if (t == DOC_COMMENT) {
+      r = doc_comment(b, 0);
+    }
     else if (t == EMPTY_COMMAND) {
       r = empty_command(b, 0);
     }
@@ -385,6 +388,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, IDENTIFIER);
     exit_section_(b, m, DIRECTORY, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  public static boolean doc_comment(PsiBuilder b, int l) {
+    Marker m = enter_section_(b);
+    exit_section_(b, m, DOC_COMMENT, true);
+    return true;
   }
 
   /* ********************************************************** */
