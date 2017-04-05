@@ -46,7 +46,7 @@ public class PubServerManager implements Disposable {
     this.project = project;
 
     VirtualFileManager.getInstance()
-      .addVirtualFileListener(new VirtualFileAdapter() {
+      .addVirtualFileListener(new VirtualFileListener() {
                                 @Override
                                 public void beforePropertyChange(@NotNull final VirtualFilePropertyEvent event) {
                                   if (VirtualFile.PROP_NAME.equals(event.getPropertyName())) {

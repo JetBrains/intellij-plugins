@@ -136,7 +136,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     myCompilerDependenciesCache = new FlexCompilerDependenciesCache(project);
 
-    final MyVirtualFileAdapter myFileListener = new MyVirtualFileAdapter();
+    final MyVirtualFileListener myFileListener = new MyVirtualFileListener();
     LocalFileSystem.getInstance().addVirtualFileListener(myFileListener);
     Disposer.register(project, new Disposable() {
       public void dispose() {
@@ -712,7 +712,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     System.out.println(type.toString() + ":" + message);
   }
 
-  private class MyVirtualFileAdapter extends VirtualFileAdapter {
+  private class MyVirtualFileListener implements VirtualFileListener {
     @Override
       public void propertyChanged(@NotNull final VirtualFilePropertyEvent event) {
       handleVirtualFileEvent(event.getFile());
