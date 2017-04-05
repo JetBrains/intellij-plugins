@@ -12,6 +12,7 @@ import name.kropp.intellij.makefile.psi.MakefileTypes
 class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   companion object {
     val COMMENT = createTextAttributesKey("MAKEFILE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+    val DOCCOMMENT = createTextAttributesKey("MAKEFILE_DOCCOMMENT", DefaultLanguageHighlighterColors.DOC_COMMENT)
     val KEYWORD = createTextAttributesKey("MAKEFILE_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
     val TARGET = createTextAttributesKey("MAKEFILE_TARGET", DefaultLanguageHighlighterColors.CLASS_NAME)
     val SPECIAL_TARGET = createTextAttributesKey("MAKEFILE_SPECIAL_TARGET", DefaultLanguageHighlighterColors.PREDEFINED_SYMBOL)
@@ -34,10 +35,12 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     private val LINE_SPLIT_KEYS = arrayOf(LINE_SPLIT)
     private val TAB_KEYS = arrayOf(TAB)
     private val COMMENT_KEYS = arrayOf(COMMENT)
+    private val DOCCOMMENT_KEYS = arrayOf(DOCCOMMENT)
     private val EMPTY_KEYS = emptyArray<TextAttributesKey>()
   }
 
   override fun getTokenHighlights(tokenType: IElementType) = when(tokenType) {
+    MakefileTypes.DOC_COMMENT -> DOCCOMMENT_KEYS
     MakefileTypes.COMMENT -> COMMENT_KEYS
     MakefileTypes.TARGET -> TARGET_KEYS
     MakefileTypes.COLON, MakefileTypes.DOUBLECOLON, MakefileTypes.ASSIGN, MakefileTypes.SEMICOLON, MakefileTypes.PIPE -> SEPARATOR_KEYS

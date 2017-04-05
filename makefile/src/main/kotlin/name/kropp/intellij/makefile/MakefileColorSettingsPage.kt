@@ -16,6 +16,8 @@ class MakefileColorSettingsPage : ColorSettingsPage {
   )
 
   private val DESCRIPTORS = arrayOf(
+      AttributesDescriptor("Comment", MakefileSyntaxHighlighter.COMMENT),
+      AttributesDescriptor("Documentation Comment", MakefileSyntaxHighlighter.DOCCOMMENT),
       AttributesDescriptor("Keyword", MakefileSyntaxHighlighter.KEYWORD),
       AttributesDescriptor("Target", MakefileSyntaxHighlighter.TARGET),
       AttributesDescriptor("Special Target", MakefileSyntaxHighlighter.SPECIAL_TARGET),
@@ -33,7 +35,7 @@ class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getDemoText() = """# Simple Makefile
 include make.mk
 
-<target>all</target>: <prerequisite>hello</prerequisite>
+<target>all</target>: <prerequisite>hello</prerequisite> ## Doc comment
 
 <target>hello</target>: <prerequisite>hello.o</prerequisite> <prerequisite>world.o</prerequisite>
 <specialTarget>.PHONY: hello</specialTarget>
