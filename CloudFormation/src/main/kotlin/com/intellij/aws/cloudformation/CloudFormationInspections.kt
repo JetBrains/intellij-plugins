@@ -218,7 +218,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       }
 
       CloudFormationIntrinsicFunction.FnJoin -> {
-        if (function.args.size != 2 || arg0 !is CfnScalarValueNode || arg1 !is CfnArrayValueNode) {
+        if (function.args.size != 2) {
           addProblem(function, "Join expects a string argument and an array argument")
         }
 

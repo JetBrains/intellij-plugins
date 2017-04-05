@@ -31,6 +31,7 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
 
   fun testFindInMapBroken() = runTest("findinmap_broken.yaml")
   fun testFnSplit() = runTest("fn-split.yaml")
+  fun testFnJoinCommaDelimitedList() = runTest("fn-join-commadelimitedlist.yaml")
 
   fun runTest(fileName: String) {
     println("Working on $fileName")
