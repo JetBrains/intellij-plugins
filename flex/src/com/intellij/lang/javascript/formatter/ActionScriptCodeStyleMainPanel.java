@@ -27,7 +27,7 @@ public class ActionScriptCodeStyleMainPanel extends TabbedLanguageCodeStylePanel
         return ActionScriptFileType.INSTANCE;
       }
     });
-    addTab(new JSGeneratedCodeStylePanel(JavaScriptSupportLoader.ECMA_SCRIPT_L4, settings) {
+    addTab(new JSGeneratedCodeStylePanel(JavaScriptSupportLoader.ECMA_SCRIPT_L4, settings, true) {
       @NotNull
       @Override
       protected FileType getFileType() {
