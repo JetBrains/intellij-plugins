@@ -21,7 +21,7 @@ public class DartRemoteDebugConfigurationType extends ConfigurationTypeBase {
     super("DartRemoteDebugConfigurationType",
           DartBundle.message("remote.debug.configuration.name"),
           DartBundle.message("remote.debug.configuration.description"),
-          DartIcons.Dart_16);
+          DartIcons.Dart_remote);
     addFactory(new ConfigurationFactory(this) {
       @NotNull
       @Override
