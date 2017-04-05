@@ -3,6 +3,7 @@ Amazon Web Services <https://aws.amazon.com>
 Sign In to the Console <https://console.aws.amazon.com/console/home> Try 
 AWS for Free
 <https://portal.aws.amazon.com/gp/aws/developer/registration/index.html>
+<http://www.amazon.com/dp/B007S28IUW>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
 
@@ -84,6 +85,8 @@ User Guide (API Version 2010-05-15)
                 + Mappings
                 + Conditions
                 + Transform
+                      # AWS::Include Transform
+                      # AWS::Serverless Transform
                 + Resources
                 + Outputs
           o What Is AWS CloudFormation Designer?
@@ -97,6 +100,7 @@ User Guide (API Version 2010-05-15)
                   Basic Web Server
                 + Walkthrough: Use AWS CloudFormation Designer to Modify a
                   Stack's Template
+                + Peer with a VPC in Another Account
                 + Walkthrough: Refer to Resource Outputs in Another AWS
                   CloudFormation Stack
                 + Create a Scalable, Load-balancing Web Server
@@ -151,6 +155,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::ApiGateway::RestApi
                 + AWS::ApiGateway::Stage
                 + AWS::ApiGateway::UsagePlan
+                + AWS::ApiGateway::UsagePlanKey
                 + AWS::ApplicationAutoScaling::ScalableTarget
                 + AWS::ApplicationAutoScaling::ScalingPolicy
                 + AWS::AutoScaling::AutoScalingGroup
@@ -539,6 +544,7 @@ User Guide (API Version 2010-05-15)
                   EncryptionConfiguration KMSEncryptionConfig
                 + Firehose DeliveryStream S3DestinationConfiguration
                   EncryptionConfiguration
+                + AWS Lambda Function DeadLetterConfig
                 + AWS Lambda Function Environment
                 + AWS Lambda Function Code
                 + AWS Lambda Function VPCConfig
@@ -570,6 +576,7 @@ User Guide (API Version 2010-05-15)
                 + Route 53 AliasTarget Property
                 + Amazon Route 53 Record Set GeoLocation Property
                 + Amazon Route 53 HealthCheckConfig
+                + Amazon Route 53 AlarmIdentifier
                 + Amazon Route 53 HealthCheckTags
                 + Amazon Route 53 HostedZoneConfig Property
                 + Amazon Route 53 HostedZoneTags
@@ -706,6 +713,7 @@ User Guide (API Version 2010-05-15)
     * Release History
           o Supported AWS Services
     * AWS Glossary
+    *  <http://www.amazon.com/dp/B007S28IUW>
 AWS Documentation <http://aws.amazon.com/documentation> » AWS 
 CloudFormation <http://aws.amazon.com/documentation/cloudformation> » User 
 Guide » Release History
@@ -717,6 +725,78 @@ The following table describes the important changes to the documentation
 since the preceding release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+AWS::Include transform
+
+March 28, 2017
+
+Use the AWS::Include transform to reference reusable snippets stored in an 
+Amazon S3 bucket. For more information, see AWS::Include Transform.
+
+2010-05-15
+
+Peer your Amazon VPC with another account
+
+March 28, 2017
+
+You can now use AWS CloudFormation to peer your Amazon VPC with a VPC in 
+another AWS account. For more information, see Walkthrough: Peer with an 
+Amazon VPC in Another AWS Account.
+
+2010-05-15
+
+New resource
+
+March 28, 2017
+
+AWS::ApiGateway::UsagePlanKey
+
+    Use the AWS::ApiGateway::UsagePlanKey resource to associate a usage
+    plan key and determine which users the usage plan is applied to.
+
+2010-05-15
+
+Updated resources
+
+March 28, 2017
+
+AWS::EC2::VPCPeeringConnection
+
+    Use the PeerOwnerId property and the PeerRoleArn property to peer with
+    a VPC in another AWS account.
+
+    For more information, see Walkthrough: Peer with an Amazon VPC in
+    Another AWS Account.
+
+AWS::IAM::InstanceProfile
+
+    Use the InstanceProfileName property to configure an instance profile.
+
+AWS::Lambda::Function
+
+    Use the DeadLetterConfig property to configure how AWS Lambda handles
+    events that it can't process.
+
+    Node.js v0.10 is no longer supported for the Runtime property.
+
+AWS::Route53::HealthCheck
+
+    There are seven new resource subproperty types for the Amazon Route 53
+    HealthCheckConfig HealthCheckConfig property: AlarmIdentifier, 
+    ChildHealthChecks, EnableSNI, HealthThreshold, 
+    InsufficientDataHealthStatus, Inverted, and MeasureLatency.
+
+AWS::SQS::Queue
+
+    Use the ContentBasedDeduplication and FifoQueue properties to create
+    First-In-First-Out (FIFO) Amazon Simple Queue Service queues.
+
+AWS::S3::Bucket
+
+    You can now specify IPv6 domain names for your Amazon S3 buckets.
+
+2010-05-15
+
 New resources 	February 10, 2017 	
 AWS::StepFunctions::Activity
 
@@ -3103,7 +3183,6 @@ This is the initial public release of AWS CloudFormation.
 Document Conventions
 « Previous Next »
 © 2017, Amazon Web Services, Inc. or its affiliates. All rights reserved.
-PDF | Kindle <http://www.amazon.com/dp/B007S28IUW>
 Terms of Use <http://aws.amazon.com/terms> | © 2017, Amazon Web Services, 
 Inc. or its affiliates. All rights reserved.
 Have a question? Try the Forums.
