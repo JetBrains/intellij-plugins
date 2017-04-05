@@ -4,7 +4,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
@@ -28,28 +28,8 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     myProject = project;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public void initComponent() {
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public void disposeComponent() {
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @NotNull
-  public String getComponentName() {
-    return TapestryListenersSupportLoader.class.getName();
-  }
-
+  @Override
   public void projectOpened() {
-
     // Listener for file deletion
     PsiManager.getInstance(myProject).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
       @Override
@@ -119,6 +99,7 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
 
     MessageBusConnection connection = myProject.getMessageBus().connect(myProject);
     connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+      @Override
       public void rootsChanged(ModuleRootEvent event) {
         for (Module module : ModuleManager.getInstance((Project)event.getSource()).getModules()) {
           if (!TapestryUtils.isTapestryModule(module)) {
@@ -132,12 +113,13 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     });
   }
 
+  @Override
   public void projectClosed() {
   }
 
   @Nullable
   private static Module getModuleFromEvent(PsiTreeChangeEvent event) {
     PsiElement parent = event.getParent();
-    return parent == null ? null : ModuleUtil.findModuleForPsiElement(parent);
+    return parent == null ? null : ModuleUtilCore.findModuleForPsiElement(parent);
   }
 }
