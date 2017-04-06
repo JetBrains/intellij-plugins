@@ -70,11 +70,11 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testCompositeFileHeaderAndExpandedImports() throws Exception {
-    doTestWithSpecificSettings(settings -> settings.COLLAPSE_IMPORTS = false);
+    doTestWithSpecificSettings(settings -> settings.setCollapseImports(false));
   }
 
   public void testExpandedFileHeaderAndFoldedImports() throws Exception {
-    doTestWithSpecificSettings(settings -> settings.COLLAPSE_FILE_HEADER = false);
+    doTestWithSpecificSettings(settings -> settings.setCollapseFileHeader(false));
   }
 
   public void testFileHeaderBeforePartOf() throws Exception {
@@ -90,7 +90,7 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testDocCommentsCollapsed() throws Exception {
-    doTestWithSpecificSettings(settings -> settings.COLLAPSE_DOC_COMMENTS = true);
+    doTestWithSpecificSettings(settings -> settings.setCollapseDocComments(true));
   }
 
   public void testFunctionBody() throws Exception {
@@ -98,7 +98,7 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionBodyCollapsedByDefault() throws Exception {
-    doTestWithSpecificSettings(settings -> settings.COLLAPSE_METHODS = true);
+    doTestWithSpecificSettings(settings -> settings.setCollapseMethods(true));
   }
 
   public void testCustomRegionsOverlappingWithCommentFoldings() throws Exception {

@@ -84,17 +84,17 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     final CodeFoldingSettings settings = CodeFoldingSettings.getInstance();
     final DartCodeFoldingSettings dartSettings = DartCodeFoldingSettings.getInstance();
 
-    if (psiElement instanceof DartFile) return settings.COLLAPSE_FILE_HEADER;                        // 1. File header
-    if (psiElement instanceof DartImportOrExportStatement) return settings.COLLAPSE_IMPORTS;         // 2. Import and export statements
+    if (psiElement instanceof DartFile) return settings.isCollapseFileHeader();                      // 1. File header
+    if (psiElement instanceof DartImportOrExportStatement) return settings.isCollapseImports();      // 2. Import and export statements
     if (psiElement instanceof DartPartStatement) return dartSettings.isCollapseParts();              // 3. Part statements
 
     if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT ||                                  // 4.1. Multiline doc comments
         elementType ==
         DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {                                                // 4.3. Consequent single line doc comments
-      return settings.COLLAPSE_DOC_COMMENTS;                                                         // 4.2 and 4.4 never collapsed by default
+      return settings.isCollapseDocComments();                                                       // 4.2 and 4.4 never collapsed by default
     }
     //                                                                                                  5. Class body never collapsed by default
-    if (psiElement instanceof DartFunctionBody) return settings.COLLAPSE_METHODS;                    // 6. Function body
+    if (psiElement instanceof DartFunctionBody) return settings.isCollapseMethods();                 // 6. Function body
     if (psiElement instanceof DartTypeArguments) return dartSettings.isCollapseGenericParameters();  // 7. Type arguments
 
     return false;
