@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 51;
+  public static final int BASE_VERSION = 52;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
@@ -146,7 +146,7 @@ public class AngularIndexUtil {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       int version = -1;
       PsiElement resolve;
-      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ngFor]")) != null) {
+      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngFor")) != null) {
         version = 20;
       } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
         version = 13;

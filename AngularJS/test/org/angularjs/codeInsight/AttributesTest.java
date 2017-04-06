@@ -521,7 +521,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
       myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(), "[ngFor]", "[ngForOf]");
+      assertContainsElements(myFixture.getLookupElementStrings(), "ngFor", "[ngForOf]");
     });
   }
 
@@ -544,7 +544,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
       myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(), "[ngFor]", "[ngForOf]");
+      assertContainsElements(myFixture.getLookupElementStrings(), "ngFor", "[ngForOf]");
     });
   }
 
@@ -805,6 +805,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("case.html", "angular2.js");
       myFixture.completeBasic();
+      myFixture.type('\n');
       myFixture.checkResultByFile("case.after.html");
     });
   }
@@ -822,6 +823,46 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("routerLink.html", "angular2.js", "routerLink.js");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "routerLink", "routerLink2");
+    });
+  }
+
+  public void testComplexSelectorList() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("material.html", "angular2.js", "material.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "md-icon-button", "mat-icon-button");
+    });
+  }
+
+  public void testComplexSelectorList2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
+    });
+  }
+
+  public void testSelectorListSpaces() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("spaces.html", "angular2.js", "spaces.ts");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "other-attr");
+    });
+  }
+
+  public void testSelectorListSpaces2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("spaces.html", "angular2.js", "spaces.ts");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "other-attr");
+    });
+  }
+
+  public void testSelectorListSpacesCompiled() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("flexOrder.html", "angular2.js", "flexOrder.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "fxFlexOrder");
     });
   }
 }
