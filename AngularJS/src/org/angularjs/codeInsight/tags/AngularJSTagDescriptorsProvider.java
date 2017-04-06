@@ -28,6 +28,7 @@ import java.util.List;
  */
 public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
   private static final String NG_CONTAINER = "ng-container";
+  private static final String NG_TEMPLATE = "ng-template";
 
   @Override
   public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
@@ -40,7 +41,8 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       return true;
     });
     if (AngularIndexUtil.hasAngularJS2(project)) {
-      addLookupItem(language, elements, createContainerDirective(xmlTag));
+      addLookupItem(language, elements, createDirective(xmlTag, NG_CONTAINER));
+      addLookupItem(language, elements, createDirective(xmlTag, NG_TEMPLATE));
     }
   }
 
@@ -65,8 +67,9 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
       return null;
     }
-    if (NG_CONTAINER.equals(directiveName) && AngularIndexUtil.hasAngularJS2(project)) {
-      return new AngularJSTagDescriptor(NG_CONTAINER, createContainerDirective(xmlTag));
+    if ((NG_CONTAINER.equals(directiveName) || NG_TEMPLATE.equals(directiveName)) &&
+        AngularIndexUtil.hasAngularJS2(project)) {
+      return new AngularJSTagDescriptor(directiveName, createDirective(xmlTag, directiveName));
     }
 
     final JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
@@ -75,7 +78,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   }
 
   @NotNull
-  private static JSImplicitElementImpl createContainerDirective(XmlTag xmlTag) {
-    return new JSImplicitElementImpl.Builder(NG_CONTAINER, xmlTag).setTypeString("E;;;").toImplicitElement();
+  private static JSImplicitElementImpl createDirective(XmlTag xmlTag, String name) {
+    return new JSImplicitElementImpl.Builder(name, xmlTag).setTypeString("E;;;").toImplicitElement();
   }
 }
