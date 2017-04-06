@@ -37,6 +37,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
+    <fileDocumentManagerListener implementation="com.jetbrains.lang.dart.ide.editor.DartfmtOnSave"/>
     <psi.treeChangePreprocessor implementation="com.jetbrains.lang.dart.DartPsiTreeChangePreprocessor"/>
     <lang.syntaxHighlighterFactory language="Dart" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterFactory"/>
     <highlightErrorFilter implementation="com.jetbrains.lang.dart.highlight.DartHighlightingErrorFilter"/>

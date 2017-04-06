@@ -1111,6 +1111,15 @@ public class DartAnalysisServerService implements Disposable {
                                   final int _selectionOffset,
                                   final int _selectionLength,
                                   final int lineLength) {
+    return edit_format(file, _selectionOffset, _selectionLength, lineLength, true);
+  }
+
+  @Nullable
+  public FormatResult edit_format(@NotNull final VirtualFile file,
+                                  final int _selectionOffset,
+                                  final int _selectionLength,
+                                  final int lineLength,
+                                  final boolean checkWriteLock) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<FormatResult> resultRef = new Ref<>();
 
@@ -1140,7 +1149,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, EDIT_FORMAT_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, EDIT_FORMAT_TIMEOUT, checkWriteLock);
 
     if (latch.getCount() > 0) {
       LOG.info("edit_format() took too long for file " + filePath);
