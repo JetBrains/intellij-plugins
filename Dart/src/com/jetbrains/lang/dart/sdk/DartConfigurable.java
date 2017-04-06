@@ -152,7 +152,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     });
 
     myCheckSdkUpdateButton.addActionListener(e -> {
-      final Runnable runnable = () -> checkSdkUpdate();
+      final Runnable runnable = this::checkSdkUpdate;
       ApplicationManagerEx.getApplicationEx()
         .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject, myMainPanel);
     });

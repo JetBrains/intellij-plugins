@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.intellij.codeInsight.template.*;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.DartClass;

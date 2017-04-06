@@ -115,10 +115,7 @@ public class Stagehand {
 
       return result;
     }
-    catch (StagehandException e) {
-      LOG.info(e);
-    }
-    catch (JSONException e) {
+    catch (StagehandException | JSONException e) {
       LOG.info(e);
     }
 

@@ -747,7 +747,7 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     if (!filesToUpdate.isEmpty()) {
-      server.analysis_updateContent(filesToUpdate, () -> myServerData.onFilesContentUpdated());
+      server.analysis_updateContent(filesToUpdate, myServerData::onFilesContentUpdated);
     }
   }
 
@@ -1253,7 +1253,7 @@ public class DartAnalysisServerService implements Disposable {
 
     server.analysis_reanalyze(null);
 
-    ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(), ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL);
   }
 
   private void analysis_setPriorityFiles() {

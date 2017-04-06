@@ -29,7 +29,7 @@ import static com.intellij.util.ArrayUtil.toStringArray;
  */
 public class ServerExtractMethodRefactoring extends ServerRefactoring {
   private final ExtractMethodOptions options =
-    new ExtractMethodOptions("returnType", false, "name", ImmutableList.<RefactoringMethodParameter>of(), false);
+    new ExtractMethodOptions("returnType", false, "name", ImmutableList.of(), false);
   private ExtractMethodFeedback feedback;
 
   public ServerExtractMethodRefactoring(@NotNull final Project project,

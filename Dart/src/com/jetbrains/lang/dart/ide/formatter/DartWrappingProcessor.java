@@ -49,7 +49,7 @@ public class DartWrappingProcessor {
           // Not used; PREFER_PARAMETERS_WRAP cannot be changed in the UI.
           return Wrap.createChildWrap(childWrap, WrappingUtil.getWrapType(mySettings.CALL_PARAMETERS_WRAP), true);
         }
-        Wrap wrap = null;
+        Wrap wrap;
         // First, do persistent object management.
         if (myNode.getFirstChildNode() == child && childType != NAMED_ARGUMENT) {
           ASTNode[] childs = myNode.getChildren(DartIndentProcessor.EXPRESSIONS);
@@ -120,7 +120,7 @@ public class DartWrappingProcessor {
     // Lists in schematic s-expr notation:
     // (LIST_LITERAL_EXPRESSION '[ (EXPRESSION_LIST expr ', expr) '])
     if (elementType == EXPRESSION_LIST) {
-      Wrap wrap = null;
+      Wrap wrap;
       // First, do persistent object management.
       if (myNode.getFirstChildNode() == child) {
         wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
@@ -357,7 +357,7 @@ public class DartWrappingProcessor {
   }
 
   private Wrap sharedWrap(ASTNode child, Key<Wrap> key) {
-    Wrap wrap = null;
+    Wrap wrap;
     if (myNode.getFirstChildNode() == child) {
       wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
       if (myNode.getLastChildNode() != child) {

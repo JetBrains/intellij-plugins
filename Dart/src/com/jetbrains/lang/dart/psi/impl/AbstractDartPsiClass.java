@@ -159,7 +159,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   public List<DartComponent> findMembersByName(@NotNull final String name) {
     ensureMembersCacheInitialized();
     final List<DartComponent> components = myMembersCache.getValue().get(name);
-    return components == null ? Collections.<DartComponent>emptyList() : components;
+    return components == null ? Collections.emptyList() : components;
   }
 
   private void ensureMembersCacheInitialized() {

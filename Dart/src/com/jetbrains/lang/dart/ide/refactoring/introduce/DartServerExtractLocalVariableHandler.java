@@ -115,7 +115,7 @@ class ExtractLocalVariableProcessor {
         public void pass(DartExpression expression) {
           performOnExpression(expression);
         }
-      }, expression -> expression.getText());
+      }, PsiElement::getText);
     }
   }
 

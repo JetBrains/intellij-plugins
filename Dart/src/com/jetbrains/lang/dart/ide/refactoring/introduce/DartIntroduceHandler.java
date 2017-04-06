@@ -204,7 +204,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
             operation.setElement(expression);
             performActionOnElement(operation);
           }
-        }, expression -> expression.getText()
+        }, PsiElement::getText
       );
       return true;
     }
@@ -273,7 +273,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
 
   protected List<PsiElement> getOccurrences(PsiElement element, @NotNull final DartExpression expression) {
     PsiElement context = element;
-    DartComponentType type = null;
+    DartComponentType type;
     do {
       context = PsiTreeUtil.getParentOfType(context, DartComponent.class, true);
       type = DartComponentType.typeOf(context);
@@ -477,7 +477,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     protected void collectAdditionalElementsToRename(List<Pair<PsiElement, TextRange>> stringUsages) {
       for (PsiElement expression : getOccurrences()) {
         LOG.assertTrue(expression.isValid(), expression.getText());
-        stringUsages.add(Pair.<PsiElement, TextRange>create(expression, new TextRange(0, expression.getTextLength())));
+        stringUsages.add(Pair.create(expression, new TextRange(0, expression.getTextLength())));
       }
     }
   }

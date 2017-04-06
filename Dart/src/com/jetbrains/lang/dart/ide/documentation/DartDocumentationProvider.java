@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.lang.documentation.DocumentationProvider;
+import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -141,14 +142,14 @@ public class DartDocumentationProvider implements DocumentationProvider {
     if (component instanceof DartNamedConstructorDeclaration) {
       assert dartClass != null;
       return baseUrl + dartClass.getName() + "/" +
-             StringUtil.join(((DartNamedConstructorDeclaration)component).getComponentNameList(), cName -> cName.getName(), ".") +
+             StringUtil.join(((DartNamedConstructorDeclaration)component).getComponentNameList(), NavigationItem::getName, ".") +
              ".html";
     }
 
     if (component instanceof DartFactoryConstructorDeclaration) {
       assert dartClass != null;
       return baseUrl + dartClass.getName() + "/" +
-             StringUtil.join(((DartFactoryConstructorDeclaration)component).getComponentNameList(), cName -> cName.getName(), ".") +
+             StringUtil.join(((DartFactoryConstructorDeclaration)component).getComponentNameList(), NavigationItem::getName, ".") +
              ".html";
     }
 
