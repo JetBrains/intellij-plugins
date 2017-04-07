@@ -1,6 +1,5 @@
 package org.intellij.errorProne;
 
-import com.google.common.base.Supplier;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.CompilerConfigurationImpl;
 import com.intellij.compiler.impl.javaCompiler.BackendCompiler;
@@ -12,7 +11,6 @@ import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -25,7 +23,7 @@ import java.util.List;
  */
 public class ErrorProneClasspathProvider extends BuildProcessParametersProvider {
   private static final Logger LOG = Logger.getInstance(ErrorProneClasspathProvider.class);
-  public static final String ERROR_PRONE_VERSION = "2.0.9";//must be consistent with library/error-prone.xml
+  public static final String ERROR_PRONE_VERSION = "2.0.19";//must be consistent with library/error-prone.xml
   private final Project myProject;
 
   public ErrorProneClasspathProvider(Project project) {
