@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.pubServer
 import com.google.common.net.UrlEscapers
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -67,7 +68,7 @@ private fun getServedDirAndPathForPubServer(project: Project, path: String): Pai
   // First see if full path can be resolved to a file
   val pathToFileManager = WebServerPathToFileManager.getInstance(project)
   val file = pathToFileManager.findVirtualFile(path, pathQuery = pathQuery)
-  if (file != null) {
+  if (file != null && ProjectFileIndex.getInstance(project).isInContent(file)) {
     val dartRoot = PubspecYamlUtil.findPubspecYamlFile(project, file)?.parent ?: return null
     val relativePath = VfsUtilCore.getRelativePath(file, dartRoot)
     // we only handle files 2 levels deeper than the Dart project root
@@ -91,7 +92,7 @@ private fun getServedDirAndPathForPubServer(project: Project, path: String): Pai
     if (slashIndex < 0) {
       break
     }
-    
+
     val pathPart = path.substring(0, slashIndex)
     val dir = pathToFileManager.findVirtualFile(pathPart, pathQuery = pathQuery)
     if (dir == null || !dir.isDirectory) {
