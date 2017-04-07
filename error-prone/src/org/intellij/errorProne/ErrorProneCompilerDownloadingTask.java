@@ -1,6 +1,5 @@
 package org.intellij.errorProne;
 
-import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -27,11 +26,6 @@ public class ErrorProneCompilerDownloadingTask implements CompileTask {
       return true;
     }
 
-    File cacheDir = ErrorProneClasspathProvider.getCompilerFilesDir();
-    if (ErrorProneClasspathProvider.getJarFiles(cacheDir).length > 0) {
-      return true;
-    }
-
     DownloadableFileService service = DownloadableFileService.getInstance();
     DownloadableFileSetVersions<DownloadableFileSetDescription> versions = service.createFileSetVersions(null, getClass().getResource("/library/error-prone.xml"));
     List<DownloadableFileSetDescription> descriptions = versions.fetchVersions();
@@ -39,8 +33,15 @@ public class ErrorProneCompilerDownloadingTask implements CompileTask {
       context.addMessage(CompilerMessageCategory.ERROR, "No error-prone compiler versions loaded", null, -1, -1);
       return false;
     }
+
+    DownloadableFileSetDescription latestVersion = descriptions.get(0);
+    File cacheDir = ErrorProneClasspathProvider.getCompilerFilesDir(latestVersion.getVersionString());
+    if (ErrorProneClasspathProvider.getJarFiles(cacheDir).length > 0) {
+      return true;
+    }
+
     try {
-      List<Pair<File, DownloadableFileDescription>> pairs = service.createDownloader(descriptions.get(0)).download(cacheDir);
+      List<Pair<File, DownloadableFileDescription>> pairs = service.createDownloader(latestVersion).download(cacheDir);
       if (pairs.isEmpty() || ErrorProneClasspathProvider.getJarFiles(cacheDir).length == 0) {
         context.addMessage(CompilerMessageCategory.ERROR, "No compiler JARs were downloaded", null, -1, -1);
         return false;

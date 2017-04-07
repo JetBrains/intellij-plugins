@@ -7,10 +7,12 @@ import com.intellij.compiler.server.BuildProcessParametersProvider;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.text.VersionComparatorUtil;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,17 +23,13 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author nik
  */
 public class ErrorProneClasspathProvider extends BuildProcessParametersProvider {
   private static final Logger LOG = Logger.getInstance(ErrorProneClasspathProvider.class);
-  public static final String ERROR_PRONE_VERSION = "2.0.19";//must be consistent with library/error-prone.xml
   private static final String VERSION_PROPERTY = "idea.error.prone.version";//duplicates ErrorProneJavaCompilingTool.VERSION_PROPERTY
   private final Project myProject;
 
@@ -39,8 +37,25 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
     myProject = project;
   }
 
-  public static File getCompilerFilesDir() {
-    return new File(PathManager.getSystemPath(), "download-cache/error-prone/" + ERROR_PRONE_VERSION);
+  public static File getCompilerFilesDir(String version) {
+    return new File(getDownloadCacheDir(), version);
+  }
+
+  @NotNull
+  private static File getDownloadCacheDir() {
+    return new File(PathManager.getSystemPath(), "download-cache/error-prone");
+  }
+
+  private static File[] getLatestCompilerJars() {
+    File[] files = getDownloadCacheDir().listFiles();
+    if (files != null && files.length > 0) {
+      return StreamEx.of(files).map(dir -> new Pair<>(dir, getJarFiles(dir)))
+        .filter(pair -> pair.second.length > 0)
+        .max(Comparator.comparing(pair -> pair.getFirst().getName(), VersionComparatorUtil.COMPARATOR))
+        .map(pair -> pair.getSecond())
+        .orElse(new File[0]);
+    }
+    return new File[0];
   }
 
   public static File[] getJarFiles(File dir) {
@@ -51,9 +66,8 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
   @Override
   public List<String> getVMArguments() {
     if (isErrorProneCompilerSelected(myProject)) {
-      File libDir = getCompilerFilesDir();
-      File[] jars = getJarFiles(libDir);
-      LOG.assertTrue(jars.length > 0, "error-prone compiler jars not found in directory: " + libDir.getAbsolutePath());
+      File[] jars = getLatestCompilerJars();
+      LOG.assertTrue(jars.length > 0, "error-prone compiler jars not found in directory: " + getDownloadCacheDir());
       List<String> classpath = new ArrayList<>();
       for (File file : jars) {
         classpath.add(file.getAbsolutePath());
