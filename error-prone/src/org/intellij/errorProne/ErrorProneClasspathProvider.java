@@ -11,12 +11,20 @@ import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author nik
@@ -24,6 +32,7 @@ import java.util.List;
 public class ErrorProneClasspathProvider extends BuildProcessParametersProvider {
   private static final Logger LOG = Logger.getInstance(ErrorProneClasspathProvider.class);
   public static final String ERROR_PRONE_VERSION = "2.0.19";//must be consistent with library/error-prone.xml
+  private static final String VERSION_PROPERTY = "idea.error.prone.version";//duplicates ErrorProneJavaCompilingTool.VERSION_PROPERTY
   private final Project myProject;
 
   public ErrorProneClasspathProvider(Project project) {
@@ -49,9 +58,33 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
       for (File file : jars) {
         classpath.add(file.getAbsolutePath());
       }
-      return Collections.singletonList("-Xbootclasspath/a:" + StringUtil.join(classpath, File.pathSeparator));
+      List<String> arguments = new ArrayList<>();
+      arguments.add("-Xbootclasspath/a:" + StringUtil.join(classpath, File.pathSeparator));
+      StreamEx.of(jars).map(ErrorProneClasspathProvider::readVersion).nonNull().findFirst().ifPresent(
+        version -> arguments.add("-D" + VERSION_PROPERTY + "=" + version)
+      );
+      return arguments;
     }
     return Collections.emptyList();
+  }
+
+  private static String readVersion(File jarFile) {
+    try {
+      try (FileSystem zipFS = FileSystems.newFileSystem(jarFile.toPath(), null)) {
+        Path propertiesPath = zipFS.getPath("META-INF/maven/com.google.errorprone/error_prone_core/pom.properties");
+        if (Files.exists(propertiesPath)) {
+          Properties properties = new Properties();
+          try (InputStream input = Files.newInputStream(propertiesPath)) {
+            properties.load(input);
+            return properties.getProperty("version");
+          }
+        }
+      }
+    }
+    catch (IOException e) {
+      LOG.debug(e);
+    }
+    return null;
   }
 
   static boolean isErrorProneCompilerSelected(@NotNull Project project) {
