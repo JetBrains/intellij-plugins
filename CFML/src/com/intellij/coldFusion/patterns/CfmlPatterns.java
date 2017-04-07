@@ -1,14 +1,15 @@
 package com.intellij.coldFusion.patterns;
 
+import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 
 /**
  * @author Sergey Karashevich
  */
 public class CfmlPatterns extends PlatformPatterns {
 
-  public static LeafPsiElementPattern.Capture<LeafPsiElement> sqlCapture() {
+
+  public static CfmlTagImplPattern.Capture<CfmlTagImpl> sqlCapture() {
     return CfmlPatternsUtil.INSTANCE.sqlCapture();
   }
 
