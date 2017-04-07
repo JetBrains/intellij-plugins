@@ -3,6 +3,7 @@ package org.angularjs.codeInsight.attributes;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
@@ -17,6 +18,7 @@ import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -83,7 +85,16 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   }
 
   private static ThreeState isApplicable(Project project, String directiveName, XmlTag tag, final StubIndexKey<String, JSImplicitElementProvider> index) {
-    final JSImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
+    Ref<ThreeState> result = Ref.create(ThreeState.UNSURE);
+    AngularIndexUtil.multiResolve(project, index, directiveName, (directive) -> {
+      result.set(isApplicable(project, tag, directive));
+      return result.get() != ThreeState.YES;
+    });
+    return result.get();
+  }
+
+  @NotNull
+  private static ThreeState isApplicable(Project project, XmlTag tag, JSImplicitElement directive) {
     if (directive == null) {
       return ThreeState.UNSURE;
     }

@@ -56,12 +56,9 @@ public class AngularIndexUtil {
   public static JSImplicitElement resolve(final Project project, final StubIndexKey<String, JSImplicitElementProvider> index, final String lookupKey) {
     final Ref<JSImplicitElement> result = new Ref<>(null);
     final Processor<JSImplicitElement> processor = element -> {
-      if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
-                                                  AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
-        result.set(element);
-        if (DialectDetector.isTypeScript(element)) {
-          return false;
-        }
+      result.set(element);
+      if (DialectDetector.isTypeScript(element)) {
+        return false;
       }
       return true;
     };
@@ -82,7 +79,10 @@ public class AngularIndexUtil {
           final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
           if (elements != null) {
             for (JSImplicitElement element : elements) {
-              if (!processor.process(element)) return false;
+              if (element.getName().equals(lookupKey) && ((index != AngularDirectivesIndex.KEY && index != AngularDirectivesDocIndex.KEY) ||
+                                                          AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
+                if (!processor.process(element)) return false;
+              }
             }
           }
         }
