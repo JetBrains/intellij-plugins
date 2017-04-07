@@ -15,17 +15,17 @@
  */
 package com.intellij.coldFusion.patterns
 
+import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl
 import com.intellij.patterns.InitialPatternCondition
 import com.intellij.patterns.PsiElementPattern
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 
 /**
  * @author Sergey Karashevich
  */
 
-open class LeafPsiElementPattern<T : LeafPsiElement, Self : LeafPsiElementPattern<T, Self>>(condition: InitialPatternCondition<T>) : PsiElementPattern<T, Self>(
+open class CfmlTagImplPattern<T : CfmlTagImpl, Self : CfmlTagImplPattern<T, Self>>(condition: InitialPatternCondition<T>) : PsiElementPattern<T, Self>(
   condition) {
 
-  class Capture<T : LeafPsiElement>(condition: InitialPatternCondition<T>) : LeafPsiElementPattern<T, Capture<T>>(condition)
+  class Capture<T : CfmlTagImpl>(condition: InitialPatternCondition<T>) : CfmlTagImplPattern<T, Capture<T>>(condition)
 
 }

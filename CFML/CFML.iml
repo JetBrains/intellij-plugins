@@ -29,5 +29,7 @@
     <orderEntry type="module" module-name="platform-ultimate" />
     <orderEntry type="module" module-name="spellchecker" />
     <orderEntry type="module" module-name="IntelliLang" />
+    <orderEntry type="module" module-name="sql-tests" scope="TEST" />
+    <orderEntry type="module" module-name="sql-dialects" scope="TEST" />
   </component>
 </module>

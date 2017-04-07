@@ -1,10 +1,10 @@
 package com.intellij.coldFusion.injection;
 
+import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
 import com.intellij.coldFusion.patterns.CfmlPatterns;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.intellij.plugins.intelliLang.inject.AbstractLanguageInjectionSupport;
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection;
 import org.jetbrains.annotations.NonNls;
@@ -32,7 +32,7 @@ public class CfmlLanguageInjectionSupport extends AbstractLanguageInjectionSuppo
 
   @Override
   public boolean isApplicableTo(PsiLanguageInjectionHost host) {
-    return host instanceof LeafPsiElement;
+    return host instanceof CfmlTagImpl;
   }
 
   @Override
