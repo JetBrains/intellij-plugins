@@ -227,9 +227,7 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected boolean isRulesetStart() {
-    return super.isRulesetStart()
-           || SELECTORS_HIERARCHY_TOKENS.contains(getTokenType())
-           || getTokenType() == PostCssTokenTypes.HASH_SIGN;
+    return super.isRulesetStart() || getTokenType() == PostCssTokenTypes.HASH_SIGN;
   }
 
   private boolean tryToParseRuleset() {
