@@ -117,4 +117,30 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
       assertInstanceOf(resolve, TypeScriptFieldImpl.class);
     });
   }
+
+  public void testNonInlineTemplatePropertyResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("definition2.html", "angular2.js", "definition2.ts");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("check<caret>ed", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("definition2.ts", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, TypeScriptFieldImpl.class);
+    });
+  }
+
+  public void testInlineTemplatePropertyResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("definition2.ts", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("check<caret>ed", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("definition2.ts", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, TypeScriptFieldImpl.class);
+    });
+  }
 }
