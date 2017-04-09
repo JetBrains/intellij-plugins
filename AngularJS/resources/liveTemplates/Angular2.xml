@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templateSet group="Angular">
+<templateSet group="/Users/denofevil/Code/sandbox/vscode-angular-snippets/snippets">
   <template name="a-class" value="[class]=&quot;$expression$&quot;" description="Angular [class] binding" toReformat="true" toShortenFQNames="true">
     <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
     <context>
@@ -50,14 +50,12 @@
   <template name="a-ngModel" value="[(ngModel)]=&quot;$binding$&quot;" description="Angular ngModel" toReformat="true" toShortenFQNames="true">
     <variable name="binding" expression="" defaultValue="&quot;binding&quot;" alwaysStopAt="true" />
     <context>
-      <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
   <template name="a-routerLink" value="[routerLink]=&quot;[&apos;/$routePath$&apos;]&quot;$END$" description="Angular routerLink" toReformat="true" toShortenFQNames="true">
     <variable name="routePath" expression="" defaultValue="&quot;routePath&quot;" alwaysStopAt="true" />
     <context>
-      <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
@@ -65,7 +63,6 @@
     <variable name="routeParameterValue" expression="" defaultValue="&quot;routeParameterValue&quot;" alwaysStopAt="true" />
     <variable name="routePath" expression="" defaultValue="&quot;routePath&quot;" alwaysStopAt="true" />
     <context>
-      <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
@@ -94,14 +91,16 @@
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-preja" value="&lt;pre&gt;{{$1$ | async | json}}&lt;/pre&gt;$2" description="Angular pre debug | async | json" toReformat="true" toShortenFQNames="true">
-    <variable name="1" expression="" defaultValue="&quot;7&quot;" alwaysStopAt="true" />
+  <template name="a-preja" value="&lt;pre&gt;{{$1$ | async | json}}&lt;/pre&gt;$2$" description="Angular pre debug | async | json" toReformat="true" toShortenFQNames="true">
+    <variable name="1" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
+    <variable name="2" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="a-prej" value="&lt;pre&gt;{{$1$ | json}}&lt;/pre&gt;$2" description="Angular pre debug | json" toReformat="true" toShortenFQNames="true">
-    <variable name="1" expression="" defaultValue="&quot;7&quot;" alwaysStopAt="true" />
+  <template name="a-prej" value="&lt;pre&gt;{{$1$ | json}}&lt;/pre&gt;$2$" description="Angular pre debug | json" toReformat="true" toShortenFQNames="true">
+    <variable name="1" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
+    <variable name="2" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML" value="true" />
     </context>
@@ -169,7 +168,7 @@
   </template>
   <template name="a-directive" value="import { Directive } from &apos;@angular/core&apos;;&#10;&#10;@Directive({ selector: &apos;[$selector_name$]&apos; })&#10;export class $Name$Directive {&#10;	constructor() { }&#10;}" description="Angular directive" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
-    <variable name="selector_name" expression="" defaultValue="&quot;selector_name&quot;" alwaysStopAt="true" />
+    <variable name="selector_name" expression="" defaultValue="&quot;selector-name&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
@@ -188,8 +187,8 @@
     </context>
   </template>
   <template name="a-route-path-lazy" value="{ path: &apos;$path$&apos;, loadChildren: &apos;$lazy_path$#$lazy_module$&apos; }," description="Angular lazy route path" toReformat="true" toShortenFQNames="true">
-    <variable name="lazy_module" expression="" defaultValue="&quot;lazy_module&quot;" alwaysStopAt="true" />
-    <variable name="lazy_path" expression="" defaultValue="&quot;lazy_path&quot;" alwaysStopAt="true" />
+    <variable name="lazy_module" expression="" defaultValue="&quot;lazy-module&quot;" alwaysStopAt="true" />
+    <variable name="lazy_path" expression="" defaultValue="&quot;lazy-path&quot;" alwaysStopAt="true" />
     <variable name="path" expression="" defaultValue="&quot;path&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
@@ -210,14 +209,14 @@
   </template>
   <template name="a-pipe" value="import { Pipe, PipeTransform } from &apos;@angular/core&apos;;&#10;&#10;@Pipe({&#10;	name: &apos;$selector_name$&apos;&#10;})&#10;&#10;export class $Name$Pipe implements PipeTransform {&#10;	transform(value: any, ...args: any[]): any {&#10;		$END$&#10;	}&#10;}" description="Angular pipe" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
-    <variable name="selector_name" expression="" defaultValue="&quot;selector_name&quot;" alwaysStopAt="true" />
+    <variable name="selector_name" expression="" defaultValue="&quot;selector-name&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
   </template>
   <template name="a-component-root" value="import { Component } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	moduleId: module.id,&#10;	selector: &apos;$prefix_app$&apos;,&#10;	template: `&#10;		&lt;router-outlet&gt;&lt;/router-outlet&gt;&#10;		`&#10;})&#10;export class $App$Component { }&#10;$END$" description="Angular App root component" toReformat="true" toShortenFQNames="true">
     <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
-    <variable name="prefix_app" expression="" defaultValue="&quot;prefix_app&quot;" alwaysStopAt="true" />
+    <variable name="prefix_app" expression="" defaultValue="&quot;prefix-app&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
