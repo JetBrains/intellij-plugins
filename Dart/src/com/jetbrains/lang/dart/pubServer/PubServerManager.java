@@ -9,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.*;
-import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import io.netty.channel.Channel;
@@ -18,7 +17,6 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class PubServerManager implements Disposable {
@@ -29,7 +27,7 @@ public class PubServerManager implements Disposable {
 
   private String myServedSdkVersion;
 
-  private final LoadingCache<VirtualFile, PubServerService> dartProjectToPubService =
+  private final LoadingCache<VirtualFile, PubServerService> myServedDirToPubService =
     CacheBuilder.newBuilder().build(new CacheLoader<VirtualFile, PubServerService>() {
       @Override
       public PubServerService load(@NotNull VirtualFile key) throws Exception {
@@ -80,11 +78,10 @@ public class PubServerManager implements Disposable {
     final VirtualFile mainDir = file.getParent();
     if (mainDir == null) return;
 
-    // todo remove subfolder iteration when administration is done via admin port
     for (VirtualFile subdir : mainDir.getChildren()) {
       if (!subdir.isDirectory()) continue;
 
-      final PubServerService service = dartProjectToPubService.getIfPresent(subdir);
+      final PubServerService service = myServedDirToPubService.getIfPresent(subdir);
       if (service != null) {
         Disposer.dispose(service);
       }
@@ -104,9 +101,7 @@ public class PubServerManager implements Disposable {
 
     try {
       // servedDir - web or test, direct child of directory containing pubspec.yaml
-      // "pub serve" process per dart project
-      // todo uncomment /*.getParent()*/ below, serve subfolders of the same Dart project using the same pub serve process, manage it via admin port
-      dartProjectToPubService.get(servedDir/*.getParent()*/).sendToPubServer(clientChannel, clientRequest, extraHeaders, servedDir, pathForPubServer);
+      myServedDirToPubService.get(servedDir).sendToPubServer(clientChannel, clientRequest, extraHeaders, servedDir, pathForPubServer);
     }
     catch (ExecutionException e) {
       LOG.error(e);
@@ -114,7 +109,7 @@ public class PubServerManager implements Disposable {
   }
 
   public boolean hasAlivePubServerProcesses() {
-    for (PubServerService service : dartProjectToPubService.asMap().values()) {
+    for (PubServerService service : myServedDirToPubService.asMap().values()) {
       if (service.isPubServerProcessAlive()) return true;
     }
     return false;
@@ -126,27 +121,13 @@ public class PubServerManager implements Disposable {
   }
 
   public void stopAllPubServerProcesses() {
-    for (PubServerService service : dartProjectToPubService.asMap().values()) {
+    for (PubServerService service : myServedDirToPubService.asMap().values()) {
       try {
         Disposer.dispose(service);
       }
       catch (Exception e) {
         LOG.error(e);
       }
-    }
-  }
-
-  public static int findOneMoreAvailablePort(final int forbiddenPort) throws com.intellij.execution.ExecutionException {
-    try {
-      while (true) {
-        final int port = NetUtils.findAvailableSocketPort();
-        if (port != forbiddenPort) {
-          return port;
-        }
-      }
-    }
-    catch (IOException e) {
-      throw new com.intellij.execution.ExecutionException(e);
     }
   }
 }
