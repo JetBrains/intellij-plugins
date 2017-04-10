@@ -611,6 +611,34 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "    <caret>\n" +
                  "  );\n" +
                  "}");
+    doTypingTest('\n',
+                 "main() {\n" +
+                 "  new X(\n" +
+                 "    1,<caret>\n" +
+                 "    2,\n" +
+                 "  );\n" +
+                 "}",
+                 "main() {\n" +
+                 "  new X(\n" +
+                 "    1,\n" +
+                 "    <caret>\n" +
+                 "    2,\n" +
+                 "  );\n" +
+                 "}");
+    doTypingTest('\n',
+                 "main() {\n" +
+                 "  new X(\n" +
+                 "      1,<caret>\n" +
+                 "      2\n" +
+                 "  );\n" +
+                 "}",
+                 "main() {\n" +
+                 "  new X(\n" +
+                 "      1,\n" +
+                 "      <caret>\n" +
+                 "      2\n" +
+                 "  );\n" +
+                 "}");
   }
 
   public void testEnterInMultilineString() {
