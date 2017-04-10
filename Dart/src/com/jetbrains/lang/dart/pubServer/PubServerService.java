@@ -270,9 +270,21 @@ final class PubServerService extends NetService {
                     @NotNull HttpHeaders extraHeaders,
                     @NotNull final String pathToPubServe) {
     ServerInfo serverInstanceInfo = servedDirToSocketAddress.get(servedDir);
+    final InetSocketAddress address = serverInstanceInfo.address;
+
+    if (false) {
+      // We can't use 301 (MOVED_PERMANENTLY) response status because Pub Serve port will change after restart, but browser will remember outdated redirection URL
+      final HttpResponse response = Responses.response(HttpResponseStatus.FOUND, clientRequest, null);
+      //assert serverInstanceInfo != null;
+      response.headers().add(HttpHeaderNames.LOCATION,
+                             "http://" + address.getHostString() + ":" + address.getPort() + pathToPubServe);
+      Responses.send(response, clientChannel, clientRequest, extraHeaders);
+      return;
+    }
+
     Channel serverChannel = findFreeServerChannel(serverInstanceInfo.freeServerChannels);
     if (serverChannel == null) {
-      connect(bootstrap, serverInstanceInfo.address, serverChannel1 -> {
+      connect(bootstrap, address, serverChannel1 -> {
         if (serverChannel1 == null) {
           if (clientChannel.isActive()) {
             Responses.send(HttpResponseStatus.BAD_GATEWAY, clientChannel, clientRequest, null, extraHeaders);
