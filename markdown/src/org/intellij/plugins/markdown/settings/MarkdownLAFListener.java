@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 class MarkdownLAFListener implements LafManagerListener {
-  private boolean isLastLAFWasDarcula = isDarcula(LafManager.getInstance().getCurrentLookAndFeel());
+  private boolean isLastLAFWasDarcula = isDarcula();
 
   @Override
   public void lookAndFeelChanged(LafManager source) {
@@ -37,5 +37,13 @@ class MarkdownLAFListener implements LafManagerListener {
       return false;
     }
     return laf.getName().contains("Darcula");
+  }
+
+  public static boolean isDarcula() {
+    final LafManager lafManager = LafManager.getInstance();
+    if (lafManager == null) {
+      return false;
+    }
+    return isDarcula(lafManager.getCurrentLookAndFeel());
   }
 }
