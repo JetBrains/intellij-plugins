@@ -73,7 +73,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                          new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest,
                            inExample},
                          true);
-      doTestResolveScope(new VirtualFile[]{/*inPackages*/},
+      doTestResolveScope(VirtualFile.EMPTY_ARRAY /*inPackages*/,
                          new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, /*inPackages*/},
                          new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest,
                            inExample});

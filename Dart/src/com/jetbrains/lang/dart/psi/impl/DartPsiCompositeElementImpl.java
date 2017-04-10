@@ -82,7 +82,7 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
         if (optionalFormalParameters != null) {
           normalFormalParameterList.addAll(
             ContainerUtil.map(optionalFormalParameters.getDefaultFormalNamedParameterList(),
-                              parameter -> parameter.getNormalFormalParameter())
+                              DartDefaultFormalNamedParameter::getNormalFormalParameter)
           );
         }
         for (DartNormalFormalParameter parameter : normalFormalParameterList) {

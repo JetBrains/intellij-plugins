@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -14,9 +13,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartNameSuggesterUtil {
   private DartNameSuggesterUtil() {
   }

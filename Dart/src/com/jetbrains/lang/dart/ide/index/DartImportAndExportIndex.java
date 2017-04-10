@@ -73,12 +73,12 @@ public class DartImportAndExportIndex extends FileBasedIndexExtension<String, Li
           final String uri = IOUtil.readUTF(in);
           final String prefix = IOUtil.readUTF(in);
           final int showSize = DataInputOutputUtil.readINT(in);
-          final Set<String> showComponentNames = showSize == 0 ? Collections.<String>emptySet() : new THashSet<>(showSize);
+          final Set<String> showComponentNames = showSize == 0 ? Collections.emptySet() : new THashSet<>(showSize);
           for (int j = 0; j < showSize; j++) {
             showComponentNames.add(IOUtil.readUTF(in));
           }
           final int hideSize = DataInputOutputUtil.readINT(in);
-          final Set<String> hideComponentNames = hideSize == 0 ? Collections.<String>emptySet() : new THashSet<>(hideSize);
+          final Set<String> hideComponentNames = hideSize == 0 ? Collections.emptySet() : new THashSet<>(hideSize);
           for (int j = 0; j < hideSize; j++) {
             hideComponentNames.add(IOUtil.readUTF(in));
           }

@@ -50,7 +50,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
 
     List<DartNamedElementNode> selectedElements = Collections.emptyList();
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      selectedElements = ContainerUtil.map(candidates, namedComponent -> new DartNamedElementNode(namedComponent));
+      selectedElements = ContainerUtil.map(candidates, DartNamedElementNode::new);
     }
     else if (!candidates.isEmpty()) {
       final MemberChooser<DartNamedElementNode> chooser = createMemberChooserDialog(project, dartClass, candidates, getTitle());
@@ -163,7 +163,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
                                                                           @NotNull final DartClass dartClass,
                                                                           @NotNull final Collection<DartComponent> candidates,
                                                                           @NotNull final String title) {
-    final List<DartNamedElementNode> nodes = ContainerUtil.map(candidates, namedComponent -> new DartNamedElementNode(namedComponent));
+    final List<DartNamedElementNode> nodes = ContainerUtil.map(candidates, DartNamedElementNode::new);
     final MemberChooser<DartNamedElementNode> chooser =
       new MemberChooser<DartNamedElementNode>(nodes.toArray(new DartNamedElementNode[0]), doAllowEmptySelection(), true, project, false) {
 

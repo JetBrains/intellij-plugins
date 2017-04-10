@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.intellij.codeInsight.template.*;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -14,9 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author: Fedor.Korotkov
- */
 public abstract class DartFilterByClassMacro extends Macro {
   @Override
   public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {

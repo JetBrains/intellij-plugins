@@ -79,7 +79,7 @@ public class DartSdkUtil {
                                                    final @NotNull JButton dartiumSettingsButton,
                                                    final @NotNull Computable<Boolean> isResettingControlsComputable) {
     dartSdkPathComponent.getComboBox().setEditable(true);
-    addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, path -> isDartSdkHome(path));
+    addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, DartSdkUtil::isDartSdkHome);
 
     dartiumPathComponent.getComboBox().setEditable(true);
     addKnownPathsToCombo(dartiumPathComponent.getComboBox(), DARTIUM_KNOWN_PATHS, path -> !path.isEmpty() && new File(path).exists());

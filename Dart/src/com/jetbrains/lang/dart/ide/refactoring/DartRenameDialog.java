@@ -107,7 +107,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
       }
     };
 
-    myNameSuggestionsField.addDataChangedListener(() -> processNewNameChanged());
+    myNameSuggestionsField.addDataChangedListener(this::processNewNameChanged);
   }
 
   @NotNull
