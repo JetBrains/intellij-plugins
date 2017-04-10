@@ -160,6 +160,8 @@
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <completion.contributor language="HTML" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <lookup.charFilter implementation="com.jetbrains.lang.dart.ide.completion.DartCharFilter"/>
+    <lang.smartEnterProcessor language="Dart"
+                              implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerStatementCompletionProcessor"/>
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 

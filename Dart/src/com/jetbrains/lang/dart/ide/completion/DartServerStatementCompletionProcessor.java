@@ -10,6 +10,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
+import org.dartlang.analysis.server.protocol.Position;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +26,8 @@ public class DartServerStatementCompletionProcessor extends SmartEnterProcessor 
     if (sourceChange != null) {
       try {
         AssistUtils.applySourceChange(project, sourceChange, true);
+        Position position = sourceChange.getSelection();
+        editor.getCaretModel().moveToOffset(position.getOffset());
       }
       catch (DartSourceEditException e) {
         CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
