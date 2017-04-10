@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -12,9 +13,7 @@ import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
-import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 /**
  * User: avokin
@@ -40,7 +39,9 @@ public class GherkinStepRenameHandler extends PsiElementRenameHandler {
     }
 
 
-    RenameDialog.showRenameDialog(dataContext, new CucumberStepRenameDialog(project, step, null, editor));
+    final CucumberStepRenameDialog dialog = new CucumberStepRenameDialog(project, step, null, editor);
+    Disposer.register(project, dialog.getDisposable());
+    RenameDialog.showRenameDialog(dataContext, dialog);
   }
 
 
