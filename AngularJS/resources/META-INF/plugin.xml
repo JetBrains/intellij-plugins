@@ -1,6 +1,6 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/AngularJS">
   <name>AngularJS</name>
-  <description>Support for AngularJS and Angular 2</description>
+  <description>Support for AngularJS and Angular</description>
   <vendor>johnlindquist, JetBrains</vendor>
 
   <depends>JavaScript</depends>
