@@ -64,7 +64,7 @@ public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
   @Nullable
   @Override
   protected IndentCalculator getIndent(@NotNull Project project, @NotNull Editor editor, @Nullable Language language, int offset) {
-    if (getPosition(editor, offset).matchesRule(position -> position.before().isAtAnyOf(LeftParenthesis, Comma))) {
+    if (getPosition(editor, offset).matchesRule(position -> position.before().isAt(LeftParenthesis))) {
       // Need to skip a common logic and force formatter-based line indent provider to work, because
       // there may be different indents inside parentheses, see https://github.com/dart-lang/dart_style/issues/551
       return null;
