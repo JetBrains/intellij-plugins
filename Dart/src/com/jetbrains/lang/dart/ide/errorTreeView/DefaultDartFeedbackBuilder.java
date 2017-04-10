@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.google.common.base.Charsets;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.actions.SendFeedbackAction;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
@@ -13,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
 
@@ -44,7 +47,8 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
         // ignore it
       }
     }
-    openBrowserOnFeedbackForm(template, project);
+    String url = DartBundle.message("dart.feedback.url", urlEncode(template));
+    openBrowserOnFeedbackForm(url, project);
   }
 
   public static void openBrowserOnFeedbackForm(@NotNull String urlTemplate, @Nullable Project project) {
@@ -54,5 +58,14 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
   protected String getSdkVersion(@NotNull Project project) {
     DartSdk sdk = DartSdk.getDartSdk(project);
     return sdk == null ? "<NO SDK>" : sdk.getVersion();
+  }
+
+  private static String urlEncode(@NotNull String str) {
+    try {
+      return URLEncoder.encode(str, Charsets.UTF_8.name());
+    }
+    catch (UnsupportedEncodingException ignore) {
+      return str;
+    }
   }
 }
