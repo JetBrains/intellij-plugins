@@ -26,7 +26,7 @@ import javax.swing.event.HyperlinkEvent;
  * send issues to the flutter project on github.
  */
 public abstract class DartFeedbackBuilder {
-  public static final int MAX_URL_LENGTH = 4000;
+  public static final int MAX_URL_LENGTH = 1900;
 
   // NOTIFICATION_GROUP is used to add an error to Event Log tool window. Red balloon is shown separately, like for IDE fatal errors.
   // We do not show standard balloon using this NOTIFICATION_GROUP because it is not red enough.
