@@ -44,15 +44,11 @@ public class DartParameterDescription {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    DartParameterDescription that = (DartParameterDescription)o;
-
-    if (myText != null ? !myText.equals(that.myText) : that.myText != null) return false;
-
-    return true;
+    return myText.equals(((DartParameterDescription)o).myText);
   }
 
   @Override
   public int hashCode() {
-    return myText != null ? myText.hashCode() : 0;
+    return myText.hashCode();
   }
 }
