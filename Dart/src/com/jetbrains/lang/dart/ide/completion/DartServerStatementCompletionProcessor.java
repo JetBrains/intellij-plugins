@@ -27,7 +27,10 @@ public class DartServerStatementCompletionProcessor extends SmartEnterProcessor 
       try {
         AssistUtils.applySourceChange(project, sourceChange, true);
         Position position = sourceChange.getSelection();
-        editor.getCaretModel().moveToOffset(position.getOffset());
+        if (position != null) {
+          // The position should never be null but it might be if unit tests are flaky.
+          editor.getCaretModel().moveToOffset(position.getOffset());
+        }
       }
       catch (DartSourceEditException e) {
         CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
