@@ -72,7 +72,6 @@ class SafeOpener {
 
   private static boolean isLocalHost(@Nullable String hostName) {
     return hostName == null
-           || LOCALHOSTS.contains(hostName.toLowerCase(Locale.US))
            || hostName.startsWith("127.")
            || hostName.endsWith(":1")
            || NettyKt.isLocalHost(hostName, false, false);
