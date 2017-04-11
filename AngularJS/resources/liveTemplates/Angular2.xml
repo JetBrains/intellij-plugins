@@ -258,8 +258,8 @@
   <template name="a-subscribe" value="this.$service$.$function$&#10;	.subscribe($arg$ =&gt; this.$property$ = $arg$);&#10;$END$" description="Angular observable subscribe" toReformat="true" toShortenFQNames="true">
     <variable name="service" expression="" defaultValue="&quot;service&quot;" alwaysStopAt="true" />
     <variable name="function" expression="" defaultValue="&quot;function&quot;" alwaysStopAt="true" />
-    <variable name="property" expression="" defaultValue="&quot;property&quot;" alwaysStopAt="true" />
     <variable name="arg" expression="" defaultValue="&quot;arg&quot;" alwaysStopAt="true" />
+    <variable name="property" expression="" defaultValue="&quot;property&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
