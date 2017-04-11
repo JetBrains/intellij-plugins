@@ -40,14 +40,13 @@ import com.intellij.xdebugger.XDebuggerManager;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
 import org.jetbrains.debugger.connection.VmConnection;
 import org.jetbrains.wip.WipVm;
 import org.jetbrains.wip.protocol.runtime.CallFrameValue;
 import org.jetbrains.wip.protocol.runtime.ConsoleAPICalledEventData;
 import org.jetbrains.wip.protocol.runtime.ConsoleAPICalledEventDataType;
 import org.jetbrains.wip.protocol.runtime.StackTraceValue;
-
-import static org.jetbrains.concurrency.Promises.resolvedPromise;
 
 public class KarmaDebugProgramRunner extends AsyncProgramRunner {
   private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
@@ -67,58 +66,63 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
   @Override
   protected Promise<RunContentDescriptor> execute(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
+    ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
       return Promise.resolve(null);
     }
-    final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
+    KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
     if (consoleView == null) {
       return Promise.resolve(KarmaUtil.createDefaultDescriptor(executionResult, environment));
     }
-    final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
+    KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
       KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(
         karmaServer.getCapturedBrowsers(),
         environment,
         consoleView
       );
-      final DebuggableWebBrowser debuggableWebBrowser = browserSelector.selectDebugEngine();
+      DebuggableWebBrowser debuggableWebBrowser = browserSelector.selectDebugEngine();
       if (debuggableWebBrowser == null) {
-        return resolvedPromise(KarmaUtil.createDefaultDescriptor(executionResult, environment));
+        return Promises.resolvedPromise(KarmaUtil.createDefaultDescriptor(executionResult, environment));
       }
-
       return KarmaKt.prepareKarmaDebugger(environment.getProject(), debuggableWebBrowser,
-                                          () -> {
-                                            final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
-                                            final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
-                                            XDebugSession session = XDebuggerManager.getInstance(environment.getProject()).startSession(
-                                              environment,
-                                              new XDebugProcessStarter() {
-                                                @Override
-                                                @NotNull
-                                                public XDebugProcess start(@NotNull XDebugSession session) {
-                                                  JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
-                                                  WebBrowser browser = debuggableWebBrowser.getWebBrowser();
-                                                  JavaScriptDebugProcess<? extends VmConnection>
-                                                    debugProcess =
-                                                    debugEngine
-                                                      .createDebugProcess(session, browser, fileFinder, url, executionResult, true);
-                                                  debugProcess.addFirstLineBreakpointPattern("\\.browserify$");
-                                                  debugProcess.setElementsInspectorEnabled(false);
-                                                  debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
-                                                  listenForCompletedMessage(debugProcess, karmaServer);
-                                                  return debugProcess;
-                                                }
-                                              }
-                                            );
-                                            return session.getRunContentDescriptor();
-                                          });
+                                          () -> createDescriptor(environment, executionResult, consoleView, karmaServer,
+                                                                 debuggableWebBrowser));
     }
     else {
-      final RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, environment);
+      RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, environment);
       karmaServer.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
-      return resolvedPromise(descriptor);
+      return Promises.resolvedPromise(descriptor);
     }
+  }
+
+  @NotNull
+  private static RunContentDescriptor createDescriptor(@NotNull ExecutionEnvironment environment,
+                                                       @NotNull ExecutionResult executionResult,
+                                                       @NotNull KarmaConsoleView consoleView,
+                                                       @NotNull KarmaServer karmaServer,
+                                                       @NotNull DebuggableWebBrowser debuggableWebBrowser) throws ExecutionException {
+    Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
+    DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
+    XDebugSession session = XDebuggerManager.getInstance(environment.getProject()).startSession(
+      environment,
+      new XDebugProcessStarter() {
+        @Override
+        @NotNull
+        public XDebugProcess start(@NotNull XDebugSession session) {
+          JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
+          WebBrowser browser = debuggableWebBrowser.getWebBrowser();
+          JavaScriptDebugProcess<? extends VmConnection> debugProcess =
+            debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
+          debugProcess.addFirstLineBreakpointPattern("\\.browserify$");
+          debugProcess.setElementsInspectorEnabled(false);
+          debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
+          listenForCompletedMessage(debugProcess, karmaServer);
+          return debugProcess;
+        }
+      }
+    );
+    return session.getRunContentDescriptor();
   }
 
   private static void listenForCompletedMessage(@NotNull JavaScriptDebugProcess<? extends VmConnection> debugProcess,
