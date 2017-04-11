@@ -21,6 +21,7 @@ import netscape.javascript.JSObject;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
+import org.intellij.plugins.markdown.ui.preview.PreviewStaticServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,12 +36,10 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     @NotNull
     @Override
     protected String compute() {
-      final Class<JavaFxHtmlPanel> clazz = JavaFxHtmlPanel.class;
-      //noinspection StringBufferReplaceableByString
-      return new StringBuilder()
-        .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
-        .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
-        .toString();
+      return SCRIPTS.stream()
+        .map(s -> "<script src=\"" + PreviewStaticServer.getStaticUrl("scripts/" + s) + "\"></script>")
+        .reduce((s, s2) -> s + "\n" + s2)
+        .orElseGet(String::new);
     }
   };
 
@@ -159,7 +158,9 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @NotNull
   private String prepareHtml(@NotNull String html) {
     return ImageRefreshFix.setStamps(html
-      .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris) + "\n" + getScriptingLines()));
+      .replace("<head>", "<head>"
+                         + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.CSP.getValue() + "\"/>"
+                         + getCssLines(myInlineCss, myCssUris) + "\n" + getScriptingLines()));
   }
 
   @Override
