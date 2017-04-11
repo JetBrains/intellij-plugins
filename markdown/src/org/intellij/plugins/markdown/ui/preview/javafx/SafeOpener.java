@@ -21,13 +21,6 @@ class SafeOpener {
     "https"
   ));
 
-  private static final Set<String> LOCALHOSTS = new HashSet<>(Arrays.asList(
-    "localhost",
-    "127.0.0.1",
-    "::1",
-    "0.0.0.0"
-  ));
-
   private static final Set<String> SAFE_LOCAL_EXTENSIONS = new HashSet<>(Arrays.asList(
     "md",
     "png",
