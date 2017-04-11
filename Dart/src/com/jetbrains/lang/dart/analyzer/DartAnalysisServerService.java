@@ -1451,7 +1451,7 @@ public class DartAnalysisServerService implements Disposable {
 
         mySdkVersion = sdk.getVersion();
 
-        startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
+        startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, false, false, true, false));
 
         myServer = startedServer;
       }
