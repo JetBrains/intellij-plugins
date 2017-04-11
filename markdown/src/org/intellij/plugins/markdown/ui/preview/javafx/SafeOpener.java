@@ -2,26 +2,25 @@ package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.NettyKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
 class SafeOpener {
   private static final Logger LOG = Logger.getInstance(SafeOpener.class);
 
-  private static final Set<String> SCHEMES = new HashSet<>(Arrays.asList(
+  private static final Set<String> SCHEMES = ContainerUtil.newTroveSet(
     "http",
     "https"
-  ));
+  );
 
-  private static final Set<String> SAFE_LOCAL_EXTENSIONS = new HashSet<>(Arrays.asList(
+  private static final Set<String> SAFE_LOCAL_EXTENSIONS = ContainerUtil.newTroveSet(
     "md",
     "png",
     "gif",
@@ -30,7 +29,7 @@ class SafeOpener {
     "bmp",
     "svg",
     "html"
-  ));
+  );
 
   private SafeOpener() {
   }
