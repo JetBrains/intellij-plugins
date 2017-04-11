@@ -2,6 +2,7 @@ package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.io.NettyKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,9 +72,10 @@ class SafeOpener {
 
   private static boolean isLocalHost(@Nullable String hostName) {
     return hostName == null
-      || LOCALHOSTS.contains(hostName.toLowerCase(Locale.US))
-      || hostName.startsWith("127.")
-      || hostName.endsWith(":1");
+           || LOCALHOSTS.contains(hostName.toLowerCase(Locale.US))
+           || hostName.startsWith("127.")
+           || hostName.endsWith(":1")
+           || NettyKt.isLocalHost(hostName, false, false);
   }
 
   private static boolean isSafeExtension(@Nullable String path) {
