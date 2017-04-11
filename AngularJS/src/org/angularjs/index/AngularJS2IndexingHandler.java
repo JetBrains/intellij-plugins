@@ -134,24 +134,25 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     }
     Set<String> added = new HashSet<>();
     boolean template = isTemplate(element);
+    for (String elementName : attributesToElements.get("")) {
+      if (!added.add(elementName)) continue;
+      JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(elementName, element)
+        .setType(JSImplicitElement.Type.Class);
+      if (!attributesToElements.containsKey(elementName)) {
+        elementBuilder.setTypeString("E;;;");
+      } else {
+        Collection<String> elements = attributesToElements.get(elementName);
+        elementBuilder.setTypeString("AE;" + StringUtil.join(elements, ",") + ";;");
+      }
+      elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
+      if (outData == null) outData = new JSElementIndexingDataImpl();
+      outData.addImplicitElement(elementBuilder.toImplicitElement());
+    }
+
     for (Map.Entry<String, Collection<String>> entry : attributesToElements.entrySet()) {
       JSImplicitElementImpl.Builder elementBuilder;
       String attributeName = entry.getKey();
       if (attributeName.isEmpty()) {
-        for (String elementName : entry.getValue()) {
-          if (!added.add(elementName)) continue;
-          elementBuilder = new JSImplicitElementImpl.Builder(elementName, element)
-            .setType(JSImplicitElement.Type.Class);
-          if (!attributesToElements.containsKey(elementName)) {
-            elementBuilder.setTypeString("E;;;");
-          } else {
-            Collection<String> elements = attributesToElements.get(elementName);
-            elementBuilder.setTypeString("AE;" + StringUtil.join(elements, ",") + ";;");
-          }
-          elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-          if (outData == null) outData = new JSElementIndexingDataImpl();
-          outData.addImplicitElement(elementBuilder.toImplicitElement());
-        }
         continue;
       }
       if (!added.add(attributeName)) continue;

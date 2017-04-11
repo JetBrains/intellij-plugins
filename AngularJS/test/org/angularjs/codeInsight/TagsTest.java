@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.xml.util.CheckValidXmlInScriptBodyInspection;
 import org.angularjs.AngularTestUtil;
 
@@ -289,6 +290,14 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(resolve);
       assertEquals("ngTemplate.after.html", resolve.getContainingFile().getName());
       assertEquals("<ng-template></ng-template>", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    });
+  }
+
+  public void testComplexSelectorList2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
     });
   }
 }
