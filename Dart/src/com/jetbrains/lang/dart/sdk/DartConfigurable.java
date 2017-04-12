@@ -45,8 +45,6 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.*;
 
@@ -97,12 +95,9 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private void initEnableDartSupportCheckBox() {
     myEnableDartSupportCheckBox.setText(DartBundle.message("enable.dart.support.for.project.0", myProject.getName()));
-    myEnableDartSupportCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        updateControlsEnabledState();
-        updateErrorLabel();
-      }
+    myEnableDartSupportCheckBox.addActionListener(e -> {
+      updateControlsEnabledState();
+      updateErrorLabel();
     });
   }
 
@@ -138,16 +133,13 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       }
     });
 
-    myCheckSdkUpdateCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        final boolean enabled = myCheckSdkUpdateCheckBox.isSelected() && myCheckSdkUpdateCheckBox.isEnabled();
-        mySdkUpdateChannelCombo.setEnabled(enabled);
-        myCheckSdkUpdateButton.setEnabled(enabled);
+    myCheckSdkUpdateCheckBox.addActionListener(e -> {
+      final boolean enabled = myCheckSdkUpdateCheckBox.isSelected() && myCheckSdkUpdateCheckBox.isEnabled();
+      mySdkUpdateChannelCombo.setEnabled(enabled);
+      myCheckSdkUpdateButton.setEnabled(enabled);
 
-        if (enabled) {
-          IdeFocusManager.getInstance(myProject).requestFocus(mySdkUpdateChannelCombo, true);
-        }
+      if (enabled) {
+        IdeFocusManager.getInstance(myProject).requestFocus(mySdkUpdateChannelCombo, true);
       }
     });
 
@@ -159,13 +151,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       }
     });
 
-    myCheckSdkUpdateButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        final Runnable runnable = () -> checkSdkUpdate();
-        ApplicationManagerEx.getApplicationEx()
-          .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject, myMainPanel);
-      }
+    myCheckSdkUpdateButton.addActionListener(e -> {
+      final Runnable runnable = () -> checkSdkUpdate();
+      ApplicationManagerEx.getApplicationEx()
+        .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject, myMainPanel);
     });
   }
 

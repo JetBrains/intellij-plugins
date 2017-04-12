@@ -33,12 +33,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<DartProjectWizardData> {
@@ -98,12 +94,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     //final boolean checkedMode = dartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
     //myCheckedModeCheckBox.setSelected(checkedMode);
 
-    myCreateSampleProjectCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        myTemplatesList.setEnabled(myCreateSampleProjectCheckBox.isSelected());
-      }
-    });
+    myCreateSampleProjectCheckBox.addActionListener(e -> myTemplatesList.setEnabled(myCreateSampleProjectCheckBox.isSelected()));
 
     myTemplatesList.setEmptyText(DartBundle.message("set.sdk.to.see.sample.content.options"));
 
@@ -281,19 +272,9 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
       }
     });
 
-    myCreateSampleProjectCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        validateInIntelliJ();
-      }
-    });
+    myCreateSampleProjectCheckBox.addActionListener(e -> validateInIntelliJ());
 
-    myTemplatesList.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(final ListSelectionEvent e) {
-        validateInIntelliJ();
-      }
-    });
+    myTemplatesList.addListSelectionListener(e -> validateInIntelliJ());
   }
 
   @Override
@@ -311,19 +292,9 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
       }
     });
 
-    myCreateSampleProjectCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        stateListener.stateChanged(validate() == null);
-      }
-    });
+    myCreateSampleProjectCheckBox.addActionListener(e -> stateListener.stateChanged(validate() == null));
 
-    myTemplatesList.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(final ListSelectionEvent e) {
-        stateListener.stateChanged(validate() == null);
-      }
-    });
+    myTemplatesList.addListSelectionListener(e -> stateListener.stateChanged(validate() == null));
   }
 
   private void createUIComponents() {

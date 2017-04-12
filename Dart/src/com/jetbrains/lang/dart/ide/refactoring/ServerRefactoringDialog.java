@@ -47,21 +47,18 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
     myEditor = editor;
     myRefactoring = refactoring;
     // Listen for responses.
-    myRefactoring.setListener(new ServerRefactoring.ServerRefactoringListener() {
-      @Override
-      public void requestStateChanged(final boolean hasPendingRequests, @NotNull final RefactoringStatus optionsStatus) {
-        final Runnable runnable = () -> {
-          myHasPendingRequests = hasPendingRequests;
-          myOptionsStatus = optionsStatus;
-          validateButtons();
-        };
+    myRefactoring.setListener((hasPendingRequests, optionsStatus) -> {
+      final Runnable runnable = () -> {
+        myHasPendingRequests = hasPendingRequests;
+        myOptionsStatus = optionsStatus;
+        validateButtons();
+      };
 
-        final ModalityState modalityState = ModalityState.stateForComponent(getWindow());
+      final ModalityState modalityState = ModalityState.stateForComponent(getWindow());
 
-        final Condition expired = o -> !isShowing();
+      final Condition expired = o -> !isShowing();
 
-        ApplicationManager.getApplication().invokeLater(runnable, modalityState, expired);
-      }
+      ApplicationManager.getApplication().invokeLater(runnable, modalityState, expired);
     });
   }
 
@@ -115,20 +112,17 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
 
   protected final void doRefactoring(@NotNull final Set<String> excludedIds) {
     // Apply the change.
-    final String error = ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
-      @Override
-      public String compute() {
-        final SourceChange change = myRefactoring.getChange();
-        assert change != null;
-        try {
-          AssistUtils.applySourceChange(myProject, change, false, excludedIds);
-        }
-        catch (DartSourceEditException e) {
-          return e.getMessage();
-        }
-
-        return null;
+    final String error = ApplicationManager.getApplication().runWriteAction((Computable<String>)() -> {
+      final SourceChange change = myRefactoring.getChange();
+      assert change != null;
+      try {
+        AssistUtils.applySourceChange(myProject, change, false, excludedIds);
       }
+      catch (DartSourceEditException e) {
+        return e.getMessage();
+      }
+
+      return null;
     });
 
     if (error == null) {

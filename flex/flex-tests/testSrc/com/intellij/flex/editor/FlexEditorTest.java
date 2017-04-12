@@ -5,6 +5,7 @@ import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
@@ -205,7 +206,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     _testInsertBraceOnEnter("2", "js2");
 
     final JSCodeStyleSettings codeSettings =
-      CodeStyleSettingsManager.getSettings(getProject()).getCustomSettings(JSCodeStyleSettings.class);
+      CodeStyleSettingsManager.getSettings(getProject()).getCustomSettings(ECMA4CodeStyleSettings.class);
     try {
       codeSettings.INDENT_PACKAGE_CHILDREN = JSCodeStyleSettings.INDENT;
       _testInsertBraceOnEnter("3", "js2");

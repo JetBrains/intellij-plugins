@@ -24,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters.Scope.*;
 
@@ -49,12 +47,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myDirField.addBrowseFolderListener(DartBundle.message("choose.dart.directory"), null, project,
                                        // Unfortunately, withFileFilter() only works for files, not directories.
                                        FileChooserDescriptorFactory.createSingleFolderDescriptor());
-    myDirField.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        onTestDirChanged(project);
-      }
-    });
+    myDirField.addActionListener(e -> onTestDirChanged(project));
 
     myScopeCombo.setModel(
       new DefaultComboBoxModel<>(new DartTestRunnerParameters.Scope[]{FOLDER, FILE, GROUP_OR_TEST_BY_NAME}));
@@ -70,12 +63,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
       }
     });
 
-    myScopeCombo.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        onScopeChanged();
-      }
-    });
+    myScopeCombo.addActionListener(e -> onScopeChanged());
 
     final DocumentAdapter dirListener = new DocumentAdapter() {
       @Override

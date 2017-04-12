@@ -74,14 +74,11 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
     for (VirtualFile vFile : files) {
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
-        processComponents(root, new PsiElementProcessor<DartComponent>() {
-          @Override
-          public boolean execute(@NotNull DartComponent component) {
-            if (name.equals(component.getName())) {
-              result.add(component.getComponentName());
-            }
-            return true;
+        processComponents(root, component -> {
+          if (name.equals(component.getName())) {
+            result.add(component.getComponentName());
           }
+          return true;
         });
       }
     }

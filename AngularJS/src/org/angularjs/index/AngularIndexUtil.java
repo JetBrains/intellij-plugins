@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 51;
+  public static final int BASE_VERSION = 52;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
@@ -56,12 +56,9 @@ public class AngularIndexUtil {
   public static JSImplicitElement resolve(final Project project, final StubIndexKey<String, JSImplicitElementProvider> index, final String lookupKey) {
     final Ref<JSImplicitElement> result = new Ref<>(null);
     final Processor<JSImplicitElement> processor = element -> {
-      if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
-                                                  AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
-        result.set(element);
-        if (DialectDetector.isTypeScript(element)) {
-          return false;
-        }
+      result.set(element);
+      if (DialectDetector.isTypeScript(element)) {
+        return false;
       }
       return true;
     };
@@ -82,7 +79,10 @@ public class AngularIndexUtil {
           final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
           if (elements != null) {
             for (JSImplicitElement element : elements) {
-              if (!processor.process(element)) return false;
+              if (element.getName().equals(lookupKey) && ((index != AngularDirectivesIndex.KEY && index != AngularDirectivesDocIndex.KEY) ||
+                                                          AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
+                if (!processor.process(element)) return false;
+              }
             }
           }
         }
@@ -146,7 +146,7 @@ public class AngularIndexUtil {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       int version = -1;
       PsiElement resolve;
-      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ngFor]")) != null) {
+      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngFor")) != null) {
         version = 20;
       } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
         version = 13;

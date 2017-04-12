@@ -27,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -135,13 +133,9 @@ public class DartSdkUtil {
       }
     });
 
-    dartiumSettingsButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        ShowSettingsUtil.getInstance().editConfigurable(dartiumSettingsButton,
-                                                        currentDartiumSettingsRetriever.compute().createConfigurable());
-      }
-    });
+    dartiumSettingsButton.addActionListener(e -> ShowSettingsUtil.getInstance().editConfigurable(dartiumSettingsButton,
+                                                                                                 currentDartiumSettingsRetriever.compute()
+                                                                                                   .createConfigurable()));
 
     // we decided to save one line in settings and always use Dartium in checked mode
     //checkedModeCheckBox.addActionListener(new ActionListener() {

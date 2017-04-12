@@ -80,7 +80,6 @@ public class DartDocUtil {
     final StringBuilder builder = new StringBuilder();
     builder.append("<code>");
     if (signature != null) {
-      builder.append("<b>Signature:</b> ");
       if (signatureIsHtml) {
         builder.append(signature);
       }
@@ -118,14 +117,13 @@ public class DartDocUtil {
         builder.append("<br>");
       }
     }
-    builder.append("</code>");
+    builder.append("</code>\n");
     if (docText != null) {
-      builder.append("<br>");
       final MarkdownProcessor processor = new MarkdownProcessor();
-      builder.append(processor.markdown(docText));
+      builder.append(processor.markdown(docText.trim()));
     }
     // done
-    return builder.toString();
+    return builder.toString().trim();
   }
 
   @Nullable

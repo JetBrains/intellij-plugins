@@ -1,124 +1,266 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templateSet group="Angular2">
-  <template name="ng2-bootstrap" value="import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';&#10;&#10;import { $APP$Module } from './$NAME$.module';&#10;&#10;platformBrowserDynamic().bootstrapModule($APP$Module)&#10;    .then(success =&gt; console.log(`Bootstrap success`))&#10;    .catch(error =&gt; console.log(error));&#10;$END$" description="Angular2 bootstrap" toReformat="false" toShortenFQNames="true">
-    <variable name="APP" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="NAME" expression="lowercaseAndDash(APP)" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="ng2-component" value="import { Component, OnInit } from '@angular/core';&#10;&#10;@Component({&#10;    moduleId: module.id,&#10;    selector: '$SELECTOR$',&#10;    templateUrl: '$NAME$.component.html'&#10;})&#10;export class $COMPONENT_NAME$Component implements OnInit {&#10;    constructor() { }&#10;&#10;    ngOnInit() { }&#10;    $END$&#10;}" description="Angular2 component" toReformat="false" toShortenFQNames="true">
-    <variable name="SELECTOR" expression="" defaultValue="&quot;selector&quot;" alwaysStopAt="true" />
-    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true" />
-    <variable name="COMPONENT_NAME" expression="capitalize(String)" defaultValue="&quot;ComponentName&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="ng2-component-root" value="import { Component } from '@angular/core';&#10;&#10;@Component({&#10;    moduleId: module.id,&#10;    selector: '$SELECTOR$',&#10;    template:  &#10;        `&lt;router-outlet&gt;&lt;/router-outlet&gt;`&#10;})&#10;export class $NAME$Component { }&#10;$END$" description="Angular2 root component" toReformat="false" toShortenFQNames="true">
-    <variable name="SELECTOR" expression="" defaultValue="&quot;selector&quot;" alwaysStopAt="true" />
-    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="ng2-http-get" value="return this.http.get('$URL$')&#10;    .map((response: Response) =&gt; response.json()$END$);" description="Angular2 http get" toReformat="false" toShortenFQNames="true">
-    <variable name="URL" expression="" defaultValue="&quot;url&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="ng2-pipe" value="import { Pipe, PipeTransform } from '@angular/core';&#10;&#10;@Pipe({&#10;    name: '$NAME$'&#10;})&#10;&#10;export class $PIPE_NAME$Pipe implements PipeTransform {&#10;    transform(value: any, args: any[]): any {&#10;        $END$&#10;    }&#10;}" description="Angular2 pipe" toReformat="false" toShortenFQNames="true">
-    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true" />
-    <variable name="PIPE_NAME" expression="" defaultValue="&quot;PipeName&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="ng2-service" value="import { Injectable } from '@angular/core';&#10;&#10;@Injectable()&#10;export class $SERVICE_NAME$Service {&#10;&#10;    constructor($END$) { }&#10;&#10;}" description="Angular2 service" toReformat="false" toShortenFQNames="true">
-    <variable name="SERVICE_NAME" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="ng2-subscribe" value="this.$SERVICE$.$FUNCTION$()&#10;    .subscribe($ARG$ =&gt; this.$PROPERTY$ = $ARG$);&#10;$END$    " description="Angular2 subscribe" toReformat="false" toShortenFQNames="true">
-    <variable name="SERVICE" expression="" defaultValue="&quot;service&quot;" alwaysStopAt="true" />
-    <variable name="FUNCTION" expression="" defaultValue="&quot;function&quot;" alwaysStopAt="true" />
-    <variable name="ARG" expression="" defaultValue="&quot;arg&quot;" alwaysStopAt="true" />
-    <variable name="PROPERTY" expression="" defaultValue="&quot;property&quot;" alwaysStopAt="true" />
-    <context>
-      <option name="TypeScript" value="true" />
-    </context>
-  </template>
-  <template name="ng2-ngClass" value="[ngClass]=&quot;{$CSS_CLASS$: $EXPRESSION$}&quot;" description="Angular2 ngClass" toReformat="false" toShortenFQNames="true">
-    <variable name="CSS_CLASS" expression="" defaultValue="&quot;cssClass&quot;" alwaysStopAt="true" />
-    <variable name="EXPRESSION" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
+<templateSet group="Angular">
+  <template name="a-class" value="[class]=&quot;$expression$&quot;" description="Angular [class] binding" toReformat="true" toShortenFQNames="true">
+    <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="ng2-ngFor" value="*ngFor=&quot;let $ITEM$ of $LIST$&quot;" description="Angular2 ngFor" toReformat="false" toShortenFQNames="true">
-    <variable name="ITEM" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
-    <variable name="LIST" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
+  <template name="a-ngClass" value="[ngClass]=&quot;{$cssClass$: $expression$}&quot;" description="Angular ngClass" toReformat="true" toShortenFQNames="true">
+    <variable name="cssClass" expression="" defaultValue="&quot;cssClass&quot;" alwaysStopAt="true" />
+    <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="ng2-ngIf" value="*ngIf=&quot;$EXPRESSION$&quot;" description="Angular2 ngIf" toReformat="false" toShortenFQNames="true">
-    <variable name="EXPRESSION" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
+  <template name="a-ngFor" value="*ngFor=&quot;let $item$ of $list$&quot;" description="Angular *ngFor" toReformat="true" toShortenFQNames="true">
+    <variable name="item" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
+    <variable name="list" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="ng2-ngModel" value="[(ngModel)]=&quot;$BINDING$&quot;" description="Angular2 ngModel" toReformat="false" toShortenFQNames="true">
-    <variable name="BINDING" expression="" defaultValue="&quot;binding&quot;" alwaysStopAt="true" />
+  <template name="a-ngForAsync" value="*ngFor=&quot;let $item$ of $stream$ | async as $list$&quot;" description="Angular *ngForAsync" toReformat="true" toShortenFQNames="true">
+    <variable name="item" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
+    <variable name="list" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
+    <variable name="stream" expression="" defaultValue="&quot;stream&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="ng2-ngStyle" value="[ngStyle]=&quot;{$STYLE$: $EXPRESSION$}&quot;" description="Angular2 ngStyle" toReformat="false" toShortenFQNames="true">
-    <variable name="STYLE" expression="" defaultValue="&quot;style&quot;" alwaysStopAt="true" />
-    <variable name="EXPRESSION" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
+  <template name="a-ngIf" value="*ngIf=&quot;$expression$&quot;" description="Angular *ngIf" toReformat="true" toShortenFQNames="true">
+    <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="ng2-ngSwitch" value="&lt;div [ngSwitch]=\&quot;${conditionExpression}\&quot;&gt;&#10;      &lt;div *ngSwitchCase=\&quot;${expression}\&quot;&gt;${output}&lt;/div&gt;&#10;      &lt;div *ngSwitchDefault&gt;${output2}&lt;/div&gt;&#10;&lt;/div&gt;" description="Angular2 ngSwitch" toReformat="false" toShortenFQNames="true">
-    <context>
-      <option name="HTML_TEXT" value="true" />
-    </context>
-  </template>
-  <template name="ng2-routerLink" value="[routerLink]=&quot;['$ROUTE_NAME$']&quot;" description="Angular2 routerLink" toReformat="false" toShortenFQNames="true">
-    <variable name="ROUTE_NAME" expression="" defaultValue="&quot;routeName&quot;" alwaysStopAt="true" />
+  <template name="a-ngIfElse" value="*ngIf=&quot;$expression$;else $templateName$&quot;" description="Angular *ngIfElse" toReformat="true" toShortenFQNames="true">
+    <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
+    <variable name="templateName" expression="" defaultValue="&quot;templateName&quot;" alwaysStopAt="true" />
     <context>
       <option name="HTML_TEXT" value="false" />
       <option name="HTML" value="true" />
     </context>
   </template>
-  <template name="ng2-routing" value="import { NgModule } from '@angular/core';&#10;import { Routes, RouterModule } from '@angular/router';&#10;&#10;import { $COMPONENT_NAME$Component } from './$NAME$.component';&#10;&#10;const routes: Routes = [&#10;  { path: '$PATH$', component: $COMPONENT_NAME$Component },&#10;];&#10;&#10;@NgModule({&#10;  imports: [RouterModule.for$CHILD_OR_ROOT$(routes)],&#10;  exports: [RouterModule],&#10;})&#10;export class $COMPONENT_NAME$RoutingModule { }&#10;&#10;export const routedComponents = [$COMPONENT_NAME$Component];" description="Angular 2 routing file" toReformat="false" toShortenFQNames="true">
-    <variable name="COMPONENT_NAME" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="NAME" expression="lowercaseAndDash(COMPONENT_NAME)" defaultValue="" alwaysStopAt="true" />
-    <variable name="PATH" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="CHILD_OR_ROOT" expression="complete()" defaultValue="" alwaysStopAt="true" />
+  <template name="a-ngModel" value="[(ngModel)]=&quot;$binding$&quot;" description="Angular ngModel" toReformat="true" toShortenFQNames="true">
+    <variable name="binding" expression="" defaultValue="&quot;binding&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML_TEXT" value="false" />
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-routerLink" value="[routerLink]=&quot;[&apos;/$routePath$&apos;]&quot;$END$" description="Angular routerLink" toReformat="true" toShortenFQNames="true">
+    <variable name="routePath" expression="" defaultValue="&quot;routePath&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML_TEXT" value="false" />
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-routerLink-param" value="[routerLink]=&quot;[&apos;$routePath$&apos;, $routeParameterValue$$END$]&quot;" description="Angular routerLink with a route parameter" toReformat="true" toShortenFQNames="true">
+    <variable name="routeParameterValue" expression="" defaultValue="&quot;routeParameterValue&quot;" alwaysStopAt="true" />
+    <variable name="routePath" expression="" defaultValue="&quot;routePath&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML_TEXT" value="false" />
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-select" value="&lt;select [(ngModel)]=&quot;$model$&quot;&gt;&#10;	&lt;option *ngFor=&quot;let $item$ of $list$&quot; [value]=&quot;$item$&quot;&gt;{{$item$}}&lt;/option&gt;&#10;&lt;/select&gt;" description="&lt;select&gt; control with ngModel" toReformat="true" toShortenFQNames="true">
+    <variable name="item" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
+    <variable name="list" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
+    <variable name="model" expression="" defaultValue="&quot;model&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-ngStyle" value="[ngStyle]=&quot;{$style$: $expression$}&quot;" description="Angular ngStyle" toReformat="true" toShortenFQNames="true">
+    <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
+    <variable name="style" expression="" defaultValue="&quot;style&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML_TEXT" value="false" />
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-ngSwitch" value="&lt;div [ngSwitch]=&quot;$conditionExpression$&quot;&gt;&#10;	&lt;div *ngSwitchCase=&quot;$expression$&quot;&gt;$output$&lt;/div&gt;&#10;	&lt;div *ngSwitchDefault&gt;$output2$&lt;/div&gt;&#10;&lt;/div&gt;" description="Angular ngSwitch" toReformat="true" toShortenFQNames="true">
+    <variable name="conditionExpression" expression="" defaultValue="&quot;conditionExpression&quot;" alwaysStopAt="true" />
+    <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
+    <variable name="output" expression="" defaultValue="&quot;output&quot;" alwaysStopAt="true" />
+    <variable name="output2" expression="" defaultValue="&quot;output2&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-preja" value="&lt;pre&gt;{{$1$ | async | json}}&lt;/pre&gt;$2" description="Angular pre debug | async | json" toReformat="true" toShortenFQNames="true">
+    <variable name="1" expression="" defaultValue="&quot;7&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-prej" value="&lt;pre&gt;{{$1$ | json}}&lt;/pre&gt;$2" description="Angular pre debug | json" toReformat="true" toShortenFQNames="true">
+    <variable name="1" expression="" defaultValue="&quot;7&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-style" value="[style.$property$]=&quot;$expression$&quot;" description="Angular [style] binding" toReformat="true" toShortenFQNames="true">
+    <variable name="expression" expression="" defaultValue="&quot;expression&quot;" alwaysStopAt="true" />
+    <variable name="property" expression="" defaultValue="&quot;property&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML_TEXT" value="false" />
+      <option name="HTML" value="true" />
+    </context>
+  </template>
+  <template name="a-route-path-404" value="{ path: &apos;**&apos;, pathMatch: &apos;full&apos;, component: $PathNotFoundComponent$ }$END$" description="Angular 404 route path" toReformat="true" toShortenFQNames="true">
+    <variable name="PathNotFoundComponent" expression="" defaultValue="&quot;PathNotFoundComponent&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="ng2-module-root" value="import { NgModule } from '@angular/core';&#10;import { BrowserModule  } from '@angular/platform-browser';&#10;import { HttpModule } from '@angular/http';&#10;&#10;import { $COMPONENT_NAME$Component } from './$NAME$.component';&#10;import { AppRoutingModule } from './$NAME$.routing'; //TODO: Create $NAME$.routing&#10;&#10;@NgModule({&#10;    imports: [&#10;        BrowserModule,&#10;        HttpModule,&#10;    &#10;        AppRoutingModule,&#10;    ],&#10;    declarations: [$COMPONENT_NAME$Component],&#10;    providers: [/* TODO: Providers go here */],&#10;    bootstrap: [$COMPONENT_NAME$Component],&#10;})&#10;export class $COMPONENT_NAME$Module { }&#10;$END$" description="Angular 2 root module" toReformat="false" toShortenFQNames="true">
-    <variable name="COMPONENT_NAME" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="NAME" expression="lowercaseAndDash(COMPONENT_NAME)" defaultValue="" alwaysStopAt="true" />
+  <template name="a-bootstrap" value="import { platformBrowserDynamic } from &apos;@angular/platform-browser-dynamic&apos;;&#10;//import { enableProdMode } from &apos;@angular/core&apos;;&#10;&#10;//enableProdMode(); // Uncomment for production&#10;import { $App$Module } from &apos;./$app$.module&apos;;&#10;&#10;platformBrowserDynamic().bootstrapModule($App$Module);&#10;$END$" description="Angular bootstrap" toReformat="true" toShortenFQNames="true">
+    <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
+    <variable name="app" expression="lowercaseAndDash(App)" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>
   </template>
-  <template name="ng2-module" value="import { NgModule } from '@angular/core';&#10;&#10;import { $COMPONENT_NAME$Component } from './$NAME$.component';&#10;&#10;@NgModule({&#10;    imports: [],&#10;    exports: [],&#10;    declarations: [$COMPONENT_NAME$Component],&#10;    providers: [],&#10;})&#10;export class $COMPONENT_NAME$Module { }&#10;$END$" description="Angular 2 module" toReformat="false" toShortenFQNames="true">
-    <variable name="COMPONENT_NAME" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="NAME" expression="lowercaseAndDash(COMPONENT_NAME)" defaultValue="" alwaysStopAt="true" />
+  <template name="a-guard-can-activate" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;&#10;@Injectable()&#10;export class $Name$Guard implements CanActivate {&#10;	constructor() { }&#10;&#10;	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {&#10;		return true;$END$&#10;	}&#10;}" description="Angular CanActivate guard" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-guard-can-activate-child" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanActivateChild, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;&#10;@Injectable()&#10;export class $Name$Guard implements CanActivateChild {&#10;	constructor() { }&#10;&#10;	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {&#10;		return true;$END$&#10;	}&#10;}" description="Angular CanActivateChild guard" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-guard-can-deactivate" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;&#10;import { $ComponentName$Component } from &apos;./$filename$.component&apos;;&#10;&#10;// Consider using this interface for all CanDeactivate guards,&#10;// and have your components implement this interface, too.&#10;//&#10;//   e.g. export class CanDeactivateGuard implements CanDeactivate&lt;CanComponentDeactivate&gt; {&#10;//&#10;// export interface CanComponentDeactivate {&#10;// canDeactivate: () =&gt; any;&#10;// }&#10;&#10;@Injectable()&#10;export class $Name$Guard implements CanDeactivate&lt;$ComponentName$Component&gt; {&#10;	canDeactivate(&#10;		component: $ComponentName$Component,&#10;		currentRoute: ActivatedRouteSnapshot, &#10;		currentState: RouterStateSnapshot&#10;	): Observable&lt;boolean&gt;|Promise&lt;boolean&gt;|boolean {&#10;		return false;$END$&#10;	}&#10;}" description="Angular CanDeactivate guard" toReformat="true" toShortenFQNames="true">
+    <variable name="ComponentName" expression="" defaultValue="&quot;ComponentName&quot;" alwaysStopAt="true" />
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="filename" expression="lowercaseAndDash(ComponentName)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-guard-can-load" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { CanLoad, Route } from &apos;@angular/router&apos;;&#10;&#10;@Injectable()&#10;export class $Name$Guard implements CanLoad {&#10;	constructor() { }&#10;&#10;	canLoad(route: Route) {&#10;		return true;$END$&#10;	}&#10;}" description="Angular CanLoad guard" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-component" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	moduleId: module.id,&#10;	selector: &apos;$selector_name$&apos;,&#10;	templateUrl: &apos;$name$.component.html&apos;&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }$END$&#10;}" description="Angular component" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
+    <variable name="selector_name" expression="" defaultValue="&quot;selector_name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-route-path-default" value="{ path: &apos;&apos;, pathMatch: &apos;full&apos;, redirectTo: &apos;$dashboard$&apos; }$END$" description="Angular default route path" toReformat="true" toShortenFQNames="true">
+    <variable name="dashboard" expression="" defaultValue="&quot;dashboard&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-directive" value="import { Directive } from &apos;@angular/core&apos;;&#10;&#10;@Directive({ selector: &apos;[$selector_name$]&apos; })&#10;export class $Name$Directive {&#10;	constructor() { }&#10;}" description="Angular directive" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="selector_name" expression="" defaultValue="&quot;selector_name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-route-path-eager" value="{ path: &apos;$path$&apos;, component: $Name$Component }," description="Angular eager route path" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="path" expression="" defaultValue="&quot;path&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-service-http" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { Http, Response } from &apos;@angular/http&apos;;&#10;import { Observable } from &apos;rxjs/Observable&apos;;&#10;import &apos;rxjs/add/operator/map&apos;;&#10;import &apos;rxjs/add/operator/catch&apos;;&#10;&#10;@Injectable()&#10;export class $ServiceName$Service {&#10;	constructor(private http: Http) { }&#10;	$END$&#10;}" description="Angular service with Http" toReformat="true" toShortenFQNames="true">
+    <variable name="ServiceName" expression="" defaultValue="&quot;ServiceName&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-route-path-lazy" value="{ path: &apos;$path$&apos;, loadChildren: &apos;$lazy_path$#$lazy_module$&apos; }," description="Angular lazy route path" toReformat="true" toShortenFQNames="true">
+    <variable name="lazy_module" expression="" defaultValue="&quot;lazy_module&quot;" alwaysStopAt="true" />
+    <variable name="lazy_path" expression="" defaultValue="&quot;lazy_path&quot;" alwaysStopAt="true" />
+    <variable name="path" expression="" defaultValue="&quot;path&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-module" value="import { NgModule } from &apos;@angular/core&apos;;&#10;&#10;import { $Name$Component } from &apos;./$name$.component&apos;;&#10;&#10;@NgModule({&#10;	imports: [],&#10;	exports: [],&#10;	declarations: [$Name$Component],&#10;	providers: [],&#10;})&#10;export class $Name$Module { }&#10;$END$" description="Angular Module" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-ctor-skip-self" value="constructor( @Optional() @SkipSelf() parentModule: $ModuleName$ {&#10;	if (parentModule) {&#10;		const msg = `$ModuleName$ has already been loaded. &#10;			Import $ModuleName$ once, only, in the root AppModule.`;&#10;		throw new Error(msg);&#10;	}&#10;}" description="Angular Module SkipSelf constructor" toReformat="true" toShortenFQNames="true">
+    <variable name="ModuleName" expression="" defaultValue="&quot;ModuleName&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-pipe" value="import { Pipe, PipeTransform } from &apos;@angular/core&apos;;&#10;&#10;@Pipe({&#10;	name: &apos;$selector_name$&apos;&#10;})&#10;&#10;export class $Name$Pipe implements PipeTransform {&#10;	transform(value: any, ...args: any[]): any {&#10;		$END$&#10;	}&#10;}" description="Angular pipe" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="selector_name" expression="" defaultValue="&quot;selector_name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-component-root" value="import { Component } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	moduleId: module.id,&#10;	selector: &apos;$prefix_app$&apos;,&#10;	template: `&#10;		&lt;router-outlet&gt;&lt;/router-outlet&gt;&#10;		`&#10;})&#10;export class $App$Component { }&#10;$END$" description="Angular App root component" toReformat="true" toShortenFQNames="true">
+    <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
+    <variable name="prefix_app" expression="" defaultValue="&quot;prefix_app&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-module-root" value="import { NgModule } from &apos;@angular/core&apos;;&#10;import { BrowserModule  } from &apos;@angular/platform-browser&apos;;&#10;import { HttpModule } from &apos;@angular/http&apos;;&#10;&#10;import { $App$Component } from &apos;./$app$.component&apos;;&#10;import { AppRoutingModule } from &apos;./$app$.routing&apos;; //TODO: Create $app$.routing&#10;&#10;@NgModule({&#10;	imports: [&#10;		BrowserModule,&#10;		HttpModule,&#10;	&#10;		AppRoutingModule,&#10;	],&#10;	declarations: [$App$Component],&#10;	providers: [/* TODO: Providers go here */],&#10;	bootstrap: [$App$Component],&#10;})&#10;export class $App$Module { }&#10;$END$" description="Angular Root Module" toReformat="true" toShortenFQNames="true">
+    <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
+    <variable name="app" expression="lowercaseAndDash(App)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-module-routing" value="import { NgModule } from &apos;@angular/core&apos;;&#10;import { Routes, RouterModule } from &apos;@angular/router&apos;;&#10;&#10;import { $Name$Component } from &apos;./$name$.component&apos;;&#10;&#10;const routes: Routes = [&#10;  { path: &apos;$path$&apos;, component: $Name$Component },&#10;];&#10;&#10;@NgModule({&#10;  imports: [RouterModule.forChild(routes)],&#10;  exports: [RouterModule],&#10;})&#10;export class $Name$RoutingModule { }&#10;&#10;export const routedComponents = [$Name$Component];" description="Angular routing module file (forChild)" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
+    <variable name="path" expression="" defaultValue="&quot;path&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-service" value="import { Injectable } from &apos;@angular/core&apos;;&#10;&#10;@Injectable()&#10;export class $Name$Service {&#10;$END$&#10;	constructor() { }&#10;}" description="Angular service" toReformat="true" toShortenFQNames="true">
+    <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-http-get" value="return this.http.get(&apos;$url$&apos;)&#10;	.map((response: Response) =&gt; response.json()$END$);" description="Angular Http.get" toReformat="true" toShortenFQNames="true">
+    <variable name="url" expression="" defaultValue="&quot;url&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-output-event" value="@Output() $eventName$: EventEmitter&lt;$eventType$&gt; = new EventEmitter&lt;$eventType$&gt;();" description="Angular @Output event and emitter" toReformat="true" toShortenFQNames="true">
+    <variable name="eventName" expression="" defaultValue="&quot;eventName&quot;" alwaysStopAt="true" />
+    <variable name="eventType" expression="" defaultValue="&quot;eventType&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="a-subscribe" value="this.$service$.$function$&#10;	.subscribe($arg$ =&gt; this.$property$ = $arg$);&#10;$END$" description="Angular observable subscribe" toReformat="true" toShortenFQNames="true">
+    <variable name="arg" expression="" defaultValue="&quot;arg&quot;" alwaysStopAt="true" />
+    <variable name="function" expression="" defaultValue="&quot;function&quot;" alwaysStopAt="true" />
+    <variable name="property" expression="" defaultValue="&quot;property&quot;" alwaysStopAt="true" />
+    <variable name="service" expression="" defaultValue="&quot;service&quot;" alwaysStopAt="true" />
     <context>
       <option name="TypeScript" value="true" />
     </context>

@@ -88,11 +88,6 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
     return new CreateConstructorFix(clazz, reference, node);
   }
 
-  @Override
-  public boolean startInWriteAction() {
-    return false;
-  }
-
   @NotNull
   @Override
   protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {

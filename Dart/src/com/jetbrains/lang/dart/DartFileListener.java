@@ -35,7 +35,7 @@ import java.util.*;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-public class DartFileListener extends VirtualFileAdapter {
+public class DartFileListener implements VirtualFileListener {
 
   private static final Key<Boolean> DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS =
     Key.create("DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS");

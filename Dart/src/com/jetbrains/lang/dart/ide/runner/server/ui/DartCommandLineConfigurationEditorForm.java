@@ -25,8 +25,6 @@ import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartCommandLineRunConfiguration> {
   private JPanel myMainPanel;
@@ -54,31 +52,25 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
 
   public static void initDartFileTextWithBrowse(final @NotNull Project project,
                                                 final @NotNull TextFieldWithBrowseButton textWithBrowse) {
-    textWithBrowse.getButton().addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        final String initialPath = FileUtil.toSystemIndependentName(textWithBrowse.getText().trim());
-        final VirtualFile initialFile = initialPath.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(initialPath);
-        final PsiFile initialPsiFile = initialFile == null ? null : PsiManager.getInstance(project).findFile(initialFile);
+    textWithBrowse.getButton().addActionListener(e -> {
+      final String initialPath = FileUtil.toSystemIndependentName(textWithBrowse.getText().trim());
+      final VirtualFile initialFile = initialPath.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(initialPath);
+      final PsiFile initialPsiFile = initialFile == null ? null : PsiManager.getInstance(project).findFile(initialFile);
 
-        TreeFileChooser fileChooser = TreeFileChooserFactory.getInstance(project).createFileChooser(
-          DartBundle.message("choose.dart.main.file"),
-          initialPsiFile,
-          DartFileType.INSTANCE,
-          new TreeFileChooser.PsiFileFilter() {
-            public boolean accept(PsiFile file) {
-              return !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(file);
-            }
-          }
-        );
+      TreeFileChooser fileChooser = TreeFileChooserFactory.getInstance(project).createFileChooser(
+        DartBundle.message("choose.dart.main.file"),
+        initialPsiFile,
+        DartFileType.INSTANCE,
+        file -> !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(file)
+      );
 
-        fileChooser.showDialog();
+      fileChooser.showDialog();
 
-        final PsiFile selectedFile = fileChooser.getSelectedFile();
-        final VirtualFile virtualFile = selectedFile == null ? null : selectedFile.getVirtualFile();
-        if (virtualFile != null) {
-          final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
-          textWithBrowse.setText(path);
-        }
+      final PsiFile selectedFile = fileChooser.getSelectedFile();
+      final VirtualFile virtualFile = selectedFile == null ? null : selectedFile.getVirtualFile();
+      if (virtualFile != null) {
+        final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
+        textWithBrowse.setText(path);
       }
     });
   }
