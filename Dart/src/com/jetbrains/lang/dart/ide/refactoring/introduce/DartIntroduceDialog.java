@@ -48,9 +48,9 @@ public class DartIntroduceDialog extends DialogWrapper {
     myNameComboBox.setEditable(true);
     myNameComboBox.setMaximumRowCount(8);
 
-    myContentPane.registerKeyboardAction(e -> IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-      IdeFocusManager.getGlobalInstance().requestFocus(myNameComboBox, true);
-    }), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+    myContentPane.registerKeyboardAction(e -> IdeFocusManager.getGlobalInstance()
+                                           .doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myNameComboBox, true)),
+                                         KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     for (String possibleName : possibleNames) {
       myNameComboBox.addItem(possibleName);

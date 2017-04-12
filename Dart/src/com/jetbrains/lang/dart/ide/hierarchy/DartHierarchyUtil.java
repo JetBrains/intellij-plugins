@@ -29,7 +29,7 @@ import java.util.List;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
 public class DartHierarchyUtil {
-  private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = (first, second) -> first.getIndex() - second.getIndex();
+  private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = Comparator.comparingInt(NodeDescriptor::getIndex);
 
   private DartHierarchyUtil() {
   }

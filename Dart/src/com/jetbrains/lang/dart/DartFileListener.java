@@ -129,7 +129,7 @@ public class DartFileListener implements VirtualFileListener {
           removeDartPackagesLibraryAndDependencies(project);
         }
         else {
-          final Condition<Module> moduleFilter = module -> DartSdkLibUtil.isDartSdkEnabled(module);
+          final Condition<Module> moduleFilter = DartSdkLibUtil::isDartSdkEnabled;
 
           updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
         }
@@ -282,7 +282,7 @@ public class DartFileListener implements VirtualFileListener {
       }
 
       if (modifiableModel.isChanged()) {
-        ApplicationManager.getApplication().runWriteAction(() -> modifiableModel.commit());
+        ApplicationManager.getApplication().runWriteAction(modifiableModel::commit);
       }
     }
     finally {
@@ -305,7 +305,7 @@ public class DartFileListener implements VirtualFileListener {
 
       modifiableModel.addLibraryEntry(library);
 
-      ApplicationManager.getApplication().runWriteAction(() -> modifiableModel.commit());
+      ApplicationManager.getApplication().runWriteAction(modifiableModel::commit);
     }
     finally {
       if (!modifiableModel.isDisposed()) {
