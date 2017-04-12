@@ -6,11 +6,13 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
 
 public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
   @Override
@@ -139,5 +141,29 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
                          "  List<caret> bar(int i, bool arg1, String s) {}\n" +
                          "}";
     doCrLfAwareTest(content, "Create method", after);
+  }
+
+  public void testQuickFixOrder() throws Throwable {
+    myFixture.configureByText("foo.dart", "<caret>Future f;\nclass Futures{}");
+    final List<String> intentions = ContainerUtil.map(myFixture.getAvailableIntentions(), intention -> intention.getText());
+    assertOrderedEquals(intentions,
+                        "Import library 'dart:async'",
+                        "Edit inspection profile setting",
+                        "Suppress warning with comment",
+                        "Suppress warning with EOL comment",
+                        "Disable inspection",
+                        "Change to 'Futures'",
+                        "Edit inspection profile setting",
+                        "Suppress warning with comment",
+                        "Suppress warning with EOL comment",
+                        "Disable inspection",
+                        "Create class 'Future'",
+                        "Edit inspection profile setting",
+                        "Suppress warning with comment",
+                        "Suppress warning with EOL comment",
+                        "Disable inspection",
+                        "Remove type annotation",
+                        "Edit intention settings",
+                        "Disable 'Dart/Quick assist powered by the Dart Analysis Server'");
   }
 }
