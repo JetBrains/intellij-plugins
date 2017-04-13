@@ -2,6 +2,8 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -141,6 +143,43 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(resolve);
       assertEquals("definition2.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, TypeScriptFieldImpl.class);
+    });
+  }
+
+  public void testInlineTemplateCreateFunction2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.getAllQuickFixes("createFunction.ts", "angular2.js");
+      myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
+      myFixture.checkResultByFile("createFunction.fixed.ts", true);
+    });
+  }
+
+  public void testInlineTemplateCreateField2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(JSUnresolvedVariableInspection.class);
+      myFixture.getAllQuickFixes("createField.ts", "angular2.js");
+      myFixture.launchAction(myFixture.findSingleIntention("Create Field 'todo'"));
+      myFixture.checkResultByFile("createField.fixed.ts", true);
+    });
+
+  }
+
+  public void testNonInlineTemplateCreateFunction2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.getAllQuickFixes("createFunction.html", "createFunction.ts", "angular2.js");
+      myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
+      myFixture.checkResultByFile("createFunction.ts", "createFunction.fixed.ts", true);
+    });
+  }
+
+  public void testNonInlineTemplateCreateField2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.enableInspections(JSUnresolvedVariableInspection.class);
+      myFixture.getAllQuickFixes("createField.html", "createField.ts", "angular2.js");
+      myFixture.launchAction(myFixture.findSingleIntention("Create Field 'todo'"));
+      myFixture.checkResultByFile("createField.ts", "createField.fixed.ts", true);
     });
   }
 }

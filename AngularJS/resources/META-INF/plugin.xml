@@ -121,6 +121,7 @@
     <elementScopeProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSResolveScopeProvider"/>
     <LanguageServiceProvider implementation="org.angularjs.service.Angular2LanguageServiceProvider"/>
     <LanguageServiceFilter implementation="org.angularjs.service.Angular2LanguageServiceFilter"/>
+    <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSAnalysisHandlersFactory"/>
   </extensions>
 
   <actions>
