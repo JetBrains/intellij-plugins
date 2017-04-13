@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.arrangement;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -162,7 +163,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     // group property fields with getters/setters
     if (groupPropertyFieldWithGetterSetter(settings)) {
       final JSCodeStyleSettings codeStyleSettings =
-        CodeStyleSettingsManager.getSettings(jsClass.getProject()).getCustomSettings(JSCodeStyleSettings.class);
+        CodeStyleSettingsManager.getSettings(jsClass.getProject()).getCustomSettings(ECMA4CodeStyleSettings.class);
 
       for (Map.Entry<JSVariable, ActionScriptArrangementEntry> mapEntry : varToEntry.entrySet()) {
         final JSVariable jsVar = mapEntry.getKey();
