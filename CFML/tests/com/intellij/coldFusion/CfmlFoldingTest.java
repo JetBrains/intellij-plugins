@@ -36,10 +36,10 @@ public class CfmlFoldingTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testMethods() throws Throwable {
-    boolean oldValue = CodeFoldingSettings.getInstance().isCollapseMethods();
-    CodeFoldingSettings.getInstance().setCollapseMethods(true);
+    boolean oldValue = CodeFoldingSettings.getInstance().COLLAPSE_METHODS;
+    CodeFoldingSettings.getInstance().COLLAPSE_METHODS = true;
     myFixture.testFoldingWithCollapseStatus(getTestDataPath() + "/" + getTestName(false) + ".test.cfml");
-    CodeFoldingSettings.getInstance().setCollapseMethods(oldValue);
+    CodeFoldingSettings.getInstance().COLLAPSE_METHODS = oldValue;
   }
 
   public void testIfSwitchLoop() throws Throwable {

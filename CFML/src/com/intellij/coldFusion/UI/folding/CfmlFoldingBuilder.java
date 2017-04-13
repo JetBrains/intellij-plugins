@@ -161,14 +161,14 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
       ASTNode treePrev = node.getTreePrev();
 
       if (parent.getElementType() == CfmlElementTypes.CFML_FILE && treePrev == null) {
-        return CodeFoldingSettings.getInstance().isCollapseFileHeader();
+        return CodeFoldingSettings.getInstance().COLLAPSE_FILE_HEADER;
       }
       else {
-        return CodeFoldingSettings.getInstance().isCollapseDocComments();
+        return CodeFoldingSettings.getInstance().COLLAPSE_DOC_COMMENTS;
       }
     }
     else if (element instanceof CfmlFunction || node.getElementType() == CfmlElementTypes.FUNCTIONBODY) {
-      return settings.isCollapseMethods();
+      return settings.COLLAPSE_METHODS;
     }/* else if (element instanceof CfmlComponent) {
       return settings.isCollapseClasses();
     }*/
