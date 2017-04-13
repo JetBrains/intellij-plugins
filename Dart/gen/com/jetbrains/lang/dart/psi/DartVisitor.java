@@ -344,10 +344,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitComponent(o);
   }
 
-  public void visitNamedParameterType(@NotNull DartNamedParameterType o) {
-    visitPsiCompositeElement(o);
-  }
-
   public void visitNewExpression(@NotNull DartNewExpression o) {
     visitExpression(o);
     // visitReference(o);

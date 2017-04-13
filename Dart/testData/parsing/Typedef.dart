@@ -64,5 +64,4 @@ Function]);
 // Here Function may be a special word, type and a name identifier, all cases are tested here
 @foo @bar typedef L<T, E> = List<T,E> Function<S,E>(S, {T Function(int, S) factory,
 Function<T>() factory,
-Function factory,
-Function});
+Function factory});

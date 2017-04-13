@@ -263,9 +263,6 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == NAMED_CONSTRUCTOR_DECLARATION) {
       r = namedConstructorDeclaration(b, 0);
     }
-    else if (t == NAMED_PARAMETER_TYPE) {
-      r = namedParameterType(b, 0);
-    }
     else if (t == NEW_EXPRESSION) {
       r = newExpression(b, 0);
     }
@@ -4602,49 +4599,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // functionType <<nonStrictID>> | type <<nonStrictID>> | <<nonStrictID>>
-  public static boolean namedParameterType(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterType")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, NAMED_PARAMETER_TYPE, "<named parameter type>");
-    r = namedParameterType_0(b, l + 1);
-    if (!r) r = namedParameterType_1(b, l + 1);
-    if (!r) r = nonStrictID(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // functionType <<nonStrictID>>
-  private static boolean namedParameterType_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterType_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = functionType(b, l + 1);
-    r = r && nonStrictID(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // type <<nonStrictID>>
-  private static boolean namedParameterType_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterType_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = type(b, l + 1);
-    r = r && nonStrictID(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '{' namedParameterType (',' namedParameterType)* ','? '}'
+  // '{' typedIdentifier (',' typedIdentifier)* ','? '}'
   static boolean namedParameterTypes(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedParameterTypes")) return false;
     if (!nextTokenIs(b, LBRACE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, LBRACE);
-    r = r && namedParameterType(b, l + 1);
+    r = r && typedIdentifier(b, l + 1);
     r = r && namedParameterTypes_2(b, l + 1);
     r = r && namedParameterTypes_3(b, l + 1);
     r = r && consumeToken(b, RBRACE);
@@ -4652,7 +4614,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (',' namedParameterType)*
+  // (',' typedIdentifier)*
   private static boolean namedParameterTypes_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedParameterTypes_2")) return false;
     int c = current_position_(b);
@@ -4664,13 +4626,13 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // ',' namedParameterType
+  // ',' typedIdentifier
   private static boolean namedParameterTypes_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedParameterTypes_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
-    r = r && namedParameterType(b, l + 1);
+    r = r && typedIdentifier(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4825,38 +4787,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // functionType <<nonStrictID>> | type <<nonStrictID>> | functionType | type
+  // typedIdentifier | typeOrFunctionType
   public static boolean normalParameterType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "normalParameterType")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, NORMAL_PARAMETER_TYPE, "<normal parameter type>");
-    r = normalParameterType_0(b, l + 1);
-    if (!r) r = normalParameterType_1(b, l + 1);
-    if (!r) r = functionType(b, l + 1);
-    if (!r) r = type(b, l + 1);
+    r = typedIdentifier(b, l + 1);
+    if (!r) r = typeOrFunctionType(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // functionType <<nonStrictID>>
-  private static boolean normalParameterType_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "normalParameterType_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = functionType(b, l + 1);
-    r = r && nonStrictID(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // type <<nonStrictID>>
-  private static boolean normalParameterType_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "normalParameterType_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = type(b, l + 1);
-    r = r && nonStrictID(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -6541,6 +6479,18 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // functionType | type
+  static boolean typeOrFunctionType(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typeOrFunctionType")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionType(b, l + 1);
+    if (!r) r = type(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // metadata* componentName ('extends' type)?
   public static boolean typeParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeParameter")) return false;
@@ -6674,6 +6624,40 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, VAR);
     if (!r) r = consumeToken(b, VOID);
     if (!r) r = consumeToken(b, LBRACE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // functionType <<nonStrictID>> | type <<nonStrictID>>
+  static boolean typedIdentifier(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typedIdentifier")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = typedIdentifier_0(b, l + 1);
+    if (!r) r = typedIdentifier_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // functionType <<nonStrictID>>
+  private static boolean typedIdentifier_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typedIdentifier_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = functionType(b, l + 1);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // type <<nonStrictID>>
+  private static boolean typedIdentifier_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typedIdentifier_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = type(b, l + 1);
+    r = r && nonStrictID(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

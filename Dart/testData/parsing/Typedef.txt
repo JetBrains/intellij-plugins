@@ -2062,60 +2062,53 @@ Dart File
         PsiElement(,)(',')
         OPTIONAL_PARAMETER_TYPES
           PsiElement({)('{')
-          NAMED_PARAMETER_TYPE
-            FUNCTION_TYPE
-              RETURN_TYPE
+          FUNCTION_TYPE
+            RETURN_TYPE
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('T')
+            ID
+              PsiElement(IDENTIFIER)('Function')
+            PARAMETER_TYPE_LIST
+              PsiElement(()('(')
+              NORMAL_PARAMETER_TYPE
                 TYPE
                   REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('T')
-              ID
-                PsiElement(IDENTIFIER)('Function')
-              PARAMETER_TYPE_LIST
-                PsiElement(()('(')
-                NORMAL_PARAMETER_TYPE
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                PsiElement(,)(',')
-                NORMAL_PARAMETER_TYPE
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('S')
-                PsiElement())(')')
-            ID
-              PsiElement(factory)('factory')
-          PsiElement(,)(',')
-          NAMED_PARAMETER_TYPE
-            FUNCTION_TYPE
-              ID
-                PsiElement(IDENTIFIER)('Function')
-              TYPE_PARAMETERS
-                PsiElement(<)('<')
-                TYPE_PARAMETER
-                  COMPONENT_NAME
+                      PsiElement(IDENTIFIER)('int')
+              PsiElement(,)(',')
+              NORMAL_PARAMETER_TYPE
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('T')
-                PsiElement(>)('>')
-              PARAMETER_TYPE_LIST
-                PsiElement(()('(')
-                PsiElement())(')')
-            ID
-              PsiElement(factory)('factory')
+                      PsiElement(IDENTIFIER)('S')
+              PsiElement())(')')
+          ID
+            PsiElement(factory)('factory')
           PsiElement(,)(',')
-          NAMED_PARAMETER_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Function')
-            ID
-              PsiElement(factory)('factory')
-          PsiElement(,)(',')
-          NAMED_PARAMETER_TYPE
+          FUNCTION_TYPE
             ID
               PsiElement(IDENTIFIER)('Function')
+            TYPE_PARAMETERS
+              PsiElement(<)('<')
+              TYPE_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('T')
+              PsiElement(>)('>')
+            PARAMETER_TYPE_LIST
+              PsiElement(()('(')
+              PsiElement())(')')
+          ID
+            PsiElement(factory)('factory')
+          PsiElement(,)(',')
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Function')
+          ID
+            PsiElement(factory)('factory')
           PsiElement(})('}')
         PsiElement())(')')
     PsiElement(;)(';')

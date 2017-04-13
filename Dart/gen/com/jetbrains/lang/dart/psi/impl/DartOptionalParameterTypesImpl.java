@@ -28,14 +28,20 @@ public class DartOptionalParameterTypesImpl extends DartPsiCompositeElementImpl 
 
   @Override
   @NotNull
-  public List<DartNamedParameterType> getNamedParameterTypeList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNamedParameterType.class);
+  public List<DartFunctionType> getFunctionTypeList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartFunctionType.class);
   }
 
   @Override
   @NotNull
   public List<DartNormalParameterType> getNormalParameterTypeList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNormalParameterType.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartType> getTypeList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartType.class);
   }
 
 }
