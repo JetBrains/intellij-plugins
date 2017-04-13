@@ -88,7 +88,6 @@ public interface DartTokenTypes {
   IElementType MULTIPLICATIVE_OPERATOR = new DartElementType("MULTIPLICATIVE_OPERATOR");
   IElementType NAMED_ARGUMENT = new DartElementType("NAMED_ARGUMENT");
   IElementType NAMED_CONSTRUCTOR_DECLARATION = new DartElementType("NAMED_CONSTRUCTOR_DECLARATION");
-  IElementType NAMED_PARAMETER_TYPE = new DartElementType("NAMED_PARAMETER_TYPE");
   IElementType NEW_EXPRESSION = new DartElementType("NEW_EXPRESSION");
   IElementType NORMAL_FORMAL_PARAMETER = new DartElementType("NORMAL_FORMAL_PARAMETER");
   IElementType NORMAL_PARAMETER_TYPE = new DartElementType("NORMAL_PARAMETER_TYPE");
@@ -510,9 +509,6 @@ public interface DartTokenTypes {
       }
       else if (type == NAMED_CONSTRUCTOR_DECLARATION) {
         return new DartNamedConstructorDeclarationImpl(node);
-      }
-      else if (type == NAMED_PARAMETER_TYPE) {
-        return new DartNamedParameterTypeImpl(node);
       }
       else if (type == NEW_EXPRESSION) {
         return new DartNewExpressionImpl(node);

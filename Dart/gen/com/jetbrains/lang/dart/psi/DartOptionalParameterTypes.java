@@ -8,9 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface DartOptionalParameterTypes extends DartPsiCompositeElement {
 
   @NotNull
-  List<DartNamedParameterType> getNamedParameterTypeList();
+  List<DartFunctionType> getFunctionTypeList();
 
   @NotNull
   List<DartNormalParameterType> getNormalParameterTypeList();
+
+  @NotNull
+  List<DartType> getTypeList();
 
 }

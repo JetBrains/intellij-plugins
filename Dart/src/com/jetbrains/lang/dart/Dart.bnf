@@ -329,13 +329,13 @@ parameterTypeList ::= '(' ')'
 
 private normalParameterTypes ::= normalParameterType (',' normalParameterType)*
 // TODO spec changes the rule for 'type' completely, not only for typedefs
-normalParameterType ::= functionType <<nonStrictID>> | type <<nonStrictID>> | functionType | type
+normalParameterType ::= typedIdentifier | typeOrFunctionType
+private typedIdentifier ::= functionType <<nonStrictID>> | type <<nonStrictID>>
+private typeOrFunctionType ::= functionType | type
 
 optionalParameterTypes ::= optionalPositionalParameterTypes | namedParameterTypes
 private optionalPositionalParameterTypes ::= '[' normalParameterTypes ','? ']'
-private namedParameterTypes ::= '{' namedParameterType (',' namedParameterType)* ','? '}'
-// TODO spec changes the rule for 'type' completely, not only for typedefs
-namedParameterType ::= functionType <<nonStrictID>> | type <<nonStrictID>> | <<nonStrictID>>
+private namedParameterTypes ::= '{' typedIdentifier (',' typedIdentifier)* ','? '}'
 
 factoryConstructorDeclaration ::= metadata* ('external' | 'const')* 'factory' componentName ('.' componentName)? formalParameterList factoryTail?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent" methods = [getComponentName]}
