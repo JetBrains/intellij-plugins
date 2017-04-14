@@ -254,48 +254,31 @@ public class ActionScriptRearranger extends JSRearrangerBase {
     return matchRules;
   }
 
-  @Override
-  public boolean isEnabled(@NotNull ArrangementSettingsToken token, @Nullable ArrangementMatchCondition current) {
-    if (getSupportedTypes().contains(token) ||
-        KEEP.equals(token) ||
-        BY_NAME.equals(token) ||
-        StdArrangementTokens.Regexp.NAME.equals(token)) {
-      return true;
-    }
-    
-    // Assuming that the token is a modifier then.
-    if (current == null) {
-      return getSupportedModifiers().contains(token);
-    }
-
-    ArrangementSettingsToken type = ArrangementUtil.parseType(current);
-    if (type == null) {
-      return true;
-    }
-
+  protected boolean isVisibilityModifierEnabled(@NotNull ArrangementSettingsToken modifier,
+                                                @NotNull ArrangementSettingsToken type,
+                                                @NotNull Set<ArrangementSettingsToken> existingModifiers) {
     if (STATIC_INIT.equals(type)) {
       return false;
     }
     else if (CONST.equals(type)) {
       // const can also be static/not static, but there's no sense in non-static constants
-      return PUBLIC.equals(token) || PROTECTED.equals(token) || PACKAGE_PRIVATE.equals(token) || PRIVATE.equals(token);
+      return PUBLIC.equals(modifier) || PROTECTED.equals(modifier) || PACKAGE_PRIVATE.equals(modifier) || PRIVATE.equals(modifier);
     }
     else if (VAR.equals(type)) {
-      return STATIC.equals(token) || PUBLIC.equals(token) || PROTECTED.equals(token) || PACKAGE_PRIVATE.equals(token)
-             || PRIVATE.equals(token);
+      return STATIC.equals(modifier) || PUBLIC.equals(modifier) || PROTECTED.equals(modifier) || PACKAGE_PRIVATE.equals(modifier)
+             || PRIVATE.equals(modifier);
     }
     else if (CONSTRUCTOR.equals(type)) {
       return false; // constructor can have visibility modifier, but there's no sense in selecting it 'cuz constructor is only one
     }
     else if (METHOD.equals(type) || PROPERTY.equals(type) || EVENT_HANDLER.equals(type)) {
-      Map<ArrangementSettingsToken, Object> tokens = ArrangementUtil.extractTokens(current);
-      if (OVERRIDE.equals(token) && tokens.keySet().contains(STATIC)) {
+      if (OVERRIDE.equals(modifier) && existingModifiers.contains(STATIC)) {
         return false;
       }
-      else if (STATIC.equals(token) && (tokens.keySet().contains(OVERRIDE) || tokens.keySet().contains(FINAL))) {
+      else if (STATIC.equals(modifier) && (existingModifiers.contains(OVERRIDE) || existingModifiers.contains(FINAL))) {
         return false;
       }
-      else if (FINAL.equals(token) && tokens.keySet().contains(STATIC)) {
+      else if (FINAL.equals(modifier) && existingModifiers.contains(STATIC)) {
         return false;
       }
       else {
