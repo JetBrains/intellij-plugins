@@ -1,7 +1,8 @@
-package com.intellij.lang.javascript.highlighting;
+package com.intellij.lang.javascript.colors.page;
 
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.highlighting.ECMAL4Highlighter;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] ATTRS =
-    new AttributesDescriptor[]{
+    {
       new AttributesDescriptor(JSBundle.message("javascript.keyword"), ECMAL4Highlighter.ECMAL4_KEYWORD),
       new AttributesDescriptor(JSBundle.message("javascript.metadata"), ECMAL4Highlighter.ECMAL4_METADATA),
       new AttributesDescriptor(JSBundle.message("javascript.string"), ECMAL4Highlighter.ECMAL4_STRING),
@@ -54,7 +55,7 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(JSBundle.message("javascript.static.member.variable"), ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_VARIABLE)
     };
 
-  private static @NonNls final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
+  @NonNls private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
   static {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("meta", ECMAL4Highlighter.ECMAL4_METADATA);
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("keyword", ECMAL4Highlighter.ECMAL4_KEYWORD);
@@ -88,7 +89,7 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("interface", ECMAL4Highlighter.ECMAL4_INTERFACE);
   }
 
-  private final static String DEMO_TEXT =
+  private static final String DEMO_TEXT =
     "var globalVar : int = 123;\n" +
     "\n" +
     "function foo() : int {return 0;}\n" +
