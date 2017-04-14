@@ -41,10 +41,14 @@ public class Angular2Injector implements MultiHostInjector {
     if (context instanceof JSLiteralExpressionImpl && ((JSLiteralExpressionImpl)context).isQuotedLiteral()) {
       if (injectIntoDirectiveProperty(registrar, context, parent, "template", Angular2HTMLLanguage.INSTANCE)) return;
       if (injectIntoEmbeddedLiteral(registrar, context, parent)) return;
-      if (!(parent instanceof JSArrayLiteralExpression)) return;
-
-      final JSProperty property = ObjectUtils.tryCast(parent.getParent(), JSProperty.class);
-      if (injectIntoDirectiveProperty(registrar, context, property, "styles", CSSLanguage.INSTANCE)) return;
+      if (parent instanceof JSArrayLiteralExpression) {
+        final JSProperty property = ObjectUtils.tryCast(parent.getParent(), JSProperty.class);
+        if (injectIntoDirectiveProperty(registrar, context, property, "styles", CSSLanguage.INSTANCE)) return;
+      }
+      if (parent instanceof JSProperty && parent.getParent() instanceof JSObjectLiteralExpression) {
+        injectIntoDirectiveProperty(registrar, context, parent.getParent().getParent(), "host", AngularJSLanguage.INSTANCE);
+      }
+      return;
     }
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
       final int length = context.getTextLength();

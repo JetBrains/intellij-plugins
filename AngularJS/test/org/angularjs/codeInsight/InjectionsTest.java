@@ -228,6 +228,17 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testHost() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("host.ts", "angular2.js");
+      for (String signature : new String[]{"eve<caret>nt", "bind<caret>ing", "at<caret>tribute"}) {
+        final int offset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
+        final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
+        assertEquals(signature, AngularJSLanguage.INSTANCE, element.getContainingFile().getLanguage());
+      }
+    });
+  }
+
   public void testUnterminated() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.enableInspections(UnterminatedStatementJSInspection.class);
