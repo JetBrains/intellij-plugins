@@ -59,6 +59,7 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   "else"                      { return ELSE_KEYWORD; }
 
   "as"/(\.)                   { return IDENTIFIER; }
+  "then"/([^ ])               { return IDENTIFIER; }
   {IDENT}                     { return IDENTIFIER; }
 
   "+"                         { return PLUS; }
