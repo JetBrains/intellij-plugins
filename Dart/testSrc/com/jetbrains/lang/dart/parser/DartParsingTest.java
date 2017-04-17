@@ -152,7 +152,7 @@ public class DartParsingTest extends ParsingTestCase {
     doTest();
   }
 
-  public void testFunctionTypes() throws Throwable {
+  public void testFunctionType() throws Throwable {
     doTest();
   }
 }
