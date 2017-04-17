@@ -4,10 +4,7 @@ import com.intellij.CommonBundle;
 import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiDirectory;
@@ -46,7 +43,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
 
     Module module = null;
     try {
-      module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
+      module = (Module)event.getDataContext().getData(LangDataKeys.MODULE.getName());
     }
     catch (Throwable ex) {
       // ignore
@@ -58,13 +55,12 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
       return;
     }
 
-    assert module != null;
     final TapestryProjectViewPane pane = TapestryProjectViewPane.getInstance(module.getProject());
     final DefaultMutableTreeNode element = pane != null ? pane.getSelectedNode() : null;
 
     // it's the project view
     if (element == null) {
-      PsiElement eventPsiElement = (PsiElement)event.getDataContext().getData(DataKeys.PSI_ELEMENT.getName());
+      PsiElement eventPsiElement = (PsiElement)event.getDataContext().getData(CommonDataKeys.PSI_ELEMENT.getName());
       final TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
       if (tapestryProject == null) {
         presentation.setEnabled(false);
@@ -127,7 +123,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
 
   @Nullable
   protected String getDefaultElementPath(AnActionEvent event, Module module) {
-    final PsiElement eventPsiElement = (PsiElement)event.getDataContext().getData(DataKeys.PSI_ELEMENT.getName());
+    final PsiElement eventPsiElement = (PsiElement)event.getDataContext().getData(CommonDataKeys.PSI_ELEMENT.getName());
 
     PsiPackage psiPackage = IdeaUtils.getPackage(eventPsiElement);
     String defaultPagePath = "";
@@ -170,7 +166,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
   }
 
   protected static Module getModule(AnActionEvent event) {
-    return (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
+    return (Module)event.getDataContext().getData(LangDataKeys.MODULE.getName());
   }
 
   private static void showError() {
