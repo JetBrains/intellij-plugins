@@ -112,17 +112,17 @@ public class JstdLibraryUtil {
 
   private static class MyLibraryChangeWatcher implements LibraryTable.Listener {
     @Override
-    public void afterLibraryAdded(Library newLibrary) {
+    public void afterLibraryAdded(@NotNull Library newLibrary) {
       libraryChanged();
     }
 
     @Override
-    public void afterLibraryRenamed(Library library) {
+    public void afterLibraryRenamed(@NotNull Library library) {
       libraryChanged();
     }
 
     @Override
-    public void afterLibraryRemoved(Library library) {
+    public void afterLibraryRemoved(@NotNull Library library) {
       libraryChanged();
     }
   }
