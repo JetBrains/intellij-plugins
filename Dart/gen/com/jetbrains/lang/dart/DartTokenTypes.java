@@ -55,7 +55,6 @@ public interface DartTokenTypes {
   IElementType FUNCTION_EXPRESSION = new DartElementType("FUNCTION_EXPRESSION");
   IElementType FUNCTION_EXPRESSION_BODY = new DartElementType("FUNCTION_EXPRESSION_BODY");
   IElementType FUNCTION_FORMAL_PARAMETER = new DartElementType("FUNCTION_FORMAL_PARAMETER");
-  IElementType FUNCTION_TYPE = new DartElementType("FUNCTION_TYPE");
   IElementType FUNCTION_TYPE_ALIAS = new DartElementType("FUNCTION_TYPE_ALIAS");
   IElementType GETTER_DECLARATION = new DartElementType("GETTER_DECLARATION");
   IElementType HIDE_COMBINATOR = new DartElementType("HIDE_COMBINATOR");
@@ -113,6 +112,7 @@ public interface DartTokenTypes {
   IElementType SHORT_TEMPLATE_ENTRY = new DartElementType("SHORT_TEMPLATE_ENTRY");
   IElementType SHOW_COMBINATOR = new DartElementType("SHOW_COMBINATOR");
   IElementType SIMPLE_FORMAL_PARAMETER = new DartElementType("SIMPLE_FORMAL_PARAMETER");
+  IElementType SIMPLE_TYPE = new DartElementType("SIMPLE_TYPE");
   IElementType STATEMENTS = new DartElementType("STATEMENTS");
   IElementType STRING_LITERAL_EXPRESSION = new DartElementType("STRING_LITERAL_EXPRESSION");
   IElementType SUFFIX_EXPRESSION = new DartElementType("SUFFIX_EXPRESSION");
@@ -127,10 +127,12 @@ public interface DartTokenTypes {
   IElementType THROW_EXPRESSION = new DartElementType("THROW_EXPRESSION");
   IElementType TRY_STATEMENT = new DartElementType("TRY_STATEMENT");
   IElementType TYPE = new DartElementType("TYPE");
+  IElementType TYPED_FUNCTION_TYPE = new DartElementType("TYPED_FUNCTION_TYPE");
   IElementType TYPE_ARGUMENTS = new DartElementType("TYPE_ARGUMENTS");
   IElementType TYPE_LIST = new DartElementType("TYPE_LIST");
   IElementType TYPE_PARAMETER = new DartElementType("TYPE_PARAMETER");
   IElementType TYPE_PARAMETERS = new DartElementType("TYPE_PARAMETERS");
+  IElementType UNTYPED_FUNCTION_TYPE = new DartElementType("UNTYPED_FUNCTION_TYPE");
   IElementType URI_ELEMENT = new DartElementType("URI_ELEMENT");
   IElementType USER_DEFINABLE_OPERATOR = new DartElementType("USER_DEFINABLE_OPERATOR");
   IElementType VALUE_EXPRESSION = new DartElementType("VALUE_EXPRESSION");
@@ -138,6 +140,7 @@ public interface DartTokenTypes {
   IElementType VAR_DECLARATION_LIST = new DartElementType("VAR_DECLARATION_LIST");
   IElementType VAR_DECLARATION_LIST_PART = new DartElementType("VAR_DECLARATION_LIST_PART");
   IElementType VAR_INIT = new DartElementType("VAR_INIT");
+  IElementType VOID_TYPE_FUNCTION_TYPE = new DartElementType("VOID_TYPE_FUNCTION_TYPE");
   IElementType WHILE_STATEMENT = new DartElementType("WHILE_STATEMENT");
   IElementType YIELD_EACH_STATEMENT = new DartElementType("YIELD_EACH_STATEMENT");
   IElementType YIELD_STATEMENT = new DartElementType("YIELD_STATEMENT");
@@ -411,9 +414,6 @@ public interface DartTokenTypes {
       else if (type == FUNCTION_FORMAL_PARAMETER) {
         return new DartFunctionFormalParameterImpl(node);
       }
-      else if (type == FUNCTION_TYPE) {
-        return new DartFunctionTypeImpl(node);
-      }
       else if (type == FUNCTION_TYPE_ALIAS) {
         return new DartFunctionTypeAliasImpl(node);
       }
@@ -585,6 +585,9 @@ public interface DartTokenTypes {
       else if (type == SIMPLE_FORMAL_PARAMETER) {
         return new DartSimpleFormalParameterImpl(node);
       }
+      else if (type == SIMPLE_TYPE) {
+        return new DartSimpleTypeImpl(node);
+      }
       else if (type == STATEMENTS) {
         return new DartStatementsImpl(node);
       }
@@ -627,6 +630,9 @@ public interface DartTokenTypes {
       else if (type == TYPE) {
         return new DartTypeImpl(node);
       }
+      else if (type == TYPED_FUNCTION_TYPE) {
+        return new DartTypedFunctionTypeImpl(node);
+      }
       else if (type == TYPE_ARGUMENTS) {
         return new DartTypeArgumentsImpl(node);
       }
@@ -638,6 +644,9 @@ public interface DartTokenTypes {
       }
       else if (type == TYPE_PARAMETERS) {
         return new DartTypeParametersImpl(node);
+      }
+      else if (type == UNTYPED_FUNCTION_TYPE) {
+        return new DartUntypedFunctionTypeImpl(node);
       }
       else if (type == URI_ELEMENT) {
         return new DartUriElementImpl(node);
@@ -659,6 +668,9 @@ public interface DartTokenTypes {
       }
       else if (type == VAR_INIT) {
         return new DartVarInitImpl(node);
+      }
+      else if (type == VOID_TYPE_FUNCTION_TYPE) {
+        return new DartVoidTypeFunctionTypeImpl(node);
       }
       else if (type == WHILE_STATEMENT) {
         return new DartWhileStatementImpl(node);

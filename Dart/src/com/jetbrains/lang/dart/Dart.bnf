@@ -294,7 +294,7 @@ private functionNative ::= 'native' (stringLiteralExpression ';' | ';' | stringL
 
 methodDeclaration ::= metadata* ('external' | 'static' | 'const')* methodDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartMethodDeclarationImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-private methodDeclarationPrivate ::= returnType <<methodNameWrapper>> typeParameters? formalParameterList | <<methodNameWrapper>> typeParameters? formalParameterList // todo remove, use functionSignature as in spec
+private methodDeclarationPrivate ::= returnType <<methodNameWrapper>> typeParameters? formalParameterList | !untypedFunctionType <<methodNameWrapper>> typeParameters? formalParameterList // todo remove, use functionSignature as in spec
 
 namedConstructorDeclaration ::= metadata* ('external' | 'const')* componentName '.' componentName formalParameterList initializers? (';' | functionBodyOrNative | redirection)?
 {pin=6 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent" methods = [getComponentName]}
@@ -315,23 +315,19 @@ private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':
                                                       'native' | 'operator' | 'part' | 'set' | 'static' | 'sync' | 'typedef' | 'var' | 'void' | '{' |
                                                       '}' )
 
-functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
-                    | metadata* 'typedef' componentName typeParameters? '=' functionType ';'
+functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'?
+                    | metadata* 'typedef' componentName typeParameters? '=' functionTypeWrapper ';'?
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionPrefix ::= returnType componentName | componentName
 
-// TODO may be introduce a dedicated token for 'Function' like we have for other special identifiers that are not keywords?
-functionType ::= <<functionId>> typeParameters? parameterTypeList | returnType <<functionId>> typeParameters? parameterTypeList
 parameterTypeList ::= '(' ')'
                     | '(' normalParameterTypes ','? ')'
                     | '(' normalParameterTypes ',' optionalParameterTypes ')'
                     | '(' optionalParameterTypes ')'
 
 private normalParameterTypes ::= normalParameterType (',' normalParameterType)*
-// TODO spec changes the rule for 'type' completely, not only for typedefs
-normalParameterType ::= typedIdentifier | typeOrFunctionType
-private typedIdentifier ::= functionType <<nonStrictID>> | type <<nonStrictID>>
-private typeOrFunctionType ::= functionType | type
+normalParameterType ::= typedIdentifier | type
+private typedIdentifier ::= type <<nonStrictID>>
 
 optionalParameterTypes ::= optionalPositionalParameterTypes | namedParameterTypes
 private optionalPositionalParameterTypes ::= '[' normalParameterTypes ','? ']'
@@ -383,16 +379,16 @@ normalFormalParameter ::= functionFormalParameter
 }
 private incorrectNormalFormalParameter ::= '<' + <<nonStrictID>> + '>' <<nonStrictID>> // because Analysis Server gives syntactically incorrect quick fixes, e.g. "void foo(<bottom> arg0) {\n}"
 
-functionFormalParameter ::= metadata*                         componentName typeParameters? formalParameterList |
-                            metadata* 'covariant'? returnType componentName typeParameters? formalParameterList |
-                            metadata* 'covariant'             componentName typeParameters? formalParameterList
+functionFormalParameter ::= !functionTypeWrapper (metadata*                         componentName typeParameters? formalParameterList |
+                                                  metadata* 'covariant'? returnType componentName typeParameters? formalParameterList |
+                                                  metadata* 'covariant'             componentName typeParameters? formalParameterList)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 simpleFormalParameter ::= declaredIdentifier | metadata* componentName | metadata* 'covariant' componentName
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private declaredIdentifier ::= metadata* finalConstVarOrTypeAndComponentName;
 
-returnType ::= 'void' | type
+returnType ::= 'void' !untypedFunctionType | type
 
 private finalConstVarVoidOrType ::= 'final' type? | 'const' type? | 'var' | 'void' | type // Be careful on using it! It may erroneously consume 'type?'. See finalConstVarOrTypeAndComponentName
 private finalConstVarOrTypeAndComponentName ::= 'covariant'? 'final' type componentName |
@@ -409,12 +405,18 @@ componentName ::= << nonStrictID >>
 // see nonStrictID
 id ::= IDENTIFIER
 
-type ::= simpleQualifiedReferenceExpression typeArguments? {
-  pin=1
+type ::= functionTypeWrapper | simpleType  {
   methods=[
-    resolveReference
+    resolveReference getReferenceExpression getTypeArguments
   ]
 }
+
+untypedFunctionType ::= <<functionId>> typeParameters? parameterTypeList
+private functionTypeWrapper ::= (voidTypeFunctionType | untypedFunctionType | simpleType) typedFunctionType+ | untypedFunctionType
+left typedFunctionType ::= <<functionId>> typeParameters? parameterTypeList
+
+voidTypeFunctionType ::= 'void'
+simpleType ::= simpleQualifiedReferenceExpression typeArguments?
 
 typeArguments ::= '<' typeList '>'
 typeList ::= type? (',' type)*

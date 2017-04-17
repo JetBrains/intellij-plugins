@@ -283,16 +283,28 @@ public class DartDocUtil {
     appendFunctionSignature(builder, component, dartClass.getName());
   }
 
-  private static void appendVariableSignature(final StringBuilder builder, final DartComponent component, final DartType type) {
+  private static void appendVariableSignature(@NotNull final StringBuilder builder,
+                                              @NotNull final DartComponent component,
+                                              @Nullable final DartType type) {
     if (type == null) {
       builder.append("var ");
     }
     else {
-      builder.append(type.getReferenceExpression().getText());
-      appendTypeArguments(builder, type);
+      appendDartType(builder, type);
       builder.append(" ");
     }
     builder.append("<b>").append(component.getName()).append("</b>");
+  }
+
+  private static void appendDartType(@NotNull final StringBuilder builder, @NotNull final DartType type) {
+    final DartReferenceExpression expression = type.getReferenceExpression();
+    if (expression != null) {
+      builder.append(StringUtil.escapeXml(expression.getText()));
+      appendTypeArguments(builder, type);
+    }
+    else {
+      builder.append("Function"); // functionType
+    }
   }
 
   private static void appendTypeArguments(final @NotNull StringBuilder builder, final @NotNull DartType type) {
@@ -302,14 +314,7 @@ public class DartDocUtil {
       final List<DartType> children = typeList.getTypeList();
       if (!children.isEmpty()) {
         builder.append("&lt;");
-        for (Iterator<DartType> iter = children.iterator(); iter.hasNext(); ) {
-          DartType child = iter.next();
-          builder.append(child.getFirstChild().getText());
-          appendTypeArguments(builder, child);
-          if (iter.hasNext()) {
-            builder.append(", ");
-          }
-        }
+        appendDartTypeList(builder, children);
         builder.append("&gt;");
       }
     }
@@ -348,7 +353,7 @@ public class DartDocUtil {
 
   private static void appendDartTypeList(final StringBuilder builder, final List<DartType> dartTypes) {
     for (Iterator<DartType> iter = dartTypes.iterator(); iter.hasNext(); ) {
-      builder.append(StringUtil.escapeXml(iter.next().getText()));
+      appendDartType(builder, iter.next());
       if (iter.hasNext()) {
         builder.append(", ");
       }

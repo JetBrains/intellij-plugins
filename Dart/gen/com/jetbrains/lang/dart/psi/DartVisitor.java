@@ -204,10 +204,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitComponent(o);
   }
 
-  public void visitFunctionType(@NotNull DartFunctionType o) {
-    visitPsiCompositeElement(o);
-  }
-
   public void visitFunctionTypeAlias(@NotNull DartFunctionTypeAlias o) {
     visitComponent(o);
   }
@@ -450,6 +446,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitComponent(o);
   }
 
+  public void visitSimpleType(@NotNull DartSimpleType o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitStatements(@NotNull DartStatements o) {
     visitExecutionScope(o);
   }
@@ -526,6 +526,14 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitTypedFunctionType(@NotNull DartTypedFunctionType o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitUntypedFunctionType(@NotNull DartUntypedFunctionType o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitUriElement(@NotNull DartUriElement o) {
     visitPsiCompositeElement(o);
   }
@@ -551,6 +559,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitVarInit(@NotNull DartVarInit o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitVoidTypeFunctionType(@NotNull DartVoidTypeFunctionType o) {
     visitPsiCompositeElement(o);
   }
 

@@ -14,9 +14,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -40,9 +41,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -71,9 +73,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -102,9 +105,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -128,9 +132,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -154,9 +159,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -182,9 +188,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -210,9 +217,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegEx')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegEx')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -236,9 +244,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegEx')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegEx')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -308,9 +317,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST
@@ -336,9 +346,10 @@ Dart File
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('RegExp')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('RegExp')
         ARGUMENTS
           PsiElement(()('(')
           ARGUMENT_LIST

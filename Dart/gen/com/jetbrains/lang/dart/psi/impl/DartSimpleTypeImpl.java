@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartFunctionTypeImpl extends DartPsiCompositeElementImpl implements DartFunctionType {
+public class DartSimpleTypeImpl extends DartPsiCompositeElementImpl implements DartSimpleType {
 
-  public DartFunctionTypeImpl(ASTNode node) {
+  public DartSimpleTypeImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitFunctionType(this);
+    visitor.visitSimpleType(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,20 +28,14 @@ public class DartFunctionTypeImpl extends DartPsiCompositeElementImpl implements
 
   @Override
   @NotNull
-  public DartParameterTypeList getParameterTypeList() {
-    return findNotNullChildByClass(DartParameterTypeList.class);
+  public DartReferenceExpression getReferenceExpression() {
+    return findNotNullChildByClass(DartReferenceExpression.class);
   }
 
   @Override
   @Nullable
-  public DartReturnType getReturnType() {
-    return findChildByClass(DartReturnType.class);
-  }
-
-  @Override
-  @Nullable
-  public DartTypeParameters getTypeParameters() {
-    return findChildByClass(DartTypeParameters.class);
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
 }

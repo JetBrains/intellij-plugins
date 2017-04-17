@@ -767,9 +767,10 @@ Dart File
                         PsiElement(<)('<')
                         TYPE_LIST
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('int')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('int')
                         PsiElement(>)('>')
                       PsiElement([)('[')
                       EXPRESSION_LIST
@@ -793,9 +794,10 @@ Dart File
                         PsiElement(<)('<')
                         TYPE_LIST
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('int')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('int')
                         PsiElement(>)('>')
                       PsiElement([)('[')
                       EXPRESSION_LIST
@@ -899,9 +901,10 @@ Dart File
                           PsiElement(<)('<')
                           TYPE_LIST
                             TYPE
-                              REFERENCE_EXPRESSION
-                                ID
-                                  PsiElement(IDENTIFIER)('String')
+                              SIMPLE_TYPE
+                                REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('String')
                           PsiElement(>)('>')
                         PsiElement([)('[')
                         PsiElement(])(']')
@@ -914,9 +917,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('String')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('String')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('toString')
@@ -932,9 +936,10 @@ Dart File
                   PsiElement(<)('<')
                   TYPE_LIST
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('String')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('String')
                   PsiElement(>)('>')
                 PsiElement([)('[')
                 EXPRESSION_LIST
@@ -1205,14 +1210,16 @@ Dart File
                         PsiElement(<)('<')
                         TYPE_LIST
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('String')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('String')
                           PsiElement(,)(',')
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('int')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('int')
                         PsiElement(>)('>')
                       PsiElement({)('{')
                       MAP_LITERAL_ENTRY
@@ -1247,14 +1254,16 @@ Dart File
                         PsiElement(<)('<')
                         TYPE_LIST
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('String')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('String')
                           PsiElement(,)(',')
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('int')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('int')
                         PsiElement(>)('>')
                       PsiElement({)('{')
                       MAP_LITERAL_ENTRY
@@ -1367,9 +1376,10 @@ Dart File
                             NORMAL_FORMAL_PARAMETER
                               SIMPLE_FORMAL_PARAMETER
                                 TYPE
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('String')
+                                  SIMPLE_TYPE
+                                    REFERENCE_EXPRESSION
+                                      ID
+                                        PsiElement(IDENTIFIER)('String')
                                 COMPONENT_NAME
                                   ID
                                     PsiElement(IDENTIFIER)('b')
@@ -1415,9 +1425,10 @@ Dart File
                             NORMAL_FORMAL_PARAMETER
                               SIMPLE_FORMAL_PARAMETER
                                 TYPE
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('int')
+                                  SIMPLE_TYPE
+                                    REFERENCE_EXPRESSION
+                                      ID
+                                        PsiElement(IDENTIFIER)('int')
                                 COMPONENT_NAME
                                   ID
                                     PsiElement(IDENTIFIER)('e')

@@ -5,19 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartFunctionTypeAlias extends DartComponent {
+public interface DartTypedFunctionType extends DartPsiCompositeElement {
 
   @NotNull
-  DartComponentName getComponentName();
+  DartParameterTypeList getParameterTypeList();
 
   @Nullable
-  DartFormalParameterList getFormalParameterList();
-
-  @NotNull
-  List<DartMetadata> getMetadataList();
-
-  @Nullable
-  DartReturnType getReturnType();
+  DartSimpleType getSimpleType();
 
   @Nullable
   DartTypeParameters getTypeParameters();
@@ -27,5 +21,8 @@ public interface DartFunctionTypeAlias extends DartComponent {
 
   @Nullable
   DartUntypedFunctionType getUntypedFunctionType();
+
+  @Nullable
+  DartVoidTypeFunctionType getVoidTypeFunctionType();
 
 }

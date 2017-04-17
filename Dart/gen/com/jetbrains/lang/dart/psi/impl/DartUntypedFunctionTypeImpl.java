@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartNormalParameterTypeImpl extends DartPsiCompositeElementImpl implements DartNormalParameterType {
+public class DartUntypedFunctionTypeImpl extends DartPsiCompositeElementImpl implements DartUntypedFunctionType {
 
-  public DartNormalParameterTypeImpl(ASTNode node) {
+  public DartUntypedFunctionTypeImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitNormalParameterType(this);
+    visitor.visitUntypedFunctionType(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,8 +28,14 @@ public class DartNormalParameterTypeImpl extends DartPsiCompositeElementImpl imp
 
   @Override
   @NotNull
-  public DartType getType() {
-    return findNotNullChildByClass(DartType.class);
+  public DartParameterTypeList getParameterTypeList() {
+    return findNotNullChildByClass(DartParameterTypeList.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
   }
 
 }

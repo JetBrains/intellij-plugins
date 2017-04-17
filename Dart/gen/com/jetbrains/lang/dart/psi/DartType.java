@@ -7,13 +7,22 @@ import com.intellij.psi.PsiElement;
 
 public interface DartType extends DartPsiCompositeElement {
 
-  @NotNull
+  @Nullable
+  DartSimpleType getSimpleType();
+
+  @Nullable
+  DartTypedFunctionType getTypedFunctionType();
+
+  @Nullable
+  DartUntypedFunctionType getUntypedFunctionType();
+
+  @Nullable
+  PsiElement resolveReference();
+
+  @Nullable
   DartReferenceExpression getReferenceExpression();
 
   @Nullable
   DartTypeArguments getTypeArguments();
-
-  @Nullable
-  PsiElement resolveReference();
 
 }

@@ -39,12 +39,6 @@ public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl impleme
   }
 
   @Override
-  @Nullable
-  public DartFunctionType getFunctionType() {
-    return findChildByClass(DartFunctionType.class);
-  }
-
-  @Override
   @NotNull
   public List<DartMetadata> getMetadataList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
@@ -60,6 +54,18 @@ public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl impleme
   @Nullable
   public DartTypeParameters getTypeParameters() {
     return findChildByClass(DartTypeParameters.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypedFunctionType getTypedFunctionType() {
+    return findChildByClass(DartTypedFunctionType.class);
+  }
+
+  @Override
+  @Nullable
+  public DartUntypedFunctionType getUntypedFunctionType() {
+    return findChildByClass(DartUntypedFunctionType.class);
   }
 
 }
