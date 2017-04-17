@@ -89,7 +89,7 @@ public class ConsoleUtil {
 
   static Color getColor(String userName) {
     int a = userName.hashCode() * userName.length();
-    int idx = Math.abs(a*a) % OUR_COLORS.length;
+    int idx = Math.abs((a * a) % OUR_COLORS.length);
     return OUR_COLORS[idx];
   }
 
