@@ -395,7 +395,7 @@ ASTWrapperPsiElement(FILE)
             PsiElement(JS:LPAR)('(')
             PsiElement(JS:RPAR)(')')
         PsiElement(JS:DOT)('.')
-        PsiElement(JS:IDENTIFIER)('then')
+        PsiElement(THEN)('then')
       JSArgumentList
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')

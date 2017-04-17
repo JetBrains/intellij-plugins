@@ -76,12 +76,12 @@ class _AngularJSLexer implements FlexLexer {
     "\2\5\1\43\1\44\1\45\1\46\1\47\1\50\1\51"+
     "\1\52\1\53\1\54\1\55\1\0\1\3\6\5\1\56"+
     "\1\57\1\5\1\60\1\61\1\62\1\63\1\64\1\5"+
-    "\1\65\1\5\1\66\1\5\1\67\1\63\1\5\2\70"+
-    "\1\5\1\71\1\63\1\0\2\5\1\0\1\72\1\5"+
-    "\1\72\1\5\1\73";
+    "\1\65\1\5\1\66\1\5\1\67\1\63\2\5\1\70"+
+    "\1\63\1\0\2\5\1\0\1\71\1\5\1\71\1\5"+
+    "\1\72";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[106];
+    int [] result = new int[104];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -116,13 +116,12 @@ class _AngularJSLexer implements FlexLexer {
     "\0\u0774\0\u0173\0\u0173\0\u07a9\0\u07de\0\152\0\152\0\152"+
     "\0\152\0\152\0\152\0\152\0\u0813\0\u0848\0\u087d\0\u08b2"+
     "\0\u08e7\0\u091c\0\u0951\0\u0986\0\152\0\u0173\0\u09bb\0\152"+
-    "\0\152\0\152\0\u09f0\0\u0173\0\u0a25\0\u0a5a\0\u0a8f\0\u0173"+
-    "\0\u0ac4\0\u0173\0\u0af9\0\u0b2e\0\152\0\u0173\0\u0b63\0\u0173"+
-    "\0\u0b98\0\u0bcd\0\u0c02\0\u0c37\0\u0c6c\0\u0173\0\u0ca1\0\152"+
-    "\0\u0cd6\0\u0173";
+    "\0\152\0\152\0\u09f0\0\u0173\0\u0a25\0\u0173\0\u0a5a\0\u0173"+
+    "\0\u0a8f\0\u0173\0\u0ac4\0\u0af9\0\u0b2e\0\u0173\0\u0b63\0\u0b98"+
+    "\0\u0bcd\0\u0c02\0\u0c37\0\u0173\0\u0c6c\0\152\0\u0ca1\0\u0173";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[106];
+    int [] result = new int[104];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -209,30 +208,29 @@ class _AngularJSLexer implements FlexLexer {
     "\26\0\1\10\4\0\1\133\1\0\1\133\7\0\3\133"+
     "\3\0\1\133\2\0\1\133\2\0\1\133\1\0\1\133"+
     "\27\0\1\133\4\0\1\10\1\0\1\10\1\0\1\10"+
-    "\2\0\15\10\1\134\1\0\4\10\26\0\1\10\4\135"+
-    "\1\136\1\135\1\136\1\135\1\136\2\135\16\136\1\0"+
-    "\4\136\26\135\1\136\4\0\1\10\1\0\1\10\1\0"+
-    "\1\10\2\0\4\10\1\137\11\10\1\0\4\10\26\0"+
+    "\2\0\15\10\1\134\1\0\4\10\26\0\1\10\4\0"+
+    "\1\10\1\0\1\10\1\0\1\10\2\0\4\10\1\135"+
+    "\11\10\1\0\4\10\26\0\1\10\4\0\1\10\1\0"+
+    "\1\10\1\0\1\10\2\0\3\10\1\136\12\10\1\0"+
+    "\4\10\26\0\1\10\4\0\1\137\1\0\1\137\7\0"+
+    "\3\137\3\0\1\137\2\0\1\137\2\0\1\137\1\0"+
+    "\1\137\27\0\1\137\4\0\1\10\1\0\1\10\1\0"+
+    "\1\10\2\0\16\10\1\140\2\10\1\141\1\10\26\0"+
     "\1\10\4\0\1\10\1\0\1\10\1\0\1\10\2\0"+
-    "\3\10\1\140\12\10\1\0\4\10\26\0\1\10\4\0"+
-    "\1\141\1\0\1\141\7\0\3\141\3\0\1\141\2\0"+
-    "\1\141\2\0\1\141\1\0\1\141\27\0\1\141\4\0"+
-    "\1\10\1\0\1\10\1\0\1\10\2\0\16\10\1\142"+
-    "\2\10\1\143\1\10\26\0\1\10\4\0\1\10\1\0"+
-    "\1\10\1\0\1\10\2\0\12\10\1\144\3\10\1\0"+
-    "\4\10\26\0\1\10\4\0\1\104\1\0\1\104\7\0"+
-    "\3\104\3\0\1\104\2\0\1\104\2\0\1\104\1\0"+
-    "\1\104\27\0\1\104\32\0\1\145\36\0\1\10\1\0"+
-    "\1\10\1\0\1\10\2\0\16\10\1\0\1\10\1\146"+
-    "\2\10\26\0\1\10\4\0\1\10\1\0\1\10\1\0"+
-    "\1\10\2\0\10\10\1\147\5\10\1\0\4\10\26\0"+
-    "\1\10\33\0\1\150\35\0\1\10\1\0\1\10\1\0"+
-    "\1\10\2\0\3\10\1\151\12\10\1\0\4\10\26\0"+
-    "\1\10\4\0\1\10\1\0\1\10\1\0\1\10\2\0"+
-    "\11\10\1\152\4\10\1\0\4\10\26\0\1\10";
+    "\12\10\1\142\3\10\1\0\4\10\26\0\1\10\4\0"+
+    "\1\104\1\0\1\104\7\0\3\104\3\0\1\104\2\0"+
+    "\1\104\2\0\1\104\1\0\1\104\27\0\1\104\32\0"+
+    "\1\143\36\0\1\10\1\0\1\10\1\0\1\10\2\0"+
+    "\16\10\1\0\1\10\1\144\2\10\26\0\1\10\4\0"+
+    "\1\10\1\0\1\10\1\0\1\10\2\0\10\10\1\145"+
+    "\5\10\1\0\4\10\26\0\1\10\33\0\1\146\35\0"+
+    "\1\10\1\0\1\10\1\0\1\10\2\0\3\10\1\147"+
+    "\12\10\1\0\4\10\26\0\1\10\4\0\1\10\1\0"+
+    "\1\10\1\0\1\10\2\0\11\10\1\150\4\10\1\0"+
+    "\4\10\26\0\1\10";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[3339];
+    int [] result = new int[3286];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -272,11 +270,11 @@ class _AngularJSLexer implements FlexLexer {
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\2\0\1\11\5\1\3\11\11\1\5\11\6\1\6\11"+
     "\1\1\2\11\3\1\3\11\1\0\16\1\7\11\1\0"+
-    "\7\1\1\11\2\1\3\11\12\1\1\11\4\1\1\0"+
-    "\2\1\1\0\2\1\1\11\2\1";
+    "\7\1\1\11\2\1\3\11\15\1\1\0\2\1\1\0"+
+    "\2\1\1\11\2\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[106];
+    int [] result = new int[104];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -582,245 +580,238 @@ class _AngularJSLexer implements FlexLexer {
           case 1: 
             { return BAD_CHARACTER;
             }
-          case 60: break;
+          case 59: break;
           case 2: 
             { return WHITE_SPACE;
             }
-          case 61: break;
+          case 60: break;
           case 3: 
             { return NUMERIC_LITERAL;
             }
-          case 62: break;
+          case 61: break;
           case 4: 
             { return DOT;
             }
-          case 63: break;
+          case 62: break;
           case 5: 
             { return IDENTIFIER;
             }
-          case 64: break;
+          case 63: break;
           case 6: 
             { return MINUS;
             }
-          case 65: break;
+          case 64: break;
           case 7: 
             { yybegin(YYSTRING); quote = '\''; return STRING_LITERAL;
             }
-          case 66: break;
+          case 65: break;
           case 8: 
             { yybegin(YYSTRING); quote = '"'; return STRING_LITERAL;
             }
-          case 67: break;
+          case 66: break;
           case 9: 
             { return PLUS;
             }
-          case 68: break;
+          case 67: break;
           case 10: 
             { return MULT;
             }
-          case 69: break;
+          case 68: break;
           case 11: 
             { return DIV;
             }
-          case 70: break;
+          case 69: break;
           case 12: 
             { return PERC;
             }
-          case 71: break;
+          case 70: break;
           case 13: 
             { return XOR;
             }
-          case 72: break;
+          case 71: break;
           case 14: 
             { return EQ;
             }
-          case 73: break;
+          case 72: break;
           case 15: 
             { return EXCL;
             }
-          case 74: break;
+          case 73: break;
           case 16: 
             { return LT;
             }
-          case 75: break;
+          case 74: break;
           case 17: 
             { return GT;
             }
-          case 76: break;
+          case 75: break;
           case 18: 
             { return AND;
             }
-          case 77: break;
+          case 76: break;
           case 19: 
             { return OR;
             }
-          case 78: break;
+          case 77: break;
           case 20: 
             { return LPAR;
             }
-          case 79: break;
+          case 78: break;
           case 21: 
             { return RPAR;
             }
-          case 80: break;
+          case 79: break;
           case 22: 
             { return LBRACE;
             }
-          case 81: break;
+          case 80: break;
           case 23: 
             { return RBRACE;
             }
-          case 82: break;
+          case 81: break;
           case 24: 
             { return LBRACKET;
             }
-          case 83: break;
+          case 82: break;
           case 25: 
             { return RBRACKET;
             }
-          case 84: break;
+          case 83: break;
           case 26: 
             { return QUEST;
             }
-          case 85: break;
+          case 84: break;
           case 27: 
             { return COMMA;
             }
-          case 86: break;
+          case 85: break;
           case 28: 
             { return SEMICOLON;
             }
-          case 87: break;
+          case 86: break;
           case 29: 
             { return COLON;
             }
-          case 88: break;
+          case 87: break;
           case 30: 
             { return STRING_LITERAL;
             }
-          case 89: break;
+          case 88: break;
           case 31: 
             { yypushback(yytext().length()); yybegin(YYINITIAL);
             }
-          case 90: break;
+          case 89: break;
           case 32: 
             { if (quote == '\'') yybegin(YYINITIAL); return STRING_LITERAL;
             }
-          case 91: break;
+          case 90: break;
           case 33: 
             { if (quote == '"') yybegin(YYINITIAL); return STRING_LITERAL;
             }
-          case 92: break;
+          case 91: break;
           case 34: 
             { return AS_KEYWORD;
             }
-          case 93: break;
+          case 92: break;
           case 35: 
             { return IN_KEYWORD;
             }
-          case 94: break;
+          case 93: break;
           case 36: 
             { return OF_KEYWORD;
             }
-          case 95: break;
+          case 94: break;
           case 37: 
             { return EQEQ;
             }
-          case 96: break;
+          case 95: break;
           case 38: 
             { return NE;
             }
-          case 97: break;
+          case 96: break;
           case 39: 
             { return LE;
             }
-          case 98: break;
+          case 97: break;
           case 40: 
             { return GE;
             }
-          case 99: break;
+          case 98: break;
           case 41: 
             { return ANDAND;
             }
-          case 100: break;
+          case 99: break;
           case 42: 
             { return OROR;
             }
-          case 101: break;
+          case 100: break;
           case 43: 
             { return ELVIS;
             }
-          case 102: break;
+          case 101: break;
           case 44: 
             { return ONE_TIME_BINDING;
             }
-          case 103: break;
+          case 102: break;
           case 45: 
             { return ESCAPE_SEQUENCE;
             }
-          case 104: break;
+          case 103: break;
           case 46: 
             // lookahead expression with fixed base length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL/*, zzStartRead, zzEndRead - zzStartRead*/, zzStartRead, 2);
             { return IDENTIFIER;
             }
-          case 105: break;
+          case 104: break;
           case 47: 
             { return LET_KEYWORD;
             }
-          case 106: break;
+          case 105: break;
           case 48: 
             { return EQEQEQ;
             }
-          case 107: break;
+          case 106: break;
           case 49: 
             { return NEQEQ;
             }
-          case 108: break;
+          case 107: break;
           case 50: 
             { yypushback(1); return INVALID_ESCAPE_SEQUENCE;
             }
-          case 109: break;
+          case 108: break;
           case 51: 
             { return INVALID_ESCAPE_SEQUENCE;
             }
-          case 110: break;
+          case 109: break;
           case 52: 
             { return TRUE_KEYWORD;
             }
-          case 111: break;
+          case 110: break;
           case 53: 
             { return THEN;
             }
-          case 112: break;
+          case 111: break;
           case 54: 
             { return ELSE_KEYWORD;
             }
-          case 113: break;
+          case 112: break;
           case 55: 
             { return NULL_KEYWORD;
             }
-          case 114: break;
+          case 113: break;
           case 56: 
-            // lookahead expression with fixed base length
-            zzMarkedPos = Character.offsetByCodePoints
-                (zzBufferL/*, zzStartRead, zzEndRead - zzStartRead*/, zzStartRead, 4);
-            { return IDENTIFIER;
-            }
-          case 115: break;
-          case 57: 
             { return FALSE_KEYWORD;
             }
-          case 116: break;
-          case 58: 
+          case 114: break;
+          case 57: 
             { return TRACK_BY_KEYWORD;
             }
-          case 117: break;
-          case 59: 
+          case 115: break;
+          case 58: 
             { return UNDEFINED_KEYWORD;
             }
-          case 118: break;
+          case 116: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }
