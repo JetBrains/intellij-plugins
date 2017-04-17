@@ -193,7 +193,8 @@ public class DartSpacingProcessor {
           }
         }
         else {
-          if (type2 == VAR_DECLARATION_LIST && hasEmptyBlock(node1)) {
+          if (type2 == VAR_DECLARATION_LIST && hasEmptyBlock(node1) ||
+              type1 == FUNCTION_TYPE_ALIAS && type2 == FUNCTION_TYPE_ALIAS) {
             lineFeeds = 1;
           }
           else {
@@ -591,7 +592,10 @@ public class DartSpacingProcessor {
       if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) return noSpace();
     }
     boolean isBraces = type1 == LBRACE || type2 == RBRACE;
-    if ((isBraces && elementType != OPTIONAL_FORMAL_PARAMETERS && elementType != MAP_LITERAL_EXPRESSION) ||
+    if ((isBraces &&
+         elementType != OPTIONAL_FORMAL_PARAMETERS &&
+         elementType != OPTIONAL_PARAMETER_TYPES &&
+         elementType != MAP_LITERAL_EXPRESSION) ||
         BLOCKS_EXT.contains(type1) ||
         FUNCTION_DEFINITION.contains(type1)) {
       return addLineBreak();
