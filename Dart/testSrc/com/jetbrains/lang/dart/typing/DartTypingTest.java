@@ -2,6 +2,8 @@ package com.jetbrains.lang.dart.typing;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.editor.impl.TrailingSpacesStripper;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
@@ -685,5 +687,24 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('[', "var a = ", "var a = [<caret>]");
     doTypingTest('\n', "var a = [<caret>]", "var a = [\n  <caret>\n]");
     doTypingTest('\n', "g() {\n  var a = [<caret>]", "g() {\n  var a = [\n    <caret>\n  ]");
+  }
+
+  public void testTrailingSpaces() throws Exception {
+    myFixture.configureByText("foo.dart",
+                              "var a = r'''   \n" +
+                              "trailing spaces     \n" +
+                              "''';   \n" +
+                              "var b = \"\"\"   \n" +
+                              "  ${''' \n" +
+                              "     '''  \n" +
+                              "}\"\"\";  \n");
+    WriteAction.run(() -> TrailingSpacesStripper.strip(myFixture.getDocument(myFixture.getFile()), false, false));
+    myFixture.checkResult("var a = r'''   \n" +
+                          "trailing spaces     \n" +
+                          "''';\n" +
+                          "var b = \"\"\"   \n" +
+                          "  ${''' \n" +
+                          "     '''\n" +
+                          "}\"\"\";\n", false);
   }
 }
