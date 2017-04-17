@@ -123,7 +123,7 @@ public class AngularIndexUtil {
   }
 
   public static Collection<String> getAllKeys(final ID<String, ?> index, final Project project) {
-    final String indexId = index.toString();
+    final String indexId = index.getName();
     final Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>> key =
       ConcurrencyUtil.cacheOrGet(ourCacheKeys, indexId, Key.create("angularjs.index." + indexId));
     final Pair<Project, ID<String, ?>> pair = Pair.create(project, index);
