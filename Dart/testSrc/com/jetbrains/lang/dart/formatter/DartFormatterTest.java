@@ -84,6 +84,25 @@ public class DartFormatterTest extends FormatterTestCase {
     doTest();
   }
 
+  public void testTrailingSpaces() throws Exception {
+    doTextTest("var a = r'''   \n" +
+               "trailing spaces     \n" +
+               "''';   \n" +
+               "var b = \"\"\"   \n" +
+               "  ${''' \n" +
+               "     '''  \n" +
+               "}\"\"\";  \n" +
+               "var c = 1;",
+               "var a = r'''   \n" +
+               "trailing spaces     \n" +
+               "''';\n" +
+               "var b = \"\"\"   \n" +
+               "  ${''' \n" +
+               "     '''\n" +
+               "}\"\"\";\n" +
+               "var c = 1;");
+  }
+
   public void testAdjacentStrings() throws Exception {
     doTest();
   }
