@@ -187,27 +187,36 @@ public class DartPresentableUtil {
       return "";
     }
     final StringBuilder result = new StringBuilder();
-    final String typeText = type.getReferenceExpression().getText();
-    if (specializations != null && specializations.containsKey(element, typeText)) {
-      final DartClass dartClass = specializations.get(element, typeText).getDartClass();
-      result.append(dartClass == null ? typeText : dartClass.getName());
+    final String typeText;
+    final DartReferenceExpression expression = type.getReferenceExpression();
+    if (expression != null) {
+      typeText = expression.getText();
+
+      if (specializations != null && !typeText.isEmpty() && specializations.containsKey(element, typeText)) {
+        final DartClass dartClass = specializations.get(element, typeText).getDartClass();
+        result.append(dartClass == null ? typeText : dartClass.getName());
+      }
+      else {
+        result.append(typeText);
+      }
+      final DartTypeArguments typeArguments = type.getTypeArguments();
+      if (typeArguments != null) {
+        result.append("<");
+        List<DartType> list = typeArguments.getTypeList().getTypeList();
+        for (int i = 0; i < list.size(); i++) {
+          if (i > 0) {
+            result.append(", ");
+          }
+          DartType typeListPart = list.get(i);
+          result.append(buildTypeText(element, typeListPart, specializations));
+        }
+        result.append(">");
+      }
     }
     else {
-      result.append(typeText);
+      result.append("Function"); // functionType
     }
-    final DartTypeArguments typeArguments = type.getTypeArguments();
-    if (typeArguments != null) {
-      result.append("<");
-      List<DartType> list = typeArguments.getTypeList().getTypeList();
-      for (int i = 0; i < list.size(); i++) {
-        if (i > 0) {
-          result.append(", ");
-        }
-        DartType typeListPart = list.get(i);
-        result.append(buildTypeText(element, typeListPart, specializations));
-      }
-      result.append(">");
-    }
+
     return result.toString();
   }
 

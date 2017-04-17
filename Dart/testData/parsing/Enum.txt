@@ -98,9 +98,10 @@ Dart File
                 FOR_IN_PART
                   VAR_ACCESS_DECLARATION
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('Foo')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('Foo')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('foo')

@@ -5,13 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartFunctionType extends DartPsiCompositeElement {
+public interface DartUntypedFunctionType extends DartPsiCompositeElement {
 
   @NotNull
   DartParameterTypeList getParameterTypeList();
-
-  @Nullable
-  DartReturnType getReturnType();
 
   @Nullable
   DartTypeParameters getTypeParameters();

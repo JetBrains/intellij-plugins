@@ -7,26 +7,30 @@ Dart File
     SUPERCLASS
       PsiElement(extends)('extends')
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Kuk')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Kuk')
     INTERFACES
       PsiElement(implements)('implements')
       TYPE_LIST
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('A')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('A')
         PsiElement(,)(',')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('B')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('B')
         PsiElement(,)(',')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('C')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('C')
     CLASS_BODY
       PsiElement({)('{')
       CLASS_MEMBERS
@@ -56,9 +60,10 @@ Dart File
             PsiElement(static)('static')
             PsiElement(final)('final')
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Foo')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Foo')
             COMPONENT_NAME
               ID
                 PsiElement(IDENTIFIER)('moms')
@@ -80,9 +85,10 @@ Dart File
           VAR_ACCESS_DECLARATION
             PsiElement(final)('final')
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Kuk')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Kuk')
             COMPONENT_NAME
               ID
                 PsiElement(IDENTIFIER)('hest')
@@ -118,9 +124,10 @@ Dart File
             NEW_EXPRESSION
               PsiElement(const)('const')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('Foo')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Foo')
               ARGUMENTS
                 PsiElement(()('(')
                 PsiElement())(')')
@@ -309,9 +316,10 @@ Dart File
                 FUNCTION_DECLARATION_WITH_BODY
                   RETURN_TYPE
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('int')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
                   COMPONENT_NAME
                     ID
                       PsiElement(IDENTIFIER)('kongy')
@@ -443,17 +451,19 @@ Dart File
                         VAR_ACCESS_DECLARATION
                           PsiElement(final)('final')
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('Foo')
-                            TYPE_ARGUMENTS
-                              PsiElement(<)('<')
-                              TYPE_LIST
-                                TYPE
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('int')
-                              PsiElement(>)('>')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('Foo')
+                              TYPE_ARGUMENTS
+                                PsiElement(<)('<')
+                                TYPE_LIST
+                                  TYPE
+                                    SIMPLE_TYPE
+                                      REFERENCE_EXPRESSION
+                                        ID
+                                          PsiElement(IDENTIFIER)('int')
+                                PsiElement(>)('>')
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('i')
@@ -475,17 +485,19 @@ Dart File
                       FOR_IN_PART
                         VAR_ACCESS_DECLARATION
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('Foo')
-                            TYPE_ARGUMENTS
-                              PsiElement(<)('<')
-                              TYPE_LIST
-                                TYPE
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('int')
-                              PsiElement(>)('>')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('Foo')
+                              TYPE_ARGUMENTS
+                                PsiElement(<)('<')
+                                TYPE_LIST
+                                  TYPE
+                                    SIMPLE_TYPE
+                                      REFERENCE_EXPRESSION
+                                        ID
+                                          PsiElement(IDENTIFIER)('int')
+                                PsiElement(>)('>')
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('i')
@@ -522,9 +534,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('hest')
@@ -632,9 +645,10 @@ Dart File
                       VAR_DECLARATION_LIST
                         VAR_ACCESS_DECLARATION
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('int')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('int')
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('kuk')
@@ -676,9 +690,10 @@ Dart File
                       FUNCTION_DECLARATION_WITH_BODY
                         RETURN_TYPE
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('int')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('int')
                         COMPONENT_NAME
                           ID
                             PsiElement(IDENTIFIER)('id')
@@ -872,9 +887,10 @@ Dart File
             PsiElement(static)('static')
             PsiElement(final)('final')
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('int')
             COMPONENT_NAME
               ID
                 PsiElement(IDENTIFIER)('operatorOrderMap')
@@ -895,9 +911,10 @@ Dart File
                           NEW_EXPRESSION
                             PsiElement(new)('new')
                             TYPE
-                              REFERENCE_EXPRESSION
-                                ID
-                                  PsiElement(IDENTIFIER)('Whatever')
+                              SIMPLE_TYPE
+                                REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('Whatever')
                             ARGUMENTS
                               PsiElement(()('(')
                               PsiElement())(')')
@@ -944,9 +961,10 @@ Dart File
                   VAR_DECLARATION_LIST
                     VAR_ACCESS_DECLARATION
                       TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(await)('await')
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(await)('await')
                       COMPONENT_NAME
                         ID
                           PsiElement(IDENTIFIER)('a')
@@ -974,9 +992,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(async)('async')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(async)('async')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1016,9 +1035,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(sync)('sync')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(sync)('sync')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1076,9 +1096,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(async)('async')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(async)('async')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1120,9 +1141,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(sync)('sync')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(sync)('sync')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1142,9 +1164,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(await)('await')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(await)('await')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1256,9 +1279,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(async)('async')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(async)('async')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1296,9 +1320,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(yield)('yield')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(yield)('yield')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1327,9 +1352,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(sync)('sync')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(sync)('sync')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1358,9 +1384,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(yield)('yield')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(yield)('yield')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('a')
@@ -1426,9 +1453,10 @@ Dart File
                           VAR_DECLARATION_LIST
                             VAR_ACCESS_DECLARATION
                               TYPE
-                                REFERENCE_EXPRESSION
-                                  ID
-                                    PsiElement(yield)('yield')
+                                SIMPLE_TYPE
+                                  REFERENCE_EXPRESSION
+                                    ID
+                                      PsiElement(yield)('yield')
                               COMPONENT_NAME
                                 ID
                                   PsiElement(IDENTIFIER)('a')

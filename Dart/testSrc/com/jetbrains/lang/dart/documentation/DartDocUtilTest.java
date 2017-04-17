@@ -160,6 +160,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "void <caret>x({bool b}){};");
   }
 
+  public void testFunctionType() throws Exception {
+    doTest("<code><b>x</b>({bool b}) " + RIGHT_ARROW + " Function<br><br><b>Containing library:</b> test.dart<br></code>",
+           "Function<T>(y) <caret>x({bool b}){};");
+  }
+
   public void testTypedefSig() throws Exception {
     doTest("<code>typedef <b>a</b>(int x) " + RIGHT_ARROW + " int<br><br><b>Containing library:</b> test.dart<br></code>",
            "<caret>typedef int a(int x);");

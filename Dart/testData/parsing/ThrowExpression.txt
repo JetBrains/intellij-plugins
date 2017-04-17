@@ -50,9 +50,10 @@ Dart File
               NEW_EXPRESSION
                 PsiElement(new)('new')
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('ArgumentError')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('ArgumentError')
                 ARGUMENTS
                   PsiElement(()('(')
                   PsiElement())(')')

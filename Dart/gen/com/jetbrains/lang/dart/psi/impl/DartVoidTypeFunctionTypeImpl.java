@@ -11,25 +11,19 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartNormalParameterTypeImpl extends DartPsiCompositeElementImpl implements DartNormalParameterType {
+public class DartVoidTypeFunctionTypeImpl extends DartPsiCompositeElementImpl implements DartVoidTypeFunctionType {
 
-  public DartNormalParameterTypeImpl(ASTNode node) {
+  public DartVoidTypeFunctionTypeImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitNormalParameterType(this);
+    visitor.visitVoidTypeFunctionType(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public DartType getType() {
-    return findNotNullChildByClass(DartType.class);
   }
 
 }

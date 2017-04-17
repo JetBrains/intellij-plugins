@@ -23,9 +23,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Element')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Element')
           PsiElement(operator)('operator')
           COMPONENT_NAME
             ID
@@ -35,9 +36,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('Node')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Node')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('node')
@@ -53,9 +55,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Element')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Element')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('e')
@@ -95,9 +98,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Element')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Element')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('e')
@@ -142,9 +146,10 @@ Dart File
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('Element')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Element')
               COMPONENT_NAME
                 ID
                   PsiElement(hide)('hide')
@@ -173,9 +178,10 @@ Dart File
                 FOR_IN_PART
                   VAR_ACCESS_DECLARATION
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('Element')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('Element')
                     COMPONENT_NAME
                       ID
                         PsiElement(export)('export')

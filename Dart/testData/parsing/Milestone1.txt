@@ -100,9 +100,10 @@ Dart File
             NEW_EXPRESSION
               PsiElement(const)('const')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('Logger')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Logger')
               ARGUMENTS
                 PsiElement(()('(')
                 ARGUMENT_LIST
@@ -333,9 +334,10 @@ Dart File
             ON_PART
               PsiElement(on)('on')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('IllegalArgumentException')
               BLOCK
                 PsiElement({)('{')
                 STATEMENTS
@@ -344,9 +346,10 @@ Dart File
             ON_PART
               PsiElement(on)('on')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('IllegalArgumentException')
               CATCH_PART
                 PsiElement(catch)('catch')
                 PsiElement(()('(')
@@ -362,74 +365,10 @@ Dart File
             ON_PART
               PsiElement(on)('on')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('IllegalArgumentException')
-              CATCH_PART
-                PsiElement(catch)('catch')
-                PsiElement(()('(')
-                COMPONENT_NAME
-                  ID
-                    PsiElement(IDENTIFIER)('e')
-                PsiElement(,)(',')
-                COMPONENT_NAME
-                  ID
-                    PsiElement(IDENTIFIER)('s')
-                PsiElement())(')')
-              BLOCK
-                PsiElement({)('{')
-                STATEMENTS
-                  <empty list>
-                PsiElement(})('}')
-          TRY_STATEMENT
-            PsiElement(try)('try')
-            BLOCK
-              PsiElement({)('{')
-              STATEMENTS
-                <empty list>
-              PsiElement(})('}')
-            FINALLY_PART
-              PsiElement(finally)('finally')
-              BLOCK
-                PsiElement({)('{')
-                STATEMENTS
-                  <empty list>
-                PsiElement(})('}')
-          TRY_STATEMENT
-            PsiElement(try)('try')
-            BLOCK
-              PsiElement({)('{')
-              STATEMENTS
-                <empty list>
-              PsiElement(})('}')
-            ON_PART
-              CATCH_PART
-                PsiElement(catch)('catch')
-                PsiElement(()('(')
-                COMPONENT_NAME
-                  ID
-                    PsiElement(IDENTIFIER)('e')
-                PsiElement())(')')
-              BLOCK
-                PsiElement({)('{')
-                STATEMENTS
-                  <empty list>
-                PsiElement(})('}')
-            FINALLY_PART
-              PsiElement(finally)('finally')
-              BLOCK
-                PsiElement({)('{')
-                STATEMENTS
-                  <empty list>
-                PsiElement(})('}')
-          TRY_STATEMENT
-            PsiElement(try)('try')
-            BLOCK
-              PsiElement({)('{')
-              STATEMENTS
-                <empty list>
-              PsiElement(})('}')
-            ON_PART
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('IllegalArgumentException')
               CATCH_PART
                 PsiElement(catch)('catch')
                 PsiElement(()('(')
@@ -446,6 +385,71 @@ Dart File
                 STATEMENTS
                   <empty list>
                 PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            FINALLY_PART
+              PsiElement(finally)('finally')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            ON_PART
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            FINALLY_PART
+              PsiElement(finally)('finally')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            ON_PART
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement(,)(',')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('s')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
             FINALLY_PART
               PsiElement(finally)('finally')
               BLOCK
@@ -463,9 +467,10 @@ Dart File
             ON_PART
               PsiElement(on)('on')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('IllegalArgumentException')
               BLOCK
                 PsiElement({)('{')
                 STATEMENTS
@@ -488,9 +493,10 @@ Dart File
             ON_PART
               PsiElement(on)('on')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('IllegalArgumentException')
               CATCH_PART
                 PsiElement(catch)('catch')
                 PsiElement(()('(')
@@ -520,9 +526,10 @@ Dart File
             ON_PART
               PsiElement(on)('on')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('IllegalArgumentException')
               CATCH_PART
                 PsiElement(catch)('catch')
                 PsiElement(()('(')
@@ -577,9 +584,10 @@ Dart File
                     PsiElement(IDENTIFIER)('p')
                 PsiElement(as)('as')
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('int')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('int')
           PsiElement(;)(';')
           RETURN_STATEMENT
             PsiElement(return)('return')
@@ -596,9 +604,10 @@ Dart File
   GETTER_DECLARATION
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('int')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('int')
     PsiElement(get)('get')
     COMPONENT_NAME
       ID
@@ -619,9 +628,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('bool')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('bool')
           PsiElement(operator)('operator')
           COMPONENT_NAME
             ID
@@ -642,9 +652,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('MagicNumber')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('MagicNumber')
           PsiElement(operator)('operator')
           COMPONENT_NAME
             ID
@@ -661,9 +672,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('MagicNumber')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('MagicNumber')
           PsiElement(operator)('operator')
           COMPONENT_NAME
             ID
@@ -721,9 +733,10 @@ Dart File
           NORMAL_FORMAL_PARAMETER
             SIMPLE_FORMAL_PARAMETER
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('bool')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('bool')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('bold')
@@ -732,9 +745,10 @@ Dart File
           NORMAL_FORMAL_PARAMETER
             SIMPLE_FORMAL_PARAMETER
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('bool')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('bool')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('hidden')
@@ -756,9 +770,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('bool')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('bool')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('test')
@@ -769,9 +784,10 @@ Dart File
           NORMAL_FORMAL_PARAMETER
             SIMPLE_FORMAL_PARAMETER
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('bool')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('bool')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('bold')
@@ -780,9 +796,10 @@ Dart File
           NORMAL_FORMAL_PARAMETER
             SIMPLE_FORMAL_PARAMETER
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('bool')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('bool')
               COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('hidden')

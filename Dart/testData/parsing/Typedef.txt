@@ -11,9 +11,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -31,9 +32,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -41,9 +43,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -61,9 +64,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -71,9 +75,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -97,9 +102,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -107,9 +113,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -132,9 +139,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -150,9 +158,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -160,9 +169,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -178,9 +188,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -188,9 +199,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -212,9 +224,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -222,9 +235,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -241,9 +255,10 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('int')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('int')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('IntCallback1')
@@ -252,9 +267,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -264,9 +280,10 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('int')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('int')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('IntCallback2')
@@ -275,9 +292,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -285,9 +303,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -297,9 +316,10 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('int')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('int')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('IntCallback3')
@@ -308,9 +328,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -318,9 +339,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -336,9 +358,10 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('int')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('int')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('IntCallback4')
@@ -347,9 +370,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -357,9 +381,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -376,17 +401,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('int')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxCallback1')
@@ -395,9 +422,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -407,17 +435,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('int')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxCallback2')
@@ -426,9 +456,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -436,9 +467,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -448,17 +480,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('int')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxCallback3')
@@ -467,9 +501,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -477,9 +512,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -495,17 +531,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('int')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxCallback4')
@@ -514,9 +552,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -524,9 +563,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -543,25 +583,28 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Box')
-              TYPE_ARGUMENTS
-                PsiElement(<)('<')
-                TYPE_LIST
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                PsiElement(>)('>')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Box')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
+                    PsiElement(>)('>')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxBoxCallback1')
@@ -570,9 +613,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -582,25 +626,28 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Box')
-              TYPE_ARGUMENTS
-                PsiElement(<)('<')
-                TYPE_LIST
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                PsiElement(>)('>')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Box')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
+                    PsiElement(>)('>')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxBoxCallback2')
@@ -609,9 +656,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -619,9 +667,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -631,25 +680,28 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Box')
-              TYPE_ARGUMENTS
-                PsiElement(<)('<')
-                TYPE_LIST
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                PsiElement(>)('>')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Box')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
+                    PsiElement(>)('>')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxBoxCallback3')
@@ -658,9 +710,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -668,9 +721,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -686,25 +740,28 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Box')
-              TYPE_ARGUMENTS
-                PsiElement(<)('<')
-                TYPE_LIST
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                PsiElement(>)('>')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Box')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
+                    PsiElement(>)('>')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxBoxCallback4')
@@ -713,9 +770,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -723,9 +781,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -750,9 +809,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -770,9 +830,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -780,9 +841,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -800,9 +862,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -810,9 +873,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -836,9 +900,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Event')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Event')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -846,9 +911,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('int')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -880,9 +946,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -912,9 +979,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -922,9 +990,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -945,9 +1014,10 @@ Dart File
             PsiElement(IDENTIFIER)('E')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('Event')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Event')
       PsiElement(,)(',')
       TYPE_PARAMETER
         COMPONENT_NAME
@@ -955,18 +1025,20 @@ Dart File
             PsiElement(IDENTIFIER)('I')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('int')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('int')
       PsiElement(>)('>')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -974,9 +1046,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1003,17 +1076,19 @@ Dart File
             PsiElement(IDENTIFIER)('E')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('Event')
-          TYPE_ARGUMENTS
-            PsiElement(<)('<')
-            TYPE_LIST
-              TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('E')
-            PsiElement(>)('>')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Event')
+            TYPE_ARGUMENTS
+              PsiElement(<)('<')
+              TYPE_LIST
+                TYPE
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('E')
+              PsiElement(>)('>')
       PsiElement(,)(',')
       TYPE_PARAMETER
         COMPONENT_NAME
@@ -1021,18 +1096,20 @@ Dart File
             PsiElement(IDENTIFIER)('I')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('int')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('int')
       PsiElement(>)('>')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1040,9 +1117,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1072,9 +1150,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1102,9 +1181,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1112,9 +1192,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1133,9 +1214,10 @@ Dart File
             PsiElement(IDENTIFIER)('E')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('Event')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Event')
       PsiElement(,)(',')
       TYPE_PARAMETER
         COMPONENT_NAME
@@ -1147,9 +1229,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1157,9 +1240,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1189,18 +1273,20 @@ Dart File
             PsiElement(IDENTIFIER)('I')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('int')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('int')
       PsiElement(>)('>')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1208,9 +1294,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1227,9 +1314,10 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('int')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('int')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('IntCallbuk1')
@@ -1245,9 +1333,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1257,9 +1346,10 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('I')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('I')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('IntCallbuk2')
@@ -1271,9 +1361,10 @@ Dart File
             PsiElement(IDENTIFIER)('E')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('Event')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Event')
       PsiElement(,)(',')
       TYPE_PARAMETER
         COMPONENT_NAME
@@ -1281,18 +1372,20 @@ Dart File
             PsiElement(IDENTIFIER)('I')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('int')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('int')
       PsiElement(>)('>')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1300,9 +1393,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1312,9 +1406,10 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('I')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('I')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('IntCallbuk3')
@@ -1335,9 +1430,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1345,9 +1441,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1363,9 +1460,10 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('I')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('I')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('IntCallbuk4')
@@ -1386,9 +1484,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1396,9 +1495,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1415,17 +1515,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('int')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxCallbuk1')
@@ -1441,9 +1543,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1453,17 +1556,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('I')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('I')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxCallbuk2')
@@ -1484,9 +1589,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1494,9 +1600,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1506,17 +1613,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('I')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('I')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxCallbuk3')
@@ -1537,9 +1646,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1547,9 +1657,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1565,17 +1676,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('I')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('I')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxCallbuk4')
@@ -1596,9 +1709,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1606,9 +1720,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1625,17 +1740,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('int')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxBoxCallbuk1')
@@ -1651,9 +1768,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1663,17 +1781,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('I')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('I')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxBoxCallbuk2')
@@ -1694,9 +1814,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1704,9 +1825,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1716,17 +1838,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('I')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('I')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxBoxCallbuk3')
@@ -1747,9 +1871,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1757,9 +1882,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1775,17 +1901,19 @@ Dart File
     PsiElement(typedef)('typedef')
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Box')
-        TYPE_ARGUMENTS
-          PsiElement(<)('<')
-          TYPE_LIST
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('I')
-          PsiElement(>)('>')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Box')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('I')
+            PsiElement(>)('>')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('BoxBoxCallbuk4')
@@ -1806,9 +1934,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('E')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('E')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('event')
@@ -1816,9 +1945,10 @@ Dart File
       NORMAL_FORMAL_PARAMETER
         SIMPLE_FORMAL_PARAMETER
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('I')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('I')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
@@ -1844,20 +1974,20 @@ Dart File
             PsiElement(IDENTIFIER)('T')
       PsiElement(>)('>')
     PsiElement(=)('=')
-    FUNCTION_TYPE
-      RETURN_TYPE
-        TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('List')
-          TYPE_ARGUMENTS
-            PsiElement(<)('<')
-            TYPE_LIST
-              TYPE
+    TYPED_FUNCTION_TYPE
+      SIMPLE_TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('List')
+        TYPE_ARGUMENTS
+          PsiElement(<)('<')
+          TYPE_LIST
+            TYPE
+              SIMPLE_TYPE
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('T')
-            PsiElement(>)('>')
+          PsiElement(>)('>')
       ID
         PsiElement(IDENTIFIER)('Function')
       TYPE_PARAMETERS
@@ -1871,9 +2001,10 @@ Dart File
         PsiElement(()('(')
         NORMAL_PARAMETER_TYPE
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('T')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('T')
         PsiElement(,)(',')
         PsiElement())(')')
     PsiElement(;)(';')
@@ -1883,20 +2014,20 @@ Dart File
       ID
         PsiElement(IDENTIFIER)('G')
     PsiElement(=)('=')
-    FUNCTION_TYPE
-      RETURN_TYPE
-        TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('List')
-          TYPE_ARGUMENTS
-            PsiElement(<)('<')
-            TYPE_LIST
-              TYPE
+    TYPED_FUNCTION_TYPE
+      SIMPLE_TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('List')
+        TYPE_ARGUMENTS
+          PsiElement(<)('<')
+          TYPE_LIST
+            TYPE
+              SIMPLE_TYPE
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('int')
-            PsiElement(>)('>')
+          PsiElement(>)('>')
       ID
         PsiElement(IDENTIFIER)('Function')
       PARAMETER_TYPE_LIST
@@ -1917,20 +2048,20 @@ Dart File
             PsiElement(IDENTIFIER)('T')
       PsiElement(>)('>')
     PsiElement(=)('=')
-    FUNCTION_TYPE
-      RETURN_TYPE
-        TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('List')
-          TYPE_ARGUMENTS
-            PsiElement(<)('<')
-            TYPE_LIST
-              TYPE
+    TYPED_FUNCTION_TYPE
+      SIMPLE_TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('List')
+        TYPE_ARGUMENTS
+          PsiElement(<)('<')
+          TYPE_LIST
+            TYPE
+              SIMPLE_TYPE
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('T')
-            PsiElement(>)('>')
+          PsiElement(>)('>')
       ID
         PsiElement(IDENTIFIER)('Function')
       PARAMETER_TYPE_LIST
@@ -1938,55 +2069,59 @@ Dart File
         OPTIONAL_PARAMETER_TYPES
           PsiElement([)('[')
           NORMAL_PARAMETER_TYPE
-            FUNCTION_TYPE
-              RETURN_TYPE
-                TYPE
+            TYPE
+              TYPED_FUNCTION_TYPE
+                SIMPLE_TYPE
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('int')
-              ID
-                PsiElement(IDENTIFIER)('Function')
-              TYPE_PARAMETERS
-                PsiElement(<)('<')
-                TYPE_PARAMETER
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('T')
-                PsiElement(>)('>')
-              PARAMETER_TYPE_LIST
-                PsiElement(()('(')
-                PsiElement())(')')
-            ID
-              PsiElement(IDENTIFIER)('a')
-          PsiElement(,)(',')
-          NORMAL_PARAMETER_TYPE
-            FUNCTION_TYPE
-              ID
-                PsiElement(IDENTIFIER)('Function')
-              PARAMETER_TYPE_LIST
-                PsiElement(()('(')
-                NORMAL_PARAMETER_TYPE
-                  TYPE
-                    REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Function')
+                TYPE_PARAMETERS
+                  PsiElement(<)('<')
+                  TYPE_PARAMETER
+                    COMPONENT_NAME
                       ID
-                        PsiElement(IDENTIFIER)('int')
-                PsiElement())(')')
+                        PsiElement(IDENTIFIER)('T')
+                  PsiElement(>)('>')
+                PARAMETER_TYPE_LIST
+                  PsiElement(()('(')
+                  PsiElement())(')')
             ID
               PsiElement(IDENTIFIER)('a')
           PsiElement(,)(',')
           NORMAL_PARAMETER_TYPE
             TYPE
-              REFERENCE_EXPRESSION
+              UNTYPED_FUNCTION_TYPE
                 ID
                   PsiElement(IDENTIFIER)('Function')
+                PARAMETER_TYPE_LIST
+                  PsiElement(()('(')
+                  NORMAL_PARAMETER_TYPE
+                    TYPE
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
+                  PsiElement())(')')
             ID
               PsiElement(IDENTIFIER)('a')
           PsiElement(,)(',')
           NORMAL_PARAMETER_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Function')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Function')
+            ID
+              PsiElement(IDENTIFIER)('a')
+          PsiElement(,)(',')
+          NORMAL_PARAMETER_TYPE
+            TYPE
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Function')
           PsiElement(])(']')
         PsiElement())(')')
     PsiElement(;)(';')
@@ -2019,25 +2154,26 @@ Dart File
             PsiElement(IDENTIFIER)('E')
       PsiElement(>)('>')
     PsiElement(=)('=')
-    FUNCTION_TYPE
-      RETURN_TYPE
-        TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('List')
-          TYPE_ARGUMENTS
-            PsiElement(<)('<')
-            TYPE_LIST
-              TYPE
+    TYPED_FUNCTION_TYPE
+      SIMPLE_TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('List')
+        TYPE_ARGUMENTS
+          PsiElement(<)('<')
+          TYPE_LIST
+            TYPE
+              SIMPLE_TYPE
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('T')
-              PsiElement(,)(',')
-              TYPE
+            PsiElement(,)(',')
+            TYPE
+              SIMPLE_TYPE
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('E')
-            PsiElement(>)('>')
+          PsiElement(>)('>')
       ID
         PsiElement(IDENTIFIER)('Function')
       TYPE_PARAMETERS
@@ -2056,59 +2192,442 @@ Dart File
         PsiElement(()('(')
         NORMAL_PARAMETER_TYPE
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('S')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('S')
         PsiElement(,)(',')
         OPTIONAL_PARAMETER_TYPES
           PsiElement({)('{')
-          FUNCTION_TYPE
-            RETURN_TYPE
-              TYPE
+          TYPE
+            TYPED_FUNCTION_TYPE
+              SIMPLE_TYPE
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('T')
-            ID
-              PsiElement(IDENTIFIER)('Function')
-            PARAMETER_TYPE_LIST
-              PsiElement(()('(')
-              NORMAL_PARAMETER_TYPE
-                TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('int')
-              PsiElement(,)(',')
-              NORMAL_PARAMETER_TYPE
-                TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('S')
-              PsiElement())(')')
-          ID
-            PsiElement(factory)('factory')
-          PsiElement(,)(',')
-          FUNCTION_TYPE
-            ID
-              PsiElement(IDENTIFIER)('Function')
-            TYPE_PARAMETERS
-              PsiElement(<)('<')
-              TYPE_PARAMETER
-                COMPONENT_NAME
-                  ID
-                    PsiElement(IDENTIFIER)('T')
-              PsiElement(>)('>')
-            PARAMETER_TYPE_LIST
-              PsiElement(()('(')
-              PsiElement())(')')
+              ID
+                PsiElement(IDENTIFIER)('Function')
+              PARAMETER_TYPE_LIST
+                PsiElement(()('(')
+                NORMAL_PARAMETER_TYPE
+                  TYPE
+                    SIMPLE_TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('int')
+                PsiElement(,)(',')
+                NORMAL_PARAMETER_TYPE
+                  TYPE
+                    SIMPLE_TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('S')
+                PsiElement())(')')
           ID
             PsiElement(factory)('factory')
           PsiElement(,)(',')
           TYPE
-            REFERENCE_EXPRESSION
+            UNTYPED_FUNCTION_TYPE
               ID
                 PsiElement(IDENTIFIER)('Function')
+              TYPE_PARAMETERS
+                PsiElement(<)('<')
+                TYPE_PARAMETER
+                  COMPONENT_NAME
+                    ID
+                      PsiElement(IDENTIFIER)('T')
+                PsiElement(>)('>')
+              PARAMETER_TYPE_LIST
+                PsiElement(()('(')
+                PsiElement())(')')
+          ID
+            PsiElement(factory)('factory')
+          PsiElement(,)(',')
+          TYPE
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Function')
           ID
             PsiElement(factory)('factory')
           PsiElement(})('}')
         PsiElement())(')')
     PsiElement(;)(';')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      TYPE
+        UNTYPED_FUNCTION_TYPE
+          ID
+            PsiElement(IDENTIFIER)('Function')
+          TYPE_PARAMETERS
+            PsiElement(<)('<')
+            TYPE_PARAMETER
+              COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('T')
+            PsiElement(>)('>')
+          PARAMETER_TYPE_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+      COMPONENT_NAME
+        ID
+          PsiElement(factory)('factory')
+  PsiElement(;)(';')
+  FUNCTION_TYPE_ALIAS
+    PsiElement(typedef)('typedef')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('X')
+    PsiElement(=)('=')
+    UNTYPED_FUNCTION_TYPE
+      ID
+        PsiElement(IDENTIFIER)('Function')
+      PARAMETER_TYPE_LIST
+        PsiElement(()('(')
+        PsiElement())(')')
+    PsiElement(;)(';')
+  FUNCTION_TYPE_ALIAS
+    PsiElement(typedef)('typedef')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('Y')
+    PsiElement(=)('=')
+    TYPED_FUNCTION_TYPE
+      SIMPLE_TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('Function')
+      ID
+        PsiElement(IDENTIFIER)('Function')
+      PARAMETER_TYPE_LIST
+        PsiElement(()('(')
+        PsiElement())(')')
+    PsiElement(;)(';')
+  FUNCTION_TYPE_ALIAS
+    PsiElement(typedef)('typedef')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('Z')
+    PsiElement(=)('=')
+    TYPED_FUNCTION_TYPE
+      TYPED_FUNCTION_TYPE
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Function')
+        ID
+          PsiElement(IDENTIFIER)('Function')
+        PARAMETER_TYPE_LIST
+          PsiElement(()('(')
+          PsiElement())(')')
+      ID
+        PsiElement(IDENTIFIER)('Function')
+      PARAMETER_TYPE_LIST
+        PsiElement(()('(')
+        PsiElement())(')')
+    PsiElement(;)(';')
+  FUNCTION_TYPE_ALIAS
+    PsiElement(typedef)('typedef')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('Q')
+    PsiElement(=)('=')
+    TYPED_FUNCTION_TYPE
+      TYPED_FUNCTION_TYPE
+        TYPED_FUNCTION_TYPE
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Function')
+          ID
+            PsiElement(IDENTIFIER)('Function')
+          PARAMETER_TYPE_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+        ID
+          PsiElement(IDENTIFIER)('Function')
+        PARAMETER_TYPE_LIST
+          PsiElement(()('(')
+          PsiElement())(')')
+      ID
+        PsiElement(IDENTIFIER)('Function')
+      PARAMETER_TYPE_LIST
+        PsiElement(()('(')
+        PsiElement())(')')
+    PsiElement(;)(';')
+  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('x1700')
+    FORMAL_PARAMETER_LIST
+      PsiElement(()('(')
+      NORMAL_FORMAL_PARAMETER
+        SIMPLE_FORMAL_PARAMETER
+          TYPE
+            UNTYPED_FUNCTION_TYPE
+              ID
+                PsiElement(IDENTIFIER)('Function')
+              PARAMETER_TYPE_LIST
+                PsiElement(()('(')
+                PsiElement())(')')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('s')
+      PsiElement())(')')
+    FUNCTION_BODY
+      LAZY_PARSEABLE_BLOCK
+        PsiElement({)('{')
+        STATEMENTS
+          <empty list>
+        PsiElement(})('}')
+  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('x1701')
+    FORMAL_PARAMETER_LIST
+      PsiElement(()('(')
+      NORMAL_FORMAL_PARAMETER
+        SIMPLE_FORMAL_PARAMETER
+          TYPE
+            TYPED_FUNCTION_TYPE
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('int')
+              ID
+                PsiElement(IDENTIFIER)('Function')
+              PARAMETER_TYPE_LIST
+                PsiElement(()('(')
+                PsiElement())(')')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('s')
+      PsiElement())(')')
+    FUNCTION_BODY
+      LAZY_PARSEABLE_BLOCK
+        PsiElement({)('{')
+        STATEMENTS
+          <empty list>
+        PsiElement(})('}')
+  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('x1702')
+    FORMAL_PARAMETER_LIST
+      PsiElement(()('(')
+      NORMAL_FORMAL_PARAMETER
+        SIMPLE_FORMAL_PARAMETER
+          TYPE
+            TYPED_FUNCTION_TYPE
+              UNTYPED_FUNCTION_TYPE
+                ID
+                  PsiElement(IDENTIFIER)('Function')
+                PARAMETER_TYPE_LIST
+                  PsiElement(()('(')
+                  NORMAL_PARAMETER_TYPE
+                    TYPE
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
+                    ID
+                      PsiElement(IDENTIFIER)('x')
+                  PsiElement(,)(',')
+                  OPTIONAL_PARAMETER_TYPES
+                    PsiElement([)('[')
+                    NORMAL_PARAMETER_TYPE
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('List')
+                          TYPE_ARGUMENTS
+                            PsiElement(<)('<')
+                            TYPE_LIST
+                              TYPE
+                                SIMPLE_TYPE
+                                  REFERENCE_EXPRESSION
+                                    ID
+                                      PsiElement(IDENTIFIER)('Function')
+                            PsiElement(>)('>')
+                      ID
+                        PsiElement(IDENTIFIER)('x2')
+                    PsiElement(])(']')
+                  PsiElement())(')')
+              ID
+                PsiElement(IDENTIFIER)('Function')
+              PARAMETER_TYPE_LIST
+                PsiElement(()('(')
+                PsiElement())(')')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('s')
+      PsiElement())(')')
+    FUNCTION_BODY
+      LAZY_PARSEABLE_BLOCK
+        PsiElement({)('{')
+        STATEMENTS
+          <empty list>
+        PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('a')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        VAR_DECLARATION_LIST
+          VAR_ACCESS_DECLARATION
+            TYPE
+              UNTYPED_FUNCTION_TYPE
+                ID
+                  PsiElement(IDENTIFIER)('Function')
+                PARAMETER_TYPE_LIST
+                  PsiElement(()('(')
+                  PsiElement())(')')
+            COMPONENT_NAME
+              ID
+                PsiElement(IDENTIFIER)('fsa')
+        PsiElement(;)(';')
+        METHOD_DECLARATION
+          RETURN_TYPE
+            TYPE
+              TYPED_FUNCTION_TYPE
+                TYPED_FUNCTION_TYPE
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Function')
+                  ID
+                    PsiElement(IDENTIFIER)('Function')
+                  PARAMETER_TYPE_LIST
+                    PsiElement(()('(')
+                    PsiElement())(')')
+                ID
+                  PsiElement(IDENTIFIER)('Function')
+                PARAMETER_TYPE_LIST
+                  PsiElement(()('(')
+                  PsiElement())(')')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('fsa1')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+          PsiElement(;)(';')
+        METHOD_DECLARATION
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('x1703')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  UNTYPED_FUNCTION_TYPE
+                    ID
+                      PsiElement(IDENTIFIER)('Function')
+                    PARAMETER_TYPE_LIST
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('s')
+            PsiElement())(')')
+          FUNCTION_BODY
+            LAZY_PARSEABLE_BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+        METHOD_DECLARATION
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('x1704')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  TYPED_FUNCTION_TYPE
+                    SIMPLE_TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('int')
+                    ID
+                      PsiElement(IDENTIFIER)('Function')
+                    PARAMETER_TYPE_LIST
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('s')
+            PsiElement())(')')
+          FUNCTION_BODY
+            LAZY_PARSEABLE_BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+        METHOD_DECLARATION
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('x1705')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  TYPED_FUNCTION_TYPE
+                    UNTYPED_FUNCTION_TYPE
+                      ID
+                        PsiElement(IDENTIFIER)('Function')
+                      PARAMETER_TYPE_LIST
+                        PsiElement(()('(')
+                        NORMAL_PARAMETER_TYPE
+                          TYPE
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('int')
+                          ID
+                            PsiElement(IDENTIFIER)('x')
+                        PsiElement(,)(',')
+                        OPTIONAL_PARAMETER_TYPES
+                          PsiElement([)('[')
+                          NORMAL_PARAMETER_TYPE
+                            TYPE
+                              SIMPLE_TYPE
+                                REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('List')
+                                TYPE_ARGUMENTS
+                                  PsiElement(<)('<')
+                                  TYPE_LIST
+                                    TYPE
+                                      SIMPLE_TYPE
+                                        REFERENCE_EXPRESSION
+                                          ID
+                                            PsiElement(IDENTIFIER)('Function')
+                                  PsiElement(>)('>')
+                            ID
+                              PsiElement(IDENTIFIER)('x2')
+                          PsiElement(])(']')
+                        PsiElement())(')')
+                    ID
+                      PsiElement(IDENTIFIER)('Function')
+                    PARAMETER_TYPE_LIST
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('s')
+            PsiElement())(')')
+          FUNCTION_BODY
+            LAZY_PARSEABLE_BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+      PsiElement(})('}')

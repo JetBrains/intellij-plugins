@@ -18,9 +18,10 @@ Dart File
         VAR_DECLARATION_LIST
           VAR_ACCESS_DECLARATION
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('T')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('T')
             COMPONENT_NAME
               ID
                 PsiElement(IDENTIFIER)('t')
@@ -52,9 +53,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('T')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('T')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('t')
@@ -90,38 +92,42 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Box')
-              TYPE_ARGUMENTS
-                PsiElement(<)('<')
-                TYPE_LIST
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Box')
-                    TYPE_ARGUMENTS
-                      PsiElement(<)('<')
-                      TYPE_LIST
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('Box')
-                          TYPE_ARGUMENTS
-                            PsiElement(<)('<')
-                            TYPE_LIST
-                              TYPE
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Box')
+                TYPE_ARGUMENTS
+                  PsiElement(<)('<')
+                  TYPE_LIST
+                    TYPE
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('Box')
+                        TYPE_ARGUMENTS
+                          PsiElement(<)('<')
+                          TYPE_LIST
+                            TYPE
+                              SIMPLE_TYPE
                                 REFERENCE_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('prefix')
-                                  PsiElement(.)('.')
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('Fisk')
-                            PsiElement(>)('>')
-                      PsiElement(>)('>')
-                PsiElement(>)('>')
+                                  ID
+                                    PsiElement(IDENTIFIER)('Box')
+                                TYPE_ARGUMENTS
+                                  PsiElement(<)('<')
+                                  TYPE_LIST
+                                    TYPE
+                                      SIMPLE_TYPE
+                                        REFERENCE_EXPRESSION
+                                          REFERENCE_EXPRESSION
+                                            ID
+                                              PsiElement(IDENTIFIER)('prefix')
+                                          PsiElement(.)('.')
+                                          REFERENCE_EXPRESSION
+                                            ID
+                                              PsiElement(IDENTIFIER)('Fisk')
+                                  PsiElement(>)('>')
+                          PsiElement(>)('>')
+                  PsiElement(>)('>')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('boxIt')
@@ -130,30 +136,33 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('Box')
-                  TYPE_ARGUMENTS
-                    PsiElement(<)('<')
-                    TYPE_LIST
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('Box')
-                        TYPE_ARGUMENTS
-                          PsiElement(<)('<')
-                          TYPE_LIST
-                            TYPE
-                              REFERENCE_EXPRESSION
-                                REFERENCE_EXPRESSION
-                                  ID
-                                    PsiElement(IDENTIFIER)('prefix')
-                                PsiElement(.)('.')
-                                REFERENCE_EXPRESSION
-                                  ID
-                                    PsiElement(IDENTIFIER)('Fisk')
-                          PsiElement(>)('>')
-                    PsiElement(>)('>')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Box')
+                    TYPE_ARGUMENTS
+                      PsiElement(<)('<')
+                      TYPE_LIST
+                        TYPE
+                          SIMPLE_TYPE
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('Box')
+                            TYPE_ARGUMENTS
+                              PsiElement(<)('<')
+                              TYPE_LIST
+                                TYPE
+                                  SIMPLE_TYPE
+                                    REFERENCE_EXPRESSION
+                                      REFERENCE_EXPRESSION
+                                        ID
+                                          PsiElement(IDENTIFIER)('prefix')
+                                      PsiElement(.)('.')
+                                      REFERENCE_EXPRESSION
+                                        ID
+                                          PsiElement(IDENTIFIER)('Fisk')
+                              PsiElement(>)('>')
+                      PsiElement(>)('>')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('box')
@@ -177,14 +186,16 @@ Dart File
                           PsiElement(<)('<')
                           TYPE_LIST
                             TYPE
-                              REFERENCE_EXPRESSION
-                                ID
-                                  PsiElement(IDENTIFIER)('b')
+                              SIMPLE_TYPE
+                                REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('b')
                             PsiElement(,)(',')
                             TYPE
-                              REFERENCE_EXPRESSION
-                                ID
-                                  PsiElement(IDENTIFIER)('c')
+                              SIMPLE_TYPE
+                                REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('c')
                           PsiElement(>)('>')
                         ARGUMENTS
                           PsiElement(()('(')
@@ -238,9 +249,10 @@ Dart File
                             PsiElement(IDENTIFIER)('K')
                         PsiElement(extends)('extends')
                         TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('Object')
+                          SIMPLE_TYPE
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('Object')
                       PsiElement(,)(',')
                       TYPE_PARAMETER
                         COMPONENT_NAME
@@ -263,9 +275,10 @@ Dart File
                 FUNCTION_DECLARATION_WITH_BODY
                   RETURN_TYPE
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('int')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
                   COMPONENT_NAME
                     ID
                       PsiElement(IDENTIFIER)('local1')
@@ -282,9 +295,10 @@ Dart File
                           PsiElement(IDENTIFIER)('E')
                       PsiElement(extends)('extends')
                       TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('Object')
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('Object')
                     PsiElement(>)('>')
                   FORMAL_PARAMETER_LIST
                     PsiElement(()('(')
@@ -322,38 +336,42 @@ Dart File
                   NEW_EXPRESSION
                     PsiElement(new)('new')
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('Box')
-                      TYPE_ARGUMENTS
-                        PsiElement(<)('<')
-                        TYPE_LIST
-                          TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('Box')
-                            TYPE_ARGUMENTS
-                              PsiElement(<)('<')
-                              TYPE_LIST
-                                TYPE
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('Box')
-                                  TYPE_ARGUMENTS
-                                    PsiElement(<)('<')
-                                    TYPE_LIST
-                                      TYPE
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('Box')
+                        TYPE_ARGUMENTS
+                          PsiElement(<)('<')
+                          TYPE_LIST
+                            TYPE
+                              SIMPLE_TYPE
+                                REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('Box')
+                                TYPE_ARGUMENTS
+                                  PsiElement(<)('<')
+                                  TYPE_LIST
+                                    TYPE
+                                      SIMPLE_TYPE
                                         REFERENCE_EXPRESSION
-                                          REFERENCE_EXPRESSION
-                                            ID
-                                              PsiElement(IDENTIFIER)('prefix')
-                                          PsiElement(.)('.')
-                                          REFERENCE_EXPRESSION
-                                            ID
-                                              PsiElement(IDENTIFIER)('Fisk')
-                                    PsiElement(>)('>')
-                              PsiElement(>)('>')
-                        PsiElement(>)('>')
+                                          ID
+                                            PsiElement(IDENTIFIER)('Box')
+                                        TYPE_ARGUMENTS
+                                          PsiElement(<)('<')
+                                          TYPE_LIST
+                                            TYPE
+                                              SIMPLE_TYPE
+                                                REFERENCE_EXPRESSION
+                                                  REFERENCE_EXPRESSION
+                                                    ID
+                                                      PsiElement(IDENTIFIER)('prefix')
+                                                  PsiElement(.)('.')
+                                                  REFERENCE_EXPRESSION
+                                                    ID
+                                                      PsiElement(IDENTIFIER)('Fisk')
+                                          PsiElement(>)('>')
+                                  PsiElement(>)('>')
+                          PsiElement(>)('>')
                     ARGUMENTS
                       PsiElement(()('(')
                       ARGUMENT_LIST
@@ -380,30 +398,34 @@ Dart File
                   PsiElement(IDENTIFIER)('T1')
               PsiElement(extends)('extends')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('Map')
-                TYPE_ARGUMENTS
-                  PsiElement(<)('<')
-                  TYPE_LIST
-                    TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('int')
-                    PsiElement(,)(',')
-                    TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('List')
-                      TYPE_ARGUMENTS
-                        PsiElement(<)('<')
-                        TYPE_LIST
-                          TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('bool')
-                        PsiElement(>)('>')
-                  PsiElement(>)('>')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Map')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
+                      PsiElement(,)(',')
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('List')
+                          TYPE_ARGUMENTS
+                            PsiElement(<)('<')
+                            TYPE_LIST
+                              TYPE
+                                SIMPLE_TYPE
+                                  REFERENCE_EXPRESSION
+                                    ID
+                                      PsiElement(IDENTIFIER)('bool')
+                            PsiElement(>)('>')
+                    PsiElement(>)('>')
             PsiElement(>)('>')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
@@ -448,9 +470,10 @@ Dart File
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     RETURN_TYPE
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('int')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('int')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('global1')
@@ -467,9 +490,10 @@ Dart File
             PsiElement(IDENTIFIER)('E')
         PsiElement(extends)('extends')
         TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('Object')
+          SIMPLE_TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Object')
       PsiElement(>)('>')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')

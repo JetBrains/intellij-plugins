@@ -65,3 +65,19 @@ Function]);
 @foo @bar typedef L<T, E> = List<T,E> Function<S,E>(S, {T Function(int, S) factory,
 Function<T>() factory,
 Function factory});
+
+Function<T>() factory;
+typedef X = Function();
+typedef Y = Function Function();
+typedef Z = Function Function() Function();
+typedef Q = Function Function() Function() Function();
+x1700(Function() s) {}
+x1701(int Function() s) {}
+x1702(Function(int x, [List<Function> x2]) Function() s) {}
+class a{
+  Function() fsa;
+  Function Function() Function() fsa1();
+  x1703(Function() s) {}
+  x1704(int Function() s) {}
+  x1705(Function(int x, [List<Function> x2]) Function() s) {}
+}

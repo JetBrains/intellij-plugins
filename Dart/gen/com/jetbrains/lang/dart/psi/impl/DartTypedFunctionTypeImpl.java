@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartType {
+public class DartTypedFunctionTypeImpl extends DartPsiCompositeElementImpl implements DartTypedFunctionType {
 
-  public DartTypeImpl(ASTNode node) {
+  public DartTypedFunctionTypeImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitType(this);
+    visitor.visitTypedFunctionType(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,9 +27,21 @@ public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartTyp
   }
 
   @Override
+  @NotNull
+  public DartParameterTypeList getParameterTypeList() {
+    return findNotNullChildByClass(DartParameterTypeList.class);
+  }
+
+  @Override
   @Nullable
   public DartSimpleType getSimpleType() {
     return findChildByClass(DartSimpleType.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
   }
 
   @Override
@@ -44,19 +56,10 @@ public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartTyp
     return findChildByClass(DartUntypedFunctionType.class);
   }
 
+  @Override
   @Nullable
-  public PsiElement resolveReference() {
-    return DartPsiImplUtil.resolveReference(this);
-  }
-
-  @Nullable
-  public DartReferenceExpression getReferenceExpression() {
-    return DartPsiImplUtil.getReferenceExpression(this);
-  }
-
-  @Nullable
-  public DartTypeArguments getTypeArguments() {
-    return DartPsiImplUtil.getTypeArguments(this);
+  public DartVoidTypeFunctionType getVoidTypeFunctionType() {
+    return findChildByClass(DartVoidTypeFunctionType.class);
   }
 
 }

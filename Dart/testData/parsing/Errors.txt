@@ -46,9 +46,10 @@ Dart File
             NEW_EXPRESSION
               PsiElement(new)('new')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('F')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('F')
               PsiErrorElement:'(', '.', < or <qualified reference expression> expected, got '}'
                 <empty list>
         PsiElement(})('}')

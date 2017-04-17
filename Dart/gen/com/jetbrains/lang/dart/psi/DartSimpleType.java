@@ -5,9 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartNormalParameterType extends DartPsiCompositeElement {
+public interface DartSimpleType extends DartPsiCompositeElement {
 
   @NotNull
-  DartType getType();
+  DartReferenceExpression getReferenceExpression();
+
+  @Nullable
+  DartTypeArguments getTypeArguments();
 
 }
