@@ -26,9 +26,6 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.NamedStub
 
-/**
- * Created by Lera Nikolaenko
- */
 
 open class CfmlTagImpl : CfmlCompositeElement, CfmlTag, PsiLanguageInjectionHost {
   constructor(astNode: ASTNode) : super(astNode)
@@ -42,8 +39,8 @@ open class CfmlTagImpl : CfmlCompositeElement, CfmlTag, PsiLanguageInjectionHost
   }
 
   override fun getTagName(): String {
-    val pe = findChildByType<PsiElement>(CfmlTokenTypes.CF_TAG_NAME)
-    return pe?.text?.toLowerCase() ?: ""
+    val tagName = findChildByType<PsiElement>(CfmlTokenTypes.CF_TAG_NAME)
+    return tagName?.text?.toLowerCase() ?: ""
   }
 
   override fun getName() = tagName
@@ -61,15 +58,14 @@ open class CfmlTagImpl : CfmlCompositeElement, CfmlTag, PsiLanguageInjectionHost
     val componentName = prefixAndName.getSecond()
     val cfmlImport = CfmlUtil.getImportByPrefix(this, prefixAndName.getFirst())
     val tagName = findChildByType<PsiElement>(CfmlTokenTypes.CF_TAG_NAME)
+
     if (tagName != null && cfmlImport != null && !StringUtil.isEmpty(componentName)) {
       return arrayOf(CfmlComponentReference(tagName.node))
     }
     return super.getReferences()
   }
 
-  fun getAttributeValueElement(attributeName: String): PsiElement? {
-    return CfmlPsiUtil.getAttributeValueElement(this, attributeName)
-  }
+  fun getAttributeValueElement(attributeName: String): PsiElement? = CfmlPsiUtil.getAttributeValueElement(this, attributeName)
 
   //// PsiLanguageInjectionHost implementation
 

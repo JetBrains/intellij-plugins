@@ -15,6 +15,7 @@
  */
 package com.intellij.coldFusion.model.psi
 
+import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl
 import com.intellij.lang.ASTNode
 import com.intellij.psi.LiteralTextEscaper
 import com.intellij.psi.PsiLanguageInjectionHost
@@ -33,7 +34,7 @@ class CfmlLeafElementType(s: String) : CfmlElementType(s), ILeafElementType {
 
 class CfmlLeafPsiElement(cfmlLeafElementType: CfmlLeafElementType, leafText: CharSequence) : LeafPsiElement(cfmlLeafElementType, leafText), PsiLanguageInjectionHost {
 
-  override fun isValidHost() = true
+  override fun isValidHost() = (this.parent is CfmlTagImpl && (this.parent as CfmlTagImpl).name.toLowerCase() == "cfquery")
 
   override fun updateText(text: String) = replaceWithText(text) as PsiLanguageInjectionHost
 
