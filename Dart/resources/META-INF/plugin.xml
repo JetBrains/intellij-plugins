@@ -52,6 +52,7 @@
     <enterHandlerDelegate implementation="com.jetbrains.lang.dart.ide.editor.DartEnterInStringHandler" order="first"/>
     <enterHandlerDelegate implementation="com.jetbrains.lang.dart.ide.editor.DartEnterBetweenBracesHandler"/>
     <lang.lineWrapStrategy language="Dart" implementationClass="com.jetbrains.lang.dart.ide.editor.DartLineWrapPositionStrategy"/>
+    <stripTrailingSpacesFilterFactory implementation="com.jetbrains.lang.dart.ide.editor.DartStripTrailingSpacesFilterFactory"/>
 
     <languageInjector implementation="com.jetbrains.lang.dart.psi.DartLanguageInjector"/>
     <multiHostInjector implementation="com.jetbrains.lang.dart.injection.DartMultiHostInjector"/>
