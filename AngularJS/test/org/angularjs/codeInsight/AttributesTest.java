@@ -865,4 +865,19 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertContainsElements(myFixture.getLookupElementStrings(), "fxFlexOrder");
     });
   }
+
+  public void testComponent15AttributesCompletion() {
+    myFixture.testCompletion("component15.html", "component15.after.html", "angular.js", "component15.js");
+  }
+
+  public void testComponent15AttributesResolve() {
+    myFixture.configureByFiles("component15.after.html", "angular.js", "component15.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("he<caret>ro=", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("component15.js", resolve.getContainingFile().getName());
+    assertEquals("hero: '<'", getDirectiveDefinitionText(resolve));
+  }
 }

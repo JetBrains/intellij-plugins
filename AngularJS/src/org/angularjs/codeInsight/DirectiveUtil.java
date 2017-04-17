@@ -92,7 +92,7 @@ public class DirectiveUtil {
   public static JSImplicitElement getTagDirective(String directiveName, Project project) {
     final JSImplicitElement directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.KEY);
     return directive == null ? getTagDirective(project, directiveName, AngularDirectivesIndex.KEY) : directive;
-    }
+  }
 
   private static JSImplicitElement getTagDirective(Project project, String directiveName, final StubIndexKey<String, JSImplicitElementProvider> index) {
     final JSImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
