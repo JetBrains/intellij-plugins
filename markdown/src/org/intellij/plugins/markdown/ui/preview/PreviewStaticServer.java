@@ -1,6 +1,5 @@
 package org.intellij.plugins.markdown.ui.preview;
 
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import io.netty.channel.Channel;
@@ -18,16 +17,25 @@ import org.jetbrains.ide.HttpRequestHandler;
 import org.jetbrains.io.FileResponses;
 import org.jetbrains.io.Responses;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.List;
 
 public class PreviewStaticServer extends HttpRequestHandler {
 
+  public static final String INLINE_CSS_FILENAME = "inline.css";
+
   private static final String PREFIX = "/api/markdown-preview/";
+
+  @Nullable
+  private String myInlineStyle = null;
+
+  private long myInlineStyleTimestamp = 0;
+
+  public static PreviewStaticServer getInstance() {
+    return HttpRequestHandler.Companion.getEP_NAME().findExtension(PreviewStaticServer.class);
+  }
 
   @NotNull
   public static String createCSP(@NotNull List<String> scripts, @NotNull List<String> styles) {
@@ -52,21 +60,9 @@ public class PreviewStaticServer extends HttpRequestHandler {
     return getStaticUrl("styles/" + scriptFileName);
   }
 
-  @Nullable
-  public static String getCSPHash(@NotNull String inlineCSS) {
-    if (inlineCSS.isEmpty()) {
-      return null;
-    }
-
-    try {
-      String algorithm = "sha-512";
-      MessageDigest instance = MessageDigest.getInstance(algorithm);
-      byte[] digest = instance.digest(inlineCSS.getBytes(CharsetToolkit.UTF8_CHARSET));
-      return '\'' + algorithm.replace("-", "") + '-' + new String(Base64.getEncoder().encode(digest), CharsetToolkit.UTF8_CHARSET) + '\'';
-    }
-    catch (NoSuchAlgorithmException e) {
-      return null;
-    }
+  public void setInlineStyle(@Nullable String inlineStyle) {
+    myInlineStyle = inlineStyle;
+    myInlineStyleTimestamp = System.currentTimeMillis();
   }
 
   @Override
@@ -99,14 +95,47 @@ public class PreviewStaticServer extends HttpRequestHandler {
                    fileName);
     }
     else if ("styles".equals(contentType) && MarkdownHtmlPanel.STYLES.contains(fileName)) {
-      sendResource(request,
-                   context.channel(),
-                   MarkdownCssSettings.class,
-                   fileName);
+      if (INLINE_CSS_FILENAME.equals(fileName)) {
+        sendInlineStyle(request, context.channel());
+      }
+      else {
+        sendResource(request,
+                     context.channel(),
+                     MarkdownCssSettings.class,
+                     fileName);
+      }
     }
-    return false;
+    else {
+      return false;
+    }
+
+    return true;
   }
 
+
+  private void sendInlineStyle(@NotNull HttpRequest request,
+                               @NotNull Channel channel) {
+    final HttpResponse response =
+      FileResponses.INSTANCE.prepareSend(request, channel, myInlineStyleTimestamp, INLINE_CSS_FILENAME, EmptyHttpHeaders.INSTANCE);
+    if (response == null) {
+      return;
+    }
+
+    Responses.addKeepAliveIfNeed(response, request);
+
+    if (myInlineStyle == null) {
+      Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
+      return;
+    }
+
+    channel.write(response);
+    if (request.method() != HttpMethod.HEAD) {
+      channel.write(new ChunkedStream(new ByteArrayInputStream(myInlineStyle.getBytes(CharsetToolkit.UTF8_CHARSET))));
+    }
+
+    final ChannelFuture future = channel.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+    future.addListener(ChannelFutureListener.CLOSE);
+  }
 
   private static void sendResource(@NotNull HttpRequest request,
                                    @NotNull Channel channel,
