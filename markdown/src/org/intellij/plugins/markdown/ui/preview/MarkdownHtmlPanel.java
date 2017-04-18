@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class MarkdownHtmlPanel implements Disposable {
   protected static final List<String> SCRIPTS = Arrays.asList("processLinks.js", "scrollToElement.js");
 
-  protected static final List<String> STYLES = Arrays.asList("default.css", "darcula.css");
+  protected static final List<String> STYLES = Arrays.asList("default.css", "darcula.css", PreviewStaticServer.INLINE_CSS_FILENAME);
 
   @NotNull
   public abstract JComponent getComponent();
