@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.highlighting;
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.openapi.application.ApplicationManager;
@@ -13,6 +14,8 @@ import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+
+import java.util.List;
 
 public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   protected String getBasePath() {
@@ -85,6 +88,11 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   public void testSyncAsyncAwaitYield() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
+
+    // now check that reparsing because of typing inside a reparseable block doesn't loose knowledge that the method is async
+    final List<HighlightInfo> oldHighlighting = myFixture.doHighlighting();
+    myFixture.type(' ');
+    assertSameElements(myFixture.doHighlighting(), oldHighlighting);
   }
 
   public void testColorAnnotatorIdePart() {
