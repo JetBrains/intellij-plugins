@@ -51,7 +51,7 @@ class SafeOpener {
     }
 
     if (!isHttpScheme(uri.getScheme()) || isLocalHost(uri.getHost()) && !isSafeExtension(uri.getPath())) {
-      LOG.error("Malicious code", new MaliciousURLOpenedException(link));
+      LOG.warn("Malicious code", new MaliciousURLOpenedException(link));
       return;
     }
 
