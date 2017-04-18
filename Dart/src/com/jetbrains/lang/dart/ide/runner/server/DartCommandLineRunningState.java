@@ -134,16 +134,16 @@ public class DartCommandLineRunningState extends CommandLineState {
       final VirtualFile launchFile = dartRunConfiguration.getRunnerParameters().getDartFileOrDirectory();
 
       if (getEnvironment().getRunnerAndConfigurationSettings() == null) {
-        DartExecutionHelper.getInstance(project).displayIssues(launchFile);
+        DartExecutionHelper.displayIssues(project, launchFile);
       }
       else {
-        String launchTitle = "Error launching " + getEnvironment().getRunnerAndConfigurationSettings().getName();
+        String launchTitle = "Analysis issues with " + getEnvironment().getRunnerAndConfigurationSettings().getName();
         Icon icon = getEnvironment().getRunnerAndConfigurationSettings().getConfiguration().getIcon();
-        DartExecutionHelper.getInstance(project).displayIssues(launchFile, launchTitle, icon);
+        DartExecutionHelper.displayIssues(project, launchFile, launchTitle, icon);
       }
     }
     catch (RuntimeConfigurationError error) {
-      DartExecutionHelper.getInstance(project).clearIssueNotifications();
+      DartExecutionHelper.clearIssueNotifications(project);
     }
 
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());

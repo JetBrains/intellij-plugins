@@ -15,7 +15,6 @@
  */
 package com.jetbrains.lang.dart.ide.runner;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
@@ -37,33 +36,28 @@ import java.util.stream.Collectors;
 
 public class DartExecutionHelper {
 
-  public static DartExecutionHelper getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, DartExecutionHelper.class);
-  }
-
-  private @NotNull final Project myProject;
-
-  DartExecutionHelper(@NotNull final Project project) {
-    myProject = project;
+  private DartExecutionHelper() {
   }
 
   @SuppressWarnings("unused")
-  public boolean hasIssues(@NotNull VirtualFile launchFile) {
-    return !getIssues(launchFile).isEmpty();
+  public static boolean hasIssues(@NotNull final Project project, @NotNull VirtualFile launchFile) {
+    return !getIssues(project, launchFile).isEmpty();
   }
 
-  public List<DartServerData.DartError> getIssues(@NotNull VirtualFile launchFile) {
-    return getIssues(launchFile, true);
+  public static List<DartServerData.DartError> getIssues(@NotNull final Project project, @NotNull VirtualFile launchFile) {
+    return getIssues(project, launchFile, true);
   }
 
-  public List<DartServerData.DartError> getIssues(@NotNull VirtualFile launchFile, boolean onlyErrors) {
-    GlobalSearchScope scope = DartResolveScopeProvider.getDartScope(myProject, launchFile, true);
+  public static List<DartServerData.DartError> getIssues(@NotNull final Project project,
+                                                         @NotNull VirtualFile launchFile,
+                                                         boolean onlyErrors) {
+    GlobalSearchScope scope = DartResolveScopeProvider.getDartScope(project, launchFile, true);
     if (scope == null) {
       return Collections.emptyList();
     }
 
     // Collect errors.
-    final DartAnalysisServerService analysisServerService = DartAnalysisServerService.getInstance(myProject);
+    final DartAnalysisServerService analysisServerService = DartAnalysisServerService.getInstance(project);
     List<DartServerData.DartError> errors = analysisServerService.getErrors(scope);
     if (onlyErrors) {
       errors = errors.stream().filter(DartServerData.DartError::isError).collect(Collectors.toList());
@@ -73,46 +67,49 @@ public class DartExecutionHelper {
   }
 
   @SuppressWarnings("unused")
-  public void displayIssues(@NotNull VirtualFile launchFile) {
-    displayIssues(launchFile, "Error launching app", null);
+  public static void displayIssues(@NotNull final Project project, @NotNull VirtualFile launchFile) {
+    displayIssues(project, launchFile, "Analysis issues with launch", null);
   }
 
   @SuppressWarnings("SameParameterValue")
-  public void displayIssues(@NotNull VirtualFile launchFile, @NotNull String launchTitle, @Nullable Icon icon) {
-    clearIssueNotifications();
+  public static void displayIssues(@NotNull final Project project,
+                                   @NotNull VirtualFile launchFile,
+                                   @NotNull String launchTitle,
+                                   @Nullable Icon icon) {
+    clearIssueNotifications(project);
 
-    List<DartServerData.DartError> errors = getIssues(launchFile);
+    List<DartServerData.DartError> errors = getIssues(project, launchFile);
 
     if (errors.isEmpty()) {
       return;
     }
 
-    final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
+    final DartProblemsView problemsView = DartProblemsView.getInstance(project);
 
     final String content;
     if (errors.size() == 1) {
       content = errors.get(0).getMessage() + " (<a href=\"issues\">show</a>)";
     }
     else {
-      content = errors.size() + " analysis " + StringUtil.pluralize("issue", errors.size()) + " found. (<a href=\"issues\">show</a>)";
-      problemsView.showErrorNotification(myProject, launchTitle, content, icon);
+      content = errors.size() + " " + StringUtil.pluralize("issue", errors.size()) + " found. (<a href=\"issues\">show</a>)";
+      problemsView.showErrorNotification(project, launchTitle, content, icon);
     }
 
     // Show a notification on the dart analysis tool window.
-    problemsView.showErrorNotification(myProject, launchTitle, content, icon);
+    problemsView.showErrorNotification(project, launchTitle, content, icon);
 
     // Jump to and highlight the first error (order unspecified) in the editor.
     DartServerData.DartError error = errors.get(0);
     final VirtualFile errorFile = LocalFileSystem.getInstance().findFileByPath(error.getAnalysisErrorFileSD());
     if (errorFile != null) {
-      final OpenFileDescriptor descriptor = new OpenFileDescriptor(myProject, errorFile, error.getOffset());
+      final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, errorFile, error.getOffset());
       descriptor.setScrollType(ScrollType.MAKE_VISIBLE);
       descriptor.navigate(true);
     }
   }
 
-  public void clearIssueNotifications() {
-    final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
+  public static void clearIssueNotifications(@NotNull final Project project) {
+    final DartProblemsView problemsView = DartProblemsView.getInstance(project);
     problemsView.clearNotifications();
   }
 }
