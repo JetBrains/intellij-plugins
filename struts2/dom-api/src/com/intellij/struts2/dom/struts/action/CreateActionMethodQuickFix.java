@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
@@ -43,6 +44,12 @@ public class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionO
                                     final String methodName) {
     super(actionClass);
     this.methodName = methodName;
+  }
+
+  @Override
+  protected boolean isAvailable() {
+    return StringUtil.isNotEmpty(methodName) &&
+           super.isAvailable();
   }
 
   @NotNull
