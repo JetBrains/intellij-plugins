@@ -63,7 +63,7 @@ class SafeOpener {
       return;
     }
     if (!isHttpScheme(uri.getScheme()) || isLocalHost(uri.getHost()) && !isSafeExtension(uri.getPath())) {
-      LOG.warn("Malicious code", new MaliciousURLOpenedException(link));
+      LOG.warn("Bad URL", new InaccessibleURLOpenedException(link));
       return;
     }
 
@@ -118,8 +118,8 @@ class SafeOpener {
     return i != -1 && SAFE_LOCAL_EXTENSIONS.contains(path.substring(i + 1).toLowerCase(Locale.US));
   }
 
-  private static class MaliciousURLOpenedException extends IllegalArgumentException {
-    public MaliciousURLOpenedException(String link) {
+  private static class InaccessibleURLOpenedException extends IllegalArgumentException {
+    public InaccessibleURLOpenedException(String link) {
       super(link);
     }
   }
