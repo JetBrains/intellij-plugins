@@ -1,7 +1,15 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.NettyKt;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +19,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Set;
+
+import static com.intellij.ide.impl.ProjectUtil.focusProjectWindow;
 
 class SafeOpener {
   private static final Logger LOG = Logger.getInstance(SafeOpener.class);
@@ -38,7 +48,6 @@ class SafeOpener {
     final URI uri;
     try {
       if (!BrowserUtil.isAbsoluteURL(link)) {
-        // TODO handle links opening via editor
         uri = new URI("http://" + link);
       }
       else {
@@ -50,12 +59,44 @@ class SafeOpener {
       return;
     }
 
+    if (tryOpenInEditor(uri)) {
+      return;
+    }
     if (!isHttpScheme(uri.getScheme()) || isLocalHost(uri.getHost()) && !isSafeExtension(uri.getPath())) {
       LOG.warn("Malicious code", new MaliciousURLOpenedException(link));
       return;
     }
 
     BrowserUtil.browse(uri);
+  }
+
+  private static boolean tryOpenInEditor(@NotNull URI uri) {
+    if (!"file".equals(uri.getScheme())) {
+      return false;
+    }
+
+    Pair<Project, VirtualFile> result = ApplicationManager.getApplication().runReadAction((Computable<Pair<Project, VirtualFile>>)() -> {
+      final VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(uri.toString());
+      if (virtualFile == null) {
+        return null;
+      }
+      Project project = ProjectUtil.guessProjectForContentFile(virtualFile);
+      if (project != null) {
+        return Pair.create(project, virtualFile);
+      }
+      else {
+        return null;
+      }
+    });
+
+    if (result != null) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        new OpenFileDescriptor(result.first, result.second).navigate(true);
+        focusProjectWindow(result.first, true);
+      });
+    }
+
+    return result != null;
   }
 
   private static boolean isHttpScheme(@Nullable String scheme) {
