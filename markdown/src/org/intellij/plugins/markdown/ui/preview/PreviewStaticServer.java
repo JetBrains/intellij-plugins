@@ -2,6 +2,7 @@ package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -11,6 +12,7 @@ import io.netty.handler.stream.ChunkedStream;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
 import org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 import org.jetbrains.ide.HttpRequestHandler;
 import org.jetbrains.io.FileResponses;
@@ -18,33 +20,53 @@ import org.jetbrains.io.Responses;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.List;
 
 public class PreviewStaticServer extends HttpRequestHandler {
 
   private static final String PREFIX = "/api/markdown-preview/";
 
-  public static final NotNullLazyValue<String> CSP = new NotNullLazyValue<String>() {
-    @NotNull
-    @Override
-    protected String compute() {
-      return "default-src 'none'; script-src "
-             + MarkdownHtmlPanel.SCRIPTS.stream()
-               .map(s -> getStaticUrl("scripts/" + s))
-               .reduce((s, s2) -> s + " " + s2)
-               .orElseGet(String::new)
-             + "; style-src https: "
-             + MarkdownHtmlPanel.STYLES.stream().map(s -> getStaticUrl("styles/" + s))
-               .reduce((s, s2) -> s + " " + s2)
-               .orElseGet(String::new)
-             + "; img-src *; connect-src 'none'; font-src *; " +
-             "object-src 'none'; media-src 'none'; child-src 'none';";
-    }
-  };
+  @NotNull
+  public static String createCSP(@NotNull List<String> scripts, @NotNull List<String> styles) {
+    return "default-src 'none'; script-src " + StringUtil.join(scripts, " ") + "; "
+           + "style-src https: " + StringUtil.join(styles, " ") + "; "
+           + "img-src *; connect-src 'none'; font-src *; " +
+           "object-src 'none'; media-src 'none'; child-src 'none';";
+  }
 
   @NotNull
-  public static String getStaticUrl(@NotNull String staticPath) {
+  private static String getStaticUrl(@NotNull String staticPath) {
     return "http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + staticPath;
+  }
+
+  @NotNull
+  public static String getScriptUrl(@NotNull String scriptFileName) {
+    return getStaticUrl("scripts/" + scriptFileName);
+  }
+
+  @NotNull
+  public static String getStyleUrl(@NotNull String scriptFileName) {
+    return getStaticUrl("styles/" + scriptFileName);
+  }
+
+  @Nullable
+  public static String getCSPHash(@NotNull String inlineCSS) {
+    if (inlineCSS.isEmpty()) {
+      return null;
+    }
+
+    try {
+      String algorithm = "sha-512";
+      MessageDigest instance = MessageDigest.getInstance(algorithm);
+      byte[] digest = instance.digest(inlineCSS.getBytes(CharsetToolkit.UTF8_CHARSET));
+      return '\'' + algorithm.replace("-", "") + '-' + new String(Base64.getEncoder().encode(digest), CharsetToolkit.UTF8_CHARSET) + '\'';
+    }
+    catch (NoSuchAlgorithmException e) {
+      return null;
+    }
   }
 
   @Override
@@ -107,7 +129,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
       channel.write(response);
       if (request.method() != HttpMethod.HEAD) {
-          channel.write(new ChunkedStream(resource));
+        channel.write(new ChunkedStream(resource));
       }
     }
     catch (IOException ignored) {
