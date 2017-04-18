@@ -303,13 +303,9 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   private static void updatePanelCssSettings(@NotNull MarkdownHtmlPanel panel, @NotNull final MarkdownCssSettings cssSettings) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    //noinspection StringBufferReplaceableByString
-    final String inlineCss = new StringBuilder()
-      .append(cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() + "\n" : "")
-      .append("body {\n  font-size: ").append(JBUI.scale(100)).append("%;\n}")
-      .toString();
 
-    panel.setCSS(inlineCss, cssSettings.isUriEnabled() ? cssSettings.getStylesheetUri() : null);
+    panel.setCSS(cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() : null,
+                 cssSettings.isUriEnabled() ? cssSettings.getStylesheetUri() : null);
     panel.render();
   }
 
