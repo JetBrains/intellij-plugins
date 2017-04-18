@@ -55,8 +55,6 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private JFXPanel myPanel;
   @Nullable
   private WebView myWebView;
-  @Nullable
-  private String myInlineCss;
   @NotNull
   private String[] myCssUris = ArrayUtil.EMPTY_STRING_ARRAY;
   @NotNull
@@ -167,22 +165,18 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     return ImageRefreshFix.setStamps(html
       .replace("<head>", "<head>"
                          + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + myCSP + "\"/>"
-                         + getCssLines(myInlineCss, myCssUris) + "\n" + getScriptingLines()));
+                         + getCssLines(null, myCssUris) + "\n" + getScriptingLines()));
   }
 
   @Override
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
-    myInlineCss = inlineCss;
-    myCssUris = fileUris;
+    PreviewStaticServer.getInstance().setInlineStyle(inlineCss);
+    myCssUris = inlineCss == null ? fileUris
+                                  : ArrayUtil.mergeArrays(fileUris, PreviewStaticServer.getStyleUrl(PreviewStaticServer.INLINE_CSS_FILENAME));
     myCSP = PreviewStaticServer.createCSP(ContainerUtil.map(SCRIPTS, s -> PreviewStaticServer.getScriptUrl(s)),
                                           ContainerUtil.concat(
                                             ContainerUtil.map(STYLES, s -> PreviewStaticServer.getStyleUrl(s)),
-                                            ContainerUtil.filter(fileUris, s -> s.startsWith("http://") || s.startsWith("https://")),
-                                            Stream.of(myInlineCss)
-                                              .filter(Objects::nonNull)
-                                              .map(PreviewStaticServer::getCSPHash)
-                                              .filter(Objects::nonNull)
-                                              .collect(Collectors.toList())
+                                            ContainerUtil.filter(fileUris, s -> s.startsWith("http://") || s.startsWith("https://"))
                                           ));
     setHtml(myLastRawHtml);
   }
