@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
@@ -26,8 +27,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
@@ -36,7 +39,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     @Override
     protected String compute() {
       return SCRIPTS.stream()
-        .map(s -> "<script src=\"" + PreviewStaticServer.getStaticUrl("scripts/" + s) + "\"></script>")
+        .map(s -> "<script src=\"" + PreviewStaticServer.getScriptUrl(s) + "\"></script>")
         .reduce((s, s2) -> s + "\n" + s2)
         .orElseGet(String::new);
     }
@@ -54,6 +57,8 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private String myInlineCss;
   @NotNull
   private String[] myCssUris = ArrayUtil.EMPTY_STRING_ARRAY;
+  @NotNull
+  private String myCSP = "";
   @NotNull
   private String myLastRawHtml = "";
   @NotNull
@@ -154,7 +159,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private String prepareHtml(@NotNull String html) {
     return ImageRefreshFix.setStamps(html
       .replace("<head>", "<head>"
-                         + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.CSP.getValue() + "\"/>"
+                         + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + myCSP + "\"/>"
                          + getCssLines(myInlineCss, myCssUris) + "\n" + getScriptingLines()));
   }
 
@@ -162,6 +167,15 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
     myInlineCss = inlineCss;
     myCssUris = fileUris;
+    myCSP = PreviewStaticServer.createCSP(ContainerUtil.map(SCRIPTS, s -> PreviewStaticServer.getScriptUrl(s)),
+                                          ContainerUtil.concat(
+                                            ContainerUtil.map(STYLES, s -> PreviewStaticServer.getStyleUrl(s)),
+                                            ContainerUtil.filter(fileUris, s -> s.startsWith("http://") || s.startsWith("https://")),
+                                            Stream.of(myInlineCss)
+                                              .map(PreviewStaticServer::getCSPHash)
+                                              .filter(Objects::nonNull)
+                                              .collect(Collectors.toList())
+                                          ));
     setHtml(myLastRawHtml);
   }
 
