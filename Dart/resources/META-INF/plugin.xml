@@ -189,6 +189,8 @@
                     serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"
                     serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
+    <projectService serviceInterface="com.jetbrains.lang.dart.ide.runner.DartExecutionHelper"
+                    serviceImplementation="com.jetbrains.lang.dart.ide.runner.DartExecutionHelper"/>
 
     <applicationService serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"
                         serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>

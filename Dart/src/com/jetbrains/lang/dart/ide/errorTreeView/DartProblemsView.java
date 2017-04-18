@@ -19,6 +19,10 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -45,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +60,9 @@ import java.util.Map;
 )
 public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings> {
   public static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
+
+  private static final NotificationGroup NOTIFICATION_GROUP =
+    NotificationGroup.toolWindowGroup(TOOLWINDOW_ID, TOOLWINDOW_ID, false);
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 
@@ -72,6 +80,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private boolean myAnalysisIsBusy;
 
   private int myFilesWithErrorsHash;
+  private Notification myNotification;
 
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
@@ -170,6 +179,44 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   public static DartProblemsView getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, DartProblemsView.class);
+  }
+
+  @SuppressWarnings("unused")
+  public void showWarningNotification(@NotNull Project project, @NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
+    showNotification(NotificationType.WARNING, project, title, htmlContent, icon);
+  }
+
+  public void showErrorNotification(@NotNull Project project, @NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
+    showNotification(NotificationType.ERROR, project, title, htmlContent, icon);
+  }
+
+  public void clearNotifications() {
+    if (myNotification != null) {
+      myNotification.expire();
+      myNotification = null;
+    }
+  }
+
+  private void showNotification(@NotNull NotificationType notificationType,
+                                @NotNull Project project,
+                                @NotNull String title,
+                                @NotNull String htmlContent,
+                                @Nullable Icon icon) {
+    clearNotifications();
+
+    myNotification = NOTIFICATION_GROUP.createNotification(
+      title, htmlContent, notificationType, new NotificationListener.Adapter() {
+        @Override
+        protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
+          notification.expire();
+          ToolWindowManager.getInstance(project).getToolWindow(TOOLWINDOW_ID).activate(null);
+        }
+      }
+    );
+    if (icon != null) {
+      myNotification.setIcon(icon);
+    }
+    myNotification.notify(project);
   }
 
   @Override

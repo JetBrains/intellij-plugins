@@ -45,6 +45,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
@@ -612,6 +613,14 @@ public class DartAnalysisServerService implements Disposable {
   @NotNull
   public List<DartServerData.DartError> getErrors(@NotNull final VirtualFile file) {
     return myServerData.getErrors(file);
+  }
+
+  public List<DartServerData.DartError> getErrors(@NotNull final Module module) {
+    return myServerData.getErrors(module);
+  }
+
+  public List<DartServerData.DartError> getErrors(@NotNull final SearchScope scope) {
+    return myServerData.getErrors(scope);
   }
 
   @NotNull
