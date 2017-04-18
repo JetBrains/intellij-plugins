@@ -3,8 +3,10 @@ package com.jetbrains.lang.dart;
 import com.intellij.lang.*;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.text.BlockSupport;
 import com.intellij.psi.tree.*;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 import com.jetbrains.lang.dart.lexer.DartDocLexer;
@@ -268,8 +270,9 @@ public interface DartTokenTypesSets {
       return builder.getTreeBuilt().getFirstChildNode();
     }
 
-    private static boolean isSyncOrAsync(@NotNull final ASTNode lazyParseableBlock) {
-      final IElementType type = lazyParseableBlock.getTreeParent().getFirstChildNode().getElementType();
+    private static boolean isSyncOrAsync(@NotNull final ASTNode newBlock) {
+      final ASTNode oldBlock = Pair.getFirst(newBlock.getUserData(BlockSupport.TREE_TO_BE_REPARSED));
+      final IElementType type = (oldBlock != null ? oldBlock : newBlock).getTreeParent().getFirstChildNode().getElementType();
       return type == SYNC || type == ASYNC;
     }
   }
