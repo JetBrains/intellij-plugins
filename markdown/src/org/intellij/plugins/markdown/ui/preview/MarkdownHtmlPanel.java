@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class MarkdownHtmlPanel implements Disposable {
   protected static final List<String> SCRIPTS = Arrays.asList("processLinks.js", "scrollToElement.js");
 
-  static final List<String> STYLES = Arrays.asList("default.css", "darcula.css");
+  protected static final List<String> STYLES = Arrays.asList("default.css", "darcula.css");
 
   @NotNull
   public abstract JComponent getComponent();
@@ -64,10 +64,10 @@ public abstract class MarkdownHtmlPanel implements Disposable {
 
   private static String migrateUriToHttp(@NotNull String uri) {
     if (uri.equals(MarkdownCssSettings.DEFAULT.getStylesheetUri())) {
-      return PreviewStaticServer.getStaticUrl("styles/default.css");
+      return PreviewStaticServer.getStyleUrl("default.css");
     }
     else if (uri.equals(MarkdownCssSettings.DARCULA.getStylesheetUri())) {
-      return PreviewStaticServer.getStaticUrl("styles/darcula.css");
+      return PreviewStaticServer.getStyleUrl("darcula.css");
     }
     else {
       return uri;
