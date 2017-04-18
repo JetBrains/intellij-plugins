@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html ng-app="notesApp">
+<head>
+  <style>
+    .done {
+      color: green;
+    }
+
+    .pending {
+      color: darkred;
+    }
+  </style>
+</head>
+<body ng-controller="MainCtrl as ctrl">
+<table ng-cloak>
+  <tr ng-repeat-start="aNote in ctrl.notes" ng-class="ctrl.getNotesClass(aNote.done)">
+    <td><span ng-bind="aNote.id"></span></td>
+    <td> aNote.label </td>
+  </tr>
+  <tr ng-repeat-end>
+    <td colspan="2"><span ng-show="aNo<caret>" ng-bind="aNote.assignee"></span></td>
+  </tr>
+  <tr>
+    <td colspan="2"><span ng-show="aNote.assignee" ng-bind="aNote.assignee"></span></td>
+  </tr>
+</table>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js"></script>
+<script src="notes.js"></script>
+</body>
+</html>

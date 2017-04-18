@@ -111,6 +111,15 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     checkVariableResolve("val<caret>ue", "value", JSVariable.class);
   }
 
+  public void testNgRepeatEndCompletion() {
+    myFixture.testCompletion("ngRepeatEnd.html", "ngRepeatEnd.after.html", "angular.js");
+  }
+
+  public void testNgRepeatEndResolve() {
+    myFixture.configureByFiles("ngRepeatEnd.resolve.html", "angular.js");
+    checkVariableResolve("aNo<caret>te", "aNote", JSVariable.class);
+  }
+
   public void testNgControllerAliasCompletion() {
     myFixture.testCompletionTyping("ngControllerAlias.html", "\n", "ngControllerAlias.after.html", "angular.js", "custom.js");
   }
