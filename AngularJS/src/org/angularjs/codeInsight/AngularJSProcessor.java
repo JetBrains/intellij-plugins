@@ -111,9 +111,25 @@ public class AngularJSProcessor {
     if (declarationContainer != null && elementContainer != null && elementTag != null && declarationTag != null) {
       return PsiTreeUtil.isAncestor(declarationTag, elementTag, true) ||
              (PsiTreeUtil.isAncestor(declarationTag, elementTag, false) &&
-              declarationContainer.getTextOffset() < elementContainer.getTextOffset());
+              declarationContainer.getTextOffset() < elementContainer.getTextOffset()) ||
+             isInRepeatStartEnd(declarationTag, declarationContainer, elementContainer);
     }
     return true;
+  }
+
+  private static boolean isInRepeatStartEnd(XmlTagChild declarationTag,
+                                            PsiLanguageInjectionHost declarationContainer,
+                                            PsiLanguageInjectionHost elementContainer) {
+    PsiElement parent = declarationContainer.getParent();
+    if (parent instanceof XmlAttribute && "ng-repeat-start".equals(((XmlAttribute)parent).getName())) {
+      XmlTagChild next = declarationTag.getNextSiblingInTag();
+      while (next != null) {
+        if (PsiTreeUtil.isAncestor(next, elementContainer, true)) return true;
+        if (next instanceof XmlTag && ((XmlTag)next).getAttribute("ng-repeat-end") != null) break;
+        next = next.getNextSiblingInTag();
+      }
+    }
+    return false;
   }
 
   private static boolean eventScopeMatches(InjectedLanguageManager injector, PsiElement element, PsiElement parent) {
