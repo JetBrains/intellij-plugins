@@ -8,6 +8,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.JBUI;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -79,6 +80,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       updateFontSmoothingType(myWebView,
                               MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
       myWebView.setContextMenuEnabled(false);
+      myWebView.setZoom(JBUI.scale(1.f));
 
       final WebEngine engine = myWebView.getEngine();
       engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
@@ -177,6 +179,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
                                             ContainerUtil.map(STYLES, s -> PreviewStaticServer.getStyleUrl(s)),
                                             ContainerUtil.filter(fileUris, s -> s.startsWith("http://") || s.startsWith("https://")),
                                             Stream.of(myInlineCss)
+                                              .filter(Objects::nonNull)
                                               .map(PreviewStaticServer::getCSPHash)
                                               .filter(Objects::nonNull)
                                               .collect(Collectors.toList())
