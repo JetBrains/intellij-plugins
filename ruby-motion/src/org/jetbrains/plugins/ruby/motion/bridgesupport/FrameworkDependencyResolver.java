@@ -62,10 +62,15 @@ public class FrameworkDependencyResolver {
   public Collection<Framework> getFrameworks(final Module module) {
     final String sdkVersion = RubyMotionUtil.getInstance().getSdkVersion(module);
     final String[] frameworks = RubyMotionUtil.getInstance().getRequiredFrameworks(module);
-    final Map<String, List<String>> dependencyInfo = myDependencyInfo.get(sdkVersion);
+    Map<String, List<String>> dependencyInfo = myDependencyInfo.get(sdkVersion);
 
     if (dependencyInfo == null) {
       LOG.warn("Could not find dependency info for version: '" + sdkVersion + "'");
+      if (RubyMotionUtil.getInstance().isOSX(module)) {
+        dependencyInfo = myDependencyInfo.get("10.10");
+      } else if (!RubyMotionUtil.getInstance().isAndroid(module)) {
+        dependencyInfo = myDependencyInfo.get("9.3");
+      }
     }
 
     final Set<Framework> result = new HashSet<>();
