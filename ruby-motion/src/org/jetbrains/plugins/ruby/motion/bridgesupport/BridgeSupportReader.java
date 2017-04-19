@@ -149,6 +149,8 @@ public class BridgeSupportReader {
       LOG.warn("No declared type for " + ((Element)e.getParent()).getAttributeValue(NAME));
       return "void";
     }
+    declaredType = StringUtil.trimEnd(declaredType, " _Nullable");
+    declaredType = StringUtil.trimEnd(declaredType, " _Nonnull");
     return declaredType.intern();
   }
 
