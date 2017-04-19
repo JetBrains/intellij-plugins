@@ -50,4 +50,8 @@ public class Function extends Sealable {
   public boolean isClassMethod() {
     return myClassMethod;
   }
+
+  public boolean isId() {
+    return "id".equals(getReturnValue()) || "instancetype".equals(getReturnValue());
+  }
 }
