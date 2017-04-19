@@ -300,4 +300,21 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
     });
   }
+
+  public void testNoNormalizedResolve20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      myFixture.configureByFiles("noNormalized.ts", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("app_<caret>hello", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("noNormalized.ts", resolve.getContainingFile().getName());
+      assertEquals("Component({\n" +
+                   "    selector: 'app_hello',\n" +
+                   "    template: '<app_hello></app_hello>',\n" +
+                   "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    });
+  }
+
 }

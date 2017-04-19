@@ -61,7 +61,8 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     final Project project = xmlTag.getProject();
     if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(project))) return null;
 
-    final String directiveName = DirectiveUtil.normalizeAttributeName(xmlTag.getName());
+    final String tagName = xmlTag.getName();
+    final String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
     final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
     final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
     if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
@@ -72,7 +73,14 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       return new AngularJSTagDescriptor(directiveName, createDirective(xmlTag, directiveName));
     }
 
-    final JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
+    JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
+    if (DirectiveUtil.isAngular2Directive(directive) && !directive.getName().equals(tagName)) {
+      // we've found directive via normalized name for Angular, it should not work
+      return null;
+    }
+    if (directive == null && !tagName.equals(directiveName) && AngularIndexUtil.hasAngularJS2(project)) {
+      directive = DirectiveUtil.getTagDirective(tagName, project);
+    }
 
     return directive != null ? new AngularJSTagDescriptor(directiveName, directive) : null;
   }
