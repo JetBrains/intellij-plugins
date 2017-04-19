@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor;
-import com.intellij.lang.javascript.psi.resolve.ResolveResultSink;
+import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.angularjs.index.AngularJS2IndexingHandler;
@@ -23,13 +23,13 @@ public class AngularJSSpecificHandlersFactory extends JavaScriptSpecificHandlers
     return new AngularJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
   }
 
-  @NotNull
   @Override
-  public QualifiedItemProcessor<ResolveResultSink> createQualifiedItemProcessor(@NotNull PsiElement place, @NotNull String name) {
+  public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
     JSClass clazz = AngularJS2IndexingHandler.findDirectiveClass(place);
     if (clazz != null && DialectDetector.isTypeScript(clazz)) {
-      return new TypeScriptQualifiedItemProcessor<>(new ResolveResultSink(place, name), place.getContainingFile());
+      return new TypeScriptQualifiedItemProcessor<>(sink, place.getContainingFile());
     }
-    return super.createQualifiedItemProcessor(place, name);
+
+    return super.createQualifiedItemProcessor(sink, place);
   }
 }
