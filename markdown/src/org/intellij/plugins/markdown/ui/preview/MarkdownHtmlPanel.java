@@ -50,9 +50,6 @@ public abstract class MarkdownHtmlPanel implements Disposable {
     StringBuilder result = new StringBuilder();
 
     for (String uri : fileUris) {
-      if (uri == null) {
-        continue;
-      }
       uri = migrateUriToHttp(uri);
       result.append("<link rel=\"stylesheet\" href=\"").append(uri).append("\" />\n");
     }
