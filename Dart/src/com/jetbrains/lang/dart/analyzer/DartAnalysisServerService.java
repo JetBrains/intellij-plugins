@@ -610,6 +610,11 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @NotNull
+  public List<DartServerData.DartError> getErrors(@NotNull final Module module) {
+    return myServerData.getErrors(module);
+  }
+
+  @NotNull
   public List<DartServerData.DartError> getErrors(@NotNull final VirtualFile file) {
     return myServerData.getErrors(file);
   }
