@@ -104,8 +104,8 @@ public class MotionSymbolUtil {
     }
     final Project project = module.getProject();
     if (typeName.endsWith("*")) {
-      final RType type = doGetTypeByName(module, typeName.substring(0, typeName.length() - 1));
-      if (type != REmptyType.INSTANCE || "void".equals(typeName.substring(0, typeName.length() - 1))) {
+      final RType type = doGetTypeByName(module, dereferencePointerType(typeName));
+      if (type != REmptyType.INSTANCE || "void".equals(dereferencePointerType(typeName))) {
         return new RArrayType(project, type);
       }
     }
@@ -120,9 +120,14 @@ public class MotionSymbolUtil {
       return symbol instanceof StructSymbol || (symbol != null && RubyMotionUtil.getInstance().isAndroid(module)) ?
              new RSymbolTypeImpl(symbol, Context.INSTANCE) : REmptyType.INSTANCE;
     }
-    typeName = typeName.substring(0, typeName.length() - 1);
+    typeName = dereferencePointerType(typeName);
     final Symbol symbol = RubyMotionSymbolProvider.findClassOrStruct(module, frameworks, Collections.singletonList(typeName));
     return symbol != null ? new RSymbolTypeImpl(symbol, Context.INSTANCE) : REmptyType.INSTANCE;
+  }
+
+  @NotNull
+  private static String dereferencePointerType(String typeName) {
+    return typeName.substring(0, typeName.length() - 1).trim();
   }
 
   @Nullable
