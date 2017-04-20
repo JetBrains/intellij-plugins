@@ -27,9 +27,6 @@ public class KarmaJsSourcesLocator {
    * @return 'karma-intellij' directory
    */
   private static File findKarmaIntellijPackageDir(@NotNull File karmaPackageDir) {
-    if (true) {
-      return new File("/home/segrey/work/idea-master/contrib/js-karma/src/js_reporter/karma-intellij");
-    }
     File dir = new File(karmaPackageDir.getParentFile(), "karma-intellij");
     if (dir.isDirectory()) {
       return dir;
