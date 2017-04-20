@@ -12,7 +12,8 @@ function setBasePath(config) {
 }
 
 function configureDebug(config) {
-  // disable browser activity checker as when execution is suspended, no activity is being sent
+  // Disable browser activity checker as when execution is suspended, no activity is being sent.
+  // By default, browserNoActivityTimeout=10000 ms, not enough for suspended execution.
   // https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
   config.browserNoActivityTimeout = null;
   config.browsers = intellijUtil.isString(config.browserForDebugging) ? [config.browserForDebugging] : [];
