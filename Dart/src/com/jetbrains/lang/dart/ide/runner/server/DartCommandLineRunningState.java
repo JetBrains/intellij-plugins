@@ -35,7 +35,6 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
 
@@ -133,21 +132,14 @@ public class DartCommandLineRunningState extends CommandLineState {
       final DartRunConfiguration dartRunConfiguration = (DartRunConfiguration)getEnvironment().getRunProfile();
       final VirtualFile launchFile = dartRunConfiguration.getRunnerParameters().getDartFileOrDirectory();
 
-      if (getEnvironment().getRunnerAndConfigurationSettings() == null) {
-        DartExecutionHelper.displayIssues(project, launchFile);
-      }
-      else {
-        String launchTitle = "Analysis issues with " + getEnvironment().getRunnerAndConfigurationSettings().getName();
-        Icon icon = getEnvironment().getRunnerAndConfigurationSettings().getConfiguration().getIcon();
-        DartExecutionHelper.displayIssues(project, launchFile, launchTitle, icon);
-      }
+      String launchTitle = "Analysis issues with " + dartRunConfiguration.getName();
+      DartExecutionHelper.displayIssues(project, launchFile, launchTitle, dartRunConfiguration.getIcon());
     }
     catch (RuntimeConfigurationError error) {
       DartExecutionHelper.clearIssueNotifications(project);
     }
 
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
-
     return processHandler;
   }
 

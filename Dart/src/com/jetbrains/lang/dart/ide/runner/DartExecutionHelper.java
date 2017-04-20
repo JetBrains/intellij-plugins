@@ -44,10 +44,12 @@ public class DartExecutionHelper {
     return !getIssues(project, launchFile).isEmpty();
   }
 
+  @NotNull
   public static List<DartServerData.DartError> getIssues(@NotNull final Project project, @NotNull VirtualFile launchFile) {
     return getIssues(project, launchFile, true);
   }
 
+  @NotNull
   public static List<DartServerData.DartError> getIssues(@NotNull final Project project,
                                                          @NotNull VirtualFile launchFile,
                                                          boolean onlyErrors) {
@@ -66,12 +68,6 @@ public class DartExecutionHelper {
     return errors;
   }
 
-  @SuppressWarnings("unused")
-  public static void displayIssues(@NotNull final Project project, @NotNull VirtualFile launchFile) {
-    displayIssues(project, launchFile, "Analysis issues with launch", null);
-  }
-
-  @SuppressWarnings("SameParameterValue")
   public static void displayIssues(@NotNull final Project project,
                                    @NotNull VirtualFile launchFile,
                                    @NotNull String launchTitle,
@@ -88,17 +84,17 @@ public class DartExecutionHelper {
 
     final String content;
     if (errors.size() == 1) {
-      content = errors.get(0).getMessage() + " (<a href=\"issues\">show</a>)";
+      content = errors.get(0).getMessage();
     }
     else {
-      content = errors.size() + " " + StringUtil.pluralize("issue", errors.size()) + " found. (<a href=\"issues\">show</a>)";
-      problemsView.showErrorNotification(project, launchTitle, content, icon);
+      content = errors.size() + " " + StringUtil.pluralize("issue", errors.size()) + " found.";
     }
 
     // Show a notification on the dart analysis tool window.
-    problemsView.showErrorNotification(project, launchTitle, content, icon);
+    problemsView.showErrorNotification(launchTitle, content, icon);
 
     // Jump to and highlight the first error (order unspecified) in the editor.
+    // TODO: easy opt-out
     DartServerData.DartError error = errors.get(0);
     final VirtualFile errorFile = LocalFileSystem.getInstance().findFileByPath(error.getAnalysisErrorFileSD());
     if (errorFile != null) {

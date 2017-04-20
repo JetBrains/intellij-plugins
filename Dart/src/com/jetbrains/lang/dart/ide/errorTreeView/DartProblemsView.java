@@ -182,12 +182,12 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   }
 
   @SuppressWarnings("unused")
-  public void showWarningNotification(@NotNull Project project, @NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
-    showNotification(NotificationType.WARNING, project, title, htmlContent, icon);
+  public void showWarningNotification(@NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
+    showNotification(NotificationType.WARNING, title, htmlContent, icon);
   }
 
-  public void showErrorNotification(@NotNull Project project, @NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
-    showNotification(NotificationType.ERROR, project, title, htmlContent, icon);
+  public void showErrorNotification(@NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
+    showNotification(NotificationType.ERROR, title, htmlContent, icon);
   }
 
   public void clearNotifications() {
@@ -198,25 +198,28 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   }
 
   private void showNotification(@NotNull NotificationType notificationType,
-                                @NotNull Project project,
                                 @NotNull String title,
                                 @NotNull String htmlContent,
                                 @Nullable Icon icon) {
     clearNotifications();
 
     myNotification = NOTIFICATION_GROUP.createNotification(
-      title, htmlContent, notificationType, new NotificationListener.Adapter() {
+      title, htmlContent + " (<a href='open.dart.analysis'>show</a>)", notificationType, new NotificationListener.Adapter() {
         @Override
         protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
-          notification.expire();
-          ToolWindowManager.getInstance(project).getToolWindow(TOOLWINDOW_ID).activate(null);
+          if ("open.dart.analysis".equals(e.getDescription())) {
+            notification.expire();
+            ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID).activate(null);
+          }
         }
       }
     );
+
     if (icon != null) {
       myNotification.setIcon(icon);
     }
-    myNotification.notify(project);
+
+    myNotification.notify(myProject);
   }
 
   @Override
