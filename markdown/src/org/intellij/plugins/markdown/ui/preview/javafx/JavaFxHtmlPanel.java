@@ -129,10 +129,10 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   }
 
   private String prepareHtml(@NotNull String html) {
-    return ImageRefreshFix.setStamps(html
+    return html
       .replace("<head>", "<head>"
                          + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + myCSP + "\"/>"
-                         + getCssLines(null, myCssUris) + "\n" + getScriptingLines()));
+                         + getCssLines(null, myCssUris) + "\n" + getScriptingLines());
   }
 
   @Override
