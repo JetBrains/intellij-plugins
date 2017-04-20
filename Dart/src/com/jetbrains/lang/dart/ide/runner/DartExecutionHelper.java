@@ -92,7 +92,6 @@ public class DartExecutionHelper {
     }
     else {
       content = errors.size() + " " + StringUtil.pluralize("issue", errors.size()) + " found. (<a href=\"issues\">show</a>)";
-      problemsView.showErrorNotification(project, launchTitle, content, icon);
     }
 
     // Show a notification on the dart analysis tool window.
