@@ -62,6 +62,7 @@ public class KarmaRunProfileState implements RunProfileState {
       .setKarmaPackageDirPath(myKarmaPackageDirPath)
       .setRunSettings(myRunSettings)
       .setWithCoverage(myExecutionType == KarmaExecutionType.COVERAGE)
+      .setDebug(myExecutionType == KarmaExecutionType.DEBUG)
       .build();
 
     KarmaServerRegistry registry = KarmaServerRegistry.getInstance(myProject);

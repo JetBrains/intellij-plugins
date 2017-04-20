@@ -72,9 +72,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
     consoleContent.setCloseable(false);
-    final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this,
-                                                                                      myServer,
-                                                                                      myExecutionSession.isDebug());
+    final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
     if (myServer.areBrowsersReady()) {
       KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
     }
@@ -163,16 +161,13 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
     private final KarmaServer myServer;
     private final TestTreeView myTreeView;
-    private final boolean myDebug;
     private boolean myTestRunProcessTerminated = false;
     private boolean myServerProcessTerminated = false;
 
     private KarmaRootTestProxyFormatter(@NotNull SMTRunnerConsoleView consoleView,
-                                        @NotNull KarmaServer server,
-                                        boolean debug) {
+                                        @NotNull KarmaServer server) {
       myTreeView = consoleView.getResultsViewer().getTreeView();
       myServer = server;
-      myDebug = debug;
       if (myTreeView != null) {
         TestTreeRenderer originalRenderer = ObjectUtils.tryCast(myTreeView.getCellRenderer(), TestTreeRenderer.class);
         if (originalRenderer != null) {
@@ -196,10 +191,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
           render(renderer, "Server is dead", true);
         }
         else {
-          if (myDebug) {
-            render(renderer, "Test tree is not available in a debug session", false);
-          }
-          else if (myTestRunProcessTerminated) {
+          if (myTestRunProcessTerminated) {
             render(renderer, "Aborted", true);
           }
           else if (myServer.isPortBound() && !myServer.areBrowsersReady()) {

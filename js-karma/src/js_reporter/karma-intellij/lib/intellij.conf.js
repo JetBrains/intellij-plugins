@@ -11,7 +11,33 @@ function setBasePath(config) {
   config.basePath = path.resolve(path.dirname(originalConfigPath), basePath);
 }
 
-module.exports = function(config) {
+function configureDebug(config) {
+  // Disable browser activity checker as when execution is suspended, no activity is being sent.
+  // By default, browserNoActivityTimeout=10000 ms, not enough for suspended execution.
+  // https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
+  config.browserNoActivityTimeout = null;
+  config.browsers = intellijUtil.isString(config.browserForDebugging) ? [config.browserForDebugging] : [];
+  console.error('intellij: config.browsers = ' + JSON.stringify(config.browsers));
+  fixMochaTimeout(config);
+}
+
+function fixMochaTimeout(config) {
+  var client = config.client;
+  if (typeof client === 'undefined') {
+    config.client = client = {};
+  }
+  if (client === Object(client)) {
+    var mocha = client.mocha;
+    if (typeof mocha === 'undefined') {
+      client.mocha = mocha = {};
+    }
+    if (mocha === Object(mocha)) {
+      mocha.timeout = 0;
+    }
+  }
+}
+
+module.exports = function (config) {
   var originalConfigModule = require(originalConfigPath);
   originalConfigModule(config);
 
@@ -30,6 +56,9 @@ module.exports = function(config) {
   config.reporters = filteredReporters;
 
   IntellijCoverageReporter.configureCoverage(config);
+  if (cli.isDebug()) {
+    configureDebug(config);
+  }
 
   var plugins = config.plugins || [];
   plugins.push(require.resolve('./intellijPlugin.js'));
@@ -39,7 +68,6 @@ module.exports = function(config) {
   // https://github.com/karma-runner/karma-intellij/issues/9
   config.exclude = config.exclude || [];
   config.exclude.push(originalConfigPath);
-  require('./karma-intellij-debug').initCustomDebugFile(config);
 
   // remove 'logLevel' changing as soon as
   // https://github.com/karma-runner/karma/issues/614 is ready

@@ -151,7 +151,8 @@ public class KarmaServer {
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
-    //NodeCommandLineUtil.addDebugParameters(commandLine, 34598);
+    //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
+    //                                               serverSettings.getNodeInterpreter(), false);
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
@@ -161,6 +162,9 @@ public class KarmaServer {
     }
     if (myCoveragePeer != null) {
       commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
+    }
+    if (serverSettings.isDebug()) {
+      commandLine.addParameter("--debug=true");
     }
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
 

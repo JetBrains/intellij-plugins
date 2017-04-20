@@ -41,7 +41,6 @@ import java.util.List;
  */
 public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   private final JpsOsmorcModuleExtension myExtension;
-  private List<BuildRootDescriptor> myRootDescriptors = null;
   private List<File> myOutputRoots = null;
 
   public OsmorcBuildTarget(@NotNull JpsOsmorcModuleExtension extension, @NotNull JpsModule module) {
@@ -70,28 +69,26 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
                                                           ModuleExcludeIndex index,
                                                           IgnoredFileIndex ignoredFileIndex,
                                                           BuildDataPaths dataPaths) {
-    if (myRootDescriptors == null) {
-      myRootDescriptors = ContainerUtil.newArrayList();
+    List<BuildRootDescriptor> rootDescriptors = ContainerUtil.newArrayList();
 
-      JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(getModule());
-      if (extension != null) {
-        File file = extension.getBundleDescriptorFile();
-        if (file != null) {
-          myRootDescriptors.add(new BuildRootDescriptorImpl(this, file, true));
-        }
+    JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(getModule());
+    if (extension != null) {
+      File file = extension.getBundleDescriptorFile();
+      if (file != null) {
+        rootDescriptors.add(new BuildRootDescriptorImpl(this, file, true));
       }
-
-      JpsJavaExtensionService.dependencies(getModule()).recursively().productionOnly().processModules(module -> {
-        if (module == getModule() || JpsOsmorcExtensionService.getExtension(module) == null) {
-          File root = JpsJavaExtensionService.getInstance().getOutputDirectory(myModule, false);
-          if (root != null) {
-            myRootDescriptors.add(new BuildRootDescriptorImpl(this, root, true));
-          }
-        }
-      });
     }
 
-    return myRootDescriptors;
+    JpsJavaExtensionService.dependencies(getModule()).recursively().productionOnly().processModules(module -> {
+      if (module == getModule() || JpsOsmorcExtensionService.getExtension(module) == null) {
+        File root = JpsJavaExtensionService.getInstance().getOutputDirectory(myModule, false);
+        if (root != null) {
+          rootDescriptors.add(new BuildRootDescriptorImpl(this, root, true));
+        }
+      }
+    });
+
+    return rootDescriptors;
   }
 
   @Nullable
