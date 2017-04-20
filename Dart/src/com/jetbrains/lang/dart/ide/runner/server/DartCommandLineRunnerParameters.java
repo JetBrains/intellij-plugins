@@ -1,6 +1,9 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -149,6 +152,22 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     }
 
     return dartFile;
+  }
+
+  @Nullable
+  public Module getModule(@NotNull Project project) {
+    try {
+      final VirtualFile file = getDartFileOrDirectory();
+      return ModuleUtilCore.findModuleForFile(file, project);
+    }
+    catch (RuntimeConfigurationError ignore) {
+      final Module[] modules = ModuleManager.getInstance(project).getModules();
+      if (modules.length == 1) {
+        return modules[0];
+      }
+    }
+
+    return null;
   }
 
   public void check(final @NotNull Project project) throws RuntimeConfigurationError {

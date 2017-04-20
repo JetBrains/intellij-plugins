@@ -6,11 +6,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.*;
@@ -178,6 +181,34 @@ public class DartServerData {
     if (hasChanges) {
       forceFileAnnotation(file, false);
     }
+  }
+
+  @NotNull
+  List<DartError> getErrors(@NotNull final Module module) {
+    final List<DartError> errors = new ArrayList<>();
+
+    for (String path : myErrorData.keySet()) {
+      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+      if (file != null && ModuleUtilCore.moduleContainsFile(module, file, false)) {
+        errors.addAll(myErrorData.get(path));
+      }
+    }
+
+    return errors;
+  }
+
+  @NotNull
+  List<DartError> getErrors(@NotNull final SearchScope scope) {
+    final List<DartError> errors = new ArrayList<>();
+
+    for (String path : myErrorData.keySet()) {
+      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+      if (file != null && scope.contains(file)) {
+        errors.addAll(myErrorData.get(path));
+      }
+    }
+
+    return errors;
   }
 
   @NotNull
@@ -398,7 +429,6 @@ public class DartServerData {
     }
   }
 
-
   public static class DartRegion {
     protected int myOffset;
     protected int myLength;
@@ -460,6 +490,10 @@ public class DartServerData {
 
     public String getSeverity() {
       return mySeverity;
+    }
+
+    public boolean isError() {
+      return mySeverity == "ERROR";
     }
 
     @Nullable
