@@ -113,6 +113,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
             debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
           debugProcess.addFirstLineBreakpointPattern("\\.browserify$");
           debugProcess.setElementsInspectorEnabled(false);
+          debugProcess.setConsoleMessagesSupportEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           Alarm alarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, consoleView);
           alarm.addRequest(() -> {
