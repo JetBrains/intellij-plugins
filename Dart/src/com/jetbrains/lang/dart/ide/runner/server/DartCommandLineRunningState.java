@@ -26,6 +26,7 @@ import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.coverage.DartCoverageProgramRunner;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
+import com.jetbrains.lang.dart.ide.runner.DartExecutionHelper;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
@@ -34,11 +35,11 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
 
 public class DartCommandLineRunningState extends CommandLineState {
-
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
   private int myObservatoryPort = -1;
   private Collection<Consumer<String>> myObservatoryUrlConsumers = new ArrayList<>();
@@ -76,7 +77,7 @@ public class DartCommandLineRunningState extends CommandLineState {
   @Override
   protected AnAction[] createActions(final ConsoleView console, final ProcessHandler processHandler, final Executor executor) {
     // These actions are effectively added only to the Run tool window. For Debug see DartCommandLineDebugProcess.registerAdditionalActions()
-    final List<AnAction> actions = new ArrayList(Arrays.asList(super.createActions(console, processHandler, executor)));
+    final List<AnAction> actions = new ArrayList<>(Arrays.asList(super.createActions(console, processHandler, executor)));
     addObservatoryActions(actions, processHandler);
     return actions.toArray(new AnAction[actions.size()]);
   }
@@ -126,7 +127,27 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     });
 
+    // Check for and display any analysis errors when we launch a Dart app.
+    final Project project = getEnvironment().getProject();
+    try {
+      final DartRunConfiguration dartRunConfiguration = (DartRunConfiguration)getEnvironment().getRunProfile();
+      final VirtualFile launchFile = dartRunConfiguration.getRunnerParameters().getDartFileOrDirectory();
+
+      if (getEnvironment().getRunnerAndConfigurationSettings() == null) {
+        DartExecutionHelper.displayIssues(project, launchFile);
+      }
+      else {
+        String launchTitle = "Analysis issues with " + getEnvironment().getRunnerAndConfigurationSettings().getName();
+        Icon icon = getEnvironment().getRunnerAndConfigurationSettings().getConfiguration().getIcon();
+        DartExecutionHelper.displayIssues(project, launchFile, launchTitle, icon);
+      }
+    }
+    catch (RuntimeConfigurationError error) {
+      DartExecutionHelper.clearIssueNotifications(project);
+    }
+
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
+
     return processHandler;
   }
 
