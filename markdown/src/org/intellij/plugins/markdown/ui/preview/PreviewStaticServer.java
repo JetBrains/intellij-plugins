@@ -34,7 +34,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   private long myInlineStyleTimestamp = 0;
 
   public static PreviewStaticServer getInstance() {
-    return HttpRequestHandler.Companion.getEP_NAME().findExtension(PreviewStaticServer.class);
+    return HttpRequestHandler.EP_NAME.findExtension(PreviewStaticServer.class);
   }
 
   @NotNull
