@@ -94,7 +94,7 @@ public class DartFileListener implements VirtualFileListener {
       scheduleDartPackageRootsUpdate(project);
 
       final Module module = ModuleUtilCore.findModuleForFile(pubspec, project);
-      if (module != null) {
+      if (module != null && !module.isDisposed()) {
         DartProjectComponent.excludeBuildAndPackagesFolders(module, pubspec);
       }
     }
