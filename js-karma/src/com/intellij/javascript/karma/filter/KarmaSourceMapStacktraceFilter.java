@@ -4,6 +4,8 @@ import com.intellij.execution.filters.*;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +39,16 @@ public class KarmaSourceMapStacktraceFilter extends AbstractFileHyperlinkFilter 
       }
     }
     return myBaseFilter.parse(line);
+  }
+
+  @Nullable
+  @Override
+  public VirtualFile findFile(@NotNull String filePath) {
+    VirtualFile file = super.findFile(filePath);
+    if (file == null && filePath.startsWith("/tmp/")) {
+      return super.findFile(StringUtil.trimStart(filePath, "/tmp/"));
+    }
+    return file;
   }
 
   public static class KarmaSourceMapStacktraceFinder implements FileHyperlinkRawDataFinder {
