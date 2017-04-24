@@ -58,7 +58,7 @@
                     </constraints>
                     <properties>
                       <actionCommand value="After named arguments in constructor invocations"/>
-                      <text value="For named arguments in constructor invocations"/>
+                      <text value="After named arguments in constructor invocations"/>
                     </properties>
                   </component>
                 </children>
