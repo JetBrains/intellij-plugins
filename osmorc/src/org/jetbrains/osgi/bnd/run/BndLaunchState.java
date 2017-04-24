@@ -16,8 +16,6 @@
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
-import aQute.bnd.build.Run;
-import aQute.bnd.build.Workspace;
 import com.intellij.debugger.ui.HotSwapUI;
 import com.intellij.debugger.ui.HotSwapVetoableListener;
 import com.intellij.execution.CantRunException;
@@ -89,9 +87,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
         @Override
         protected ProjectLauncher compute(@NotNull ProgressIndicator indicator) throws Exception {
           indicator.setIndeterminate(true);
-          Run run = Workspace.getRun(runFile);
-          if (run == null) throw new IllegalStateException("Failed to locate Bnd workspace at " + runFile.getParentFile().getParent());
-          ProjectLauncher launcher = run.getProjectLauncher();
+          ProjectLauncher launcher = BndLaunchUtil.getRun(runFile).getProjectLauncher();
           launcher.prepare();
           return launcher;
         }
