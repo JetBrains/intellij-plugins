@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.ui.IdeBorderFactory;
+import com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettings;
 
 import javax.swing.*;
 
@@ -32,6 +33,7 @@ public class DartCodeStyleGenerationConfigurable implements Configurable {
 
   private JPanel myPanel;
   private JCheckBox myInsertOverrideAnnotationCheckBox;
+  private JCheckBox myInsertTrailingCommasInConsCheckBox;
 
   public DartCodeStyleGenerationConfigurable(CodeStyleSettings settings) {
     mySettings = settings;
@@ -55,6 +57,8 @@ public class DartCodeStyleGenerationConfigurable implements Configurable {
 
   public void reset(CodeStyleSettings settings) {
     myInsertOverrideAnnotationCheckBox.setSelected(settings.INSERT_OVERRIDE_ANNOTATION);
+    final DartCodeStyleSettings customSettings = settings.getCustomSettings(DartCodeStyleSettings.class);
+    myInsertTrailingCommasInConsCheckBox.setSelected(customSettings.TRAILING_COMMAS_AFTER_CONS_ARGS);
   }
 
   public void reset() {
@@ -63,6 +67,9 @@ public class DartCodeStyleGenerationConfigurable implements Configurable {
 
   public void apply(CodeStyleSettings settings) throws ConfigurationException {
     settings.INSERT_OVERRIDE_ANNOTATION = myInsertOverrideAnnotationCheckBox.isSelected();
+
+    final DartCodeStyleSettings customSettings = settings.getCustomSettings(DartCodeStyleSettings.class);
+    customSettings.TRAILING_COMMAS_AFTER_CONS_ARGS = myInsertTrailingCommasInConsCheckBox.isSelected();
 
     for (Project project : ProjectManager.getInstance().getOpenProjects()) {
       DaemonCodeAnalyzer.getInstance(project).settingsChanged();
@@ -74,7 +81,9 @@ public class DartCodeStyleGenerationConfigurable implements Configurable {
   }
 
   public boolean isModified(CodeStyleSettings settings) {
-    return isModified(myInsertOverrideAnnotationCheckBox, settings.INSERT_OVERRIDE_ANNOTATION);
+    final DartCodeStyleSettings customSettings = settings.getCustomSettings(DartCodeStyleSettings.class);
+    return isModified(myInsertOverrideAnnotationCheckBox, settings.INSERT_OVERRIDE_ANNOTATION) ||
+           isModified(myInsertTrailingCommasInConsCheckBox, customSettings.TRAILING_COMMAS_AFTER_CONS_ARGS);
   }
 
   public boolean isModified() {

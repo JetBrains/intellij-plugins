@@ -26,6 +26,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
@@ -33,8 +36,8 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
-import com.jetbrains.lang.dart.psi.DartUriElement;
+import com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettings;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -339,10 +342,38 @@ public class DartServerCompletionContributor extends CompletionContributor {
         if (endOffset > startOffset) {
           editor.getSelectionModel().setSelection(startOffset, endOffset);
         }
+
+        // Conditionally add trailing comma for named args.
+        if (CompletionSuggestionKind.NAMED_ARGUMENT.equals(suggestion.getKind())) {
+          final CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
+          DartCodeStyleSettings dartSettings = codeStyleSettings.getCustomSettings(DartCodeStyleSettings.class);
+          if (dartSettings.TRAILING_COMMAS_AFTER_CONS_ARGS) {
+            final PsiElement psiElement = context.getFile().findElementAt(startOffset);
+            final DartNewExpression newExpression = PsiTreeUtil.getParentOfType(psiElement, DartNewExpression.class);
+            if (newExpression != null) {
+              final DartComponent declaration = DartResolveUtil.findConstructorDeclaration(newExpression);
+              if (declaration instanceof DartMethodDeclaration) {
+                if (takesMoreThanOneArg((DartMethodDeclaration)declaration)) {
+                  editor.getDocument().insertString(endOffset, ",");
+                }
+              }
+            }
+          }
+        }
       });
     }
 
     return PrioritizedLookupElement.withPriority(lookup, suggestion.getRelevance());
+  }
+
+
+  private static boolean takesMoreThanOneArg(@NotNull DartMethodDeclaration decl) {
+    final DartFormalParameterList parameterList = decl.getFormalParameterList();
+    int args = parameterList.getNormalFormalParameterList().size();
+    if (args > 1) return true;
+    final DartOptionalFormalParameters optionalParams = parameterList.getOptionalFormalParameters();
+    if (optionalParams == null) return false;
+    return args + optionalParams.getDefaultFormalNamedParameterList().size() > 1;
   }
 
   private static Icon getBaseImage(Element element) {
