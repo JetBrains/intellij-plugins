@@ -63,5 +63,10 @@ class MakefileAnnotator : Annotator {
     }
   }
 
-  private fun MakefileRule.isUnused() = targetLine.prerequisites?.normalPrerequisites?.prerequisiteList?.any() == false && recipe.isEmpty
+  private fun MakefileRule.isUnused(): Boolean {
+    if (!recipe.isEmpty) return false
+    if (targetLine.targets.targetList.any { it.isSpecialTarget || it.isPatternTarget }) return false
+    if (targetLine.prerequisites?.normalPrerequisites?.prerequisiteList?.any() == true) return false
+    return true
+  }
 }
