@@ -254,9 +254,9 @@ public class ActionScriptRearranger extends JSRearrangerBase {
     return matchRules;
   }
 
-  protected boolean isVisibilityModifierEnabled(@NotNull ArrangementSettingsToken modifier,
-                                                @NotNull ArrangementSettingsToken type,
-                                                @NotNull Set<ArrangementSettingsToken> existingModifiers) {
+  protected boolean isModifierEnabled(@NotNull ArrangementSettingsToken modifier,
+                                      @NotNull ArrangementSettingsToken type,
+                                      @NotNull Set<ArrangementSettingsToken> existingModifiers) {
     if (STATIC_INIT.equals(type)) {
       return false;
     }
