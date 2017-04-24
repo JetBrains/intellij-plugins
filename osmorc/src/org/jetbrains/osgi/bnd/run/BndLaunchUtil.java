@@ -16,6 +16,8 @@
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
+import aQute.bnd.build.Run;
+import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Constants;
 import aQute.bnd.osgi.Processor;
 import com.intellij.execution.CantRunException;
@@ -35,6 +37,12 @@ import java.util.Collection;
 import java.util.List;
 
 public class BndLaunchUtil {
+  @NotNull
+  public static Run getRun(@NotNull File runFile) throws Exception {
+    Workspace ws = Workspace.getWorkspaceWithoutException(runFile.getParentFile().getParentFile());
+    return Run.createRun(ws, runFile);
+  }
+
   @NotNull
   public static JavaParameters createJavaParameters(@NotNull BndRunConfigurationBase configuration,
                                                     @NotNull ProjectLauncher launcher) throws CantRunException {
