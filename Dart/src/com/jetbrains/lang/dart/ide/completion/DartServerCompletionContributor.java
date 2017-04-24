@@ -27,6 +27,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
@@ -197,7 +198,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
     }
     else {
-      final PsiReference reference = context.getFile().findReferenceAt(context.getStartOffset());
+      PsiReference reference = context.getFile().findReferenceAt(context.getStartOffset());
+      if (reference instanceof PsiMultiReference && ((PsiMultiReference)reference).getReferences().length > 0) {
+        reference.getRangeInElement(); // to ensure that references are sorted by range
+        reference = ((PsiMultiReference)reference).getReferences()[0];
+      }
       if (reference instanceof DartNewExpression) {
         // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
         // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.

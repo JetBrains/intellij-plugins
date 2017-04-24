@@ -73,7 +73,15 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest("identical", Lookup.REPLACE_SELECT_CHAR);
   }
 
+  public void testEatTailOnTab() throws Throwable {
+    doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
+  }
+
   public void testDoNotEatParenOnTab() throws Throwable {
+    doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
+  }
+
+  public void testDoNotEatParenOnTab2() throws Throwable {
     doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
   }
 
