@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,8 +70,9 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
       super(type, message("bnd.run.configuration.name"), OsmorcIdeaIcons.BndLaunch);
     }
 
+    @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new BndRunConfigurationBase.Launch(project, this, "");
     }
   }
@@ -81,8 +82,9 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
       super(type, message("bnd.test.configuration.name"), OsmorcIdeaIcons.BndTest);
     }
 
+    @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new BndRunConfigurationBase.Test(project, this, "");
     }
   }
