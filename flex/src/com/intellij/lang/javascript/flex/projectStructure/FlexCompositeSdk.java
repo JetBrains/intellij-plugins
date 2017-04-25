@@ -10,7 +10,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.roots.impl.SdkFinder;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
@@ -61,12 +60,12 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
     application.getMessageBus().connect(d).subscribe(ProjectJdkTable.JDK_TABLE_TOPIC, new ProjectJdkTable.Listener() {
       @Override
-      public void jdkAdded(final Sdk jdk) {
+      public void jdkAdded(@NotNull final Sdk jdk) {
         resetSdks();
       }
 
       @Override
-      public void jdkRemoved(final Sdk jdk) {
+      public void jdkRemoved(@NotNull final Sdk jdk) {
         if (jdk == FlexCompositeSdk.this) {
           Disposer.dispose(d);
         }
@@ -74,7 +73,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       }
 
       @Override
-      public void jdkNameChanged(final Sdk jdk, final String previousName) {
+      public void jdkNameChanged(@NotNull final Sdk jdk, @NotNull final String previousName) {
         resetSdks();
       }
     });
