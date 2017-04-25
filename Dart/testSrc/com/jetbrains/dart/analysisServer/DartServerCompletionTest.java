@@ -134,4 +134,15 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     }
   }
 
+  public void testTrailingCommas2() throws Throwable {
+    final DartCodeInsightSettings settings = DartCodeInsightSettings.getInstance();
+    final boolean current = settings.TRAILING_COMMAS_AFTER_CONS_ARGS;
+    try {
+      settings.TRAILING_COMMAS_AFTER_CONS_ARGS = true;
+      doTest();
+    } finally {
+      settings.TRAILING_COMMAS_AFTER_CONS_ARGS = current;
+    }
+  }
+
 }
