@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.IndentOptionsEditor;
-import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -27,7 +26,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
 
   @Override
   public IndentOptionsEditor getIndentOptionsEditor() {
-    return new SmartIndentOptionsEditor();
+    return new ActionScriptIndentOptionsEditor();
   }
 
   @Override
@@ -74,11 +73,18 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON",
                           JSBundle.message("space.after.type.colon"),
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
+      
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class,
+                                "SPACES_WITHIN_OBJECT_LITERAL_BRACES",
+                                JSBundle.message("spaces.within.object.literal.braces"),
+                                CodeStyleSettingsCustomizable.SPACES_WITHIN);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
       List<String> blankLinesOptions = new ArrayList<>();
-      blankLinesOptions.addAll(Arrays.asList(JSLanguageCodeStyleSettingsProvider.STANDARD_BLANK_LINES_OPTIONS));
-      blankLinesOptions.addAll(Arrays.asList("BLANK_LINES_AFTER_IMPORTS",
+      blankLinesOptions.addAll(Arrays.asList("KEEP_BLANK_LINES_IN_CODE",
+                                             "KEEP_BLANK_LINES_IN_DECLARATIONS",
+                                             "KEEP_BLANK_LINES_BEFORE_RBRACE",
+                                             "BLANK_LINES_AFTER_IMPORTS",
                                              "BLANK_LINES_BEFORE_IMPORTS",
                                              "BLANK_LINES_AROUND_METHOD",
                                              "KEEP_BLANK_LINES_IN_CODE",
@@ -96,10 +102,68 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
       consumer.showStandardOptions(ArrayUtil.toStringArray(wrappingOptions));
       consumer.renameStandardOption("ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.after.left.bracket"));
       consumer.renameStandardOption("ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.before.right.bracket"));
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "FUNCTION_EXPRESSION_BRACE_STYLE",
+                                JSBundle.message("js.function.expression.brace.style"),
+                                CodeStyleSettingsCustomizable.WRAPPING_BRACES,
+                                CodeStyleSettingsCustomizable.OptionAnchor.AFTER,
+                                "METHOD_BRACE_STYLE",
+                                CodeStyleSettingsCustomizable.BRACE_PLACEMENT_OPTIONS,
+                                CodeStyleSettingsCustomizable.BRACE_PLACEMENT_VALUES);
+
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "REFORMAT_C_STYLE_COMMENTS",
+                                JSBundle.message("js.format.cstyle.comments"),
+                                CodeStyleSettingsCustomizable.WRAPPING_COMMENTS);
+      
+      //object literals
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class,
+                                "OBJECT_LITERAL_WRAP",
+                                "Object literals",
+                                null,
+                                CodeStyleSettingsCustomizable.WRAP_OPTIONS,
+                                CodeStyleSettingsCustomizable.WRAP_VALUES);
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "ALIGN_OBJECT_PROPERTIES",
+                                JSBundle.message("js.code.style.align.caption"),
+                                JSBundle.message("js.code.style.object.literals.category.name"),
+                                JSLanguageCodeStyleSettingsProvider.ALIGN_OBJECT_PROPERTIES_OPTIONS,
+                                JSLanguageCodeStyleSettingsProvider.ALIGN_OBJECT_PROPERTIES_VALUES);
+
+      //var statements
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class,
+                                "VAR_DECLARATION_WRAP",
+                                JSBundle.message("js.wrap.settings.var.group.name"),
+                                null,
+                                CodeStyleSettingsCustomizable.WRAP_OPTIONS,
+                                CodeStyleSettingsCustomizable.WRAP_VALUES);
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class, "ALIGN_VAR_STATEMENTS",
+                                JSBundle.message("js.code.style.align.caption"),
+                                JSBundle.message("js.wrap.settings.var.group.name"),
+                                JSLanguageCodeStyleSettingsProvider.ALIGN_VAR_STATEMENT_OPTIONS,
+                                JSLanguageCodeStyleSettingsProvider.ALIGN_VAR_STATEMENT_VALUES);
     }
     else if (settingsType == SettingsType.LANGUAGE_SPECIFIC) {
       consumer.showStandardOptions("LINE_COMMENT_AT_FIRST_COLUMN");
     }
+  }
+  protected String getPreviewText() {
+    return "/*\n" +
+           " Multiline\n" +
+           " C-style\n" +
+           " Comment\n" +
+           " */\n" +
+           "var myLink = {\n" +
+           "      img: \"btn.gif\",\n" +
+           "      text: \"Button\",\n" +
+           "      width: 128\n" +
+           "    },\n" +
+           "    local = true,\n" +
+           "    initial = -1;\n" +
+           "var cssClasses = [\"bold\", \"red\",]\n" +
+           "var selector = \"#id\";\n" +
+           "\n" +
+           "var color = \"red\";\n" +
+           "var offset = 10;\n" +
+           "\n" +
+           "varName = val;";
   }
 
   @Override
@@ -193,6 +257,21 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     "function fThree(strA, strB, strC, strD, strE) {\n" +
     "return strA + strB + strC + strD + strE;\n" +
     "}\n" +
+    "/*\n" +
+    " Multiline\n" +
+    "   C-style\n" +
+    "     Comment\n" +
+    " */\n" +
+    "function fFour() {\n" +
+    "    var myLinkText = \"Button\",\n" +
+    "            local = true,\n" +
+    "            initial = -1;\n" +
+    "    var cssClasses = [\"bold\", \"red\",]\n" +
+    "    var selector = \"#id\";\n" +
+    "\n" +
+    "    var color = \"red\";\n" +
+    "    var offset = 10;\n" +
+    "    }" +
     "}";
 
   public final static String BLANK_LINE_CODE_SAMPLE =

@@ -170,7 +170,7 @@ public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
         final Symbol callSymbol = ResolveUtil.resolveToSymbolWithCaching(ref.getReference());
         if (callSymbol instanceof FunctionSymbol) {
           final Function function = ((FunctionSymbol)callSymbol).getFunction();
-          if ("id".equals(function.getReturnValue())) {
+          if (function.isId()) {
             return RTypeUtil.createTypeSameAsReceiverInstance(ref);
           }
         }

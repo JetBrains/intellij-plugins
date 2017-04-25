@@ -3,6 +3,7 @@
 <x:OverridingMarkers_2 xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:x="*">
   <mx:Script>
       use namespace mx_internal;
+
       public override function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
       }
 

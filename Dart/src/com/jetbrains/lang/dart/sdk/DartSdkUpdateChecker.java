@@ -2,8 +2,6 @@ package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -19,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
-import javax.swing.event.HyperlinkEvent;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -137,17 +134,14 @@ public class DartSdkUpdateChecker {
     final String title = DartBundle.message("dart.sdk.update.title");
     final String message = DartBundle.message("new.dart.sdk.available.for.download..notification", availableSdkVersion, currentSdkVersion);
 
-    UpdateChecker.NOTIFICATIONS.createNotification(title, message, NotificationType.INFORMATION, new NotificationListener() {
-      @Override
-      public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-        notification.expire();
-        if ("download".equals(event.getDescription())) {
-          BrowserUtil.browse(downloadUrl);
-        }
+    UpdateChecker.NOTIFICATIONS.createNotification(title, message, NotificationType.INFORMATION, (notification, event) -> {
+      notification.expire();
+      if ("download".equals(event.getDescription())) {
+        BrowserUtil.browse(downloadUrl);
+      }
 
-        if ("settings".equals(event.getDescription())) {
-          DartConfigurable.openDartSettings(project);
-        }
+      if ("settings".equals(event.getDescription())) {
+        DartConfigurable.openDartSettings(project);
       }
     }).notify(project);
   }

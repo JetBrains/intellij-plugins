@@ -383,3 +383,19 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('tracker')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('fetchFromApi')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:DOT)('.')
+        PsiElement(THEN)('then')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        PsiElement(JS:RPAR)(')')

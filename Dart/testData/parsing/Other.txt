@@ -30,37 +30,42 @@ Dart File
                       PsiElement(IDENTIFIER)('a')
                   PsiElement(as)('as')
                   TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('B')
-                    TYPE_ARGUMENTS
-                      PsiElement(<)('<')
-                      TYPE_LIST
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('C')
-                          TYPE_ARGUMENTS
-                            PsiElement(<)('<')
-                            TYPE_LIST
-                              TYPE
-                                REFERENCE_EXPRESSION
-                                  ID
-                                    PsiElement(IDENTIFIER)('D')
-                              PsiElement(,)(',')
-                              TYPE
-                                REFERENCE_EXPRESSION
-                                  ID
-                                    PsiElement(IDENTIFIER)('E')
-                            PsiElement(>)('>')
-                      PsiElement(>)('>')
+                    SIMPLE_TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('B')
+                      TYPE_ARGUMENTS
+                        PsiElement(<)('<')
+                        TYPE_LIST
+                          TYPE
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('C')
+                              TYPE_ARGUMENTS
+                                PsiElement(<)('<')
+                                TYPE_LIST
+                                  TYPE
+                                    SIMPLE_TYPE
+                                      REFERENCE_EXPRESSION
+                                        ID
+                                          PsiElement(IDENTIFIER)('D')
+                                  PsiElement(,)(',')
+                                  TYPE
+                                    SIMPLE_TYPE
+                                      REFERENCE_EXPRESSION
+                                        ID
+                                          PsiElement(IDENTIFIER)('E')
+                                PsiElement(>)('>')
+                        PsiElement(>)('>')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
                   VAR_ACCESS_DECLARATION
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('a')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('a')
                     COMPONENT_NAME
                       ID
                         PsiElement(as)('as')
@@ -373,9 +378,10 @@ Dart File
               NEW_EXPRESSION
                 PsiElement(new)('new')
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('Exception')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Exception')
                 ARGUMENTS
                   PsiElement(()('(')
                   PsiElement())(')')
@@ -444,9 +450,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('int')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('foo')
@@ -461,9 +468,10 @@ Dart File
         GETTER_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('int')
           PsiElement(get)('get')
           COMPONENT_NAME
             ID
@@ -504,9 +512,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('int')
           PsiElement(operator)('operator')
           COMPONENT_NAME
             ID
@@ -556,9 +565,10 @@ Dart File
                 FUNCTION_DECLARATION_WITH_BODY
                   RETURN_TYPE
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('int')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
                   COMPONENT_NAME
                     ID
                       PsiElement(IDENTIFIER)('biz')
@@ -612,9 +622,10 @@ Dart File
                         NEW_EXPRESSION
                           PsiElement(new)('new')
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('Exception')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('Exception')
                           ARGUMENTS
                             PsiElement(()('(')
                             PsiElement())(')')

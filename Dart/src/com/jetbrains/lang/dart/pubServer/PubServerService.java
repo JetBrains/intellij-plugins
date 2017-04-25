@@ -189,8 +189,6 @@ final class PubServerService extends NetService {
     commandLine.addParameter("--port=" + String.valueOf(port));
     commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue());
 
-    //commandLine.addParameter("--admin-port=" + String.valueOf(PubServerManager.findOneMoreAvailablePort(port))); // todo uncomment and use
-
     final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
     processHandler.addProcessListener(new PubServeOutputListener(project));
 
@@ -207,14 +205,6 @@ final class PubServerService extends NetService {
     LOG.assertTrue(old == null);
 
     super.connectToProcess(promise, port, processHandler, errorOutputConsumer);
-  }
-
-  @SuppressWarnings({"MethodMayBeStatic", "UnusedParameters"})
-  private void serveDirAndSendRequest(@NotNull final Channel clientChannel,
-                                      @NotNull final FullHttpRequest clientRequest,
-                                      @NotNull final VirtualFile servedDir,
-                                      @NotNull final String pathForPubServer) {
-    throw new UnsupportedOperationException(); // todo this code is not reachable because of commented out /*.getParent()*/ in PubServerManager.send()
   }
 
   static void sendBadGateway(@NotNull final Channel channel, @NotNull HttpHeaders extraHeaders) {
@@ -280,13 +270,21 @@ final class PubServerService extends NetService {
                     @NotNull HttpHeaders extraHeaders,
                     @NotNull final String pathToPubServe) {
     ServerInfo serverInstanceInfo = servedDirToSocketAddress.get(servedDir);
-    if (serverInstanceInfo == null) {
-      serveDirAndSendRequest(clientChannel, clientRequest, servedDir, pathToPubServe);
+    final InetSocketAddress address = serverInstanceInfo.address;
+
+    if (false) {
+      // We can't use 301 (MOVED_PERMANENTLY) response status because Pub Serve port will change after restart, but browser will remember outdated redirection URL
+      final HttpResponse response = Responses.response(HttpResponseStatus.FOUND, clientRequest, null);
+      //assert serverInstanceInfo != null;
+      response.headers().add(HttpHeaderNames.LOCATION,
+                             "http://" + address.getHostString() + ":" + address.getPort() + pathToPubServe);
+      Responses.send(response, clientChannel, clientRequest, extraHeaders);
+      return;
     }
 
     Channel serverChannel = findFreeServerChannel(serverInstanceInfo.freeServerChannels);
     if (serverChannel == null) {
-      connect(bootstrap, serverInstanceInfo.address, serverChannel1 -> {
+      connect(bootstrap, address, serverChannel1 -> {
         if (serverChannel1 == null) {
           if (clientChannel.isActive()) {
             Responses.send(HttpResponseStatus.BAD_GATEWAY, clientChannel, clientRequest, null, extraHeaders);
@@ -318,7 +316,11 @@ final class PubServerService extends NetService {
     return null;
   }
 
-  private void sendToServer(@NotNull final Channel clientChannel, @NotNull FullHttpRequest clientRequest, @NotNull HttpHeaders extraHeaders, @NotNull String pathToPubServe, @NotNull Channel serverChannel) {
+  private void sendToServer(@NotNull final Channel clientChannel,
+                            @NotNull FullHttpRequest clientRequest,
+                            @NotNull HttpHeaders extraHeaders,
+                            @NotNull String pathToPubServe,
+                            @NotNull Channel serverChannel) {
     ClientInfo oldClientInfo = serverToClientChannel.put(serverChannel, new ClientInfo(clientChannel, extraHeaders));
     LOG.assertTrue(oldClientInfo == null);
 

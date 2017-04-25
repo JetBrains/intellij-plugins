@@ -1,13 +1,14 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.JBUI;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -22,12 +23,12 @@ import netscape.javascript.JSObject;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
+import org.intellij.plugins.markdown.ui.preview.PreviewStaticServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,12 +38,10 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     @NotNull
     @Override
     protected String compute() {
-      final Class<JavaFxHtmlPanel> clazz = JavaFxHtmlPanel.class;
-      //noinspection StringBufferReplaceableByString
-      return new StringBuilder()
-        .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
-        .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
-        .toString();
+      return SCRIPTS.stream()
+        .map(s -> "<script src=\"" + PreviewStaticServer.getScriptUrl(s) + "\"></script>")
+        .reduce((s, s2) -> s + "\n" + s2)
+        .orElseGet(String::new);
     }
   };
 
@@ -54,10 +53,10 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private JFXPanel myPanel;
   @Nullable
   private WebView myWebView;
-  @Nullable
-  private String myInlineCss;
   @NotNull
   private String[] myCssUris = ArrayUtil.EMPTY_STRING_ARRAY;
+  @NotNull
+  private String myCSP = "";
   @NotNull
   private String myLastRawHtml = "";
   @NotNull
@@ -77,6 +76,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       updateFontSmoothingType(myWebView,
                               MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
       myWebView.setContextMenuEnabled(false);
+      myWebView.setZoom(JBUI.scale(1.f));
 
       final WebEngine engine = myWebView.getEngine();
       engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
@@ -161,13 +161,21 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @NotNull
   private String prepareHtml(@NotNull String html) {
     return ImageRefreshFix.setStamps(html
-      .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris) + "\n" + getScriptingLines()));
+      .replace("<head>", "<head>"
+                         + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + myCSP + "\"/>"
+                         + getCssLines(null, myCssUris) + "\n" + getScriptingLines()));
   }
 
   @Override
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
-    myInlineCss = inlineCss;
-    myCssUris = fileUris;
+    PreviewStaticServer.getInstance().setInlineStyle(inlineCss);
+    myCssUris = inlineCss == null ? fileUris
+                                  : ArrayUtil.mergeArrays(fileUris, PreviewStaticServer.getStyleUrl(PreviewStaticServer.INLINE_CSS_FILENAME));
+    myCSP = PreviewStaticServer.createCSP(ContainerUtil.map(SCRIPTS, s -> PreviewStaticServer.getScriptUrl(s)),
+                                          ContainerUtil.concat(
+                                            ContainerUtil.map(STYLES, s -> PreviewStaticServer.getStyleUrl(s)),
+                                            ContainerUtil.filter(fileUris, s -> s.startsWith("http://") || s.startsWith("https://"))
+                                          ));
     setHtml(myLastRawHtml);
   }
 
@@ -220,15 +228,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     static final JavaPanelBridge INSTANCE = new JavaPanelBridge();
 
     public void openInExternalBrowser(@NotNull String link) {
-      if (!BrowserUtil.isAbsoluteURL(link)) {
-        try {
-          link = new URI("http", link, null).toURL().toString();
-        }
-        catch (Exception ignore) {
-        }
-      }
-
-      BrowserUtil.browse(link);
+      SafeOpener.openLink(link);
     }
 
     public void log(@Nullable String text) {

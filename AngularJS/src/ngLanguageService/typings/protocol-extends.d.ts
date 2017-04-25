@@ -41,6 +41,7 @@ interface TypeScriptPluginState extends PluginState {
     projectPath?: string;
     commandLineArguments?: string[];
     mainFilePath?: string;
+    isUseSingleInferredProject?: boolean;
 }
 
 declare namespace ts.server.CommandNames {

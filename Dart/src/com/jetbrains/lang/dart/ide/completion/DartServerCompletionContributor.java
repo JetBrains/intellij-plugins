@@ -26,6 +26,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -36,6 +38,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettings;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -196,6 +199,18 @@ public class DartServerCompletionContributor extends CompletionContributor {
         context.setReplacementOffset(context.getReplacementOffset());
       }
     }
+    else {
+      PsiReference reference = context.getFile().findReferenceAt(context.getStartOffset());
+      if (reference instanceof PsiMultiReference && ((PsiMultiReference)reference).getReferences().length > 0) {
+        reference.getRangeInElement(); // to ensure that references are sorted by range
+        reference = ((PsiMultiReference)reference).getReferences()[0];
+      }
+      if (reference instanceof DartNewExpression) {
+        // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
+        // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.
+        context.setReplacementOffset(context.getStartOffset());
+      }
+    }
   }
 
   private static Icon applyOverlay(Icon base, boolean condition, Icon overlay) {
@@ -286,41 +301,44 @@ public class DartServerCompletionContributor extends CompletionContributor {
               final Editor editor = context.getEditor();
               final PsiElement psiElement = lookupObject.getElement();
 
-              // Insert argument defaults if provided.
-              final String argumentListString = suggestion.getDefaultArgumentListString();
-              if (argumentListString != null) {
-                final Document document = editor.getDocument();
-                int offset = editor.getCaretModel().getOffset();
 
-                // At this point caret is expected to be right after the opening paren.
-                // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
-                // if so, skip inserting argumentListString
+              if (DartCodeInsightSettings.getInstance().INSERT_DEFAULT_ARG_VALUES) {
+                // Insert argument defaults if provided.
+                final String argumentListString = suggestion.getDefaultArgumentListString();
+                if (argumentListString != null) {
+                  final Document document = editor.getDocument();
+                  int offset = editor.getCaretModel().getOffset();
 
-                final CharSequence text = document.getCharsSequence();
-                if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
-                  document.insertString(offset, argumentListString);
+                  // At this point caret is expected to be right after the opening paren.
+                  // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
+                  // if so, skip inserting argumentListString
 
-                  PsiDocumentManager.getInstance(project).commitDocument(document);
+                  final CharSequence text = document.getCharsSequence();
+                  if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
+                    document.insertString(offset, argumentListString);
 
-                  final TemplateBuilderImpl
-                    builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
+                    PsiDocumentManager.getInstance(project).commitDocument(document);
 
-                  final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
-                  // Only proceed if ranges are provided and well-formed.
-                  if (ranges != null && (ranges.length & 1) == 0) {
-                    int index = 0;
-                    while (index < ranges.length) {
-                      final int start = ranges[index];
-                      final int length = ranges[index + 1];
-                      final String arg = argumentListString.substring(start, start + length);
-                      final TextExpression expression = new TextExpression(arg);
-                      final TextRange range = new TextRange(offset + start, offset + start + length);
+                    final TemplateBuilderImpl
+                      builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
 
-                      index += 2;
-                      builder.replaceRange(range, "group_" + (index - 1), expression, true);
+                    final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
+                    // Only proceed if ranges are provided and well-formed.
+                    if (ranges != null && (ranges.length & 1) == 0) {
+                      int index = 0;
+                      while (index < ranges.length) {
+                        final int start = ranges[index];
+                        final int length = ranges[index + 1];
+                        final String arg = argumentListString.substring(start, start + length);
+                        final TextExpression expression = new TextExpression(arg);
+                        final TextRange range = new TextRange(offset + start, offset + start + length);
+
+                        index += 2;
+                        builder.replaceRange(range, "group_" + (index - 1), expression, true);
+                      }
+
+                      builder.run(editor, true);
                     }
-
-                    builder.run(editor, true);
                   }
                 }
               }

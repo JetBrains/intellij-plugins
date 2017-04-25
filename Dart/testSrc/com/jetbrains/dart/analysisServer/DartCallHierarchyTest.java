@@ -26,7 +26,6 @@ import java.util.List;
 import static com.jetbrains.lang.dart.DartTokenTypes.CALL_EXPRESSION;
 
 public class DartCallHierarchyTest extends HierarchyViewTestBase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -36,18 +35,19 @@ public class DartCallHierarchyTest extends HierarchyViewTestBase {
   }
 
   @Override
-  protected VirtualFile configureByFiles(@Nullable final File rawProjectRoot, @NotNull final VirtualFile... vFiles) throws IOException {
-    VirtualFile root = super.configureByFiles(rawProjectRoot, vFiles);
-    return DartTestUtils.configureNavigation(this, root, vFiles);
-  }
-
-  @Override
   protected String getBasePath() {
     return "analysisServer/callHierarchy/" + getTestName(false);
   }
 
+  @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;
+  }
+
+  @Override
+  protected VirtualFile configureByFiles(@Nullable final File rawProjectRoot, @NotNull final VirtualFile... vFiles) throws IOException {
+    VirtualFile root = super.configureByFiles(rawProjectRoot, vFiles);
+    return DartTestUtils.configureNavigation(this, root, vFiles);
   }
 
   private void doCallHierarchyTest(final String className,

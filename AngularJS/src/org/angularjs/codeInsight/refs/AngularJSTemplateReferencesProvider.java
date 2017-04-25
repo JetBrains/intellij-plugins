@@ -36,7 +36,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
 
     @NotNull
     @Override
-    public Collection<PsiFileSystemItem> getDefaultContexts() {
+    public Collection<PsiFileSystemItem> computeDefaultContexts() {
       final PsiElement element = getElement();
       final Project project = element.getProject();
       if (AngularIndexUtil.hasAngularJS2(project)) {
@@ -48,7 +48,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
         return ContainerUtil.skipNulls(Arrays.asList(file.getContainingDirectory(), directory));
       }
 
-      return super.getDefaultContexts();
+      return super.computeDefaultContexts();
     }
 
     @Override

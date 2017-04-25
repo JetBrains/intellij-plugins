@@ -19,6 +19,10 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -37,6 +41,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerMessages;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -44,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +60,9 @@ import java.util.Map;
 )
 public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings> {
   public static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
+
+  private static final NotificationGroup NOTIFICATION_GROUP =
+    NotificationGroup.toolWindowGroup(TOOLWINDOW_ID, TOOLWINDOW_ID, false);
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 
@@ -70,12 +79,19 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private Icon myCurrentIcon;
   private boolean myAnalysisIsBusy;
 
+  private int myFilesWithErrorsHash;
+  private Notification myNotification;
+
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
     public void run() {
       if (ProjectViewPane.ID.equals(ProjectView.getInstance(myProject).getCurrentViewId())) {
-        // refresh red squiggles managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
-        ProjectView.getInstance(myProject).refresh();
+        final int hash = DartAnalysisServerService.getInstance(myProject).getFilePathsWithErrorsHash();
+        if (myFilesWithErrorsHash != hash) {
+          // refresh red squiggles managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
+          myFilesWithErrorsHash = hash;
+          ProjectView.getInstance(myProject).refresh();
+        }
       }
 
       final Map<String, List<AnalysisError>> filePathToErrors;
@@ -163,6 +179,47 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   public static DartProblemsView getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, DartProblemsView.class);
+  }
+
+  @SuppressWarnings("unused")
+  public void showWarningNotification(@NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
+    showNotification(NotificationType.WARNING, title, htmlContent, icon);
+  }
+
+  public void showErrorNotification(@NotNull String title, @NotNull String htmlContent, @Nullable Icon icon) {
+    showNotification(NotificationType.ERROR, title, htmlContent, icon);
+  }
+
+  public void clearNotifications() {
+    if (myNotification != null) {
+      myNotification.expire();
+      myNotification = null;
+    }
+  }
+
+  private void showNotification(@NotNull NotificationType notificationType,
+                                @NotNull String title,
+                                @NotNull String htmlContent,
+                                @Nullable Icon icon) {
+    clearNotifications();
+
+    myNotification = NOTIFICATION_GROUP.createNotification(
+      title, htmlContent + " (<a href='open.dart.analysis'>show</a>)", notificationType, new NotificationListener.Adapter() {
+        @Override
+        protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
+          if ("open.dart.analysis".equals(e.getDescription())) {
+            notification.expire();
+            ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID).activate(null);
+          }
+        }
+      }
+    );
+
+    if (icon != null) {
+      myNotification.setIcon(icon);
+    }
+
+    myNotification.notify(myProject);
   }
 
   @Override

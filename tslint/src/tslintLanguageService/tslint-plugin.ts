@@ -8,17 +8,24 @@ const enum TsLintVersion {
     VERSION_4_AND_HIGHER
 }
 
-type LinerOptions = {
+type LinterOptions = {
     linter?: any;
     versionKind?: TsLintVersion;
     linterConfiguration: any;
     version?: string
 }
+class Response {
+    version?: string;
+    command: string;
+    request_seq: number;
+    body: string | null;
+    error: string | null;
+}
 let fs = require("fs");
 
 export class TSLintPlugin implements LanguagePlugin {
 
-    private readonly linterOptions: LinerOptions;
+    private readonly linterOptions: LinterOptions;
     private readonly additionalRulesDirectory?: string;
 
     constructor(state: PluginState) {
@@ -26,7 +33,7 @@ export class TSLintPlugin implements LanguagePlugin {
         this.additionalRulesDirectory = state.additionalRootDirectory;
     }
 
-    process(parsedObject: TsLintRequest): Object | null {
+    private process(parsedObject: TsLintRequest): Object | null {
         switch (parsedObject.command) {
             case TsLintCommands.GetErrors: {
                 return this.getErrors(parsedObject.arguments);
@@ -41,32 +48,33 @@ export class TSLintPlugin implements LanguagePlugin {
 
     onMessage(p: string, writer: MessageWriter): void {
         const request: TsLintRequest = JSON.parse(p);
-        let result = this.process(request);
-        if (result) {
-            let output = (<any>result).output;
-            let version = this.linterOptions.version;
-            let command = request.command;
-            let seq = request.seq;
-            let resultJson = `{"body":${output},"version":"${version}",` +
-                `"command":"${command}","request_seq":${seq}}`;
+        // here we use object -> JSON.stringify, because we need to escape possible error's text symbols
+        // and we do not want to duplicate this code
+        let response: Response = new Response();
+        response.version = this.linterOptions.version;
+        response.command = request.command;
+        response.request_seq = request.seq;
 
-            writer.write(resultJson);
-        } else {
-            let version = this.linterOptions.version;
-            let command = request.command;
-            let seq = request.seq;
-            let resultJson = `{"version":"${version}",` +
-                `"command":"${command}","request_seq":${seq}}`;
-            writer.write(resultJson);
+        let result: Object | null;
+        try {
+            result = this.process(request);
+        } catch (e) {
+            response.error = e.toString() + "\n\n" + e.stack;
+            writer.write(JSON.stringify(response));
+            return;
         }
+        if (result) {
+            response.body = (<any>result).output;
+        }
+        writer.write(JSON.stringify(response));
     }
 
-    getErrors(toProcess: GetErrorsArguments): {} {
+    private getErrors(toProcess: GetErrorsArguments): {} {
         let options = this.getOptions(false);
         return this.processLinting(toProcess.fileName, toProcess.content, toProcess.configPath, options);
     }
 
-    fixErrors(toProcess: FixErrorsArguments): {} {
+    private fixErrors(toProcess: FixErrorsArguments): {} {
         let options = this.getOptions(true);
 
         let contents = fs.readFileSync(toProcess.fileName, "utf8");
@@ -83,10 +91,10 @@ export class TSLintPlugin implements LanguagePlugin {
         };
     }
 
-    processLinting(fileName: string, content: string | null | undefined, configFileName: string, options: {}) {
+    private processLinting(fileName: string, content: string | null | undefined, configFileName: string, options: {}) {
         let linterOptions = this.linterOptions;
         let linter: any = this.linterOptions.linter;
-        let result = {}
+        let result = {};
 
         let configuration = this.getConfiguration(fileName, configFileName, linter);
         if (linterOptions.versionKind == TsLintVersion.VERSION_4_AND_HIGHER) {
@@ -103,7 +111,7 @@ export class TSLintPlugin implements LanguagePlugin {
         return result;
     }
 
-    getConfiguration(fileName: string, configFileName: string, linter: any) {
+    private getConfiguration(fileName: string, configFileName: string, linter: any) {
 
         let linterConfiguration = this.linterOptions.linterConfiguration;
         let versionKind = this.linterOptions.versionKind;
@@ -124,7 +132,7 @@ export class TSLintPlugin implements LanguagePlugin {
 }
 
 
-function resolveTsLint(options: PluginState): LinerOptions {
+function resolveTsLint(options: PluginState): LinterOptions {
     const tslintPackagePath = options.tslintPackagePath;
     let value: any = require(tslintPackagePath);
 

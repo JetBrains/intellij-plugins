@@ -4,6 +4,7 @@
   <mx:Script>
     <![CDATA[
       use namespace mx_internal;
+
       [Inspectable(category="General")]
       override public function set layout(s:String) {
           return super.layout = s;

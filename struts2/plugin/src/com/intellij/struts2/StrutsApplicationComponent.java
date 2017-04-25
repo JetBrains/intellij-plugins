@@ -15,7 +15,7 @@
 
 package com.intellij.struts2;
 
-import com.intellij.openapi.components.ApplicationComponentAdapter;
+import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsApplicationComponent implements ApplicationComponentAdapter {
+public class StrutsApplicationComponent implements ApplicationComponent {
   @Override
   public void initComponent() {
     // TODO remove, this should not be needed --> DOM unique name highlighting not working

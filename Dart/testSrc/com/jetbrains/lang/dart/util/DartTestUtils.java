@@ -184,8 +184,6 @@ public class DartTestUtils {
       if (testFile == null) TestCase.fail();
       DartAnalysisServerService.getInstance(test.getProject()).analysis_getNavigation(testFile, 0, (int)testFile.getLength());
     }
-    // A little cargo-cult programming: some tests fail without the next line.
-    DartAnalysisServerService.getInstance(test.getProject()).waitForAnalysisToComplete_TESTS_ONLY(test.getFile().getVirtualFile());
     return testRoot;
   }
 

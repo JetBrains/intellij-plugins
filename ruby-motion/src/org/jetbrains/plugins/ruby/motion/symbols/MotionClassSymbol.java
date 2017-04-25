@@ -67,7 +67,16 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
 
   @Nullable
   public Symbol getSuperClassSymbol(@Nullable PsiElement invocationPoint) {
-    final String ancestor = InheritanceInfoHolder.getInstance().getInheritance(myName, RubyMotionUtil.getInstance().getSdkVersion(myModule));
+    String sdkVersion = RubyMotionUtil.getInstance().getSdkVersion(myModule);
+    String ancestor = InheritanceInfoHolder.getInstance().getInheritance(myName, sdkVersion);
+    if (ancestor == null) {
+      if (RubyMotionUtil.getInstance().isOSX(myModule)) {
+        ancestor = InheritanceInfoHolder.getInstance().getInheritance(myName, "10.10");
+      } else if (!RubyMotionUtil.getInstance().isAndroid(myModule)) {
+        ancestor = InheritanceInfoHolder.getInstance().getInheritance(myName, "9.3");
+      }
+    }
+
     return ancestor != null ? SymbolUtil.findSymbol(getProject(), Type.CLASS, ancestor, invocationPoint) : null;
   }
 

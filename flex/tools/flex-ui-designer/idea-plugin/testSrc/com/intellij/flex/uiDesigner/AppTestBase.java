@@ -1,12 +1,11 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.FlexTestUtils;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
@@ -24,7 +23,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.Consumer;
 import junit.framework.AssertionFailedError;
 import org.jetbrains.annotations.Nullable;
 

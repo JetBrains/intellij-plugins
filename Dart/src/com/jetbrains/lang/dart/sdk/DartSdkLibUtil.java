@@ -34,6 +34,7 @@ public class DartSdkLibUtil {
     "dev_compiler",
     "front_end",
     "internal",
+    "kernel",
     "profiler",
   };
 

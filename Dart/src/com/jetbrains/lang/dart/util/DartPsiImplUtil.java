@@ -147,7 +147,20 @@ public class DartPsiImplUtil {
   @Nullable
   public static DartComponentName getComponentName(@NotNull DartFactoryConstructorDeclaration element) {
     final List<DartComponentName> list = element.getComponentNameList();
-    return list.size() == 2 ? list.get(1) : null; // todo somehow remove this bogus code, it is here just to mimic old behavior
+    // todo somehow remove this bogus code, it is here just to mimic old behavior
+    return list.size() == 2 ? list.get(1) : list.size() == 1 ? list.get(0) : null;
+  }
+
+  @Nullable
+  public static DartReferenceExpression getReferenceExpression(@NotNull final DartType dartType) {
+    final DartSimpleType simpleType = dartType.getSimpleType();
+    return simpleType == null ? null : simpleType.getReferenceExpression();
+  }
+
+  @Nullable
+  public static DartTypeArguments getTypeArguments(@NotNull final DartType dartType) {
+    final DartSimpleType simpleType = dartType.getSimpleType();
+    return simpleType == null ? null : simpleType.getTypeArguments();
   }
 
   @Nullable
@@ -166,6 +179,9 @@ public class DartPsiImplUtil {
 
   private static PsiElement doResolveTypeReference(final DartType dartType) {
     final DartExpression expression = dartType.getReferenceExpression();
+    if (expression == null) {
+      return null;
+    }
     final String typeName = expression.getText();
     if (typeName.indexOf('.') != -1) {
       return ((DartReference)expression).resolve();

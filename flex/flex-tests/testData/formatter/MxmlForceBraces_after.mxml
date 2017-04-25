@@ -1,0 +1,14 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+                creationComplete="foo();">
+    <mx:Script><![CDATA[
+        import mx.core.FlexVersion;
+
+        private function foo():void {
+            if (FlexVersion.CURRENT_VERSION > FlexVersion.VERSION_3_0) {
+                trace("new version");
+            } else {
+                trace("old version");
+            }
+        }
+        ]]></mx:Script>
+</mx:Application>

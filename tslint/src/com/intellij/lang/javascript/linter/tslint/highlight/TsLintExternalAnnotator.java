@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.DialectOptionHolder;
@@ -25,6 +26,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -34,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Future;
 
 /**
@@ -100,7 +103,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       return null;
     }
 
-    return new TsLinterInput(project, psiFile, document, fileContent, state, colorsScheme, config);
+    return new TsLinterInput(project, psiFile, fileContent, state, colorsScheme, config);
   }
 
 
@@ -121,8 +124,30 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       }
       return null;
     }
+    if (!annotationErrors.isEmpty()) {
+      final Optional<TsLinterError> globalError = annotationErrors.stream().filter(error -> error.isGlobal()).findFirst();
+      if (globalError.isPresent()) {
+        final JSLinterAnnotationResult<TsLintState> annotation = createGlobalErrorMessage(collectedInfo, config, globalError.get().getDescription());
+        if (annotation != null) return annotation;
+      }
+    }
 
     return JSLinterAnnotationResult.createLinterResult(collectedInfo, ContainerUtil.newArrayList(annotationErrors), config);
+  }
+
+  @Nullable
+  private static JSLinterAnnotationResult<TsLintState> createGlobalErrorMessage(@NotNull TsLinterInput collectedInfo,
+                                                                                @Nullable VirtualFile config,
+                                                                                @Nullable String error) {
+    if (!StringUtil.isEmptyOrSpaces(error)) {
+      final ProcessOutput output = new ProcessOutput();
+      output.appendStderr(error);
+      final IntentionAction detailsAction = JSLinterUtil.createDetailsAction(collectedInfo.getProject(), collectedInfo.getVirtualFile(),
+                                                                             null, output, null);
+      final JSLinterFileLevelAnnotation annotation = new JSLinterFileLevelAnnotation(error, detailsAction);
+      return JSLinterAnnotationResult.create(collectedInfo, annotation, config);
+    }
+    return null;
   }
 
   protected void cleanNotification(@NotNull TsLinterInput collectedInfo) {

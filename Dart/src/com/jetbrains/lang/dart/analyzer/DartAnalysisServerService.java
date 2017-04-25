@@ -45,6 +45,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
@@ -98,6 +99,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long EXECUTION_CREATE_CONTEXT_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EXECUTION_MAP_URI_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long ANALYSIS_IN_TESTS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+  private static final long TESTS_TIMEOUT_COEFF = 10;
 
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
   private static final String STACK_TRACE_MARKER = "#0";
@@ -613,6 +615,10 @@ public class DartAnalysisServerService implements Disposable {
     return myServerData.getErrors(file);
   }
 
+  public List<DartServerData.DartError> getErrors(@NotNull final SearchScope scope) {
+    return myServerData.getErrors(scope);
+  }
+
   @NotNull
   public List<DartServerData.DartHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
     return myServerData.getHighlight(file);
@@ -746,12 +752,7 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     if (!filesToUpdate.isEmpty()) {
-      server.analysis_updateContent(filesToUpdate, new UpdateContentConsumer() {
-        @Override
-        public void onResponse() {
-          myServerData.onFilesContentUpdated();
-        }
-      });
+      server.analysis_updateContent(filesToUpdate, myServerData::onFilesContentUpdated);
     }
   }
 
@@ -1257,7 +1258,7 @@ public class DartAnalysisServerService implements Disposable {
 
     server.analysis_reanalyze(null);
 
-    ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(), ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL);
   }
 
   private void analysis_setPriorityFiles() {
@@ -1391,13 +1392,10 @@ public class DartAnalysisServerService implements Disposable {
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
 
-      final DebugPrintStream debugStream = new DebugPrintStream() {
-        @Override
-        public void println(String str) {
-          str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
-          synchronized (myDebugLog) {
-            myDebugLog.add(str);
-          }
+      final DebugPrintStream debugStream = str -> {
+        str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
+        synchronized (myDebugLog) {
+          myDebugLog.add(str);
         }
       };
 
@@ -1446,14 +1444,11 @@ public class DartAnalysisServerService implements Disposable {
         startedServer.addAnalysisServerListener(myAnalysisServerListener);
 
         myHaveShownInitialProgress = false;
-        startedServer.addStatusListener(new AnalysisServerStatusListener() {
-          @Override
-          public void isAliveServer(boolean isAlive) {
-            if (!isAlive) {
-              synchronized (myLock) {
-                if (startedServer == myServer) {
-                  stopServer();
-                }
+        startedServer.addStatusListener(isAlive -> {
+          if (!isAlive) {
+            synchronized (myLock) {
+              if (startedServer == myServer) {
+                stopServer();
               }
             }
           }
@@ -1576,7 +1571,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, ANALYSIS_IN_TESTS_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, ANALYSIS_IN_TESTS_TIMEOUT / TESTS_TIMEOUT_COEFF);
     assert latch.getCount() == 0 : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
   }
 
@@ -1612,6 +1607,12 @@ public class DartAnalysisServerService implements Disposable {
     }
   }
 
+  public int getFilePathsWithErrorsHash() {
+    synchronized (myFilePathsWithErrors) {
+      return myFilePathsWithErrors.hashCode();
+    }
+  }
+
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
     final String trace = error.getStackTrace();
     final String partialTrace = trace == null || trace.isEmpty() ? "" : trace.substring(0, Math.min(trace.length(), 1000));
@@ -1635,11 +1636,15 @@ public class DartAnalysisServerService implements Disposable {
 
   private static boolean awaitForLatchCheckingCanceled(@NotNull final AnalysisServer server,
                                                        @NotNull final CountDownLatch latch,
-                                                       final long timeoutInMillis,
+                                                       long timeoutInMillis,
                                                        final boolean checkWriteLock) {
     if (checkWriteLock) {
       // waiting under write action blocks server notifications handling that require read action
       LOG.assertTrue(!ApplicationManager.getApplication().isWriteAccessAllowed());
+    }
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      timeoutInMillis *= TESTS_TIMEOUT_COEFF;
     }
 
     long startTime = System.currentTimeMillis();

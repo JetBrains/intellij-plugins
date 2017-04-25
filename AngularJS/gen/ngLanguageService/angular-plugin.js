@@ -23,6 +23,7 @@ function createPluginClass(state) {
     var TypeScriptLanguagePluginImpl = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin;
     var getSession = require(fixedPath + "ts-session-provider.js").getSession;
     var createSessionClass = require(fixedPath + "ts-session.js").createSessionClass;
+    var util = require(fixedPath + "util.js");
     var AngularLanguagePlugin = (function (_super) {
         __extends(AngularLanguagePlugin, _super);
         function AngularLanguagePlugin(state) {
@@ -39,6 +40,9 @@ function createPluginClass(state) {
                     obj.typescript = ts_impl;
                     ng_1 = requiredObject(obj);
                 }
+                if (!isVersionCompatible(ng_1, util, ts_impl)) {
+                    ts_impl["ngIncompatible"] = true;
+                }
                 extendEx(ts_impl, "createLanguageService", function (oldFunction, args) {
                     var languageService = oldFunction.apply(_this, args);
                     var host = args[0];
@@ -51,7 +55,8 @@ function createPluginClass(state) {
                 });
             }
             else {
-                ts_impl["skipNg"] = true;
+                ts_impl["skipNg"] = "Cannot start Angular Service with the bundled TypeScript. " +
+                    "Please specify 'typescript' node_modules package.";
             }
             var angularSession = angular_session_1.createAngularSessionClass(ts_impl, sessionClass);
             return getSession(ts_impl, loggerImpl, defaultOptionHolder, mainFile, projectEmittedWithAllFiles, angularSession);
@@ -78,6 +83,18 @@ function createPluginClass(state) {
         return AngularLanguagePlugin;
     }(TypeScriptLanguagePluginImpl));
     return AngularLanguagePlugin;
+}
+function isVersionCompatible(ng, util, ts_impl) {
+    try {
+        if (ng.VERSION && ng.VERSION.full && util.isTypeScript20(ts_impl)) {
+            var versions = util.parseNumbersInVersion(ng.VERSION.full);
+            return !util.isVersionMoreOrEqual(versions, 2, 4, 5);
+        }
+    }
+    catch (e) {
+        return true;
+    }
+    return true;
 }
 function extendEx(ObjectToExtend, name, func) {
     var oldFunction = ObjectToExtend[name];

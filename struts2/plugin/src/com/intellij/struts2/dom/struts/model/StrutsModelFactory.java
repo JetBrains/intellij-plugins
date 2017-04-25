@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2017 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,9 +16,9 @@
 package com.intellij.struts2.dom.struts.model;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -53,19 +53,20 @@ class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiEle
       if (set.isRemoved()) {
         continue;
       }
-//      System.out.println("adding " + set);
+
       final Set<XmlFile> files = new LinkedHashSet<>(set.getFiles().size());
       for (final VirtualFilePointer filePointer : set.getFiles()) {
+        if (!filePointer.isValid()) continue;
         final VirtualFile file = filePointer.getFile();
         if (file == null) {
           continue;
         }
         final PsiFile psiFile = psiManager.findFile(file);
         if (psiFile instanceof XmlFile) {
-          final StrutsRoot strutsRootDom = getDom((XmlFile) psiFile);
+          final StrutsRoot strutsRootDom = getDom((XmlFile)psiFile);
           if (strutsRootDom != null) {
-            files.add((XmlFile) psiFile);
-// TODO           addIncludes(files, strutsRootDom);
+            files.add((XmlFile)psiFile);
+            // TODO           addIncludes(files, strutsRootDom);
           }
         }
       }
@@ -88,5 +89,4 @@ class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiEle
                                             final Module module) {
     return new StrutsModelImpl(strutsRootDomFileElement, xmlFiles);
   }
-
 }

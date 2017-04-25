@@ -11,7 +11,7 @@ HtmlFile:css.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-          JSEmbeddedContentStubBased:ANG_EMBEDDED_CONTENT
+          JSEmbeddedContent:ANG_EMBEDDED_CONTENT
             JSExpressionStatement
               AngularJSRepeatExpression
                 JSVarStatement

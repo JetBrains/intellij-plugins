@@ -7,7 +7,6 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
 public class DartOptimizeImportsTest extends CodeInsightFixtureTestCase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -15,6 +14,7 @@ public class DartOptimizeImportsTest extends CodeInsightFixtureTestCase {
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
+  @Override
   protected String getBasePath() {
     return "/analysisServer/optimizeImports";
   }
@@ -29,6 +29,6 @@ public class DartOptimizeImportsTest extends CodeInsightFixtureTestCase {
 
   public void testOptimizeImports() throws Throwable {
     final String testName = getTestName(false);
-    doTest(testName+ ".dart", testName + "_other1.dart", testName + "_other2.dart");
+    doTest(testName + ".dart", testName + "_other1.dart", testName + "_other2.dart");
   }
 }

@@ -15,5 +15,5 @@ bar5() <info textAttributesKey="DART_KEYWORD">async</info><info textAttributesKe
 <info textAttributesKey="DART_KEYWORD">yield</info><info textAttributesKey="DART_KEYWORD">*</info>a*b;
 <info textAttributesKey="DART_KEYWORD">await</info> for(a in a);
 <info textAttributesKey="DART_KEYWORD">await</info> for (;;);
-<info textAttributesKey="DART_KEYWORD">await</info> c;
+<info textAttributesKey="DART_KEYWORD">await</info> c;<caret>
 }

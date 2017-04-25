@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,12 +73,7 @@ public class DartProblemsFilterForm {
   public void addListener(@NotNull final FilterListener filterListener) {
     myListeners.add(filterListener);
 
-    final ActionListener listener = new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        filterListener.filtersChanged();
-      }
-    };
+    final ActionListener listener = e -> filterListener.filtersChanged();
 
     myErrorsCheckBox.addActionListener(listener);
     myWarningsCheckBox.addActionListener(listener);

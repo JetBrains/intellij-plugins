@@ -195,9 +195,6 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
     catch (WriteExternalException e) {
       throw new RuntimeException(e);
     }
-    catch (InvalidDataException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Override

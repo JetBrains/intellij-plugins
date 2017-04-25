@@ -7,33 +7,38 @@ Dart File
     MIXIN_APPLICATION
       PsiElement(=)('=')
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Super')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Super')
       MIXINS
         PsiElement(with)('with')
         TYPE_LIST
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Mixin1')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Mixin1')
           PsiElement(,)(',')
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Mixin2')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Mixin2')
       INTERFACES
         PsiElement(implements)('implements')
         TYPE_LIST
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Inter1')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Inter1')
           PsiElement(,)(',')
           TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('Inter2')
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('Inter2')
       PsiElement(;)(';')
   CLASS_DEFINITION
     METADATA
@@ -61,9 +66,10 @@ Dart File
     SUPERCLASS
       PsiElement(extends)('extends')
       TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('EventTarget')
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('EventTarget')
     CLASS_BODY
       PsiElement({)('{')
       CLASS_MEMBERS
@@ -96,17 +102,19 @@ Dart File
             PsiElement(static)('static')
             PsiElement(const)('const')
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('EventStreamProvider')
-              TYPE_ARGUMENTS
-                PsiElement(<)('<')
-                TYPE_LIST
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Event')
-                PsiElement(>)('>')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('EventStreamProvider')
+                TYPE_ARGUMENTS
+                  PsiElement(<)('<')
+                  TYPE_LIST
+                    TYPE
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('Event')
+                  PsiElement(>)('>')
             COMPONENT_NAME
               ID
                 PsiElement(IDENTIFIER)('errorEvent')
@@ -115,17 +123,19 @@ Dart File
             NEW_EXPRESSION
               PsiElement(const)('const')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('EventStreamProvider')
-                TYPE_ARGUMENTS
-                  PsiElement(<)('<')
-                  TYPE_LIST
-                    TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('Event')
-                  PsiElement(>)('>')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('EventStreamProvider')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('Event')
+                    PsiElement(>)('>')
               ARGUMENTS
                 PsiElement(()('(')
                 ARGUMENT_LIST
@@ -156,9 +166,10 @@ Dart File
               PsiElement())(')')
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('AbstractWorkerEvents')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('AbstractWorkerEvents')
           PsiElement(get)('get')
           COMPONENT_NAME
             ID
@@ -168,9 +179,10 @@ Dart File
             NEW_EXPRESSION
               PsiElement(new)('new')
               TYPE
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('AbstractWorkerEvents')
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('AbstractWorkerEvents')
               ARGUMENTS
                 PsiElement(()('(')
                 ARGUMENT_LIST
@@ -207,9 +219,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('String')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('String')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('type')
@@ -217,9 +230,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('EventListener')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('EventListener')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('listener')
@@ -230,9 +244,10 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   SIMPLE_FORMAL_PARAMETER
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('bool')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('bool')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('useCapture')
@@ -265,9 +280,10 @@ Dart File
               PsiElement())(')')
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('bool')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('bool')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('$dom_dispatchEvent')
@@ -276,9 +292,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('Event')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Event')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('evt')
@@ -318,9 +335,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('String')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('String')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('type')
@@ -328,9 +346,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('EventListener')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('EventListener')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('listener')
@@ -341,9 +360,10 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   SIMPLE_FORMAL_PARAMETER
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('bool')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('bool')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('useCapture')
@@ -358,17 +378,19 @@ Dart File
         GETTER_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Stream')
-              TYPE_ARGUMENTS
-                PsiElement(<)('<')
-                TYPE_LIST
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Event')
-                PsiElement(>)('>')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Stream')
+                TYPE_ARGUMENTS
+                  PsiElement(<)('<')
+                  TYPE_LIST
+                    TYPE
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('Event')
+                  PsiElement(>)('>')
           PsiElement(get)('get')
           COMPONENT_NAME
             ID

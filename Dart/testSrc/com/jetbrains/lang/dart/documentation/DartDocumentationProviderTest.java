@@ -1,11 +1,18 @@
 package com.jetbrains.lang.dart.documentation;
 
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.documentation.DartDocumentationProvider;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
 
 import static com.jetbrains.lang.dart.util.DartPresentableUtil.RIGHT_ARROW;
 
@@ -26,6 +33,17 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
     assertEquals(expectedDoc, myProvider.getQuickNavigateInfo(element, element));
   }
 
+  private void doTestDocUrl(@NotNull final String expectedUrl, @NotNull final String fileRelPath, @NotNull final String declText) {
+    final String filePath = DartSdk.getDartSdk(getProject()).getHomePath() + "/lib/" + fileRelPath;
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    final PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(file);
+    final int caretOffset = psiFile.getText().indexOf(declText);
+    assertTrue(caretOffset != -1);
+    final PsiElement element = PsiTreeUtil.getParentOfType(psiFile.findElementAt(caretOffset), DartComponent.class);
+    assertNotNull("target element not found at offset " + caretOffset, element);
+    assertSameElements(myProvider.getUrlFor(element, element), Collections.singletonList(expectedUrl));
+  }
+
   public void testFieldRef() throws Exception {
     doTestQuickNavigateInfo("int <b>x</b>", "class A { int <caret>x; foo() => x; }");
   }
@@ -36,5 +54,26 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
 
   public void testEnumRef() throws Exception {
     doTestQuickNavigateInfo("E <b>E1</b>", "enum E { <caret>E1 } var e = E.E1;");
+  }
+
+  public void testDocUrls() throws Exception {
+    doTestDocUrl("https://api.dartlang.org/stable/dart-core/int-class.html",
+                 "core/int.dart",
+                 "abstract class int extends num {");
+    doTestDocUrl("https://api.dartlang.org/stable/dart-core/String/String.fromCharCodes.html",
+                 "core/string.dart",
+                 "external factory String.fromCharCodes(Iterable<int> charCodes,");
+    doTestDocUrl("https://api.dartlang.org/stable/dart-core/List/List.html",
+                 "core/list.dart",
+                 "external factory List([int length]);");
+    doTestDocUrl("https://api.dartlang.org/stable/dart-core/int/int.fromEnvironment.html",
+                 "core/int.dart",
+                 "external const factory int.fromEnvironment(String name, {int defaultValue});");
+    doTestDocUrl("https://api.dartlang.org/stable/dart-math/cos.html",
+                 "math/math.dart",
+                 "external double cos(num x);");
+    doTestDocUrl("https://api.dartlang.org/stable/dart-core/List/length.html",
+                 "core/list.dart",
+                 "void set length(int newLength);");
   }
 }

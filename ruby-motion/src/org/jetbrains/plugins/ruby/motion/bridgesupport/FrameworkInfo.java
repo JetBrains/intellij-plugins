@@ -67,7 +67,7 @@ public class FrameworkInfo {
       selectorNames = ContainerUtil.newHashSet();
       for (Class clazz : framework.getClasses()) {
         for (Function function : clazz.getFunctions()) {
-          if ("id".equals(function.getReturnValue())) {
+          if (function.isId()) {
             idSelectorNames.addAll(MotionSymbolUtil.getSelectorNames(function));
           }
           selectorNames.add(function.getName());

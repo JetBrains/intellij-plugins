@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface DartNormalParameterType extends DartPsiCompositeElement {
 
-  @Nullable
-  DartFunctionType getFunctionType();
-
-  @Nullable
+  @NotNull
   DartType getType();
 
 }

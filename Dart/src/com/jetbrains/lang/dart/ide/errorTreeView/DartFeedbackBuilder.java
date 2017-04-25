@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.notification.*;
 import com.intellij.notification.impl.NotificationsManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageDialogBuilder;
@@ -25,7 +26,7 @@ import javax.swing.event.HyperlinkEvent;
  * send issues to the flutter project on github.
  */
 public abstract class DartFeedbackBuilder {
-  public static final int MAX_URL_LENGTH = 4000;
+  public static final int MAX_URL_LENGTH = 1900;
 
   // NOTIFICATION_GROUP is used to add an error to Event Log tool window. Red balloon is shown separately, like for IDE fatal errors.
   // We do not show standard balloon using this NOTIFICATION_GROUP because it is not red enough.
@@ -117,7 +118,8 @@ public abstract class DartFeedbackBuilder {
     notification.notify(project);
 
     // this shows red balloon line in case of an IDE fatal error
-    ApplicationManager.getApplication().invokeLater(() -> showErrorNotification(notification, project));
+    ApplicationManager.getApplication()
+      .invokeLater(() -> showErrorNotification(notification, project), ModalityState.NON_MODAL, project.getDisposed());
   }
 
   private static void showErrorNotification(@NotNull Notification notification, @NotNull Project project) {

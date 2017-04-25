@@ -1,0 +1,13 @@
+package aaa {
+import mx.rpc.AbstractInvoker;
+
+use namespace xxx;
+
+class AAA {
+    function zzz():void {
+        var ccc;
+    }
+}
+function yyy() {
+}
+}

@@ -3,8 +3,10 @@ package org.angularjs.index;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.frameworks.jquery.JQueryCssLanguage;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -15,24 +17,23 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.css.*;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.MultiMap;
 import org.angularjs.html.Angular2HTMLLanguage;
 import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING;
 import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_FILTER_INDEX_USER_STRING;
@@ -99,29 +100,6 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     return null;
   }
 
-  private static void iterateSelectorNames(@Nullable final String selector, @NotNull final Consumer<String> consumer) {
-    if (selector == null) return;
-    final String[] names = selector.split("\\s*,\\s*");
-    for (String selectorName : names) {
-      final int not = selectorName.indexOf(':');
-      if (not >= 0) {
-        String head = selectorName.substring(0, not);
-        int brace = selectorName.indexOf(')', not);
-        String tail = brace >= 0 ? selectorName.substring(brace + 1) : "";
-        if (!StringUtil.isEmpty(head)) {
-          consumer.consume(head);
-        }
-        if (!StringUtil.isEmpty(tail)) {
-          consumer.consume(tail);
-        }
-        continue;
-      }
-      if (!StringUtil.isEmpty(selectorName)) {
-        consumer.consume(selectorName);
-      }
-    }
-  }
-
   private static void addImplicitElementToModules(PsiElement decorator,
                                                   @NotNull JSElementIndexingDataImpl outData,
                                                   String selector) {
@@ -135,38 +113,65 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
                                                               JSElementIndexingDataImpl outData,
                                                               String selector) {
     if (selector == null) return outData;
-
-    final Ref<JSElementIndexingDataImpl> ref = new Ref<>(outData);
-    final Set<String> added = new HashSet<>();
-    iterateSelectorNames(selector, selectorName -> {
-      final int start = selectorName.indexOf('[');
-      final int end = selectorName.indexOf(']');
-      if (start == 0 && end > 0 || start < 0 && end < 0) {
-        if (ref.isNull()) ref.set(new JSElementIndexingDataImpl());
-        JSImplicitElementImpl.Builder elementBuilder;
-        for (String attr : StringUtil.split(selectorName, "]", false)) {
-          if (added.contains(attr)) continue;
-          final String restrict = selectorName.startsWith("[") ? "A" : "E";
-          elementBuilder = new JSImplicitElementImpl.Builder(attr, element)
-            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
-          elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-          ref.get().addImplicitElement(elementBuilder.toImplicitElement());
-          added.add(attr);
+    selector = selector.replace("\\n", "\n");
+    final MultiMap<String, String> attributesToElements = MultiMap.createSet();
+    PsiFile cssFile = PsiFileFactory.getInstance(element.getProject()).createFileFromText(JQueryCssLanguage.INSTANCE, selector);
+    CssSelectorList selectorList = PsiTreeUtil.findChildOfType(cssFile, CssSelectorList.class);
+    if (selectorList == null) return outData;
+    for (CssSelector cssSelector : selectorList.getSelectors()) {
+      for (CssSimpleSelector simpleSelector : cssSelector.getSimpleSelectors()) {
+        String elementName = simpleSelector.getElementName();
+        boolean seenAttribute = false;
+        for (CssSelectorSuffix suffix : simpleSelector.getSelectorSuffixes()) {
+          if (!(suffix instanceof CssAttribute)) continue;
+          String name = ((CssAttribute)suffix).getAttributeName();
+          if (seenAttribute) name = "[" + name + "]";
+          attributesToElements.putValue(name, elementName);
+          seenAttribute = true;
         }
-        if (end > start) {
-          final String attributeName = selectorName.substring(1, end);
-          final String prefix = isTemplate(element) ? "*" : "";
-          final String attr = prefix + attributeName;
-          if (added.contains(attr)) return;
-          elementBuilder = new JSImplicitElementImpl.Builder(attr, element)
-            .setType(JSImplicitElement.Type.Class).setTypeString("A;;;");
-          elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-          ref.get().addImplicitElement(elementBuilder.toImplicitElement());
-          added.add(attr);
-        }
+        if (!seenAttribute) attributesToElements.putValue("", elementName);
       }
-    });
-    return ref.get();
+    }
+    Set<String> added = new HashSet<>();
+    boolean template = isTemplate(element);
+    for (String elementName : attributesToElements.get("")) {
+      if (!added.add(elementName)) continue;
+      JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(elementName, element)
+        .setType(JSImplicitElement.Type.Class);
+      if (!attributesToElements.containsKey(elementName)) {
+        elementBuilder.setTypeString("E;;;");
+      } else {
+        Collection<String> elements = attributesToElements.get(elementName);
+        elementBuilder.setTypeString("AE;" + StringUtil.join(elements, ",") + ";;");
+      }
+      elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
+      if (outData == null) outData = new JSElementIndexingDataImpl();
+      outData.addImplicitElement(elementBuilder.toImplicitElement());
+    }
+
+    for (Map.Entry<String, Collection<String>> entry : attributesToElements.entrySet()) {
+      JSImplicitElementImpl.Builder elementBuilder;
+      String attributeName = entry.getKey();
+      if (attributeName.isEmpty()) {
+        continue;
+      }
+      if (!added.add(attributeName)) continue;
+      if (outData == null) outData = new JSElementIndexingDataImpl();
+      String elements = StringUtil.join(entry.getValue(), ",");
+      if (template && elements.isEmpty()) {
+        elementBuilder = new JSImplicitElementImpl.Builder(attributeName, element)
+          .setType(JSImplicitElement.Type.Class).setTypeString("A;template,ng-template;;");
+        elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
+        outData.addImplicitElement(elementBuilder.toImplicitElement());
+      }
+      final String prefix = isTemplate(element) && !attributeName.startsWith("[") ? "*" : "";
+      final String attr = prefix + attributeName;
+      elementBuilder = new JSImplicitElementImpl.Builder(attr, element)
+        .setType(JSImplicitElement.Type.Class).setTypeString("A;" + elements + ";;");
+      elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
+      outData.addImplicitElement(elementBuilder.toImplicitElement());
+    }
+    return outData;
   }
 
   private static void addPipe(PsiElement expression, @NotNull JSElementIndexingDataImpl outData, String pipe) {
@@ -187,24 +192,40 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     final PsiElement parent = decorator.getParent();
     if (parent instanceof JSArrayLiteralExpression) {
       final JSCallExpression metadata = PsiTreeUtil.getNextSiblingOfType(decorator, JSCallExpression.class);
-      return metadata != null && metadata.getText().contains(TEMPLATE_REF);
+      return hasTemplateRef(metadata);
     }
     if (parent instanceof JSObjectLiteralExpression) {
+      JSQualifiedName namespace = getCompiledDecoratorNamespace(parent);
+      if (namespace == null) return false;
       final JSBlockStatement block = PsiTreeUtil.getParentOfType(parent, JSBlockStatement.class);
-      final JSStatement[] statements = block != null ? block.getStatements() : JSStatement.EMPTY;
-      for (JSStatement statement : statements) {
+      final JSFile file = block == null ? PsiTreeUtil.getParentOfType(parent, JSFile.class) : null;
+      final JSSourceElement[] statements = block != null ? block.getStatements() :
+                                           file != null ? file.getStatements() :
+                                           JSStatement.EMPTY;
+      for (JSSourceElement statement : statements) {
         if (statement instanceof JSExpressionStatement) {
           final JSExpression expression = ((JSExpressionStatement)statement).getExpression();
           if (expression instanceof JSAssignmentExpression) {
             final JSDefinitionExpression def = ((JSAssignmentExpression)expression).getDefinitionExpression();
-            if (def != null && "ctorParameters".equals(def.getName())) {
-              return expression.getText().contains(TEMPLATE_REF);
+            if (def != null && "ctorParameters".equals(def.getName()) && namespace.equals(def.getJSNamespace().getQualifiedName())) {
+              return hasTemplateRef(expression) ||
+                     PsiTreeUtil.hasErrorElements(expression) && !DialectDetector.isES6(expression) && hasTemplateRef(PsiTreeUtil.getNextSiblingOfType(statement, JSExpressionStatement.class));
             }
           }
         }
       }
     }
     return false;
+  }
+
+  private static boolean hasTemplateRef(@Nullable PsiElement expression) {
+    return expression != null && expression.getText().contains(TEMPLATE_REF);
+  }
+
+  private static JSQualifiedName getCompiledDecoratorNamespace(PsiElement parent) {
+    JSAssignmentExpression assignment = PsiTreeUtil.getParentOfType(parent, JSAssignmentExpression.class, true, JSFunction.class, JSFile.class);
+    JSDefinitionExpression definition = assignment != null ? assignment.getDefinitionExpression() : null;
+    return definition != null ? definition.getJSNamespace().getQualifiedName() : null;
   }
 
   @Nullable

@@ -46,7 +46,7 @@ class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(ps
     val expression = startElement as JSObjectLiteralExpression
     val property = expression.parent as JSProperty
 
-    val newProperty = (JSChangeUtil.createExpressionWithContext("{ data() {return ${expression.text}}}", property)!!.psi as JSObjectLiteralExpression).firstProperty
+    val newProperty = (JSChangeUtil.createExpressionWithContext("{ data() {return ${expression.text}}}", property)!!.psi as JSObjectLiteralExpression).firstProperty!!
     property.replace(newProperty)
   }
 

@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -28,6 +27,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
+  @Override
   protected String getBasePath() {
     return "/analysisServer/completion";
   }
@@ -73,6 +73,18 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
 
   public void testArgsPlaceholderOnTab() throws Throwable {
     doTest("identical", Lookup.REPLACE_SELECT_CHAR);
+  }
+
+  public void testEatTailOnTab() throws Throwable {
+    doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
+  }
+
+  public void testDoNotEatParenOnTab() throws Throwable {
+    doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
+  }
+
+  public void testDoNotEatParenOnTab2() throws Throwable {
+    doTest("hashCode", Lookup.REPLACE_SELECT_CHAR);
   }
 
   public void testFunctionNoArgsInvocation() throws Throwable {

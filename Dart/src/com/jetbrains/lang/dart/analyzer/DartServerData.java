@@ -11,6 +11,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.*;
@@ -178,6 +179,22 @@ public class DartServerData {
     if (hasChanges) {
       forceFileAnnotation(file, false);
     }
+  }
+
+  @NotNull
+  List<DartError> getErrors(@NotNull final SearchScope scope) {
+    final List<DartError> errors = new ArrayList<>();
+
+    synchronized (myErrorData) {
+      for (Map.Entry<String, List<DartError>> entry : myErrorData.entrySet()) {
+        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(entry.getKey());
+        if (file != null && scope.contains(file)) {
+          errors.addAll(entry.getValue());
+        }
+      }
+    }
+
+    return errors;
   }
 
   @NotNull
@@ -398,7 +415,6 @@ public class DartServerData {
     }
   }
 
-
   public static class DartRegion {
     protected int myOffset;
     protected int myLength;
@@ -462,6 +478,10 @@ public class DartServerData {
       return mySeverity;
     }
 
+    public boolean isError() {
+      return mySeverity.equals(AnalysisErrorSeverity.ERROR);
+    }
+
     @Nullable
     public String getCode() {
       return myCode;
@@ -498,7 +518,7 @@ public class DartServerData {
     private int myConvertedOffset = -1;
 
     private DartNavigationTarget(@NotNull final NavigationTarget target) {
-      myFile = FileUtil.toSystemIndependentName(target.getFile()).intern();
+      myFile = FileUtil.toSystemIndependentName(target.getFile().trim()).intern();
       myOriginalOffset = target.getOffset();
       myKind = target.getKind().intern();
     }

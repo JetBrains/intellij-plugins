@@ -1,0 +1,6 @@
+package {
+    import     flashx.textLayout.compose.FlowComposerBase;
+
+    public class TestFormat {
+    }
+}

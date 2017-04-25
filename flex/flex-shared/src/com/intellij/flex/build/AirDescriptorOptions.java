@@ -85,14 +85,7 @@ public class AirDescriptorOptions {
     replacementMap.put("${air_version}", AIR_VERSION);
     replacementMap.put("${app_id}", APP_ID);
     replacementMap.put("${app_name}", APP_NAME);
-
-    final boolean air25OrLater = StringUtil.compareVersionNumbers(AIR_VERSION, "2.5") >= 0;
     replacementMap.put("${app_version}", APP_VERSION);
-    replacementMap.put("${version_number_comment_start}", air25OrLater ? "" : "<!--");
-    replacementMap.put("${version_number_comment_end}", air25OrLater ? "" : "-->");
-    replacementMap.put("${version_comment_start}", air25OrLater ? "<!--" : "");
-    replacementMap.put("${version_comment_end}", air25OrLater ? "-->" : "");
-
     replacementMap.put("${swf_name}", SWF_NAME);
 
     if (EXTENSIONS.length == 0) {

@@ -47,6 +47,44 @@
         }
       }, "additionalProperties": false
     },
+    "completed-docs-privacies-locations" : {
+      "type": "object",
+      "properties": {
+        "locations": {
+          "type": "array",
+          "items": {"enum": [
+            "all",
+            "instance",
+            "static"
+          ],
+          "type": "string"}
+        },
+        "privacies": {
+          "type": "array",
+          "items": {"enum": [
+            "all",
+            "private",
+            "protected",
+            "public"
+          ],
+            "type": "string"}
+        }
+      }
+    },
+    "completed-docs-visibilities" : {
+      "type": "object",
+      "properties": {
+        "visibilities": {
+          "type": "array",
+          "items": {"enum": [
+            "all",
+            "exported",
+            "internal"
+          ],
+            "type": "string"}
+        }
+      }
+    },
     "ruledefinitions": {
       "properties": {
         "adjacent-overload-signatures": {
@@ -180,7 +218,30 @@
         },
         "completed-docs": {
           "description": "Enforces documentation for important items be filled out",
-          "type": "boolean"
+          "oneOf": [
+            {"type": "boolean"},
+            {"type": "array",
+              "uniqueItems": true,
+              "items": {"type": ["boolean", "string"], "enum": [true, "classes", "functions", "methods", "properties"]},
+              "minItems": 2
+            },
+            {"type": "array",
+              "items": [
+                {"type": "boolean", "enum": [true]},
+                {"type": "object",
+                "properties": {
+                  "methods": {"$ref": "#/definitions/completed-docs-privacies-locations"},
+                  "properties": {"$ref": "#/definitions/completed-docs-privacies-locations"},
+                  "classes": {"$ref": "#/definitions/completed-docs-visibilities"},
+                  "enums": {"$ref": "#/definitions/completed-docs-visibilities"},
+                  "functions": {"$ref": "#/definitions/completed-docs-visibilities"},
+                  "interfaces": {"$ref": "#/definitions/completed-docs-visibilities"},
+                  "namespaces": {"$ref": "#/definitions/completed-docs-visibilities"},
+                  "types": {"$ref": "#/definitions/completed-docs-visibilities"},
+                  "variables": {"$ref": "#/definitions/completed-docs-visibilities"}
+                }}
+              ]}
+          ]
         },
         "curly": {
           "description": "Enforces braces for if/for/do/while statements",

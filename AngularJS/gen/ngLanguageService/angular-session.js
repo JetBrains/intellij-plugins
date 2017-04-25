@@ -11,8 +11,7 @@ function createAngularSessionClass(ts_impl, sessionClass) {
     ts_impl.server.CommandNames.IDEGetProjectHtmlErr = "IDEGetProjectHtmlErr";
     var skipAngular = ts_impl["skipNg"];
     var refreshErrorCount = 0;
-    var globalError = skipAngular ? "Cannot start Angular Service with the bundled TypeScript. " +
-        "Please specify 'typescript' node_modules package" : null;
+    var globalError = skipAngular ? skipAngular : null;
     var AngularSession = (function (_super) {
         __extends(AngularSession, _super);
         function AngularSession() {
@@ -96,6 +95,9 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                         }
                     }
                     catch (err) {
+                        if (ts_impl["ngIncompatible"] && !ts_impl["ngInitErrorIncompatible"]) {
+                            ts_impl["ngInitErrorIncompatible"] = "This version of Angular language service requires TypeScript 2.1 or higher.";
+                        }
                         //something wrong
                         sessionThis.logError(err, "update graph ng service");
                     }
@@ -333,6 +335,20 @@ function createAngularSessionClass(ts_impl, sessionClass) {
                             end: null,
                             start: null,
                             text: "For better performance please use TypeScript version 2.0.3 or higher. Angular project errors are disabled"
+                        }]
+                });
+            }
+            else if (ts_impl["ngInitErrorIncompatible"]) {
+                if (appendProjectErrors == null) {
+                    appendProjectErrors = [];
+                }
+                appendProjectErrors.push({
+                    file: null,
+                    diagnostics: [{
+                            category: "warning",
+                            end: null,
+                            start: null,
+                            text: ts_impl["ngInitErrorIncompatible"]
                         }]
                 });
             }

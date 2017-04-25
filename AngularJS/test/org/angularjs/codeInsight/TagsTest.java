@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.xml.util.CheckValidXmlInScriptBodyInspection;
 import org.angularjs.AngularTestUtil;
 
@@ -272,4 +273,48 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals("<ng-container></ng-container>", AngularTestUtil.getDirectiveDefinitionText(resolve));
     });
   }
+
+  public void testNgTemplateCompletion20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        () -> myFixture.testCompletion("ngTemplate.html", "ngTemplate.after.html", "angular2.js"));
+  }
+
+
+  public void testNgTemplateResolve20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      myFixture.configureByFiles("ngTemplate.after.html", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>template", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("ngTemplate.after.html", resolve.getContainingFile().getName());
+      assertEquals("<ng-template></ng-template>", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    });
+  }
+
+  public void testComplexSelectorList2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
+    });
+  }
+
+  public void testNoNormalizedResolve20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      myFixture.configureByFiles("noNormalized.ts", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("app_<caret>hello", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("noNormalized.ts", resolve.getContainingFile().getName());
+      assertEquals("Component({\n" +
+                   "    selector: 'app_hello',\n" +
+                   "    template: '<app_hello></app_hello>',\n" +
+                   "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    });
+  }
+
 }

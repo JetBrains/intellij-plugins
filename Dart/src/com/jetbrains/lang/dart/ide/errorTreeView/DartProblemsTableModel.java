@@ -31,6 +31,8 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       final DartProblem problem = (DartProblem)value;
       setText(problem.getErrorMessage());
 
+      setToolTipText(generateToolTipText(problem.getErrorMessage(), problem.getCorrectionMessage()));
+
       final String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
               ? AllIcons.General.Error
@@ -41,6 +43,13 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       return label;
     }
   };
+
+  @NotNull
+  private static String generateToolTipText(@Nullable final String message, @Nullable final String correction) {
+    String messageSanitized = StringUtil.notNullize(message).replaceAll("\\\\n", "\n");
+    String correctionSanitized = StringUtil.notNullize(correction).replaceAll("\\\\n", "\n");
+    return correctionSanitized.isEmpty() ? messageSanitized : messageSanitized + "\n\n" + correctionSanitized;
+  }
 
   private static final TableCellRenderer LOCATION_RENDERER = new DefaultTableCellRenderer() {
     @Override
@@ -359,14 +368,15 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     final List<String> summary = new ArrayList<>();
 
     if (myFilter.isShowErrors() && myErrorCountAfterFilter > 0) {
-      summary.add(myErrorCountAfterFilter > 1 ? myErrorCountAfterFilter + " errors" : "1 error");
+      summary.add(myErrorCountAfterFilter + " " + StringUtil.pluralize("error", myErrorCountAfterFilter));
     }
     if (myFilter.isShowWarnings() && myWarningCountAfterFilter > 0) {
-      summary.add(myWarningCountAfterFilter > 1 ? myWarningCountAfterFilter + " warnings" : "1 warning");
+      summary.add(myWarningCountAfterFilter + " " + StringUtil.pluralize("warning", myWarningCountAfterFilter));
     }
     if (myFilter.isShowHints() && myHintCountAfterFilter > 0) {
-      summary.add(myHintCountAfterFilter > 1 ? myHintCountAfterFilter + " hints" : "1 hint");
+      summary.add(myHintCountAfterFilter + " " + StringUtil.pluralize("hint", myHintCountAfterFilter));
     }
+
 
     if (summary.isEmpty()) {
       if (myFilter.areFiltersApplied()) {

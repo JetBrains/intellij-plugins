@@ -66,6 +66,7 @@ public class BridgeSupportLoader {
     for (VirtualFile file : rubyMotion.getChildren()) {
       if (file.isDirectory()) {
         final VirtualFile bridgeSupport = file.findChild("BridgeSupport");
+        if (bridgeSupport == null) continue;
         ensureFrameworkLoaded(bridgeSupport);
       }
     }

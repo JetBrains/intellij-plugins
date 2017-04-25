@@ -521,7 +521,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
       myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(), "[ngFor]", "[ngForOf]");
+      assertContainsElements(myFixture.getLookupElementStrings(), "ngFor", "[ngForOf]");
     });
   }
 
@@ -544,8 +544,39 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
       myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(), "[ngFor]", "[ngForOf]");
+      assertContainsElements(myFixture.getLookupElementStrings(), "ngFor", "[ngForOf]");
     });
+  }
+
+  public void testIfCompletion4Javascript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("if4.html", "angular4_compiled.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
+      myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "*ngIf");
+      assertDoesntContain(myFixture.getLookupElementStrings(), "ngIf");
+    });
+  }
+
+  public void testIfCompletion4JavascriptUmd() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("if4.html", "angular4_compiled.umd.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
+      myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "*ngIf");
+      assertDoesntContain(myFixture.getLookupElementStrings(), "ngIf");
+    });
+  }
+
+  public void testIfCompletion4JavascriptEs6InEs5() throws Exception {
+    myFixture.configureByFiles("if4.html", "angular4_compiled.es6.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "*ngIf");
+    assertDoesntContain(myFixture.getLookupElementStrings(), "ngIf");
   }
 
   public void testForTemplateCompletion2Javascript() throws Exception {
@@ -774,6 +805,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("case.html", "angular2.js");
       myFixture.completeBasic();
+      myFixture.type('\n');
       myFixture.checkResultByFile("case.after.html");
     });
   }
@@ -792,5 +824,60 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "routerLink", "routerLink2");
     });
+  }
+
+  public void testComplexSelectorList() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("material.html", "angular2.js", "material.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "md-icon-button", "mat-icon-button");
+    });
+  }
+
+  public void testComplexSelectorList2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
+    });
+  }
+
+  public void testSelectorListSpaces() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("spaces.html", "angular2.js", "spaces.ts");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "other-attr");
+    });
+  }
+
+  public void testSelectorListSpaces2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("spaces.html", "angular2.js", "spaces.ts");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "other-attr");
+    });
+  }
+
+  public void testSelectorListSpacesCompiled() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("flexOrder.html", "angular2.js", "flexOrder.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "fxFlexOrder");
+    });
+  }
+
+  public void testComponent15AttributesCompletion() {
+    myFixture.testCompletion("component15.html", "component15.after.html", "angular.js", "component15.js");
+  }
+
+  public void testComponent15AttributesResolve() {
+    myFixture.configureByFiles("component15.after.html", "angular.js", "component15.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("he<caret>ro=", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("component15.js", resolve.getContainingFile().getName());
+    assertEquals("hero: '<'", getDirectiveDefinitionText(resolve));
   }
 }

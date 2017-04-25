@@ -2,6 +2,9 @@ package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.intellij.idea.RareLogger;
 import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintConfigFileSearcher;
@@ -13,6 +16,7 @@ import com.intellij.lang.javascript.linter.tslint.service.protocol.TsLintLanguag
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,6 +32,7 @@ import java.util.concurrent.Future;
 
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
+  @NotNull private final static Logger LOG = RareLogger.wrap(Logger.getInstance("#com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService"), false);
   @NotNull
   private final TsLintConfigFileSearcher myConfigFileSearcher;
 
@@ -105,17 +110,40 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
   @Nullable
   private static List<TsLinterError> parseResults(@NotNull JSLanguageServiceAnswer answer, @NotNull String path) {
-    JsonObject element = answer.getElement();
-    JsonElement body = element.get("body");
-    if (body == null) {
-      return null;
+    final JsonObject element = answer.getElement();
+    final JsonElement error = element.get("error");
+    if (error != null) {
+      return Collections.singletonList(new TsLinterError(error.getAsString()));
     }
-
-    String version = element.get("version").getAsString();
-    SemVer tsLintVersion = SemVer.parseFromText(version);
-    boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
-    TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased);
+    final JsonElement body = parseBody(element);
+    if (body == null) return null;
+    final String version = element.get("version").getAsString();
+    final SemVer tsLintVersion = SemVer.parseFromText(version);
+    final boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
+    final TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased);
     return ContainerUtil.newArrayList(parser.getErrors());
+  }
+
+  private static JsonElement parseBody(@NotNull JsonObject element) {
+    final JsonElement body = element.get("body");
+    if (body == null) {
+      //we do not currently treat empty body as error in protocol
+      return null;
+    } else {
+      if (body.isJsonPrimitive() && body.getAsJsonPrimitive().isString()) {
+        final String bodyContent = StringUtil.unquoteString(body.getAsJsonPrimitive().getAsString());
+        if (!StringUtil.isEmptyOrSpaces(bodyContent)) {
+          try {
+            return new JsonParser().parse(bodyContent);
+          } catch (JsonParseException e) {
+            LOG.info(String.format("Problem parsing body: '%s'\n%s", body, e.getMessage()), e);
+          }
+        }
+      } else {
+        LOG.info(String.format("Error body type, should be a string with json inside. Body:'%s'", body.getAsString()));
+      }
+    }
+    return null;
   }
 
   @Override

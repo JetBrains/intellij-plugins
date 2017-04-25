@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.util.JavaParametersUtil;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
@@ -80,13 +79,6 @@ public abstract class BndRunConfigurationBase extends LocatableConfigurationBase
       JavaParametersUtil.checkAlternativeJRE(alternativeJrePath);
     }
   }
-
-  @NotNull
-  @Override
-  public Module[] getModules() {
-    return Module.EMPTY_ARRAY;
-  }
-
 
   public static class Launch extends BndRunConfigurationBase {
     public Launch(Project project, @NotNull ConfigurationFactory factory, String name) {

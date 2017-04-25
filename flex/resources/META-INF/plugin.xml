@@ -13,7 +13,7 @@
   <depends optional="false">JavaScript</depends>
   <depends optional="false">com.intellij.css</depends>
   <depends>com.intellij.properties</depends>
-  <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="flex-maven-support.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="uml-support.xml">com.intellij.diagram</depends>
   <depends optional="true" config-file="ant-support.xml">AntSupport</depends>
   <depends optional="true" config-file="idea-specific.xml">com.intellij.modules.java</depends>
@@ -130,7 +130,7 @@
     <testCreator language="JavaScript" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
     <testCreator language="Mxml" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
     <codeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptCodeStyleSettingsProvider"/>
-    <colorSettingsPage implementation="com.intellij.lang.javascript.highlighting.ActionScriptColorsAndFontsPage"/>
+    <colorSettingsPage implementation="com.intellij.lang.javascript.colors.page.ActionScriptColorsAndFontsPage"/>
     <projectStructureDetector implementation="com.intellij.lang.javascript.flex.projectStructure.detection.FlexProjectStructureDetector"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
     <runConfigurationProducer implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer"/>

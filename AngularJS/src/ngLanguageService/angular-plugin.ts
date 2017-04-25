@@ -4,7 +4,7 @@ import {createAngularSessionClass} from "./angular-session";
 import {LanguageService} from "./typings/types";
 
 class AngularLanguagePluginFactory implements LanguagePluginFactory {
-    create(state: AngularTypeScriptPluginState): {languagePlugin: LanguagePlugin, readyMessage?: any} {
+    create(state: AngularTypeScriptPluginState): { languagePlugin: LanguagePlugin, readyMessage?: any } {
 
         let angularLanguagePlugin = createPluginClass(state);
 
@@ -21,9 +21,9 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
     let fixedPath = state.typescriptPluginPath;
 
     const TypeScriptLanguagePluginImpl: typeof TypeScriptLanguagePlugin = require(fixedPath + "ts-plugin.js").TypeScriptLanguagePlugin
-    const getSession = require(fixedPath + "ts-session-provider.js").getSession
-    const createSessionClass = require(fixedPath + "ts-session.js").createSessionClass
-
+    const getSession = require(fixedPath + "ts-session-provider.js").getSession;
+    const createSessionClass = require(fixedPath + "ts-session.js").createSessionClass;
+    const util = require(fixedPath + "util.js");
 
     class AngularLanguagePlugin extends TypeScriptLanguagePluginImpl {
 
@@ -37,7 +37,7 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                              pathProcessor: any,
                              mainFile: string,
                              projectEmittedWithAllFiles: any): any {
-            let sessionClass: {new(state): IDETypeScriptSession} = createSessionClass(ts_impl, loggerImpl, defaultOptionHolder, pathProcessor, projectEmittedWithAllFiles, mainFile)
+            let sessionClass: { new(state): IDETypeScriptSession } = createSessionClass(ts_impl, loggerImpl, defaultOptionHolder, pathProcessor, projectEmittedWithAllFiles, mainFile)
 
             if (ts_impl["ide_processed"]) {
                 let requiredObject = require(state.ngServicePath);
@@ -49,6 +49,9 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                 }
 
 
+                if (!isVersionCompatible(ng, util, ts_impl)) {
+                    ts_impl["ngIncompatible"] = true;
+                }
                 extendEx(ts_impl, "createLanguageService", (oldFunction, args) => {
                     let languageService = oldFunction.apply(this, args);
                     let host = args[0];
@@ -64,7 +67,8 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
 
                 });
             } else {
-                ts_impl["skipNg"] = true;
+                ts_impl["skipNg"] = "Cannot start Angular Service with the bundled TypeScript. " +
+                    "Please specify 'typescript' node_modules package.";
             }
 
 
@@ -99,6 +103,19 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
     }
 
     return AngularLanguagePlugin;
+}
+
+function isVersionCompatible(ng: any, util: any, ts_impl: typeof ts) {
+    try {
+        if (ng.VERSION && ng.VERSION.full && util.isTypeScript20(ts_impl)) {
+            let versions = util.parseNumbersInVersion(ng.VERSION.full);
+            return !util.isVersionMoreOrEqual(versions, 2, 4, 5);
+        }
+    } catch (e) {
+        return true;
+    }
+
+    return true;
 }
 
 export function extendEx(ObjectToExtend: any, name: string, func: (oldFunction: any, args: any) => any) {

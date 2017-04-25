@@ -35,7 +35,7 @@ import java.util.*;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-public class DartFileListener extends VirtualFileAdapter {
+public class DartFileListener implements VirtualFileListener {
 
   private static final Key<Boolean> DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS =
     Key.create("DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS");
@@ -94,7 +94,7 @@ public class DartFileListener extends VirtualFileAdapter {
       scheduleDartPackageRootsUpdate(project);
 
       final Module module = ModuleUtilCore.findModuleForFile(pubspec, project);
-      if (module != null) {
+      if (module != null && !module.isDisposed()) {
         DartProjectComponent.excludeBuildAndPackagesFolders(module, pubspec);
       }
     }
@@ -129,7 +129,7 @@ public class DartFileListener extends VirtualFileAdapter {
           removeDartPackagesLibraryAndDependencies(project);
         }
         else {
-          final Condition<Module> moduleFilter = module -> DartSdkLibUtil.isDartSdkEnabled(module);
+          final Condition<Module> moduleFilter = DartSdkLibUtil::isDartSdkEnabled;
 
           updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
         }
@@ -282,7 +282,7 @@ public class DartFileListener extends VirtualFileAdapter {
       }
 
       if (modifiableModel.isChanged()) {
-        ApplicationManager.getApplication().runWriteAction(() -> modifiableModel.commit());
+        ApplicationManager.getApplication().runWriteAction(modifiableModel::commit);
       }
     }
     finally {
@@ -305,7 +305,7 @@ public class DartFileListener extends VirtualFileAdapter {
 
       modifiableModel.addLibraryEntry(library);
 
-      ApplicationManager.getApplication().runWriteAction(() -> modifiableModel.commit());
+      ApplicationManager.getApplication().runWriteAction(modifiableModel::commit);
     }
     finally {
       if (!modifiableModel.isDisposed()) {

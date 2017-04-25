@@ -1,0 +1,12 @@
+{
+  "rulesDirectory": [
+    "node_modules/codelyzer/478236487c2d2b4db2"
+  ],
+  "linterOptions": {
+    "typeCheck": true
+  },
+  "rules": {
+    "no-console": true,
+    "no-debugger": true
+  }
+}

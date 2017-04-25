@@ -408,7 +408,10 @@ module Teamcity
         msg = "#{exception.class.name}: #{exception.message}"
         backtrace = ::Rake::TeamCity::RunnerCommon.format_backtrace(exception.backtrace)
 
-        log(@message_factory.create_msg_error(msg, backtrace)) unless @handled_exception 
+        unless @handled_exception
+          log_test_opened("Hook", @current_feature_file_colon_line)
+          log_status_and_test_finished(status, "Hook", nil, exception, nil, nil, nil)
+        end
       end
 
 #######################################################################

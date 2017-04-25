@@ -10,11 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartParameterDescription {
-  private final String myText;
+  @NotNull private final String myText;
 
   public DartParameterDescription(@NotNull String text) {
     myText = text;
@@ -44,15 +41,11 @@ public class DartParameterDescription {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    DartParameterDescription that = (DartParameterDescription)o;
-
-    if (myText != null ? !myText.equals(that.myText) : that.myText != null) return false;
-
-    return true;
+    return myText.equals(((DartParameterDescription)o).myText);
   }
 
   @Override
   public int hashCode() {
-    return myText != null ? myText.hashCode() : 0;
+    return myText.hashCode();
   }
 }

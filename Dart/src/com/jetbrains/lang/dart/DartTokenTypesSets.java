@@ -1,13 +1,19 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.*;
+import com.intellij.lexer.Lexer;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.text.BlockSupport;
 import com.intellij.psi.tree.*;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 import com.jetbrains.lang.dart.lexer.DartDocLexer;
 import com.jetbrains.lang.dart.lexer.DartLexer;
+import com.jetbrains.lang.dart.psi.impl.DartLazyParseableBlockImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
@@ -219,9 +225,35 @@ public interface DartTokenTypesSets {
     }
   }
 
-  class DartLazyParseableBlockElementType extends ILazyParseableElementType {
+  class DartLazyParseableBlockElementType extends IReparseableElementType {
     public DartLazyParseableBlockElementType() {
       super("LAZY_PARSEABLE_BLOCK", DartLanguage.INSTANCE);
+    }
+
+    @Override
+    public boolean isParsable(@NotNull final CharSequence buffer, @NotNull final Language fileLanguage, @NotNull final Project project) {
+      final Lexer lexer = new DartLexer();
+      lexer.start(buffer);
+      if (lexer.getTokenType() != LBRACE) return false;
+      int balance = 1;
+      lexer.advance();
+
+      while (true) {
+        final IElementType type = lexer.getTokenType();
+        if (type == null) break;
+        if (balance == 0) return false;
+        if (type == LBRACE) balance++;
+        if (type == RBRACE) balance--;
+        lexer.advance();
+      }
+
+      return balance == 0;
+    }
+
+    @Nullable
+    @Override
+    public ASTNode createNode(@NotNull final CharSequence text) {
+      return new DartLazyParseableBlockImpl(this, text);
     }
 
     @Override
@@ -238,8 +270,9 @@ public interface DartTokenTypesSets {
       return builder.getTreeBuilt().getFirstChildNode();
     }
 
-    private static boolean isSyncOrAsync(@NotNull final ASTNode lazyParseableBlock) {
-      final IElementType type = lazyParseableBlock.getTreeParent().getFirstChildNode().getElementType();
+    private static boolean isSyncOrAsync(@NotNull final ASTNode newBlock) {
+      final ASTNode oldBlock = Pair.getFirst(newBlock.getUserData(BlockSupport.TREE_TO_BE_REPARSED));
+      final IElementType type = (oldBlock != null ? oldBlock : newBlock).getTreeParent().getFirstChildNode().getElementType();
       return type == SYNC || type == ASYNC;
     }
   }

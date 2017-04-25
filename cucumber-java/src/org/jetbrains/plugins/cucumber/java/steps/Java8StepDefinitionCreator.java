@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.lang.Language;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
@@ -51,7 +52,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
       if (stepDefContainerInterface.isInterface()) {
         PsiReferenceList implementsList = createPsiClass.getImplementsList();
         if (implementsList != null) {
-          implementsList.add(ref);
+          WriteAction.run(() -> implementsList.add(ref));
         }
       }
     }

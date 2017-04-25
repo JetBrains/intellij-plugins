@@ -19,16 +19,19 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.usages.Usage;
 import com.intellij.usages.UsageGroup;
+import com.intellij.usages.UsageTarget;
 import com.intellij.usages.rules.PsiElementUsage;
-import com.intellij.usages.rules.UsageGroupingRule;
+import com.intellij.usages.rules.SingleParentUsageGroupingRule;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class DartUnitMemberUsageGroupingRule implements UsageGroupingRule, DumbAware {
+public class DartUnitMemberUsageGroupingRule extends SingleParentUsageGroupingRule implements DumbAware {
+  @Nullable
   @Override
-  public UsageGroup groupUsage(@NotNull Usage usage) {
+  protected UsageGroup getParentGroupFor(@NotNull Usage usage, @NotNull UsageTarget[] targets) {
     PsiElement psiElement = usage instanceof PsiElementUsage ? ((PsiElementUsage)usage).getElement() : null;
     if (psiElement == null || psiElement.getLanguage() != DartLanguage.INSTANCE) return null;
 

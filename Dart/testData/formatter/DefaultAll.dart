@@ -13,3 +13,7 @@ add(Foo foo, {Bar param}) {
 
 class AClass extends Object with Mixin {
 }
+
+typedef  F800  =  Function  Function(int  x1 ,  [List< Function >  x2])  Function();
+typedef F1300 = core.List<core.int> Function(
+{core.List<core.int> x}) Function();

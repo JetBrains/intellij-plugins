@@ -4,11 +4,12 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.RunProfileStarter;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
-import com.intellij.execution.runners.AsyncGenericProgramRunner;
+import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.runners.AsyncProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -25,33 +26,26 @@ import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.util.Alarm;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
 import org.jetbrains.debugger.connection.VmConnection;
-import org.jetbrains.wip.WipVm;
-import org.jetbrains.wip.protocol.runtime.CallFrameValue;
-import org.jetbrains.wip.protocol.runtime.ConsoleAPICalledEventData;
-import org.jetbrains.wip.protocol.runtime.ConsoleAPICalledEventDataType;
-import org.jetbrains.wip.protocol.runtime.StackTraceValue;
 
-public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
+import java.io.PrintWriter;
 
+public class KarmaDebugProgramRunner extends AsyncProgramRunner {
   private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
 
   @NotNull
@@ -67,91 +61,70 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected Promise<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
+  protected Promise<RunContentDescriptor> execute(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
+    ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
       return Promise.resolve(null);
     }
-    final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
+    KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
     if (consoleView == null) {
-      return Promise.resolve(KarmaUtil.createDefaultRunProfileStarter(executionResult));
+      return Promise.resolve(KarmaUtil.createDefaultDescriptor(executionResult, environment));
     }
-    final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
+    KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
       KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(
         karmaServer.getCapturedBrowsers(),
         environment,
         consoleView
       );
-      final DebuggableWebBrowser debuggableWebBrowser = browserSelector.selectDebugEngine();
+      DebuggableWebBrowser debuggableWebBrowser = browserSelector.selectDebugEngine();
       if (debuggableWebBrowser == null) {
-        return Promise.resolve(KarmaUtil.createDefaultRunProfileStarter(executionResult));
+        return Promises.resolvedPromise(KarmaUtil.createDefaultDescriptor(executionResult, environment));
       }
-      return prepareDebugger(environment.getProject(), debuggableWebBrowser, new RunProfileStarter() {
-        @Nullable
-        @Override
-        public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
-          final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
-          final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
-          XDebugSession session = XDebuggerManager.getInstance(env.getProject()).startSession(
-            env,
-            new XDebugProcessStarter() {
-              @Override
-              @NotNull
-              public XDebugProcess start(@NotNull XDebugSession session) {
-                JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
-                WebBrowser browser = debuggableWebBrowser.getWebBrowser();
-                JavaScriptDebugProcess<? extends VmConnection>
-                  debugProcess = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
-                debugProcess.addFirstLineBreakpointPattern("\\.browserify$");
-                debugProcess.setElementsInspectorEnabled(false);
-                debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
-                listenForCompletedMessage(debugProcess, karmaServer);
-                return debugProcess;
-              }
-            }
-          );
-          return session.getRunContentDescriptor();
-        }
-      });
+      return KarmaKt.prepareKarmaDebugger(environment.getProject(), debuggableWebBrowser,
+                                          () -> createDescriptor(environment, executionResult, consoleView, karmaServer,
+                                                                 debuggableWebBrowser));
     }
     else {
-      return Promise.resolve(new RunProfileStarter() {
-        @Nullable
-        @Override
-        public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
-          final RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, env);
-          karmaServer.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
-          return descriptor;
-        }
-      });
+      RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, environment);
+      karmaServer.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
+      return Promises.resolvedPromise(descriptor);
     }
   }
 
-  private static void listenForCompletedMessage(@NotNull JavaScriptDebugProcess<? extends VmConnection> debugProcess,
-                                                @NotNull KarmaServer karmaServer) {
-    String debugJsFileUrl = karmaServer.formatUrl("/debug.js");
-    debugProcess.getConnection().stateChanged(state -> {
-      WipVm vm = ObjectUtils.tryCast(debugProcess.getVm(), WipVm.class);
-      if (vm != null) {
-        vm.getCommandProcessor().getEventMap().add(ConsoleAPICalledEventData.TYPE, data -> {
-          if (data.type() == ConsoleAPICalledEventDataType.LOG) {
-            StackTraceValue trace = data.getStackTrace();
-            if (trace != null) {
-              CallFrameValue frame = ContainerUtil.getFirstItem(trace.callFrames());
-              if (frame != null && "window.__karma__.complete".equals(frame.functionName()) &&
-                  debugJsFileUrl.equals(frame.url())) {
-                // postpone closing connection to let "Skipped <N> test" message be printed in console
-                new Alarm(Alarm.ThreadToUse.SWING_THREAD).addRequest(() -> debugProcess.getConnection().detachAndClose(), 500);
-              }
-            }
-          }
-          return Unit.INSTANCE;
-        });
+  @NotNull
+  private static RunContentDescriptor createDescriptor(@NotNull ExecutionEnvironment environment,
+                                                       @NotNull ExecutionResult executionResult,
+                                                       @NotNull KarmaConsoleView consoleView,
+                                                       @NotNull KarmaServer karmaServer,
+                                                       @NotNull DebuggableWebBrowser debuggableWebBrowser) throws ExecutionException {
+    Url url = Urls.newFromEncoded(karmaServer.formatUrl("/"));
+    DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
+    XDebugSession session = XDebuggerManager.getInstance(environment.getProject()).startSession(
+      environment,
+      new XDebugProcessStarter() {
+        @Override
+        @NotNull
+        public XDebugProcess start(@NotNull XDebugSession session) {
+          JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
+          WebBrowser browser = debuggableWebBrowser.getWebBrowser();
+          JavaScriptDebugProcess<? extends VmConnection> debugProcess =
+            debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
+          debugProcess.addFirstLineBreakpointPattern("\\.browserify$");
+          debugProcess.setElementsInspectorEnabled(false);
+          debugProcess.setConsoleMessagesSupportEnabled(false);
+          debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
+          Alarm alarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, consoleView);
+          alarm.addRequest(() -> {
+            resumeTestRunning(executionResult.getProcessHandler());
+            Disposer.dispose(alarm);
+          }, 2000);
+          return debugProcess;
+        }
       }
-      return Unit.INSTANCE;
-    });
+    );
+    return session.getRunContentDescriptor();
   }
 
   private static DebuggableFileFinder getDebuggableFileFinder(@NotNull KarmaServer karmaServer) {
@@ -193,10 +166,13 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     return new RemoteDebuggingFileFinder(mappings, null);
   }
 
-  public static Promise<RunProfileStarter> prepareDebugger(@NotNull Project project,
-                                                           @NotNull DebuggableWebBrowser debuggableWebBrowser,
-                                                           @NotNull final RunProfileStarter starter) {
-    return debuggableWebBrowser.getDebugEngine().prepareDebugger(project, debuggableWebBrowser.getWebBrowser())
-      .then(aVoid -> starter);
+  private static void resumeTestRunning(@NotNull ProcessHandler processHandler) {
+    if (processHandler instanceof OSProcessHandler) {
+      // process's input stream will be closed on process termination
+      @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "ConstantConditions"})
+      PrintWriter writer = new PrintWriter(processHandler.getProcessInput());
+      writer.print("resume-test-running\n");
+      writer.flush();
+    }
   }
 }

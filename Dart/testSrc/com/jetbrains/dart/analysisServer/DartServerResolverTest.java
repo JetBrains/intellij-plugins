@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DartServerResolverTest extends CodeInsightFixtureTestCase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();

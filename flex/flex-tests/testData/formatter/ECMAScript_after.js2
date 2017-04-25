@@ -1,0 +1,20 @@
+import jetbrains.charisma.IssueView;
+import jetbrains.charisma.ui.IssueViewsDataDescriptor;
+
+public function refresh():void {
+    CharismaClient(parentApplication).charisma.fetchWorkspace(function (result:Array):void {
+        workspaceTree.dataProvider = result;
+    });
+}
+
+[Bind]
+private function onTreeSelectionChange():void {
+    var selection:Object = workspaceTree.selectedItem;
+    if (selection == null) {
+        return;
+    }
+    var id:String = IssueView(selection).id;
+    CharismaClient(parentApplication).charisma.fetchIssues(id, function (result:Array):void {
+        dataGrid.dataProvider = result;
+    });
+}

@@ -11,9 +11,10 @@ Dart File
         VAR_DECLARATION_LIST
           VAR_ACCESS_DECLARATION
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Function')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Function')
             COMPONENT_NAME
               ID
                 PsiElement(IDENTIFIER)('a')
@@ -22,9 +23,10 @@ Dart File
           VAR_ACCESS_DECLARATION
             PsiElement(static)('static')
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Function')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Function')
             COMPONENT_NAME
               ID
                 PsiElement(IDENTIFIER)('b')
@@ -32,9 +34,10 @@ Dart File
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Function')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Function')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('c')
@@ -51,9 +54,10 @@ Dart File
           PsiElement(static)('static')
           RETURN_TYPE
             TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Function')
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Function')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('d')
@@ -75,9 +79,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('Function')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Function')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('f')
@@ -98,9 +103,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('Function')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Function')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('f')
@@ -225,9 +231,10 @@ Dart File
               FUNCTION_FORMAL_PARAMETER
                 RETURN_TYPE
                   TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
+                    SIMPLE_TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('int')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('f')
@@ -236,9 +243,10 @@ Dart File
                   NORMAL_FORMAL_PARAMETER
                     SIMPLE_FORMAL_PARAMETER
                       TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('int')
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
                       COMPONENT_NAME
                         ID
                           PsiElement(IDENTIFIER)('x')
@@ -246,9 +254,10 @@ Dart File
                   NORMAL_FORMAL_PARAMETER
                     SIMPLE_FORMAL_PARAMETER
                       TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('int')
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
                       COMPONENT_NAME
                         ID
                           PsiElement(IDENTIFIER)('y')
@@ -269,9 +278,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('int')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('int')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('x')
@@ -280,9 +290,10 @@ Dart File
               FUNCTION_FORMAL_PARAMETER
                 RETURN_TYPE
                   TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
+                    SIMPLE_TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('int')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('f')
@@ -298,9 +309,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('int')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('int')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('y')
@@ -326,9 +338,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('int')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('int')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('p2')
@@ -354,9 +367,10 @@ Dart File
                   NORMAL_FORMAL_PARAMETER
                     SIMPLE_FORMAL_PARAMETER
                       TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('String')
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('String')
                       COMPONENT_NAME
                         ID
                           PsiElement(IDENTIFIER)('p5')
@@ -379,9 +393,10 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   SIMPLE_FORMAL_PARAMETER
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('int')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('p7')
@@ -416,9 +431,10 @@ Dart File
                       NORMAL_FORMAL_PARAMETER
                         SIMPLE_FORMAL_PARAMETER
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('String')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('String')
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('z')
@@ -439,9 +455,10 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   SIMPLE_FORMAL_PARAMETER
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('int')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('p11')
@@ -469,9 +486,10 @@ Dart File
                       NORMAL_FORMAL_PARAMETER
                         SIMPLE_FORMAL_PARAMETER
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('String')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('String')
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('z')
@@ -499,9 +517,10 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('int')
+                  SIMPLE_TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('int')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('p2')
@@ -527,9 +546,10 @@ Dart File
                   NORMAL_FORMAL_PARAMETER
                     SIMPLE_FORMAL_PARAMETER
                       TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('String')
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('String')
                       COMPONENT_NAME
                         ID
                           PsiElement(IDENTIFIER)('p5')
@@ -552,9 +572,10 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   SIMPLE_FORMAL_PARAMETER
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('int')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('p7')
@@ -589,9 +610,10 @@ Dart File
                       NORMAL_FORMAL_PARAMETER
                         SIMPLE_FORMAL_PARAMETER
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('String')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('String')
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('z')
@@ -612,9 +634,10 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   SIMPLE_FORMAL_PARAMETER
                     TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('int')
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('int')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('p11')
@@ -642,9 +665,10 @@ Dart File
                       NORMAL_FORMAL_PARAMETER
                         SIMPLE_FORMAL_PARAMETER
                           TYPE
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('String')
+                            SIMPLE_TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('String')
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('z')

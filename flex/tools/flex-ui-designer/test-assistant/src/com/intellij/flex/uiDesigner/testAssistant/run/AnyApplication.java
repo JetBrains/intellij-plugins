@@ -5,7 +5,6 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -24,8 +23,9 @@ public class AnyApplication implements ConfigurationType {
 
   AnyApplication() {
     factory = new ConfigurationFactory(this) {
+      @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new AnyApplicationConfiguration(project, this, "");
       }
     };
@@ -58,8 +58,6 @@ public class AnyApplication implements ConfigurationType {
   }
 
   private static class AnyApplicationConfiguration extends RunConfigurationBase implements ModuleRunProfile {
-    private static final Module[] EMPTY_MODULES = Module.EMPTY_ARRAY;
-
     protected AnyApplicationConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
       super(project, factory, name);
     }
@@ -100,16 +98,6 @@ public class AnyApplication implements ConfigurationType {
           return params;
         }
       };
-    }
-
-    @Override
-    public void checkConfiguration() throws RuntimeConfigurationException {
-    }
-
-    @NotNull
-    @Override
-    public Module[] getModules() {
-      return EMPTY_MODULES;
     }
   }
 

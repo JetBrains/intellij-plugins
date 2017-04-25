@@ -1,8 +1,11 @@
 package com.intellij.javascript.karma.filter;
 
 import com.intellij.execution.filters.*;
+import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +17,7 @@ import java.util.regex.Pattern;
 
 public class KarmaSourceMapStacktraceFilter extends AbstractFileHyperlinkFilter implements DumbAware {
   private static final String SEPARATOR = " <- ";
+  private static final String WEBPACK_URL_PREFIX = "webpack:///";
   public static final KarmaSourceMapStacktraceFinder FINDER = new KarmaSourceMapStacktraceFinder();
 
   private final AbstractFileHyperlinkFilter myBaseFilter;
@@ -37,12 +41,22 @@ public class KarmaSourceMapStacktraceFilter extends AbstractFileHyperlinkFilter 
     return myBaseFilter.parse(line);
   }
 
+  @Nullable
+  @Override
+  public VirtualFile findFile(@NotNull String filePath) {
+    VirtualFile file = super.findFile(filePath);
+    if (file == null && filePath.startsWith("/tmp/")) {
+      return super.findFile(StringUtil.trimStart(filePath, "/tmp/"));
+    }
+    return file;
+  }
+
   public static class KarmaSourceMapStacktraceFinder implements FileHyperlinkRawDataFinder {
     private static final Pattern[] PATTERNS = new Pattern[] {
-      Pattern.compile("^\\s*at\\s.*\\(([^(]*:\\d+:\\d+) <- (.*:\\d+:\\d+)\\)$"),
-      Pattern.compile("^\\s*at\\s+([^\\s(].*:\\d+:\\d+) <- (.*:\\d+:\\d+)$"),
-      Pattern.compile("^.*@(.*:\\d+:\\d+) <- (.*:\\d+:\\d+)$"),
-      Pattern.compile("^\\s*([^\\s].*:\\d+:\\d+) <- (.*:\\d+:\\d+)$")
+      Pattern.compile("^\\s*at\\s.*\\(([^(]*:\\d+:\\d+) <- .*"),
+      Pattern.compile("^\\s*at\\s+([^\\s(].*:\\d+:\\d+) <- .*"),
+      Pattern.compile("^[^@]*[^/]@(.*:\\d+:\\d+) <- .*"),
+      Pattern.compile("^\\s*([^\\s].*:\\d+:\\d+) <- .*")
     };
 
     private static final PatternBasedFileHyperlinkRawDataFinder INNER_FINDER = new PatternBasedFileHyperlinkRawDataFinder(
@@ -62,20 +76,32 @@ public class KarmaSourceMapStacktraceFilter extends AbstractFileHyperlinkFilter 
         if (matcher.matches()) {
           List<FileHyperlinkRawData> result = ContainerUtil.newArrayList();
           for (int i = 1; i <= matcher.groupCount(); i++) {
-            String group = matcher.group(i);
-            List<FileHyperlinkRawData> list = INNER_FINDER.find(group);
+            String originalLink = matcher.group(i);
+            String normalizedLink = normalizeLinkPrefix(originalLink);
+            List<FileHyperlinkRawData> list = INNER_FINDER.find(normalizedLink);
             for (FileHyperlinkRawData data : list) {
               result.add(new FileHyperlinkRawData(data.getFilePath(),
                                                   data.getDocumentLine(),
                                                   data.getDocumentColumn(),
-                                                  matcher.start(i) + data.getHyperlinkStartInd(),
-                                                  matcher.start(i) + data.getHyperlinkEndInd()));
+                                                  matcher.start(i),
+                                                  matcher.start(i) + originalLink.length()));
             }
           }
           return result;
         }
       }
       return Collections.emptyList();
+    }
+
+    @NotNull
+    private static String normalizeLinkPrefix(@NotNull String link) {
+      if (link.startsWith(WEBPACK_URL_PREFIX)) {
+        link = link.substring(WEBPACK_URL_PREFIX.length());
+        if (link.startsWith("~/")) {
+          link = NodeModuleUtil.NODE_MODULES + link.substring(1);
+        }
+      }
+      return link;
     }
   }
 }

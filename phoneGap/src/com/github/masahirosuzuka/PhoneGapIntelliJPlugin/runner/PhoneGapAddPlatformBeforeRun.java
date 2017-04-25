@@ -60,7 +60,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
   @Nullable
   @Override
-  public PhoneGapAddPlatformTask createTask(RunConfiguration runConfiguration) {
+  public PhoneGapAddPlatformTask createTask(@NotNull RunConfiguration runConfiguration) {
     return runConfiguration instanceof PhoneGapRunConfiguration ? new PhoneGapAddPlatformTask(ID) : null;
   }
 

@@ -1,12 +1,12 @@
 package org.angularjs.index;
 
-import com.intellij.testFramework.UsefulTestCase;
+import junit.framework.TestCase;
 
 import static org.angularjs.index.AngularJSIndexingHandler.RESTRICT;
 import static org.angularjs.index.AngularJSIndexingHandler.getParamValue;
 
 
-public class AngularDirectiveCommentParsingTest extends UsefulTestCase {
+public class AngularDirectiveCommentParsingTest extends TestCase {
 
   public void testDirectiveDocParsing() {
     assertEquals("ANY", getParamValue("", " * @restrict ANY    ", RESTRICT).trim());

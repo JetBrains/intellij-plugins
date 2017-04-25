@@ -69,6 +69,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
   public static final String COMPONENT = "component";
+  public static final String BINDINGS = "bindings";
   public static final String MODULE = "module";
   public static final String FILTER = "filter";
   public static final String STATE = "state";
@@ -129,6 +130,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     for (String key : INDEXES.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
+
+    CUSTOM_PROPERTY_PROCESSORS.put(COMPONENT, AngularJSIndexingHandler::bindingsProcessor);
+    NAME_CONVERTERS.put(BINDINGS, NAME_CONVERTERS.get(DIRECTIVE));
 
     final PairProcessor<JSProperty, JSElementIndexingData> processor = createRouterParametersProcessor();
     CUSTOM_PROPERTY_PROCESSORS.put(WHEN, processor);
@@ -675,5 +679,24 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   @Nullable
   static String unquote(PsiElement value) {
     return (String)((JSLiteralExpression)value).getValue();
+  }
+
+  private static boolean bindingsProcessor(JSProperty property, JSElementIndexingData data) {
+    PsiElement parent = property.getParent();
+    if (parent instanceof JSObjectLiteralExpression && parent.getParent() instanceof JSProperty &&
+        BINDINGS.equals(((JSProperty)parent.getParent()).getName())) {
+      Pair<JSCallExpression, Integer> call = findImmediatelyWrappingCall(property);
+      assert call != null;
+      JSExpression[] arguments = call.first.getArguments();
+      if (arguments.length < 2 ||
+          !(arguments[0] instanceof JSLiteralExpression) ||
+          !((JSLiteralExpression)arguments[0]).isQuotedLiteral()) return false;
+
+      final String componentName = unquote(arguments[0]);
+      addImplicitElements(property, BINDINGS, AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(property.getName()),
+                          "A;" + DirectiveUtil.getAttributeName(componentName) + ";expression;", data);
+      return true;
+    }
+    return false;
   }
 }

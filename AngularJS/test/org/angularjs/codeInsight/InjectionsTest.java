@@ -111,6 +111,15 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     checkVariableResolve("val<caret>ue", "value", JSVariable.class);
   }
 
+  public void testNgRepeatEndCompletion() {
+    myFixture.testCompletion("ngRepeatEnd.html", "ngRepeatEnd.after.html", "angular.js");
+  }
+
+  public void testNgRepeatEndResolve() {
+    myFixture.configureByFiles("ngRepeatEnd.resolve.html", "angular.js");
+    checkVariableResolve("aNo<caret>te", "aNote", JSVariable.class);
+  }
+
   public void testNgControllerAliasCompletion() {
     myFixture.testCompletionTyping("ngControllerAlias.html", "\n", "ngControllerAlias.after.html", "angular.js", "custom.js");
   }
@@ -225,6 +234,17 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       final int offset = AngularTestUtil.findOffsetBySignature("Helvetica <caret>Neue", myFixture.getFile());
       final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
       assertEquals(CSSLanguage.INSTANCE, element.getLanguage());
+    });
+  }
+
+  public void testHost() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("host.ts", "angular2.js");
+      for (String signature : new String[]{"eve<caret>nt", "bind<caret>ing", "at<caret>tribute"}) {
+        final int offset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
+        final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
+        assertEquals(signature, AngularJSLanguage.INSTANCE, element.getContainingFile().getLanguage());
+      }
     });
   }
 

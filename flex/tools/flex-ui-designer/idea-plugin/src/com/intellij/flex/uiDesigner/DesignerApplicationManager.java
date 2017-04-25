@@ -120,7 +120,7 @@ public class DesignerApplicationManager {
         Disposer.dispose(disposedApp);
       }
       finally {
-        serviceManager.disposeComponent();
+        Disposer.dispose(serviceManager);
         serviceManager = null;
       }
     });
@@ -518,12 +518,9 @@ public class DesignerApplicationManager {
 
       final AtomicBoolean processed = new AtomicBoolean(false);
       indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
-      renderResult.doWhenDone(new Consumer<DocumentInfo>() {
-        @Override
-        public void consume(DocumentInfo documentInfo) {
-          if (asyncResult != null) {
-            asyncResult.setDone(documentInfo);
-          }
+      renderResult.doWhenDone((Consumer<DocumentInfo>)documentInfo -> {
+        if (asyncResult != null) {
+          asyncResult.setDone(documentInfo);
         }
       });
       renderResult.doWhenProcessed(() -> processed.set(true));

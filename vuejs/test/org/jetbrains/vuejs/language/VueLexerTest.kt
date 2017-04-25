@@ -79,11 +79,14 @@ open class VueLexerTest : LexerTestCase() {
   fun testTemplateInner() = doFileTest("vue")
   fun testTemplateInnerDouble() = doFileTest("vue")
   fun testTemplateJade() = doFileTest("vue")
+  fun testTemplateNewLine() = doFileTest("vue")
 
   fun testBindingAttribute() = doFileTest("vue")
   fun testEventAttribute() = doFileTest("vue")
 
   fun testInterpolation() = doFileTest("vue")
+  fun testInterpolationNewLine() = doFileTest("vue")
+  fun testInterpolationDoubleNewLine() = doFileTest("vue")
   fun testInterpolationInText() = doFileTest("vue")
   fun testMultipleInterpolations() = doFileTest("vue")
 

@@ -41,6 +41,14 @@
  */
 /**
  * @ngdoc directive
+ * @name ngShow
+ *
+ * @element ANY
+ * @param {expression} ngShow If the {@link guide/expression expression} is truthy
+ *     then the element is shown or hidden respectively.
+*/
+/**
+ * @ngdoc directive
  * @name ng.directive:ngIf
  * @param {expression} ngRepeat The expression indicating how to enumerate a collection. These
  *   formats are currently supported:

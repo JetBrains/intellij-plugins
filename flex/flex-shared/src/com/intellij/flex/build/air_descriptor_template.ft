@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/${air_version}">
 
 <!-- Adobe AIR Application Descriptor File Template.
      Specifies parameters for identifying, installing, and launching AIR applications.
@@ -7,8 +8,6 @@
      The last segment of the namespace specifies the version of the AIR runtime required for this application to run.
 
      minimumPatchLevel - The minimum patch level of the AIR runtime required to run the application. Optional. -->
-
-<application xmlns="http://ns.adobe.com/air/application/${air_version}">
 
     <!-- A universally unique application identifier. Must be unique across all AIR applications.
          Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
@@ -22,14 +21,15 @@
 
     <!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade.
          Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
-         An updated version of application must have a versionNumber value higher than the previous version. Required for namespace >= 2.5. -->
-    ${version_number_comment_start}<versionNumber>${app_version}</versionNumber>${version_number_comment_end}
+         An updated version of application must have a versionNumber value higher than the previous version. Required for namespace >= 2.5.
+         For iOS Apps, this represents build number. -->
+    <versionNumber>${app_version}</versionNumber>
 
-    <!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users. Optional. -->
+    <!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users.
+         For iOS Apps, this represents application version number and format should be (<0-999>.<0-999>.<0-999>).
+         If this tag is not specified or the value is not according to the format, then this tag will be ignored
+         and <versionNumber> will be used for application version number.Optional. -->
     <!--<versionLabel></versionLabel>-->
-
-    <!-- An application version designator (such as "v1", "2.5", or "Alpha 1"). Required for namespace < 2.5. -->
-    ${version_comment_start}<version>${app_version}</version>${version_comment_end}
 
     <!-- Description, displayed in the AIR application installer. May have multiple values for each language. See samples or xsd schema file. Optional. -->
     <!--<description></description>-->
@@ -116,7 +116,7 @@
     <!--<supportedProfiles>desktop extendedDesktop mobileDevice extendedMobileDevice</supportedProfiles>-->
 
     <!-- Languages supported by application. Only these languages can be specified -->
-    <!--<supportedLanguages>en de cs es fr it ja ko nl pl pt ru sv tr zh</supportedLanguages>-->
+    <!--<supportedLanguages>en da de cs es fr it iw ja ko nb nl pl pt ru sv tr zh</supportedLanguages>-->
 
     <!-- The subpath of the standard default installation location to use. Optional. -->
     <!--<installFolder></installFolder>-->
@@ -131,14 +131,18 @@
         <image32x32></image32x32>
         <image36x36></image36x36>
         <image40x40></image40x40>
+        <image44x44></image44x44>
         <image48x48></image48x48>
         <image50x50></image50x50>
         <image57x57></image57x57>
         <image58x58></image58x58>
         <image60x60></image60x60>
+        <image66x66></image66x66>
         <image72x72></image72x72>
+        <image75x75></image75x75>
         <image76x76></image76x76>
         <image80x80></image80x80>
+        <image87x87></image87x87>
         <image96x96></image96x96>
         <image100x100></image100x100>
         <image114x114></image114x114>
@@ -146,6 +150,9 @@
         <image128x128></image128x128>
         <image144x144></image144x144>
         <image152x152></image152x152>
+        <image167x167></image167x167>
+        <image180x180></image180x180>
+        <image192x192></image192x192>
         <image512x512></image512x512>
         <image732x412></image732x412>
         <image1024x1024></image1024x1024>
@@ -219,7 +226,7 @@
         <!--<externalSwfs></externalSwfs> -->
     ${iOS_comment_start}</iPhone>${iOS_comment_end}
 
-    <!-- Android specific tags that get passed to AndroidManifest.xml file. -->
+    <!-- Specify Android specific tags that get passed to AndroidManifest.xml file. -->
     ${android_comment_start}<android>${android_comment_end}
         ${android_comment_start}<manifestAdditions>${android_comment_end}
             ${android_comment_start}<![CDATA[${android_comment_end}
@@ -253,6 +260,16 @@
         <!--<colorDepth></colorDepth>-->
         <!-- Indicates if the app contains video or not. Necessary for ordering of video planes with graphics plane, especially in Jellybean - if you app does video this must be set to true - valid values are true or false -->
         <!-- <containsVideo></containsVideo> -->
+        <!-- This app is also for Android TV (either "true" or "false"). Optional. Default is 'false' -->
+        <!-- <supportsAndroidTV></supportsAndroidTV> -->
+        <!-- Path to the image used for banner when the app is shown on TV. Optional. The banner should be a .png image of size 320*180.-->
+        <!-- <banner></banner> -->
+        <!-- Indicates if webContents (HTML/CSS/JavaScript) can be inspected in browser. Optional . Default value is 'false' -->
+        <!-- <webContentsDebuggingEnabled></webContentsDebuggingEnabled> -->
+
+        <!-- Indicates if disableMediaCodec is enabled or not. Optional . Default value is 'false' -->
+        <!-- <disableMediaCodec></disableMediaCodec> -->
+
     ${android_comment_start}</android>${android_comment_end}
 
 </application>

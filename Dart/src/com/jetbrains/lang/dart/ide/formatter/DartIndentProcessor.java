@@ -144,7 +144,7 @@ public class DartIndentProcessor {
       // see https://github.com/dart-lang/dart_style/issues/551
       return parent.getLastChildNode().getElementType() == COMMA ? Indent.getNormalIndent() : Indent.getContinuationIndent();
     }
-    if (parentType == FORMAL_PARAMETER_LIST) {
+    if (parentType == FORMAL_PARAMETER_LIST || parentType == PARAMETER_TYPE_LIST) {
       return Indent.getContinuationIndent();
     }
     if (parentType == OPTIONAL_FORMAL_PARAMETERS &&

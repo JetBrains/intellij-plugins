@@ -9,13 +9,19 @@ import com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Comparator;
 
 
 public class TsLintErrorFixAction extends BaseIntentionAction implements HighPriorityAction {
@@ -63,22 +69,59 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     }
     WriteCommandAction.runWriteCommandAction(project, getText(), null, () -> {
       Document document = editor.getDocument();
+      String separator = FileDocumentManager.getInstance().getLineSeparator(file.getViewProvider().getVirtualFile(), project);
+
       TsLintFixInfo.TsLintFixReplacements[] replacements = info.innerReplacements;
+
       if (replacements == null || replacements.length == 0) {
         return;
       }
-      for (TsLintFixInfo.TsLintFixReplacements replacement : replacements) {
-        int offset = replacement.innerStart;
-        if (offset > document.getTextLength()) {
-          //incorrect value
-          return;
-        }
+      Arrays.sort(replacements, Comparator.comparingInt(el -> -el.innerStart));
 
-        document.replaceString(offset, offset + replacement.innerLength, StringUtil.notNullize(replacement.innerText));
-      }
+      if (!applyReplacements(document, separator, replacements)) return;
+
       PsiDocumentManager.getInstance(project).commitDocument(document);
     });
 
     DaemonCodeAnalyzer.getInstance(project).restart(file);
+  }
+
+  public boolean applyReplacements(@NotNull Document document,
+                                   @NotNull String separator,
+                                   @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements) {
+    if ("\n".equals(separator)) {
+      if (!applyFor(document.getTextLength(), replacements,
+                    (replacement) -> document
+                      .replaceString(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil
+                        .notNullize(replacement.innerText)))) {
+        return false;
+      }
+    }
+    else {
+      StringBuilder newContent = new StringBuilder(StringUtilRt.convertLineSeparators(document.getText(), separator));
+      if (!applyFor(newContent.length(), replacements,
+                    (replacement) -> newContent
+                      .replace(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil.notNullize(
+                        replacement.innerText)))) {
+        return false;
+      }
+      document.setText(StringUtilRt.convertLineSeparators(newContent, "\n"));
+    }
+    return true;
+  }
+
+  public boolean applyFor(int documentLength,
+                          @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements,
+                          @NotNull Consumer<TsLintFixInfo.TsLintFixReplacements> apply) {
+    for (TsLintFixInfo.TsLintFixReplacements replacement : replacements) {
+      int offset = replacement.innerStart;
+      if (offset > documentLength || (offset + replacement.innerLength) > documentLength) {
+        //incorrect value
+        return false;
+      }
+
+      apply.consume(replacement);
+    }
+    return true;
   }
 }

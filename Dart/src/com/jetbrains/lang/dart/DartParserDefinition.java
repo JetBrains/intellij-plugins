@@ -15,7 +15,6 @@ import com.jetbrains.lang.dart.lexer.DartLexer;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.impl.DartDocCommentImpl;
 import com.jetbrains.lang.dart.psi.impl.DartEmbeddedContentImpl;
-import com.jetbrains.lang.dart.psi.impl.DartLazyParseableBlockImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class DartParserDefinition implements ParserDefinition {
@@ -67,7 +66,6 @@ public class DartParserDefinition implements ParserDefinition {
 
     if (type == DartTokenTypesSets.EMBEDDED_CONTENT) return new DartEmbeddedContentImpl(node);
     if (type == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT) return new DartDocCommentImpl(node);
-    if (type == DartTokenTypesSets.LAZY_PARSEABLE_BLOCK) return new DartLazyParseableBlockImpl(node);
 
     return DartTokenTypes.Factory.createElement(node);
   }

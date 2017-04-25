@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex.mxml;
 
-import com.intellij.application.options.editor.WebEditorOptions;
 import com.intellij.codeInsight.FileModificationService;
+import com.intellij.codeInsight.daemon.LineMarkerSettings;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.lang.annotation.Annotation;
@@ -20,7 +20,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.impl.util.CssPsiColorUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.ui.ColorChooser;
+import com.intellij.ui.ColorLineMarkerProvider;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -31,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 
 /**
  * @author Eugene.Kudelevsky
@@ -41,8 +44,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
     if (!(element instanceof XmlAttribute) || !JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
       return;
     }
-    final WebEditorOptions webEditorOptions = WebEditorOptions.getInstance();
-    if (webEditorOptions == null || !webEditorOptions.isShowCssColorPreviewInGutter()) {
+    if (!LineMarkerSettings.getSettings().isEnabled(new ColorLineMarkerProvider())) {
       return;
     }
     XmlAttribute attribute = (XmlAttribute)element;
@@ -63,8 +65,11 @@ public class FlexMxmlColorAnnotator implements Annotator {
     }
 
     if (!JSCommonTypeNames.ARRAY_CLASS_NAME.equals(annotationBackedDescriptor.getType())) {
-      Annotation annotation = holder.createInfoAnnotation(attribute.getValueElement(), null);
-      annotation.setGutterIconRenderer(new MyRenderer(value, attribute));
+      XmlAttributeValue valueElement = attribute.getValueElement();
+      if (valueElement != null) {
+        Annotation annotation = holder.createInfoAnnotation(valueElement, null);
+        annotation.setGutterIconRenderer(new MyRenderer(value, attribute));
+      }
     }
   }
 
@@ -72,11 +77,12 @@ public class FlexMxmlColorAnnotator implements Annotator {
   private static Color getColor(@NotNull String colorValue) {
     try {
       int num = Integer.parseInt(colorValue);
+      //noinspection UseJBColor
       return new Color(num);
     }
     catch (NumberFormatException ignored) {
     }
-    String hex = toCannonicalHex(colorValue, false);
+    String hex = toCanonicalHex(colorValue, false);
     if (hex == null) {
       return null;
     }
@@ -89,7 +95,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
   }
 
   @Nullable
-  private static String toCannonicalHex(String colorValue, boolean cssStyle) {
+  private static String toCanonicalHex(String colorValue, boolean cssStyle) {
     if (colorValue.startsWith("#")) {
       if (cssStyle) return colorValue;
       return "0x" + colorValue.substring(1);
@@ -98,11 +104,11 @@ public class FlexMxmlColorAnnotator implements Annotator {
       if (!cssStyle) return colorValue;
       return "#" + colorValue.substring(2);
     }
-    colorValue = colorValue.toLowerCase();
+    colorValue = colorValue.toLowerCase(Locale.US);
     if (ColorMap.isStandardColor(colorValue)) {
       String hex = ColorMap.getHexCodeForColorName(colorValue);
       if (hex != null) {
-        return toCannonicalHex(hex, cssStyle);
+        return toCanonicalHex(hex, cssStyle);
       }
     }
     return null;
@@ -131,7 +137,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
 
     @Override
     public String getTooltipText() {
-      String hex = toCannonicalHex(myColorValue, true);
+      String hex = toCanonicalHex(myColorValue, true);
       if (hex == null) {
         return null;
       }
@@ -173,7 +179,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
               if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return;
 
               final String hex = CssPsiColorUtil.toHexColor(color);
-              final String mxmlStyleHex = toCannonicalHex(hex, false);
+              final String mxmlStyleHex = toCanonicalHex(hex, false);
               ApplicationManager.getApplication().runWriteAction(() -> myAttribute.setValue(mxmlStyleHex));
             }
           }

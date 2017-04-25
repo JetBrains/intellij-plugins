@@ -110,15 +110,12 @@ public class DartResolveUtil {
       return true;
     }
     final BooleanValueHolder result = new BooleanValueHolder(false);
-    processSuperClasses(new PsiElementProcessor<DartClass>() {
-      @Override
-      public boolean execute(@NotNull DartClass dartClass) {
-        if (dartClass == baseClass) {
-          result.setValue(true);
-          return false;
-        }
-        return true;
+    processSuperClasses(dartClass -> {
+      if (dartClass == baseClass) {
+        result.setValue(true);
+        return false;
       }
+      return true;
     }, aClass);
     return result.getValue();
   }
@@ -129,13 +126,13 @@ public class DartResolveUtil {
       return findType(((DartDefaultFormalNamedParameter)element).getNormalFormalParameter());
     }
     if (element instanceof DartNormalFormalParameter) {
-      final DartFunctionFormalParameter functionFormalParameter = ((DartNormalFormalParameter)element).getFunctionFormalParameter();
+      //final DartFunctionFormalParameter functionFormalParameter = ((DartNormalFormalParameter)element).getFunctionFormalParameter();
       final DartFieldFormalParameter fieldFormalParameter = ((DartNormalFormalParameter)element).getFieldFormalParameter();
       final DartSimpleFormalParameter simpleFormalParameter = ((DartNormalFormalParameter)element).getSimpleFormalParameter();
 
-      if (functionFormalParameter != null) {
-        // todo return some FUNCTION type?
-      }
+      // todo return some FUNCTION type?
+      //if (functionFormalParameter != null) {}
+
       if (fieldFormalParameter != null) return fieldFormalParameter.getType();
       if (simpleFormalParameter != null) return simpleFormalParameter.getType();
     }
@@ -319,7 +316,7 @@ public class DartResolveUtil {
     final List<VirtualFile> librariesForContext2 = findLibrary(context2.getContainingFile());
     if (librariesForContext2.isEmpty()) return false;
     final THashSet<VirtualFile> librariesSetForContext1 = new THashSet<>(librariesForContext1);
-    return ContainerUtil.find(librariesForContext2, file -> librariesSetForContext1.contains(file)) != null;
+    return ContainerUtil.find(librariesForContext2, librariesSetForContext1::contains) != null;
   }
 
   @NotNull
@@ -462,12 +459,9 @@ public class DartResolveUtil {
   @NotNull
   public static <T> List<T> findSubComponents(final Function<DartClass, List<T>> fun, @NotNull DartClass... rootDartClasses) {
     final List<T> unfilteredResult = new ArrayList<>();
-    processSuperClasses(new PsiElementProcessor<DartClass>() {
-      @Override
-      public boolean execute(@NotNull DartClass dartClass) {
-        unfilteredResult.addAll(fun.fun(dartClass));
-        return true;
-      }
+    processSuperClasses(dartClass -> {
+      unfilteredResult.addAll(fun.fun(dartClass));
+      return true;
     }, rootDartClasses);
     return unfilteredResult;
   }
@@ -500,18 +494,12 @@ public class DartResolveUtil {
   public static void collectSupers(@NotNull final List<DartClass> superClasses,
                                    @NotNull final List<DartClass> superInterfaces,
                                    @Nullable DartClass rootDartClass) {
-    processSupers(new PsiElementProcessor<DartClass>() {
-      @Override
-      public boolean execute(@NotNull DartClass dartClass) {
-        superClasses.add(dartClass);
-        return true;
-      }
-    }, new PsiElementProcessor<DartClass>() {
-      @Override
-      public boolean execute(@NotNull DartClass dartClass) {
-        superInterfaces.add(dartClass);
-        return true;
-      }
+    processSupers(dartClass -> {
+      superClasses.add(dartClass);
+      return true;
+    }, dartClass -> {
+      superInterfaces.add(dartClass);
+      return true;
     }, rootDartClass);
   }
 
@@ -573,7 +561,7 @@ public class DartResolveUtil {
 
   public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields) {
     return ContainerUtil
-      .filter(ContainerUtil.map(fields, (Function<DartComponent, DartComponentName>)component -> component.getComponentName()),
+      .filter(ContainerUtil.map(fields, (Function<DartComponent, DartComponentName>)DartComponent::getComponentName),
               Condition.NOT_NULL);
   }
 
@@ -587,9 +575,7 @@ public class DartResolveUtil {
     if (dartClass.isEnum()) {
       final List<DartEnumConstantDeclaration> enumConstants = dartClass.getEnumConstantDeclarationList();
       final List<DartComponent> result = new ArrayList<>(enumConstants.size());
-      for (DartEnumConstantDeclaration constant : enumConstants) {
-        result.add(constant);
-      }
+      result.addAll(enumConstants);
       return result;
     }
 
@@ -911,7 +897,7 @@ public class DartResolveUtil {
     if (elements == null) {
       return ResolveResult.EMPTY_ARRAY;
     }
-    elements = ContainerUtil.filter(elements, (Condition<PsiElement>)element -> element != null);
+    elements = ContainerUtil.filter(elements, (Condition<PsiElement>)Objects::nonNull);
     final ResolveResult[] result = new ResolveResult[elements.size()];
     for (int i = 0, size = elements.size(); i < size; i++) {
       result[i] = new PsiElementResolveResult(elements.get(i));

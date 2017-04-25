@@ -10,8 +10,8 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
+import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -42,14 +42,14 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
       }
     });
 
-    VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileAdapter() {
+    VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
       @Override
       public void fileCreated(@NotNull VirtualFileEvent event) {
         if (!isProcess(event)) {
           return;
         }
 
-        updateModuleExcludeByFSEvent(event, ContainerUtil.<String>newHashSet(), ContainerUtil.newHashSet(getExcludedFolderNames(event)));
+        updateModuleExcludeByFSEvent(event, ContainerUtil.newHashSet(), ContainerUtil.newHashSet(getExcludedFolderNames(event)));
       }
 
       @Override
@@ -58,7 +58,7 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
           return;
         }
 
-        updateModuleExcludeByFSEvent(event, getExcludedFolderNames(event), ContainerUtil.<String>newHashSet());
+        updateModuleExcludeByFSEvent(event, getExcludedFolderNames(event), ContainerUtil.newHashSet());
       }
 
       private boolean isProcess(@NotNull VirtualFileEvent event) {

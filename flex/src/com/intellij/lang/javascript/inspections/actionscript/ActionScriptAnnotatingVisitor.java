@@ -1224,23 +1224,29 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkFileUnderSourceRoot(aClass, new SimpleErrorReportingClient());
   }
 
-  protected void validateGetPropertyReturnType(JSFunction function, JSType type) {
+  @Override
+  protected void validateSetter(@NotNull JSFunction setter,
+                                @NotNull JSFunction getter,
+                                JSParameterListElement param,
+                                JSType setterType,
+                                JSType retType) {
+    super.validateSetter(setter, getter, param, setterType, retType);
+    checkAccessorAccessTypeMatch(setter, getter, "actionscript.validation.message.set.method.access.type.is.different.from.getter");
+  }
+
+
+  protected void validateGetter(@NotNull JSFunction getter, JSFunction setter, JSType type) {
     if (type instanceof JSVoidType) {
       // TODO: fix!
       final String typeString = type != null ? type.getTypeText(JSType.TypeTextFormat.PRESENTABLE) : "empty";
       myHolder.createErrorAnnotation(
         type != null ?
-        function.getReturnTypeElement() :
-        getPlaceForNamedElementProblem(function),
+        getter.getReturnTypeElement() :
+        getPlaceForNamedElementProblem(getter),
         JSBundle
           .message("javascript.validation.message.get.method.should.be.valid.type", typeString));
     }
     else {
-      PsiElement element = JSResolveUtil.findParent(function);
-
-      if (element instanceof JSClass && !isBindable((JSClass)element)) {
-        JSFunction setter = ((JSClass)element).findFunctionByNameAndKind(function.getName(), JSFunction.FunctionKind.SETTER);
-
         if (setter != null) {
           JSParameterList setterParameterList = setter.getParameterList();
           JSParameter[] setterParameters = setterParameterList != null ?
@@ -1250,20 +1256,19 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           if (setterParameters.length == 1 &&
               !((setterType = setterParameters[0].getType()) instanceof JSAnyType) &&
               !(type instanceof JSAnyType) &&
-              !JSTypeUtils.areTypesCompatible(setterType, type,  null, function)) {
-            PsiElement typeElement = function.getReturnTypeElement();
+              !JSTypeUtils.areTypesCompatible(setterType, type,  null, getter)) {
+            PsiElement typeElement = getter.getReturnTypeElement();
 
             myHolder.createErrorAnnotation(
-              typeElement != null ? typeElement : getPlaceForNamedElementProblem(function),
+              typeElement != null ? typeElement : getPlaceForNamedElementProblem(getter),
               JSBundle.message("javascript.validation.message.get.method.type.is.different.from.setter",
                                setterType != null ? setterType.getTypeText(JSType.TypeTextFormat.PRESENTABLE) : "empty")
             );
           }
 
-          checkAccessorAccessTypeMatch(function, setter,
-                                       "javascript.validation.message.get.method.access.type.is.different.from.setter");
+          checkAccessorAccessTypeMatch(getter, setter,
+                                       "actionscript.validation.message.get.method.access.type.is.different.from.setter");
         }
-      }
     }
   }
 

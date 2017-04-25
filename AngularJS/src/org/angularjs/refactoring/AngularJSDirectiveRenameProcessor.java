@@ -37,9 +37,6 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
   public void renameElement(PsiElement element, String newName, UsageInfo[] usages, @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     final boolean isAngular2 = DirectiveUtil.isAngular2Directive(element);
     final PsiNamedElement directive = (PsiNamedElement)element;
-    if (isAngular2 && directive.getName() != null && directive.getName().startsWith("[")) {
-      newName = "[" + newName + "]";
-    }
     final String attributeName = isAngular2 ? newName : DirectiveUtil.getAttributeName(newName);
     for (UsageInfo usage : usages) {
       RenameUtil.rename(usage, attributeName);
@@ -49,6 +46,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
       final JSProperty selector = AngularJS2IndexingHandler.getSelector(element.getParent());
       final JSExpression value = selector != null ? selector.getValue() : null;
       if (value != null) {
+        if (value.getText().contains("[")) newName = "[" + newName + "]";
         ElementManipulators.getManipulator(value).handleContentChange(value, newName);
       }
     } else {

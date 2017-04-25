@@ -73,7 +73,7 @@
   </change-notes>
 
   <depends>com.intellij.modules.java</depends>
-  <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
 
   <project-components>
     <component>

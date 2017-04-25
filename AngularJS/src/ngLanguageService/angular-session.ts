@@ -13,8 +13,7 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
 
     let skipAngular = ts_impl["skipNg"];
     let refreshErrorCount = 0;
-    let globalError = skipAngular ? "Cannot start Angular Service with the bundled TypeScript. " +
-        "Please specify 'typescript' node_modules package" : null;
+    let globalError = skipAngular ? skipAngular : null;
     abstract class AngularSession extends sessionClass {
 
         executeCommand(request: ts.server.protocol.Request): { response?: any; responseRequired?: boolean } {
@@ -99,6 +98,10 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                         }
 
                     } catch (err) {
+                        if (ts_impl["ngIncompatible"] && !ts_impl["ngInitErrorIncompatible"]) {
+                            ts_impl["ngInitErrorIncompatible"] = "This version of Angular language service requires TypeScript 2.1 or higher.";
+                        }
+
                         //something wrong
                         sessionThis.logError(err, "update graph ng service");
                     }
@@ -356,6 +359,19 @@ export function createAngularSessionClass(ts_impl: typeof ts, sessionClass: { ne
                         end: null,
                         start: null,
                         text: "For better performance please use TypeScript version 2.0.3 or higher. Angular project errors are disabled"
+                    }]
+                })
+            } else if (ts_impl["ngInitErrorIncompatible"]) {
+                if (appendProjectErrors == null) {
+                    appendProjectErrors = []
+                }
+                appendProjectErrors.push({
+                    file: null,
+                    diagnostics: [{
+                        category: "warning",
+                        end: null,
+                        start: null,
+                        text: ts_impl["ngInitErrorIncompatible"]
                     }]
                 })
             }

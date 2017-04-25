@@ -27,20 +27,36 @@ public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartTyp
   }
 
   @Override
-  @NotNull
-  public DartReferenceExpression getReferenceExpression() {
-    return findNotNullChildByClass(DartReferenceExpression.class);
+  @Nullable
+  public DartSimpleType getSimpleType() {
+    return findChildByClass(DartSimpleType.class);
   }
 
   @Override
   @Nullable
-  public DartTypeArguments getTypeArguments() {
-    return findChildByClass(DartTypeArguments.class);
+  public DartTypedFunctionType getTypedFunctionType() {
+    return findChildByClass(DartTypedFunctionType.class);
+  }
+
+  @Override
+  @Nullable
+  public DartUntypedFunctionType getUntypedFunctionType() {
+    return findChildByClass(DartUntypedFunctionType.class);
   }
 
   @Nullable
   public PsiElement resolveReference() {
     return DartPsiImplUtil.resolveReference(this);
+  }
+
+  @Nullable
+  public DartReferenceExpression getReferenceExpression() {
+    return DartPsiImplUtil.getReferenceExpression(this);
+  }
+
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return DartPsiImplUtil.getTypeArguments(this);
   }
 
 }

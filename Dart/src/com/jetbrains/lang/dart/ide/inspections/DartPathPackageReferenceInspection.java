@@ -175,7 +175,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
       try {
         modifiableModel.addContentEntry(myContentRoot);
 
-        ApplicationManager.getApplication().runWriteAction(() -> modifiableModel.commit());
+        ApplicationManager.getApplication().runWriteAction(modifiableModel::commit);
 
         final VirtualFile otherPubspec = myContentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML);
         if (otherPubspec != null) {

@@ -106,6 +106,10 @@ public class AngularJSParser
     };
   }
 
+  @Override
+  public boolean isIdentifierName(IElementType firstToken) {
+    return super.isIdentifierName(firstToken) || firstToken == AngularJSTokenTypes.THEN;
+  }
 
   public void parseAngular(IElementType root) {
     final PsiBuilder.Marker rootMarker = builder.mark();

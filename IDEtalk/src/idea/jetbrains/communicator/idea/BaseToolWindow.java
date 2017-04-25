@@ -49,6 +49,7 @@ public abstract class BaseToolWindow implements ProjectComponent {
     myActionManager = actionManager;
 
     myPanel = new JPanel(new BorderLayout()) {
+      @Override
       public void addNotify() {
         super.addNotify();
         myWindow = SwingUtilities.getWindowAncestor(this);
@@ -59,8 +60,8 @@ public abstract class BaseToolWindow implements ProjectComponent {
   protected abstract String getToolWindowId();
   protected abstract void createToolWindowComponent();
   protected abstract ToolWindowAnchor getAnchor();
-
-
+  
+  @Override
   public void projectOpened() {
     myPanel.setOpaque(true);
     myPanel.setBackground(com.intellij.util.ui.UIUtil.getListBackground());
@@ -68,12 +69,6 @@ public abstract class BaseToolWindow implements ProjectComponent {
     createToolWindowComponent();
     myToolWindow = myToolWindowManager.registerToolWindow(getToolWindowId(), myPanel, getAnchor(), myProject, true);
     myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User_toolwindow);
-  }
-
-  public void projectClosed() {
-  }
-
-  public void disposeComponent() {
   }
 
   public void expandToolWindow() {

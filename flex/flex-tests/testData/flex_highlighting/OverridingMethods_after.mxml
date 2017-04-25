@@ -4,6 +4,7 @@
   <mx:Script>
     <![CDATA[
       use namespace mx_internal;
+
       private var myVar:*
 
       [Inspectable(category="General")]

@@ -11,12 +11,14 @@ public class KarmaServerSettings {
   private final String myKarmaPackageDirPath;
   private final KarmaRunSettings myRunSettings;
   private final boolean myWithCoverage;
+  private final boolean myDebug;
 
   private KarmaServerSettings(@NotNull Builder builder) {
     myNodeInterpreter = builder.myNodeInterpreter;
     myKarmaPackageDirPath = builder.myKarmaPackageDirPath;
     myRunSettings = builder.myRunSettings;
     myWithCoverage = builder.myWithCoverage;
+    myDebug = builder.myDebug;
   }
 
   @NotNull
@@ -36,6 +38,10 @@ public class KarmaServerSettings {
 
   public boolean isWithCoverage() {
     return myWithCoverage;
+  }
+
+  public boolean isDebug() {
+    return myDebug;
   }
 
   @NotNull
@@ -58,7 +64,8 @@ public class KarmaServerSettings {
     return myKarmaPackageDirPath.equals(that.myKarmaPackageDirPath) &&
            myNodeInterpreter.getInterpreterSystemIndependentPath().equals(that.myNodeInterpreter.getInterpreterSystemIndependentPath()) &&
            myRunSettings.equals(that.myRunSettings) &&
-           myWithCoverage == that.myWithCoverage;
+           myWithCoverage == that.myWithCoverage &&
+           myDebug == that.myDebug;
   }
 
   @Override
@@ -67,6 +74,7 @@ public class KarmaServerSettings {
     result = 31 * result + myKarmaPackageDirPath.hashCode();
     result = 31 * result + myRunSettings.hashCode();
     result = 31 * result + (myWithCoverage ? 1 : 0);
+    result = 31 * result + (myDebug ? 1 : 0);
     return result;
   }
 
@@ -75,6 +83,7 @@ public class KarmaServerSettings {
     private String myKarmaPackageDirPath;
     private KarmaRunSettings myRunSettings;
     private boolean myWithCoverage;
+    private boolean myDebug;
 
     @NotNull
     public Builder setNodeInterpreter(@NotNull NodeJsLocalInterpreter interpreter) {
@@ -97,6 +106,12 @@ public class KarmaServerSettings {
     @NotNull
     public Builder setWithCoverage(boolean withCoverage) {
       myWithCoverage = withCoverage;
+      return this;
+    }
+
+    @NotNull
+    public Builder setDebug(boolean debug) {
+      myDebug = debug;
       return this;
     }
 

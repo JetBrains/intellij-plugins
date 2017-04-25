@@ -4,14 +4,20 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Range;
 import org.intellij.markdown.html.HtmlGenerator;
+import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class MarkdownHtmlPanel implements Disposable {
+  protected static final List<String> SCRIPTS = Arrays.asList("processLinks.js", "scrollToElement.js");
+
+  protected static final List<String> STYLES = Arrays.asList("default.css", "darcula.css", PreviewStaticServer.INLINE_CSS_FILENAME);
+
   @NotNull
   public abstract JComponent getComponent();
 
@@ -44,14 +50,24 @@ public abstract class MarkdownHtmlPanel implements Disposable {
     StringBuilder result = new StringBuilder();
 
     for (String uri : fileUris) {
-      if (uri == null) {
-        continue;
-      }
+      uri = migrateUriToHttp(uri);
       result.append("<link rel=\"stylesheet\" href=\"").append(uri).append("\" />\n");
     }
     if (inlineCss != null) {
       result.append("<style>\n").append(inlineCss).append("\n</style>\n");
     }
     return result.toString();
+  }
+
+  private static String migrateUriToHttp(@NotNull String uri) {
+    if (uri.equals(MarkdownCssSettings.DEFAULT.getStylesheetUri())) {
+      return PreviewStaticServer.getStyleUrl("default.css");
+    }
+    else if (uri.equals(MarkdownCssSettings.DARCULA.getStylesheetUri())) {
+      return PreviewStaticServer.getStyleUrl("darcula.css");
+    }
+    else {
+      return uri;
+    }
   }
 }

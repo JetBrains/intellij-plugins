@@ -27,13 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -62,12 +58,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
       }
     });
 
-    myPortField.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(final ChangeEvent e) {
-        updateVmArgs();
-      }
-    });
+    myPortField.addChangeListener(e -> updateVmArgs());
 
     initCopyToClipboardActions();
     initDartProjectsCombo(project);
@@ -97,12 +88,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
 
     myCopyButton.setSize(22);
     myCopyButton.setIcon(PlatformIcons.COPY_ICON);
-    myCopyButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim()));
-      }
-    });
+    myCopyButton.addActionListener(e -> CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim())));
   }
 
   private void initDartProjectsCombo(@NotNull final Project project) {

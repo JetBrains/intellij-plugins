@@ -27,15 +27,9 @@ public class DartNormalParameterTypeImpl extends DartPsiCompositeElementImpl imp
   }
 
   @Override
-  @Nullable
-  public DartFunctionType getFunctionType() {
-    return findChildByClass(DartFunctionType.class);
-  }
-
-  @Override
-  @Nullable
+  @NotNull
   public DartType getType() {
-    return findChildByClass(DartType.class);
+    return findNotNullChildByClass(DartType.class);
   }
 
 }

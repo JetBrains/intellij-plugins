@@ -1,48 +1,42 @@
 package com.intellij.lang.javascript.arrangement;
 
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.generation.ActionScriptGenerateEventHandler;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSParameter;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.codeStyle.arrangement.*;
+import com.intellij.psi.codeStyle.arrangement.ArrangementSettingsSerializer;
+import com.intellij.psi.codeStyle.arrangement.ArrangementUtil;
+import com.intellij.psi.codeStyle.arrangement.DefaultArrangementSettingsSerializer;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
-import com.intellij.psi.codeStyle.arrangement.match.ArrangementEntryMatcher;
-import com.intellij.psi.codeStyle.arrangement.match.StdArrangementEntryMatcher;
 import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule;
-import com.intellij.psi.codeStyle.arrangement.model.ArrangementAtomMatchCondition;
-import com.intellij.psi.codeStyle.arrangement.model.ArrangementCompositeMatchCondition;
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementMatchCondition;
-import com.intellij.psi.codeStyle.arrangement.std.*;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
+import com.intellij.psi.codeStyle.arrangement.std.StdArrangementSettings;
+import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
-import com.intellij.util.containers.SortedList;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.EntryType.*;
-import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.General.*;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Grouping.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Modifier.*;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Order.BY_NAME;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Order.KEEP;
 
-public class ActionScriptRearranger implements Rearranger<ActionScriptArrangementEntry>, ArrangementStandardSettingsAware {
+public class ActionScriptRearranger extends JSRearrangerBase {
 
   private static final Logger LOG = Logger.getInstance(ActionScriptRearranger.class.getName());
 
@@ -54,155 +48,71 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE, STATIC, FINAL, OVERRIDE
   );
 
-  private static final StdArrangementSettings DEFAULT_SETTINGS;
+  private static final Set<ArrangementSettingsToken> VISIBILITY_MODIFIERS = ContainerUtilRt.newLinkedHashSet(
+    PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE
+  );
 
-  static {
+  private final StdArrangementSettings DEFAULT_SETTINGS;
+  private final DefaultArrangementSettingsSerializer SETTINGS_SERIALIZER;
+
+  public ActionScriptRearranger() {
     final List<ArrangementGroupingRule> groupingRules =
       Collections.singletonList(new ArrangementGroupingRule(GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
     final List<StdArrangementMatchRule> matchRules = getDefaultMatchRules();
     DEFAULT_SETTINGS = StdArrangementSettings.createByMatchRules(groupingRules, matchRules);
-  }
-
-  private static final DefaultArrangementSettingsSerializer SETTINGS_SERIALIZER = new DefaultArrangementSettingsSerializer(DEFAULT_SETTINGS);
-
-  private static void addRule(final List<StdArrangementMatchRule> rules, @NotNull ArrangementSettingsToken... conditions) {
-    if (conditions.length == 1) {
-      rules.add(new StdArrangementMatchRule(
-        new StdArrangementEntryMatcher(new ArrangementAtomMatchCondition(conditions[0]))));
-      return;
-    }
-
-    ArrangementCompositeMatchCondition composite = new ArrangementCompositeMatchCondition();
-    for (ArrangementSettingsToken condition : conditions) {
-      composite.addOperand(new ArrangementAtomMatchCondition(condition));
-    }
-    rules.add(new StdArrangementMatchRule(new StdArrangementEntryMatcher(composite)));
-  }
-
-  @Nullable
-  @Override
-  public Pair<ActionScriptArrangementEntry, List<ActionScriptArrangementEntry>> parseWithNew(@NotNull PsiElement root,
-                                                                                             @Nullable Document document,
-                                                                                             @NotNull Collection<TextRange> ranges,
-                                                                                             @NotNull PsiElement element,
-                                                                                             @NotNull ArrangementSettings settings) {
-    // todo implement and use in quick fixes, code generators, etc.
-    return null;
+    SETTINGS_SERIALIZER = new DefaultArrangementSettingsSerializer(DEFAULT_SETTINGS);
   }
 
   @NotNull
   @Override
-  public List<ActionScriptArrangementEntry> parse(final @NotNull PsiElement root,
-                                                  final @Nullable Document document,
-                                                  final @NotNull Collection<TextRange> ranges,
-                                                  final @NotNull ArrangementSettings settings) {
-    final PsiFile file = root.getContainingFile();
-    if (!(file instanceof JSFile)) return Collections.emptyList();
-
-    final JSClass jsClass = JSPsiImplUtils.findClass((JSFile)file);
-    if (jsClass == null) return Collections.emptyList();
-
-    final List<ActionScriptArrangementEntry> result = new SortedList<>(ActionScriptArrangementEntry.COMPARATOR);
-
-    // static init blocks
-    final JSBlockStatement[] blockStatements = PsiTreeUtil.getChildrenOfType(jsClass, JSBlockStatement.class);
-    if (blockStatements != null) {
-      for (JSBlockStatement blockStatement : blockStatements) {
-        ContainerUtil.addIfNotNull(result, ActionScriptArrangementEntry.create(blockStatement, ranges, document));
-      }
-    }
-
-    // vars and consts. Added to map only if there's only one var in JSVarStatement
-    final Map<JSVariable, ActionScriptArrangementEntry> varToEntry = new THashMap<>();
-
-    final JSVarStatement[] varStatements = PsiTreeUtil.getChildrenOfType(jsClass, JSVarStatement.class);
-    if (varStatements != null) {
-      for (final JSVarStatement varStatement : varStatements) {
-        final ActionScriptArrangementEntry entry = ActionScriptArrangementEntry.create(varStatement, ranges, document);
-
-        if (entry != null) {
-          result.add(entry);
-
-          final JSVariable[] variables = varStatement.getVariables();
-          if (entry.getType() == VAR && variables.length == 1) {
-            varToEntry.put(variables[0], entry);
-          }
-        }
-      }
-    }
-
-    // methods, getters/setters and event handlers
-    final Map<JSFunction, ActionScriptArrangementEntry> functionToEntry = new THashMap<>();
-
-    for (final JSFunction function : jsClass.getFunctions()) {
-      final ActionScriptArrangementEntry entry = ActionScriptArrangementEntry.create(function, ranges, document);
-      if (entry != null) {
-        result.add(entry);
-        functionToEntry.put(function, entry);
-      }
-    }
-
-    // group getters and setters, getters first
-    for (Map.Entry<JSFunction, ActionScriptArrangementEntry> mapEntry : functionToEntry.entrySet()) {
-      final JSFunction function = mapEntry.getKey();
-
-      final String name = function.getName();
-      if (function.isSetProperty() && name != null) {
-        final ActionScriptArrangementEntry setterEntry = mapEntry.getValue();
-
-        final JSFunction getter = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.GETTER);
-        final ActionScriptArrangementEntry getterEntry = functionToEntry.get(getter);
-
-        if (getterEntry != null) {
-          setterEntry.addDependency(getterEntry);
-        }
-      }
-    }
-
-    // group property fields with getters/setters
-    if (groupPropertyFieldWithGetterSetter(settings)) {
-      final JSCodeStyleSettings codeStyleSettings =
-        CodeStyleSettingsManager.getSettings(jsClass.getProject()).getCustomSettings(JSCodeStyleSettings.class);
-
-      for (Map.Entry<JSVariable, ActionScriptArrangementEntry> mapEntry : varToEntry.entrySet()) {
-        final JSVariable jsVar = mapEntry.getKey();
-        final ActionScriptArrangementEntry varEntry = mapEntry.getValue();
-
-        if (StringUtil.startsWith(jsVar.getName(), codeStyleSettings.FIELD_PREFIX)) {
-          final String propertyName = JSRefactoringUtil.transformVarNameToAccessorName(jsVar.getName(), jsClass.getProject());
-
-          JSFunction getterOrSetter = jsClass.findFunctionByNameAndKind(propertyName, JSFunction.FunctionKind.GETTER);
-          if (getterOrSetter == null) getterOrSetter = jsClass.findFunctionByNameAndKind(propertyName, JSFunction.FunctionKind.SETTER);
-
-          final ActionScriptArrangementEntry propertyEntry = getterOrSetter == null ? null : functionToEntry.get(getterOrSetter);
-          if (propertyEntry != null) {
-            // arrangement engine sorts group according to the first entry, so we pretend that var is a property
-            varEntry.setType(propertyEntry.getType());
-            varEntry.setModifiers(propertyEntry.getModifiers());
-
-            propertyEntry.addDependency(varEntry);
-          }
-        }
-      }
-    }
-
-    return result;
+  protected ArrangementSettingsToken detectFieldType(JSVariable variable) {
+    return variable != null && variable.isConst() ? CONST : VAR;
   }
 
-  private static boolean groupPropertyFieldWithGetterSetter(final @NotNull ArrangementSettings settings) {
-    for (ArrangementGroupingRule rule : settings.getGroupings()) {
-      if (rule.getGroupingType() == GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER) {
-        return true;
-      }
+  @NotNull
+  @Override
+  protected ArrangementSettingsToken detectFunctionType(@NotNull JSFunction function) {
+    if (isEventHandler(function)) {
+      return EVENT_HANDLER;
     }
-    return false;
+    return super.detectFunctionType(function);
+  }
+
+  @NotNull
+  @Override
+  protected Set<ArrangementSettingsToken> getSupportedTypes() {
+    return SUPPORTED_TYPES;
+  }
+
+  @NotNull
+  @Override
+  protected Set<ArrangementSettingsToken> getVisibilityModifiers() {
+    return VISIBILITY_MODIFIERS;
+  }
+
+  @NotNull
+  @Override
+  protected Set<ArrangementSettingsToken> getSupportedModifiers() {
+    return SUPPORTED_MODIFIERS;
+  }
+
+  @Nullable
+  @Override
+  public StdArrangementSettings getDefaultSettings() {
+    return DEFAULT_SETTINGS;
+  }
+
+  @NotNull
+  @Override
+  public ArrangementSettingsSerializer getSerializer() {
+    return SETTINGS_SERIALIZER;
   }
 
   @Override
   public int getBlankLines(@NotNull CodeStyleSettings settings,
-                           @Nullable ActionScriptArrangementEntry parent,
-                           @Nullable ActionScriptArrangementEntry previous,
-                           @NotNull ActionScriptArrangementEntry target) {
+                           @Nullable JSArrangementEntry parent,
+                           @Nullable JSArrangementEntry previous,
+                           @NotNull JSArrangementEntry target) {
     if (previous == null) {
       return -1;
     }
@@ -213,8 +123,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
       return commonSettings.BLANK_LINES_AROUND_FIELD;
     }
     else if (STATIC_INIT.equals(type) || CONSTRUCTOR.equals(type) || METHOD.equals(type) || PROPERTY.equals(type)
-             || EVENT_HANDLER.equals(type))
-    {
+             || EVENT_HANDLER.equals(type)) {
       return commonSettings.BLANK_LINES_AROUND_METHOD;
     }
     else {
@@ -224,22 +133,69 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
   }
 
   @NotNull
-  @Override
-  public ArrangementSettingsSerializer getSerializer() {
-    return SETTINGS_SERIALIZER;
+  protected Set<ArrangementSettingsToken> detectModifiers(@NotNull final JSAttributeListOwner fieldOrMethod) {
+    final Set<ArrangementSettingsToken> result = ContainerUtil.newHashSet();
+
+    final JSAttributeList attributes = fieldOrMethod.getAttributeList();
+
+    if (attributes != null) {
+      JSAttributeList.AccessType accessType = attributes.getExplicitAccessType();
+
+      if (accessType == null) {
+        final String namespace = attributes.getNamespace();
+        if (namespace == null) {
+          accessType = JSAttributeList.AccessType.PACKAGE_LOCAL;
+        }
+      }
+
+      if (accessType != null) {
+        switch (accessType) {
+          case PUBLIC:
+            result.add(PUBLIC);
+            break;
+          case PROTECTED:
+            result.add(PROTECTED);
+            break;
+          case PACKAGE_LOCAL:
+            result.add(PACKAGE_PRIVATE);
+            break;
+          case PRIVATE:
+            result.add(PRIVATE);
+            break;
+        }
+      }
+
+      if (attributes.hasModifier(JSAttributeList.ModifierType.STATIC)) result.add(STATIC);
+      if (attributes.hasModifier(JSAttributeList.ModifierType.FINAL)) result.add(FINAL);
+      if (attributes.hasModifier(JSAttributeList.ModifierType.OVERRIDE)) result.add(OVERRIDE);
+    }
+    return result;
   }
 
-  @Nullable
-  @Override
-  public StdArrangementSettings getDefaultSettings() {
-    return DEFAULT_SETTINGS;
+  private static boolean isEventHandler(final JSFunction function) {
+    final JSParameter[] parameters = function.getParameterVariables();
+
+    if (parameters.length == 1) {
+      final PsiElement typeElement = parameters[0].getTypeElement();
+      if (typeElement instanceof JSReferenceExpression) {
+        final PsiElement resolve = ((JSReferenceExpression)typeElement).resolve();
+        if (resolve instanceof JSClass &&
+            (FlexCommonTypeNames.FLASH_EVENT_FQN.equals(((JSClass)resolve).getQualifiedName()) ||
+             FlexCommonTypeNames.STARLING_EVENT_FQN.equals(((JSClass)resolve).getQualifiedName()) ||
+             ActionScriptGenerateEventHandler.isEventClass((JSClass)resolve))) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   public static List<StdArrangementMatchRule> getDefaultMatchRules() {
     // more or less close to Coding Conventions at http://sourceforge.net/adobe/flexsdk/wiki/Coding%20Conventions/
     final List<StdArrangementMatchRule> matchRules = new ArrayList<>();
 
-    final ArrangementSettingsToken[] visibility = {PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE};
+    final Set<ArrangementSettingsToken> visibility = VISIBILITY_MODIFIERS;
 
     // static initialization blocks
     addRule(matchRules, STATIC_INIT);
@@ -298,45 +254,31 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     return matchRules;
   }
 
-  @Override
-  public boolean isEnabled(@NotNull ArrangementSettingsToken token, @Nullable ArrangementMatchCondition current) {
-    if (SUPPORTED_TYPES.contains(token) || KEEP.equals(token) || BY_NAME.equals(token) || StdArrangementTokens.Regexp.NAME.equals(token)) {
-      return true;
-    }
-    
-    // Assuming that the token is a modifier then.
-    if (current == null) {
-      return SUPPORTED_MODIFIERS.contains(token);
-    }
-
-    ArrangementSettingsToken type = ArrangementUtil.parseType(current);
-    if (type == null) {
-      return true;
-    }
-
+  protected boolean isModifierEnabled(@NotNull ArrangementSettingsToken modifier,
+                                      @NotNull ArrangementSettingsToken type,
+                                      @NotNull Set<ArrangementSettingsToken> existingModifiers) {
     if (STATIC_INIT.equals(type)) {
       return false;
     }
     else if (CONST.equals(type)) {
       // const can also be static/not static, but there's no sense in non-static constants
-      return PUBLIC.equals(token) || PROTECTED.equals(token) || PACKAGE_PRIVATE.equals(token) || PRIVATE.equals(token);
+      return PUBLIC.equals(modifier) || PROTECTED.equals(modifier) || PACKAGE_PRIVATE.equals(modifier) || PRIVATE.equals(modifier);
     }
     else if (VAR.equals(type)) {
-      return STATIC.equals(token) || PUBLIC.equals(token) || PROTECTED.equals(token) || PACKAGE_PRIVATE.equals(token)
-             || PRIVATE.equals(token);
+      return STATIC.equals(modifier) || PUBLIC.equals(modifier) || PROTECTED.equals(modifier) || PACKAGE_PRIVATE.equals(modifier)
+             || PRIVATE.equals(modifier);
     }
     else if (CONSTRUCTOR.equals(type)) {
       return false; // constructor can have visibility modifier, but there's no sense in selecting it 'cuz constructor is only one
     }
     else if (METHOD.equals(type) || PROPERTY.equals(type) || EVENT_HANDLER.equals(type)) {
-      Map<ArrangementSettingsToken, Object> tokens = ArrangementUtil.extractTokens(current);
-      if (OVERRIDE.equals(token) && tokens.keySet().contains(STATIC)) {
+      if (OVERRIDE.equals(modifier) && existingModifiers.contains(STATIC)) {
         return false;
       }
-      else if (STATIC.equals(token) && (tokens.keySet().contains(OVERRIDE) || tokens.keySet().contains(FINAL))) {
+      else if (STATIC.equals(modifier) && (existingModifiers.contains(OVERRIDE) || existingModifiers.contains(FINAL))) {
         return false;
       }
-      else if (FINAL.equals(token) && tokens.keySet().contains(STATIC)) {
+      else if (FINAL.equals(modifier) && existingModifiers.contains(STATIC)) {
         return false;
       }
       else {
@@ -347,40 +289,6 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
       LOG.error(type);
       return true;
     }
-  }
-
-  @NotNull
-  @Override
-  public Collection<Set<ArrangementSettingsToken>> getMutexes() {
-    final Collection<Set<ArrangementSettingsToken>> result = ContainerUtilRt.newArrayList();
-
-    result.add(SUPPORTED_TYPES);
-    result.add(ContainerUtilRt.newHashSet(PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE));
-
-    return result;
-  }
-
-  @Nullable
-  @Override
-  public List<CompositeArrangementSettingsToken> getSupportedGroupingTokens() {
-    return Collections.singletonList(new CompositeArrangementSettingsToken(GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
-  }
-
-  @Nullable
-  @Override
-  public List<CompositeArrangementSettingsToken> getSupportedMatchingTokens() {
-    return ContainerUtilRt.newArrayList(
-      new CompositeArrangementSettingsToken(TYPE, SUPPORTED_TYPES),
-      new CompositeArrangementSettingsToken(MODIFIER, SUPPORTED_MODIFIERS),
-      new CompositeArrangementSettingsToken(StdArrangementTokens.Regexp.NAME),
-      new CompositeArrangementSettingsToken(ORDER, KEEP, BY_NAME)
-    );
-  }
-
-  @NotNull
-  @Override
-  public ArrangementEntryMatcher buildMatcher(@NotNull ArrangementMatchCondition condition) throws IllegalArgumentException {
-    throw new IllegalArgumentException("Can't build a matcher for condition " + condition);
   }
 }
 

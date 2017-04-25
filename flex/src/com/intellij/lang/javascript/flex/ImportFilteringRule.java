@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.Usage;
+import com.intellij.usages.UsageTarget;
 import com.intellij.usages.rules.PsiElementUsage;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * Time: 19:30:53
  */
 public class ImportFilteringRule extends com.intellij.usages.rules.ImportFilteringRule {
-  public boolean isVisible(@NotNull Usage usage) {
+  public boolean isVisible(@NotNull Usage usage, @NotNull UsageTarget[] targets) {
     if (usage instanceof PsiElementUsage) {
       final PsiElement psiElement = ((PsiElementUsage)usage).getElement();
       final PsiFile containingFile = psiElement.getContainingFile();

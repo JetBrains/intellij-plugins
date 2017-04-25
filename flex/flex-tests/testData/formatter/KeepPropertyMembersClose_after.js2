@@ -1,0 +1,9 @@
+class X {
+    private var _itemPosition:int;
+    public function set itemPosition(value:int):void {
+    }
+
+    private var _itemPosition2:int;
+    public function set itemPosition2(value:int):void {
+    }
+}

@@ -10,6 +10,7 @@
         use namespace MyNs;
         use namespace ZzNs;
         use namespace ZzNs2;
+
         ZzNs2 static var v = Helper.help2();
 
         MyNs static function foo() {

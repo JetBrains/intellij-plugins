@@ -18,7 +18,6 @@ import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.ui.JBUI;
 import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.html.GeneratingProvider;
@@ -303,16 +302,16 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   private static void updatePanelCssSettings(@NotNull MarkdownHtmlPanel panel, @NotNull final MarkdownCssSettings cssSettings) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    //noinspection StringBufferReplaceableByString
-    final String inlineCss = new StringBuilder()
-      .append(cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() + "\n" : "")
-      .append("body {\n  font-size: ").append(JBUI.scale(100)).append("%;\n}")
-      .toString();
 
-    panel.setCSS(inlineCss, cssSettings.isUriEnabled() ? cssSettings.getStylesheetUri() : null);
+    final String inlineCss = cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() : null;
+    if (cssSettings.isUriEnabled()) {
+      panel.setCSS(inlineCss, cssSettings.getStylesheetUri());
+    }
+    else {
+      panel.setCSS(inlineCss);
+    }
     panel.render();
   }
-
 
 
   private class MyUpdatePanelOnSettingsChangedListener implements MarkdownApplicationSettings.SettingsChangedListener {

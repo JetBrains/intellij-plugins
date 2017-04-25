@@ -1,9 +1,15 @@
 "use strict";
+exports.__esModule = true;
 var TsLintCommands;
 (function (TsLintCommands) {
     TsLintCommands.GetErrors = "GetErrors";
     TsLintCommands.FixErrors = "FixErrors";
 })(TsLintCommands || (TsLintCommands = {}));
+var Response = (function () {
+    function Response() {
+    }
+    return Response;
+}());
 var fs = require("fs");
 var TSLintPlugin = (function () {
     function TSLintPlugin(state) {
@@ -23,24 +29,25 @@ var TSLintPlugin = (function () {
     };
     TSLintPlugin.prototype.onMessage = function (p, writer) {
         var request = JSON.parse(p);
-        var result = this.process(request);
+        // here we use object -> JSON.stringify, because we need to escape possible error's text symbols
+        // and we do not want to duplicate this code
+        var response = new Response();
+        response.version = this.linterOptions.version;
+        response.command = request.command;
+        response.request_seq = request.seq;
+        var result;
+        try {
+            result = this.process(request);
+        }
+        catch (e) {
+            response.error = e.toString() + "\n\n" + e.stack;
+            writer.write(JSON.stringify(response));
+            return;
+        }
         if (result) {
-            var output = result.output;
-            var version = this.linterOptions.version;
-            var command = request.command;
-            var seq = request.seq;
-            var resultJson = ("{\"body\":" + output + ",\"version\":\"" + version + "\",") +
-                ("\"command\":\"" + command + "\",\"request_seq\":" + seq + "}");
-            writer.write(resultJson);
+            response.body = result.output;
         }
-        else {
-            var version = this.linterOptions.version;
-            var command = request.command;
-            var seq = request.seq;
-            var resultJson = ("{\"version\":\"" + version + "\",") +
-                ("\"command\":\"" + command + "\",\"request_seq\":" + seq + "}");
-            writer.write(resultJson);
-        }
+        writer.write(JSON.stringify(response));
     };
     TSLintPlugin.prototype.getErrors = function (toProcess) {
         var options = this.getOptions(false);
@@ -78,7 +85,6 @@ var TSLintPlugin = (function () {
     };
     TSLintPlugin.prototype.getConfiguration = function (fileName, configFileName, linter) {
         var linterConfiguration = this.linterOptions.linterConfiguration;
-        ;
         var versionKind = this.linterOptions.versionKind;
         if (versionKind == 1 /* VERSION_4_AND_HIGHER */) {
             var configurationResult = linterConfiguration.findConfiguration(configFileName, fileName);

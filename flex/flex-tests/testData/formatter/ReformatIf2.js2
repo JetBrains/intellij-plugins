@@ -1,0 +1,13 @@
+package
+{
+public class TestClass
+{
+    public function TestClass()
+    {
+        if (true) 
+        {
+            var x;
+        }
+    }
+}
+}

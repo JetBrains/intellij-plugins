@@ -1,7 +1,7 @@
 class Greeter {
     constructor(public greeting: string) { }
     greet() {
-        <error descr="TSLint: use of debugger statements is disallowed (no-debugger)">debugger</error>;
+        <error descr="TSLint: Use of debugger statements is forbidden (no-debugger)">debugger</error>;
         <error descr="TSLint: if statements must be braced (curly)">if</error> (this.greeting.length > 1) return "<h2>" + this.greeting + "</h2>";
         return "<h1>" + this.greeting + "</h1>";
     }
