@@ -17,7 +17,7 @@ import java.io.IOException;
 public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
 
   public String prompt() {
-    return "Open issue submission form";
+    return "Open issue submission form?";
   }
 
   public void sendFeedback(@NotNull Project project, @Nullable String errorMessage, @Nullable String serverLog) {
