@@ -12,7 +12,7 @@ public class FunctionSignatureMismatch11 {
       });
   }
 
-  private function foo(b:String, zzz:FunctionSignatureMismatch11, functionSignatureMismatch11:FunctionSignatureMismatch11, functionSignatureMismatch:FunctionSignatureMismatch11, p:Array, s:String, foo:Function, p1:*, f:Function, listener:Function):void {
+  private function foo(b:String, zzz:FunctionSignatureMismatch11, functionSignatureMismatch11:FunctionSignatureMismatch11, functionSignatureMismatch:FunctionSignatureMismatch11, ints:Array, s:String, foo:Function, p:*, f:Function, listener:Function):void {
 
   }
 }
