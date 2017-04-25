@@ -28,8 +28,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
@@ -39,7 +37,6 @@ import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
-import com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettings;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -363,9 +360,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
         // Conditionally add trailing comma for named args.
         if (CompletionSuggestionKind.NAMED_ARGUMENT.equals(suggestion.getKind())) {
-          final CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
-          DartCodeStyleSettings dartSettings = codeStyleSettings.getCustomSettings(DartCodeStyleSettings.class);
-          if (dartSettings.TRAILING_COMMAS_AFTER_CONS_ARGS) {
+          if (DartCodeInsightSettings.getInstance().TRAILING_COMMAS_AFTER_CONS_ARGS) {
             final PsiElement psiElement = context.getFile().findElementAt(startOffset);
             final DartNewExpression newExpression = PsiTreeUtil.getParentOfType(psiElement, DartNewExpression.class);
             if (newExpression != null) {

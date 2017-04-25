@@ -31,6 +31,8 @@ public class DartSmartKeysConfigurable extends BeanConfigurable<DartCodeInsightS
 
     checkBox(DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), () -> settings.INSERT_DEFAULT_ARG_VALUES,
              v -> settings.INSERT_DEFAULT_ARG_VALUES = v);
+    checkBox(DartBundle.message("dart.smartKeys.addTrailingCommas.text"), () -> settings.TRAILING_COMMAS_AFTER_CONS_ARGS,
+             v -> settings.TRAILING_COMMAS_AFTER_CONS_ARGS = v);
   }
 
   @Override
