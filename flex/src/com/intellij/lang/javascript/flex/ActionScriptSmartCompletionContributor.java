@@ -164,7 +164,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
               if (expression != null) {
                 JSType expressionType = JSResolveUtil.getExpressionJSType(expression);
                 if (expressionType != null) {
-                  final JSType componentType = JSTypeUtils.getComponentType(expressionType);
+                  final JSType componentType = JSTypeUtils.getIndexableComponentType(expressionType);
                   if (componentType != null) {
                     type = componentType;
                   }
