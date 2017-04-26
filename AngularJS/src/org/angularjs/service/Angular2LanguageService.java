@@ -4,12 +4,10 @@ package org.angularjs.service;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.ide.highlighter.XmlLikeFileType;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
-import com.intellij.lang.javascript.service.JSLanguageServiceProcessConnector;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceCommand;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand;
-import com.intellij.lang.javascript.service.ui.JSLanguageServiceToolWindowManager;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerService;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
@@ -64,7 +62,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   public Angular2LanguageService(@NotNull Project project,
                                  @NotNull TypeScriptCompilerSettings settings) {
-    super(project, settings);
+    super(project, settings, "Angular Console");
 
     myFileFilter = Conditions
       .or(super.getAcceptableFilesFilter(), (el) -> el != null && el.isInLocalFileSystem() && el.getFileType() == HtmlFileType.INSTANCE);
@@ -170,12 +168,6 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     }
 
     return super.createLanguageServiceQueue();
-  }
-
-  @Nullable
-  protected JSLanguageServiceQueue.ProcessConnector createProcessConnector(@Nullable JSLanguageServiceToolWindowManager manager) {
-    if (manager == null) return null;
-    return new JSLanguageServiceProcessConnector("Angular Console", manager);
   }
 
 
