@@ -1,7 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectComponent;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType;
@@ -100,15 +100,23 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
         if (!StringUtil.equals(settings.getExecutable(), state.getExecutablePath())) {
           PhoneGapSettings.getInstance().loadState(new PhoneGapSettings.State(settings.executable, state.repositoriesList));
         }
-        VfsUtil.markDirty(false, true, project.getBaseDir());
+        VfsUtil.markDirty(false, true, baseDir);
         createRunConfiguration(project, settings);
 
         baseDir.refresh(true, true, () -> {
           if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
-            VirtualFile platformsFolder = project.getBaseDir().findChild(PhoneGapUtil.FOLDER_PLATFORMS);
+            VirtualFile platformsFolder = baseDir.findChild(PhoneGapUtil.FOLDER_PLATFORMS);
 
             if (platformsFolder != null) {
-              PhoneGapProjectComponent.excludePlatformFolder(project, platformsFolder);
+              PhoneGapStartupActivity.excludeFolder(project, platformsFolder);
+            }
+
+            VirtualFile ionicConfig = baseDir.findChild(PhoneGapUtil.IONIC_CONFIG);
+            if (ionicConfig != null) {
+              VirtualFile wwwFolder = baseDir.findChild(PhoneGapUtil.FOLDER_WWW);
+              if (wwwFolder != null) {
+                PhoneGapStartupActivity.excludeFolder(project, wwwFolder);
+              }
             }
           }
         });

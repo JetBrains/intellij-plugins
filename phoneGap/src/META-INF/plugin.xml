@@ -36,12 +36,8 @@
 
     <projectConfigurable provider="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationProvider"/>
     <stepsBeforeRunProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapAddPlatformBeforeRun"/>
+    <postStartupActivity implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity"/>
   </extensions>
 
-  <project-components>
-    <component>
-      <implementation-class>com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectComponent</implementation-class>
-    </component>
-  </project-components>
 
 </idea-plugin>

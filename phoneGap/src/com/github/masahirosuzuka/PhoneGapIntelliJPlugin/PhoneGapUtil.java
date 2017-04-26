@@ -4,6 +4,7 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapComm
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.util.SystemInfo;
@@ -30,6 +31,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class PhoneGapUtil {
+
+  public static final String IONIC_CONFIG = "ionic.config.json";
 
   public static final String FOLDER_PLATFORMS = "platforms";
   public static final String FOLDER_WWW = "www";
@@ -139,6 +142,7 @@ public class PhoneGapUtil {
   }
 
   public static boolean isPhoneGapProject(@NotNull final Project project) {
+    if (DumbService.isDumb(project)) return false;
 
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       PsiFile[] files = FilenameIndex.getFilesByName(project, "config.xml", GlobalSearchScope.projectScope(project));
