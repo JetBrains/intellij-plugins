@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.Consumer;
@@ -272,7 +273,7 @@ final class PubServerService extends NetService {
     ServerInfo serverInstanceInfo = servedDirToSocketAddress.get(servedDir);
     final InetSocketAddress address = serverInstanceInfo.address;
 
-    if (false) {
+    if (Registry.is("dart.redirect.to.pub.server", true)) {
       // We can't use 301 (MOVED_PERMANENTLY) response status because Pub Serve port will change after restart, but browser will remember outdated redirection URL
       final HttpResponse response = Responses.response(HttpResponseStatus.FOUND, clientRequest, null);
       //assert serverInstanceInfo != null;
@@ -334,6 +335,13 @@ final class PubServerService extends NetService {
     InetSocketAddress serverAddress = (InetSocketAddress)serverChannel.remoteAddress();
     request.headers().set(HttpHeaderNames.HOST, serverAddress.getAddress().getHostAddress() + ':' + serverAddress.getPort());
     serverChannel.writeAndFlush(request);
+  }
+
+  @Nullable
+  String getPubServeAuthority(@NotNull final VirtualFile dir) {
+    final ServerInfo serverInfo = servedDirToSocketAddress.get(dir);
+    final InetSocketAddress address = serverInfo == null ? null : serverInfo.address;
+    return address != null ? address.getHostString() + ":" + address.getPort() : null;
   }
 
   @ChannelHandler.Sharable

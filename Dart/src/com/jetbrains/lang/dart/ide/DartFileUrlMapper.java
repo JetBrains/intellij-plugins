@@ -5,14 +5,17 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.SmartList;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.pubServer.PubServerManager;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -53,7 +56,18 @@ final class DartFileUrlMapper extends FileUrlMapper {
       final Url dartRootUrl = Urls.newHttpUrl(currentAuthority, "/" + project.getName() + "/" + dartRootUrlPath);
 
       final String urlPath = StringUtil.trimEnd(dartRootUrl.getPath(), "/") + "/web/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
-      return Collections.singletonList(Urls.newHttpUrl(currentAuthority, urlPath));
+
+      final List<Url> result = new SmartList<>();
+      result.add(Urls.newHttpUrl(currentAuthority, urlPath));
+
+      if (Registry.is("dart.redirect.to.pub.server", true)) {
+        for (String pubAuthority : PubServerManager.getInstance(project).getAlivePubServerAuthorities(dartRoot)) {
+          final String pubUrlPath = "/packages/" + dartUri.substring(PACKAGE_PREFIX.length());
+          result.add(Urls.newHttpUrl(pubAuthority, pubUrlPath));
+        }
+      }
+
+      return result;
     }
     else {
       // for any other server (e.g. localhost:8181):

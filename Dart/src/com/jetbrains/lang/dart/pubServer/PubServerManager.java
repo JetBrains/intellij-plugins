@@ -9,6 +9,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.*;
+import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import io.netty.channel.Channel;
@@ -17,6 +19,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 public class PubServerManager implements Disposable {
@@ -129,5 +132,17 @@ public class PubServerManager implements Disposable {
         LOG.error(e);
       }
     }
+  }
+
+  @NotNull
+  public Collection<String> getAlivePubServerAuthorities(@NotNull final VirtualFile dartProjectRoot) {
+    final Collection<String> result = new SmartList<>();
+    for (VirtualFile subdir : dartProjectRoot.getChildren()) {
+      if (!subdir.isDirectory()) continue;
+      final PubServerService service = myServedDirToPubService.getIfPresent(subdir);
+      if (service == null) continue;
+      ContainerUtil.addIfNotNull(result, service.getPubServeAuthority(subdir));
+    }
+    return result;
   }
 }
