@@ -52,6 +52,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
                                                                                    PLATFORM_BLACKBERRY_10,
                                                                                    PLATFORM_FIREFOXOS,
                                                                                    PLATFORM_WP_8,
+                                                                                   PLATFORM_WINDOWS,
                                                                                    PLATFORM_BROWSER,
                                                                                    PLATFORM_WINDOWS_8);
 

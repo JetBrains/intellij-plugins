@@ -51,6 +51,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   public static final String PLATFORM_UBUNTU = "ubuntu";
   public static final String PLATFORM_WP_8 = "wp8";
   public static final String PLATFORM_WINDOWS_8 = "windows8";
+  public static final String PLATFORM_WINDOWS = "windows";
   public static final String PLATFORM_FIREFOXOS = "firefoxos";
   public static final String PLATFORM_BROWSER = "browser";
 
@@ -306,6 +307,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     set.add(PLATFORM_BLACKBERRY_10);
     set.add(PLATFORM_UBUNTU);
     set.add(PLATFORM_WP_8);
+    set.add(PLATFORM_WINDOWS);
     set.add(PLATFORM_WINDOWS_8);
     return set;
   }
