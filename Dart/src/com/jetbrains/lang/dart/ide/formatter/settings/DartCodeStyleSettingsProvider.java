@@ -9,7 +9,6 @@ import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class DartCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
-
   @NotNull
   @Override
   public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
