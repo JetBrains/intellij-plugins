@@ -301,6 +301,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void edit_getStatementCompletion(String file, int offset, GetStatementCompletionConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateEditStatementCompletion(id, file, offset), consumer);
+  }
+
+  @Override
   public void edit_organizeDirectives(String file, OrganizeDirectivesConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditOrganizeDirectives(id, file), consumer);
@@ -592,6 +598,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     }
     else if (consumer instanceof GetFixesConsumer) {
       new FixesProcessor((GetFixesConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetStatementCompletionConsumer) {
+      new StatementCompletionProcessor((GetStatementCompletionConsumer)consumer).process(resultObject, requestError);
     }
     else if (consumer instanceof GetLibraryDependenciesConsumer) {
       new LibraryDependenciesProcessor((GetLibraryDependenciesConsumer)consumer).process(resultObject, requestError);

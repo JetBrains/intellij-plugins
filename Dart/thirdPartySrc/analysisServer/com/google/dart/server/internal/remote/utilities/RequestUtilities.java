@@ -76,6 +76,7 @@ public class RequestUtilities {
   private static final String METHOD_EDIT_GET_AVAILABLE_REFACTORING = "edit.getAvailableRefactorings";
   private static final String METHOD_EDIT_GET_FIXES = "edit.getFixes";
   private static final String METHOD_EDIT_GET_REFACTORING = "edit.getRefactoring";
+  private static final String METHOD_EDIT_GET_STATEMENT_COMPLETION = "edit.getStatementCompletion";
   private static final String METHOD_EDIT_ORGANIZE_DIRECTIVES = "edit.organizeDirectives";
   private static final String METHOD_EDIT_SORT_MEMBERS = "edit.sortMembers";
 
@@ -528,6 +529,13 @@ public class RequestUtilities {
       params.add("options", options.toJson());
     }
     return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_REFACTORING, params);
+  }
+
+  public static JsonObject generateEditStatementCompletion(String idValue, String file, int offset) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(OFFSET, offset);
+    return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_STATEMENT_COMPLETION, params);
   }
 
   /**
