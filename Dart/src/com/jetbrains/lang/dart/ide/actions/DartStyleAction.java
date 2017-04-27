@@ -97,6 +97,11 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       return;
     }
 
+    runDartfmt(project, dartFiles);
+  }
+
+  // keep public to be accessible in 3rd party plugins
+  public static void runDartfmt(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
     final Map<VirtualFile, String> fileToNewContentMap = new THashMap<>();
     final int lineLength = getRightMargin(project);
 
