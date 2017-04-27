@@ -164,8 +164,8 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
     overriddenBC.setOutputFolder(JpsPathUtil.urlToPath(testOutputUrl));
 
     overriddenBC.setUseHtmlWrapper(false);
-    overriddenBC.setRLMs(Collections.<JpsFlexBuildConfiguration.RLMInfo>emptyList());
-    overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
+    overriddenBC.setRLMs(Collections.emptyList());
+    overriddenBC.setCssFilesToCompile(Collections.emptyList());
     overriddenBC.setSkipCompile(false);
 
     overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);

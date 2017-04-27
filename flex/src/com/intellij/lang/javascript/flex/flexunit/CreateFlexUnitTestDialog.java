@@ -301,6 +301,6 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
   }
 
   public JSMemberInfo[] getSelectedMemberInfos() {
-    return JSMemberInfo.getSelected(myMemberSelectionPanel.getTable().getSelectedMemberInfos(), myContextClass, Conditions.<JSMemberInfo>alwaysTrue());
+    return JSMemberInfo.getSelected(myMemberSelectionPanel.getTable().getSelectedMemberInfos(), myContextClass, Conditions.alwaysTrue());
   }
 }

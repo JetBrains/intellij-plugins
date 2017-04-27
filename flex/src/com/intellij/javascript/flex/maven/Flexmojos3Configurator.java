@@ -100,7 +100,7 @@ public class Flexmojos3Configurator {
 
     final ModifiableFlexBuildConfiguration mainBC = setupMainBuildConfiguration(existingBC);
 
-    final Collection<RLMInfo> rlmInfos = FlexmojosImporter.isFlexApp(myMavenProject) ? getRLMInfos() : Collections.<RLMInfo>emptyList();
+    final Collection<RLMInfo> rlmInfos = FlexmojosImporter.isFlexApp(myMavenProject) ? getRLMInfos() : Collections.emptyList();
     for (final RLMInfo info : rlmInfos) {
       final ModifiableFlexBuildConfiguration existingRlmBC =
         ContainerUtil.find(oldBCs, bc -> bc.getName().equals(info.myRLMName));

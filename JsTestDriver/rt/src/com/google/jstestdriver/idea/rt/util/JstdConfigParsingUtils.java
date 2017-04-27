@@ -6,7 +6,6 @@ import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.config.*;
-import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.model.BasePaths;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
 import com.google.jstestdriver.util.ManifestLoader;
@@ -38,7 +37,7 @@ public class JstdConfigParsingUtils {
   public static ResolvedConfiguration resolveConfiguration(@NotNull ParsedConfiguration parsedConfiguration) {
     PathResolver pathResolver = new PathResolver(
       parsedConfiguration.getBasePaths(),
-      Collections.<FileParsePostProcessor>emptySet(),
+      Collections.emptySet(),
       new DisplayPathSanitizer()
     );
     FlagsImpl flags = new FlagsImpl();

@@ -11,7 +11,6 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -53,7 +52,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
 
   public void reset() {
     final FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)mySdk.getSdkAdditionalData();
-    myFlexmojosSdkForm.setFlexCompilerClasspath(data == null ? Collections.<String>emptyList() : data.getFlexCompilerClasspath());
+    myFlexmojosSdkForm.setFlexCompilerClasspath(data == null ? Collections.emptyList() : data.getFlexCompilerClasspath());
     myFlexmojosSdkForm.setAdlPath(data == null ? "" : data.getAdlPath());
     myFlexmojosSdkForm.setAirRuntimePath(data == null ? "" : data.getAirRuntimePath());
   }

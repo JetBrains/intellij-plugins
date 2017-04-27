@@ -25,7 +25,6 @@ import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -244,7 +243,7 @@ public class BCUtils {
     if (value == null) value = info.getDefaultValue(sdk.getVersionString(), bc.getNature(), bc.getDependencies().getComponentSet());
 
     return value == null
-           ? Collections.<String>emptyList()
+           ? Collections.emptyList()
            : StringUtil.split(FlexUtils.replacePathMacros(value, module, sdk.getHomePath()), CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 }

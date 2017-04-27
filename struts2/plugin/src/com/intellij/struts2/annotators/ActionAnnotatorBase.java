@@ -66,7 +66,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
   private static final NotNullFunction<PathReference, Collection<? extends PsiElement>> PATH_REFERENCE_CONVERTER =
     pathReference -> {
       final PsiElement resolve = pathReference.resolve();
-      return resolve != null ? Collections.singleton(resolve) : Collections.<PsiElement>emptyList();
+      return resolve != null ? Collections.singleton(resolve) : Collections.emptyList();
     };
 
   private static final NotNullFunction<PathReference, Collection<? extends GotoRelatedItem>> PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER =
@@ -82,7 +82,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
         public String getCustomName() {
           return pathReference.getPath();
         }
-      }) : Collections.<GotoRelatedItem>emptyList();
+      }) : Collections.emptyList();
     };
 
   /**

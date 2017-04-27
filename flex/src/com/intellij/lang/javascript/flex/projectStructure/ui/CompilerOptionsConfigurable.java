@@ -40,7 +40,6 @@ import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
@@ -986,7 +985,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       final Object userObject = node == null ? null : node.getUserObject();
       return userObject instanceof CompilerOptionInfo
              ? Pair.create(node, (CompilerOptionInfo)userObject)
-             : Pair.<DefaultMutableTreeNode, CompilerOptionInfo>empty();
+             : Pair.empty();
     }
   }
 

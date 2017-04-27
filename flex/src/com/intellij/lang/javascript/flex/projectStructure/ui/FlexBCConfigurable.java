@@ -18,7 +18,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBu
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.Disposable;
@@ -710,7 +709,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     rebuildMainClassFilter();
     myMainClassComponent = JSReferenceEditor.forClassName("", myModule.getProject(), null,
                                                           myModule.getModuleScope(false), null,
-                                                          Conditions.<JSClass>alwaysTrue(), // no filtering until IDEA-83046
+                                                          Conditions.alwaysTrue(), // no filtering until IDEA-83046
                                                           ExecutionBundle.message("choose.main.class.dialog.title"));
   }
 

@@ -32,7 +32,7 @@ public class RubyMotionUtilExt {
     final RunnerAndConfigurationSettings settings =
       RakeRunConfigurationType.getInstance().getRakeFactory().createConfigurationSettings(module, taskFullName,
                                                                                           ArrayUtil.EMPTY_STRING_ARRAY,
-                                                                                          Collections.<String, String>emptyMap());
+                                                                                          Collections.emptyMap());
     runManagerEx.addConfiguration(settings, false);
 
     return settings;

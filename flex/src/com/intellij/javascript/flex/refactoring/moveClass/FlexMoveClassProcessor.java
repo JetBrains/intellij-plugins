@@ -138,7 +138,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
 
     for (PsiElement fileToMove : filesToMove) {
       JSRefactoringConflictsUtil.checkOutgoingReferencesAccessibility(fileToMove, filesToMove, null, true, conflicts,
-                                                                      Conditions.<PsiElement>alwaysTrue(), options);
+                                                                      Conditions.alwaysTrue(), options);
     }
 
     // TODO module conflicts

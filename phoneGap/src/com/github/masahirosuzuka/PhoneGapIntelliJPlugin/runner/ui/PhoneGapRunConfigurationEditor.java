@@ -112,7 +112,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     setTargetFieldsEnable();
 
     if (resetField) {
-      myTarget.getTargetsField().setHistory(ContainerUtil.<String>emptyList());
+      myTarget.getTargetsField().setHistory(ContainerUtil.emptyList());
       myTarget.getTargetsField().setText("");
     }
 
@@ -191,7 +191,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       }
 
       private void processEmpty() {
-        myTarget.onUpdateValues(ContainerUtil.<String>newHashOrEmptySet(null));
+        myTarget.onUpdateValues(ContainerUtil.newHashOrEmptySet(null));
       }
     });
 

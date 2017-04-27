@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.intentions;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
-import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSBundle;
@@ -29,7 +28,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -152,7 +150,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
           return CreateClassOrInterfaceFix.findOrCreateDirectory(packageName, jsPackageStatement);
         }
       });
-      interfaces = jsClass.isInterface() ? Collections.singletonList(jsClass.getQualifiedName()) : Collections.<String>emptyList();
+      interfaces = jsClass.isInterface() ? Collections.singletonList(jsClass.getQualifiedName()) : Collections.emptyList();
       templateAttributes = Collections.emptyMap();
       superClass = jsClass.isInterface() ? null : jsClass;
     }

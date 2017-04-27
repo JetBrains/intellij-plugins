@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 
@@ -153,7 +152,7 @@ public class FlashBuilderProjectLoadUtil {
     loadProjectRoot(project, dotProjectFile);
 
     final Map<String, String> pathReplacementMap =
-      isArchive ? loadMapFromDotFxpPropertiesFile(dotProjectFile) : Collections.<String, String>emptyMap();
+      isArchive ? loadMapFromDotFxpPropertiesFile(dotProjectFile) : Collections.emptyMap();
     loadInfoFromDotActionScriptPropertiesFile(project, dotProjectFile, pathReplacementMap);
     loadInfoFromDotFlexLibPropertiesFile(project, dotProjectFile);
 

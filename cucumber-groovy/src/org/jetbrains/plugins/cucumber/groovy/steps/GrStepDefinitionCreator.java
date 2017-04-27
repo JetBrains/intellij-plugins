@@ -21,7 +21,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
 import cucumber.runtime.groovy.GroovySnippet;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
@@ -167,7 +166,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   private static GrMethodCall buildStepDefinitionByStep(@NotNull final GherkinStep step) {
     final GroovyPsiElementFactory factory = GroovyPsiElementFactory.getInstance(step.getProject());
 
-    final Step cucumberStep = new Step(Collections.<Comment>emptyList(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
 
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
     final String fqnPendingException;

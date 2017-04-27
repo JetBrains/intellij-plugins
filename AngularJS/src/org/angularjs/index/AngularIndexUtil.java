@@ -181,10 +181,10 @@ public class AngularIndexUtil {
         id instanceof StubIndexKey ? stubIndex.getAllKeys((StubIndexKey<String, ?>)id, project) :
         fileIndex.getAllKeys(id, project);
 
-      return CachedValueProvider.Result.<Collection<String>>create(ContainerUtil.filter(allKeys, key -> id instanceof StubIndexKey ?
-                                                                                                    !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
+      return CachedValueProvider.Result.create(ContainerUtil.filter(allKeys, key -> id instanceof StubIndexKey ?
+                                                                                    !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
                                         element -> false) :
-                                                                                                    !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
+                                                                                    !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
                @Override
                public boolean process(VirtualFile file, Object value) {
                  return false;

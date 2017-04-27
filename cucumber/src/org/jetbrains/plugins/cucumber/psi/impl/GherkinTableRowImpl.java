@@ -42,7 +42,7 @@ public class GherkinTableRowImpl extends GherkinPsiElementBase implements Gherki
       }
     }
 
-    return list.isEmpty() ? Collections.<T>emptyList() : list;
+    return list.isEmpty() ? Collections.emptyList() : list;
   }
 
   @NotNull

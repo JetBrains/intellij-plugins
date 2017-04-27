@@ -138,7 +138,7 @@ public class JstdCoverageEngine extends CoverageEngine {
   @Override
   public Set<String> getQualifiedNames(@NotNull PsiFile sourceFile) {
     final String qName = getQName(sourceFile);
-    return qName != null ? Collections.singleton(qName) : Collections.<String>emptySet();
+    return qName != null ? Collections.singleton(qName) : Collections.emptySet();
   }
 
   @Override

@@ -453,7 +453,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myBCCombo = new BCCombo(myProject);
     myMainClassFilter = Conditions.alwaysFalse();
     myMainClassComponent = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
-                                                          Conditions.<JSClass>alwaysTrue(), // no filtering until IDEA-83046
+                                                          Conditions.alwaysTrue(), // no filtering until IDEA-83046
                                                           ExecutionBundle.message("choose.main.class.dialog.title"));
     mySdkForDebuggingCombo = new FlexSdkComboBoxWithBrowseButton(FlexSdkComboBoxWithBrowseButton.FLEX_OR_FLEXMOJOS_SDK);
     mySdkForDebuggingCombo.showBCSdk(true);

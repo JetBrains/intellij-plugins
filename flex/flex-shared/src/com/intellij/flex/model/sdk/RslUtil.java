@@ -36,7 +36,7 @@ public class RslUtil {
   public static List<String> getRslUrls(final String sdkHome, final String swcPath) {
     final Map<String, List<String>> swcPathToRslUrlMap = getSwcPathToRslUrlsMap(sdkHome);
     final List<String> rslUrls = swcPathToRslUrlMap.get(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase());
-    return rslUrls == null ? Collections.<String>emptyList() : rslUrls;
+    return rslUrls == null ? Collections.emptyList() : rslUrls;
   }
 
   private synchronized static Map<String, List<String>> getSwcPathToRslUrlsMap(final String sdkHome) {

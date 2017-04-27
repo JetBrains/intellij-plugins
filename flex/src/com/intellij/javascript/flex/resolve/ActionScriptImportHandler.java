@@ -28,7 +28,6 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +54,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
       protected CachedValue<Map<String, JSImportedElementResolveResult>> compute(final PsiElement psiElement, final Object p) {
         return CachedValuesManager
           .getManager(psiElement.getProject()).createCachedValue(() -> new CachedValueProvider.Result<Map<String, JSImportedElementResolveResult>>(
-            ContainerUtil.<String, JSImportedElementResolveResult>newConcurrentMap(),
+            ContainerUtil.newConcurrentMap(),
             PsiModificationTracker.MODIFICATION_COUNT), false);
       }
     };

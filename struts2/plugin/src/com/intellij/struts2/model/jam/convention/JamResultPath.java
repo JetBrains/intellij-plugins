@@ -31,7 +31,6 @@ import com.intellij.lang.properties.references.PropertiesCompletionContributor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiModifierListOwner;
@@ -73,7 +72,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
       }
 
       final PropertiesFile strutsPropertiesFile = PropertiesUtilBase.getPropertiesFile("struts", module, null);
-      return strutsPropertiesFile != null ? strutsPropertiesFile.getProperties() : Collections.<IProperty>emptyList();
+      return strutsPropertiesFile != null ? strutsPropertiesFile.getProperties() : Collections.emptyList();
     }
 
     @Override

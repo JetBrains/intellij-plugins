@@ -98,7 +98,7 @@ public class FlexCompilerConfigFileUtil {
       }
     }
 
-    return data == null ? Collections.<NamespacesInfo>emptyList() : data.second;
+    return data == null ? Collections.emptyList() : data.second;
   }
 
   @NotNull

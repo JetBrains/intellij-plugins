@@ -29,7 +29,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryEditingUtil;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
@@ -304,7 +303,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     LibraryTable.ModifiableModel librariesModifiableModel = getTableModifiableModel(modifiableModel);
     LibraryEx libraryCopy = (LibraryEx)librariesModifiableModel.createLibrary(library.getName(), library.getKind());
     LibraryEx.ModifiableModelEx libraryCopyModel = libraryCopy.getModifiableModel();
-    LibraryEditingUtil.copyLibrary(library, Collections.<String, String>emptyMap(), libraryCopyModel); // will overwrite library id
+    LibraryEditingUtil.copyLibrary(library, Collections.emptyMap(), libraryCopyModel); // will overwrite library id
     libraryCopyModel.setProperties(new FlexLibraryProperties(FlexLibraryIdGenerator.generateId())); // do assign unique library id
     libraryCopyModel.commit();
     return libraryCopy;
@@ -369,7 +368,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     }
 
     if (!nature.isLib()) {
-      bc.getCompilerOptions().setFilesToIncludeInSWC(Collections.<String>emptyList());
+      bc.getCompilerOptions().setFilesToIncludeInSWC(Collections.emptyList());
     }
   }
 

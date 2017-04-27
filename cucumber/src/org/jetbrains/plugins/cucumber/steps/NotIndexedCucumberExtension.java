@@ -114,7 +114,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     for (PsiDirectory root : stepDefRoots) {
       stepDefs.addAll(gatherStepDefinitionsFilesFromDirectory(root, true));
     }
-    return stepDefs.isEmpty() ? Collections.<PsiFile>emptySet() : stepDefs;
+    return stepDefs.isEmpty() ? Collections.emptySet() : stepDefs;
   }
 
   protected Set<PsiDirectory> findStepDefsRoots(@NotNull final GherkinFile featureFile) {

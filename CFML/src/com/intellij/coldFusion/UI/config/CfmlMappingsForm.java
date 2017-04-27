@@ -156,7 +156,7 @@ public class CfmlMappingsForm {
   }
 
   public void reset(CfmlProjectConfiguration.State state) {
-    setItems(state != null ? state.getMapps().getServerMappings() : Collections.<String, String>emptyMap());
+    setItems(state != null ? state.getMapps().getServerMappings() : Collections.emptyMap());
     String newLanguageLevel = state != null ? state.getLanguageLevel() : CfmlLanguage.CF10;
     myLanguageLevel.setSelectedItem(newLanguageLevel);
   }

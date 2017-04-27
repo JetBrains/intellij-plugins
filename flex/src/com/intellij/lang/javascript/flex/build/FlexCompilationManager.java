@@ -278,7 +278,7 @@ public class FlexCompilationManager {
           myFinishedTasks.add(taskToStart);
 
           try {
-            FlexCompilationUtils.performPostCompileActions(taskToStart.getModule(), taskToStart.getBC(), Collections.<String>emptyList());
+            FlexCompilationUtils.performPostCompileActions(taskToStart.getModule(), taskToStart.getBC(), Collections.emptyList());
           }
           catch (FlexCompilerException e) {
             addMessage(taskToStart, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());

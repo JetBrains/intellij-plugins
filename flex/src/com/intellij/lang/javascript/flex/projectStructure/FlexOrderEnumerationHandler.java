@@ -16,7 +16,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -163,7 +162,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     Collection<FlexBuildConfiguration> accessibleConfigurations;
     if (myActiveConfigurations != null) {
       ModuleData moduleData = myActiveConfigurations.get(module);
-      accessibleConfigurations = moduleData != null ? moduleData.bcs : Collections.<FlexBuildConfiguration>emptyList();
+      accessibleConfigurations = moduleData != null ? moduleData.bcs : Collections.emptyList();
     }
     else {
       // let all configurations be accessible in ProjectOrderEnumerator

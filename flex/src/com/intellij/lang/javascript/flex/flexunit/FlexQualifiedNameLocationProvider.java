@@ -30,7 +30,7 @@ public class FlexQualifiedNameLocationProvider implements SMTestLocator {
     if (PROTOCOL_ID.equals(protocol)) {
       JSElement element = findElement(path, project);
       if (element != null) {
-        return Collections.<Location>singletonList(new PsiLocation<PsiElement>(project, element));
+        return Collections.singletonList(new PsiLocation<PsiElement>(project, element));
       }
     }
 

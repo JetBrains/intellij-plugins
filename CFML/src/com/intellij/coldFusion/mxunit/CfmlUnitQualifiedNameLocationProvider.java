@@ -48,7 +48,7 @@ public class CfmlUnitQualifiedNameLocationProvider implements SMTestLocator, Dum
     if (PROTOCOL_ID.equals(protocol)) {
       PsiElement element = findElement(path, project);
       if (element != null) {
-        return Collections.<Location>singletonList(new PsiLocation<>(project, element));
+        return Collections.singletonList(new PsiLocation<>(project, element));
       }
     }
 

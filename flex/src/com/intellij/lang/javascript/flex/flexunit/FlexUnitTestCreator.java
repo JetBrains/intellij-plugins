@@ -95,10 +95,10 @@ public class FlexUnitTestCreator implements TestCreator {
     };
 
     CommandProcessor.getInstance().executeCommand(project, () -> CreateClassOrInterfaceFix.createClass(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
-                                                                                                   packageName, superClass, Collections.<String>emptyList(), targetDirectory,
-                                                                                                   CodeInsightBundle.message("intention.create.test"), true,
-                                                                                                   Collections.<String, Object>emptyMap(),
-                                                                                                   postProcessRunnable), CodeInsightBundle.message("intention.create.test"), null);
+                                                                                                       packageName, superClass, Collections.emptyList(), targetDirectory,
+                                                                                                       CodeInsightBundle.message("intention.create.test"), true,
+                                                                                                       Collections.emptyMap(),
+                                                                                                       postProcessRunnable), CodeInsightBundle.message("intention.create.test"), null);
   }
 
   private static String getMethodsText(final JSClass createdClass,

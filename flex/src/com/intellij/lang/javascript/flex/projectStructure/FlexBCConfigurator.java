@@ -28,11 +28,9 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiab
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureDaemonAnalyzer;
 import com.intellij.openapi.ui.MasterDetailsComponent;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
@@ -180,7 +178,7 @@ public class FlexBCConfigurator {
       final BuildConfigurationNature oldNature = bc.getNature();
       final AddBuildConfigurationDialog dialog =
         new AddBuildConfigurationDialog(myConfigEditor.getProject(), FlexBundle.message("change.bc.type.title"),
-                                        Collections.<String>emptyList(), oldNature, false);
+                                        Collections.emptyList(), oldNature, false);
       dialog.reset(bc.getName(), bc.getAndroidPackagingOptions().isEnabled(), bc.getIosPackagingOptions().isEnabled());
       if (!dialog.showAndGet()) {
         return;

@@ -215,7 +215,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
 
     @NotNull
     public Set<String> getRequiredSelectionKeywords() {
-      return myRequiredSelectionKeywords == null ? Collections.<String>emptySet() : myRequiredSelectionKeywords;
+      return myRequiredSelectionKeywords == null ? Collections.emptySet() : myRequiredSelectionKeywords;
     }
   }
 }

@@ -39,7 +39,6 @@ import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.refactoring.util.NonCodeUsageInfo;
 import com.intellij.refactoring.util.TextOccurrencesUtil;
 import com.intellij.usageView.*;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -222,7 +221,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     JSVisibilityUtil.Options options = new JSVisibilityUtil.Options();
     options.overridePackage(myElement, myPackageName);
     JSRefactoringConflictsUtil.checkOutgoingReferencesAccessibility(myElement, Collections.singletonList(myElement), null, true, result,
-                                                                    Conditions.<PsiElement>alwaysTrue(), options);
+                                                                    Conditions.alwaysTrue(), options);
     return result;
   }
 

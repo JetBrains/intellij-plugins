@@ -8,7 +8,6 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.util.CatchingConsumer;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.PackageManagementServiceEx;
@@ -138,7 +137,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   public void fetchPackageVersions(String packageName, CatchingConsumer<List<String>, Exception> consumer) {
     PhoneGapPluginsList.PhoneGapRepoPackage aPackage = PhoneGapPluginsList.getPackage(packageName);
     if (aPackage == null) {
-      consumer.consume(ContainerUtil.<String>emptyList());
+      consumer.consume(ContainerUtil.emptyList());
       return;
     }
     consumer.consume(ContainerUtil.newArrayList(aPackage.getLatestVersion()));

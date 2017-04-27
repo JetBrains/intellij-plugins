@@ -35,7 +35,7 @@ public class FlexBCTree extends CheckboxTree {
 
   public FlexBCTree(final Project project) {
     //noinspection unchecked
-    this(project, Conditions.<FlexBuildConfiguration>alwaysTrue());
+    this(project, Conditions.alwaysTrue());
   }
 
   public FlexBCTree(final Project project, final Condition<FlexBuildConfiguration> bcFilter) {

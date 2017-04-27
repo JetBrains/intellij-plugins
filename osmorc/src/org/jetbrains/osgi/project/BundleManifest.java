@@ -110,6 +110,6 @@ public class BundleManifest {
 
   private Set<String> getValues(String header) {
     String value = get(header);
-    return StringUtil.isEmptyOrSpaces(value) ? Collections.<String>emptySet() : new Parameters(value).keySet();
+    return StringUtil.isEmptyOrSpaces(value) ? Collections.emptySet() : new Parameters(value).keySet();
   }
 }

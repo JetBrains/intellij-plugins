@@ -259,7 +259,7 @@ public class JstdRunProfileState implements RunProfileState {
               }
               Map<String, Set<String>> scope = ContainerUtil.newHashMap();
               for (String testCase : testCases) {
-                scope.put(testCase, Collections.<String>emptySet());
+                scope.put(testCase, Collections.emptySet());
               }
               return TestFileScope.customScope(scope);
             }

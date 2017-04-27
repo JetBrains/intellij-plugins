@@ -157,7 +157,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
                                  attributeList != null ? attributeList.getAccessType() : JSAttributeList.AccessType.PACKAGE_LOCAL,
                                  myClass.getName(),
                                  "",
-                                 paramInfos.toArray(new JSParameterInfo[paramInfos.size()]), Collections.<JSFunction>emptySet());
+                                 paramInfos.toArray(new JSParameterInfo[paramInfos.size()]), Collections.emptySet());
         }
       }.invoke(project, editor, file);
     }
@@ -219,7 +219,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
                              parameters.toArray(new JSParameterInfo[parameters.size()]),
                              myMethodsToPropagateParameters != null
                              ? myMethodsToPropagateParameters
-                             : Collections.<JSFunction>emptySet());
+                             : Collections.emptySet());
     }
   }
 

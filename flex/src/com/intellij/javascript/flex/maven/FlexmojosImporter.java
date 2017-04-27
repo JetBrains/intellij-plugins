@@ -183,7 +183,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   private List<String> getRuntimeLocales(final MavenProject mavenProject) {
     final String elementName = isFlexmojos3(getFlexmojosPlugin(mavenProject)) ? "runtimeLocales" : "localesRuntime";
     final Element localesElement = getConfig(mavenProject, elementName);
-    return localesElement == null ? Collections.<String>emptyList() : getChildrenValues(localesElement);
+    return localesElement == null ? Collections.emptyList() : getChildrenValues(localesElement);
   }
 
   private List<String> getCompiledLocales(final MavenProject mavenProject) {

@@ -9,7 +9,6 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NonNls;
@@ -121,7 +120,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
           addSubstitutionFromText(tableText, substitutions);
         }
 
-        mySubstitutions = substitutions.isEmpty() ? Collections.<String>emptyList() : substitutions;
+        mySubstitutions = substitutions.isEmpty() ? Collections.emptyList() : substitutions;
       }
       return mySubstitutions;
     }

@@ -6,7 +6,6 @@ import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.config.ResolvedConfiguration;
 import com.google.jstestdriver.config.YamlParser;
-import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.model.BasePaths;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
 import com.intellij.openapi.project.Project;
@@ -104,7 +103,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
     ParsedConfiguration parsedConfiguration = (ParsedConfiguration) yamlParser.parse(configFileReader, initialBasePaths);
     PathResolver pathResolver = new PathResolver(
       parsedConfiguration.getBasePaths(),
-      Collections.<FileParsePostProcessor>emptySet(),
+      Collections.emptySet(),
       new DisplayPathSanitizer()
     );
     FlagsImpl flags = new FlagsImpl();

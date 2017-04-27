@@ -33,7 +33,7 @@ public class ParamValueConvertersRegistry extends GenericDomValueConvertersRegis
   private ParamValueConvertersRegistry() {
     registerBuiltinValueConverters();
 
-    registerFromExtensions(ExtensionPointName.<Provider>create("com.intellij.struts2.paramValueConverter"));
+    registerFromExtensions(ExtensionPointName.create("com.intellij.struts2.paramValueConverter"));
   }
 
   private void registerBuiltinValueConverters() {

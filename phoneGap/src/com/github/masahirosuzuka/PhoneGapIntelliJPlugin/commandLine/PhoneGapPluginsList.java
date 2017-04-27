@@ -66,7 +66,7 @@ public class PhoneGapPluginsList {
   }
 
   public static List<RepoPackage> listCached() {
-    return ContainerUtil.<RepoPackage>newArrayList(mapCached().values());
+    return ContainerUtil.newArrayList(mapCached().values());
   }
 
   public static Map<String, PhoneGapRepoPackage> mapCached() {

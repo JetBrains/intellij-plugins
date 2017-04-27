@@ -16,7 +16,6 @@ import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
@@ -232,8 +231,8 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
     rlmBC.setUseHtmlWrapper(false);
 
-    rlmBC.setRLMs(Collections.<JpsFlexBuildConfiguration.RLMInfo>emptyList());
-    rlmBC.setCssFilesToCompile(Collections.<String>emptyList());
+    rlmBC.setRLMs(Collections.emptyList());
+    rlmBC.setCssFilesToCompile(Collections.emptyList());
 
     final JpsFlexCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
     compilerOptions.setResourceFilesMode(JpsFlexCompilerOptions.ResourceFilesMode.None);
@@ -265,8 +264,8 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     }
 
     cssBC.setUseHtmlWrapper(false);
-    cssBC.setRLMs(Collections.<JpsFlexBuildConfiguration.RLMInfo>emptyList());
-    cssBC.setCssFilesToCompile(Collections.<String>emptyList());
+    cssBC.setRLMs(Collections.emptyList());
+    cssBC.setCssFilesToCompile(Collections.emptyList());
 
     final JpsFlexCompilerOptions compilerOptions = cssBC.getCompilerOptions();
     compilerOptions.setResourceFilesMode(JpsFlexCompilerOptions.ResourceFilesMode.None);

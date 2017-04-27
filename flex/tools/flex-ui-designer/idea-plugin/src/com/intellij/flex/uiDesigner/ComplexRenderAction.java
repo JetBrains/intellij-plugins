@@ -170,7 +170,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
           if (p != null) {
             ModuleInfo info = client.getRegisteredModules().getNullableInfo(ModuleUtilCore.findModuleForFile(file, p));
             if (info != null) {
-              localStyleSources.put(info, Collections.<LocalStyleHolder>emptyList());
+              localStyleSources.put(info, Collections.emptyList());
             }
           }
         }

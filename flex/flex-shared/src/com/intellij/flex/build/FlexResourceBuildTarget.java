@@ -96,7 +96,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
   public Collection<File> getOutputRoots(CompileContext context) {
     if (getTargetType() == FlexResourceBuildTargetType.TEST) {
       final File outputDir = ProjectPaths.getModuleOutputDir(getModule(), true);
-      return outputDir == null ? Collections.<File>emptyList() : Collections.singletonList(outputDir);
+      return outputDir == null ? Collections.emptyList() : Collections.singletonList(outputDir);
     }
 
     final Set<File> result = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);

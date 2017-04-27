@@ -199,8 +199,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
     overriddenBC.setUseHtmlWrapper(false);
 
-    overriddenBC.setRLMs(Collections.<FlexBuildConfiguration.RLMInfo>emptyList());
-    overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
+    overriddenBC.setRLMs(Collections.emptyList());
+    overriddenBC.setCssFilesToCompile(Collections.emptyList());
     overriddenBC.setSkipCompile(false);
 
     overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);
