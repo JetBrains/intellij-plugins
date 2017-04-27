@@ -96,7 +96,10 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
                                     DartBundle.message("dart.style.action.name"), null) != Messages.OK) {
       return;
     }
+    runDartFmt(project, dartFiles, true);
+  }
 
+  public static void runDartFmt(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles, final boolean checkWriteLock) {
     final Map<VirtualFile, String> fileToNewContentMap = new THashMap<>();
     final int lineLength = getRightMargin(project);
 
@@ -112,7 +115,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
         }
 
         final DartAnalysisServerService.FormatResult formatResult =
-          DartAnalysisServerService.getInstance(project).edit_format(virtualFile, 0, 0, lineLength);
+          DartAnalysisServerService.getInstance(project).edit_format(virtualFile, 0, 0, lineLength, checkWriteLock);
         if (formatResult != null && formatResult.getEdits() != null && formatResult.getEdits().size() == 1) {
           final String replacement = StringUtil.convertLineSeparators(formatResult.getEdits().get(0).getReplacement());
           fileToNewContentMap.put(virtualFile, replacement);
