@@ -775,18 +775,8 @@ public class DartAnalysisServerService implements Disposable {
                                @NotNull final List<AnalysisError> errors,
                                final boolean hasSevereProblems,
                                final int errorsHash) {
-    ApplicationManager.getApplication().runReadAction(() -> {
-      updateFilesWithErrorsSet(filePath, hasSevereProblems, errorsHash);
-
-      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-
-      if (vFile != null && ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(vFile)) {
-        DartProblemsView.getInstance(myProject).updateErrorsForFile(filePath, errors);
-      }
-      else {
-        DartProblemsView.getInstance(myProject).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
-      }
-    });
+    updateFilesWithErrorsSet(filePath, hasSevereProblems, errorsHash);
+    DartProblemsView.getInstance(myProject).updateErrorsForFile(filePath, errors);
   }
 
   private void updateFilesWithErrorsSet(@NotNull final String filePath, final boolean hasSevereProblems, final int errorsHash) {
@@ -1203,8 +1193,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    // runnable returned by DartImportOptimizer.processFile() is called under write lock, so we have to skip the check unfortunately
-    awaitForLatchCheckingCanceled(server, latch, EDIT_ORGANIZE_DIRECTIVES_TIMEOUT, false);
+    awaitForLatchCheckingCanceled(server, latch, EDIT_ORGANIZE_DIRECTIVES_TIMEOUT);
 
     if (latch.getCount() > 0) {
       LOG.info("edit_organizeDirectives() took too long for file " + filePath);
@@ -1630,19 +1619,7 @@ public class DartAnalysisServerService implements Disposable {
 
   private static boolean awaitForLatchCheckingCanceled(@NotNull final AnalysisServer server,
                                                        @NotNull final CountDownLatch latch,
-                                                       final long timeoutInMillis) {
-    return awaitForLatchCheckingCanceled(server, latch, timeoutInMillis, true);
-  }
-
-  private static boolean awaitForLatchCheckingCanceled(@NotNull final AnalysisServer server,
-                                                       @NotNull final CountDownLatch latch,
-                                                       long timeoutInMillis,
-                                                       final boolean checkWriteLock) {
-    if (checkWriteLock) {
-      // waiting under write action blocks server notifications handling that require read action
-      LOG.assertTrue(!ApplicationManager.getApplication().isWriteAccessAllowed());
-    }
-
+                                                       long timeoutInMillis) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       timeoutInMillis *= TESTS_TIMEOUT_COEFF;
     }

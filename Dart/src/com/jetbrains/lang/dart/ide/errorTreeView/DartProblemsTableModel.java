@@ -3,7 +3,10 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.ide.annotator.DartAnnotator;
@@ -271,7 +274,10 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     final List<DartProblem> problemsToAdd = new ArrayList<>();
     for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
       final String filePath = entry.getKey();
-      final List<AnalysisError> errors = entry.getValue();
+      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+      final List<AnalysisError> errors = vFile != null && ProjectFileIndex.getInstance(myProject).isInContent(vFile)
+                                         ? entry.getValue()
+                                         : AnalysisError.EMPTY_LIST;
 
       for (AnalysisError analysisError : errors) {
         if (DartAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError.getLocation().getFile())) {
