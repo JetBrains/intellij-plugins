@@ -3,10 +3,8 @@ package com.intellij.tapestry.intellij.view;
 import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModuleFileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -29,15 +27,12 @@ public class TapestryIdeView implements IdeView {
         final List<PsiDirectory> directories = new ArrayList<>();
         final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance((Module) _viewPane.getData(DataKeys.MODULE.getName())).getFileIndex();
         moduleFileIndex.iterateContent(
-                new ContentIterator() {
-                    @Override
-                    public boolean processFile(VirtualFile virtualfile) {
-                        if (virtualfile.isDirectory() && moduleFileIndex.isInSourceContent(virtualfile)) {
-                            directories.add(PsiManager.getInstance(_viewPane.getProject()).findDirectory(virtualfile));
-                        }
-                        return true;
-                    }
-                }
+          virtualfile -> {
+              if (virtualfile.isDirectory() && moduleFileIndex.isInSourceContent(virtualfile)) {
+                  directories.add(PsiManager.getInstance(_viewPane.getProject()).findDirectory(virtualfile));
+              }
+              return true;
+          }
         );
         return directories.toArray(PsiDirectory.EMPTY_ARRAY);
     }

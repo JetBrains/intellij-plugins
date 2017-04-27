@@ -2,10 +2,8 @@ package com.intellij.tapestry.intellij.view.nodes;
 
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModuleFileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPackage;
@@ -34,25 +32,23 @@ public class ModuleNode extends AbstractModuleNode {
 
         final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance((Module) getElement()).getFileIndex();
         moduleFileIndex.iterateContent(
-                new ContentIterator() {
-                    public boolean processFile(VirtualFile virtualfile) {
-                        if (virtualfile.isDirectory() && moduleFileIndex.isInSourceContent(virtualfile)) {
-                            PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(virtualfile);
+          virtualfile -> {
+              if (virtualfile.isDirectory() && moduleFileIndex.isInSourceContent(virtualfile)) {
+                  PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(virtualfile);
 
-                            PsiPackage aPackage = IdeaUtils.getPackage(psiDirectory);
-                            if (TapestryProjectViewPane.getInstance(myProject).isFromBasePackage()) {
-                              if (aPackage.getName() != null && aPackage.getQualifiedName()
-                                      .equals(TapestryModuleSupportLoader.getTapestryProject(_module).getApplicationLibrary().getBasePackage())) {
-                                  children.add(new LibraryNode(TapestryModuleSupportLoader.getTapestryProject(_module).getApplicationLibrary(), psiDirectory, _module, _treeBuilder));
-                              }
-                            } else if (aPackage.getName() != null
-                                    && (aPackage.getParentPackage() == null || aPackage.getParentPackage().getName() == null)) {
-                                children.add(new PackageNode(PsiManager.getInstance(myProject).findDirectory(virtualfile), (Module) getElement(), _treeBuilder));
-                            }
-                        }
-                        return true;
+                  PsiPackage aPackage = IdeaUtils.getPackage(psiDirectory);
+                  if (TapestryProjectViewPane.getInstance(myProject).isFromBasePackage()) {
+                    if (aPackage.getName() != null && aPackage.getQualifiedName()
+                            .equals(TapestryModuleSupportLoader.getTapestryProject(_module).getApplicationLibrary().getBasePackage())) {
+                        children.add(new LibraryNode(TapestryModuleSupportLoader.getTapestryProject(_module).getApplicationLibrary(), psiDirectory, _module, _treeBuilder));
                     }
-                }
+                  } else if (aPackage.getName() != null
+                          && (aPackage.getParentPackage() == null || aPackage.getParentPackage().getName() == null)) {
+                      children.add(new PackageNode(PsiManager.getInstance(myProject).findDirectory(virtualfile), (Module) getElement(), _treeBuilder));
+                  }
+              }
+              return true;
+          }
         );
 
         if (TapestryProjectViewPane.getInstance(myProject).isShowLibraries()) {
