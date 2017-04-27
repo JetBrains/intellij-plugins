@@ -29,7 +29,7 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   public TapestryTagDescriptor(@NotNull PresentationLibraryElement component,
                                @Nullable String prefix,
                                TapestryNamespaceDescriptor descriptor) {
-    this(component, Collections.<Mixin>emptyList(), prefix, descriptor);
+    this(component, Collections.emptyList(), prefix, descriptor);
   }
 
   public TapestryTagDescriptor(@NotNull PresentationLibraryElement component,

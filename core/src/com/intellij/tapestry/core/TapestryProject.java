@@ -300,9 +300,9 @@ public class TapestryProject {
   };
 
   public Collection<PresentationLibraryElement> getBuiltinComponents() {
-    return Arrays.<PresentationLibraryElement>asList(BodyComponent.getInstance(this), BlockComponent.getInstance(this),
-                                                     ParameterComponent.getInstance(this),
-                                                     ContainerComponent.getInstance(this));
+    return Arrays.asList(BodyComponent.getInstance(this), BlockComponent.getInstance(this),
+                         ParameterComponent.getInstance(this),
+                         ContainerComponent.getInstance(this));
   }
 
   public Collection<PresentationLibraryElement> getBuiltinPages() {
