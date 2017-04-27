@@ -32,6 +32,7 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ProjectModelExternalSource;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.*;
 import com.intellij.openapi.roots.ui.OrderEntryAppearanceService;
@@ -1819,6 +1820,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public Library createLibrary(String name, @Nullable PersistentLibraryKind kind) {
       return myDelegate.createLibrary(name, kind);
+    }
+
+    @Override
+    public Library createLibrary(String name, @Nullable PersistentLibraryKind type, @Nullable ProjectModelExternalSource externalSource) {
+      return myDelegate.createLibrary(name, type, externalSource);
     }
 
     @Override
