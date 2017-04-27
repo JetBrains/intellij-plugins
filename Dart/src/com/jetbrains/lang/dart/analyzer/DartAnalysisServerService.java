@@ -93,6 +93,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
@@ -937,6 +938,30 @@ public class DartAnalysisServerService implements Disposable {
 
     awaitForLatchCheckingCanceled(server, latch, GET_ASSISTS_TIMEOUT);
     return results;
+  }
+
+  @Nullable
+  public SourceChange edit_getStatementCompletion(@NotNull final VirtualFile file, final int _offset) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
+    final Ref<SourceChange> resultRef = Ref.create();
+    final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
+    server.edit_getStatementCompletion(filePath, offset, new GetStatementCompletionConsumer() {
+      @Override
+      public void computedSourceChange(SourceChange sourceChange) {
+        resultRef.set(sourceChange);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, STATEMENT_COMPLETION_TIMEOUT);
+    return resultRef.get();
   }
 
   public void diagnostic_getServerPort(GetServerPortConsumer consumer) {
