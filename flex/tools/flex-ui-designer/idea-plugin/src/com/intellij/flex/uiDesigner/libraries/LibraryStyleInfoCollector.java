@@ -11,7 +11,6 @@ import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import gnu.trove.THashSet;
 
@@ -48,18 +47,15 @@ class LibraryStyleInfoCollector {
     }, module.getProject());
 
     final THashSet<String> uniqueGuard = new THashSet<>();
-    final FileBasedIndex.ValueProcessor<Set<FlexStyleIndexInfo>> processor = new FileBasedIndex.ValueProcessor<Set<FlexStyleIndexInfo>>() {
-      @Override
-      public boolean process(VirtualFile file, Set<FlexStyleIndexInfo> value) {
-        final FlexStyleIndexInfo firstInfo = value.iterator().next();
-        if (firstInfo.getInherit().charAt(0) == 'y' && uniqueGuard.add(firstInfo.getAttributeName())) {
-          bytes.writeUInt29(stringWriter.getReference(firstInfo.getAttributeName()) - 1);
-        }
-
-        // If the property is defined in the library - we it consider that unique for all library - we make an assumption that
-        // may not be in a class stylePName be inherited, and another class of the same library not inherited
-        return false;
+    final FileBasedIndex.ValueProcessor<Set<FlexStyleIndexInfo>> processor = (file, value) -> {
+      final FlexStyleIndexInfo firstInfo = value.iterator().next();
+      if (firstInfo.getInherit().charAt(0) == 'y' && uniqueGuard.add(firstInfo.getAttributeName())) {
+        bytes.writeUInt29(stringWriter.getReference(firstInfo.getAttributeName()) - 1);
       }
+
+      // If the property is defined in the library - we it consider that unique for all library - we make an assumption that
+      // may not be in a class stylePName be inherited, and another class of the same library not inherited
+      return false;
     };
 
     for (String dataKey : dataKeys) {

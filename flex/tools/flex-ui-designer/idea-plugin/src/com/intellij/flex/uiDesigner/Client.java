@@ -27,7 +27,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
-import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.InfoMap;
@@ -437,13 +436,10 @@ public class Client implements Disposable {
       beginMessage(ClientMethod.updateLocalStyleHolders);
       stringWriter.writeTo(out);
       out.writeUInt29(holders.size());
-      holders.forEachKey(new TObjectProcedure<ModuleInfo>() {
-        @Override
-        public boolean execute(ModuleInfo moduleInfo) {
-          out.writeUInt29(moduleInfo.getId());
-          out.write(moduleInfo.getLocalStyleHolders(), "lsh", true, true);
-          return true;
-        }
+      holders.forEachKey(moduleInfo -> {
+        out.writeUInt29(moduleInfo.getId());
+        out.write(moduleInfo.getLocalStyleHolders(), "lsh", true, true);
+        return true;
       });
     }
     catch (Throwable e) {
@@ -511,12 +507,9 @@ public class Client implements Disposable {
       });
 
       out.writeUInt29(outdatedLocalStyleHolders.size());
-      outdatedLocalStyleHolders.forEachKey(new TObjectProcedure<ModuleInfo>() {
-        @Override
-        public boolean execute(ModuleInfo moduleInfo) {
-          out.writeUInt29(moduleInfo.getId());
-          return true;
-        }
+      outdatedLocalStyleHolders.forEachKey(moduleInfo -> {
+        out.writeUInt29(moduleInfo.getId());
+        return true;
       });
 
       out.write(infos);

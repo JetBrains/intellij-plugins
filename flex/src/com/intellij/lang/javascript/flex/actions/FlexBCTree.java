@@ -17,14 +17,12 @@ import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.containers.Convertor;
 import com.intellij.util.ui.tree.TreeUtil;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import java.util.Collection;
 import java.util.Enumeration;
 
@@ -192,21 +190,19 @@ public class FlexBCTree extends CheckboxTree {
   }
 
   protected void installSpeedSearch() {
-    new TreeSpeedSearch(this, new Convertor<TreePath, String>() {
-      public String convert(final TreePath path) {
-        final CheckedTreeNode node = (CheckedTreeNode)path.getLastPathComponent();
-        final Object userObject = node.getUserObject();
-        if (userObject instanceof Project) {
-          return ((Project)userObject).getName();
-        }
-        else if (userObject instanceof Module) {
-          return ((Module)userObject).getName();
-        }
-        else if (userObject instanceof FlexBuildConfiguration) {
-          return ((FlexBuildConfiguration)userObject).getName();
-        }
-        return null;
+    new TreeSpeedSearch(this, path -> {
+      final CheckedTreeNode node = (CheckedTreeNode)path.getLastPathComponent();
+      final Object userObject = node.getUserObject();
+      if (userObject instanceof Project) {
+        return ((Project)userObject).getName();
       }
+      else if (userObject instanceof Module) {
+        return ((Module)userObject).getName();
+      }
+      else if (userObject instanceof FlexBuildConfiguration) {
+        return ((FlexBuildConfiguration)userObject).getName();
+      }
+      return null;
     });
   }
 }

@@ -12,6 +12,7 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -246,12 +247,8 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
       for (final VirtualFile file : root.getChildren()) {
         if (RakeUtilBase.isRakeFileByNamingConventions(file)) {
-          final PsiFile psiFile = ApplicationManager.getApplication().runReadAction(new Computable<PsiFile>() {
-            @Override
-            public PsiFile compute() {
-              return PsiManager.getInstance(module.getProject()).findFile(file);
-            }
-          });
+          final PsiFile psiFile =
+            ReadAction.compute(() -> PsiManager.getInstance(module.getProject()).findFile(file));
           if (psiFile instanceof RFile) {
             return doCalculateSdkAndFrameworks((RFile)psiFile);
           }

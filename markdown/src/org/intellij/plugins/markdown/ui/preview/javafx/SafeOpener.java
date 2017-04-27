@@ -2,11 +2,11 @@ package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -75,7 +75,7 @@ class SafeOpener {
       return false;
     }
 
-    Pair<Project, VirtualFile> result = ApplicationManager.getApplication().runReadAction((Computable<Pair<Project, VirtualFile>>)() -> {
+    Pair<Project, VirtualFile> result = ReadAction.compute(() -> {
       final VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(uri.toString());
       if (virtualFile == null) {
         return null;

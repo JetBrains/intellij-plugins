@@ -51,11 +51,8 @@ public class GlobalExceptionMappingResultResolveConverter extends ResolvingConve
       return null;
     }
 
-    return ContainerUtil.find(getVariants(context), new Condition<GlobalResult>() {
-      public boolean value(final GlobalResult globalResult) {
-        return Comparing.equal(value, globalResult.getName().getStringValue());
-      }
-    });
+    return ContainerUtil.find(getVariants(context),
+                              (Condition<GlobalResult>)globalResult -> Comparing.equal(value, globalResult.getName().getStringValue()));
   }
 
   public String toString(@Nullable final GlobalResult result, final ConvertContext context) {

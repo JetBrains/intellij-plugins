@@ -2,7 +2,6 @@ package com.jetbrains.profiler;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.ui.UISettingsListener;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -32,12 +31,7 @@ public abstract class ProfileView extends UserDataHolderBase implements FileEdit
     myFile = file;
     myProject = project;
 
-    project.getMessageBus().connect().subscribe(UISettingsListener.TOPIC, new UISettingsListener() {
-      @Override
-      public void uiSettingsChanged(UISettings uiSettings) {
-        uiSettingsChange();
-      }
-    });
+    project.getMessageBus().connect().subscribe(UISettingsListener.TOPIC, uiSettings -> uiSettingsChange());
   }
 
   protected void uiSettingsChange() {

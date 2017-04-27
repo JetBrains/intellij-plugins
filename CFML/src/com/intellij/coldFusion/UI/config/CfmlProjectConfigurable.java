@@ -26,7 +26,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -98,13 +97,11 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
         final Collection<VirtualFile> cfmlFiles = new ArrayList<>();
         final VirtualFile baseDir = project.getBaseDir();
         if (baseDir != null) {
-          FileBasedIndex.getInstance().iterateIndexableFiles(new ContentIterator() {
-            public boolean processFile(VirtualFile file) {
-              if (CfmlFileType.INSTANCE == file.getFileType()) {
-                cfmlFiles.add(file);
-              }
-              return true;
+          FileBasedIndex.getInstance().iterateIndexableFiles(file -> {
+            if (CfmlFileType.INSTANCE == file.getFileType()) {
+              cfmlFiles.add(file);
             }
+            return true;
           }, project, indicator);
         }
         ApplicationManager.getApplication().invokeAndWait(() -> FileContentUtil.reparseFiles(project, cfmlFiles, true), ModalityState.NON_MODAL);

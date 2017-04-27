@@ -184,12 +184,8 @@ public class AngularIndexUtil {
       return CachedValueProvider.Result.create(ContainerUtil.filter(allKeys, key -> id instanceof StubIndexKey ?
                                                                                     !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
                                         element -> false) :
-                                                                                    !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
-               @Override
-               public boolean process(VirtualFile file, Object value) {
-                 return false;
-               }
-             }, scope)), PsiManager.getInstance(project).getModificationTracker());
+                                                                                    !fileIndex.processValues(id, key, null,
+                                                                                                             (FileBasedIndex.ValueProcessor)(file, value) -> false, scope)), PsiManager.getInstance(project).getModificationTracker());
     }
   }
 }

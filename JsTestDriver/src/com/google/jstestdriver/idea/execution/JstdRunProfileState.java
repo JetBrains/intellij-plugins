@@ -59,12 +59,7 @@ import static java.io.File.pathSeparator;
 public class JstdRunProfileState implements RunProfileState {
 
   private static final String JSTD_FRAMEWORK_NAME = "JsTestDriver";
-  private static final Function<File, String> GET_ABSOLUTE_PATH = new Function<File, String>() {
-    @Override
-    public String apply(File file) {
-      return file.getAbsolutePath();
-    }
-  };
+  private static final Function<File, String> GET_ABSOLUTE_PATH = file -> file.getAbsolutePath();
 
   private final ExecutionEnvironment myEnvironment;
   private final JstdRunSettings myRunSettings;

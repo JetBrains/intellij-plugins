@@ -51,11 +51,7 @@ public class ValidatorConfigResolveConverterImpl extends ValidatorConfigResolveC
       return null;
     }
 
-    return ContainerUtil.find(getVariants(context), new Condition<ValidatorConfig>() {
-      public boolean value(final ValidatorConfig validatorConfig) {
-        return Comparing.equal(name, validatorConfig.getName().getStringValue());
-      }
-    });
+    return ContainerUtil.find(getVariants(context), (Condition<ValidatorConfig>)validatorConfig -> Comparing.equal(name, validatorConfig.getName().getStringValue()));
   }
 
 }

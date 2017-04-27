@@ -2,7 +2,8 @@ package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.util.ProjectRootUtils;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -13,7 +14,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -24,8 +24,8 @@ import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
-import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.util.ui.SwingHelper;
+import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -107,21 +107,17 @@ public class AddAdapterSupportDialog extends DialogWrapper {
     if (!psiFileRequestor.isValid()) {
       return null;
     }
-    return ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
-      @Override
-      @Nullable
-      public VirtualFile compute() {
-        Project project = psiFileRequestor.getProject();
-        VirtualFile virtualFile = psiFileRequestor.getVirtualFile();
-        if (virtualFile != null) {
-          ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-          VirtualFile contentRoot = fileIndex.getContentRootForFile(virtualFile);
-          if (contentRoot != null) {
-            return contentRoot;
-          }
+    return ReadAction.compute(() -> {
+      Project project = psiFileRequestor.getProject();
+      VirtualFile virtualFile = psiFileRequestor.getVirtualFile();
+      if (virtualFile != null) {
+        ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+        VirtualFile contentRoot = fileIndex.getContentRootForFile(virtualFile);
+        if (contentRoot != null) {
+          return contentRoot;
         }
-        return project.getBaseDir();
       }
+      return project.getBaseDir();
     });
 
   }
@@ -209,17 +205,14 @@ public class AddAdapterSupportDialog extends DialogWrapper {
    */
   @Nullable
   private List<VirtualFile> extractAdapterFiles() {
-    return ApplicationManager.getApplication().runWriteAction(new Computable<List<VirtualFile>>() {
-      @Override
-      @Nullable
-      public List<VirtualFile> compute() {
-        try {
-          VirtualFile extractDir = getOrCreateExtractDirVirtualFile();
-          return copyVirtualFilesToDir(extractDir);
-        } catch (Exception e) {
-          LOG.warn("Extraction of " + getAssertFrameworkAdapterName() + " files failed", e);
-          return null;
-        }
+    return WriteAction.compute(() -> {
+      try {
+        VirtualFile extractDir = getOrCreateExtractDirVirtualFile();
+        return copyVirtualFilesToDir(extractDir);
+      }
+      catch (Exception e) {
+        LOG.warn("Extraction of " + getAssertFrameworkAdapterName() + " files failed", e);
+        return null;
       }
     });
   }
@@ -254,12 +247,9 @@ public class AddAdapterSupportDialog extends DialogWrapper {
   }
 
   public void installCodeAssistance(final List<VirtualFile> extractedAdapterSourceFiles) {
-    boolean createLibrary = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-      @Override
-      public Boolean compute() {
-        File extractDir = new File(myDirectoryTextField.getText());
-        return !ProjectRootUtils.isInsideContentRoots(myProject, extractDir);
-      }
+    boolean createLibrary = ReadAction.compute(() -> {
+      File extractDir = new File(myDirectoryTextField.getText());
+      return !ProjectRootUtils.isInsideContentRoots(myProject, extractDir);
     });
     if (createLibrary) {
       ChooseScopeAndCreateLibraryDialog dialog = new ChooseScopeAndCreateLibraryDialog(

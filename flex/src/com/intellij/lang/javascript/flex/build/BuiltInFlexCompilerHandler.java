@@ -14,7 +14,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,32 +134,30 @@ public class BuiltInFlexCompilerHandler {
   }
 
   private void scheduleInputReading() {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        final StringBuilder buffer = new StringBuilder();
-        while (true) {
-          final DataInputStream dataInputStream = myDataInputStream;
-          if (dataInputStream != null) {
-            try {
-              buffer.append(dataInputStream.readUTF());
+    ApplicationManager.getApplication().executeOnPooledThread((Runnable)() -> {
+      final StringBuilder buffer = new StringBuilder();
+      while (true) {
+        final DataInputStream dataInputStream = myDataInputStream;
+        if (dataInputStream != null) {
+          try {
+            buffer.append(dataInputStream.readUTF());
 
-              int index;
-              while ((index = buffer.indexOf("\n")) > -1) {
-                final String line = buffer.substring(0, index);
-                buffer.delete(0, index + 1);
-                handleInputLine(line);
-              }
-            }
-            catch (IOException e) {
-              if (dataInputStream == myDataInputStream) {
-                stopCompilerProcess();
-              }
-              break;
+            int index;
+            while ((index = buffer.indexOf("\n")) > -1) {
+              final String line = buffer.substring(0, index);
+              buffer.delete(0, index + 1);
+              handleInputLine(line);
             }
           }
-          else {
+          catch (IOException e) {
+            if (dataInputStream == myDataInputStream) {
+              stopCompilerProcess();
+            }
             break;
           }
+        }
+        else {
+          break;
         }
       }
     });

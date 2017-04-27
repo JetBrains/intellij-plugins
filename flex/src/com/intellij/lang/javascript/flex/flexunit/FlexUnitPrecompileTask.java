@@ -76,19 +76,17 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
     final Ref<Boolean> isDumb = new Ref<>(false);
     final RuntimeConfigurationException validationError =
-      ApplicationManager.getApplication().runReadAction(new NullableComputable<RuntimeConfigurationException>() {
-        public RuntimeConfigurationException compute() {
-          if (DumbService.getInstance(myProject).isDumb()) {
-            isDumb.set(true);
-            return null;
-          }
-          try {
-            runConfiguration.checkConfiguration();
-            return null;
-          }
-          catch (RuntimeConfigurationException e) {
-            return e;
-          }
+      ApplicationManager.getApplication().runReadAction((NullableComputable<RuntimeConfigurationException>)() -> {
+        if (DumbService.getInstance(myProject).isDumb()) {
+          isDumb.set(true);
+          return null;
+        }
+        try {
+          runConfiguration.checkConfiguration();
+          return null;
+        }
+        catch (RuntimeConfigurationException e) {
+          return e;
         }
       });
 
@@ -165,16 +163,14 @@ public class FlexUnitPrecompileTask implements CompileTask {
       case Class: {
         final Ref<Boolean> isFlexUnit1Suite = new Ref<>();
         final Ref<Boolean> isSuite = new Ref<>();
-        Set<String> customRunners = ApplicationManager.getApplication().runReadAction(new NullableComputable<Set<String>>() {
-          public Set<String> compute() {
-            if (DumbService.getInstance(myProject).isDumb()) return null;
-            Set<String> result = new THashSet<>();
-            final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
-            collectCustomRunners(result, clazz, support, null);
-            isFlexUnit1Suite.set(support.isFlexUnit1SuiteSubclass(clazz));
-            isSuite.set(support.isSuite(clazz));
-            return result;
-          }
+        Set<String> customRunners = ApplicationManager.getApplication().runReadAction((NullableComputable<Set<String>>)() -> {
+          if (DumbService.getInstance(myProject).isDumb()) return null;
+          Set<String> result = new THashSet<>();
+          final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
+          collectCustomRunners(result, clazz, support, null);
+          isFlexUnit1Suite.set(support.isFlexUnit1SuiteSubclass(clazz));
+          isSuite.set(support.isSuite(clazz));
+          return result;
         });
 
         if (customRunners == null) {
@@ -189,14 +185,12 @@ public class FlexUnitPrecompileTask implements CompileTask {
       break;
 
       case Method: {
-        Set<String> customRunners = ApplicationManager.getApplication().runReadAction(new NullableComputable<Set<String>>() {
-          public Set<String> compute() {
-            if (DumbService.getInstance(myProject).isDumb()) return null;
-            Set<String> result = new THashSet<>();
-            final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
-            collectCustomRunners(result, clazz, support, null);
-            return result;
-          }
+        Set<String> customRunners = ApplicationManager.getApplication().runReadAction((NullableComputable<Set<String>>)() -> {
+          if (DumbService.getInstance(myProject).isDumb()) return null;
+          Set<String> result = new THashSet<>();
+          final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
+          collectCustomRunners(result, clazz, support, null);
+          return result;
         });
         if (customRunners == null) {
           context.addMessage(CompilerMessageCategory.ERROR, FlexBundle.message("dumb.mode.flex.unit.warning"), null, -1, -1);
@@ -211,27 +205,25 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
       case Package: {
         final Collection<Pair<String, Set<String>>> classes =
-          ApplicationManager.getApplication().runReadAction(new NullableComputable<Collection<Pair<String, Set<String>>>>() {
-            public Collection<Pair<String, Set<String>>> compute() {
-              if (DumbService.getInstance(myProject).isDumb()) return null;
+          ApplicationManager.getApplication().runReadAction((NullableComputable<Collection<Pair<String, Set<String>>>>)() -> {
+            if (DumbService.getInstance(myProject).isDumb()) return null;
 
-              final Collection<Pair<String, Set<String>>> result = new ArrayList<>();
-              JSPackageIndex
-                .processElementsInScopeRecursive(params.getPackageName(), new JSPackageIndex.PackageQualifiedElementsProcessor() {
-                  public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
-                    if (kind == JSPackageIndexInfo.Kind.CLASS) {
-                      PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(qualifiedName, moduleScope);
-                      if (clazz instanceof JSClass && support.isTestClass((JSClass)clazz, false)) {
-                        Set<String> customRunners = new THashSet<>();
-                        collectCustomRunners(customRunners, (JSClass)clazz, support, null);
-                        result.add(Pair.create(((JSClass)clazz).getQualifiedName(), customRunners));
-                      }
+            final Collection<Pair<String, Set<String>>> result = new ArrayList<>();
+            JSPackageIndex
+              .processElementsInScopeRecursive(params.getPackageName(), new JSPackageIndex.PackageQualifiedElementsProcessor() {
+                public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
+                  if (kind == JSPackageIndexInfo.Kind.CLASS) {
+                    PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(qualifiedName, moduleScope);
+                    if (clazz instanceof JSClass && support.isTestClass((JSClass)clazz, false)) {
+                      Set<String> customRunners = new THashSet<>();
+                      collectCustomRunners(customRunners, (JSClass)clazz, support, null);
+                      result.add(Pair.create(((JSClass)clazz).getQualifiedName(), customRunners));
                     }
-                    return true;
                   }
-                }, moduleScope, myProject);
-              return result;
-            }
+                  return true;
+                }
+              }, moduleScope, myProject);
+            return result;
           });
 
         if (classes == null) {

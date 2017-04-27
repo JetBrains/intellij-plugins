@@ -25,7 +25,6 @@ import com.intellij.util.messages.MessageBus;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TObjectObjectProcedure;
-import gnu.trove.TObjectProcedure;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,18 +60,15 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
   @Override
   protected void doRun() {
     renderDocumentsAndCheckLocalStyleModification(result);
-    result.doWhenDone(new Consumer<List<DocumentFactoryManager.DocumentInfo>>() {
-      @Override
-      public void consume(List<DocumentFactoryManager.DocumentInfo> infos) {
-        Application application = ApplicationManager.getApplication();
-        if (application.isDisposed()) {
-          return;
-        }
+    result.doWhenDone((Consumer<List<DocumentFactoryManager.DocumentInfo>>)infos -> {
+      Application application = ApplicationManager.getApplication();
+      if (application.isDisposed()) {
+        return;
+      }
 
-        MessageBus messageBus = application.getMessageBus();
-        for (DocumentFactoryManager.DocumentInfo info : infos) {
-          messageBus.syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).documentRendered(info);
-        }
+      MessageBus messageBus = application.getMessageBus();
+      for (DocumentFactoryManager.DocumentInfo info : infos) {
+        messageBus.syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).documentRendered(info);
       }
     });
   }
@@ -221,38 +217,35 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
   private static boolean collectChangedLocalStyleSources(final THashMap<ModuleInfo, List<LocalStyleHolder>> holders,
                                                       final VirtualFile file) {
     final Ref<Boolean> result = new Ref<>(false);
-    Client.getInstance().getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
-      @Override
-      public boolean execute(ModuleInfo moduleInfo) {
-        if (holders.containsKey(moduleInfo)) {
-          result.set(true);
+    Client.getInstance().getRegisteredModules().forEach(moduleInfo -> {
+      if (holders.containsKey(moduleInfo)) {
+        result.set(true);
+        return false;
+      }
+
+      List<LocalStyleHolder> styleHolders = moduleInfo.getLocalStyleHolders();
+      if (styleHolders != null) {
+        List<LocalStyleHolder> list = null;
+        for (LocalStyleHolder styleHolder : styleHolders) {
+          if (styleHolder.file.equals(file)) {
+            if (list == null) {
+              list = new ArrayList<>();
+              holders.put(moduleInfo, list);
+              result.set(true);
+            }
+
+            list.add(styleHolder);
+          }
+        }
+
+        if (list != null) {
+          // well, local style applicable only for one module, so,
+          // if we found for this module, there is no reason to continue search
           return false;
         }
-
-        List<LocalStyleHolder> styleHolders = moduleInfo.getLocalStyleHolders();
-        if (styleHolders != null) {
-          List<LocalStyleHolder> list = null;
-          for (LocalStyleHolder styleHolder : styleHolders) {
-            if (styleHolder.file.equals(file)) {
-              if (list == null) {
-                list = new ArrayList<>();
-                holders.put(moduleInfo, list);
-                result.set(true);
-              }
-
-              list.add(styleHolder);
-            }
-          }
-
-          if (list != null) {
-            // well, local style applicable only for one module, so,
-            // if we found for this module, there is no reason to continue search
-            return false;
-          }
-        }
-
-        return true;
       }
+
+      return true;
     });
 
     return result.get();

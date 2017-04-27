@@ -18,12 +18,12 @@ package com.jetbrains.lang.dart.ide.refactoring;
 import com.intellij.CommonBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.jetbrains.lang.dart.assists.AssistUtils;
@@ -112,7 +112,7 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
 
   protected final void doRefactoring(@NotNull final Set<String> excludedIds) {
     // Apply the change.
-    final String error = ApplicationManager.getApplication().runWriteAction((Computable<String>)() -> {
+    final String error = WriteAction.compute(() -> {
       final SourceChange change = myRefactoring.getChange();
       assert change != null;
       try {

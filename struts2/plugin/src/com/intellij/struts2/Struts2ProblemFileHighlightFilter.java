@@ -15,12 +15,11 @@
 
 package com.intellij.struts2;
 
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -61,28 +60,22 @@ public class Struts2ProblemFileHighlightFilter implements Condition<VirtualFile>
       return false;
     }
 
-    final boolean isStrutsXml = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-      @Override
-      public Boolean compute() {
-        final StrutsManager strutsManager = StrutsManager.getInstance(project);
+    final boolean isStrutsXml = ReadAction.compute(() -> {
+      final StrutsManager strutsManager = StrutsManager.getInstance(project);
 
-        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-        return psiFile instanceof XmlFile &&
-               strutsManager.isStruts2ConfigFile((XmlFile)psiFile) &&
-               strutsManager.getModelByFile((XmlFile)psiFile) != null;
-      }
+      final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+      return psiFile instanceof XmlFile &&
+             strutsManager.isStruts2ConfigFile((XmlFile)psiFile) &&
+             strutsManager.getModelByFile((XmlFile)psiFile) != null;
     });
     if (isStrutsXml) {
       return true;
     }
 
-    return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-      @Override
-      public Boolean compute() {
-        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-        return psiFile instanceof XmlFile
-               && ValidatorManager.getInstance(project).isValidatorsFile((XmlFile)psiFile);
-      }
+    return ReadAction.compute(() -> {
+      final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+      return psiFile instanceof XmlFile
+             && ValidatorManager.getInstance(project).isValidatorsFile((XmlFile)psiFile);
     });
   }
 }

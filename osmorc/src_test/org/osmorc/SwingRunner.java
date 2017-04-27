@@ -11,11 +11,6 @@ public class SwingRunner extends BlockJUnit4ClassRunner {
 
   @Override
   public void run(final RunNotifier arg0) {
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        SwingRunner.super.run(arg0);
-      }
-    });
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> SwingRunner.super.run(arg0));
   }
 }

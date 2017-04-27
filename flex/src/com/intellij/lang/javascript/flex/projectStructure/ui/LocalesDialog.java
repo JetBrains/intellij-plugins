@@ -86,12 +86,7 @@ public class LocalesDialog extends DialogWrapper {
 
     myCheckBoxList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-    new ListSpeedSearch(myCheckBoxList, new Function<Object, String>() {
-      @Override
-      public String fun(final Object o) {
-        return ((JCheckBox)o).getText();
-      }
-    });
+    new ListSpeedSearch(myCheckBoxList, (Function<Object, String>)o -> ((JCheckBox)o).getText());
   }
 
   @Override

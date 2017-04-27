@@ -6,10 +6,10 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -93,15 +93,12 @@ public class FlexStackFrame extends XStackFrame {
           ensureQName2IdMapLoaded();
           final XValueChildrenList resultChildren = new XValueChildrenList(1);
 
-          Boolean insideFunExpr = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-            @Override
-            public Boolean compute() {
-              Project project = getDebugProcess().getSession().getProject();
-              PsiElement element =
-                XDebuggerUtil.getInstance().findContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project, true);
-              JSFunction function = PsiTreeUtil.getParentOfType(element, JSFunction.class);
-              return function instanceof JSFunctionExpression;
-            }
+          Boolean insideFunExpr = ReadAction.compute(() -> {
+            Project project = getDebugProcess().getSession().getProject();
+            PsiElement element =
+              XDebuggerUtil.getInstance().findContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project, true);
+            JSFunction function = PsiTreeUtil.getParentOfType(element, JSFunction.class);
+            return function instanceof JSFunctionExpression;
           });
 
           if (Boolean.TRUE.equals(insideFunExpr)) {
@@ -198,29 +195,27 @@ public class FlexStackFrame extends XStackFrame {
 
   private @NonNls String buildCommandForExpression(final String _expression) {
     if (_expression.indexOf('=') != -1) {
-      String evalCommand = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
-        @Override
-        public String compute() {
-          final PsiFile fromText =
-            PsiFileFactory.getInstance(myDebugProcess.getSession().getProject()).createFileFromText("A.js2", JavaScriptSupportLoader.ECMA_SCRIPT_L4, _expression);
-          final PsiElement[] elements = fromText.getChildren();
+      String evalCommand = ReadAction.compute(() -> {
+        final PsiFile fromText =
+          PsiFileFactory.getInstance(myDebugProcess.getSession().getProject())
+            .createFileFromText("A.js2", JavaScriptSupportLoader.ECMA_SCRIPT_L4, _expression);
+        final PsiElement[] elements = fromText.getChildren();
 
-          if (elements.length == 1 && elements[0] instanceof JSExpressionStatement) {
-            final JSExpression expression = ((JSExpressionStatement)elements[0]).getExpression();
+        if (elements.length == 1 && elements[0] instanceof JSExpressionStatement) {
+          final JSExpression expression = ((JSExpressionStatement)elements[0]).getExpression();
 
-            if (expression instanceof JSAssignmentExpression) {
-              JSAssignmentExpression expr = (JSAssignmentExpression)expression;
-              final JSExpression lOperand = expr.getLOperand();
-              final String lOperandText = lOperand == null ? null : lOperand.getText();
-              final JSExpression rOperand = expr.getROperand();
+          if (expression instanceof JSAssignmentExpression) {
+            JSAssignmentExpression expr = (JSAssignmentExpression)expression;
+            final JSExpression lOperand = expr.getLOperand();
+            final String lOperandText = lOperand == null ? null : lOperand.getText();
+            final JSExpression rOperand = expr.getROperand();
 
-              if (lOperandText != null && rOperand != null) {
-                return addFrameOffset("set " + lOperandText + " = " + rOperand.getText() + "\nprint " + lOperandText);
-              }
+            if (lOperandText != null && rOperand != null) {
+              return addFrameOffset("set " + lOperandText + " = " + rOperand.getText() + "\nprint " + lOperandText);
             }
           }
-          return null;
         }
+        return null;
       });
 
       if (evalCommand != null) return evalCommand;
@@ -327,12 +322,9 @@ public class FlexStackFrame extends XStackFrame {
 
           if (psiLanguageInjectionHost != null) {
             final Ref<PsiElement> result = new Ref<>();
-            InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
-              @Override
-              public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
-                final int injectedStart = InjectedLanguageUtil.getInjectedStart(places);
-                result.set(injectedPsi.findElementAt(offset - injectedStart + (places.get(0).getPrefix().length())));
-              }
+            InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, (injectedPsi, places) -> {
+              final int injectedStart = InjectedLanguageUtil.getInjectedStart(places);
+              result.set(injectedPsi.findElementAt(offset - injectedStart + (places.get(0).getPrefix().length())));
             });
             element = result.get();
           }
@@ -490,12 +482,9 @@ public class FlexStackFrame extends XStackFrame {
         final Project project = flexDebugProcess.getSession().getProject();
         final VirtualFile file = mySourcePosition.getFile();
 
-        final JSFunction function = ApplicationManager.getApplication().runReadAction(new NullableComputable<JSFunction>() {
-          @Override
-          public JSFunction compute() {
-            final PsiElement element = XDebuggerUtil.getInstance().findContextElement(file, mySourcePosition.getOffset(), project, true);
-            return PsiTreeUtil.getParentOfType(element, JSFunction.class);
-          }
+        final JSFunction function = ApplicationManager.getApplication().runReadAction((NullableComputable<JSFunction>)() -> {
+          final PsiElement element = XDebuggerUtil.getInstance().findContextElement(file, mySourcePosition.getOffset(), project, true);
+          return PsiTreeUtil.getParentOfType(element, JSFunction.class);
         });
 
         String name;

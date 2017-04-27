@@ -884,12 +884,8 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private static Collection<VirtualFile> getFilesByName(final Project project, final GlobalSearchScope scope, final String fileName) {
-    return ApplicationManager.getApplication().runReadAction(new NullableComputable<Collection<VirtualFile>>() {
-      @Override
-      public Collection<VirtualFile> compute() {
-        return FilenameIndex.getVirtualFilesByName(project, fileName, scope);
-      }
-    });
+    return ApplicationManager.getApplication().runReadAction(
+      (NullableComputable<Collection<VirtualFile>>)() -> FilenameIndex.getVirtualFilesByName(project, fileName, scope));
   }
 
   @Nullable

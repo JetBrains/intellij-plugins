@@ -31,10 +31,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_ACCESS_FINE_LOCATION;
-import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_CAMERA;
-import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_INTERNET;
-import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE;
+import static com.intellij.flex.build.AirDescriptorOptions.*;
 
 public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
 
@@ -253,16 +250,14 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
 
     try {
       final Ref<VirtualFile> fileRef = new Ref<>();
-      final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
-        public IOException compute() {
-          try {
-            fileRef.set(FlexUtils.addFileWithContent(fileName, options.getAirDescriptorText(), dir));
-          }
-          catch (IOException e) {
-            return e;
-          }
-          return null;
+      final IOException exception = ApplicationManager.getApplication().runWriteAction((NullableComputable<IOException>)() -> {
+        try {
+          fileRef.set(FlexUtils.addFileWithContent(fileName, options.getAirDescriptorText(), dir));
         }
+        catch (IOException e) {
+          return e;
+        }
+        return null;
       });
 
       if (exception != null) {

@@ -72,13 +72,10 @@ public class StrutsConstantHelper {
             @Override
             protected List<String> compute() {
               final List<String> extensions1 =
-                  ApplicationManager.getApplication().runReadAction(new NullableComputable<List<String>>() {
-                    public List<String> compute() {
-                      return StrutsConstantManager.getInstance(project)
-                                                  .getConvertedValue(psiFile,
-                                                                     StrutsCoreConstantContributor.ACTION_EXTENSION);
-                    }
-                  });
+                  ApplicationManager.getApplication().runReadAction(
+                    (NullableComputable<List<String>>)() -> StrutsConstantManager.getInstance(project)
+                                                .getConvertedValue(psiFile,
+                                                                   StrutsCoreConstantContributor.ACTION_EXTENSION));
 
               if (extensions1 == null) {
                 return Collections.emptyList();

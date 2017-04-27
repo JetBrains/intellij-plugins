@@ -26,12 +26,9 @@ public class InfoMap<E,I extends Info<E>> implements Disposable {
   @Override
   public void dispose() {
     if (infoIsDisposable) {
-      elements.forEachValue(new TObjectProcedure<I>() {
-        @Override
-        public boolean execute(I info) {
-          ((Disposable)info).dispose();
-          return true;
-        }
+      elements.forEachValue(info -> {
+        ((Disposable)info).dispose();
+        return true;
       });
     }
   }

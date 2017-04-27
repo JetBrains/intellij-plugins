@@ -16,7 +16,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.WriteExternalException;
@@ -128,23 +127,17 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   private static boolean isAvailableForPlatform(@NotNull final AppCodeRunConfiguration config) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-      @Override
-      public Boolean compute() {
-        AppleSdk sdk = getSdk(config);
-        return sdk != null && (sdk.getPlatform().isIOS() || sdk.getPlatform().isTv());
-      }
+    return ReadAction.compute(() -> {
+      AppleSdk sdk = getSdk(config);
+      return sdk != null && (sdk.getPlatform().isIOS() || sdk.getPlatform().isTv());
     });
   }
 
   @Nullable
   private static AppleSdk getSdk(@NotNull final AppCodeRunConfiguration config) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<AppleSdk>() {
-      @Override
-      public AppleSdk compute() {
-        XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
-        return xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
-      }
+    return ReadAction.compute(() -> {
+      XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
+      return xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
     });
   }
 
@@ -217,45 +210,41 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
       final int[] response = new int[1];
 
-      UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-        @Override
-        public void run() {
-          response[0] = Messages.showYesNoDialog("Project is not configured with Reveal library.<br><br>" +
-                          "Would you like to enable automatic library upload for this run configuration?",
-                  "Reveal",
-                  Messages.YES_BUTTON,
-                  Messages.NO_BUTTON,
-                  Messages.getQuestionIcon(),
-                  new DialogWrapper.DoNotAskOption() {
-                    @Override
-                    public boolean isToBeShown() {
-                      return true;
-                    }
-
-                    @Override
-                    public void setToBeShown(boolean value, int exitCode) {
-                      settings.askToEnableAutoInstall = value;
-                    }
-
-                    @Override
-                    public boolean canBeHidden() {
-                      return true;
-                    }
-
-                    @Override
-                    public boolean shouldSaveOptionsOnCancel() {
-                      return false;
-                    }
-
-                    @NotNull
-                    @Override
-                    public String getDoNotShowMessage() {
-                      return CommonBundle.message("dialog.options.do.not.show");
-                    }
+      UIUtil.invokeAndWaitIfNeeded(
+        (Runnable)() -> response[0] = Messages.showYesNoDialog("Project is not configured with Reveal library.<br><br>" +
+                                                             "Would you like to enable automatic library upload for this run configuration?",
+                                                             "Reveal",
+                                                             Messages.YES_BUTTON,
+                                                             Messages.NO_BUTTON,
+                                                             Messages.getQuestionIcon(),
+                                                             new DialogWrapper.DoNotAskOption() {
+                  @Override
+                  public boolean isToBeShown() {
+                    return true;
                   }
-          );
-        }
-      });
+
+                  @Override
+                  public void setToBeShown(boolean value, int exitCode) {
+                    settings.askToEnableAutoInstall = value;
+                  }
+
+                  @Override
+                  public boolean canBeHidden() {
+                    return true;
+                  }
+
+                  @Override
+                  public boolean shouldSaveOptionsOnCancel() {
+                    return false;
+                  }
+
+                  @NotNull
+                  @Override
+                  public String getDoNotShowMessage() {
+                    return CommonBundle.message("dialog.options.do.not.show");
+                  }
+                }
+        ));
       if (response[0] != Messages.YES) return null;
 
       settings.autoInstall = true;
@@ -269,19 +258,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   private static boolean hasBundledRevealLib(@NotNull final BuildConfiguration buildConfiguration, @NotNull final File libReveal) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-      @Override
-      public Boolean compute() {
-        PBXTarget target = buildConfiguration.getConfiguration().getTarget();
-        if (target != null) {
-          for (PBXBuildFile eachFile : target.getBuildFiles(PBXBuildPhase.Type.RESOURCES)) {
-            PBXReference ref = eachFile.getFileRef();
-            String name = ref == null ? null : ref.getFileName();
-            if (FileUtil.namesEqual(libReveal.getName(), name)) return true;
-          }
+    return ReadAction.compute(() -> {
+      PBXTarget target = buildConfiguration.getConfiguration().getTarget();
+      if (target != null) {
+        for (PBXBuildFile eachFile : target.getBuildFiles(PBXBuildPhase.Type.RESOURCES)) {
+          PBXReference ref = eachFile.getFileRef();
+          String name = ref == null ? null : ref.getFileName();
+          if (FileUtil.namesEqual(libReveal.getName(), name)) return true;
         }
-        return false;
       }
+      return false;
     });
   }
 

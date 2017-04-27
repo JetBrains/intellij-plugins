@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -15,7 +16,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
@@ -197,7 +197,7 @@ public class DartFileListener implements VirtualFileListener {
     final Library existingLibrary = projectLibraryTable.getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     final Library library =
       existingLibrary != null ? existingLibrary
-                              : ApplicationManager.getApplication().runWriteAction((Computable<Library>)() -> {
+                              : WriteAction.compute(() -> {
                                 final LibraryTableBase.ModifiableModel libTableModel =
                                   ProjectLibraryTable.getInstance(project).getModifiableModel();
                                 final Library lib = libTableModel

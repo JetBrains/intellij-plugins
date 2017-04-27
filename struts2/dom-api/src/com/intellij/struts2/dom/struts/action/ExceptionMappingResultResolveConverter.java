@@ -61,11 +61,8 @@ public class ExceptionMappingResultResolveConverter extends ResolvingConverter<H
       return null;
     }
 
-    return ContainerUtil.find(getVariants(context), new Condition<HasResultType>() {
-      public boolean value(final HasResultType result) {
-        return Comparing.equal(result.getName().getStringValue(), value);
-      }
-    });
+    return ContainerUtil.find(getVariants(context),
+                              (Condition<HasResultType>)result -> Comparing.equal(result.getName().getStringValue(), value));
   }
 
   public String toString(@Nullable final HasResultType result, final ConvertContext context) {

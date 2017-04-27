@@ -43,7 +43,6 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.FilteringProcessor;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
@@ -54,7 +53,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -207,11 +205,8 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
 
     final Filter filter = ContainerUtil.find(webApp.getFilters(), WEB_XML_STRUTS_FILTER_CONDITION);
     if (filter != null) {
-      final ParamValue initParam = ContainerUtil.find(filter.getInitParams(), new Condition<ParamValue>() {
-        public boolean value(final ParamValue paramValue) {
-          return Comparing.equal(paramValue.getParamName().getStringValue(), name);
-        }
-      });
+      final ParamValue initParam = ContainerUtil.find(filter.getInitParams(),
+                                                      (Condition<ParamValue>)paramValue -> Comparing.equal(paramValue.getParamName().getStringValue(), name));
       if (initParam != null) {
         value = initParam.getParamValue().getStringValue();
       }

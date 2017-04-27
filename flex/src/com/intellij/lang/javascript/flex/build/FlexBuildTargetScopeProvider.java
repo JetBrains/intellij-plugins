@@ -61,15 +61,13 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
       final Pair<Module, FlexBuildConfiguration> moduleAndBC;
 
       final Ref<RuntimeConfigurationError> exceptionRef = new Ref<>();
-      moduleAndBC = ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexBuildConfiguration>>() {
-        public Pair<Module, FlexBuildConfiguration> compute() {
-          try {
-            return params.checkAndGetModuleAndBC(runConfiguration.getProject());
-          }
-          catch (RuntimeConfigurationError e) {
-            exceptionRef.set(e);
-            return null;
-          }
+      moduleAndBC = ApplicationManager.getApplication().runReadAction((NullableComputable<Pair<Module, FlexBuildConfiguration>>)() -> {
+        try {
+          return params.checkAndGetModuleAndBC(runConfiguration.getProject());
+        }
+        catch (RuntimeConfigurationError e) {
+          exceptionRef.set(e);
+          return null;
         }
       });
       if (!exceptionRef.isNull()) {

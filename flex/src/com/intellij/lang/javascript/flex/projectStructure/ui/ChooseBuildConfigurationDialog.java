@@ -12,9 +12,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.ui.*;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Convertor;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.Nullable;
@@ -24,12 +22,14 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author ksafonov
@@ -127,12 +127,9 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
     }
     myTree.setModel(new DefaultTreeModel(root));
     myTree.setRootVisible(false);
-    new TreeSpeedSearch(myTree, new Convertor<TreePath, String>() {
-      @Override
-      public String convert(TreePath o) {
-        Object lastPathComponent = o.getLastPathComponent();
-        return getText((DefaultMutableTreeNode)lastPathComponent);
-      }
+    new TreeSpeedSearch(myTree, o -> {
+      Object lastPathComponent = o.getLastPathComponent();
+      return getText((DefaultMutableTreeNode)lastPathComponent);
     }, true).setComparator(new SpeedSearchComparator(false));
     TreeUIHelper.getInstance().installTreeSpeedSearch(myTree);
     myTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);

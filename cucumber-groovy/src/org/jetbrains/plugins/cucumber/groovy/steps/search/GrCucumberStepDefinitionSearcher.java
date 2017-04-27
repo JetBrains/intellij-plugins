@@ -10,7 +10,6 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
@@ -23,18 +22,14 @@ public class GrCucumberStepDefinitionSearcher implements QueryExecutor<PsiRefere
   @Override
   public boolean execute(@NotNull final ReferencesSearch.SearchParameters queryParameters,
                          @NotNull final Processor<PsiReference> consumer) {
-    return ApplicationManager.getApplication().runReadAction(new NullableComputable<Boolean>() {
-      @Nullable
-      @Override
-      public Boolean compute() {
-        PsiElement element = getStepDefinition(queryParameters.getElementToSearch());
-        if (element == null) return true;
+    return ApplicationManager.getApplication().runReadAction((NullableComputable<Boolean>)() -> {
+      PsiElement element = getStepDefinition(queryParameters.getElementToSearch());
+      if (element == null) return true;
 
-        String regexp = GrCucumberUtil.getStepDefinitionPatternText((GrMethodCall)element);
-        if (regexp == null) return true;
+      String regexp = GrCucumberUtil.getStepDefinitionPatternText((GrMethodCall)element);
+      if (regexp == null) return true;
 
-        return CucumberUtil.findGherkinReferencesToElement(element, regexp, consumer, queryParameters.getEffectiveSearchScope());
-      }
+      return CucumberUtil.findGherkinReferencesToElement(element, regexp, consumer, queryParameters.getEffectiveSearchScope());
     });
   }
 

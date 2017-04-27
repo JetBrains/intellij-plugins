@@ -22,7 +22,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -32,7 +32,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureProblemType;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Trinity;
@@ -564,12 +563,8 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
 
       suggestParallelCompilationIfNeeded(context.getProject(), modulesAndBCsToCompile);
 
-      final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems = ApplicationManager.getApplication()
-        .runReadAction(new Computable<Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>>>() {
-          public Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> compute() {
-            return getProblems(context.getCompileScope(), modulesAndBCsToCompile);
-          }
-        });
+      final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems =
+        ReadAction.compute(() -> getProblems(context.getCompileScope(), modulesAndBCsToCompile));
 
       if (!problems.isEmpty()) {
         boolean hasErrors = false;

@@ -1,8 +1,7 @@
 package com.google.jstestdriver.idea.util;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -15,16 +14,13 @@ public class VfsUtils {
 
   @NotNull
   public static List<VirtualFile> findVirtualFilesByResourceNames(final Class<?> markerClass, final String[] resourceNames) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<List<VirtualFile>>() {
-      @Override
-      public List<VirtualFile> compute() {
-        List<VirtualFile> virtualFiles = Lists.newArrayList();
-        for (String resourceName : resourceNames) {
-          VirtualFile virtualFile = findVirtualFileByResourceName(markerClass, resourceName);
-          virtualFiles.add(virtualFile);
-        }
-        return virtualFiles;
+    return ReadAction.compute(() -> {
+      List<VirtualFile> virtualFiles = Lists.newArrayList();
+      for (String resourceName : resourceNames) {
+        VirtualFile virtualFile = findVirtualFileByResourceName(markerClass, resourceName);
+        virtualFiles.add(virtualFile);
       }
+      return virtualFiles;
     });
   }
 

@@ -2,8 +2,8 @@ package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -35,11 +35,8 @@ public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntention
     final PsiDirectory targetDirectory;
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      targetDirectory = ApplicationManager.getApplication().runWriteAction(new Computable<PsiDirectory>() {
-        public PsiDirectory compute() {
-          return CreateClassOrInterfaceFix.findOrCreateDirectory("foo", myElement);
-        }
-      });
+      targetDirectory =
+        WriteAction.compute(() -> CreateClassOrInterfaceFix.findOrCreateDirectory("foo", myElement));
     }
     else {
       final ChoosePackageDialog dialog = new ChoosePackageDialog(module, getText(), myPackageName, myElement.getContainingFile());

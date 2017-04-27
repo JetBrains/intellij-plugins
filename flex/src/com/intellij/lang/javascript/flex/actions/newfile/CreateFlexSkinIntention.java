@@ -10,8 +10,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateMxmlFileIntentionBase;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
@@ -46,11 +46,8 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
     final String defaultHostComponent = hostComponentClass == null ? "" : hostComponentClass.getQualifiedName();
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       hostComponent = defaultHostComponent;
-      targetDirectory = ApplicationManager.getApplication().runWriteAction(new Computable<PsiDirectory>() {
-        public PsiDirectory compute() {
-          return CreateClassOrInterfaceFix.findOrCreateDirectory(myPackageName, myElement);
-        }
-      });
+      targetDirectory = WriteAction
+        .compute(() -> CreateClassOrInterfaceFix.findOrCreateDirectory(myPackageName, myElement));
     }
     else {
       final CreateFlexSkinDialog dialog = new CreateFlexSkinDialog(module, myClassName, myPackageName,

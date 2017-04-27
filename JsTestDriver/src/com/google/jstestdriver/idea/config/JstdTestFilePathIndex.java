@@ -135,12 +135,9 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
       KEY,
       jsTestFile.getPath(),
       null,
-      new FileBasedIndex.ValueProcessor<Void>() {
-        @Override
-        public boolean process(final VirtualFile file, final Void value) {
-          jstdConfigs.add(file);
-          return true;
-        }
+      (file, value) -> {
+        jstdConfigs.add(file);
+        return true;
       },
       scope
     );

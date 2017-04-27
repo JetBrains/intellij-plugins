@@ -7,7 +7,6 @@ import com.intellij.flex.uiDesigner.abc.Encoder;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.openapi.util.Condition;
 import gnu.trove.THashMap;
-import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
@@ -79,17 +78,14 @@ public class LibrarySorter {
 
       final List<Decoder> decoders = new ArrayList<>(definitionMap.size());
       final String[] singleStringArray = new String[1];
-      definitionMap.forEachValue(new TObjectProcedure<Definition>() {
-        @Override
-        public boolean execute(Definition definition) {
-          if (definition.doAbcData != null &&
-              (definition.resolved == ResolvedState.YES || (definition.resolved == ResolvedState.UNKNOWN &&
-                                                            processDependencies(decoders, definition, definitionMap, singleStringArray)))) {
-            decoders.add(createDecoder(definition));
-          }
-
-          return true;
+      definitionMap.forEachValue(definition -> {
+        if (definition.doAbcData != null &&
+            (definition.resolved == ResolvedState.YES || (definition.resolved == ResolvedState.UNKNOWN &&
+                                                          processDependencies(decoders, definition, definitionMap, singleStringArray)))) {
+          decoders.add(createDecoder(definition));
         }
+
+        return true;
       });
 
       abcMerger.end(decoders, new Encoder());

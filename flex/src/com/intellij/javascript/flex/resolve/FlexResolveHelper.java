@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
@@ -232,15 +231,13 @@ public class FlexResolveHelper implements JSResolveHelper {
                                                   final String nameHint) {
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     for (final VirtualFile root : ProjectRootManager.getInstance(project).getContentSourceRoots()) {
-      final boolean b = projectFileIndex.iterateContentUnderDirectory(root, new ContentIterator() {
-        public boolean processFile(final VirtualFile fileOrDir) {
-          if (scope.contains(fileOrDir) &&
-              JavaScriptSupportLoader.isMxmlOrFxgFile(fileOrDir) &&
-              (nameHint == null || nameHint.equals(fileOrDir.getNameWithoutExtension()))) {
-            if (!processor.processFile(fileOrDir, root)) return false;
-          }
-          return true;
+      final boolean b = projectFileIndex.iterateContentUnderDirectory(root, fileOrDir -> {
+        if (scope.contains(fileOrDir) &&
+            JavaScriptSupportLoader.isMxmlOrFxgFile(fileOrDir) &&
+            (nameHint == null || nameHint.equals(fileOrDir.getNameWithoutExtension()))) {
+          if (!processor.processFile(fileOrDir, root)) return false;
         }
+        return true;
       });
       if (!b) return false;
     }

@@ -3,6 +3,7 @@ package org.intellij.plugins.markdown.settings;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -13,7 +14,6 @@ import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.UnknownFileType;
-import com.intellij.openapi.util.Computable;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
@@ -126,12 +126,7 @@ public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
   @Override
   public MarkdownCssSettings getMarkdownCssSettings() {
     if (myEditor != null && !myEditor.isDisposed()) {
-      myCssText = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
-        @Override
-        public String compute() {
-          return myEditor.getDocument().getText();
-        }
-      });
+      myCssText = ReadAction.compute(() -> myEditor.getDocument().getText());
     }
     return new MarkdownCssSettings(myCssFromURIEnabled.isSelected(),
                                    myCssURI.getText(),

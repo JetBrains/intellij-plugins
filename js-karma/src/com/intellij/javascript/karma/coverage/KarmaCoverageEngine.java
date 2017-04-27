@@ -12,11 +12,10 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -200,30 +199,27 @@ public class KarmaCoverageEngine extends CoverageEngine {
    */
   @Nullable
   private static VirtualFile findRootDir(@NotNull final Project project, @NotNull final CoverageSuitesBundle suitesBundle) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
-      @Override
-      public VirtualFile compute() {
-        CoverageDataManager coverageDataManager = CoverageDataManager.getInstance(project);
-        for (CoverageSuite suite : suitesBundle.getSuites()) {
-          ProjectData data = suite.getCoverageData(coverageDataManager);
-          if (data != null) {
-            for (Object key : data.getClasses().keySet()) {
-              if (key instanceof String) {
-                String path = (String) key;
-                VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
-                if (file != null && file.isValid()) {
-                  ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-                  VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);
-                  if (contentRoot != null && contentRoot.isDirectory() && contentRoot.isValid()) {
-                    return contentRoot;
-                  }
+    return ReadAction.compute(() -> {
+      CoverageDataManager coverageDataManager = CoverageDataManager.getInstance(project);
+      for (CoverageSuite suite : suitesBundle.getSuites()) {
+        ProjectData data = suite.getCoverageData(coverageDataManager);
+        if (data != null) {
+          for (Object key : data.getClasses().keySet()) {
+            if (key instanceof String) {
+              String path = (String)key;
+              VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
+              if (file != null && file.isValid()) {
+                ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+                VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);
+                if (contentRoot != null && contentRoot.isDirectory() && contentRoot.isValid()) {
+                  return contentRoot;
                 }
               }
             }
           }
         }
-        return null;
       }
+      return null;
     });
   }
 }

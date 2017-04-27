@@ -128,15 +128,13 @@ public class BCUtils {
     final String sdkHome = currentSdk == null ? null : currentSdk.getHomePath();
     final String playerFolderPath = sdkHome == null ? null : sdkHome + "/frameworks/libs/player";
     if (playerFolderPath != null) {
-      final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-        public VirtualFile compute() {
-          final VirtualFile playerFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(playerFolderPath);
-          if (playerFolder != null && playerFolder.isDirectory()) {
-            playerFolder.refresh(false, true);
-            return playerFolder;
-          }
-          return null;
+      final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction((NullableComputable<VirtualFile>)() -> {
+        final VirtualFile playerFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(playerFolderPath);
+        if (playerFolder != null && playerFolder.isDirectory()) {
+          playerFolder.refresh(false, true);
+          return playerFolder;
         }
+        return null;
       });
 
       if (playerDir != null) {

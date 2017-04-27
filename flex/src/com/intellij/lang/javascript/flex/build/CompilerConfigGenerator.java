@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
@@ -28,7 +29,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
@@ -666,24 +670,21 @@ public class CompilerConfigGenerator {
     final Ref<Boolean> noClasses = new Ref<>(true);
 
     for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(false)) {
-      fileIndex.iterateContentUnderDirectory(sourceRoot, new ContentIterator() {
-        @Override
-        public boolean processFile(final VirtualFile file) {
-          if (file.isDirectory()) return true;
-          if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
-          if (compilerConfiguration.isExcludedFromCompilation(file)) return true;
+      fileIndex.iterateContentUnderDirectory(sourceRoot, file -> {
+        if (file.isDirectory()) return true;
+        if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
+        if (compilerConfiguration.isExcludedFromCompilation(file)) return true;
 
-          final String packageText = VfsUtilCore.getRelativePath(file.getParent(), sourceRoot, '.');
-          assert packageText != null : sourceRoot.getPath() + ": " + file.getPath();
-          final String qName = (packageText.length() > 0 ? packageText + "." : "") + file.getNameWithoutExtension();
+        final String packageText = VfsUtilCore.getRelativePath(file.getParent(), sourceRoot, '.');
+        assert packageText != null : sourceRoot.getPath() + ": " + file.getPath();
+        final String qName = (packageText.length() > 0 ? packageText + "." : "") + file.getNameWithoutExtension();
 
-          if (isSourceFileWithPublicDeclaration(myModule, file, qName)) {
-            addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
-            noClasses.set(false);
-          }
-
-          return true;
+        if (isSourceFileWithPublicDeclaration(myModule, file, qName)) {
+          addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
+          noClasses.set(false);
         }
+
+        return true;
       });
     }
 
@@ -841,22 +842,19 @@ public class CompilerConfigGenerator {
 
   private static boolean isSourceFileWithPublicDeclaration(final Module module, final VirtualFile file, final String qName) {
     return JavaScriptSupportLoader.isMxmlOrFxgFile(file) ||
-           ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-             @Override
-             public Boolean compute() {
-               // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
-               // But first we try to find it in JSQualifiedElementIndex because it is faster.
-               final Collection<JSQualifiedNamedElement> elements = StubIndex.getInstance()
-                 .getElements(JSQualifiedElementIndex.KEY, qName.hashCode(), module.getProject(), GlobalSearchScope.moduleScope(module),
-                              JSQualifiedNamedElement.class);
-               if (elements.isEmpty()) {
-                 // If SomeClass.as contains IncorrectClass definition - we want to include this class into compilation so that compilation fails.
-                 final PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(file);
-                 return psiFile != null && PsiTreeUtil.getChildOfType(psiFile, JSPackageStatement.class) != null;
-               }
-               else {
-                 return true;
-               }
+           ReadAction.compute(() -> {
+             // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
+             // But first we try to find it in JSQualifiedElementIndex because it is faster.
+             final Collection<JSQualifiedNamedElement> elements = StubIndex.getInstance()
+               .getElements(JSQualifiedElementIndex.KEY, qName.hashCode(), module.getProject(), GlobalSearchScope.moduleScope(module),
+                            JSQualifiedNamedElement.class);
+             if (elements.isEmpty()) {
+               // If SomeClass.as contains IncorrectClass definition - we want to include this class into compilation so that compilation fails.
+               final PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(file);
+               return psiFile != null && PsiTreeUtil.getChildOfType(psiFile, JSPackageStatement.class) != null;
+             }
+             else {
+               return true;
              }
            });
   }

@@ -177,15 +177,12 @@ public class AngularUiRouterDiagramBuilder {
     final PsiManager psiManager = PsiManager.getInstance(myProject);
     final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(myProject);
     for (String key : keys) {
-      instance.processValues(AngularAppIndex.ANGULAR_APP_INDEX, key, null, new FileBasedIndex.ValueProcessor<AngularNamedItemDefinition>() {
-        @Override
-        public boolean process(VirtualFile file, AngularNamedItemDefinition value) {
-          final PsiFile psiFile = psiManager.findFile(file);
-          if (psiFile != null) {
-            files.put(psiFile, value);
-          }
-          return true;
+      instance.processValues(AngularAppIndex.ANGULAR_APP_INDEX, key, null, (file, value) -> {
+        final PsiFile psiFile = psiManager.findFile(file);
+        if (psiFile != null) {
+          files.put(psiFile, value);
         }
+        return true;
       }, projectScope);
     }
     for (Map.Entry<PsiFile, AngularNamedItemDefinition> entry : files.entrySet()) {
@@ -438,19 +435,16 @@ public class AngularUiRouterDiagramBuilder {
     final SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(project);
     for (String key : placeholdersSet) {
       instance.processValues(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, key, null,
-                             new FileBasedIndex.ValueProcessor<AngularNamedItemDefinition>() {
-                               @Override
-                               public boolean process(VirtualFile file, AngularNamedItemDefinition value) {
-                                 final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(
-                                   JSQualifiedNameImpl.fromQualifiedName(key), null);
-                                 final JSOffsetBasedImplicitElement implicitElement =
-                                   new JSOffsetBasedImplicitElement(builder, (int)value.getStartOffset(), templateFile);
-                                 if (templateElement instanceof PsiFile ||
-                                        PsiTreeUtil.isAncestor(templateElement, implicitElement, false)) {
-                                   placeholders.put(key, smartPointerManager.createSmartPsiElementPointer(implicitElement));
-                                 }
-                                 return true;
+                             (file, value) -> {
+                               final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(
+                                 JSQualifiedNameImpl.fromQualifiedName(key), null);
+                               final JSOffsetBasedImplicitElement implicitElement =
+                                 new JSOffsetBasedImplicitElement(builder, (int)value.getStartOffset(), templateFile);
+                               if (templateElement instanceof PsiFile ||
+                                      PsiTreeUtil.isAncestor(templateElement, implicitElement, false)) {
+                                 placeholders.put(key, smartPointerManager.createSmartPsiElementPointer(implicitElement));
                                }
+                               return true;
                              }, scope);
     }
     final Template template = new Template(url, smartPointerManager.createSmartPsiElementPointer(templateElement));

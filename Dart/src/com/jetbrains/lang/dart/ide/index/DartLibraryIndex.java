@@ -1,8 +1,7 @@
 package com.jetbrains.lang.dart.ide.index;
 
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -103,7 +102,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
       return data.second;
     }
 
-    return ApplicationManager.getApplication().runReadAction((Computable<BidirectionalMap<String, String>>)() -> {
+    return ReadAction.compute(() -> {
       try {
         final String contents = StringUtil.convertLineSeparators(VfsUtilCore.loadText(librariesDartFile));
         final PsiFile psiFile =

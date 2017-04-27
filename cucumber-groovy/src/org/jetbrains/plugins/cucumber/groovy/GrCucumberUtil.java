@@ -35,64 +35,53 @@ public class GrCucumberUtil {
 
   @Nullable
   public static GrReferenceExpression getCucumberStepRef(final GrMethodCall stepDefinition) {
-    return ApplicationManager.getApplication().runReadAction(new NullableComputable<GrReferenceExpression>() {
-      @Override
-      public GrReferenceExpression compute() {
-        final GrExpression ref = stepDefinition.getInvokedExpression();
-        if (!(ref instanceof GrReferenceExpression)) return null;
+    return ApplicationManager.getApplication().runReadAction((NullableComputable<GrReferenceExpression>)() -> {
+      final GrExpression ref = stepDefinition.getInvokedExpression();
+      if (!(ref instanceof GrReferenceExpression)) return null;
 
-        final PsiMethod method = stepDefinition.resolveMethod();
-        if (method == null) return null;
+      final PsiMethod method = stepDefinition.resolveMethod();
+      if (method == null) return null;
 
-        final PsiClass containingClass = method.getContainingClass();
-        if (containingClass == null) return null;
+      final PsiClass containingClass = method.getContainingClass();
+      if (containingClass == null) return null;
 
-        final String qName = containingClass.getQualifiedName();
-        if (qName == null) return null;
+      final String qName = containingClass.getQualifiedName();
+      if (qName == null) return null;
 
-        final String packageName = StringUtil.getPackageName(qName);
+      final String packageName = StringUtil.getPackageName(qName);
 
-        if (!GrCucumberCommonClassNames.isCucumberRuntimeGroovyPackage(packageName)) return null;
+      if (!GrCucumberCommonClassNames.isCucumberRuntimeGroovyPackage(packageName)) return null;
 
-        return (GrReferenceExpression)ref;
-      }
+      return (GrReferenceExpression)ref;
     });
   }
 
   @Nullable
   public static String getStepDefinitionPatternText(final GrMethodCall stepDefinition) {
-    return ApplicationManager.getApplication().runReadAction(new NullableComputable<String>() {
-      @Nullable
-      @Override
-      public String compute() {
-        GrLiteral pattern = getStepDefinitionPattern(stepDefinition);
-        if (pattern == null) return null;
-        Object value = pattern.getValue();
-        return value instanceof String ? (String)value : null;
-      }
+    return ApplicationManager.getApplication().runReadAction((NullableComputable<String>)() -> {
+      GrLiteral pattern = getStepDefinitionPattern(stepDefinition);
+      if (pattern == null) return null;
+      Object value = pattern.getValue();
+      return value instanceof String ? (String)value : null;
     });
   }
 
   @Nullable
   public static GrLiteral getStepDefinitionPattern(final GrMethodCall stepDefinition) {
-    return ApplicationManager.getApplication().runReadAction(new NullableComputable<GrLiteral>() {
-      @Nullable
-      @Override
-      public GrLiteral compute() {
-        GrArgumentList argumentList = stepDefinition.getArgumentList();
+    return ApplicationManager.getApplication().runReadAction((NullableComputable<GrLiteral>)() -> {
+      GrArgumentList argumentList = stepDefinition.getArgumentList();
 
-        GroovyPsiElement[] arguments = argumentList.getAllArguments();
-        if (arguments.length == 0 || arguments.length > 2) return null;
+      GroovyPsiElement[] arguments = argumentList.getAllArguments();
+      if (arguments.length == 0 || arguments.length > 2) return null;
 
-        GroovyPsiElement arg = arguments[0];
-        if (!(arg instanceof GrUnaryExpression && ((GrUnaryExpression)arg).getOperationTokenType() == GroovyTokenTypes.mBNOT)) return null;
+      GroovyPsiElement arg = arguments[0];
+      if (!(arg instanceof GrUnaryExpression && ((GrUnaryExpression)arg).getOperationTokenType() == GroovyTokenTypes.mBNOT)) return null;
 
-        GrExpression operand = ((GrUnaryExpression)arg).getOperand();
-        if (!(operand instanceof GrLiteral)) return null;
+      GrExpression operand = ((GrUnaryExpression)arg).getOperand();
+      if (!(operand instanceof GrLiteral)) return null;
 
-        Object value = ((GrLiteral)operand).getValue();
-        return value instanceof String ? ((GrLiteral)operand) : null;
-      }
+      Object value = ((GrLiteral)operand).getValue();
+      return value instanceof String ? ((GrLiteral)operand) : null;
     });
   }
 

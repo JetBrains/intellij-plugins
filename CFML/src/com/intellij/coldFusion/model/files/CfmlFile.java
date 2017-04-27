@@ -71,11 +71,8 @@ public class CfmlFile extends PsiFileBase {
           if (nameAndType == null) {
             return;
           }
-          CfmlImplicitVariable var = ContainerUtil.getOrCreate(result, nameAndType[0], new Factory<CfmlImplicitVariable>() {
-            public CfmlImplicitVariable create() {
-              return new CfmlImplicitVariable(CfmlFile.this, comment, nameAndType[0]);
-            }
-          });
+          CfmlImplicitVariable var = ContainerUtil.getOrCreate(result, nameAndType[0],
+                                                               (Factory<CfmlImplicitVariable>)() -> new CfmlImplicitVariable(CfmlFile.this, comment, nameAndType[0]));
           var.setType(nameAndType[1]);
         }
       });

@@ -257,12 +257,9 @@ public class WhatToTestForm {
       }
 
       if (myCondition == null) {
-        myCondition = Conditions.cached(new Condition<JSClass>() {
-          @Override
-          public boolean value(JSClass jsClass) {
-            assert mySupport != null;
-            return mySupport.isTestClass(jsClass, myAllowSuite);
-          }
+        myCondition = Conditions.cached(jsClass -> {
+          assert mySupport != null;
+          return mySupport.isTestClass(jsClass, myAllowSuite);
         });
       }
       return myCondition;

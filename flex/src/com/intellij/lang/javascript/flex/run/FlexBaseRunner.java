@@ -44,6 +44,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.*;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -57,7 +58,10 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -392,7 +396,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Nullable
   public static String getApplicationId(final String airDescriptorPath) {
-    final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>)() -> {
+    final VirtualFile descriptorFile = WriteAction.compute(() -> {
       final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
       if (file != null) {
         file.refresh(false, false);
@@ -411,7 +415,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Nullable
   public static String getApplicationName(final String airDescriptorPath) {
-    final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>)() -> {
+    final VirtualFile descriptorFile = WriteAction.compute(() -> {
       final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
       if (file != null) {
         file.refresh(false, false);

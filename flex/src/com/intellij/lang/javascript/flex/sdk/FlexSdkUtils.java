@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfiguration
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -139,15 +140,13 @@ public class FlexSdkUtils {
   }
 
   private static Sdk doCreateSdk(final SdkType sdkType, final @NotNull String sdkHomePath) {
-    return ApplicationManager.getApplication().runWriteAction(new Computable<Sdk>() {
-      public Sdk compute() {
-        final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-        final String sdkName = SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkHomePath, projectJdkTable.getSdksOfType(sdkType));
-        final Sdk sdk = new ProjectJdkImpl(sdkName, sdkType, sdkHomePath, "");
-        sdkType.setupSdkPaths(sdk);
-        projectJdkTable.addJdk(sdk);
-        return sdk;
-      }
+    return WriteAction.compute(() -> {
+      final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+      final String sdkName = SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkHomePath, projectJdkTable.getSdksOfType(sdkType));
+      final Sdk sdk = new ProjectJdkImpl(sdkName, sdkType, sdkHomePath, "");
+      sdkType.setupSdkPaths(sdk);
+      projectJdkTable.addJdk(sdk);
+      return sdk;
     });
   }
 
@@ -255,19 +254,17 @@ public class FlexSdkUtils {
   @NotNull
   private static VirtualFile unzip(final String zipFilePath, final String outputDirPath) throws IOException {
     final Ref<IOException> ioExceptionRef = new Ref<>();
-    final VirtualFile dir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-      public VirtualFile compute() {
-        try {
-          ZipUtil.extract(new File(zipFilePath), new File(outputDirPath), null);
-          final VirtualFile tempDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(outputDirPath);
-          assert tempDir != null;
-          return tempDir;
-        }
-        catch (IOException e) {
-          ioExceptionRef.set(e);
-        }
-        return null;
+    final VirtualFile dir = ApplicationManager.getApplication().runWriteAction((NullableComputable<VirtualFile>)() -> {
+      try {
+        ZipUtil.extract(new File(zipFilePath), new File(outputDirPath), null);
+        final VirtualFile tempDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(outputDirPath);
+        assert tempDir != null;
+        return tempDir;
       }
+      catch (IOException e) {
+        ioExceptionRef.set(e);
+      }
+      return null;
     });
 
     if (!ioExceptionRef.isNull()) {

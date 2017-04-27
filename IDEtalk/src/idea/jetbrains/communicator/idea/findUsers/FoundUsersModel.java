@@ -17,8 +17,8 @@ package jetbrains.communicator.idea.findUsers;
 
 import jetbrains.communicator.core.users.User;
 
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.util.*;
 
 /**
@@ -48,11 +48,7 @@ class FoundUsersModel extends DefaultTreeModel {
   private static Collection<User> getUsers(Map<String,Collection<User>> resultMap, String project) {
     Collection<User> users = (resultMap.get(project));
     if (users == null) {
-      users = new TreeSet<>(new Comparator() {
-        public int compare(Object o1, Object o2) {
-          return ((User)o1).getName().compareToIgnoreCase(((User)o2).getName());
-        }
-      });
+      users = new TreeSet<>((Comparator)(o1, o2) -> ((User)o1).getName().compareToIgnoreCase(((User)o2).getName()));
       resultMap.put(project, users);
     }
     return users;

@@ -13,10 +13,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -411,13 +410,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     for (String fileName : myFileNames) {
       Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, fileName, scope);
       for (final VirtualFile file : files) {
-        PsiFile psiFile = ApplicationManager.getApplication().runReadAction(new Computable<PsiFile>() {
-          @Nullable
-          @Override
-          public PsiFile compute() {
-            return PsiManager.getInstance(project).findFile(file);
-          }
-        });
+        PsiFile psiFile = ReadAction.compute(() -> PsiManager.getInstance(project).findFile(file));
         if (psiFile instanceof JSFile) {
           findStyleAttributesInFile((JSFile)psiFile, visitedFiles, navElement2pairInfo);
         }

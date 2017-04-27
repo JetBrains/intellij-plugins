@@ -7,7 +7,6 @@ import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
@@ -44,12 +43,8 @@ public abstract class RubyMotionSimulatorDebugProcess extends IPhoneSimulatorDeb
   @NotNull
   @Override
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
-    final List<XBreakpointHandler<?>> handlerList = ContainerUtil.filter(super.getBreakpointHandlers(), new Condition<XBreakpointHandler<?>>() {
-      @Override
-      public boolean value(XBreakpointHandler<?> handler) {
-        return !(handler instanceof CidrSymbolicBreakpointHandler);
-      }
-    });
+    final List<XBreakpointHandler<?>> handlerList = ContainerUtil.filter(super.getBreakpointHandlers(),
+                                                                         handler -> !(handler instanceof CidrSymbolicBreakpointHandler));
     return handlerList.toArray(new XBreakpointHandler[handlerList.size()]);
   }
 

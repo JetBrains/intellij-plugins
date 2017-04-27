@@ -4,11 +4,11 @@ import com.google.jstestdriver.idea.assertFramework.jstd.jsSrc.JstdDefaultAssert
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
@@ -58,36 +58,33 @@ public class JstdLibraryUtil {
   private static boolean doesCorrectJstdLibExist(@NotNull final Project project) {
     Boolean correctJstdLibExists = JSTD_LIBRARY_EXISTS;
     if (correctJstdLibExists == null) {
-      correctJstdLibExists = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-        @Override
-        public Boolean compute() {
-          VirtualFile libVirtualFile = VfsUtil.findFileByURL(
-            JstdDefaultAssertionFrameworkSrcMarker.class.getResource("TestCase.js")
-          );
-          if (libVirtualFile == null) {
-            return false;
-          }
-          JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
-          for (ScriptingLibraryModel libraryModel : libraryManager.getAllLibraries()) {
-            if (libraryModel == null) {
-              continue;
-            }
-            String libraryName = libraryModel.getName();
-            if (libraryName != null && libraryName.startsWith(LIBRARY_NAME)) {
-              Library library = libraryModel.getOriginalLibrary();
-              if (library instanceof LibraryEx) {
-                LibraryEx libraryEx = (LibraryEx) library;
-                if (libraryEx.isDisposed()) {
-                  continue;
-                }
-              }
-              if (libraryModel.containsFile(libVirtualFile)) {
-                return true;
-              }
-            }
-          }
+      correctJstdLibExists = ReadAction.compute(() -> {
+        VirtualFile libVirtualFile = VfsUtil.findFileByURL(
+          JstdDefaultAssertionFrameworkSrcMarker.class.getResource("TestCase.js")
+        );
+        if (libVirtualFile == null) {
           return false;
         }
+        JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
+        for (ScriptingLibraryModel libraryModel : libraryManager.getAllLibraries()) {
+          if (libraryModel == null) {
+            continue;
+          }
+          String libraryName = libraryModel.getName();
+          if (libraryName != null && libraryName.startsWith(LIBRARY_NAME)) {
+            Library library = libraryModel.getOriginalLibrary();
+            if (library instanceof LibraryEx) {
+              LibraryEx libraryEx = (LibraryEx)library;
+              if (libraryEx.isDisposed()) {
+                continue;
+              }
+            }
+            if (libraryModel.containsFile(libVirtualFile)) {
+              return true;
+            }
+          }
+        }
+        return false;
       });
       JSTD_LIBRARY_EXISTS = correctJstdLibExists;
     }

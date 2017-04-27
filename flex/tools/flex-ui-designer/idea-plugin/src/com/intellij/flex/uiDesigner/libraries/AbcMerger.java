@@ -4,7 +4,6 @@ import com.intellij.flex.uiDesigner.abc.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntObjectHashMap;
-import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -12,7 +11,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 class AbcMerger extends AbcTranscoder {
   private static final Logger LOG = Logger.getInstance(AbcMerger.class.getName());
@@ -69,18 +71,15 @@ class AbcMerger extends AbcTranscoder {
 
     if (!currentSymbolsInfo.isEmpty()) {
       symbols.ensureCapacity(symbols.size() + currentSymbolsInfo.size());
-      currentSymbolsInfo.forEachValue(new TObjectProcedure<SymbolInfo>() {
-        @Override
-        public boolean execute(SymbolInfo info) {
-          // not all objects with character id are exported
-          if (info.start == -1) {
-            assert info.end == -1;
-          }
-          else {
-            symbols.add(info);
-          }
-          return true;
+      currentSymbolsInfo.forEachValue(info -> {
+        // not all objects with character id are exported
+        if (info.start == -1) {
+          assert info.end == -1;
         }
+        else {
+          symbols.add(info);
+        }
+        return true;
       });
 
       currentSymbolsInfo.clear();

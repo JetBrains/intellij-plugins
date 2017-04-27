@@ -7,7 +7,6 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.PersistentHashMap;
 import gnu.trove.THashMap;
-import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
@@ -79,18 +78,15 @@ class LibrariesData {
       }
 
       out.writeInt(value.definitionMap.size());
-      value.definitionMap.forEachKey(new TObjectProcedure<CharSequence>() {
-        @Override
-        public boolean execute(CharSequence charSequence) {
-          try {
-            out.writeUTF(charSequence.toString());
-          }
-          catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-
-          return true;
+      value.definitionMap.forEachKey(charSequence -> {
+        try {
+          out.writeUTF(charSequence.toString());
         }
+        catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+
+        return true;
       });
     }
 

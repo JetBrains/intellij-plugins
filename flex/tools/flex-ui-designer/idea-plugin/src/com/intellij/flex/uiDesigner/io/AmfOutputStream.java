@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.util.PairConsumer;
 import gnu.trove.TIntArrayList;
-import gnu.trove.TIntProcedure;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.Identifiable;
 
@@ -98,12 +97,9 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
     writeUInt29(collection.size());
     for (TIntArrayList list : collection) {
       writeUInt29(list.size());
-      list.forEach(new TIntProcedure() {
-        @Override
-        public boolean execute(int value) {
-          writeUInt29(value);
-          return true;
-        }
+      list.forEach(value -> {
+        writeUInt29(value);
+        return true;
       });
     }
   }

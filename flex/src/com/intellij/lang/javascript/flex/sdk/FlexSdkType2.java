@@ -11,7 +11,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
-import com.intellij.util.Processor;
 import icons.FlexIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -123,15 +122,13 @@ public class FlexSdkType2 extends SdkType {
 
     sdkModificator.setVersionString(getVersionString(sdkRoot.getPath()));
 
-    final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-      public VirtualFile compute() {
-        final VirtualFile libsDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkRoot.getPath() + "/frameworks/libs");
-        if (libsDir != null && libsDir.isDirectory()) {
-          libsDir.refresh(false, true);
-          return libsDir.findChild("player");
-        }
-        return null;
+    final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction((NullableComputable<VirtualFile>)() -> {
+      final VirtualFile libsDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkRoot.getPath() + "/frameworks/libs");
+      if (libsDir != null && libsDir.isDirectory()) {
+        libsDir.refresh(false, true);
+        return libsDir.findChild("player");
       }
+      return null;
     });
 
     if (playerDir != null) {

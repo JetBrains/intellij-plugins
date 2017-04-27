@@ -2,8 +2,7 @@ package org.jetbrains.plugins.cucumber.inspections.suppress;
 
 import com.intellij.codeInspection.SuppressQuickFix;
 import com.intellij.codeInspection.SuppressionUtil;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -34,11 +33,7 @@ public class GherkinSuppressionUtil {
   }
 
   public static boolean isSuppressedFor(@NotNull final PsiElement element, @NotNull final String toolId) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-      public Boolean compute() {
-        return getSuppressedIn(element, toolId) != null;
-      }
-    }).booleanValue();
+    return ReadAction.compute(() -> getSuppressedIn(element, toolId) != null).booleanValue();
   }
 
   @Nullable

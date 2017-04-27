@@ -188,22 +188,20 @@ public class FlexTestUtils {
   }
 
   public static Sdk createSdk(final String flexSdkRootPath, @Nullable String sdkVersion, final boolean removeExisting) {
-    Sdk sdk = WriteCommandAction.runWriteCommandAction(null, new Computable<Sdk>() {
-      public Sdk compute() {
-        final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-        if (removeExisting) {
-          final List<Sdk> existingFlexSdks = projectJdkTable.getSdksOfType(FlexSdkType2.getInstance());
-          for (Sdk existingFlexSdk : existingFlexSdks) {
-            projectJdkTable.removeJdk(existingFlexSdk);
-          }
+    Sdk sdk = WriteCommandAction.runWriteCommandAction(null, (Computable<Sdk>)() -> {
+      final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+      if (removeExisting) {
+        final List<Sdk> existingFlexSdks = projectJdkTable.getSdksOfType(FlexSdkType2.getInstance());
+        for (Sdk existingFlexSdk : existingFlexSdks) {
+          projectJdkTable.removeJdk(existingFlexSdk);
         }
-
-        final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
-        final Sdk sdk = new ProjectJdkImpl(sdkType.suggestSdkName(null, flexSdkRootPath), sdkType, flexSdkRootPath, "");
-        sdkType.setupSdkPaths(sdk);
-        projectJdkTable.addJdk(sdk);
-        return sdk;
       }
+
+      final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
+      final Sdk sdk1 = new ProjectJdkImpl(sdkType.suggestSdkName(null, flexSdkRootPath), sdkType, flexSdkRootPath, "");
+      sdkType.setupSdkPaths(sdk1);
+      projectJdkTable.addJdk(sdk1);
+      return sdk1;
     });
 
     final SdkModificator modificator = sdk.getSdkModificator();
@@ -431,23 +429,20 @@ public class FlexTestUtils {
   }
 
   private static VirtualFile copyTo(VirtualFile to, final String path) {
-    return ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
-      @Override
-      public VirtualFile compute() {
-        try {
-          VirtualFile f = LocalFileSystem.getInstance().findFileByPath(path);
-          if (f.isDirectory()) {
-            VirtualFile result = to.createChildDirectory(JSTestUtils.class, f.getName());
-            VfsUtil.copyDirectory(JSTestUtils.class, f, result, null);
-            return result;
-          }
-          else {
-            return VfsUtilCore.copyFile(JSTestUtils.class, f, to);
-          }
+    return WriteAction.compute(() -> {
+      try {
+        VirtualFile f = LocalFileSystem.getInstance().findFileByPath(path);
+        if (f.isDirectory()) {
+          VirtualFile result = to.createChildDirectory(JSTestUtils.class, f.getName());
+          VfsUtil.copyDirectory(JSTestUtils.class, f, result, null);
+          return result;
         }
-        catch (IOException e) {
-          throw new RuntimeException(e);
+        else {
+          return VfsUtilCore.copyFile(JSTestUtils.class, f, to);
         }
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
       }
     });
   }

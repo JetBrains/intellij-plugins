@@ -117,11 +117,8 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
     try {
       final PsiElement finalSourceClass = sourceClass;
       PsiDirectory dir =
-        WriteCommandAction.runWriteCommandAction(null, new Computable<PsiDirectory>() {
-          public PsiDirectory compute() {
-            return CreateClassOrInterfaceFix.findOrCreateDirectory(StringUtil.getPackageName(extractedSuperName), finalSourceClass);
-          }
-        });
+        WriteCommandAction.runWriteCommandAction(null,
+                                                 (Computable<PsiDirectory>)() -> CreateClassOrInterfaceFix.findOrCreateDirectory(StringUtil.getPackageName(extractedSuperName), finalSourceClass));
       new JSExtractSuperProcessor(sourceClass, infosArray, StringUtil.getShortName(extractedSuperName),
                                   StringUtil.getPackageName(extractedSuperName), docCommentPolicy, mode, classNotInterface, dir).run();
       assertEquals("Conflicts expected:\n" + StringUtil.join(conflicts, "\n"), 0, conflicts.length);

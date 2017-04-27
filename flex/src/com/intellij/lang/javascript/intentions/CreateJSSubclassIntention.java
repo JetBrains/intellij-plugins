@@ -20,9 +20,9 @@ import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -144,12 +144,8 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       className = suggestSubclassName(jsClass.getName());
       packageName = "foo";
       templateName = defaultTemplateName;
-      targetDirectory = ApplicationManager.getApplication().runWriteAction(new Computable<PsiDirectory>() {
-        @Override
-        public PsiDirectory compute() {
-          return CreateClassOrInterfaceFix.findOrCreateDirectory(packageName, jsPackageStatement);
-        }
-      });
+      targetDirectory = WriteAction
+        .compute(() -> CreateClassOrInterfaceFix.findOrCreateDirectory(packageName, jsPackageStatement));
       interfaces = jsClass.isInterface() ? Collections.singletonList(jsClass.getQualifiedName()) : Collections.emptyList();
       templateAttributes = Collections.emptyMap();
       superClass = jsClass.isInterface() ? null : jsClass;

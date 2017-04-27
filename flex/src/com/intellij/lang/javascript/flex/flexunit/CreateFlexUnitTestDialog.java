@@ -221,24 +221,22 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
       final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
       try {
         final VirtualFile finalContentRoot = contentRoot;
-        final VirtualFile folder = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-          public VirtualFile compute() {
-            try {
-              final VirtualFile srcRoot =
-                VfsUtil.createDirectoryIfMissing(finalContentRoot, path.substring((finalContentRoot.getPath() + "/").length()));
-              final VirtualFile folder =
-                packageName.isEmpty() ? srcRoot : VfsUtil.createDirectoryIfMissing(srcRoot, packageName.replace('.', '/'));
-              final ContentEntry contentEntry = MarkRootActionBase.findContentEntry(model, folder);
-              if (contentEntry != null) {
-                contentEntry.addSourceFolder(srcRoot, true);
-                model.commit();
+        final VirtualFile folder = ApplicationManager.getApplication().runWriteAction((NullableComputable<VirtualFile>)() -> {
+          try {
+            final VirtualFile srcRoot =
+              VfsUtil.createDirectoryIfMissing(finalContentRoot, path.substring((finalContentRoot.getPath() + "/").length()));
+            final VirtualFile folder1 =
+              packageName.isEmpty() ? srcRoot : VfsUtil.createDirectoryIfMissing(srcRoot, packageName.replace('.', '/'));
+            final ContentEntry contentEntry = MarkRootActionBase.findContentEntry(model, folder1);
+            if (contentEntry != null) {
+              contentEntry.addSourceFolder(srcRoot, true);
+              model.commit();
 
-                return folder;
-              }
+              return folder1;
             }
-            catch (IOException ignore) {/*unlucky*/}
-            return null;
           }
+          catch (IOException ignore) {/*unlucky*/}
+          return null;
         });
 
 

@@ -126,17 +126,14 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
 
   @Override
   protected void setUp() throws Exception {
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          FlexUnitExecutionTest.super.setUp();
-          CompilerProjectExtension.getInstance(myProject).setCompilerOutputUrl(createOutputFolder().getUrl());
-        }
-        catch (Throwable e) {
-          e.printStackTrace();
-          assertTrue(false);
-        }
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+      try {
+        FlexUnitExecutionTest.super.setUp();
+        CompilerProjectExtension.getInstance(myProject).setCompilerOutputUrl(createOutputFolder().getUrl());
+      }
+      catch (Throwable e) {
+        e.printStackTrace();
+        assertTrue(false);
       }
     });
 
@@ -208,15 +205,12 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   @Override
   protected VirtualFile configureByFiles(final File projectRoot, @NotNull final VirtualFile[] vFiles) throws IOException {
     final Ref<VirtualFile> result = new Ref<>();
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          result.set(FlexUnitExecutionTest.super.configureByFiles(projectRoot, vFiles));
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+      try {
+        result.set(FlexUnitExecutionTest.super.configureByFiles(projectRoot, vFiles));
+      }
+      catch (IOException e) {
+        LOG.error(e);
       }
     });
     return result.get();
@@ -486,18 +480,15 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
     c.USE_FCSH = myUseFcsh;
     c.USE_BUILT_IN_COMPILER = myUseBuiltInCompiler;
 
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        if (BLOCK_PORT_843) {
-          myStopBlocking = true;
-        }
-        try {
-          FlexUnitExecutionTest.super.tearDown();
-        }
-        catch (Exception e) {
-          throw new RuntimeException(e);
-        }
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+      if (BLOCK_PORT_843) {
+        myStopBlocking = true;
+      }
+      try {
+        FlexUnitExecutionTest.super.tearDown();
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
       }
     });
   }

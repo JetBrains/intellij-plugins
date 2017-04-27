@@ -49,7 +49,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
@@ -350,12 +349,10 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
           final PsiLanguageInjectionHost valueElement = (PsiLanguageInjectionHost)xmlAttribute.getValueElement();
           if (valueElement != null) {
             final Ref<PsiElement> ref = new Ref<>();
-            InjectedLanguageUtil.enumerate(valueElement, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
-              public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
-                int i = injectedPsi.getText().indexOf(attributeValue);
-                if (i != -1) {
-                  ref.set(PsiTreeUtil.findElementOfClassAtOffset(injectedPsi, i, JSReferenceExpression.class, false));
-                }
+            InjectedLanguageUtil.enumerate(valueElement, (injectedPsi, places) -> {
+              int i = injectedPsi.getText().indexOf(attributeValue);
+              if (i != -1) {
+                ref.set(PsiTreeUtil.findElementOfClassAtOffset(injectedPsi, i, JSReferenceExpression.class, false));
               }
             });
             return ref.get();
