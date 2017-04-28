@@ -82,9 +82,6 @@ public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
     return template.isToShortenLongNames();
   }
 
-  public void setEnabled(final Template template, final boolean value) {
-  }
-
   @Override
   public boolean isVisible(@NotNull Template template, @NotNull TemplateContext context) {
     return false;
