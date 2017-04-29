@@ -47,7 +47,8 @@ CONDITION_CHARACTER=[^#\r\n]
 {COMMENT}              { return COMMENT; }
 
 <YYINITIAL> {
-    \t+                { yybegin(SOURCE); return TAB; }
+    ^\t+               { yybegin(SOURCE); return TAB; }
+    \t+                { return WHITE_SPACE; }
     {EOL}              { return WHITE_SPACE; }
     {SPACES}           { return WHITE_SPACE; }
     {DOUBLECOLON}      { yybegin(PREREQUISITES); return DOUBLECOLON; }
