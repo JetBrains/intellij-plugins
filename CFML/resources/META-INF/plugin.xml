@@ -19,7 +19,20 @@
   <depends>com.intellij.modules.java</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.database</depends>
+  <depends optional="true" config-file="intellilang-cfml-support.xml">org.intellij.intelliLang</depends>
+
+  <extensions defaultExtensionNs="CFML Support">
+    <splittedInjector implementation="com.intellij.coldFusion.injection.CfmlSplittedInjector"/>
+  </extensions>
+
+  <extensionPoints>
+    <extensionPoint name="splittedInjector"
+                    interface="com.intellij.coldFusion.injection.SplittedInjector"
+                    area="IDEA_PROJECT"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
+    <patterns.patternClass className="com.intellij.coldFusion.patterns.CfmlPatterns" alias="cfml"/>
     <psi.referenceContributor language="CFML"
                               implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
     <programRunner implementation="com.intellij.coldFusion.UI.runner.CfmlRunner"/>
@@ -108,6 +121,11 @@
     <spellchecker.support language="CFML" implementationClass="com.intellij.coldFusion.model.CfmlSpellcheckingStrategy"/>
     <lang.surroundDescriptor language="CFML"
                              implementationClass="com.intellij.coldFusion.UI.editorActions.surroundWith.CfmlVariableSurroundDescriptor"/>
+
+    <projectService serviceInterface="com.intellij.coldFusion.injection.CfmlSplittedInjectionManager"
+                    serviceImplementation="com.intellij.coldFusion.injection.CfmlSplittedInjectionManager"/>
+
+    <multiHostInjector implementation="com.intellij.coldFusion.injection.CfmlSplittedMultiHostInjector" order="first"/>
   </extensions>
 
   <actions>

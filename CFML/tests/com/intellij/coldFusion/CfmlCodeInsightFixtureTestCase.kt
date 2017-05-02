@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.coldFusion;
+package com.intellij.coldFusion
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 
 /**
  * Created by fedorkorotkov.
  */
-abstract public class CfmlCodeInsightFixtureTestCase extends LightPlatformCodeInsightFixtureTestCase {
-  @Override
-  protected String getTestDataPath() {
-    return CfmlTestUtil.BASE_TEST_DATA_PATH + getBasePath();
-  }
+abstract class CfmlCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
+
+  override fun getTestDataPath(): String = CfmlTestUtil.BASE_TEST_DATA_PATH + basePath
+
 }
