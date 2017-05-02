@@ -21,17 +21,6 @@ import static com.intellij.lang.javascript.linter.tslint.config.TsLintConfigurat
 public final class TsLintConfigFileSearcher {
   private static final Logger LOG = Logger.getInstance(TsLintConfiguration.LOG_CATEGORY);
 
-  public String validate(@NotNull TsLintState state) {
-    if (state.isCustomConfigFileUsed()) {
-      final String configFilePath = state.getCustomConfigFilePath();
-      if (StringUtil.isEmptyOrSpaces(configFilePath)) {
-        return "Configuration file for TSLint is not specified";
-      }
-    }
-
-    return null;
-  }
-
   public VirtualFile getConfig(@NotNull TsLintState state, @NotNull VirtualFile virtualFile) {
     if (state.isCustomConfigFileUsed()) {
       final String configFilePath = state.getCustomConfigFilePath();
