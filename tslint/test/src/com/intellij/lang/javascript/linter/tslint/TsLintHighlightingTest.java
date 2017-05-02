@@ -53,12 +53,12 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testNoConfig() throws Exception {
     doTest("noConfig", "noConfig/data.ts", false, true, null);
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file 'aaa' was not found.", false, true);
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file was not found.", false, true);
   }
 
   public void testBadConfig() throws Exception {
     doTest("badConfig", "badConfig/data.ts", false, true, null);
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file 'aaa' was not found.", false, true);
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file was not found.", false, true);
   }
 
   public void testLineSeparatorsWin() throws Exception {

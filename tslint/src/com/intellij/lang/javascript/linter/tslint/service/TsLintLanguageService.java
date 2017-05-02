@@ -62,44 +62,73 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   public final Future<List<TsLinterError>> highlight(@Nullable VirtualFile virtualFile,
                                                      @Nullable VirtualFile config,
                                                      @Nullable String content) {
-    JSLanguageServiceQueue process = getProcess();
-    if (checkParameters(virtualFile, process)) return new FixedFuture<>(Collections.singletonList(new TsLinterError("Path not specified")));
-
-    String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
-
-    String path = JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
-    if (path == null) {
-      return new FixedFuture<>(Collections.singletonList(new TsLinterError("Can not work with the path: " + virtualFile.getPath())));
-    }
-
-    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(path, configPath, StringUtil.notNullize(content));
-    return process.execute(command, createHighlightProcessor(path));
+    final JSLanguageServiceQueue process = getProcess();
+    final MyParameters parameters = MyParameters.checkParameters(virtualFile, config, process);
+    if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
+    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(parameters.getPath(), parameters.getConfigPath(),
+                                                                StringUtil.notNullize(content));
+    assert process != null;
+    return process.execute(command, createHighlightProcessor(parameters.getPath()));
   }
 
   public final Future<List<TsLinterError>> highlightAndFix(@Nullable VirtualFile virtualFile, @NotNull TsLintState state) {
-
-    JSLanguageServiceQueue process = getProcess();
-    if (checkParameters(virtualFile, process)) return new FixedFuture<>(Collections.singletonList(new TsLinterError("Path not specified")));
-
-    VirtualFile config = myConfigFileSearcher.getConfig(state, virtualFile);
-
-    String configPath = config == null ? null : JSLanguageServiceUtil.normalizeNameAndPath(config);
-
-    String path = JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
-    if (path == null) {
-      return null;
-    }
+    VirtualFile config = virtualFile == null ? null : myConfigFileSearcher.getConfig(state, virtualFile);
+    final JSLanguageServiceQueue process = getProcess();
+    final MyParameters parameters = MyParameters.checkParameters(virtualFile, config, process);
+    if (parameters.getErrors() != null) return new FixedFuture<>(parameters.getErrors());
 
     //doesn't pass content (file should be saved before)
-    TsLintFixErrorsCommand command = new TsLintFixErrorsCommand(path, configPath);
-    return process.execute(command, createHighlightProcessor(path));
+    TsLintFixErrorsCommand command = new TsLintFixErrorsCommand(parameters.getPath(), parameters.getConfigPath());
+    assert process != null;
+    return process.execute(command, createHighlightProcessor(parameters.getPath()));
   }
 
-  private static boolean checkParameters(@Nullable VirtualFile virtualFile, JSLanguageServiceQueue process) {
-    if (process == null || virtualFile == null || !virtualFile.isInLocalFileSystem()) {
-      return true;
+  private static class MyParameters {
+    @NotNull private final String myConfigPath;
+    @NotNull private final String myPath;
+    @Nullable private final List<TsLinterError> myErrors;
+
+    private MyParameters(@NotNull String path, @NotNull String configPath,
+                         @Nullable List<TsLinterError> errors) {
+      myConfigPath = configPath;
+      myPath = path;
+      myErrors = errors;
     }
-    return false;
+
+    public static MyParameters checkParameters(@Nullable VirtualFile virtualFile, @Nullable VirtualFile config,
+                                               @Nullable JSLanguageServiceQueue process) {
+      String error;
+      if (process == null) {
+        error = "Can not create language service";
+      } else if (virtualFile == null || !virtualFile.isInLocalFileSystem()) {
+        error = "Path not specified";
+      } else if (config == null) {
+        error = "Config file was not found.";
+      } else {
+        final String configPath = JSLanguageServiceUtil.normalizeNameAndPath(config);
+        final String path = JSLanguageServiceUtil.normalizeNameAndPath(virtualFile);
+        if (configPath != null && path != null) {
+          return new MyParameters(path, configPath, null);
+        }
+        error = "Can not work with the path: " + (path != null ? path : configPath);
+      }
+      return new MyParameters("", "", Collections.singletonList(new TsLinterError(error)));
+    }
+
+    @NotNull
+    public String getConfigPath() {
+      return myConfigPath;
+    }
+
+    @NotNull
+    public String getPath() {
+      return myPath;
+    }
+
+    @Nullable
+    public List<TsLinterError> getErrors() {
+      return myErrors;
+    }
   }
 
   @NotNull

@@ -38,8 +38,8 @@ public final class TsLintConfigFileSearcher {
   private static VirtualFile lookupParentConfig(@NotNull VirtualFile vf) {
     VirtualFile current = vf.getParent();
     while (current != null) {
-      final VirtualFile child = current.findChild(TSLINT_JSON);
-      if (child != null) return child;
+      VirtualFile child = current.findChild(TSLINT_JSON);
+      if (child != null && child.isValid() && !child.isDirectory()) return child;
       current = current.getParent();
     }
     final File file = new File(SystemProperties.getUserHome());
