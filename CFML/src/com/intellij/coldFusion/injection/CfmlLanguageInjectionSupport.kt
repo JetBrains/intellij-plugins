@@ -19,7 +19,7 @@ class CfmlLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
 
   override fun isApplicableTo(host: PsiLanguageInjectionHost) =  (host is CfmlTagImpl && host.name != null && host.name.toLowerCase() == "cfquery")
 
-  override fun useDefaultInjector(host: PsiLanguageInjectionHost): Boolean = true
+  override fun useDefaultInjector(host: PsiLanguageInjectionHost): Boolean = false
 
   override fun getHelpId(): String? = null
 

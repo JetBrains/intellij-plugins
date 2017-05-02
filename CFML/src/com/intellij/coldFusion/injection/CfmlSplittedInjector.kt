@@ -32,7 +32,8 @@ class CfmlSplittedInjector(val myConfiguration: Configuration,
 
 
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, vararg splittedElements: PsiElement) {
-    val list = collectSplittedInjections(PsiTreeUtil.findCommonParent(*splittedElements)!!, *splittedElements)
+    val head = getHead(splittedElements.toList()) ?: return
+    val list = collectSplittedInjections(head, *splittedElements)
     if (list.isEmpty()) return
     val lang = list[0].second.language
     processInjection(lang!!, list, splittedElements[0].containingFile, registrar)
@@ -103,6 +104,13 @@ class CfmlSplittedInjector(val myConfiguration: Configuration,
       }
     }
     return null
+  }
+
+  private fun getHead(splittedElements: List<PsiElement>): PsiElement? {
+    return if (splittedElements.size == 1)
+      splittedElements.get(0).parent
+    else
+      PsiTreeUtil.findCommonParent(splittedElements)
   }
 
 }

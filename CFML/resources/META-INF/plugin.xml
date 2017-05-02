@@ -125,7 +125,7 @@
     <projectService serviceInterface="com.intellij.coldFusion.injection.CfmlSplittedInjectionManager"
                     serviceImplementation="com.intellij.coldFusion.injection.CfmlSplittedInjectionManager"/>
 
-    <multiHostInjector implementation="com.intellij.coldFusion.injection.CfmlSplittedMultiHostInjectorAdapter" order="first"/>
+    <multiHostInjector implementation="com.intellij.coldFusion.injection.CfmlSplittedMultiHostInjector" order="first"/>
   </extensions>
 
   <actions>

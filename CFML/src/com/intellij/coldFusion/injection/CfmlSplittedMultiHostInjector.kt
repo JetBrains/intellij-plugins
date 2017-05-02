@@ -11,12 +11,16 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiParameterizedCachedValue
 import com.intellij.psi.impl.source.tree.injected.MultiHostRegistrarImpl
-import com.intellij.psi.util.*
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.ParameterizedCachedValue
+import com.intellij.psi.util.PsiModificationTracker
+import java.util.*
 
 /**
  * @author Sergey Karashevich
  */
-class CfmlSplittedMultiHostInjectorAdapter(project: Project) : MultiHostInjector {
+class CfmlSplittedMultiHostInjector(project: Project) : MultiHostInjector {
 
   val splittedManager: CfmlSplittedInjectionManager = CfmlSplittedInjectionManager.getInstance(project)
 
@@ -31,8 +35,8 @@ class CfmlSplittedMultiHostInjectorAdapter(project: Project) : MultiHostInjector
     val project = containingFile.project
     val modificationCount = PsiManager.getInstance(project).modificationTracker.modificationCount
     val pair = getHeadAndSplittedElements(psiElement)
-    val head = pair.first
-    val splittedElements = pair.second
+    val head: PsiElement = pair.first
+    val splittedElements: Array<PsiElement> = pair.second
     val noInjectionTimestamp = head.getUserData(NO_SPLITTED_INJECTION_TIMESTAMP)
 
     val myMultiHostRegistrar: MultiHostRegistrarImpl?
@@ -68,15 +72,20 @@ class CfmlSplittedMultiHostInjectorAdapter(project: Project) : MultiHostInjector
   }
 
   private fun MultiHostRegistrarImpl.copyResult(multiHostRegistrarImpl: MultiHostRegistrarImpl) {
-    multiHostRegistrarImpl.result.forEach { place2psiFile ->  this.addToResults( place2psiFile.first, place2psiFile.second, multiHostRegistrarImpl) }
+    multiHostRegistrarImpl.result.forEach { place2psiFile ->
+      this.addToResults(place2psiFile.first, place2psiFile.second, multiHostRegistrarImpl)
+    }
   }
 
   private fun createCachedPsiElement2MultiHostRegistrar(project: Project): PsiParameterizedCachedValue<MultiHostRegistrarImpl, PsiElement> {
-    val result: ParameterizedCachedValue<MultiHostRegistrarImpl, PsiElement>? = CachedValuesManager.getManager(project).createParameterizedCachedValue(
+    val result: ParameterizedCachedValue<MultiHostRegistrarImpl, PsiElement>?
+      = CachedValuesManager.getManager(project).createParameterizedCachedValue(
       { context ->
         val containingFile = context.containingFile
         val pair = getHeadAndSplittedElements(context)
-        val registrar = if (pair.second.isEmpty()) null else getRegistrarWithLinkedSplittedElements(containingFile, containingFile.project, pair.first, pair.second)
+        val registrar = if (pair.second.isEmpty()) null
+        else getRegistrarWithLinkedSplittedElements(containingFile, containingFile.project, pair.first, pair.second)
+
         if (registrar != null)
           CachedValueProvider.Result.create<MultiHostRegistrarImpl>(registrar, PsiModificationTracker.MODIFICATION_COUNT,
                                                                     CfmlSplittedInjectionManager.getInstance(containingFile.project))
@@ -105,14 +114,35 @@ class CfmlSplittedMultiHostInjectorAdapter(project: Project) : MultiHostInjector
   }
 
   fun getHeadAndSplittedElements(context: PsiElement): Pair<PsiElement, Array<PsiElement>> {
-    val filteredElements: List<PsiElement>
-    if (context is CfmlTagImpl && context.name == "cfquery") {
-      filteredElements = PsiTreeUtil.collectElements(context, PsiElementFilter { element -> element is CfmlLeafPsiElement }).toList()
-    } else {
-      filteredElements = emptyList()
-    }
-    return Pair<PsiElement, Array<PsiElement>>(context, filteredElements.toTypedArray())
+    val head: PsiElement? = findHead(context) { it is CfmlTagImpl && it.name.toLowerCase() == "cfquery" }
+    val filteredChildren: Array<PsiElement> =
+      if (head != null)
+        filterChildren(head) { it is CfmlLeafPsiElement }
+      else
+        emptyArray()
+    return Pair<PsiElement, Array<PsiElement>>(head ?: context, filteredChildren)
+  }
 
+  //if there is no head checked by checker than return null
+  private fun findHead(start: PsiElement, checker: (PsiElement) -> Boolean): PsiElement? {
+    var psiElement = start
+    while (psiElement.parent != null && !checker.invoke(psiElement)) psiElement = psiElement.parent
+    if (checker.invoke(psiElement)) return psiElement
+    else return null
+  }
+
+  private fun filterChildren(root: PsiElement, filter: (PsiElement) -> Boolean): Array<PsiElement> {
+    val filteredList = ArrayList<PsiElement>()
+    root.firstChild.traverseAndConsume { if (filter.invoke(it)) filteredList.add(it) }
+    return filteredList.toTypedArray()
+  }
+
+  private fun PsiElement.traverseAndConsume(consumer: (PsiElement) -> Unit) {
+    var psiElement = this
+    while (psiElement.nextSibling != null) {
+      consumer.invoke(psiElement)
+      psiElement = psiElement.nextSibling
+    }
   }
 
   override fun elementsToInjectIn(): List<Class<out PsiElement>> = listOf(CfmlTagImpl::class.java)
