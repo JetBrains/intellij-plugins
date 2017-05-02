@@ -53,12 +53,12 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testNoConfig() throws Exception {
     doTest("noConfig", "noConfig/data.ts", false, true, null);
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: FatalError: Failed to load", false, true);
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file 'aaa' was not found.", false, true);
   }
 
   public void testBadConfig() throws Exception {
     doTest("badConfig", "badConfig/data.ts", false, true, null);
-    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: FatalError: Failed to load", false, true);
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: Config file 'aaa' was not found.", false, true);
   }
 
   public void testLineSeparatorsWin() throws Exception {
@@ -68,11 +68,9 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest, boolean copyConfig,
                       @SuppressWarnings("SameParameterValue") boolean useConfig, LineSeparator lineSeparator) throws IOException {
-    if (!myNodeLinterPackagePaths.checkPaths()) return;
-
     final TsLintState.Builder builder = new TsLintState.Builder()
-      .setNodePath(NodeJsInterpreterRef.create(myNodeLinterPackagePaths.getNodePath().getAbsolutePath()))
-      .setPackagePath(myNodeLinterPackagePaths.getPackagePath().getPath());
+      .setNodePath(NodeJsInterpreterRef.create(myNodeLinterPackageTestPaths.getNodePath().getAbsolutePath()))
+      .setPackagePath(myNodeLinterPackageTestPaths.getPackagePath().getPath());
 
     runTest(builder, copyConfig, useConfig, lineSeparator, filePathToTest, directoryToCopy + "/tslint.json");
   }
