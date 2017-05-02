@@ -1279,11 +1279,9 @@ class _CfmlLexer implements FlexLexer {
             myCurrentConfiguration.myBlockType = CfmlTokenTypes.SCRIPT_EXPRESSION;
             yybegin(YYINITIAL);
         } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfquery")) {
-            myCurrentConfiguration.myBlockType = CfmlElementTypes.SQL;
             myCurrentConfiguration.myArePoundsEvaluated++;
             yybegin(YYINITIAL);
         } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfqueryparam")) {
-            myCurrentConfiguration.myBlockType = CfmlElementTypes.SQL;
             yybegin(YYINITIAL);
         } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfoutput") ||
                    myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfmail")) {
@@ -1756,13 +1754,8 @@ class _CfmlLexer implements FlexLexer {
           case 85: break;
           case 35: 
             { String tagName = yytext().subSequence(1, yylength()).toString();
-    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName) &&  
-      (myCurrentConfiguration.myBlockType != CfmlElementTypes.SQL ||
-       !"cfqueryparam".equals(tagName)
-      );
-    if (startTemplateText) {
-      myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
-    }
+    boolean startTemplateText =  !"include".equalsIgnoreCase(tagName);
+    if (startTemplateText) myCurrentConfiguration.myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
     yypushback(yylength() - 1);
     return startTag();
             }

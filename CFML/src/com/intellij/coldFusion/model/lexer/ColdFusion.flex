@@ -88,11 +88,9 @@ import com.intellij.util.containers.Stack;
             myCurrentConfiguration.myBlockType = CfmlTokenTypes.SCRIPT_EXPRESSION;
             yybegin(YYINITIAL);
         } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfquery")) {
-            myCurrentConfiguration.myBlockType = CfmlElementTypes.SQL;
             myCurrentConfiguration.myArePoundsEvaluated++;
             yybegin(YYINITIAL);
         } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfqueryparam")) {
-            myCurrentConfiguration.myBlockType = CfmlElementTypes.SQL;
             yybegin(YYINITIAL);
         } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfoutput") ||
                    myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfmail")) {

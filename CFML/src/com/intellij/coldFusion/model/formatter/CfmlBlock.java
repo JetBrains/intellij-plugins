@@ -85,10 +85,6 @@ public class CfmlBlock extends TemplateLanguageBlock {
 
 
   protected List<Block> buildChildren() {
-    if (myNode.getElementType() == CfmlElementTypes.SQL) {
-      //toDO: build blocks for SQL and merge trees.
-    }
-
     return super.buildChildren();
   }
 
@@ -206,10 +202,8 @@ public class CfmlBlock extends TemplateLanguageBlock {
           IElementType prevBlockType = prevNode.getElementType();
           if (prevBlockType == CfscriptTokenTypes.L_CURLYBRACKET) {
             if (myNode.getElementType() == CfmlElementTypes.FUNCTION_DEFINITION &&
-                mySettings.METHOD_BRACE_STYLE == CommonCodeStyleSettings.NEXT_LINE_SHIFTED2) {
-              indent = Indent.getSpaceIndent(superSettings.getIndentSize(CfmlFileType.INSTANCE) * 2);
-            }
-            else if (mySettings.BRACE_STYLE == CommonCodeStyleSettings.NEXT_LINE_SHIFTED2) {
+                mySettings.METHOD_BRACE_STYLE == CommonCodeStyleSettings.NEXT_LINE_SHIFTED2 ||
+                mySettings.BRACE_STYLE == CommonCodeStyleSettings.NEXT_LINE_SHIFTED2) {
               indent = Indent.getSpaceIndent(superSettings.getIndentSize(CfmlFileType.INSTANCE) * 2);
             }
             else {
