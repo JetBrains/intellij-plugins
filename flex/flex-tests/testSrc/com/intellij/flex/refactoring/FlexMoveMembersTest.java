@@ -13,7 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersDialog;
+import com.intellij.lang.javascript.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersOptions;
 import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersProcessor;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
@@ -107,9 +107,9 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     throws Exception {
     final JSClassResolver resolver =
       JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
-    final JSClass sourceClass = (JSClass)resolver.findClassByQName(sourceClassName, JSMoveMembersDialog.getScope(myProject));
+    final JSClass sourceClass = (JSClass)resolver.findClassByQName(sourceClassName, ActionScriptMoveMembersDialog.getScope(myProject));
     assertNotNull("Class " + sourceClassName + " not found", sourceClass);
-    JSClass targetClass = (JSClass)resolver.findClassByQName(targetClassName, JSMoveMembersDialog.getScope(myProject));
+    JSClass targetClass = (JSClass)resolver.findClassByQName(targetClassName, ActionScriptMoveMembersDialog.getScope(myProject));
     assertNotNull("Class " + targetClassName + " not found", targetClass);
 
     final List<JSMemberInfo> memberInfos = new ArrayList<>();
@@ -125,7 +125,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
       memberInfo.setChecked(true);
     }
 
-    new JSMoveMembersProcessor(myProject, null, sourceClass, JSMoveMembersDialog.getScope(myProject), new JSMoveMembersOptions() {
+    new JSMoveMembersProcessor(myProject, null, sourceClass, ActionScriptMoveMembersDialog.getScope(myProject), new JSMoveMembersOptions() {
 
       @Override
       public JSAttributeListOwner[] getSelectedMembers() {

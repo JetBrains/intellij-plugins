@@ -19,7 +19,7 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatur
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterTableModel;
 import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantDialog;
-import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersDialog;
+import com.intellij.lang.javascript.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -135,7 +135,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   public void testMoveMembersTargetClass() throws Exception {
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
     PsiFile fragment =
-      JSMoveMembersDialog.createTargetClassField(myProject, "", JSMoveMembersDialog.getScope(myProject), myFile).getPsiFile();
+      ActionScriptMoveMembersDialog.createTargetClassField(myProject, "", ActionScriptMoveMembersDialog.getScope(myProject), myFile).getPsiFile();
     String[] included = new String[]{"Z111", "Z222"};
     String[] excluded = new String[]{"EventDispatcher", "int", "String", "uint", "Number", "public", "function", "while"};
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", BASE_PATH + getTestName(false) + ".txt");
@@ -145,7 +145,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   public void testMoveMembersTargetInnerClass() throws Exception {
     configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
     PsiFile fragment =
-      JSMoveMembersDialog.createTargetClassField(myProject, "", JSMoveMembersDialog.getScope(myProject), myFile).getPsiFile();
+      ActionScriptMoveMembersDialog.createTargetClassField(myProject, "", ActionScriptMoveMembersDialog.getScope(myProject), myFile).getPsiFile();
     String[] included = new String[]{"Inner"};
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, ArrayUtil.EMPTY_STRING_ARRAY, "Inner",
                              BASE_PATH + getTestName(false) + ".txt");
