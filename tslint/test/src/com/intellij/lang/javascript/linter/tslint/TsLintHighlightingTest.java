@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
@@ -68,25 +67,22 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest, boolean copyConfig,
                       @SuppressWarnings("SameParameterValue") boolean useConfig, LineSeparator lineSeparator) throws IOException {
-    final TsLintState.Builder builder = new TsLintState.Builder()
-      .setNodePath(NodeJsInterpreterRef.create(myNodeLinterPackageTestPaths.getNodePath().getAbsolutePath()))
-      .setPackagePath(myNodeLinterPackageTestPaths.getPackagePath().getPath());
-
-    runTest(builder, copyConfig, useConfig, lineSeparator, filePathToTest, directoryToCopy + "/tslint.json");
+    runTest(copyConfig, useConfig, lineSeparator, filePathToTest, directoryToCopy + "/tslint.json");
   }
 
-  private void runTest(TsLintState.Builder builder, boolean copyConfig, boolean useConfig, @Nullable LineSeparator lineSeparator,
+  private void runTest(boolean copyConfig, boolean useConfig, @Nullable LineSeparator lineSeparator,
                        String... filePathToTest) {
     final String[] paths = copyConfig ? filePathToTest : new String[]{filePathToTest[0]};
     final PsiFile[] files = myFixture.configureByFiles(paths);
     if (lineSeparator != null) {
       Arrays.stream(files).forEach(file -> ensureLineSeparators(file.getVirtualFile(), lineSeparator.getSeparatorString()));
     }
+    final TsLintConfiguration configuration = TsLintConfiguration.getInstance(getProject());
+    final TsLintState.Builder builder = new TsLintState.Builder(configuration.getExtendedState().getState());
     if (useConfig) {
       final String configPath = copyConfig ? FileUtil.toSystemDependentName(files[files.length - 1].getVirtualFile().getPath()) : "aaa";
       builder.setCustomConfigFileUsed(true).setCustomConfigFilePath(configPath);
     }
-    final TsLintConfiguration configuration = TsLintConfiguration.getInstance(getProject());
     configuration.setExtendedState(true, builder.build());
 
     myFixture.testHighlighting(true, false, true);
