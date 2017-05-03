@@ -61,7 +61,7 @@ class VueHighlightingLexerTest : VueLexerTest() {
 
 
     val settings = CodeStyleSettings()
-    CodeStyleSettingsManager.getInstance().temporarySettings = settings
+    CodeStyleSettingsManager.getInstance().setTemporarySettings(settings)
   }
 
   override fun tearDown() {
