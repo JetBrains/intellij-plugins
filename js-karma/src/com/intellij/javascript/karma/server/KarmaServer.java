@@ -12,7 +12,6 @@ import com.intellij.javascript.karma.execution.KarmaRunSettings;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.server.watch.KarmaWatcher;
 import com.intellij.javascript.karma.util.StreamEventListener;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -111,11 +110,6 @@ public class KarmaServer {
   }
 
   @NotNull
-  public NodeJsLocalInterpreter getNodeInterpreter() {
-    return myServerSettings.getNodeInterpreter();
-  }
-
-  @NotNull
   public KarmaServerRestarter getRestarter() {
     return myRestarter;
   }
@@ -152,7 +146,7 @@ public class KarmaServer {
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
-    //                                               serverSettings.getNodeInterpreter(), false);
+    //                                               serverSettings.getNodeInterpreter(), true);
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
@@ -315,6 +309,7 @@ public class KarmaServer {
     return formatUrl(path, false);
   }
 
+  @SuppressWarnings("SameParameterValue")
   @NotNull
   public String formatUrl(@NotNull String path) {
     return formatUrl(path, true);
@@ -355,7 +350,6 @@ public class KarmaServer {
       LOG.info("Disposing Karma server " + myProcessHashCode);
       myWatcher.stop();
       if (myCoveragePeer != null) {
-        myCoveragePeer.dispose();
         FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
       }
       if (myOnPortBoundCallbacks != null) {
@@ -367,5 +361,4 @@ public class KarmaServer {
       shutdown();
     }
   }
-
 }

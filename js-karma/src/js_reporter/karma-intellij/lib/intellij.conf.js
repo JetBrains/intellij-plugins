@@ -18,27 +18,26 @@ function configureDebug(config) {
   config.browserNoActivityTimeout = null;
   config.browsers = intellijUtil.isString(config.browserForDebugging) ? [config.browserForDebugging] : [];
   console.error('intellij: config.browsers = ' + JSON.stringify(config.browsers));
-  fixMochaTimeout(config);
-}
-
-function fixMochaTimeout(config) {
-  var client = config.client;
-  if (typeof client === 'undefined') {
-    config.client = client = {};
-  }
-  if (client === Object(client)) {
-    var mocha = client.mocha;
-    if (typeof mocha === 'undefined') {
-      client.mocha = mocha = {};
+  (function fixMochaTimeout() {
+    var client = config.client;
+    if (typeof client === 'undefined') {
+      config.client = client = {};
     }
-    if (mocha === Object(mocha)) {
-      mocha.timeout = 0;
+    if (client === Object(client)) {
+      var mocha = client.mocha;
+      if (typeof mocha === 'undefined') {
+        client.mocha = mocha = {};
+      }
+      if (mocha === Object(mocha)) {
+        mocha.timeout = 0;
+      }
     }
-  }
+  })();
 }
 
 module.exports = function (config) {
   var originalConfigModule = require(originalConfigPath);
+  IntellijCoverageReporter.preconfigureCoverage(config);
   originalConfigModule(config);
 
   var reporters = config.reporters;

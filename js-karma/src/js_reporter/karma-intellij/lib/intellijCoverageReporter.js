@@ -2,38 +2,54 @@ var cli = require('./intellijCli.js')
   , intellijUtil = require('./intellijUtil.js')
   , fs = require('fs')
   , path = require('path')
-  , EventEmitter = require('events').EventEmitter
-  , coveragePreprocessorName = 'coverage';
+  , LCOV_INFO = 'lcov.info';
+
+/**
+ * Preconfigures coverage if 'Run with coverage' action performed.
+ * The preconfigure config is passed to original karma config, so it's possible to  makes sense
+ * @param {Object} config
+ */
+function preconfigureCoverage(config) {
+  if (cli.isWithCoverage()) {
+    configureAngularCliCoverage(config);
+  }
+}
+
+function configureAngularCliCoverage(config) {
+  var angularCli = config.angularCli;
+  if (!angularCli) {
+    angularCli = {};
+    config.angularCli = angularCli;
+  }
+  angularCli.codeCoverage = true;
+  angularCli.sourcemaps = true;
+}
 
 /**
  * Configures coverage if 'Run with coverage' action performed
  * @param {Object} config
  */
 function configureCoverage(config) {
-  var karmaCoverageReporterName = 'coverage';
   var reporters = config.reporters || [];
   if (cli.isWithCoverage()) {
-    // Ensure 'coverage' reporter is specified, otherwise coverage preprocessor won't work:
-    //   https://github.com/karma-runner/karma-coverage/blob/v0.5.3/lib/preprocessor.js#L54
-    if (!isWebpackUsed(config) && reporters.indexOf(karmaCoverageReporterName) < 0) {
-      reporters.push(karmaCoverageReporterName);
-      console.log('IntelliJ integration enabled coverage by adding \'' + karmaCoverageReporterName + '\' reporter');
-      // 'coverage' reporter uses settings from 'config.coverageReporter'. If no settings set,
-      //    by default coverage report files will be stored inside project.
-      if (!config.hasOwnProperty('coverageReporter')) {
-        // 'coverage' reporter and 'config.coverageReporter' not configured =>
-        //    let's prevent generating default coverage report files in "coverage/" directory, since
-        //    it wasn't asked explicitly and the generated lcovonly file most likely is of no used
-        config.coverageReporter = {
-          type : 'lcovonly',
-          dir : path.join(cli.getCoverageTempDirPath(), 'unused'),
-          reporters: []
-        };
-      }
-    }
     reporters.push(IntellijCoverageReporter.reporterName);
+    var coverageReporter = config.coverageReporter;
+    if (!coverageReporter) {
+      coverageReporter = {reporters: []};
+      config.coverageReporter = coverageReporter;
+    }
+    else if (!coverageReporter.reporters) {
+      // https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md
+      // the trick from https://github.com/karma-runner/karma-coverage/blob/v1.1.1/lib/reporter.js#L53
+      coverageReporter.reporters = [coverageReporter];
+    }
+    coverageReporter.reporters.push({
+      type : 'lcovonly',
+      dir : path.join(cli.getCoverageTempDirPath())
+    });
   }
   else if (canCoverageBeDisabledSafely(config.coverageReporter)) {
+    var karmaCoverageReporterName = 'coverage';
     if (reporters.indexOf(karmaCoverageReporterName) >= 0) {
       reporters = intellijUtil.removeAll(reporters, karmaCoverageReporterName);
       console.log('IntelliJ integration disabled coverage for faster run and debug capabilities');
@@ -47,218 +63,132 @@ function configureCoverage(config) {
  * @returns {boolean} true if tests can be successfully run without coverage reporter and preprocessor
  */
 function canCoverageBeDisabledSafely(coverageReporter) {
-  return coverageReporter == null || (
+  return !coverageReporter || (
       !Object.prototype.hasOwnProperty.call(coverageReporter, 'instrumenter') &&
       !Object.prototype.hasOwnProperty.call(coverageReporter, 'instrumenters')
     );
 }
 
-function findLcovInfoFile(coverageDir, callback) {
-  var first = true;
-  fs.readdir(coverageDir, function(err, files) {
-    if (!err && files) {
-      files.forEach(function(fileName) {
-        var browserDir = path.join(coverageDir, fileName);
-        fs.stat(browserDir, function(err, stats) {
-          if (!err && stats && stats.isDirectory()) {
-            var lcovFilePath = path.join(browserDir, "lcov.info");
-            fs.stat(lcovFilePath, function(err, stats) {
-              if (!err && stats && stats.isFile()) {
-                if (first) {
-                  first = false;
-                  callback(lcovFilePath);
-                }
-              }
-            });
+function sendCoverageReportFile(filePath) {
+  intellijUtil.sendIntellijEvent('coverageFinished', filePath || '');
+}
+
+function IntellijCoverageReporter(config) {
+  this.adapters = [];
+  var initialCoverageReports;
+  this.onRunStart = function () {
+    initialCoverageReports = findCoverageReports(config);
+  };
+  this.onRunComplete = function () {
+    checkRepeatedlyUntilPassed(function (expired) {
+      var coverageReports = findCoverageReports(config);
+      var filePath = findModifiedCoverageReport(initialCoverageReports, coverageReports);
+      if (filePath) {
+        reportOnceModificationsSettleDown(filePath, coverageReports[filePath]);
+        return true;
+      }
+      if (expired) {
+        sendCoverageReportFile(null);
+      }
+      return false;
+    }, 100, 3000);
+  };
+}
+
+/**
+ * @param {Function} checkCallback
+ * @param {number} delay
+ * @param {number} expireTimeout
+ */
+function checkRepeatedlyUntilPassed(checkCallback, delay, expireTimeout) {
+  var startTime = new Date().getTime();
+  setTimeout(function f() {
+    if (new Date().getTime() - startTime > expireTimeout) {
+      checkCallback(true);
+    }
+    else if (!checkCallback(false)) {
+      setTimeout(f, delay);
+    }
+  }, delay);
+}
+
+function reportOnceModificationsSettleDown(filePath, mtime) {
+  checkRepeatedlyUntilPassed(function (expired) {
+    try {
+      var stat = fs.statSync(filePath);
+      if (stat && stat.isFile()) {
+        if (stat.mtime.getTime() === mtime.getTime()) {
+          sendCoverageReportFile(filePath);
+          return true;
+        }
+        else {
+          if (expired) {
+            sendCoverageReportFile(null);
           }
-        });
+          console.log('IntelliJ: ' + filePath + ' has been modified ' + stat.mtime + ', waiting until it settles down');
+          mtime = stat.mtime;
+          return false;
+        }
+      }
+    }
+    catch (e) {}
+    sendCoverageReportFile(null);
+    return true;
+  }, 500, 10000);
+}
+
+function findModifiedCoverageReport(initialCoverageInfo, coverageInfo) {
+  return Object.keys(coverageInfo).find(function (filePath) {
+    var initial_mtime = initialCoverageInfo[filePath];
+    var mtime = coverageInfo[filePath];
+    return !initial_mtime || initial_mtime.getTime() !== mtime.getTime();
+  });
+}
+
+function findCoverageReports(config) {
+  var coverageReports = {};
+  config.coverageReporter.reporters.forEach(function (reporter) {
+    findCoverageReportsInDirectory(reporter.dir || 'coverage', coverageReports);
+  });
+  findCoverageReportsInDirectory('coverage', coverageReports);
+  return coverageReports;
+}
+
+function findCoverageReportsInDirectory(coverageDir, coverageReports) {
+  try {
+    coverageDir = path.resolve(coverageDir);
+    var children = fs.readdirSync(coverageDir);
+    if (children) {
+      children.forEach(function (fileName) {
+        var filePath = path.join(coverageDir, fileName);
+        tryAddLcovInfo(filePath, coverageReports);
+        try {
+          var stats = fs.statSync(filePath);
+          if (stats && stats.isDirectory()) {
+            tryAddLcovInfo(path.join(filePath, LCOV_INFO), coverageReports);
+          }
+        }
+        catch (e) {}
       });
     }
-  });
+  }
+  catch (e) {}
 }
 
-/**
- * If webpack is used, coverage is configured in a different way:
- *  - no explicit 'coverage' reporter needed
- *  - no explicit 'coverage' preprocessor needed
- *
- * @param config karma config
- * @returns {boolean} true if webpack preprocessor is configured
- */
-function isWebpackUsed(config) {
-  return intellijUtil.isPreprocessorSpecified(config.preprocessors, 'webpack');
-}
-
-function createKarmaCoverageReporter(injector, emitter, config) {
-  try {
-    var karmaCoverageReporterName = 'reporter:coverage';
-    var locals = {
-      emitter: ['value', emitter],
-      config:  ['value', config]
-    };
-    var childInjector = injector.createChild([locals], [karmaCoverageReporterName]);
-    return childInjector.get(karmaCoverageReporterName);
-  }
-  catch (ex) {
-    return null;
-  }
-}
-
-function IntellijCoverageReporter(injector, config) {
-  var that = this;
-  var emitter = new EventEmitter();
-  var newConfig = {
-    coverageReporter : {
-      type : 'lcovonly',
-      dir : cli.getCoverageTempDirPath()
-    },
-    basePath : config.basePath
-  };
-
-  var karmaCoverageReporter = createKarmaCoverageReporter(injector, emitter, newConfig);
-  if (karmaCoverageReporter != null) {
-    that = karmaCoverageReporter;
-    init.call(karmaCoverageReporter, emitter, newConfig);
-  }
-  else {
-    console.warn("IDE coverage reporter is disabled");
-    this.adapters = [];
-  }
-  // Missing coverage preprocessor is a common mistake that results in empty coverage reports.
-  // Reporting such a mistake before actually running tests with coverage improves user experience.
-  var coveragePreprocessorSpecifiedInConfig = intellijUtil.isPreprocessorSpecified(config.preprocessors, coveragePreprocessorName) ||
-                                              isWebpackUsed(config);
-  IntellijCoverageReporter.reportCoverageStartupStatus(coveragePreprocessorSpecifiedInConfig, karmaCoverageReporter != null);
-  return that;
-}
-
-/**
- * Informs IDE about code coverage configuration correctness.
- * @param {boolean} coveragePreprocessorSpecifiedInConfig
- * @param {boolean} coverageReporterFound
- */
-IntellijCoverageReporter.reportCoverageStartupStatus = function (coveragePreprocessorSpecifiedInConfig,
-                                                                 coverageReporterFound) {
-  intellijUtil.sendIntellijEvent('coverageStartupStatus', {
-    coveragePreprocessorSpecifiedInConfig : coveragePreprocessorSpecifiedInConfig,
-    coverageReporterFound : coverageReporterFound
-  });
-};
-
-// invoked in context of original karmaCoverageReporter
-function init(emitter, rootConfig) {
-  var currentBrowser = null;
-
-  var superOnRunStart = this.onRunStart.bind(this);
-  this.onRunStart = function(browsers) {
-    currentBrowser = findBestBrowser(browsers);
-    var browserArray = [];
-    if (currentBrowser) {
-      browserArray = [currentBrowser];
-    }
-    superOnRunStart(browserArray);
-  };
-
-  if (typeof this.onBrowserStart === 'function') {
-    var superOnBrowserStart = this.onBrowserStart.bind(this);
-    this.onBrowserStart = function(browser) {
-      if (browser === currentBrowser) {
-        superOnBrowserStart.apply(this, arguments);
-      }
-    };
-  }
-
-  var superOnSpecComplete = this.onSpecComplete.bind(this);
-  this.onSpecComplete = function(browser/*, result*/) {
-    if (browser === currentBrowser) {
-      superOnSpecComplete.apply(this, arguments);
-    }
-  };
-
-  var superOnBrowserComplete = this.onBrowserComplete.bind(this);
-  this.onBrowserComplete = function(browser/*, result*/) {
-    if (browser === currentBrowser && currentBrowser) {
-      currentBrowser.argumentsForOnBrowserComplete = arguments;
-    }
-  };
-
-  var superOnRunComplete = this.onRunComplete.bind(this);
-  this.onRunComplete = function (browsers/*, results*/) {
-    var found = currentBrowser && containsBrowser(browsers, currentBrowser);
-    if (found) {
-      // no need in mering 'onBrowserComplete' anymore
-      // get rid of 'argumentsForOnBrowserComplete'
-      if (currentBrowser.argumentsForOnBrowserComplete) {
-        superOnBrowserComplete.apply(this, currentBrowser.argumentsForOnBrowserComplete);
-      }
-      superOnRunComplete([currentBrowser]);
-
-      var done = function() {
-        findLcovInfoFile(rootConfig.coverageReporter.dir, function(lcovFilePath) {
-          intellijUtil.sendIntellijEvent('coverageFinished', lcovFilePath);
-        });
-      };
-
-      // we need a better way of setting custom 'fileWritingFinished'
-      if (typeof this.onExit === 'function') {
-        this.onExit(done);
-      }
-      else {
-        // to keep backward compatibility
-        emitter.emit('exit', done);
+function tryAddLcovInfo(filePath, coverageReports) {
+  if (path.basename(filePath) === LCOV_INFO) {
+    try {
+      var stat = fs.statSync(filePath);
+      if (stat && stat.isFile()) {
+        coverageReports[filePath] = stat.mtime;
       }
     }
-  };
-}
-
-function findBestBrowser(browsers) {
-  if (browsers.length <= 1) {
-    return getAnyBrowser(browsers);
+    catch (e) {}
   }
-  var browserNamesInPreferredOrder = ['Chrome ', 'Firefox ', 'Safari ', 'Opera '];
-  var len = browserNamesInPreferredOrder.length;
-  for (var i = 0; i < len; i++) {
-    var browser = findBrowserByName(browsers, browserNamesInPreferredOrder[i]);
-    if (browser) {
-      return browser;
-    }
-  }
-  return getAnyBrowser(browsers);
 }
-
-function getAnyBrowser(browsers) {
-  var result = null;
-  browsers.forEach(function (browser) {
-    if (result == null) {
-      result = browser;
-    }
-  });
-  return result;
-}
-
-function containsBrowser(browsers, targetBrowser) {
-  var result = false;
-  browsers.forEach(function (browser) {
-    if (browser === targetBrowser) {
-      result = true;
-    }
-  });
-  return result;
-}
-
-function findBrowserByName(browsers, browserNamePrefix) {
-  var result = null;
-  browsers.forEach(function (browser) {
-    var browserName = browser.name;
-    if (result == null && intellijUtil.isString(browserName) && browserName.indexOf(browserNamePrefix) === 0) {
-      result = browser;
-    }
-  });
-  return result;
-}
-
-IntellijCoverageReporter.$inject = ['injector', 'config'];
+IntellijCoverageReporter.$inject = ['config'];
 IntellijCoverageReporter.reporterName = 'intellijCoverage_33e284dac2b015a9da50d767dc3fa58a';
 IntellijCoverageReporter.configureCoverage = configureCoverage;
+IntellijCoverageReporter.preconfigureCoverage = preconfigureCoverage;
 
 module.exports = IntellijCoverageReporter;

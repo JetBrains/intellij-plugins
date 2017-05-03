@@ -1,39 +1,40 @@
 package com.intellij.javascript.karma.coverage;
 
-import com.intellij.coverage.*;
-import com.intellij.execution.*;
+import com.intellij.coverage.CoverageDataManager;
+import com.intellij.coverage.CoverageExecutor;
+import com.intellij.coverage.CoverageHelper;
+import com.intellij.coverage.CoverageRunnerData;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
-import com.intellij.execution.process.NopProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.GenericProgramRunner;
-import com.intellij.execution.runners.RunContentBuilder;
-import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
-import com.intellij.javascript.karma.execution.KarmaRunProfileState;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.ObjectUtils;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaCoverageProgramRunner extends GenericProgramRunner {
 
   private static final Logger LOG = Logger.getInstance(KarmaCoverageProgramRunner.class);
@@ -58,110 +59,85 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   @Override
   protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull final ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    KarmaRunProfileState runProfileState = ObjectUtils.tryCast(state, KarmaRunProfileState.class);
-    if (runProfileState == null) {
+    ExecutionResult executionResult = state.execute(env.getExecutor(), this);
+    if (executionResult == null) {
       return null;
     }
-    final KarmaServer server = runProfileState.getServerOrStart(env.getExecutor());
-    if (server == null) {
-      return null;
+    RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, env);
+    KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
+    if (consoleView == null) {
+      return descriptor;
     }
-    KarmaCoveragePeer coveragePeer = getCoveragePeer(server);
-    KarmaCoverageStartupStatus status = coveragePeer.getStartupStatus();
-    if (status != null) {
-      if (status.isSuccessful()) {
-        return executeAfterSuccessfulInitialization(runProfileState, env, server);
-      }
-      return showWarningConsole(status, server, env);
-    }
-    coveragePeer.onCoverageInitialized(new KarmaCoverageInitializationCallback() {
-      @Override
-      public void onCoverageInitialized(@NotNull KarmaCoverageStartupStatus startupStatus) {
-        RunnerAndConfigurationSettings configuration = env.getRunnerAndConfigurationSettings();
-        if (configuration != null) {
-          ProgramRunnerUtil.executeConfiguration(env, true, true);
-        }
-      }
-    });
-    return showWarningConsole(null, server, env);
-  }
-
-  @NotNull
-  private static KarmaCoveragePeer getCoveragePeer(@NotNull KarmaServer server) {
-    KarmaCoveragePeer coveragePeer = server.getCoveragePeer();
-    if (coveragePeer == null) {
-      throw new RuntimeException("Coverage peer should be initialized");
-    }
-    return coveragePeer;
-  }
-
-  private static RunContentDescriptor showWarningConsole(@Nullable KarmaCoverageStartupStatus status,
-                                                         @NotNull KarmaServer server,
-                                                         @NotNull ExecutionEnvironment env) {
-    if (status != null && status.isKarmaCoveragePackageNeededToBeInstalled()) {
-      server.getRestarter().requestRestart();
-    }
-    ExecutionConsole console = new KarmaCoverageConfigurationErrorConsole(env.getProject(), server, status);
-    final ProcessHandler processHandler = new NopProcessHandler();
-    processHandler.addProcessListener(new ProcessAdapter() {
-      @Override
-      public void startNotified(ProcessEvent event) {
-        processHandler.destroyProcess();
-      }
-    });
-    DefaultExecutionResult executionResult = new DefaultExecutionResult(console, processHandler);
-    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
-    return contentBuilder.showRunContent(env.getContentToReuse());
-  }
-
-  @NotNull
-  private static RunContentDescriptor executeAfterSuccessfulInitialization(@NotNull KarmaRunProfileState state,
-                                                                           @NotNull ExecutionEnvironment env,
-                                                                           @NotNull KarmaServer server) throws ExecutionException {
+    KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (server.areBrowsersReady()) {
-      return doCoverage(state, env, server);
+      listenForCoverageFile(env, server);
     }
-    ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
-    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
-    final RunContentDescriptor descriptor = contentBuilder.showRunContent(env.getContentToReuse());
-    server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
+    else {
+      server.onBrowsersReady(() -> ExecutionUtil.restartIfActive(descriptor));
+    }
     return descriptor;
   }
 
-  @NotNull
-  private static RunContentDescriptor doCoverage(@NotNull KarmaRunProfileState state,
-                                                 @NotNull final ExecutionEnvironment env,
-                                                 @NotNull final KarmaServer server) throws ExecutionException {
-    final KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
+  private static void listenForCoverageFile(@NotNull ExecutionEnvironment env,
+                                            @NotNull KarmaServer server) throws ExecutionException {
+    KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);
-    final String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
+    String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
     if (coverageFilePath != null) {
-      KarmaCoveragePeer coveragePeer = getCoveragePeer(server);
+      KarmaCoveragePeer coveragePeer = server.getCoveragePeer();
+      Objects.requireNonNull(coveragePeer);
       coveragePeer.startCoverageSession(new KarmaCoverageSession() {
         @Override
-        public void onCoverageSessionFinished(@NotNull final File lcovFile) {
+        public void onCoverageSessionFinished(@Nullable File lcovFile) {
+          LOG.info("Processing karma coverage file: " + lcovFile);
           UIUtil.invokeLaterIfNeeded(() -> {
-            try {
-              FileUtil.copy(lcovFile, new File(coverageFilePath));
+            Project project = env.getProject();
+            if (project.isDisposed()) return;
+            if (lcovFile != null) {
+              processLcovInfoFile(lcovFile, coverageFilePath, env, server, runConfiguration);
             }
-            catch (IOException e) {
-              LOG.error("Can't copy files from " + lcovFile.getAbsolutePath() + " to " + coverageFilePath, e);
-              return;
-            }
-            RunnerSettings runnerSettings = env.getRunnerSettings();
-            if (runnerSettings != null) {
-              KarmaCoverageRunner coverageRunner = KarmaCoverageRunner.getInstance();
-              coverageRunner.setKarmaServer(server);
-              CoverageDataManager.getInstance(env.getProject()).processGatheredCoverage(runConfiguration, runnerSettings);
+            else {
+              int response = Messages.showYesNoDialog(project,
+                                                      "Cannot find karma test coverage report - lcov.info",
+                                                      "Missing Karma Coverage Report",
+                                                      "Select lcov.info", "Cancel",
+                                                      Messages.getWarningIcon());
+              if (response == Messages.YES) {
+                FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor(),
+                                       project,
+                                       null,
+                                       null, file -> {
+                    File selected = file != null ? VfsUtilCore.virtualToIoFile(file) : null;
+                    if (selected != null) {
+                      processLcovInfoFile(selected, coverageFilePath, env, server, runConfiguration);
+                    }
+                  });
+              }
             }
           });
         }
       });
     }
-    ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
-    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
-    return contentBuilder.showRunContent(env.getContentToReuse());
   }
 
+  private static void processLcovInfoFile(@NotNull File lcovInfoFile,
+                                          @NotNull String toCoverageFilePath,
+                                          @NotNull ExecutionEnvironment env,
+                                          @NotNull KarmaServer karmaServer,
+                                          @NotNull KarmaRunConfiguration runConfiguration) {
+    try {
+      FileUtil.copy(lcovInfoFile, new File(toCoverageFilePath));
+    }
+    catch (IOException e) {
+      LOG.error("Cannot copy " + lcovInfoFile.getAbsolutePath() + " to " + toCoverageFilePath, e);
+      return;
+    }
+    RunnerSettings runnerSettings = env.getRunnerSettings();
+    if (runnerSettings != null) {
+      KarmaCoverageRunner coverageRunner = KarmaCoverageRunner.getInstance();
+      coverageRunner.setKarmaServer(karmaServer);
+      CoverageDataManager.getInstance(env.getProject()).processGatheredCoverage(runConfiguration, runnerSettings);
+    }
+  }
 }
