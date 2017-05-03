@@ -259,7 +259,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       }
       else if (newValue == State.SUCCEEDED) {
         getWebViewGuaranteed().getEngine()
-          .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
+          .executeScript("document.documentElement.scrollTop = ({} || document.body).scrollTop = " + myScrollY);
       }
     }
   }
