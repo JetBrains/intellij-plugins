@@ -2,7 +2,8 @@ var cli = require('./intellijCli.js')
   , intellijUtil = require('./intellijUtil.js')
   , fs = require('fs')
   , path = require('path')
-  , LCOV_INFO = 'lcov.info';
+  , LCOV_FILE_NAMES = ['lcov.info', 'lcovonly']
+  , extraLcovLocations = ['coverage'];
 
 /**
  * Preconfigures coverage if 'Run with coverage' action performed.
@@ -47,6 +48,17 @@ function configureCoverage(config) {
       type : 'lcovonly',
       dir : path.join(cli.getCoverageTempDirPath())
     });
+    if (config.karmaTypescriptConfig) {
+      var reports = config.karmaTypescriptConfig.reports;
+      if (!reports) {
+        reports = {};
+        config.karmaTypescriptConfig.reports = reports;
+      }
+      if (!reports.lcovonly) {
+        reports.lcovonly = cli.getCoverageTempDirPath();
+      }
+      extraLcovLocations.push(reports.lcovonly);
+    }
   }
   else if (canCoverageBeDisabledSafely(config.coverageReporter)) {
     var karmaCoverageReporterName = 'coverage';
@@ -150,7 +162,9 @@ function findCoverageReports(config) {
   config.coverageReporter.reporters.forEach(function (reporter) {
     findCoverageReportsInDirectory(reporter.dir || 'coverage', coverageReports);
   });
-  findCoverageReportsInDirectory('coverage', coverageReports);
+  extraLcovLocations.forEach(function (location) {
+    findCoverageReportsInDirectory(location, coverageReports);
+  });
   return coverageReports;
 }
 
@@ -165,7 +179,9 @@ function findCoverageReportsInDirectory(coverageDir, coverageReports) {
         try {
           var stats = fs.statSync(filePath);
           if (stats && stats.isDirectory()) {
-            tryAddLcovInfo(path.join(filePath, LCOV_INFO), coverageReports);
+            LCOV_FILE_NAMES.forEach(function (name) {
+              tryAddLcovInfo(path.join(filePath, name), coverageReports);
+            });
           }
         }
         catch (e) {}
@@ -176,7 +192,7 @@ function findCoverageReportsInDirectory(coverageDir, coverageReports) {
 }
 
 function tryAddLcovInfo(filePath, coverageReports) {
-  if (path.basename(filePath) === LCOV_INFO) {
+  if (LCOV_FILE_NAMES.indexOf(path.basename(filePath)) >= 0) {
     try {
       var stat = fs.statSync(filePath);
       if (stat && stat.isFile()) {
