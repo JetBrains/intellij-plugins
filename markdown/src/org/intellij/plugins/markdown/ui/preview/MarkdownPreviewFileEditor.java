@@ -14,6 +14,7 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
@@ -31,6 +32,9 @@ import org.intellij.plugins.markdown.settings.MarkdownPreviewSettings;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
+import org.owasp.html.Sanitizers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,6 +47,21 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
 
   private final static long RENDERING_DELAY_MS = 20L;
+
+  private final static NotNullLazyValue<PolicyFactory> SANITIZER_VALUE = new NotNullLazyValue<PolicyFactory>() {
+    @NotNull
+    @Override
+    protected PolicyFactory compute() {
+      return Sanitizers.BLOCKS
+        .and(Sanitizers.FORMATTING)
+        .and(Sanitizers.IMAGES)
+        .and(Sanitizers.LINKS)
+        .and(Sanitizers.TABLES)
+        .and(new HtmlPolicyBuilder()
+               .allowElements("body")
+               .allowAttributes(HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME()).globally().toFactory());
+    }
+  };
   @NotNull
   private final JPanel myHtmlPanelWrapper;
   @NotNull
@@ -210,7 +229,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
         mySwingAlarm.cancelRequest(myLastHtmlOrRefreshRequest);
       }
       myLastHtmlOrRefreshRequest = () -> {
-        final String currentHtml = "<html><head></head>" + html + "</html>";
+        final String currentHtml = "<html><head></head>" + SANITIZER_VALUE.getValue().sanitize(html) + "</html>";
         if (!currentHtml.equals(myLastRenderedHtml)) {
           myLastRenderedHtml = currentHtml;
           myPanel.setHtml(myLastRenderedHtml);
