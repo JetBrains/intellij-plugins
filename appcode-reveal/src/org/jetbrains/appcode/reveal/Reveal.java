@@ -115,7 +115,7 @@ public class Reveal {
   }
 
   private static void refreshRevealPostOnePointSix(@NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
-    // Reveal 1.6 and later bundle the refresh script with the application — execute it using osascript
+    // Reveal 1.6 and later bundle the refresh script with the application - execute it using osascript
     File inspectionScript = getRevealInspectionScript(revealBundle);
     if (inspectionScript == null) {
       throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found.");
