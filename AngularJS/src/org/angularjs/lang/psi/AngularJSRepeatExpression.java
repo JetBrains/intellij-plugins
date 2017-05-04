@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.JSParenthesizedExpression;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +21,8 @@ import java.util.Collections;
  * @author Dennis.Ushakov
  */
 public class AngularJSRepeatExpression extends JSExpressionImpl {
-  public AngularJSRepeatExpression(ASTNode node) {
-    super(node);
+  public AngularJSRepeatExpression(IElementType elementType) {
+    super(elementType);
   }
 
   public Collection<JSDefinitionExpression> getDefinitions() {

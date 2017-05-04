@@ -1,14 +1,13 @@
 package org.angularjs.lang.psi;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.search.PsiElementProcessor;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.lang.parser.AngularJSElementTypes;
@@ -24,8 +23,8 @@ import java.util.List;
 public class AngularJSMessageFormatExpression extends JSExpressionImpl {
   private static final Logger LOG = Logger.getInstance("#org.angularjs.lang.psi.AngularJSMessageFormatExpression");
 
-  public AngularJSMessageFormatExpression(ASTNode node) {
-    super(node);
+  public AngularJSMessageFormatExpression(IElementType elementType) {
+    super(elementType);
   }
 
   @Override

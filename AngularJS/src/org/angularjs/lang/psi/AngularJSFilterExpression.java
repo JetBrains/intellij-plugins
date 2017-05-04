@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Dennis.Ushakov
  */
 public class AngularJSFilterExpression extends JSExpressionImpl implements JSCallExpression {
-  public AngularJSFilterExpression(ASTNode node) {
-    super(node);
+  public AngularJSFilterExpression(IElementType elementType) {
+    super(elementType);
   }
 
   public static boolean isFilterNameRef(PsiReference ref, PsiElement parent) {

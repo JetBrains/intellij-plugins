@@ -4,10 +4,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.lang.parser.AngularJSMessageFormatParser;
 import org.angularjs.lang.psi.AngularJSElementVisitor;
@@ -36,7 +34,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
   @Override
   public void visitMessageFormatExpression(@NotNull final AngularJSMessageFormatExpression expression) {
     final AngularJSMessageFormatParser.ExtensionType type = expression.getExtensionType();
-    if (type == null) myHolder.createErrorAnnotation(expression, "missing or unknown message format extension");// will not happen, but
+    if (type == null) myHolder.createErrorAnnotation((PsiElement)expression, "missing or unknown message format extension");// will not happen, but
     final List<PsiElement> elements = expression.getSelectionKeywordElements();
     final List<String> selectionKeywords = ContainerUtil.map(elements, element -> element.getText());
 
@@ -118,7 +116,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
       if (!requiredKeywords.isEmpty()) {
         for (String requiredKeyword : requiredKeywords) {
           if (!selectionKeywords.contains(requiredKeyword)) {
-            myHolder.createErrorAnnotation(expression, "Missing required selection keyword '" + requiredKeyword + "'");
+            myHolder.createErrorAnnotation((PsiElement)expression, "Missing required selection keyword '" + requiredKeyword + "'");
           }
         }
       }
