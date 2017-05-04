@@ -169,11 +169,17 @@ function findModifiedCoverageReport(initialCoverageInfo, coverageInfo) {
 }
 
 function findCoverageReports(config) {
-  var coverageReports = {};
+  var locations = {};
   config.coverageReporter.reporters.forEach(function (reporter) {
-    findCoverageReportsInDirectory(reporter.dir || 'coverage', coverageReports);
+    if (reporter.dir) {
+      locations[reporter.dir] = true;
+    }
   });
   extraLcovLocations.forEach(function (location) {
+    locations[location] = true;
+  });
+  var coverageReports = {};
+  Object.keys(locations).forEach(function (location) {
     findCoverageReportsInDirectory(location, coverageReports);
   });
   return coverageReports;
