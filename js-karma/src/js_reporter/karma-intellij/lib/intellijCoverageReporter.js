@@ -48,17 +48,7 @@ function configureCoverage(config) {
       type : 'lcovonly',
       dir : path.join(cli.getCoverageTempDirPath())
     });
-    if (config.karmaTypescriptConfig) {
-      var reports = config.karmaTypescriptConfig.reports;
-      if (!reports) {
-        reports = {};
-        config.karmaTypescriptConfig.reports = reports;
-      }
-      if (!reports.lcovonly) {
-        reports.lcovonly = cli.getCoverageTempDirPath();
-      }
-      extraLcovLocations.push(reports.lcovonly);
-    }
+    configureKarmaTypeScript(config);
   }
   else if (canCoverageBeDisabledSafely(config.coverageReporter)) {
     var karmaCoverageReporterName = 'coverage';
@@ -68,6 +58,27 @@ function configureCoverage(config) {
     }
   }
   config.reporters = reporters;
+}
+
+function configureKarmaTypeScript(config) {
+  var reporters = config.reporters || [];
+  var frameworks = config.frameworks || [];
+  if (reporters.indexOf('karma-typescript') >= 0 || frameworks.indexOf('karma-typescript') >= 0) {
+    if (!config.karmaTypescriptConfig) {
+      config.karmaTypescriptConfig = {};
+    }
+  }
+  if (config.karmaTypescriptConfig) {
+    var reports = config.karmaTypescriptConfig.reports;
+    if (!reports) {
+      reports = {};
+      config.karmaTypescriptConfig.reports = reports;
+    }
+    if (!reports.lcovonly) {
+      reports.lcovonly = cli.getCoverageTempDirPath();
+    }
+    extraLcovLocations.push(reports.lcovonly);
+  }
 }
 
 /**
