@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.frameworks.jquery.JQueryCssLanguage;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
@@ -232,6 +233,9 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   private static String getPropertyName(PsiElement decorator, String name) {
     final JSProperty selector = getProperty(decorator, name);
     final JSExpression value = selector != null ? selector.getValue() : null;
+    if (value instanceof JSBinaryExpression) {
+      return JSInjectionController.getInjectionText(value);
+    }
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
       return AngularJSIndexingHandler.unquote(value);
     }

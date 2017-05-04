@@ -834,6 +834,14 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testSelectorConcatenationList() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("material.html", "angular2.js", "material2.js");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "md-raised-button", "mat-raised-button");
+    });
+  }
+
   public void testComplexSelectorList2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.js");
