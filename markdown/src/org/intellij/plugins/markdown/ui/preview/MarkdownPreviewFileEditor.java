@@ -48,18 +48,29 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   private final static long RENDERING_DELAY_MS = 20L;
 
-  private final static NotNullLazyValue<PolicyFactory> SANITIZER_VALUE = new NotNullLazyValue<PolicyFactory>() {
+  final static NotNullLazyValue<PolicyFactory> SANITIZER_VALUE = new NotNullLazyValue<PolicyFactory>() {
     @NotNull
     @Override
     protected PolicyFactory compute() {
       return Sanitizers.BLOCKS
         .and(Sanitizers.FORMATTING)
-        .and(Sanitizers.IMAGES)
-        .and(Sanitizers.LINKS)
+        .and(new HtmlPolicyBuilder()
+               .allowUrlProtocols("file", "http", "https").allowElements("img")
+               .allowAttributes("alt", "src", "title").onElements("img")
+               .allowAttributes("border", "height", "width").onElements("img")
+               .toFactory())
+        .and(new HtmlPolicyBuilder()
+               .allowUrlProtocols("file", "http", "https", "mailto").allowElements("a")
+               .allowAttributes("href", "title").onElements("a")
+               .toFactory())
         .and(Sanitizers.TABLES)
         .and(new HtmlPolicyBuilder()
-               .allowElements("body")
-               .allowAttributes(HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME()).globally().toFactory());
+               .allowElements("body", "pre")
+               .allowAttributes(HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME()).globally().toFactory())
+        .and(new HtmlPolicyBuilder()
+               .allowElements("code", "tr")
+               .allowAttributes("class").onElements("code", "tr")
+               .toFactory());
     }
   };
   @NotNull
