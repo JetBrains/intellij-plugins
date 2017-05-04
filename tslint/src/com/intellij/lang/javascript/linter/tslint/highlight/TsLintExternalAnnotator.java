@@ -141,11 +141,13 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   }
 
   public List<JSLinterError> filterResultByFile(@NotNull TsLinterInput collectedInfo, List<TsLinterError> annotationErrors) {
+    VirtualFile file = collectedInfo.getVirtualFile();
+
     return annotationErrors.stream().filter(el -> {
         String path = el.getAbsoluteFilePath();
         if (path == null) return true;
         VirtualFile candidate = LocalFileSystem.getInstance().findFileByPath(path);
-        if (candidate == null || collectedInfo.getVirtualFile().equals(candidate)) {
+      if (candidate == null || file.equals(candidate)) {
           return true;
         }
 
