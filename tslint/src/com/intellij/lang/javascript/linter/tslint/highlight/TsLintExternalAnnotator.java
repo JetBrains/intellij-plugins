@@ -27,6 +27,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -127,12 +129,28 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     if (!annotationErrors.isEmpty()) {
       final Optional<TsLinterError> globalError = annotationErrors.stream().filter(error -> error.isGlobal()).findFirst();
       if (globalError.isPresent()) {
-        final JSLinterAnnotationResult<TsLintState> annotation = createGlobalErrorMessage(collectedInfo, config, globalError.get().getDescription());
+        final JSLinterAnnotationResult<TsLintState> annotation =
+          createGlobalErrorMessage(collectedInfo, config, globalError.get().getDescription());
         if (annotation != null) return annotation;
       }
     }
 
-    return JSLinterAnnotationResult.createLinterResult(collectedInfo, ContainerUtil.newArrayList(annotationErrors), config);
+    List<JSLinterError> result = filterResultByFile(collectedInfo, annotationErrors);
+
+    return JSLinterAnnotationResult.createLinterResult(collectedInfo, result, config);
+  }
+
+  public List<JSLinterError> filterResultByFile(@NotNull TsLinterInput collectedInfo, List<TsLinterError> annotationErrors) {
+    return annotationErrors.stream().filter(el -> {
+        String path = el.getAbsoluteFilePath();
+        if (path == null) return true;
+        VirtualFile candidate = LocalFileSystem.getInstance().findFileByPath(path);
+        if (candidate == null || collectedInfo.getVirtualFile().equals(candidate)) {
+          return true;
+        }
+
+        return false;
+      }).collect(Collectors.toList());
   }
 
   @Nullable

@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +90,8 @@ public final class TsLintOutputJsonParser {
 
     JsonElement element = object.get(FIX_PROPERTY);
 
-    result.add(new TsLinterError(myPath,
+    String filePath = name.getAsString();
+    result.add(new TsLinterError(StringUtil.isEmpty(filePath) ? myPath : filePath,
                                  start.getFirst(),
                                  start.getSecond(),
                                  end.getFirst(),
