@@ -543,6 +543,10 @@ public class VmService extends VmServiceBase {
         return;
       }
     }
+    if (consumer instanceof ServiceExtensionConsumer) {
+      ((ServiceExtensionConsumer) consumer).received(json);
+      return;
+    }
     logUnknownResponse(consumer, json);
   }
 }
