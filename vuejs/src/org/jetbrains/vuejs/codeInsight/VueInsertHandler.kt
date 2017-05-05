@@ -6,7 +6,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
-import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ImportType
+import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ImportExportType
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
@@ -46,7 +46,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (components.findProperty(name) != null || components.findProperty(capitalizedName) != null) return
     val newProperty = (JSChangeUtil.createExpressionWithContext("{ $capitalizedName }", obj)!!.psi as JSObjectLiteralExpression).firstProperty!!
     addProperty(newProperty, components)
-    ES6ImportPsiUtil.insertJSImport(content, capitalizedName, ImportType.DEFAULT, importedFile, context.editor)
+    ES6ImportPsiUtil.insertJSImport(content, capitalizedName, ImportExportType.DEFAULT, importedFile, context.editor)
   }
 
   private fun shouldHandleXmlInsert(context: InsertionContext): Boolean {
