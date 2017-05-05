@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex;
 
+import com.intellij.execution.RunManager;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -218,7 +219,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
   }
 
   public static void createRunConfiguration(final Module module, final FlexBuildConfiguration bc) {
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
+    final RunManager runManager = RunManagerEx.getInstance(module.getProject());
 
     final List<RunConfiguration> existingConfigurations = runManager.getConfigurationsList(FlashRunConfigurationType.getInstance());
     for (RunConfiguration configuration : existingConfigurations) {

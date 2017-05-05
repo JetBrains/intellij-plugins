@@ -3,10 +3,7 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.CommonBundle;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.compiler.options.CompileStepBeforeRunNoErrorCheck;
-import com.intellij.execution.CantRunException;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.RunManagerEx;
-import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.*;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.process.ProcessHandler;
@@ -652,7 +649,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static void checkMakeBeforeRunEnabled(final Project project, final RunProfile runProfile) {
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
+    final RunManager runManager = RunManagerEx.getInstance(project);
     int count =
       RunManagerEx.getTasksCount(project, (RunConfiguration)runProfile, CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
     if (count == 0) {

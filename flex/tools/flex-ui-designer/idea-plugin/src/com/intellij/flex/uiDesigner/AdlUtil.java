@@ -62,9 +62,8 @@ final class AdlUtil {
   // http://kb2.adobe.com/cps/407/kb407625.html
   public static void runDebugger(final Module module, final Runnable postTask) throws ExecutionException {
     final Project project = module.getProject();
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
     final RunnerAndConfigurationSettings settings =
-      runManager.createConfiguration("FlashUIDesigner", RemoteFlashRunConfigurationType.getFactory());
+      RunManager.getInstance(project).createConfiguration("FlashUIDesigner", RemoteFlashRunConfigurationType.getFactory());
 
     final RemoteFlashRunConfiguration configuration = (RemoteFlashRunConfiguration)settings.getConfiguration();
     RunManagerEx.disableTasks(project, settings.getConfiguration(), CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
