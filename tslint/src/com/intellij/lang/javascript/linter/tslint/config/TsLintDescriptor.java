@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.config;
 
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterDescriptor;
@@ -11,6 +12,12 @@ import org.jetbrains.annotations.NotNull;
  * @author Irina.Chernushina on 11/24/2016.
  */
 public final class TsLintDescriptor extends JSLinterDescriptor {
+
+  @NotNull
+  @Override
+  public String getDisplayName() {
+    return JSBundle.message("settings.javascript.linters.tslint.configurable.name");
+  }
 
   @Override
   public String packageName() {

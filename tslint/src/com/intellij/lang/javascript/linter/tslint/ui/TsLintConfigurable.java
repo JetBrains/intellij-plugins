@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
 import com.intellij.lang.javascript.linter.JSLinterConfigurable;
@@ -45,7 +46,7 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
   @Nls
   @Override
   public String getDisplayName() {
-    return "TSLint";
+    return JSBundle.message("settings.javascript.linters.tslint.configurable.name");
   }
 
   @Override
