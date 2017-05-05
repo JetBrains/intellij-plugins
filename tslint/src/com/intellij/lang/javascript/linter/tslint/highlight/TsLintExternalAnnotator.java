@@ -26,8 +26,8 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -141,18 +142,18 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   }
 
   public List<JSLinterError> filterResultByFile(@NotNull TsLinterInput collectedInfo, List<TsLinterError> annotationErrors) {
-    VirtualFile file = collectedInfo.getVirtualFile();
+    final String filePath = collectedInfo.getVirtualFile().getPath();
+    final String fileName = collectedInfo.getPsiFile().getName();
 
-    return annotationErrors.stream().filter(el -> {
-        String path = el.getAbsoluteFilePath();
+    final Set<String> filteredPaths = annotationErrors.stream().map(TsLinterError::getAbsoluteFilePath)
+      .distinct()
+      .filter(path -> {
         if (path == null) return true;
-        VirtualFile candidate = LocalFileSystem.getInstance().findFileByPath(path);
-      if (candidate == null || file.equals(candidate)) {
-          return true;
-        }
+        if (!path.endsWith(fileName)) return false;
+        return FileUtil.pathsEqual(filePath, path);
+      }).collect(Collectors.toSet());
 
-        return false;
-      }).collect(Collectors.toList());
+    return annotationErrors.stream().filter(el -> filteredPaths.contains(el.getAbsoluteFilePath())).collect(Collectors.toList());
   }
 
   @Nullable
