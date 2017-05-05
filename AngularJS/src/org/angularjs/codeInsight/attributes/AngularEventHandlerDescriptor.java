@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
   public static final String OUTPUT = "Output";
-  public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = dom -> createEventHandler(dom.first, dom.second);
+  public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = AngularEventHandlerDescriptor::createEventHandler;
 
   private final PsiElement myElement;
 
@@ -34,8 +34,8 @@ public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
   }
 
   @NotNull
-  private static AngularEventHandlerDescriptor createEventHandler(PsiElement field, String name) {
-    return new AngularEventHandlerDescriptor(field, "(" + name + ")");
+  private static AngularEventHandlerDescriptor createEventHandler(Pair<PsiElement, String> dom) {
+    return new AngularEventHandlerDescriptor(dom.first, "(" + dom.second + ")");
   }
 
   @Nullable

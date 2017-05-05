@@ -399,6 +399,28 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testOneTimeBindingAttributeCompletion2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("attribute_one_time_binding.html", "angular2.js", "object.ts");
+      myFixture.completeBasic();
+      myFixture.type('\n');
+      myFixture.checkResultByFile("attribute_one_time_binding.after.html");
+    });
+  }
+
+  public void testOneTimeBindingAttributeResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("attribute_one_time_binding.after.html", "angular2.js", "object.ts");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("one<caret>Time", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("object.ts", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSField.class);
+    });
+  }
+
   public void testBindingAttributeFunctionCompletion2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_binding.html", "angular2.js", "object_with_function.ts");

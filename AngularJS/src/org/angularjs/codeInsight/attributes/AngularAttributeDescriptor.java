@@ -15,7 +15,8 @@ import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.NotNullFunction;
+import com.intellij.util.NullableFunction;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
@@ -48,7 +49,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
   public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration,
                                                                   String decorator,
-                                                                  NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
+                                                                  NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
     final JSClass clazz = PsiTreeUtil.getStubOrPsiParentOfType(declaration, JSClass.class);
     if (clazz != null) {
       JSField[] fields = clazz.getFields();
@@ -56,12 +57,12 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       for (JSField field : fields) {
         String decoratedName = getDecoratedName(field, decorator);
         if (decoratedName == null) continue;
-        result.add(factory.fun(Pair.create(field, decoratedName)));
+        ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(field, decoratedName)));
       }
       for (JSFunction function : clazz.getFunctions()) {
         String decoratedName = getDecoratedName(function, decorator);
         if (decoratedName == null) continue;
-        result.add(factory.fun(Pair.create(function, decoratedName)));
+        ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(function, decoratedName)));
       }
       return result.toArray(new XmlAttributeDescriptor[result.size()]);
     }
