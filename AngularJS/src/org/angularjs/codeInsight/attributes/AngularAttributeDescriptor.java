@@ -50,7 +50,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration,
                                                                   String decorator,
                                                                   NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
-    final JSClass clazz = PsiTreeUtil.getStubOrPsiParentOfType(declaration, JSClass.class);
+    final JSClass clazz = PsiTreeUtil.getContextOfType(declaration, JSClass.class);
     if (clazz != null) {
       JSField[] fields = clazz.getFields();
       final List<XmlAttributeDescriptor> result = new ArrayList<>(fields.length);
