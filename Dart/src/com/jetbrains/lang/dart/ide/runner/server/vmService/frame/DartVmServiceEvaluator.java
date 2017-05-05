@@ -72,9 +72,9 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
      dart psi: notes.text
 
      REFERENCE_EXPRESSION
-     REFERENCE_EXPRESSION “notes”
-     PsiElement(.) “.”
-     REFERENCE_EXPRESSION “text”
+     REFERENCE_EXPRESSION "notes"
+     PsiElement(.) "."
+     REFERENCE_EXPRESSION "text"
      */
     // find topmost reference, but stop if argument list found
     DartReference reference = null;

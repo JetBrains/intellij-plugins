@@ -70,7 +70,7 @@ public class DeviceInfo {
         // List of attached devices:
         // Handle<Tab>DeviceClass<Tab>DeviceUUID<Tab><Tab><Tab><Tab><Tab>DeviceName
         // 3<Tab>iPad    <Tab>cf701a789380b6ca3d563c9959a2bf383b58b702<Tab>iPad
-        // 2<Tab>iPod    <Tab>5da6555aea609c405f554b53a4a85853202b92de<Tab>JetBrains’s iPod
+        // 2<Tab>iPod    <Tab>5da6555aea609c405f554b53a4a85853202b92de<Tab>JetBrains's iPod
 
         if (myMessages.size() < 3) return true;
         if (!myMessages.get(0).trim().startsWith("List of attached devices")) return true;

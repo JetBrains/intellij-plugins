@@ -202,7 +202,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
     // http://pub.dartlang.org/doc/glossary.html#entrypoint-directory
     // Entrypoint directory: A directory inside your package that is allowed to contain Dart entrypoints.
-    // Pub will ensure all of these directories get a “packages” directory, which is needed for “package:” imports to work.
+    // Pub will ensure all of these directories get a "packages" directory, which is needed for "package:" imports to work.
     // Pub has a whitelist of these directories: benchmark, bin, example, test, tool, and web.
     // Any subdirectories of those (except bin) may also contain entrypoints.
     //

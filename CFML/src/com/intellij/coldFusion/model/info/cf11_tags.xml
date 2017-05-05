@@ -55,7 +55,7 @@
   marginright = "number"
   margintop = "number"
   mmarginbottom = "number"
-  opacity = "number”
+  opacity = "number"
   numberformat = "LOWERCASEROMAN|NUMERIC|UPPERCASEROMAN"
   image = " URL|pathname absolute or relative to web root"
 </cfhtmltopdfitem> -->
