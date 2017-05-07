@@ -87,7 +87,7 @@ public class FileOffsetsManager {
 
     try {
       byte[] bytes = file.contentsToByteArray();
-      final Charset charset = LoadTextUtil.detectCharsetAndSetBOM(file, bytes);
+      final Charset charset = LoadTextUtil.detectCharsetAndSetBOM(file, bytes, file.getFileType());
       final byte[] bom = file.getBOM();
       final int bomLength = bom == null ? 0 : bom.length;
       return loadLineOffsets(bytes, charset, bomLength, file.getModificationStamp());

@@ -37,7 +37,7 @@ public class MxmlTodoIndexer extends XmlTodoIndexer {
                                                                              .getTodoIndexer(file.getFileType(), injectedFile);
                                                                          if (indexer != null) {
                                                                            Map<TodoIndexEntry, Integer> injectedMap = indexer.map(
-                                                                             new FileContentImpl(injectedFile, file.getText(), null));
+                                                                             new FileContentImpl(injectedFile, file.getText(), -1));
                                                                            for (Map.Entry<TodoIndexEntry, Integer> e : injectedMap
                                                                              .entrySet()) {
                                                                              Integer integer = map.get(e.getKey());
