@@ -1,8 +1,6 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.JSField;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.openapi.util.Pair;
@@ -41,6 +39,12 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   @Nullable
   private static AngularBindingDescriptor createOneTimeBinding(Pair<PsiElement, String> dom) {
     PsiElement element = dom.first;
+    if (element instanceof JSImplicitElement) {
+      String type = ((JSImplicitElement)element).getTypeString();
+      if (type != null && type.endsWith("String")) {
+          return new AngularBindingDescriptor(element, dom.second);
+        }
+      }
     final JSType type = element instanceof JSFunction ? ((JSFunction)element).getReturnType() :
                         element instanceof JSField ? ((JSField)element).getType() :
                         null;

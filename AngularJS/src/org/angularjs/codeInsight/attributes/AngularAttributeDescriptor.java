@@ -1,16 +1,20 @@
 package org.angularjs.codeInsight.attributes;
 
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
@@ -21,6 +25,7 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
+import org.angularjs.index.AngularDecoratorsIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -78,7 +84,42 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       }
       return result.toArray(new XmlAttributeDescriptor[result.size()]);
     }
+    if (!DialectDetector.isTypeScript(declaration)) {
+      return getCompiledFieldBasedDescriptors(declaration, decorator, factory);
+    }
     return EMPTY;
+  }
+
+  @NotNull
+  private static XmlAttributeDescriptor[] getCompiledFieldBasedDescriptors(JSImplicitElement declaration,
+                                                                             String decorator,
+                                                                             NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> factory) {
+    Project project = declaration.getProject();
+    Collection<String> keys = StubIndex.getInstance().getAllKeys(AngularDecoratorsIndex.KEY, project);
+    GlobalSearchScope scope = GlobalSearchScope.fileScope(declaration.getContainingFile());
+    JSVariable context = PsiTreeUtil.getContextOfType(declaration, JSVariable.class);
+    if (context == null) return EMPTY;
+
+    final List<XmlAttributeDescriptor> result = new ArrayList<>();
+    for (String key : keys) {
+      StubIndex.getInstance().processElements(AngularDecoratorsIndex.KEY, key, project, scope, JSImplicitElementProvider.class, (provider) -> {
+        JSElementIndexingData data = provider.getIndexingData();
+        Collection<JSImplicitElement> elements = data != null ? data.getImplicitElements() : null;
+        if (elements != null) {
+          for (JSImplicitElement element : elements) {
+            if (key.equals(element.getName())) {
+              String type = element.getTypeString();
+              if (type != null && type.startsWith(decorator + ";") &&
+                  context.isEquivalentTo(PsiTreeUtil.getContextOfType(element, JSVariable.class))) {
+                ContainerUtil.addIfNotNull(result, factory.fun(Pair.create(element, element.getName())));
+              }
+            }
+          }
+        }
+        return true;
+      });
+    }
+    return result.toArray(new XmlAttributeDescriptor[result.size()]);
   }
 
   private static String getDecoratedName(JSAttributeListOwner field, String name) {

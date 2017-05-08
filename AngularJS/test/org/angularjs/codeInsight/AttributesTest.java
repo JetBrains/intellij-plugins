@@ -6,12 +6,10 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.psi.JSField;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -418,6 +416,52 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(resolve);
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
+    });
+  }
+
+  public void testOneTimeBindingAttributeCompletion2JavaScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.html", "angular2.js", "object.js");
+      myFixture.completeBasic();
+      myFixture.type('\n');
+      myFixture.checkResultByFile("compiled_binding.after.html");
+    });
+  }
+
+  public void testOneTimeBindingAttributeResolve2JavaScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.after.html", "angular2.js", "object.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("col<caret>or", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("object.js", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSImplicitElement.class);
+      assertEquals("\"color\"", getDirectiveDefinitionText(resolve));
+    });
+  }
+
+  public void testOneTimeBindingAttributeCompletion2JavaScriptUmd() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.html", "angular2.js", "object.umd.js");
+      myFixture.completeBasic();
+      myFixture.type('\n');
+      myFixture.checkResultByFile("compiled_binding.after.html");
+    });
+  }
+
+  public void testOneTimeBindingAttributeResolve2JavaScriptUmd() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("compiled_binding.after.html", "angular2.js", "object.umd.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("col<caret>or", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("object.umd.js", resolve.getContainingFile().getName());
+      assertInstanceOf(resolve, JSImplicitElement.class);
+      assertEquals("\"color\"", getDirectiveDefinitionText(resolve));
     });
   }
 

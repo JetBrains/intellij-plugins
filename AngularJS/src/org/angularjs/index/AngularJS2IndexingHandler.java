@@ -3,18 +3,17 @@ package org.angularjs.index;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSInjectionController;
-import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.frameworks.jquery.JQueryCssLanguage;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementCustomProvider;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
@@ -25,7 +24,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.css.*;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.impl.source.tree.TreeUtil;
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
@@ -43,6 +44,12 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   public static final String TEMPLATE_REF = "TemplateRef";
   public static final String SELECTOR = "selector";
   public static final String NAME = "name";
+  public static final String DECORATORS = "adei";
+  public static final String DECORATE = "__decorate";
+
+  static {
+    JSImplicitElement.ourUserStringsRegistry.registerUserString(DECORATORS);
+  }
 
   @Override
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
@@ -320,6 +327,85 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return null;
+  }
+
+  @Nullable
+  @Override
+  public JSLiteralImplicitElementCustomProvider createLiteralImplicitElementCustomProvider() {
+    return new JSLiteralImplicitElementCustomProvider() {
+      @Override
+      public boolean checkIfCandidate(@NotNull ASTNode literalExpression) {
+        ASTNode parent = TreeUtil.findParent(literalExpression, JSStubElementTypes.CALL_EXPRESSION);
+        LeafElement leaf = parent != null ? TreeUtil.findFirstLeaf(parent) : null;
+        return leaf != null && leaf.getText().startsWith(DECORATE);
+      }
+
+      @Override
+      public void fillIndexingDataForCandidate(@NotNull JSLiteralExpression argument, @NotNull JSElementIndexingData outIndexingData) {
+        String name = argument.isQuotedLiteral() ? AngularJSIndexingHandler.unquote(argument) : null;
+        if (name == null) return;
+        JSCallExpression callExpression = PsiTreeUtil.getParentOfType(argument, JSCallExpression.class);
+        if (callExpression == null) return;
+
+        JSExpression first = callExpression.getArguments()[0];
+        if (!(first instanceof JSArrayLiteralExpression)) return;
+        JSExpression[] expressions = ((JSArrayLiteralExpression)first).getExpressions();
+        if (expressions.length != 2) return;
+
+        JSExpression decorator = expressions[0];
+        String decoratorName = getCallName(decorator);
+        if (!"Input".equals(decoratorName) && !"Output".equals(decoratorName)) return;
+
+        JSExpression metadata = expressions[1];
+        String metadataName = getCallName(metadata);
+        if (metadataName == null || !metadataName.startsWith("__metadata")) return;
+        JSExpression[] meta = ((JSCallExpression)metadata).getArguments();
+        if (meta.length != 2) return;
+
+        if (!(meta[0] instanceof JSLiteralExpression)) return;
+        String type = AngularJSIndexingHandler.unquote(meta[0]);
+        if (!"design:type".equals(type)) return;
+
+        JSImplicitElementImpl.Builder builder =
+          new JSImplicitElementImpl.Builder(getDecoratedName(name, decorator), argument).setUserString(DECORATORS)
+            .setTypeString(decoratorName + ";" + meta[1].getText());
+        outIndexingData.addImplicitElement(builder.toImplicitElement());
+      }
+
+      private String getDecoratedName(String name, JSExpression decorator) {
+        if (decorator instanceof JSCallExpression) {
+          final JSExpression expression = ((JSCallExpression)decorator).getMethodExpression();
+          if (expression instanceof JSReferenceExpression) {
+            JSExpression[] arguments = ((JSCallExpression)decorator).getArguments();
+            if (arguments.length > 0 && arguments[0] instanceof JSLiteralExpression) {
+              Object value = ((JSLiteralExpression)arguments[0]).getValue();
+              if (value instanceof String) return (String)value;
+            }
+          }
+        }
+        return name;
+      }
+
+      private String getCallName(JSExpression call) {
+        if (call instanceof JSCallExpression) {
+          JSExpression expression = ((JSCallExpression)call).getMethodExpression();
+          if (expression instanceof JSReferenceExpression) {
+            return ((JSReferenceExpression)expression).getReferenceName();
+          }
+        }
+        return null;
+      }
+    };
+  }
+
+  @Override
+  public boolean indexImplicitElement(@NotNull JSImplicitElementStructure element, @Nullable IndexSink sink) {
+    if (sink != null && DECORATORS.equals(element.getUserString())) {
+      sink.occurrence(AngularDecoratorsIndex.KEY, element.getName());
+      sink.occurrence(AngularSymbolIndex.KEY, element.getName());
+      return true;
+    }
+    return false;
   }
 
   @Override

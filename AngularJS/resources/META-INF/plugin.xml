@@ -35,6 +35,7 @@
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularControllerIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularDecoratorsIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularModuleIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularFilterIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
