@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunManager;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -85,7 +85,7 @@ public class FlashRunConfigurationProducer extends RunConfigurationProducer<Flas
     final JSClass jsClass = getJSClass(context.getPsiLocation());
     if (jsClass == null || !isAcceptedMainClass(jsClass, module)) return false;
 
-    final List<RunConfiguration> existing = RunManagerEx.getInstanceEx(module.getProject()).getConfigurationsList(getConfigurationType());
+    final List<RunConfiguration> existing = RunManager.getInstance(module.getProject()).getConfigurationsList(getConfigurationType());
     final RunConfiguration suitable = findSuitableRunConfig(module, jsClass.getQualifiedName(), existing);
 
     return suitable == configuration;

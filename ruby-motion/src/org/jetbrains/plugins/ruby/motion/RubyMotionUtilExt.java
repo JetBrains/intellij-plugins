@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.ruby.motion;
 
-import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -28,13 +28,12 @@ public class RubyMotionUtilExt {
 
   private static RunnerAndConfigurationSettings createAndAddRakeConfiguration(final String taskFullName,
                                                                               final Module module,
-                                                                              final RunManagerEx runManagerEx) {
+                                                                              final RunManager runManager) {
     final RunnerAndConfigurationSettings settings =
       RakeRunConfigurationType.getInstance().getRakeFactory().createConfigurationSettings(module, taskFullName,
                                                                                           ArrayUtil.EMPTY_STRING_ARRAY,
                                                                                           Collections.emptyMap());
-    runManagerEx.addConfiguration(settings, false);
-
+    runManager.addConfiguration(settings, false);
     return settings;
   }
 
@@ -46,20 +45,20 @@ public class RubyMotionUtilExt {
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText(RBundle.message("progress.backgnd.indicator.title.please.wait", getTitle()));
 
-        final RunManagerEx runManagerEx = RunManagerEx.getInstanceEx(project);
+        final RunManager runManager = RunManager.getInstance(project);
 
         ApplicationManager.getApplication().runReadAction(() -> {
           // requires read action
 
           // Rake : "simulator"
           final String taskName = RubyMotionUtil.getInstance().getMainRakeTask(module);
-          final RunnerAndConfigurationSettings simulator = createAndAddRakeConfiguration(taskName, module, runManagerEx);
+          final RunnerAndConfigurationSettings simulator = createAndAddRakeConfiguration(taskName, module, runManager);
 
           // Rake : "spec"
-          createAndAddRakeConfiguration(RakeUtilBase.TASKS_SPEC_FULLCMD, module, runManagerEx);
+          createAndAddRakeConfiguration(RakeUtilBase.TASKS_SPEC_FULLCMD, module, runManager);
 
           // make development config active
-          runManagerEx.setSelectedConfiguration(simulator);
+          runManager.setSelectedConfiguration(simulator);
         });
       }
     };

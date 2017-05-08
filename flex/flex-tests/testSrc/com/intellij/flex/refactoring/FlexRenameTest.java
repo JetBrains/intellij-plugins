@@ -1,6 +1,6 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunManager;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.JSSupportLoader;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
@@ -427,7 +427,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testRunConfigUpdatedOnMethodRename() throws Exception {
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+    final RunManager runManager = RunManager.getInstance(myProject);
     FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "", "SomeTest",
                                "testSomething",
@@ -440,7 +440,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testConfigUpdatedOnClassRename() throws Exception {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.bar.SomeClass"));
 
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+    final RunManager runManager = RunManager.getInstance(myProject);
     FlexTestUtils.createFlexUnitRunConfig(runManager, "Own name", myModule, FlexUnitRunnerParameters.Scope.Method, "", "foo.bar.SomeClass",
                                           "testSomething",
                                           false);
@@ -465,7 +465,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testConfigUpdatedOnPackageRename() throws Exception {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.bar.SomeClass"));
 
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+    final RunManager runManager = RunManager.getInstance(myProject);
     FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                           "foo.bar.SomeClass", "testSomething",
                                           true);
@@ -486,7 +486,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testRunConfigUpdatedOnBcRename() throws Exception {
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+    final RunManager runManager = RunManager.getInstance(myProject);
     FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                           "SomeTest", "testSomething",
                                           true);

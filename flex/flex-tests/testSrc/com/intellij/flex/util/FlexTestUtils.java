@@ -1,6 +1,6 @@
 package com.intellij.flex.util;
 
-import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -519,7 +519,7 @@ public class FlexTestUtils {
     }.execute().throwException();
   }
 
-  public static void checkFlashRunConfig(final RunManagerEx runManager,
+  public static void checkFlashRunConfig(final RunManager runManager,
                                          final Module module,
                                          final String configName,
                                          final String className) {
@@ -538,7 +538,7 @@ public class FlexTestUtils {
     Assert.assertEquals(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getName(), params.getBCName());
   }
 
-  public static void checkFlexUnitRunConfig(final RunManagerEx runManager,
+  public static void checkFlexUnitRunConfig(final RunManager runManager,
                                             final Module module, final String configName,
                                             final String packageName,
                                             final String className,
@@ -561,7 +561,7 @@ public class FlexTestUtils {
     Assert.assertEquals(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getName(), params.getBCName());
   }
 
-  public static void createFlashRunConfig(final RunManagerEx runManager,
+  public static void createFlashRunConfig(final RunManager runManager,
                                           final Module module, final String configName, final String className, boolean generatedName) {
     final RunnerAndConfigurationSettings settings = runManager.createRunConfiguration(configName, FlashRunConfigurationType.getFactory());
     runManager.addConfiguration(settings, false);
@@ -577,7 +577,7 @@ public class FlexTestUtils {
     }
   }
 
-  public static void createFlexUnitRunConfig(final RunManagerEx runManager,
+  public static void createFlexUnitRunConfig(final RunManager runManager,
                                              final String configName,
                                              final Module module,
                                              final FlexUnitRunnerParameters.Scope scope,

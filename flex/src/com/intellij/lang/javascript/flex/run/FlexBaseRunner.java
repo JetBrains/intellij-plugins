@@ -724,9 +724,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         @Override
         protected void hyperlinkActivated(final HyperlinkEvent e) {
           if ("RunConfiguration".equals(e.getDescription())) {
-            final List<RunnerAndConfigurationSettings> allConfigurations =
-              RunManagerEx.getInstanceEx(project).getConfigurationSettingsList(((RunConfiguration)runProfile).getType());
-            for (RunnerAndConfigurationSettings configuration : allConfigurations) {
+            for (RunnerAndConfigurationSettings configuration : RunManager.getInstance(project).getConfigurationSettingsList(((RunConfiguration)runProfile).getType())) {
               if (configuration.getConfiguration() == runProfile) {
                 RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));
                 break;

@@ -28,13 +28,11 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -209,7 +207,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
                               @NotNull Executor executor,
                               @NotNull RunnerAndConfigurationSettings configuration,
                               boolean created) {
-    RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
+    RunManager runManager = RunManager.getInstance(project);
     if (created) {
       runManager.setTemporaryConfiguration(configuration);
     }

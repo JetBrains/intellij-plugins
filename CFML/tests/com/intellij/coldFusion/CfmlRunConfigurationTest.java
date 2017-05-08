@@ -92,13 +92,12 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
 
     //this block emulates RunContextAction.perform()
     RunnerAndConfigurationSettings configuration = configurationContext.findExisting();
-    final RunManagerEx runManager = (RunManagerEx)configurationContext.getRunManager();
     if (configuration == null) {
       configuration = configurationContext.getConfiguration();
       if (configuration == null) {
         return null;
       }
-      runManager.setTemporaryConfiguration(configuration);
+      ((RunManagerEx)configurationContext.getRunManager()).setTemporaryConfiguration(configuration);
     }
     //end of the emulated block
     return (CfmlRunConfiguration)configuration.getConfiguration();

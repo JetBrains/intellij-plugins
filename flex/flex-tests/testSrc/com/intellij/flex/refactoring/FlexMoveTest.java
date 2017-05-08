@@ -1,6 +1,6 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunManager;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
@@ -118,7 +118,7 @@ public class FlexMoveTest extends JSMoveTestBase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConfigUpdatedOnClassMove() throws Exception {
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+    final RunManager runManager = RunManager.getInstance(myProject);
     FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                "foo.bar.SomeClass", "testSomething", true);
@@ -138,7 +138,7 @@ public class FlexMoveTest extends JSMoveTestBase {
   public void testConfigUpdatedOnPackageMove() throws Exception {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.SomeClass"));
 
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+    final RunManager runManager = RunManager.getInstance(myProject);
     FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                "foo.SomeClass", "testSomething", true);
