@@ -8,6 +8,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.stubs.StubIndexKey;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ThreeState;
@@ -44,15 +45,15 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
           for (XmlAttributeDescriptor attributeDescriptor : descriptors) {
             final String name = attributeDescriptor.getName();
             if (name.startsWith("on")) {
-              addAttributes(project, result, "(" + name.substring(2) + ")");
+              addAttributes(project, result, "(" + name.substring(2) + ")", null);
             }
           }
         }
         for (XmlAttribute attribute : xmlTag.getAttributes()) {
           final String name = attribute.getName();
           if (isAngular2Attribute(name, project) || !directives.contains(name)) continue;
-          final PsiElement declaration = AngularIndexUtil.resolve(project, AngularDirectivesIndex.KEY, name);
-          if (declaration != null) {
+          final PsiElement declaration = applicableDirective(project, name, xmlTag, AngularDirectivesIndex.KEY);
+          if (isApplicable(declaration)) {
             for (XmlAttributeDescriptor binding : AngularAttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
               result.put(binding.getName(), binding);
             }
@@ -61,14 +62,17 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       }
       final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
       for (String directiveName : docDirectives) {
-        if (isApplicable(project, directiveName, xmlTag, AngularDirectivesDocIndex.KEY) == ThreeState.YES) {
-          addAttributes(project, result, directiveName);
+        PsiElement declaration = applicableDirective(project, directiveName, xmlTag, AngularDirectivesDocIndex.KEY);
+        if (isApplicable(declaration)) {
+          addAttributes(project, result, directiveName, declaration);
         }
       }
       for (String directiveName : directives) {
-        if (!docDirectives.contains(directiveName) &&
-            isApplicable(project, directiveName, xmlTag, AngularDirectivesIndex.KEY) == ThreeState.YES) {
-          addAttributes(project, result, directiveName);
+        if (!docDirectives.contains(directiveName)) {
+          PsiElement declaration = applicableDirective(project, directiveName, xmlTag, AngularDirectivesIndex.KEY);
+          if (isApplicable(declaration)) {
+            addAttributes(project, result, directiveName, declaration);
+          }
         }
       }
       return result.values().toArray(new XmlAttributeDescriptor[result.size()]);
@@ -76,19 +80,28 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return XmlAttributeDescriptor.EMPTY;
   }
 
-  protected void addAttributes(Project project, Map<String, XmlAttributeDescriptor> result, String directiveName) {
-    result.put(directiveName, createDescriptor(project, directiveName));
+  protected void addAttributes(Project project,
+                               Map<String, XmlAttributeDescriptor> result,
+                               String directiveName,
+                               PsiElement declaration) {
+    result.put(directiveName, createDescriptor(project, directiveName, declaration));
     if ("ng-repeat".equals(directiveName)) {
-      result.put(directiveName + "-start", createDescriptor(project, directiveName + "-start"));
-      result.put(directiveName + "-end", createDescriptor(project, directiveName + "-end"));
+      result.put(directiveName + "-start", createDescriptor(project, directiveName + "-start", declaration));
+      result.put(directiveName + "-end", createDescriptor(project, directiveName + "-end", declaration));
     }
   }
 
-  private static ThreeState isApplicable(Project project, String directiveName, XmlTag tag, final StubIndexKey<String, JSImplicitElementProvider> index) {
-    Ref<ThreeState> result = Ref.create(ThreeState.UNSURE);
+  private static PsiElement applicableDirective(Project project, String directiveName, XmlTag tag, final StubIndexKey<String, JSImplicitElementProvider> index) {
+    Ref<PsiElement> result = Ref.create(PsiUtilCore.NULL_PSI_ELEMENT);
     AngularIndexUtil.multiResolve(project, index, directiveName, (directive) -> {
-      result.set(isApplicable(project, tag, directive));
-      return result.get() != ThreeState.YES;
+      ThreeState applicable = isApplicable(project, tag, directive);
+      if (applicable == ThreeState.YES) {
+        result.set(directive);
+      }
+      if (applicable == ThreeState.NO && result.get() == PsiUtilCore.NULL_PSI_ELEMENT) {
+        result.set(null);
+      }
+      return !result.isNull();
     });
     return result.get();
   }
@@ -147,19 +160,20 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
-      ThreeState attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
-      if (attributeAvailable == ThreeState.UNSURE) {
-        attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesIndex.KEY);
+      PsiElement declaration = applicableDirective(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
+      if (declaration == PsiUtilCore.NULL_PSI_ELEMENT) {
+        declaration = applicableDirective(project, attributeName, xmlTag, AngularDirectivesIndex.KEY);
       }
-      if (attributeAvailable == ThreeState.YES) {
-        return createDescriptor(project, attributeName);
+      if (isApplicable(declaration)) {
+        return createDescriptor(project, attributeName, declaration);
       }
       if (!AngularIndexUtil.hasAngularJS2(project)) return null;
 
       for (XmlAttribute attribute : xmlTag.getAttributes()) {
-        if (isAngular2Attribute(attribute.getName(), project) || attribute.getName().equals(attrName)) continue;
-        final PsiElement declaration = AngularIndexUtil.resolve(project, AngularDirectivesIndex.KEY, attribute.getName());
-        if (declaration != null) {
+        String name = attribute.getName();
+        if (isAngular2Attribute(name, project) || name.equals(attrName)) continue;
+        declaration = applicableDirective(project, name, xmlTag, AngularDirectivesIndex.KEY);
+        if (isApplicable(declaration)) {
           for (XmlAttributeDescriptor binding : AngularAttributeDescriptor.getFieldBasedDescriptors((JSImplicitElement)declaration)) {
             if (binding.getName().equals(attrName)) {
               return binding;
@@ -179,10 +193,14 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return null;
   }
 
+  private static boolean isApplicable(PsiElement declaration) {
+    return declaration != null && declaration != PsiUtilCore.NULL_PSI_ELEMENT;
+  }
+
   @Nullable
   public static AngularAttributeDescriptor getAngular2Descriptor(String attrName, Project project) {
     if (isAngular2Attribute(attrName, project)) {
-      return createDescriptor(project, attrName);
+      return createDescriptor(project, attrName, null);
     }
     return null;
   }

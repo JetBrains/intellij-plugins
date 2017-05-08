@@ -2,6 +2,7 @@ package org.angularjs.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttribute;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularControllerIndex;
@@ -16,14 +17,15 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularAttributesRegistry {
   static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
-                                                     @NotNull String directiveName) {
+                                                     @NotNull String directiveName,
+                                                     @Nullable PsiElement declaration) {
     if ("ng-controller".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.KEY);
+      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.KEY, declaration);
     }
     if ("ng-app".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.KEY);
+      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.KEY, declaration);
     }
-    return new AngularAttributeDescriptor(project, directiveName, null);
+    return new AngularAttributeDescriptor(project, directiveName, null, declaration);
   }
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {

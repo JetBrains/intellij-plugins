@@ -16,17 +16,9 @@ public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
   public static final String OUTPUT = "Output";
   public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = AngularEventHandlerDescriptor::createEventHandler;
 
-  private final PsiElement myElement;
-
   public AngularEventHandlerDescriptor(PsiElement element,
                                   String attributeName) {
-    super(element.getProject(), attributeName, null);
-    myElement = element;
-  }
-
-  @Override
-  public PsiElement getDeclaration() {
-    return myElement;
+    super(element.getProject(), attributeName, null, element);
   }
 
   public static XmlAttributeDescriptor[] getEventHandlerDescriptors(JSImplicitElement declaration) {

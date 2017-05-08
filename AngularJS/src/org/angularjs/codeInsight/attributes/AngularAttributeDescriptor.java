@@ -21,9 +21,6 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
-import org.angularjs.codeInsight.DirectiveUtil;
-import org.angularjs.index.AngularDirectivesDocIndex;
-import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -38,13 +35,28 @@ import java.util.List;
  */
 public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
   protected final Project myProject;
+  protected final PsiElement myElement;
   private final String myAttributeName;
   private final StubIndexKey<String, JSImplicitElementProvider> myIndex;
 
-  public AngularAttributeDescriptor(final Project project, String attributeName, final StubIndexKey<String, JSImplicitElementProvider> index) {
+  /**
+   * NativeScript compatibility
+   * @deprecated to be removed in 2017.3
+   */
+  public AngularAttributeDescriptor(final Project project,
+                                    String attributeName,
+                                    final StubIndexKey<String, JSImplicitElementProvider> index) {
+    this(project, attributeName, index, null);
+  }
+
+  public AngularAttributeDescriptor(final Project project,
+                                    String attributeName,
+                                    final StubIndexKey<String, JSImplicitElementProvider> index,
+                                    PsiElement element) {
     myProject = project;
     myAttributeName = attributeName;
     myIndex = index;
+    myElement = element;
   }
 
   public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration,
@@ -98,14 +110,6 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration) {
     return ArrayUtil.mergeArrays(AngularBindingDescriptor.getBindingDescriptors(declaration),
                                  AngularEventHandlerDescriptor.getEventHandlerDescriptors(declaration));
-  }
-
-  @Override
-  public PsiElement getDeclaration() {
-    final String name = DirectiveUtil.normalizeAttributeName(getName());
-    final JSImplicitElement declaration = AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.KEY, name);
-    return declaration != null ? declaration :
-           AngularIndexUtil.resolve(myProject, AngularDirectivesDocIndex.KEY, getName());
   }
 
   @Override
@@ -164,6 +168,11 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       return AngularIndexUtil.resolve(xmlElement.getProject(), myIndex, value);
     }
     return xmlElement;
+  }
+
+  @Override
+  public PsiElement getDeclaration() {
+    return myElement;
   }
 
   @Nullable

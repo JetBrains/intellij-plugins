@@ -1,7 +1,7 @@
 import {Component, View} from 'angular2/angular2';
 import {EventEmitter} from "events";
 
-@Component({selector: 'todo-cmp'})
+@Component({selector: 'todo-cmp,[todo-cmp]'})
 class TodoCmp {
     @Input() model;
     @Input() oneTime: string;

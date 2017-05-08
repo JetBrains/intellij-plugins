@@ -22,17 +22,10 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   public static final String INPUT = "Input";
   public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = AngularBindingDescriptor::createBinding;
   public static final NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY2 = AngularBindingDescriptor::createOneTimeBinding;
-  private final PsiElement myElement;
 
   public AngularBindingDescriptor(PsiElement element,
                                   String attributeName) {
-    super(element.getProject(), attributeName, null);
-    myElement = element;
-  }
-
-  @Override
-  public PsiElement getDeclaration() {
-    return myElement;
+    super(element.getProject(), attributeName, null, element);
   }
 
   public static XmlAttributeDescriptor[] getBindingDescriptors(JSImplicitElement declaration) {
