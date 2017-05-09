@@ -1,7 +1,11 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSField;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.types.JSTypeContext;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -17,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Dennis.Ushakov
  */
 public class AngularBindingDescriptor extends AngularAttributeDescriptor {
+  public static final JSType STRING_TYPE = new JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE);
   public static final String INPUT = "Input";
   public static final NotNullFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY = AngularBindingDescriptor::createBinding;
   public static final NullableFunction<Pair<PsiElement, String>, XmlAttributeDescriptor> FACTORY2 = AngularBindingDescriptor::createOneTimeBinding;
@@ -41,7 +46,7 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
     PsiElement element = dom.first;
     if (element instanceof JSImplicitElement) {
       String type = ((JSImplicitElement)element).getTypeString();
-      if (type != null && type.endsWith("String")) {
+      if (type != null && (type.endsWith("String") || type.endsWith("Object"))) {
           return new AngularBindingDescriptor(element, dom.second);
         }
       }
@@ -49,7 +54,8 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
                         element instanceof JSField ? ((JSField)element).getType() :
                         null;
 
-    return type instanceof JSStringType ? new AngularBindingDescriptor(element, dom.second) : null;
+    return type != null && type.isDirectlyAssignableType(STRING_TYPE, null) ?
+           new AngularBindingDescriptor(element, dom.second) : null;
   }
 
   @Nullable
