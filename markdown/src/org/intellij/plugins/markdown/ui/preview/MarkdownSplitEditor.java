@@ -1,8 +1,8 @@
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.event.CaretAdapter;
 import com.intellij.openapi.editor.event.CaretEvent;
+import com.intellij.openapi.editor.event.CaretListener;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.pom.Navigatable;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
@@ -38,7 +38,7 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
     getMainEditor().navigateTo(navigatable);
   }
 
-  private static class MyCaretListener extends CaretAdapter {
+  private static class MyCaretListener implements CaretListener {
     @NotNull
     private final MarkdownPreviewFileEditor myPreviewFileEditor;
 
