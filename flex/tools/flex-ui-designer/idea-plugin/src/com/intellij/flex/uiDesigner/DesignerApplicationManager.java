@@ -34,7 +34,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerAdapter;
+import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -426,7 +426,7 @@ public class DesignerApplicationManager {
 
   void attachProjectAndModuleListeners(Disposable parentDisposable) {
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable);
-    connection.subscribe(ProjectManager.TOPIC, new ProjectManagerAdapter() {
+    connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       @Override
       public void projectClosed(Project project) {
         if (isApplicationClosed()) {
