@@ -15,13 +15,12 @@
  */
 package jetbrains.communicator.idea.monitor;
 
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.IDEtalkOptions;
 import jetbrains.communicator.core.Pico;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.mock.MockTransport;
 import jetbrains.communicator.util.WaitFor;
-
 
 /**
  * @author Kir
@@ -42,7 +41,7 @@ public class UserActivityMonitorTest extends BaseTestCase {
     myTransport = new MockTransport();
     Pico.getInstance().registerComponentInstance(myTransport);
 
-    myMonitor = new UserActivityMonitor(null);
+    myMonitor = new UserActivityMonitor();
     myMonitor.setRefreshInterval(100);
     myThread = new Thread(myMonitor, "UserActivityMonitorTest-" + getName());
   }
@@ -104,8 +103,12 @@ public class UserActivityMonitorTest extends BaseTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    myMonitor.disposeComponent();
-    myThread.join();
-    super.tearDown();
+    try {
+      myMonitor.disposeComponent();
+      myThread.join();
+    }
+    finally {
+      super.tearDown();
+    }
   }
 }
