@@ -19,7 +19,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -569,7 +568,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   private void registerDocumentListener() {
-    final DocumentListener documentListener = new DocumentAdapter() {
+    final DocumentListener documentListener = new DocumentListener() {
       @Override
       public void beforeDocumentChange(DocumentEvent e) {
         if (myServer == null) return;

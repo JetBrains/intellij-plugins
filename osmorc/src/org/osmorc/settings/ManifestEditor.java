@@ -25,8 +25,8 @@
 package org.osmorc.settings;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
@@ -67,7 +67,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
   }
 
 
-  private class MyDocumentAdapter extends DocumentAdapter {
+  private class MyDocumentAdapter implements DocumentListener {
     @Override
     public void documentChanged(DocumentEvent e) {
       firePropertyChange("text", null, null);

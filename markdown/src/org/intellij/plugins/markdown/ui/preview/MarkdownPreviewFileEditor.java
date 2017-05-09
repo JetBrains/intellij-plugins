@@ -6,8 +6,8 @@ import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -103,7 +103,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
 
     if (myDocument != null) {
-      myDocument.addDocumentListener(new DocumentAdapter() {
+      myDocument.addDocumentListener(new DocumentListener() {
 
         @Override
         public void beforeDocumentChange(DocumentEvent e) {

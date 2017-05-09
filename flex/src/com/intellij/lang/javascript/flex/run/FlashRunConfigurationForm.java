@@ -15,8 +15,8 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -130,6 +130,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   private void initBCCombo() {
     myBCCombo.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateMainClassField();
         myAppDescriptorForEmulatorCombo.repaint();
@@ -158,6 +159,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   private void initMainClassRelatedControls() {
     myOverrideMainClassCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         if (myOverrideMainClassCheckBox.isSelected()) {
           updateOutputFileName(myOutputFileNameTextField, false);
@@ -171,7 +173,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       }
     });
 
-    myMainClassComponent.addDocumentListener(new DocumentAdapter() {
+    myMainClassComponent.addDocumentListener(new DocumentListener() {
+      @Override
       public void documentChanged(final DocumentEvent e) {
         final String shortName = StringUtil.getShortName(myMainClassComponent.getText().trim());
         if (!shortName.isEmpty()) {
@@ -181,6 +184,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     });
 
     myOutputFileNameTextField.getDocument().addDocumentListener(new com.intellij.ui.DocumentAdapter() {
+      @Override
       protected void textChanged(final javax.swing.event.DocumentEvent e) {
         final FlexBuildConfiguration bc = myBCCombo.getBC();
         if (bc != null && bc.getTargetPlatform() == TargetPlatform.Web) {
@@ -192,12 +196,14 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   private void initRadioButtons() {
     myBCOutputRadioButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
       }
     });
 
     myUrlOrFileRadioButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
 
@@ -215,6 +221,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myLauncherParametersTextWithBrowse.getButton().setMnemonic(myLauncherParametersLabel.getDisplayedMnemonic());
     myLauncherParametersTextWithBrowse.getTextField().setEditable(false);
     myLauncherParametersTextWithBrowse.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         final FlexLauncherDialog dialog = new FlexLauncherDialog(myProject, myLauncherParameters);
         if (dialog.showAndGet()) {
@@ -238,6 +245,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     final ActionListener debugTransportListener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateDebugTransportRelatedControls();
       }
@@ -300,12 +308,14 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     });
 
     myEmulatorCombo.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         updateEmulatorRelatedControls();
       }
     });
 
     final ActionListener targetDeviceListener = new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         updateControls();
 
@@ -459,11 +469,13 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     mySdkForDebuggingCombo.showBCSdk(true);
   }
 
+  @Override
   @NotNull
   protected JComponent createEditor() {
     return myMainPanel;
   }
 
+  @Override
   protected void resetEditorFrom(@NotNull final FlashRunConfiguration configuration) {
     myResetting = true;
     try {
@@ -553,6 +565,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     return "";
   }
 
+  @Override
   protected void applyEditorTo(@NotNull final FlashRunConfiguration configuration) throws ConfigurationException {
     final FlashRunnerParameters params = configuration.getRunnerParameters();
 
@@ -632,6 +645,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     params.setDebuggerSdkRaw(mySdkForDebuggingCombo.getSelectedSdkRaw());
   }
 
+  @Override
   protected void disposeEditor() {
     myBCCombo.dispose();
   }

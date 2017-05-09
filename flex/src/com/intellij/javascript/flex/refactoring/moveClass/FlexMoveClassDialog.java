@@ -12,7 +12,8 @@ import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -120,7 +121,7 @@ public class FlexMoveClassDialog extends RefactoringDialog {
       }
     });
 
-    myTargetPackageField.addDocumentListener(new com.intellij.openapi.editor.event.DocumentAdapter() {
+    myTargetPackageField.addDocumentListener(new DocumentListener() {
       @Override
       public void documentChanged(com.intellij.openapi.editor.event.DocumentEvent e) {
         validateButtons();
@@ -208,7 +209,7 @@ public class FlexMoveClassDialog extends RefactoringDialog {
 
     String nameToCheck = myFileLocal ? myClassNameField.getText() : null;
     PsiDirectory targetDirectory =
-      JSRefactoringUtil.chooseOrCreateDirectoryForClass(myProject, ModuleUtil.findModuleForPsiElement(firstElement),
+      JSRefactoringUtil.chooseOrCreateDirectoryForClass(myProject, ModuleUtilCore.findModuleForPsiElement(firstElement),
                                                         GlobalSearchScope.projectScope(myProject), myTargetPackageField.getText(),
                                                         nameToCheck, baseDir,
                                                         myCbMoveToAnotherSourceFolder.isSelected() ? ThreeState.YES : ThreeState.NO);
