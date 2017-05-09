@@ -13,8 +13,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
@@ -175,8 +173,6 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   static void resetHighlighting(Project project) {
     ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
-    ((PsiModificationTrackerImpl)PsiManager.getInstance(project).getModificationTracker()).incCounter();
-    DaemonCodeAnalyzer.getInstance(project).restart();
   }
 
   private FlexBuildConfigurationImpl[] getValidatedConfigurations(Collection<? extends FlexBuildConfigurationImpl> configurations) {
