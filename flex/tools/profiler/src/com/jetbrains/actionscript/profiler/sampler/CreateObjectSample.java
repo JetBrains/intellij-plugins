@@ -1,10 +1,5 @@
 package com.jetbrains.actionscript.profiler.sampler;
 
-/**
- * User: Maxim
- * Date: 04.09.2010
- * Time: 19:54:24
- */
 public class CreateObjectSample extends Sample {
   public final int id;
   public final String className;

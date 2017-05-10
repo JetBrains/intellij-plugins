@@ -21,13 +21,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vnikolaenko
- * Date: 15.12.2008
- * Time: 16:19:24
- * To change this template use File | Settings | File Templates.
- */
 public class CfmlEditorUtil {
   public static int countSharpsBalance(Editor editor) {
     int sharpsCounter = 0;

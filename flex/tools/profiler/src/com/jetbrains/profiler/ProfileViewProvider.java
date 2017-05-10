@@ -8,11 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: Maxim
- * Date: 02.09.2010
- * Time: 13:35:23
- */
 public class ProfileViewProvider implements FileEditorProvider, DumbAware {
 
   @Override

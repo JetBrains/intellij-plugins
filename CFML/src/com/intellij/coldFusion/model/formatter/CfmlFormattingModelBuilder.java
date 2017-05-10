@@ -27,10 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 public class CfmlFormattingModelBuilder extends TemplateLanguageFormattingModelBuilder {
 
   @Override

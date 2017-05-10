@@ -8,11 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * User: Maxim
- * Date: 28.08.2010
- * Time: 21:28:04
- */
 public class DefaultProfilerExecutor extends Executor {
   @NonNls
   public static final String EXECUTOR_ID = "Profile";

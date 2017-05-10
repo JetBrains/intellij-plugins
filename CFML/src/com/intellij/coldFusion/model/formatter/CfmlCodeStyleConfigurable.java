@@ -20,10 +20,6 @@ import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 public class CfmlCodeStyleConfigurable extends CodeStyleAbstractConfigurable {
   public CfmlCodeStyleConfigurable(@NotNull CodeStyleSettings settings, CodeStyleSettings cloneSettings) {
     super(settings, cloneSettings, "CFML");

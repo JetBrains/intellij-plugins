@@ -6,11 +6,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- * User: Maxim
- * Date: 04.09.2010
- * Time: 23:38:08
- */
 public class ProfilingManager {
   private static final Logger LOG = Logger.getInstance(ProfilingManager.class.getName());
   private final int myPort;

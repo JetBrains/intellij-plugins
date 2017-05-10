@@ -24,13 +24,6 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vnikolaenko
- * Date: 23.04.2009
- * Time: 19:52:20
- * To change this template use File | Settings | File Templates.
- */
 public class CfmlCompositeElementType extends IElementType implements ICompositeElementType {
   public CfmlCompositeElementType(@NotNull @NonNls final String debugName) {
     super(debugName, CfmlLanguage.INSTANCE);

@@ -9,11 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * User: Maxim
- * Date: 21.09.2010
- * Time: 20:24:42
- */
 public class ProfileFileTypeFactory extends FileTypeFactory {
   final static FileType instance = new FileType() {
     @NotNull

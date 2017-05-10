@@ -36,11 +36,6 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-/**
- * User: Maxim
- * Date: 13.07.2010
- * Time: 13:32:04
- */
 public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> {
   private static final Logger LOG = Logger.getInstance(ActionScriptProfileRunner.class.getName());
   private static final String TOOLWINDOW_ID = ProfilerBundle.message("window.name");

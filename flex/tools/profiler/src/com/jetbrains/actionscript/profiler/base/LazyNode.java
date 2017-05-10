@@ -3,12 +3,6 @@ package com.jetbrains.actionscript.profiler.base;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim
- * Date: 10.12.10
- * Time: 15:19
- */
 public abstract class LazyNode extends DefaultMutableTreeNode {
   private boolean myChildrenLoaded;
 

@@ -15,11 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-/**
- * User: Maxim
- * Date: 04.09.2010
- * Time: 23:38:08
- */
 public class ProfilingConnection {
   private static final Logger LOG = Logger.getInstance(ProfilingConnection.class.getName());
   private ServerSocket myServerSocket;

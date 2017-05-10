@@ -27,10 +27,6 @@ import junit.framework.Assert;
 
 import java.util.concurrent.Callable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
   protected CommonCodeStyleSettings myTestStyleSettings;
 

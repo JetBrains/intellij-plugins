@@ -22,11 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-/**
- * User: Maxim.Mossienko
- * Date: 25.06.2010
- * Time: 20:11:24
- */
 public class JSQualifiedElementRenameProcessor extends JSDefaultRenameProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {

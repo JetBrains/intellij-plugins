@@ -10,13 +10,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: 07.03.2009
- * Time: 18:55:58
- * To change this template use File | Settings | File Templates.
- */
 public class SwfStructureViewBuilderProvider implements StructureViewBuilderProvider {
   private final JSStructureViewBuilderFactory myFactory = new JSStructureViewBuilderFactory();
   public StructureViewBuilder getStructureViewBuilder(@NotNull FileType fileType, @NotNull VirtualFile file, @NotNull Project project) {

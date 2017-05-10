@@ -6,11 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * User: Maxim.Mossienko
- * Date: 12.04.11
- * Time: 13:50
- */
 public class MxmlFileType extends XmlLikeFileType {
   public MxmlFileType() {
     super(MxmlLanguage.INSTANCE);

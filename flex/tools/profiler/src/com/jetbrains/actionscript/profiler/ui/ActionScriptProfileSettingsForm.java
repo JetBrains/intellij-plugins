@@ -13,11 +13,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * User: Maxim
- * Date: 27.09.2010
- * Time: 17:32:09
- */
 public class ActionScriptProfileSettingsForm {
   private JPanel myPanel;
   private JTextField myHostField;

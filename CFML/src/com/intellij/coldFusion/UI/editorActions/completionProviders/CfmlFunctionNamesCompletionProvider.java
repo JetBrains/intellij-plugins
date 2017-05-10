@@ -24,14 +24,6 @@ import com.intellij.coldFusion.model.info.CfmlLangInfo;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vnikolaenko
- * Date: 17.03.2009
- * Time: 14:15:34
- * To change this template use File | Settings | File Templates.
- */
-
 class CfmlFunctionNamesCompletionProvider extends CompletionProvider<CompletionParameters> {
   public void addCompletions(@NotNull final CompletionParameters parameters,
                              final ProcessingContext context,

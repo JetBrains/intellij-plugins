@@ -26,10 +26,6 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.tree.IElementType;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 public class CfmlIndentProcessor extends CfmlFormatterUtil {
   private final CommonCodeStyleSettings mySettings;
   private final int myIndentSize;

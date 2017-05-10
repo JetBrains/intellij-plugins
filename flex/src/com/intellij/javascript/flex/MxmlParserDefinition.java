@@ -7,12 +7,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.xml.XmlFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 
-/**
- * Created by IntelliJ IDEA.
- * User: maxim.mossienko
- * Date: 19.04.11
- * Time: 12:06
- */
 public class MxmlParserDefinition extends XMLParserDefinition{
   @Override
   public PsiFile createFile(FileViewProvider viewProvider) {

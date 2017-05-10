@@ -10,11 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: Maxim.Mossienko
- * Date: 03.03.2009
- * Time: 21:20:02
- */
 public class SwfFileViewProviderFactory implements FileViewProviderFactory {
   @NotNull
   public FileViewProvider createFileViewProvider(@NotNull final VirtualFile file, Language language, @NotNull final PsiManager manager, final boolean eventSystemEnabled) {

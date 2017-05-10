@@ -23,13 +23,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vnikolaenko
- * Date: 28.04.2009
- * Time: 14:09:53
- * To change this template use File | Settings | File Templates.
- */
 public class CfmlLiteralExpressionType extends CfmlCompositeElementType {
   private final String myTypeName;
   private final PsiPrimitiveType myPrimitiveType;

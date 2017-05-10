@@ -13,12 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim
- * Date: 15.11.10
- * Time: 10:06
- */
 public class SampleLocationResolver implements Navigatable {
   private @Nullable VirtualFile resolvedFile;
   private @Nullable PsiElement resolvedElement;

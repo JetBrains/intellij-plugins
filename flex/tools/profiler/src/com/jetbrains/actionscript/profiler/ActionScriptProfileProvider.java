@@ -11,11 +11,6 @@ import com.jetbrains.profiler.ProfilerSnapshotProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * User: Maxim
- * Date: 21.09.2010
- * Time: 22:38:55
- */
 public class ActionScriptProfileProvider implements ProfilerSnapshotProvider {
 
   public boolean accepts(@NotNull VirtualFile file) {

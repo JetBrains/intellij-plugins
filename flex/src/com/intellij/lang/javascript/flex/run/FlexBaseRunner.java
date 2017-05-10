@@ -85,11 +85,6 @@ import java.util.StringTokenizer;
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
 import static com.intellij.lang.javascript.flex.run.RemoteFlashRunnerParameters.RemoteDebugTarget;
 
-/**
- * User: Maxim.Mossienko
- * Date: Mar 11, 2008
- * Time: 8:16:33 PM
- */
 public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   public static final NotificationGroup COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(

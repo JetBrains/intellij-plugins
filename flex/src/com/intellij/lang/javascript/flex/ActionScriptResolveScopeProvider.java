@@ -22,12 +22,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: maxim.mossienko
- * Date: 26.04.11
- * Time: 1:27
- */
 public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvider {
   @Override
   public GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project) {

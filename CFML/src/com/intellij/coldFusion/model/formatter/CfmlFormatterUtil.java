@@ -21,10 +21,6 @@ import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 public class CfmlFormatterUtil implements CfmlElementTypes {
   public static final TokenSet ASSIGNMENT_OPERATORS = TokenSet.create(
     CfscriptTokenTypes.ADD_EQ,

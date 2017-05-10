@@ -19,11 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * User: Maxim
- * Date: 16.05.2010
- * Time: 18:38:05
- */
 public class FlexIconProvider extends IconProvider {
 
   @Override

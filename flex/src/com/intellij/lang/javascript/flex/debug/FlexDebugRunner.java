@@ -29,11 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
 
-/**
- * User: Maxim.Mossienko
- * Date: Mar 11, 2008
- * Time: 8:16:33 PM
- */
 public class FlexDebugRunner extends FlexBaseRunner {
 
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {

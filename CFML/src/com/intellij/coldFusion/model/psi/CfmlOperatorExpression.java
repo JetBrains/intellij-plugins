@@ -22,13 +22,6 @@ import com.intellij.psi.PsiType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vnikolaenko
- * Date: 28.04.2009
- * Time: 14:06:21
- * To change this template use File | Settings | File Templates.
- */
 public class CfmlOperatorExpression extends CfmlCompositeElement implements CfmlExpression {
 
   private final boolean myBinary;

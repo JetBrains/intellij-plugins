@@ -39,13 +39,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vnikolaenko
- * Date: 17.03.2009
- * Time: 14:18:15
- * To change this template use File | Settings | File Templates.
- */
 class CfmlAttributeNamesCompletionProvider extends CompletionProvider<CompletionParameters> {
   public void addCompletions(@NotNull final CompletionParameters parameters,
                              final ProcessingContext context,

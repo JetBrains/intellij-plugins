@@ -18,10 +18,6 @@ package com.intellij.coldFusion.model.formatter;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 public class CfmlCodeStyleSettings extends CustomCodeStyleSettings {
 
   public boolean INDENT_CODE_IN_CFML_TAGS = true;

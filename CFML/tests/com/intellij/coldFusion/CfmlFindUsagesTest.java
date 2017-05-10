@@ -20,10 +20,6 @@ import com.intellij.usageView.UsageInfo;
 
 import java.util.Collection;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 public class CfmlFindUsagesTest extends CfmlCodeInsightFixtureTestCase {
   private Collection<UsageInfo> getUsages() {
     return myFixture.testFindUsages(Util.getInputDataFileName(getTestName(true)));

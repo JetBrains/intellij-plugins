@@ -6,11 +6,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.psi.PsiElement;
 
-/**
- * User: Maxim.Mossienko
- * Date: 28.02.2010
- * Time: 19:07:06
- */
 public class ActionScriptCharFilter extends CharFilter {
   @Override
   public Result acceptChar(char c, int prefixLength, Lookup lookup) {

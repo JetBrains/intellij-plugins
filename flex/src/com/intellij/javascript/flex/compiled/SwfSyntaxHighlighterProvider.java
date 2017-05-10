@@ -10,13 +10,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: 06.03.2009
- * Time: 22:29:37
- * To change this template use File | Settings | File Templates.
- */
 public class SwfSyntaxHighlighterProvider implements SyntaxHighlighterProvider {
   public SyntaxHighlighter create(@NotNull FileType fileType, @Nullable Project project, @Nullable VirtualFile file) {
     return SyntaxHighlighterFactory.getSyntaxHighlighter(JavaScriptSupportLoader.ECMA_SCRIPT_L4, project, file);

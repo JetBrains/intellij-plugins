@@ -15,13 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim
- * Date: 02.09.2010
- * Time: 13:42:28
- * To change this template use File | Settings | File Templates.
- */
 public abstract class ProfileView extends UserDataHolderBase implements FileEditor, ProfilerActionGroup {
   private PropertyChangeSupport myPropertyChangeSupport = new PropertyChangeSupport(this);
   private final VirtualFile myFile;

@@ -30,13 +30,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vnikolaenko
- * Date: 15.12.2008
- * Time: 14:43:37
- * To change this template use File | Settings | File Templates.
- */
 public class CfmlEnterHandler extends EnterHandlerDelegateAdapter {
   public Result preprocessEnter(@NotNull final PsiFile file,
                                 @NotNull final Editor editor,

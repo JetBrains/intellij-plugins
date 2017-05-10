@@ -45,11 +45,6 @@ import java.util.List;
 
 import static com.intellij.lang.javascript.flex.presentation.FlexStructureViewProvider.FlexStructureViewElement;
 
-/**
- * User: Maxim
- * Date: 17.05.2010
- * Time: 11:13:40
- */
 public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @NotNull
   @Override

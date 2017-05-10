@@ -26,10 +26,6 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 public class CfmlSpacingProcessor extends CfmlFormatterUtil {
 
   private final CommonCodeStyleSettings mySettings;

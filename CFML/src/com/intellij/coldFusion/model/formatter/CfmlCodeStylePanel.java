@@ -31,10 +31,6 @@ import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadya.Zabrodina
- */
 
 public class CfmlCodeStylePanel extends CodeStyleAbstractPanel {
   private JPanel myMainPanel;

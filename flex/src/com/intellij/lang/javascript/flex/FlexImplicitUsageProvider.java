@@ -27,11 +27,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * User: Maxim.Mossienko
- * Date: 03.09.2010
- * Time: 15:09:53
- */
 public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiElement> {
   @Override
   public boolean isImplicitUsage(PsiElement element) {

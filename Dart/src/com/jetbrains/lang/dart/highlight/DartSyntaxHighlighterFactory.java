@@ -6,12 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: 10/12/11
- * Time: 9:01 PM
- */
 public class DartSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
   @NotNull
   @Override

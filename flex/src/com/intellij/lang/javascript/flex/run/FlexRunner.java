@@ -44,11 +44,6 @@ import javax.swing.event.HyperlinkEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * User: Maxim.Mossienko
- * Date: Mar 11, 2008
- * Time: 8:16:33 PM
- */
 public class FlexRunner extends FlexBaseRunner {
 
   protected RunContentDescriptor launchFlexConfig(final Module module,
