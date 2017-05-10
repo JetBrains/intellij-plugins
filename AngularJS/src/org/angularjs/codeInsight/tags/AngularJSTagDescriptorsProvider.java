@@ -76,13 +76,13 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     }
 
     JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
-    boolean isAngular2 = DirectiveUtil.isAngular2Directive(directive);
-    if (isAngular2 && !directive.getName().equals(tagName)) {
+    if (DirectiveUtil.isAngular2Directive(directive) && !directive.getName().equals(tagName)) {
       // we've found directive via normalized name for Angular, it should not work
       directive = null;
     }
-    if (directive == null && !tagName.equals(directiveName) && isAngular2) {
+    if (directive == null && !tagName.equals(directiveName) && AngularIndexUtil.hasAngularJS2(project)) {
       directive = DirectiveUtil.getTagDirective(tagName, project);
+      if (!DirectiveUtil.isAngular2Directive(directive)) directive = null;
     }
 
     return directive != null ? new AngularJSTagDescriptor(directiveName, directive) : null;
