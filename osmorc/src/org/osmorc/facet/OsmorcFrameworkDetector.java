@@ -15,13 +15,10 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osgi.framework.Constants;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -82,7 +79,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
     return FileContentPattern.fileContent().with(new PatternCondition<FileContent>("osmorc manifest file") {
       @Override
       public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
-        return isSuitableFile(content.getFile());
+        return isSuitableFile(content.getContentAsText());
       }
     });
   }
@@ -93,31 +90,18 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
     return ManifestFileTypeFactory.MANIFEST;
   }
 
-  private boolean isSuitableFile(VirtualFile file) {
+  private boolean isSuitableFile(CharSequence fileContent) {
     List<String> headersToDetect = new ArrayList<>(Arrays.asList(DETECTION_HEADERS));
-
-    if (file != null && file.exists() && !file.isDirectory()) {
-      try {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-        try {
-          String line;
-          while ((line = reader.readLine()) != null && headersToDetect.size() > 0) {
-            for (Iterator<String> iterator = headersToDetect.iterator(); iterator.hasNext(); ) {
-              String headerToDetect = iterator.next();
-              if (line.startsWith(headerToDetect)) {
-                iterator.remove();
-                break;
-              }
-            }
-          }
+    StringTokenizer linesTokenizer = new StringTokenizer(fileContent.toString(), "\r\n");
+    
+    while (linesTokenizer.hasMoreTokens()) {
+      String line = linesTokenizer.nextToken();
+      for (Iterator<String> iterator = headersToDetect.iterator(); iterator.hasNext(); ) {
+        String headerToDetect = iterator.next();
+        if (line.startsWith(headerToDetect)) {
+          iterator.remove();
+          break;
         }
-        finally {
-          reader.close();
-        }
-      }
-      catch (IOException e) {
-        logger.warn("There was an unexpected exception when accessing " + file.getName() + " (" + e.getMessage() + ")");
-        return false;
       }
     }
 
