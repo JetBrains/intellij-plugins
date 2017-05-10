@@ -401,8 +401,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_one_time_binding.html", "angular2.js", "object.ts");
       myFixture.completeBasic();
-      myFixture.type('\n');
-      myFixture.checkResultByFile("attribute_one_time_binding.after.html");
+      assertContainsElements(myFixture.getLookupElementStrings(), "model", "oneTime");
     });
   }
 
@@ -423,8 +422,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("compiled_binding.html", "angular2.js", "object.js");
       myFixture.completeBasic();
-      myFixture.type('\n');
-      myFixture.checkResultByFile("compiled_binding.after.html");
+      assertContainsElements(myFixture.getLookupElementStrings(), "disableRipple", "color");
     });
   }
 
@@ -446,8 +444,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("compiled_binding.html", "angular2.js", "object.umd.js");
       myFixture.completeBasic();
-      myFixture.type('\n');
-      myFixture.checkResultByFile("compiled_binding.after.html");
+      assertContainsElements(myFixture.getLookupElementStrings(),  "disableRipple", "color");
     });
   }
 
