@@ -110,7 +110,7 @@ public class DirectiveUtil {
   @Nullable
   public static JSImplicitElement getDirective(@Nullable PsiElement element) {
     if (element instanceof JSImplicitElement) {
-      return getDirective(element, ((JSImplicitElement)element).getName());
+      return isAngular2Directive(element) ? (JSImplicitElement)element : getDirective(element, ((JSImplicitElement)element).getName());
     }
     if (element instanceof JSLiteralExpression && ((JSLiteralExpression)element).isQuotedLiteral()) {
       return getDirective(element, StringUtil.unquoteString(element.getText()));
