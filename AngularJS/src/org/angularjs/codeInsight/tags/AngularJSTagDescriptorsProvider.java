@@ -28,6 +28,7 @@ import java.util.List;
  */
 public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
   private static final String NG_CONTAINER = "ng-container";
+  private static final String NG_CONTENT = "ng-content";
   private static final String NG_TEMPLATE = "ng-template";
 
   @Override
@@ -42,6 +43,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     });
     if (AngularIndexUtil.hasAngularJS2(project)) {
       addLookupItem(language, elements, createDirective(xmlTag, NG_CONTAINER));
+      addLookupItem(language, elements, createDirective(xmlTag, NG_CONTENT));
       addLookupItem(language, elements, createDirective(xmlTag, NG_TEMPLATE));
     }
   }
@@ -68,7 +70,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
       return null;
     }
-    if ((NG_CONTAINER.equals(directiveName) || NG_TEMPLATE.equals(directiveName)) &&
+    if ((NG_CONTAINER.equals(directiveName) || NG_CONTENT.equals(directiveName) || NG_TEMPLATE.equals(directiveName)) &&
         AngularIndexUtil.hasAngularJS2(project)) {
       return new AngularJSTagDescriptor(directiveName, createDirective(xmlTag, directiveName));
     }

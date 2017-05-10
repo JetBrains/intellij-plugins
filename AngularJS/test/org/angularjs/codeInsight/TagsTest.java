@@ -293,6 +293,25 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testNgContentCompletion20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
+                                        () -> myFixture.testCompletion("ngContent.html", "ngContent.after.html", "angular2.js"));
+  }
+
+
+  public void testNgContentResolve20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
+      myFixture.configureByFiles("ngContent.after.html", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>content", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("ngContent.after.html", resolve.getContainingFile().getName());
+      assertEquals("<ng-content></ng-content>", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    });
+  }
+
   public void testComplexSelectorList2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("ionic.html", "angular2.js", "ionic.js");
