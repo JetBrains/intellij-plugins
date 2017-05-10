@@ -10,11 +10,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.tapestry.psi.TelTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: Maxim.Mossienko
- * Date: 15.03.2010
- * Time: 21:10:33
- */
 public class TmlTypedHandler extends TypedHandlerDelegate {
   @Override
   public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
