@@ -401,7 +401,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_one_time_binding.html", "angular2.js", "object.ts");
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(), "model", "oneTime"/*, "oneTimeList"*/);
+      assertContainsElements(myFixture.getLookupElementStrings(), "model", "oneTime", "oneTimeList");
     });
   }
 

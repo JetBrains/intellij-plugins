@@ -3,16 +3,18 @@ package org.angularjs.codeInsight.attributes;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeContext;
+import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.NotNullFunction;
-import com.intellij.util.NullableFunction;
+import com.intellij.util.*;
 import com.intellij.xml.XmlAttributeDescriptor;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,15 +49,41 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
     if (element instanceof JSImplicitElement) {
       String type = ((JSImplicitElement)element).getTypeString();
       if (type != null && (type.endsWith("String") || type.endsWith("Object"))) {
-          return new AngularBindingDescriptor(element, dom.second);
-        }
+        return new AngularBindingDescriptor(element, dom.second);
       }
-    final JSType type = element instanceof JSFunction ? ((JSFunction)element).getReturnType() :
-                        element instanceof JSField ? ((JSField)element).getType() :
-                        null;
+    }
+    final JSType type = expandStringLiteralTypes(element instanceof JSFunction ?
+                                                 ((JSFunction)element).getReturnType() :
+                                   element instanceof JSField ? ((JSField)element).getType() :
+                                   null);
 
     return type != null && type.isDirectlyAssignableType(STRING_TYPE, null) ?
            new AngularBindingDescriptor(element, dom.second) : null;
+  }
+
+  @Contract("null->null")
+  private static JSType expandStringLiteralTypes(@Nullable JSType type) {
+    if (type == null) return null;
+
+    type = JSTypeUtils.getValuableType(type);
+    ProcessingContext context = new ProcessingContext();
+    Function<JSType, JSType> expander = new Function<JSType, JSType>() {
+      @Override
+      public JSType fun(@NotNull JSType toApply) {
+        if (toApply instanceof JSStringLiteralTypeImpl) {
+          return STRING_TYPE;
+        }
+        else if (toApply instanceof JSTypeImpl) {
+          JSType typedef = ((JSTypeImpl)toApply).getTypedef(null, context);
+          if (typedef != null && toApply != typedef) {
+            return typedef.transformTypeHierarchy(this);
+          }
+        }
+        return toApply;
+      }
+    };
+
+    return type.transformTypeHierarchy(expander);
   }
 
   @Nullable
