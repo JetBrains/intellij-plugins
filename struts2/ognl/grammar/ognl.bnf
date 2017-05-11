@@ -114,7 +114,8 @@ root ::= EXPRESSION_START rootElement EXPRESSION_END { pin=1 }
 private rootRecover ::= !(EXPRESSION_END)
 private rootElement ::= expression {recoverWhile="rootRecover"}
 
-expression ::= lambdaExpression |
+expression ::= unaryExpression |
+               lambdaExpression |
                mapExpression |
                sequenceExpression |
                parenthesizedExpression |
@@ -127,7 +128,6 @@ expression ::= lambdaExpression |
                indexedExpression |
                referenceExpression |
                variableExpression |
-               unaryExpression |
                literalExpression
 {
   methods=[

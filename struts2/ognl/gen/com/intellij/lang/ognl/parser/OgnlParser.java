@@ -622,27 +622,28 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // Expression root: expression
   // Operator priority table:
-  // 0: ATOM(lambdaExpression)
-  // 1: ATOM(mapExpression)
-  // 2: ATOM(sequenceExpression)
-  // 3: ATOM(parenthesizedExpression)
-  // 4: ATOM(variableAssignmentExpression)
-  // 5: BINARY(conditionalExpression)
-  // 6: BINARY(binaryExpression)
-  // 7: ATOM(newArrayExpression)
-  // 8: ATOM(newExpression)
-  // 9: POSTFIX(methodCallExpression)
-  // 10: ATOM(indexedExpression)
-  // 11: ATOM(referenceExpression)
-  // 12: ATOM(variableExpression)
-  // 13: PREFIX(unaryExpression)
+  // 0: PREFIX(unaryExpression)
+  // 1: ATOM(lambdaExpression)
+  // 2: ATOM(mapExpression)
+  // 3: ATOM(sequenceExpression)
+  // 4: ATOM(parenthesizedExpression)
+  // 5: ATOM(variableAssignmentExpression)
+  // 6: BINARY(conditionalExpression)
+  // 7: BINARY(binaryExpression)
+  // 8: ATOM(newArrayExpression)
+  // 9: ATOM(newExpression)
+  // 10: POSTFIX(methodCallExpression)
+  // 11: ATOM(indexedExpression)
+  // 12: ATOM(referenceExpression)
+  // 13: ATOM(variableExpression)
   // 14: ATOM(literalExpression)
   public static boolean expression(PsiBuilder b, int l, int g) {
     if (!recursion_guard_(b, l, "expression")) return false;
     addVariant(b, "<expression>");
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<expression>");
-    r = lambdaExpression(b, l + 1);
+    r = unaryExpression(b, l + 1);
+    if (!r) r = lambdaExpression(b, l + 1);
     if (!r) r = mapExpression(b, l + 1);
     if (!r) r = sequenceExpression(b, l + 1);
     if (!r) r = parenthesizedExpression(b, l + 1);
@@ -652,7 +653,6 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!r) r = indexedExpression(b, l + 1);
     if (!r) r = referenceExpression(b, l + 1);
     if (!r) r = variableExpression(b, l + 1);
-    if (!r) r = unaryExpression(b, l + 1);
     if (!r) r = literalExpression(b, l + 1);
     p = r;
     r = r && expression_0(b, l + 1, g);
@@ -665,16 +665,16 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     boolean r = true;
     while (true) {
       Marker m = enter_section_(b, l, _LEFT_, null);
-      if (g < 5 && consumeTokenSmart(b, QUESTION)) {
-        r = report_error_(b, expression(b, l, 5));
+      if (g < 6 && consumeTokenSmart(b, QUESTION)) {
+        r = report_error_(b, expression(b, l, 6));
         r = conditionalExpressionTail(b, l + 1) && r;
         exit_section_(b, l, m, CONDITIONAL_EXPRESSION, r, true, null);
       }
-      else if (g < 6 && binaryOperations(b, l + 1)) {
-        r = expression(b, l, 6);
+      else if (g < 7 && binaryOperations(b, l + 1)) {
+        r = expression(b, l, 7);
         exit_section_(b, l, m, BINARY_EXPRESSION, r, true, null);
       }
-      else if (g < 9 && leftMarkerIs(b, REFERENCE_EXPRESSION) && methodCallExpression_0(b, l + 1)) {
+      else if (g < 10 && leftMarkerIs(b, REFERENCE_EXPRESSION) && methodCallExpression_0(b, l + 1)) {
         r = true;
         exit_section_(b, l, m, METHOD_CALL_EXPRESSION, r, true, null);
       }
@@ -684,6 +684,17 @@ public class OgnlParser implements PsiParser, LightPsiParser {
       }
     }
     return r;
+  }
+
+  public static boolean unaryExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unaryExpression")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, null);
+    r = unaryOperator(b, l + 1);
+    p = r;
+    r = p && expression(b, l, 0);
+    exit_section_(b, l, m, UNARY_EXPRESSION, r, p, null);
+    return r || p;
   }
 
   // ':' '[' expression "]"
@@ -1015,17 +1026,6 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     r = consumeTokensSmart(b, 0, HASH, IDENTIFIER);
     exit_section_(b, m, VARIABLE_EXPRESSION, r);
     return r;
-  }
-
-  public static boolean unaryExpression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "unaryExpression")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, null);
-    r = unaryOperator(b, l + 1);
-    p = r;
-    r = p && expression(b, l, 13);
-    exit_section_(b, l, m, UNARY_EXPRESSION, r, p, null);
-    return r || p;
   }
 
   // numberLiteralExpression |

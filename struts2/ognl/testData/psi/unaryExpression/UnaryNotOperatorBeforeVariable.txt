@@ -1,0 +1,19 @@
+OgnlFile:UnaryNotOperatorBeforeVariable.ognl
+  PsiElement(%{)('%{')
+  UNARY_EXPRESSION
+    PsiElement(!)('!')
+    METHOD_CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        VARIABLE_EXPRESSION
+          PsiElement(#)('#')
+          PsiElement(IDENTIFIER)('variable')
+        PsiElement(.)('.')
+        PsiElement(IDENTIFIER)('property')
+        PsiElement(.)('.')
+        PsiElement(IDENTIFIER)('method')
+      PsiElement(()('(')
+      PARAMETER_LIST
+        LITERAL_EXPRESSION
+          PsiElement(CHARACTER_LITERAL)(''literal'')
+      PsiElement())(')')
+  PsiElement(EXPRESSION_END)('}')
