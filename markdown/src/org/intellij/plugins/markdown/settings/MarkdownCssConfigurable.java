@@ -32,12 +32,6 @@ public class MarkdownCssConfigurable implements SearchableConfigurable {
     return MarkdownBundle.message("settings.markdown.css.name");
   }
 
-  @Nullable
-  @Override
-  public String getHelpTopic() {
-    return null;
-  }
-
   @NotNull
   @Override
   public JComponent createComponent() {

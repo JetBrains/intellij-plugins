@@ -33,12 +33,6 @@ public class MarkdownPreviewConfigurable implements SearchableConfigurable {
 
   @Nullable
   @Override
-  public String getHelpTopic() {
-    return null;
-  }
-
-  @Nullable
-  @Override
   public JComponent createComponent() {
     return getForm().getComponent();
   }
